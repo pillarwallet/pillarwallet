@@ -53,7 +53,6 @@ import paymentNetworkReducer from './paymentNetworkReducer';
 import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
-import bitcoinReducer from './bitcoinReducer';
 import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
 import syntheticsReducer from './syntheticsReducer';
@@ -97,7 +96,6 @@ import type { PaymentNetworkReducerState, PaymentNetworkAction } from './payment
 import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './featureFlagsReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
-import type { BitcoinReducerAction, BitcoinReducerState } from './bitcoinReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
 import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
@@ -138,7 +136,6 @@ export type RootReducerState = {|
   featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
-  bitcoin: BitcoinReducerState,
   userEvents: UserEventsReducerState,
   walkthroughs: WalkthroughsReducerState,
   synthetics: SyntheticsReducerState,
@@ -168,7 +165,6 @@ type RootReducerAction =
   | WalletConnectReducerAction
   | WalletConnectSessionsReducerAction
   | UserSettingsReducerAction
-  | BitcoinReducerAction
   | UserEventsReducerAction
   | WalkthroughsReducerAction
   | DbAction
@@ -219,7 +215,6 @@ const appReducer = combineReducers({
   featureFlags: featureFlagsReducer,
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,
-  bitcoin: bitcoinReducer,
   userEvents: userEventsReducer,
   walkthroughs: walkthroughsReducer,
   synthetics: syntheticsReducer,

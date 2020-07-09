@@ -28,12 +28,10 @@ import type { Balances, Rates } from 'models/Asset';
 describe('Assets utils', () => {
   const ETH_GBP = 10;
   const PLR_ETH = 1.2;
-  const BTC_ETH = 1.5;
 
   const rates: Rates = {
     ETH: { GBP: ETH_GBP, ETH: 1 },
     PLR: { GBP: (PLR_ETH * ETH_GBP), ETH: PLR_ETH },
-    BTC: { GBP: (BTC_ETH * ETH_GBP), ETH: BTC_ETH },
     AAA: { GBP: 3 },
   };
 
@@ -67,14 +65,6 @@ describe('Assets utils', () => {
         const rate = getRate(rates, 'ETH', 'GBP');
 
         expect(rate).toEqual(rates.ETH.GBP);
-      });
-    });
-
-    describe('for BTC', () => {
-      it('returns the rate', () => {
-        const rate = getRate(rates, 'BTC', 'GBP');
-
-        expect(rate).toEqual(rates.BTC.GBP);
       });
     });
   });

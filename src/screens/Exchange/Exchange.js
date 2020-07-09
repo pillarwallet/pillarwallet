@@ -51,13 +51,12 @@ import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
-import { fiatCurrencies, initialAssets } from 'fixtures/assets';
+import { fiatCurrencies } from 'fixtures/assets';
 import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
-import { satoshisToBtc } from 'utils/bitcoin';
 import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
 
 // selectors
@@ -72,7 +71,6 @@ import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { BitcoinAddress, BitcoinBalance } from 'models/Bitcoin';
 import type { Theme } from 'models/Theme';
 import type { FormSelector } from 'models/TextInput';
 
@@ -107,8 +105,6 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   hasSeenExchangeIntro: boolean,
   updateHasSeenExchangeIntro: () => void,
-  btcAddresses: BitcoinAddress[],
-  btcBalances: BitcoinBalance,
   theme: Theme,
   isActiveAccountSmartWallet: boolean,
 };
@@ -335,19 +331,9 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   provideOptions = () => {
-    const {
-      assets,
-      exchangeSupportedAssets,
-      btcAddresses,
-    } = this.props;
-
-    const selectedFromAssetSymbol = this.getSelectedFromAssetSymbol();
-    const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
+    const { assets, exchangeSupportedAssets } = this.props;
 
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-    if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
-      assetsOptionsBuying.push(this.generateBTCAssetOption());
-    }
 
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
     const fiatOptionsFrom = this.generateFiatOptions();
@@ -490,33 +476,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     paymentNetworkBalance: null,
   }));
 
-  generateBTCAssetOption = () => {
-    const symbol = 'BTC';
-    const {
-      btcAddresses,
-      btcBalances,
-      baseFiatCurrency,
-      rates,
-    } = this.props;
-    const [{ address }] = btcAddresses;
-    const addressBalance = btcBalances[address];
-    const rawAssetBalance = addressBalance ? satoshisToBtc(addressBalance.confirmed) : 0;
-    const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
-    const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-    const btcAsset = initialAssets.find(e => e.symbol === symbol);
-    const iconUrl = btcAsset ? btcAsset.iconUrl : '';
-    return {
-      key: symbol,
-      value: symbol,
-      icon: iconUrl,
-      iconUrl,
-      symbol,
-      ...btcAsset,
-      assetBalance,
-      formattedBalanceInFiat,
-    };
-  };
-
   generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
     const { balances, baseFiatCurrency, rates } = this.props;
@@ -568,7 +527,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       exchangeSupportedAssets,
       rates,
       baseFiatCurrency,
-      btcAddresses,
     } = this.props;
     const { fromInput } = value;
     const { selector: selectedFromOption, input: amount } = fromInput;
@@ -584,11 +542,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const optionsFrom = this.generateAssetsOptions(assets);
     const optionsTo = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-    const selectedFromAssetSymbol = this.getSelectedFromAssetSymbol();
-    const isFromSelectedFiat = isFiatCurrency(selectedFromAssetSymbol);
-    if (!isEmpty(btcAddresses) && isFromSelectedFiat) {
-      optionsTo.push(this.generateBTCAssetOption());
-    }
 
     const newOptions = t.update(this.state.formOptions, {
       fields: {
@@ -755,12 +708,6 @@ const mapStateToProps = ({
   rates: { data: rates },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-  bitcoin: {
-    data: {
-      addresses: btcAddresses,
-      balances: btcBalances,
-    },
-  },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   rates,
@@ -774,8 +721,6 @@ const mapStateToProps = ({
   exchangeSupportedAssets,
   fiatExchangeSupportedAssets,
   hasSeenExchangeIntro,
-  btcAddresses,
-  btcBalances,
 });
 
 const structuredSelector = createStructuredSelector({

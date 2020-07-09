@@ -28,16 +28,14 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal';
 import { spacing, fontStyles, fontTrackings } from 'utils/variables';
 import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
-import { Paragraph, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import {
   saveBaseFiatCurrencyAction,
   setAppThemeAction,
-  setUserJoinedBetaAction,
   saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
@@ -58,11 +56,9 @@ import { SettingsSection } from './SettingsSection';
 type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
-  userJoinedBeta: boolean,
   optOutTracking: boolean,
   saveBaseFiatCurrency: (currency: string) => void,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
-  setUserJoinedBeta: (status: boolean) => void,
   saveOptOutTracking: (status: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
@@ -74,8 +70,6 @@ type Props = {
 
 type State = {
   visibleModal: ?string,
-  leaveBetaPressed: boolean,
-  joinBetaPressed: boolean,
   showRelayerMigrationModal: boolean,
 };
 
@@ -104,8 +98,6 @@ const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, va
 class AppSettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
-    leaveBetaPressed: false,
-    joinBetaPressed: false,
     showRelayerMigrationModal: false,
   }
 
@@ -130,23 +122,6 @@ class AppSettings extends React.Component<Props, State> {
     this.setState({ visibleModal: null });
   };
 
-  handleJoinBetaModalClose = () => {
-    // this is needed so that toast message can be shown in settings instead of slide modal that closes
-    if (this.state.joinBetaPressed) {
-      this.setState({ joinBetaPressed: false });
-      this.props.setUserJoinedBeta(true);
-    }
-  };
-
-
-  handleLeaveBetaModalClose = () => {
-    // this is needed so that toast message can be shown in settings instead of slide modal that closes
-    if (this.state.leaveBetaPressed) {
-      this.setState({ leaveBetaPressed: false });
-      this.props.setUserJoinedBeta(false);
-    }
-  };
-
   handleToggleOptOutTracking = () => {
     const { saveOptOutTracking, optOutTracking } = this.props;
     saveOptOutTracking(!optOutTracking);
@@ -157,7 +132,6 @@ class AppSettings extends React.Component<Props, State> {
       baseFiatCurrency,
       themeType,
       setAppTheme,
-      userJoinedBeta,
       preferredGasToken,
       isGasTokenSupported,
       setPreferredGasToken,
@@ -193,13 +167,6 @@ class AppSettings extends React.Component<Props, State> {
         toggle: true,
         value: themeType === DARK_THEME,
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
-      },
-      {
-        key: 'joinBeta',
-        title: userJoinedBeta ? 'Leave the Early Access program' : 'Opt in to Early Access',
-        onPress: () => userJoinedBeta
-          ? this.setState({ visibleModal: 'leaveBeta' })
-          : this.setState({ visibleModal: 'joinBeta' }),
       },
       {
         key: 'analytics',
@@ -272,61 +239,6 @@ class AppSettings extends React.Component<Props, State> {
           />
         </SlideModal>
 
-        {/* JOIN BETA */}
-        <SlideModal
-          isVisible={visibleModal === 'joinBeta'}
-          fullScreen
-          showHeader
-          onModalHidden={this.handleJoinBetaModalClose}
-          avoidKeyboard
-          title="Early Access"
-          onModalHide={() => this.setState({ visibleModal: null })}
-          insetTop
-        >
-          <StyledWrapper regularPadding flex={1}>
-            <Paragraph small>
-              By choosing this you will be added to our Analytics data collection.
-              Through this, Pillar will collect your username in order to enable new features and monitor your new
-              wallet experience for any bugs and/or crashes.
-              You can choose to leave the Early Access program at any time
-              via the &quot;System&quot; under Settings.
-            </Paragraph>
-            <Button
-              title="Opt in"
-              onPress={() => this.setState({ visibleModal: null, joinBetaPressed: true })}
-              style={{ marginBottom: 13 }}
-            />
-          </StyledWrapper>
-        </SlideModal>
-
-        {/* LEAVE BETA */}
-        <SlideModal
-          isVisible={visibleModal === 'leaveBeta'}
-          fullScreen
-          showHeader
-          onModalHidden={this.handleLeaveBetaModalClose}
-          avoidKeyboard
-          title="Leaving Early Access program"
-          onModalHide={() => this.setState({ visibleModal: null })}
-          insetTop
-        >
-          <StyledWrapper regularPadding flex={1}>
-            <Paragraph small>
-              By confirming, you will leave the Early Access program. As a result, your access to the
-              Bitcoin Wallet and any funds stored on them will be lost.
-            </Paragraph>
-            <Paragraph small>
-              If you wish to re-gain early access to Bitcoin Wallet (and re-gain access to the funds
-              on your Bitcoin Wallet), you will need to apply again.
-            </Paragraph>
-            <Button
-              title="Leave Program"
-              onPress={() => { this.setState({ visibleModal: null, leaveBetaPressed: true }); }}
-              style={{ marginBottom: 13 }}
-            />
-          </StyledWrapper>
-        </SlideModal>
-
         {/* ANALYTICS */}
         <SlideModal
           isVisible={visibleModal === 'analytics'}
@@ -390,14 +302,12 @@ const mapStateToProps = ({
     data: {
       baseFiatCurrency,
       themeType,
-      userJoinedBeta = false,
       optOutTracking = false,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
-  userJoinedBeta,
   optOutTracking,
 });
 
@@ -419,7 +329,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => dispatch(
     setAppThemeAction(themeType, isManualThemeSelection),
   ),
-  setUserJoinedBeta: (status: boolean) => dispatch(setUserJoinedBetaAction(status)),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
 });

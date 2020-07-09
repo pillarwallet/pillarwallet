@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, Platform, Image } from 'react-native';
+import { RefreshControl, Image } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -63,10 +63,7 @@ import PoolCard from './PoolCard';
 import PoolTickets from './PoolTickets';
 
 const ContentWrapper = styled.View`
-  padding-top: ${Platform.select({
-    ios: '25px',
-    android: '19px',
-  })};
+  padding-top: 24px;
 `;
 
 const LogoWrapper = styled.View`
@@ -77,7 +74,7 @@ const LogoWrapper = styled.View`
 `;
 
 const TicketButtonsWrapper = styled.View`
-  padding: 14px 85px 36px;
+  padding: 0 85px;
   flex-direction: row;
   justify-content: space-between;
 `;
@@ -244,7 +241,8 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
                 resizeMode="contain"
               />
             </LogoWrapper>
-            <Tabs tabs={poolCurrencyTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />
+            <Spacing h={12} />
+            <Tabs tabs={poolCurrencyTabs} activeTab={activeTab} />
             <PoolCard
               currentPrize={currentPrize}
               prizeEstimate={prizeEstimate}
@@ -288,24 +286,28 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
               </TicketButtonsWrapper>
             }
             {!userInfo &&
-              <PoolTickets
-                currentCount={poolTicketsCount}
-                maxCount={poolTokenBalance}
-                totalPoolTicketsCount={totalPoolTicketsCount}
-                userTickets={userTickets}
-                remainingTimeMs={remainingTimeMs}
-                onPressCallback={() => {
-                  navigation.navigate(POOLTOGETHER_PURCHASE, {
-                    poolToken: activeTab,
-                    poolTicketsCount,
-                    poolTokenBalance,
-                    totalPoolTicketsCount,
-                    userTickets,
-                  });
-                }}
-                onTicketCountChange={this.onTicketCountChange}
-              />
+              <>
+                <Spacing h={30} />
+                <PoolTickets
+                  currentCount={poolTicketsCount}
+                  maxCount={poolTokenBalance}
+                  totalPoolTicketsCount={totalPoolTicketsCount}
+                  userTickets={userTickets}
+                  remainingTimeMs={remainingTimeMs}
+                  onPressCallback={() => {
+                    navigation.navigate(POOLTOGETHER_PURCHASE, {
+                      poolToken: activeTab,
+                      poolTicketsCount,
+                      poolTokenBalance,
+                      totalPoolTicketsCount,
+                      userTickets,
+                    });
+                  }}
+                  onTicketCountChange={this.onTicketCountChange}
+                />
+              </>
             }
+            <Spacing h={40} />
             {!!relatedHistory.length && (
               <>
                 <ActivityFeed

@@ -23,7 +23,7 @@ import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
 
 // constants
-import { ETH, BTC } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch } from 'utils/common';
@@ -106,7 +106,7 @@ const tokenRate = (rates: Rates, token: string, fiatCurrency: string): number =>
 };
 
 export const getRate = (rates: Rates = {}, token: string, fiatCurrency: string): number => {
-  if (token === BTC || token === ETH) {
+  if (token === ETH) {
     return baseRate(rates, token, fiatCurrency);
   }
 

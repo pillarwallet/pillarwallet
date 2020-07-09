@@ -64,7 +64,6 @@ import {
   mapSdkToAppTxStatus,
   parseSmartWalletTransactions,
 } from 'utils/smartWallet';
-import { extractBitcoinTransactions } from 'utils/bitcoin';
 import { mapTransactionsHistoryWithAave } from 'utils/aave';
 import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 
@@ -87,8 +86,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
-import { refreshBTCTransactionsAction, refreshBitcoinBalanceAction } from './bitcoinActions';
+import { checkPoolTogetherApprovalTransactionAction, setWithdrawalsDepositsSync } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;
@@ -143,41 +141,12 @@ export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: n
   };
 };
 
-export const fetchBTCTransactionsHistoryAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    await dispatch(refreshBTCTransactionsAction(true));
-    const {
-      bitcoin: {
-        data: {
-          addresses,
-          transactions,
-        },
-      },
-      history: { data: currentHistory },
-    } = getState();
-
-    if (isEmpty(addresses)) {
-      return;
-    }
-
-    const btcAddress = addresses[0].address;
-    const extracted = extractBitcoinTransactions(btcAddress, transactions);
-
-    const updatedHistory = updateAccountHistory(currentHistory, btcAddress, extracted);
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
-    dispatch(refreshBitcoinBalanceAction(true));
-  };
-};
-
 export const fetchSmartWalletTransactionsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedTransactionId, connectedAccount: { devices = [] } },
+      poolTogether: { lastSynced },
     } = getState();
 
     const smartWalletAccount = findFirstSmartAccount(accounts);
@@ -203,7 +172,11 @@ export const fetchSmartWalletTransactionsAction = () => {
     );
     const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
 
-    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    let history = aaveHistory;
+    if (Date.now() - 15000 > lastSynced.withdrawalsDeposits) {
+      dispatch(setWithdrawalsDepositsSync());
+      history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    }
 
     if (!history.length) return;
 
@@ -509,6 +482,7 @@ export const restoreTransactionHistoryAction = () => {
         asset: ETH,
         createdAt: tx.timestamp,
         status: tx.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+        type: tx.type,
       })),
       ...erc20Transactions.map(tx => {
         const tokenAddress = get(tx, 'tokenInfo.address');
@@ -521,6 +495,7 @@ export const restoreTransactionHistoryAction = () => {
           status: TX_CONFIRMED_STATUS,
           to: tx.to,
           value: tx.value,
+          type: tx.type,
         });
       }),
     ];
@@ -548,23 +523,12 @@ export const fetchTransactionsHistoryAction = (forAllAccounts?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      appSettings: { data: { blockchainNetwork } = {} },
-      featureFlags: {
-        data: {
-          BITCOIN_ENABLED: bitcoinFeatureEnabled,
-        },
-      },
     } = getState();
 
     if (forAllAccounts) {
       await dispatch(restoreTransactionHistoryAction());
       await dispatch(fetchSmartWalletTransactionsAction());
-      if (bitcoinFeatureEnabled) dispatch(fetchBTCTransactionsHistoryAction());
       return Promise.resolve();
-    }
-
-    if (blockchainNetwork && blockchainNetwork === 'BITCOIN') {
-      return dispatch(fetchBTCTransactionsHistoryAction());
     }
 
     const activeAccount = getActiveAccount(accounts);

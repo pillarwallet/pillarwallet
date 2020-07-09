@@ -94,6 +94,7 @@ const mockEthTransaction = {
   status: 'confirmed',
   to: bobAddress,
   value: 10000000000000000,
+  type: 'transfer',
 };
 
 const mockPlrTransactions = {
@@ -110,6 +111,7 @@ const mockPlrTransactions = {
   status: 'confirmed',
   to: bobAddress,
   value: 10000000000000000,
+  type: 'transfer',
 };
 
 const mockImportedEthTransaction = {
@@ -120,6 +122,7 @@ const mockImportedEthTransaction = {
   value: '1000000000000000', // 0.001
   input: '0x',
   success: true,
+  type: 'transfer',
 };
 
 const mockImportedPlrTransaction = {
@@ -153,6 +156,7 @@ const transformedImportedEthTransaction = buildHistoryTransaction({
   asset: ETH,
   createdAt: mockImportedEthTransaction.timestamp,
   status: mockImportedEthTransaction.success ? TX_CONFIRMED_STATUS : TX_FAILED_STATUS,
+  type: 'transfer',
 });
 
 const transformedImportedPlrTransaction = buildHistoryTransaction({
@@ -163,6 +167,7 @@ const transformedImportedPlrTransaction = buildHistoryTransaction({
   asset: PLR,
   createdAt: mockImportedPlrTransaction.timestamp,
   status: TX_CONFIRMED_STATUS,
+  type: 'transfer',
 });
 
 describe('History Actions', () => {

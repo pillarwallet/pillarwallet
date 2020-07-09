@@ -39,7 +39,6 @@ export const lightThemeColors = {
   userAvatar: '#d1d9e4', // NOT IN DS BUT CURRENTLY REQUIRED
   legacyWallet: '#FA574F', // NOT IN DS BUT CURRENTLY REQUIRED
   smartWallet: '#3C71FE', // NOT IN DS BUT CURRENTLY REQUIRED
-  bitcoinWallet: '#F79319', // NOT IN DS BUT CURRENTLY REQUIRED
   orange: '#f57c00',
   PPNText: '#f33726',
   PPNSurface: '#0a0c78',
@@ -82,7 +81,6 @@ export const darkThemeColors = {
   userAvatar: '#d1d9e4', // TODO: add correct one when added to Design System
   legacyWallet: '#FA574F', // TODO: add correct one when added to Design System
   smartWallet: '#3C71FE', // TODO: add correct one when added to Design System
-  bitcoinWallet: '#F79319', // TODO: add correct one when added to Design System
   orange: '#f57c00',
   PPNText: '#f33726',
   PPNSurface: '#0a0c78',
@@ -175,10 +173,6 @@ export const themedColors = {
   smartWallet: theme('current', {
     lightTheme: lightThemeColors.smartWallet,
     darkTheme: darkThemeColors.smartWallet,
-  }),
-  bitcoinWallet: theme('current', {
-    lightTheme: lightThemeColors.bitcoinWallet,
-    darkTheme: darkThemeColors.bitcoinWallet,
   }),
   orange: theme('current', {
     lightTheme: lightThemeColors.orange,

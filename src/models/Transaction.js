@@ -96,6 +96,7 @@ export type Transaction = {
   extra?: TransactionExtra,
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
+  type?: string,
 }
 
 export type TransactionsStore = {
@@ -161,6 +162,7 @@ export type TransactionEthers = {
   extra?: TransactionExtra,
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
+  type?: string,
 };
 
 export type EstimatedTransactionFee = {

@@ -730,7 +730,7 @@ class SDKWrapper {
   importedErc20TransactionHistory(walletAddress: string) {
     if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
     return Promise.resolve()
-      .then(() => ethplorerSdk.getAddressHistory(walletAddress, { type: 'transfer', limit: 40 }))
+      .then(() => ethplorerSdk.getAddressHistory(walletAddress, { limit: 40 }))
       .then(data => get(data, 'operations', []))
       .then(data => data.filter(validEthplorerTransaction))
       .catch(() => []);

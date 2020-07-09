@@ -17,14 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BITCOIN_NETWORK } from 'react-native-dotenv';
 
-export const SET_BITCOIN_ADDRESSES = 'SET_BITCOIN_ADDRESSES';
-export const SET_BITCOIN_BALANCES = 'SET_BITCOIN_BALANCES';
-export const CREATED_BITCOIN_ADDRESS = 'CREATED_BITCOIN_ADDRESS';
-export const BITCOIN_WALLET_CREATION_FAILED = 'BITCOIN_WALLET_CREATION_FAILED';
-export const DEFAULT_BTC_NETWORK = BITCOIN_NETWORK || 'testnet';
-export const UPDATE_BITCOIN_BALANCE = 'UPDATE_BITCOIN_BALANCE';
-export const UPDATE_BITCOIN_TRANSACTIONS = 'UPDATE_BITCOIN_TRANSACTIONS';
-export const REFRESH_THRESHOLD = (1000 * 60) * 10; // Cache utxos for ten minutes
-export const MIN_CONFIRMATIONS = 1; // Use utxos with at least 1 confirmation
+export default {
+  // $FlowFixMe
+  0: (state) => { // 0 is the redux persist version to migrate to
+    return {
+      ...state,
+      poolTogether: {
+        ...state.poolTogether, // all the state keys of the reducer should be spread to the active storage
+        lastSynced: { // the newly added keys to the reducer with initial values
+          DAI: 0,
+          USDC: 0,
+          withdrawalsDeposits: 0,
+        },
+      },
+    };
+  },
+};

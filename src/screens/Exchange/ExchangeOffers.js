@@ -58,7 +58,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, ExchangeProvider, FiatOffer, Offer, ProvidersMeta } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
-import type { BitcoinAddress } from 'models/Bitcoin';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, Balances, Rates } from 'models/Asset';
 import type { GasInfo } from 'models/GasInfo';
@@ -114,7 +113,6 @@ type Props = {
   disableNonFiatExchange: boolean,
   setFromAmount: (string) => void,
   value: FormValue,
-  btcAddresses: BitcoinAddress[],
   exchangeSupportedAssets: Asset[],
   baseFiatCurrency: ?string,
   gasInfo: GasInfo,
@@ -468,20 +466,13 @@ class ExchangeOffers extends React.Component<Props, State> {
   };
 
   openSendWyre(selectedSellAmount: string, offer: FiatOffer) {
-    const { activeAccountAddress, btcAddresses } = this.props;
+    const { activeAccountAddress } = this.props;
     const { fromAsset, toAsset } = offer;
     const { code: fromAssetCode } = fromAsset;
     const { code: toAssetCode } = toAsset;
 
-    let destAddress;
-    if (toAssetCode === 'BTC') {
-      destAddress = btcAddresses[0].address;
-    } else {
-      destAddress = activeAccountAddress;
-    }
-
     const wyreUrl = wyreWidgetUrl(
-      destAddress,
+      activeAccountAddress,
       toAssetCode,
       fromAssetCode,
       selectedSellAmount,
@@ -702,7 +693,6 @@ const mapStateToProps = ({
     providersMeta,
     exchangeSupportedAssets,
   },
-  bitcoin: { data: { addresses: btcAddresses } },
   history: { gasInfo },
   rates: { data: rates },
   session: { data: session },
@@ -713,7 +703,6 @@ const mapStateToProps = ({
   connectedProviders,
   providersMeta,
   exchangeSupportedAssets,
-  btcAddresses,
   gasInfo,
   rates,
   session,

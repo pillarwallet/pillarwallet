@@ -57,6 +57,7 @@ export const buildHistoryTransaction = ({
   extra,
   stateInPPN,
   feeWithGasToken,
+  type,
 }: TransactionEthers): Transaction => ({
   status: status || TX_PENDING_STATUS,
   gasUsed: gasLimit ? Number(gasLimit) : 0,
@@ -75,6 +76,7 @@ export const buildHistoryTransaction = ({
   extra,
   stateInPPN,
   feeWithGasToken,
+  type,
 });
 
 export const isTransactionEvent = (eventType: string) => {

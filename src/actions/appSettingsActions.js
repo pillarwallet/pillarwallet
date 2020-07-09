@@ -27,9 +27,7 @@ import {
   DARK_THEME,
   LIGHT_THEME,
   UPDATE_APP_SETTINGS,
-  USER_JOINED_BETA_SETTING,
 } from 'constants/appSettingsConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -37,24 +35,16 @@ import Toast from 'components/Toast';
 // services
 import { firebaseAnalytics } from 'services/firebase';
 
-// selectors
-import { activeBlockchainSelector } from 'selectors';
-
 // utils
 import { setKeychainDataObject } from 'utils/keychain';
 import { delay } from 'utils/common';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // types
-import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { KeyChainData } from 'utils/keychain';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
-import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { logUserPropertyAction, logEventAction } from './analyticsActions';
 
 
@@ -145,50 +135,6 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
         }))
         .catch(() => null);
     }
-  };
-};
-
-export const setUserJoinedBetaAction = (userJoinedBeta: boolean) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: { walletId } },
-      session: { data: { isOnline } },
-    } = getState();
-
-    if (!isOnline) {
-      Toast.show({
-        message: `Cannot opt-${userJoinedBeta ? 'in to' : 'out from'} Early Access program while offline`,
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
-
-    let message;
-
-    if (userJoinedBeta) {
-      message = 'You have successfully been added to the Early Access program queue.';
-    } else {
-      // in case user opts out when Bitcoin is set as active
-      const activeBlockchain = activeBlockchainSelector(getState());
-      if (!isSupportedBlockchain(activeBlockchain)) {
-        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-        dispatch(fallbackToSmartOrKeyAccountAction());
-      }
-      message = 'You have successfully left Early Access program.';
-    }
-
-    await api.updateUser({ walletId, betaProgramParticipant: userJoinedBeta });
-    dispatch(updateAppSettingsAction(USER_JOINED_BETA_SETTING, userJoinedBeta));
-
-    await dispatch(loadFeatureFlagsAction());
-
-    Toast.show({
-      message,
-      type: 'success',
-      title: 'Success',
-      autoClose: false,
-    });
   };
 };
 
