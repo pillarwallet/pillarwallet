@@ -148,7 +148,7 @@ type Props = {
   isFetchingDepositedAssets: boolean,
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
-  fetchPoolStats: () => void,
+  fetchPoolStats: (firstRun?: boolean) => void,
   isSmartWalletActive: boolean,
 };
 
@@ -226,7 +226,7 @@ class HomeScreen extends React.Component<Props, State> {
       this.props.setUnreadNotificationsStatus(false);
     });
     if (isSmartWalletActive) {
-      fetchPoolStats();
+      fetchPoolStats(true);
     }
     fetchTransactionsHistory();
     fetchBadges();
@@ -573,6 +573,7 @@ class HomeScreen extends React.Component<Props, State> {
                           keyExtractor={(item) => item.symbol}
                           renderItem={this.renderDepositedAsset}
                           initialNumToRender={5}
+                          listKey="aave_deposits"
                         />
                       }
                       onPress={toggleLendingDeposits}
@@ -589,6 +590,7 @@ class HomeScreen extends React.Component<Props, State> {
                         keyExtractor={(item) => item.symbol}
                         renderItem={this.renderPoolTogetherItem}
                         initialNumToRender={2}
+                        listKey="pool_together"
                       />
                     }
                     onPress={togglePoolTogether}
@@ -689,7 +691,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
   fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
   toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
-  fetchPoolStats: () => dispatch(fetchAllPoolsPrizes()),
+  fetchPoolStats: (firstRun?: boolean) => dispatch(fetchAllPoolsPrizes(firstRun)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

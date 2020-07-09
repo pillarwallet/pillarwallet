@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native/index';
 import LinearGradient from 'react-native-linear-gradient';
-import { fontStyles, spacing, fontTrackings } from 'utils/variables';
+import { fontStyles, fontTrackings } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
@@ -48,17 +48,16 @@ type State = {
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
   background-color: ${themedColors.surface};
-  padding: 1px 0;
+  padding: 3px;
   align-items: center;
   justify-content: flex-start;
-  margin-bottom: ${spacing.rhythm / 2}px;
   border-radius: 10;
   width: 100%;
 `;
 
 const StyledLinearGradient = styled(LinearGradient)`
   padding: 1px;
-  height: 11px;
+  height: 14px;
   border-radius: 10;
   overflow: hidden;
 `;

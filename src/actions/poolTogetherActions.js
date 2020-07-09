@@ -76,7 +76,7 @@ export const fetchPoolPrizeInfo = (symbol: string, sequence?: boolean) => { // s
   };
 };
 
-export const fetchAllPoolsPrizes = () => {
+export const fetchAllPoolsPrizes = (firstRun?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       poolTogether: {
@@ -86,6 +86,12 @@ export const fetchAllPoolsPrizes = () => {
     if (!isFetchingPoolStats) {
       await dispatch(fetchPoolPrizeInfo(DAI));
       await dispatch(fetchPoolPrizeInfo(USDC, true));
+    }
+    if (firstRun) {
+      dispatch({
+        type: SET_POOL_TOGETHER_FETCHING_STATS,
+        payload: false,
+      });
     }
   };
 };
