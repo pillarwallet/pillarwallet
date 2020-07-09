@@ -62,7 +62,6 @@ type Props = {
 };
 
 type State = {
-  note: ?string,
   rinkebyETH: string,
   gettingFee: boolean,
   gasLimit: number,
@@ -86,7 +85,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.isRopstenNetwork = NETWORK_PROVIDER === 'ropsten';
 
     this.state = {
-      note: null,
       rinkebyETH: '',
       gasLimit: 0,
       gettingFee: true,
@@ -120,7 +118,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   getTransactionPayload = (): CollectibleTransactionPayload => {
     const { activeAccountAddress } = this.props;
-    const { txFeeInfo, note } = this.state;
+    const { txFeeInfo } = this.state;
     const {
       name,
       tokenType,
@@ -137,7 +135,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       tokenType,
       tokenId,
       txFeeInWei: txFeeInfo?.fee || new BigNumber(0),
-      note,
     };
   };
 
@@ -253,10 +250,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     });
   };
 
-  handleNoteChange = (text) => {
-    this.setState({ note: text });
-  };
-
   render() {
     const {
       session,
@@ -266,7 +259,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const {
       rinkebyETH,
       gettingFee,
-      note,
       txFeeInfo,
     } = this.state;
     const { name } = this.assetData;
@@ -350,8 +342,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         contentContainerStyle={{ marginTop: 40 }}
         customOnBack={this.handleBackAction}
         errorMessage={errorMessage}
-        onTextChange={session.isOnline ? this.handleNoteChange : noop}
-        textInputValue={note}
       />
     );
   }

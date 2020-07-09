@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Linking, Alert } from 'react-native';
+import { View, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
@@ -40,7 +40,6 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
-import ButtonText from 'components/ButtonText';
 import Spinner from 'components/Spinner';
 
 // utils
@@ -212,7 +211,6 @@ type EventData = {
   imageBorder?: boolean,
   imageBackground?: ?string,
   collectibleUrl?: ?string,
-  transactionNote?: string,
   isFailed?: boolean;
   errorMessage?: string,
 };
@@ -680,10 +678,6 @@ export class EventDetail extends React.Component<Props, State> {
     return 'Invite friends';
   };
 
-  getTrxNote = (event: Object) => {
-    return event.note;
-  };
-
   renderPoolTogetherTickets = (event: Object) => {
     const { symbol, amount, decimals } = event.extra;
     const formattedAmount = parseFloat(formatUnits(amount, decimals));
@@ -1037,7 +1031,6 @@ export class EventDetail extends React.Component<Props, State> {
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
-        const transactionNote = this.getTrxNote(event);
 
         if (isPPNTransaction) {
           eventData = {
@@ -1049,7 +1042,6 @@ export class EventDetail extends React.Component<Props, State> {
               />
             ),
             actionSubtitle: !isTrxBetweenSWAccount ? `${isReceived ? 'to' : 'from'} Pillar Network` : '',
-            transactionNote,
           };
 
           if (isReceived) {
@@ -1086,7 +1078,6 @@ export class EventDetail extends React.Component<Props, State> {
         } else {
           eventData = {
             actionTitle: fullItemValue,
-            transactionNote,
           };
 
           let buttons = [];
@@ -1170,11 +1161,9 @@ export class EventDetail extends React.Component<Props, State> {
     const { subtext, isReceived } = itemData;
 
     const isPending = isPendingTransaction(event);
-    const transactionNote = this.getTrxNote(event);
 
     let eventData: EventData = {
       actionSubtitle: subtext,
-      transactionNote,
     };
 
     if (isReceived) {
@@ -1379,16 +1368,6 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  showNote = (note: string) => {
-    return Alert.alert(
-      null,
-      note,
-      [
-        { text: 'OK' },
-      ],
-    );
-  };
-
   renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
     if (isReceived) return null;
@@ -1406,7 +1385,6 @@ export class EventDetail extends React.Component<Props, State> {
       date, name,
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
-      transactionNote,
       errorMessage,
     } = eventData;
 
@@ -1435,9 +1413,6 @@ export class EventDetail extends React.Component<Props, State> {
           <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
             <BaseText tiny secondary>{eventTime}</BaseText>
           </EventTimeHolder>
-          <ButtonHolder>
-            {!!transactionNote && <ButtonText onPress={() => this.showNote(transactionNote)} buttonText="Note" />}
-          </ButtonHolder>
         </Row>
         <Spacing h={10} />
         <AvatarWrapper disabled>

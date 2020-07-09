@@ -31,7 +31,7 @@ import ReviewAndConfirm from 'components/ReviewAndConfirm';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
-import { formatTransactionFee, noop } from 'utils/common';
+import { formatTransactionFee } from 'utils/common';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -44,34 +44,22 @@ type Props = {
   accounts: Accounts,
 };
 
-type State = {
-  note: ?string,
-};
-
-
-class SendTokenConfirm extends React.Component<Props, State> {
+class SendTokenConfirm extends React.Component<Props> {
   source: string;
 
   constructor(props) {
     super(props);
     this.source = this.props.navigation.getParam('source', '');
-    this.state = {
-      note: null,
-    };
   }
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
+    const transactionPayload = { ...navigation.getParam('transactionPayload', {}) };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
       source: this.source,
     });
-  };
-
-  handleNoteChange = (text) => {
-    this.setState({ note: text });
   };
 
   render() {
@@ -80,7 +68,6 @@ class SendTokenConfirm extends React.Component<Props, State> {
       navigation,
       accounts,
     } = this.props;
-    const { note } = this.state;
     const {
       amount,
       to,
@@ -132,8 +119,6 @@ class SendTokenConfirm extends React.Component<Props, State> {
         reviewData={reviewData}
         isConfirmDisabled={!session.isOnline}
         onConfirm={this.handleFormSubmit}
-        onTextChange={noop}
-        textInputValue={note}
       />
     );
   }

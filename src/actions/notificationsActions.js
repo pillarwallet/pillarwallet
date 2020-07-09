@@ -40,7 +40,6 @@ import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SET_UNREAD_NOTIFICATIONS_STATUS,
-  SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
   SIGNAL,
   BCX,
   COLLECTIBLE,
@@ -121,12 +120,6 @@ export const stopListeningIntercomNotificationsAction = () => {
 export const setUnreadNotificationsStatusAction = (status: boolean) => {
   return async (dispatch: Dispatch) => {
     dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: status });
-  };
-};
-
-export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: status });
   };
 };
 

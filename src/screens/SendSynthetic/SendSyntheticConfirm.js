@@ -30,9 +30,6 @@ import ReviewAndConfirm from 'components/ReviewAndConfirm';
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
-// util
-import { noop } from 'utils/common';
-
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 
@@ -48,15 +45,9 @@ type Props = {
   availableStake: number,
 };
 
-type State = {
-  note: ?string,
-};
-
-
-class SendSyntheticConfirm extends React.Component<Props, State> {
+class SendSyntheticConfirm extends React.Component<Props> {
   syntheticTransaction: SyntheticTransaction;
   assetData: Asset;
-  state: State = { note: null };
 
   constructor(props: Props) {
     super(props);
@@ -66,7 +57,6 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
   }
 
   onConfirmPress = () => {
-    const { note } = this.state;
     const { fromAmount, receiverEnsName } = this.syntheticTransaction;
     const { symbol, decimals, address: contractAddress } = this.assetData;
     const syntheticTransaction = { ...this.syntheticTransaction };
@@ -77,16 +67,10 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       symbol,
       contractAddress,
       decimals,
-      note,
       usePPN: true,
       extra: { syntheticTransaction },
     };
     this.props.navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
-  };
-
-
-  handleNoteChange = (text) => {
-    this.setState({ note: text });
   };
 
   render() {
@@ -94,7 +78,6 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       isOnline,
       availableStake,
     } = this.props;
-    const { note } = this.state;
 
     const {
       fromAmount,
@@ -150,8 +133,6 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
         onConfirm={this.onConfirmPress}
         isConfirmDisabled={!!errorMessage}
         errorMessage={errorMessage}
-        onTextChange={noop}
-        textInputValue={note}
       />
     );
   }
