@@ -86,7 +86,7 @@ import { saveDbAction } from './dbActions';
 import { getExistingTxNotesAction } from './txNoteActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { checkPoolTogetherApprovalTransactionAction, setWithdrawalsDepositsSync } from './poolTogetherActions';
+import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 const TRANSACTIONS_HISTORY_STEP = 10;

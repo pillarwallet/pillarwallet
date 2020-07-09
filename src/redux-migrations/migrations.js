@@ -33,4 +33,17 @@ export default {
       },
     };
   },
+  // $FlowFixMe
+  1: (state) => { // 1 is the redux persist version to migrate to
+    return {
+      ...state,
+      poolTogether: {
+        ...state.poolTogether, // all the state keys of the reducer should be spread to the active storage
+        lastSynced: { // the newly added keys to the reducer with initial values
+          ...state.poolTogether.lastSynced,
+          withdrawalsDeposits: undefined,
+        },
+      },
+    };
+  },
 };

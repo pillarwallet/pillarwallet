@@ -24,7 +24,6 @@ import {
   SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_ALLOWANCE,
   SET_POOL_TOGETHER_FETCHING_STATS,
-  SET_WITHDRAWALS_DEPOSITS_SYNC,
 } from 'constants/poolTogetherConstants';
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { DAI, USDC } from 'constants/assetsConstants';
@@ -99,10 +98,6 @@ export const fetchAllPoolsPrizes = (firstRun?: boolean) => {
 export const setExecutingApproveAction = (poolToken: string, txHash: string) => ({
   type: SET_EXECUTING_POOL_APPROVE,
   payload: { poolToken, txHash },
-});
-
-export const setWithdrawalsDepositsSync = () => ({
-  type: SET_WITHDRAWALS_DEPOSITS_SYNC,
 });
 
 export const setDismissApproveAction = (poolToken: string) => ({
