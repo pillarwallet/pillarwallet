@@ -24,6 +24,13 @@ import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import querystring from 'querystring';
+import {
+  RAMPNETWORK_WIDGET_URL,
+  RAMPNETWORK_API_KEY,
+  SENDWYRE_WIDGET_URL,
+  SENDWYRE_ACCOUNT_ID,
+} from 'react-native-dotenv';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
@@ -39,6 +46,8 @@ import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 // utils
 import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { openInAppBrowser } from 'utils/inAppBrowser';
+import { getActiveAccountAddress } from 'utils/accounts';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -47,6 +56,7 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { Accounts } from 'models/Account';
 
 type Props = {
   theme: Theme,
@@ -56,6 +66,8 @@ type Props = {
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
+  user: Object,
+  accounts: Accounts,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -117,6 +129,7 @@ class ServicesScreen extends React.Component<Props> {
             displayFiatOptionsFirst: true,
           }),
       },
+      ...this.getBuyCryptoServices(),
       {
         key: 'depositPool',
         title: 'AAVE Deposit',
@@ -141,6 +154,45 @@ class ServicesScreen extends React.Component<Props> {
       },
     ];
   };
+
+  getBuyCryptoServices = () => {
+    const {
+      user: { email = '' },
+      accounts,
+    } = this.props;
+
+    const address = getActiveAccountAddress(accounts);
+
+    return [
+      {
+        key: 'ramp',
+        title: 'Buy with Ramp.Network (EU)',
+        body: 'Buy Now',
+        action: () => {
+          const rampUrl = `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify({
+            hostApiKey: RAMPNETWORK_API_KEY,
+            userEmailAddress: email,
+            userAddress: address,
+          })}`;
+
+          openInAppBrowser(rampUrl);
+        },
+      },
+      {
+        key: 'wyre',
+        title: 'Buy with Wyre (Non-EU)',
+        body: 'Buy Now',
+        action: () => {
+          const wyreUrl = `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
+            accountId: SENDWYRE_ACCOUNT_ID,
+            dest: `ethereum:${address}`,
+          })}`;
+
+          openInAppBrowser(wyreUrl);
+        },
+      },
+    ];
+  }
 
   renderServicesItem = ({ item }) => {
     const {
@@ -198,9 +250,13 @@ class ServicesScreen extends React.Component<Props> {
 const mapStateToProps = ({
   exchange: { providersMeta },
   appSettings: { data: { baseFiatCurrency } },
+  user: { data: user },
+  accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
   baseFiatCurrency,
+  user,
+  accounts,
 });
 
 const structuredSelector = createStructuredSelector({
