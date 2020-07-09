@@ -146,7 +146,6 @@ export const fetchSmartWalletTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedTransactionId, connectedAccount: { devices = [] } },
-      poolTogether: { lastSynced },
     } = getState();
 
     const smartWalletAccount = findFirstSmartAccount(accounts);
@@ -171,12 +170,7 @@ export const fetchSmartWalletTransactionsAction = () => {
       relayerExtensionDevice?.address,
     );
     const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
-
-    let history = aaveHistory;
-    if (Date.now() - 15000 > lastSynced.withdrawalsDeposits) {
-      dispatch(setWithdrawalsDepositsSync());
-      history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-    }
+    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
 
     if (!history.length) return;
 
