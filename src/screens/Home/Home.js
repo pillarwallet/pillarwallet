@@ -28,7 +28,6 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled, { withTheme } from 'styled-components/native';
-import Tabs from 'components/Tabs';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -51,7 +50,6 @@ import {
   WALLETCONNECT,
   POOLTOGETHER_DASHBOARD,
 } from 'constants/navigationConstants';
-import { ALL, TRANSACTIONS } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI } from 'constants/assetsConstants';
@@ -166,7 +164,6 @@ type Props = {
 };
 
 type State = {
-  activeTab: string,
   loaderMessage: string,
 };
 
@@ -215,7 +212,6 @@ class HomeScreen extends React.Component<Props, State> {
   forceRender = false;
 
   state = {
-    activeTab: ALL,
     loaderMessage: '',
   };
 
@@ -298,13 +294,6 @@ class HomeScreen extends React.Component<Props, State> {
     if (isSmartWalletActive) {
       fetchPoolStats();
     }
-  };
-
-  setActiveTab = (activeTab) => {
-    const { logScreenView } = this.props;
-
-    logScreenView(`View tab Home.${activeTab}`, 'Home');
-    this.setState({ activeTab });
   };
 
   renderBadge = ({ item }) => {
@@ -409,7 +398,7 @@ class HomeScreen extends React.Component<Props, State> {
       isSmartWalletActive,
     } = this.props;
 
-    const { activeTab, loaderMessage } = this.state;
+    const { loaderMessage } = this.state;
     const tokenTxHistory = history
       .filter(({ tranType }) => tranType !== 'collectible')
       .filter(historyItem => historyItem.asset !== 'BTC');
@@ -437,34 +426,11 @@ class HomeScreen extends React.Component<Props, State> {
       true,
     );
 
-    const activityFeedTabs = [
-      {
-        id: ALL,
-        name: 'All',
-        icon: 'cube',
-        onPress: () => this.setActiveTab(ALL),
-        data: [
-          ...transactionsOnMainnet,
-          ...mappedCTransactions,
-          ...userEvents,
-          ...badgesEvents,
-        ],
-        emptyState: {
-          title: 'Make your first step',
-          bodyText: 'Your activity will appear here.',
-        },
-      },
-      {
-        id: TRANSACTIONS,
-        name: 'Transactions',
-        icon: 'paperPlane',
-        onPress: () => this.setActiveTab(TRANSACTIONS),
-        data: [...transactionsOnMainnet, ...mappedCTransactions],
-        emptyState: {
-          title: 'Make your first step',
-          bodyText: 'Your transactions will appear here. Send or receive tokens to start.',
-        },
-      },
+    const feedData = [
+      ...transactionsOnMainnet,
+      ...mappedCTransactions,
+      ...userEvents,
+      ...badgesEvents,
     ];
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
@@ -525,13 +491,13 @@ class HomeScreen extends React.Component<Props, State> {
         >
           {onScroll => (
             <ActivityFeed
+              card
+              cardHeaderTitle="History"
               onCancelInvitation={cancelInvitation}
               onRejectInvitation={rejectInvitation}
               onAcceptInvitation={acceptInvitation}
               navigation={navigation}
-              tabs={activityFeedTabs}
-              activeTab={activeTab}
-              hideTabs
+              feedData={feedData}
               initialNumToRender={8}
               wrapperStyle={{ flexGrow: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
@@ -625,13 +591,6 @@ class HomeScreen extends React.Component<Props, State> {
                   />
                   }
                 </React.Fragment>
-              )}
-              tabsComponent={(
-                <Tabs
-                  tabs={activityFeedTabs}
-                  wrapperStyle={{ paddingTop: 16 }}
-                  activeTab={activeTab}
-                />
               )}
               flatListProps={{
                 refreshControl: (
