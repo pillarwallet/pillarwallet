@@ -37,8 +37,6 @@ import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
 import notificationsReducer from './notificationsReducer';
-import contactsReducer from './contactsReducer';
-import chatReducer from './chatReducer';
 import sessionReducer from './sessionReducer';
 import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
@@ -79,8 +77,6 @@ import type { RatesReducerState } from './ratesReducer';
 import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState, HistoryAction } from './historyReducer';
 import type { NotificationsReducerState } from './notificationsReducer';
-import type { ContactsReducerState } from './contactsReducer';
-import type { ChatReducerState } from './chatReducer';
 import type { SessionReducerState } from './sessionReducer';
 import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
@@ -118,8 +114,6 @@ export type RootReducerState = {|
   user: UserReducerState,
   history: HistoryReducerState,
   notifications: NotificationsReducerState,
-  contacts: ContactsReducerState,
-  chat: ChatReducerState,
   session: SessionReducerState,
   txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
@@ -196,8 +190,6 @@ const appReducer = combineReducers({
   user: userReducer,
   history: historyReducer,
   notifications: notificationsReducer,
-  contacts: contactsReducer,
-  chat: chatReducer,
   session: sessionReducer,
   txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,

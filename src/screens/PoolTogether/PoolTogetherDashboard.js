@@ -47,7 +47,6 @@ import type { Balances } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { ContactSmartAddressData } from 'models/Contacts';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -97,8 +96,6 @@ type Props = {
   fetchPoolAllowanceStatus: (symbol: string) => void,
   isFetchingPoolStats: boolean,
   theme: Theme,
-  contacts: Object[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   history: Object[],
 };
 
@@ -166,8 +163,6 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
       balances,
       history,
       accounts,
-      contacts,
-      contactsSmartAddresses,
       isFetchingPoolStats,
     } = this.props;
 
@@ -210,8 +205,6 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
 
     const transactionsOnMainnet = mapTransactionsHistory(
       history,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       TRANSACTION_EVENT,
     );
@@ -326,14 +319,11 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   accounts: { data: accounts },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   poolTogether: { poolStats: poolPrizeInfo, isFetchingPoolStats },
 }: RootReducerState): $Shape<Props> => ({
   session,
   accounts,
   poolPrizeInfo,
-  contacts,
-  contactsSmartAddresses,
   isFetchingPoolStats,
 });
 

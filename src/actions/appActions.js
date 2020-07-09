@@ -35,7 +35,6 @@ import {
   UPDATE_BALANCES,
   UPDATE_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
-import { SET_CONTACTS_SMART_ADDRESSES, UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -131,12 +130,6 @@ export const initAppAndRedirectAction = () => {
 
       const { rates = {} } = get(storageData, 'rates', {});
       dispatch({ type: UPDATE_RATES, payload: rates });
-
-      const { contacts = [] } = get(storageData, 'contacts', {});
-      dispatch({ type: UPDATE_CONTACTS, payload: contacts });
-
-      const { contactsSmartAddresses = [] } = get(storageData, 'contactsSmartAddresses', {});
-      dispatch({ type: SET_CONTACTS_SMART_ADDRESSES, payload: contactsSmartAddresses });
 
       const { oAuthTokens = {} } = get(storageData, 'oAuthTokens', {});
       dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });

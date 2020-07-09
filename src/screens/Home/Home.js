@@ -96,7 +96,6 @@ import { formatAmountDisplay } from 'utils/common';
 // models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
-import type { ContactSmartAddressData } from 'models/Contacts';
 import type { CallRequest, Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
@@ -110,7 +109,6 @@ import WalletsPart from './WalletsPart';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  contacts: Object[],
   user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
@@ -125,7 +123,6 @@ type Props = {
   pendingConnector: ?Connector,
   logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,
-  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
@@ -368,9 +365,7 @@ class HomeScreen extends React.Component<Props, State> {
       navigation,
       history,
       openSeaTxHistory,
-      contacts,
       badges,
-      contactsSmartAddresses,
       accounts,
       userEvents,
       badgesEvents,
@@ -402,8 +397,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     const transactionsOnMainnet = mapTransactionsHistory(
       tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       TRANSACTION_EVENT,
       true,
@@ -415,8 +408,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     const mappedCTransactions = mapTransactionsHistory(
       collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       COLLECTIBLE_TRANSACTION,
       true,
@@ -635,7 +626,6 @@ class HomeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
   notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
@@ -652,12 +642,10 @@ const mapStateToProps = ({
   lending: { depositedAssets, isFetchingDepositedAssets },
   poolTogether: { isFetchingPoolStats },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
   user,
   intercomNotificationsCount,
   badges,
   badgesEvents,
-  contactsSmartAddresses,
   accounts,
   userEvents,
   baseFiatCurrency,

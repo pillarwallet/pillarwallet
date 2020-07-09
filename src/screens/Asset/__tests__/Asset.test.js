@@ -30,7 +30,6 @@ import { initialState as balancesState } from 'reducers/balancesReducer';
 import { initialState as paymentNetworkState } from 'reducers/paymentNetworkReducer';
 import { initialState as userState } from 'reducers/userReducer';
 import { initialState as historyState } from 'reducers/historyReducer';
-import { initialState as contactsState } from 'reducers/contactsReducer';
 import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as ratesState } from 'reducers/ratesReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
@@ -49,7 +48,6 @@ const initialStore = mockStore({
   balances: balancesState,
   paymentNetwork: paymentNetworkState,
   history: historyState,
-  contacts: contactsState,
   assets: assetsState,
   rates: ratesState,
   accounts: accountsState,
