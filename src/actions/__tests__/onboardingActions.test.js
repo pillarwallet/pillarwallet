@@ -141,7 +141,7 @@ describe('Wallet actions', () => {
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
       user: { data: mockUser },
-      session: { data: { isSignalInitiated: false, isOnline: true } },
+      session: { data: { isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
@@ -210,7 +210,7 @@ describe('Wallet actions', () => {
   dispatch on registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
       user: { data: mockUser },
-      session: { data: { isSignalInitiated: false, isOnline: true } },
+      session: { data: { isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: {

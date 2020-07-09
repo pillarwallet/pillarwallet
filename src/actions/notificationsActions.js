@@ -40,7 +40,6 @@ import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SET_UNREAD_NOTIFICATIONS_STATUS,
-  SIGNAL,
   BCX,
   COLLECTIBLE,
   BADGE,
@@ -211,10 +210,6 @@ export const subscribeToPushNotificationsAction = () => {
       }
       if (notification.type === BADGE) {
         dispatch(fetchBadgesAction());
-      }
-      if (notification.type !== SIGNAL) {
-        dispatch({ type: ADD_NOTIFICATION, payload: notification });
-        dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
       }
     }, 500));
   };

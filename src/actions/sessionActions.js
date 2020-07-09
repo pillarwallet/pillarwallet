@@ -23,8 +23,3 @@ export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
   type: UPDATE_SESSION,
   payload: { isOnline },
 });
-
-export const updateSignalInitiatedStateAction = (isSignalInitiated: boolean) => ({
-  type: UPDATE_SESSION,
-  payload: { isSignalInitiated },
-});

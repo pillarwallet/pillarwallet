@@ -128,7 +128,6 @@ import {
 } from 'actions/notificationsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
-import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
@@ -760,7 +759,6 @@ type Props = {
   wallet: Object,
   backupStatus: Object,
   isPickingImage: boolean,
-  updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   isBrowsingWebView: boolean,
@@ -839,7 +837,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
-      updateSignalInitiatedState,
       backupStatus,
     } = this.props;
 
@@ -848,7 +845,6 @@ class AppFlow extends React.Component<Props, State> {
 
     stopListeningNotifications();
     stopListeningIntercomNotifications();
-    updateSignalInitiatedState(false);
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -856,7 +852,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
-      updateSignalInitiatedState,
       isPickingImage,
       isBrowsingWebView,
       endWalkthrough,
@@ -872,7 +867,6 @@ class AppFlow extends React.Component<Props, State> {
       lockTimer = BackgroundTimer.setTimeout(() => {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        updateSignalInitiatedState(false);
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
@@ -949,7 +943,6 @@ const mapDispatchToProps = dispatch => ({
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },
-  updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),

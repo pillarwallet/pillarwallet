@@ -20,7 +20,6 @@
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { saveDbAction } from 'actions/dbActions';
 import { lockScreenAction } from 'actions/authActions';
-import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
 
@@ -41,7 +40,6 @@ export const updateOAuthTokensCB = (dispatch: Dispatch) => {
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
-    dispatch(updateSignalInitiatedStateAction(false));
     dispatch(lockScreenAction(
       refreshTokensCallback,
       'Login session expired, please enter your PIN to proceed.',
