@@ -25,6 +25,7 @@ export type AssetData = {|
   decimals: number,
   icon?: string,
   iconColor?: string,
+  id?: string,
 |};
 
 export type Asset = {

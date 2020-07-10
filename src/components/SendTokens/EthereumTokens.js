@@ -28,6 +28,7 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import { createStructuredSelector } from 'reselect';
+import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 // components
 import Button from 'components/Button';
@@ -38,9 +39,10 @@ import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import { Spacing } from 'components/Layout';
 import SendContainer from 'containers/SendContainer';
+import Toast from 'components/Toast';
 
 // utils
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, getEthereumProvider } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -48,7 +50,7 @@ import { getContactsEnsName } from 'utils/contacts';
 import { getAccountName } from 'utils/accounts';
 
 // services
-import { calculateGasEstimate } from 'services/assets';
+import { buildERC721TransactionData, calculateGasEstimate } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 
 // selectors
@@ -225,6 +227,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
   // form methods
 
   setReceiver = async (value: Option, onSuccess?: () => void) => {
+    this.setState({ gettingFee: true });
     const { receiverEnsName, receiver } = await getContactsEnsName(value?.ethAddress);
     if (receiver) {
       this.setState({ selectedContact: value, receiver, receiverEnsName }, () => {
@@ -257,7 +260,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
         return;
       }
 
-      const amount = parseFloat(get(value, 'input', 0));
+      const amount = parseFloat(get(value, 'input') || 0);
       this.updateKeyWalletGasLimitAndTxFee(amount);
     });
   };
@@ -282,6 +285,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   updateTxFee = async () => {
     const { isSmartAccount } = this.props;
+    this.setState({ gettingFee: true });
 
     const txFeeInfo = isSmartAccount
       ? await this.getSmartWalletTxFee()
@@ -292,10 +296,17 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   getGasLimitForKeyWallet = (amount: number) => {
     const { assetData, receiver } = this.state;
-    // cannot be set if value is zero or not present, fee select will be hidden
-    if (!amount || !assetData) return Promise.resolve(0);
+    if (!assetData) return Promise.resolve(0);
 
-    const { token: symbol, contractAddress, decimals } = assetData;
+    const {
+      token: symbol,
+      contractAddress,
+      decimals,
+      tokenType,
+    } = assetData;
+
+    // cannot be set if value is zero or not present (if sending token), fee select will be hidden
+    if (tokenType !== COLLECTIBLES && !amount) return Promise.resolve(0);
     const { activeAccountAddress } = this.props;
 
     return calculateGasEstimate({
@@ -329,21 +340,53 @@ class SendEthereumTokens extends React.Component<Props, State> {
   };
 
   getSmartWalletTxFee = async (amount?: number): Promise<TransactionFeeInfo> => {
-    const { useGasToken } = this.props;
-    const { inputHasError, assetData, receiver } = this.state;
+    const { useGasToken, activeAccountAddress } = this.props;
+    const {
+      inputHasError,
+      assetData,
+      receiver,
+      receiverEnsName,
+    } = this.state;
 
     const value = Number(amount || get(this.state, 'amount', 0));
     const defaultResponse = { fee: new BigNumber(0) };
+    const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
-    if (inputHasError || !value || !assetData || !receiver) return defaultResponse;
+    if (inputHasError || (!value && !isCollectible) || !assetData || !receiver) return defaultResponse;
 
-    const transaction = { recipient: receiver, value };
+    let data;
+    if (isCollectible) {
+      const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+      const {
+        name,
+        id,
+        contractAddress,
+        tokenType,
+      } = assetData;
+      const collectibleTransaction = {
+        from: activeAccountAddress,
+        to: receiver,
+        receiverEnsName,
+        name,
+        tokenId: id,
+        contractAddress,
+        tokenType,
+      };
+      data = await buildERC721TransactionData(collectibleTransaction, provider);
+    }
+
+    const transaction = { recipient: receiver, value, data };
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
-      .then(data => buildTxFeeInfo(data, useGasToken))
+      .then(res => buildTxFeeInfo(res, useGasToken))
       .catch(() => null);
 
-    if (!estimated) { // TODO: maybe we should show a Toast?
+
+    if (!estimated) {
+      Toast.show({
+        message: 'Could not estimate transaction fee',
+        type: 'warning',
+      });
       return defaultResponse;
     }
 
@@ -536,12 +579,20 @@ class SendEthereumTokens extends React.Component<Props, State> {
     const balance = getBalance(balances, token);
 
     const enteredMoreThanBalance = currentValue > balance;
-    const showFee = !enteredMoreThanBalance && !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0);
+    const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!receiver;
+
+    const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && !!amount && !!parseFloat(amount);
+    const showFeeForCollectible = hasAllFeeData;
+    const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
+    const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
+
     const showRelayerMigration = showFee && isSmartAccount && !isGasTokenSupported;
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
 
-    const showNextButton = !!amount && !!parseFloat(amount) && !!receiver && !inputHasError && !gettingFee;
-    const isNextButtonDisabled = gettingFee || !session.isOnline;
+    const hasAllData = isCollectible ? (!!receiver && !!assetData) : (!inputHasError && !!receiver && !!currentValue);
+
+    const showNextButton = !gettingFee && hasAllData;
+    const isNextButtonDisabled = !session.isOnline;
 
     return (
       <SendContainer
@@ -566,11 +617,11 @@ class SendEthereumTokens extends React.Component<Props, State> {
             isLoading: submitPressed,
             disabled: isNextButtonDisabled,
           },
-          footerTopAddon: this.renderFee({
+          footerTopAddon: !!receiver && this.renderFee({
             showTransactionSpeeds,
             showRelayerMigration,
             showFee,
-            isLoading: gettingFee && !!amount && !!parseFloat(amount) && !inputHasError,
+            isLoading: gettingFee && !inputHasError,
           }),
         }}
       >
