@@ -225,7 +225,7 @@ class SearchBar extends React.Component<Props, State> {
     if (onChange) onChange(this.value);
     if (validator) {
       const error = validator(this.value);
-      if (!!error) {
+      if (error) {
         this.setState({ errorMessage: error });
       } else if (errorMessage) {
         this.setState({ errorMessage: '' });
