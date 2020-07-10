@@ -42,8 +42,10 @@ const SearchHolder = styled.View`
 `;
 
 const Row = styled.View`
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center;
 `;
 
 const CancelButton = styled.TouchableOpacity`
@@ -162,7 +164,6 @@ const SearchInput = (props: SearchInputProps) => {
   const { icon, style: iconStyle = {}, onPress } = iconProps;
   const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
   const onIconPress = onPress || defaultOnIconPress;
-
   const iconName = icon || 'search';
 
   return (
@@ -223,9 +224,9 @@ class SearchBar extends React.Component<Props, State> {
     this.value = e.nativeEvent.text;
     if (onChange) onChange(this.value);
     if (validator) {
-      const hasError = validator(this.value);
-      if (hasError) {
-        this.setState({ errorMessage: hasError });
+      const error = validator(this.value);
+      if (!!error) {
+        this.setState({ errorMessage: error });
       } else if (errorMessage) {
         this.setState({ errorMessage: '' });
       }

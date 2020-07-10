@@ -141,7 +141,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
-  padding: ${({ padding }) => padding || '14px 20px'};
+  padding: ${({ padding }) => padding || `14px ${spacing.large}px`};
   width: 100%;
 `;
 

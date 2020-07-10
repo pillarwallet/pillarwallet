@@ -412,7 +412,6 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     const { source, navigation, isSmartAccount } = this.props;
 
-
     if (assetData.tokenType === COLLECTIBLES) {
       this.setState({ submitPressed: false }, () => {
         navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {

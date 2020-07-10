@@ -164,14 +164,12 @@ class SelectorOptions extends React.Component<Props, State> {
     }
   }
 
-
   focusInput = () => {
     if (this.searchInput) this.searchInput.focus();
   };
 
   handleSearch = (query: string) => {
     const formattedQuery = !query ? '' : query.trim();
-
     this.setState({
       query: formattedQuery,
     });

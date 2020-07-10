@@ -58,7 +58,7 @@ type State = {
 const ErrorMessage = styled(BaseText)`
   color: ${themedColors.negative};
   width: 100%;
-  ${({ isOnTop }) => isOnTop ? 'margin-bottom: 10px' : 'margin-top: 10px'};
+  margin-top: 10px;
 `;
 
 const InputFooter = styled(View)`
@@ -74,7 +74,6 @@ const Image = styled(CachedImage)`
   height: 164px;
   width: 164px;
   resize-mode: contain;
-  ${({ source, theme }) => !source && `tint-color: ${theme.colors.text};`}
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -132,17 +131,11 @@ class ItemSelector extends React.Component<Props, State> {
   };
 
   renderSelector = () => {
-    const {
-      theme, inputProps, selectorOptions = {},
-    } = this.props;
+    const { theme, inputProps, selectorOptions = {} } = this.props;
     const { genericToken } = images(theme);
-    const selector = get(inputProps, 'selectorValue.selector', {});
 
-    const {
-      icon: selectedOptionIcon,
-      iconFallback: selectedOptionFallback,
-      name: selectedValue,
-    } = selector;
+    const selector = get(inputProps, 'selectorValue.selector', {});
+    const { icon: selectedOptionIcon, iconFallback: selectedOptionFallback, name: selectedValue } = selector;
 
     if (!selectedValue) {
       return <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>;
