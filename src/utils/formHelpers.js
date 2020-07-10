@@ -234,6 +234,8 @@ export function ItemSelectorTemplate(locals: Object) {
       selectorModalTitle,
       renderOption,
       optionTabs,
+      activeTabOnItemClick,
+      activeTabOnOptionOpenClick,
     },
   } = locals;
 
@@ -255,7 +257,6 @@ export function ItemSelectorTemplate(locals: Object) {
 
   return (
     <ItemSelector
-      style={{ width: '100%' }}
       errorMessage={locals.error}
       inputProps={inputProps}
       selectorOptions={{
@@ -270,6 +271,8 @@ export function ItemSelectorTemplate(locals: Object) {
         optionsSearchPlaceholder: 'Asset search',
       }}
       renderOption={renderOption}
+      activeTabOnItemClick={activeTabOnItemClick}
+      activeTabOnOptionOpenClick={activeTabOnOptionOpenClick}
     />
   );
 }

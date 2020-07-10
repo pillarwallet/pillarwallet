@@ -46,10 +46,13 @@ type Props = {
   renderSelector?: (selector: Object) => React.Node,
   optionKeyExtractor?: (item: Object) => string,
   hasError?: boolean,
+  activeTabOnItemClick?: string,
+  activeTabOnOptionOpenClick?: string,
 };
 
 type State = {
   showOptionsSelector: boolean,
+  forceTab: ?string,
 };
 
 const ErrorMessage = styled(BaseText)`
@@ -103,10 +106,11 @@ const InputLabel = styled(MediumText)`
 class ItemSelector extends React.Component<Props, State> {
   state = {
     showOptionsSelector: false,
+    forceTab: '',
   };
 
-  openSelector = () => {
-    this.setState({ showOptionsSelector: true });
+  openSelector = (forceTab: ?string) => {
+    this.setState({ forceTab, showOptionsSelector: true });
     const { inputProps } = this.props;
     const { onSelectorOpen } = inputProps;
     if (onSelectorOpen) onSelectorOpen();
@@ -167,7 +171,7 @@ class ItemSelector extends React.Component<Props, State> {
   };
 
   renderInputHeader = () => {
-    const { inputProps } = this.props;
+    const { inputProps, activeTabOnOptionOpenClick } = this.props;
     const { label, optionsOpenText } = inputProps;
 
     if (!label && !optionsOpenText) return null;
@@ -182,15 +186,24 @@ class ItemSelector extends React.Component<Props, State> {
       >
         {!!label && <InputLabel>{label}</InputLabel>}
         {!!optionsOpenText &&
-          <ButtonText buttonText={optionsOpenText} onPress={this.openSelector} fontSize={fontSizes.regular} />
+          <ButtonText
+            buttonText={optionsOpenText}
+            onPress={() => this.openSelector(activeTabOnOptionOpenClick)}
+            fontSize={fontSizes.regular}
+          />
         }
       </View>
     );
   };
 
   render() {
-    const { showOptionsSelector } = this.state;
-    const { errorMessage, selectorOptions = {}, renderOption } = this.props;
+    const { showOptionsSelector, forceTab } = this.state;
+    const {
+      errorMessage,
+      selectorOptions = {},
+      renderOption,
+      activeTabOnItemClick,
+    } = this.props;
 
     const {
       options = [],
@@ -216,7 +229,7 @@ class ItemSelector extends React.Component<Props, State> {
       <View style={{ minHeight: 120 }}>
         {this.renderInputHeader()}
         <Selector
-          onPress={!disabledSelector ? this.openSelector : noop}
+          onPress={!disabledSelector ? () => this.openSelector(activeTabOnItemClick) : noop}
           disabled={disabledSelector}
         >
           {this.renderSelector()}
@@ -236,6 +249,7 @@ class ItemSelector extends React.Component<Props, State> {
           onOptionSelect={this.selectValue}
           renderOption={renderOption}
           horizontalOptionsData={horizontalOptions}
+          forceTab={forceTab}
         />
       </View>
     );

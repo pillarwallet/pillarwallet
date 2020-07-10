@@ -68,6 +68,7 @@ type Props = {
   onHidden: () => void,
   validator?: (value: string) => string,
   allowEnteringCustomAddress?: boolean,
+  forceTab?: string,
 };
 
 type State = {
@@ -346,6 +347,12 @@ class SelectorOptions extends React.Component<Props, State> {
     this.setState({ activeTab: tabId });
   };
 
+  handleOptionsOpen = () => {
+    const { forceTab } = this.props;
+    this.focusInput();
+    if (forceTab) this.setState({ activeTab: forceTab });
+  };
+
   render() {
     const {
       isVisible,
@@ -415,7 +422,7 @@ class SelectorOptions extends React.Component<Props, State> {
       <SlideModal
         isVisible={isVisible}
         fullScreen
-        onModalShow={this.focusInput}
+        onModalShow={this.handleOptionsOpen}
         onModalHidden={this.resetOptions}
         noSwipeToDismiss
         noClose

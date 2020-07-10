@@ -176,6 +176,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               selectorModalTitle: 'Select',
               inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
               onPressRightLabel: this.handleUseMax,
+              activeTabOnItemClick: COLLECTIBLES,
+              activeTabOnOptionOpenClick: ASSETS,
             },
             transformer: {
               parse: inputParser,
