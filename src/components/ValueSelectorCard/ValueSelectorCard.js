@@ -56,8 +56,7 @@ import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets'
 import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
-import { COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
-import { ASSETS } from 'constants/navigationConstants';
+import { COLLECTIBLES, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
 
 
 export type ExternalProps = {
@@ -177,7 +176,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
               onPressRightLabel: this.handleUseMax,
               activeTabOnItemClick: COLLECTIBLES,
-              activeTabOnOptionOpenClick: ASSETS,
+              activeTabOnOptionOpenClick: TOKENS,
             },
             transformer: {
               parse: inputParser,
@@ -187,7 +186,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         },
       },
       errorMessage: '',
-      tokenType: ASSETS,
+      tokenType: TOKENS,
     };
   }
 
@@ -212,7 +211,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     const { activeTokenType, preselectedCollectible } = this.props;
     const selectedTokenType = preselectedCollectible || activeTokenType === COLLECTIBLES
       ? COLLECTIBLES
-      : ASSETS;
+      : TOKENS;
     this.manageFormType(selectedTokenType, value, this.addCustomFormInfo);
   };
 
@@ -245,7 +244,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     let optionTabs;
     if (showAllAssetTypes) {
       optionTabs = [
-        { name: 'Assets', options: basicOptions, id: ASSETS },
+        { name: 'Tokens', options: basicOptions, id: TOKENS },
         { name: 'Collectibles', options: collectibles, id: COLLECTIBLES },
       ];
     } else {
@@ -315,7 +314,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   onFromChange = (value: FormValue) => {
     const { formSelector } = value;
     const { selector } = formSelector;
-    const selectedTokenType = selector.tokenType || ASSETS;
+    const selectedTokenType = selector.tokenType || TOKENS;
 
     this.manageFormType(selectedTokenType, value, this.handleFormChange);
   };
