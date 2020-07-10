@@ -25,7 +25,6 @@ import { connect } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 
@@ -70,10 +69,11 @@ import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selecto
 
 // utils
 import { getOfferProviderLogo, isFiatProvider, getCryptoProviderName } from 'utils/exchange';
-import { formatAmountDisplay, formatFiat, formatTransactionFee, reportOrWarn } from 'utils/common';
+import { formatAmountDisplay, formatFiat, formatTransactionFee } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
+import { openInAppBrowser } from 'utils/inAppBrowser';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
@@ -478,9 +478,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       selectedSellAmount,
     );
 
-    InAppBrowser.isAvailable()
-    .then(result => result && InAppBrowser.open(wyreUrl))
-    .catch(error => reportOrWarn('InAppBrowser.error', error, 'warning'));
+    openInAppBrowser(wyreUrl);
   }
 
   renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
