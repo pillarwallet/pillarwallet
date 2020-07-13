@@ -141,6 +141,7 @@ exports[`Storyshots ActionModal default 1`] = `
               "padding": "0 16px",
             }
           }
+          onLayout={[Function]}
           sideMargins={20}
           style={
             Array [
@@ -28277,6 +28278,7 @@ Array [
                 "padding": "0 16px",
               }
             }
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -29291,6 +29293,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                     >
                       <View
                         fullScreen={true}
+                        onLayout={[Function]}
                         style={
                           Array [
                             Object {
@@ -31154,6 +31157,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                     >
                       <View
                         fullScreen={true}
+                        onLayout={[Function]}
                         style={
                           Array [
                             Object {
@@ -32943,6 +32947,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                     >
                       <View
                         fullScreen={true}
+                        onLayout={[Function]}
                         style={
                           Array [
                             Object {

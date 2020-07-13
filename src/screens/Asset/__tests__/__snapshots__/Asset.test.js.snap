@@ -1429,12 +1429,91 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               }
             />
             <View
+              style={
+                Array [
+                  Object {
+                    "marginBottom": 0,
+                    "marginLeft": 0,
+                    "marginRight": 0,
+                    "marginTop": 0,
+                  },
+                  Object {
+                    "elevation": 2,
+                    "marginBottom": 0,
+                    "marginTop": -0,
+                    "zIndex": 11,
+                  },
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "justifyContent": "center",
+                      "width": "100%",
+                    },
+                    Object {
+                      "marginTop": -24,
+                      "position": "absolute",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "backgroundColor": "#e0eeff",
+                        "borderRadius": 24,
+                        "height": 48,
+                        "justifyContent": "center",
+                        "width": 48,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    color="#6690eb"
+                    style={
+                      Array [
+                        Object {
+                          "color": "#6690eb",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#6690eb",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlignVertical": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
               customTheme={
                 Object {
                   "borderRadius": "30px",
                   "padding": 0,
                 }
               }
+              onLayout={[Function]}
               style={
                 Array [
                   Object {
@@ -1531,45 +1610,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         }
                       >
                         <View
-                          style={
-                            Object {
-                              "flexDirection": "row",
-                              "flexWrap": "wrap",
-                            }
-                          }
-                        >
-                          <Text
-                            centerText={false}
-                            style={
-                              Array [
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontFamily": "EuclidCircularB-Regular",
-                                  "textAlignVertical": "center",
-                                },
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "fontFamily": "EuclidCircularB-Medium",
-                                    "textAlignVertical": "center",
-                                  },
-                                  Array [
-                                    Object {
-                                      "color": "#0A1427",
-                                      "fontSize": 16,
-                                      "lineHeight": 26,
-                                      "textAlign": "left",
-                                    },
-                                    Object {},
-                                  ],
-                                ],
-                              ]
-                            }
-                          >
-                            Receive
-                          </Text>
-                        </View>
-                        <View
                           style={Object {}}
                         >
                           <View
@@ -1649,59 +1689,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             undefined,
                           ]
                         }
-                      >
-                        <View
-                          style={
-                            Object {
-                              "marginBottom": -20,
-                              "marginLeft": -12,
-                              "marginRight": -20,
-                              "marginTop": -20,
-                            }
-                          }
-                        >
-                          <View
-                            accessible={true}
-                            focusable={true}
-                            isTVSelectable={true}
-                            onClick={[Function]}
-                            onResponderGrant={[Function]}
-                            onResponderMove={[Function]}
-                            onResponderRelease={[Function]}
-                            onResponderTerminate={[Function]}
-                            onResponderTerminationRequest={[Function]}
-                            onStartShouldSetResponder={[Function]}
-                            style={
-                              Object {
-                                "alignItems": "flex-end",
-                                "alignSelf": "center",
-                                "justifyContent": "center",
-                                "opacity": 1,
-                                "paddingBottom": 20,
-                                "paddingLeft": 20,
-                                "paddingRight": 20,
-                                "paddingTop": 20,
-                                "position": "relative",
-                              }
-                            }
-                          >
-                            <View
-                              name="close"
-                              style={
-                                Object {
-                                  "color": "#0A1427",
-                                  "fontSize": 14,
-                                  "marginBottom": undefined,
-                                  "marginLeft": undefined,
-                                  "marginRight": undefined,
-                                  "marginTop": undefined,
-                                  "paddingTop": 0,
-                                }
-                              }
-                            />
-                          </View>
-                        </View>
-                      </View>
+                      />
                     </View>
                   </View>
                 </View>
@@ -1722,7 +1710,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "paddingBottom": 60,
+                      "paddingBottom": 50,
                       "paddingLeft": 16,
                       "paddingRight": 16,
                       "paddingTop": 0,
@@ -1793,6 +1781,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       ]
                     }
                   >
+                    <View
+                      style={
+                        Object {
+                          "overflow": "hidden",
+                          "padding": 10,
+                        }
+                      }
+                    />
                     <Text
                       onPress={[Function]}
                       style={
@@ -1806,22 +1802,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             Object {
                               "fontSize": 14,
                               "lineHeight": 22,
-                              "marginBottom": 16,
+                              "marginBottom": 8,
                               "marginLeft": 0,
                               "marginRight": 0,
-                              "marginTop": 16,
+                              "marginTop": 8,
                             },
                             undefined,
                           ],
                         ]
-                      }
-                    />
-                    <View
-                      style={
-                        Object {
-                          "overflow": "hidden",
-                          "padding": 10,
-                        }
                       }
                     />
                   </View>
@@ -1831,8 +1819,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         Object {
                           "flexDirection": "row",
                           "justifyContent": "space-between",
-                          "marginBottom": 20,
-                          "marginTop": 40,
+                          "marginBottom": 12,
+                          "marginTop": 12,
                           "width": "100%",
                         },
                         undefined,
@@ -2552,6 +2540,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "padding": "0 16px",
                 }
               }
+              onLayout={[Function]}
               style={
                 Array [
                   Object {

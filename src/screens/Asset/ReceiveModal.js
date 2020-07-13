@@ -18,31 +18,52 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { connect } from 'react-redux';
 import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import { BaseText } from 'components/Typography';
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import styled from 'styled-components/native';
+import { withTheme } from 'styled-components';
+
+// components
+import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
 import { LabelBadge } from 'components/LabelBadge';
 import Toast from 'components/Toast';
+import ProfileImage from 'components/ProfileImage';
+
+// utils
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { getEnsName, getAccountTypeByAddress } from 'utils/accounts';
+import { getThemeColors, themedColors } from 'utils/themes';
+
+// models and types
+import type { Accounts } from 'models/Account';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
+import type { User } from 'models/User';
+
+// constants
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 const ContentWrapper = styled(SafeAreaView)`
-  padding: 0 ${spacing.layoutSides}px 60px;
+  padding: 0 ${spacing.layoutSides}px 50px;
   align-items: center;
 `;
 
 type Props = {
   address: string,
+  accounts: Accounts,
   onModalHide: () => void,
   isVisible: boolean,
   handleBuyTokens?: Function,
   onModalHidden?: Function,
   showBuyTokensButton?: boolean,
   showErc20Note?: boolean,
+  user: User,
+  theme: Theme,
 };
 
 const QRCodeWrapper = styled.View`
@@ -52,7 +73,7 @@ const QRCodeWrapper = styled.View`
 
 const WalletAddress = styled(BaseText)`
   ${fontStyles.regular};
-  margin: ${spacing.mediumLarge}px 0;
+  margin: ${spacing.small}px 0;
 `;
 
 const IconsContainer = styled.View`
@@ -67,10 +88,31 @@ const IconsSpacing = styled.View`
 
 const ButtonsRow = styled.View`
   flex-direction: row;
-  margin-top: 40px;
-  margin-bottom: ${spacing.large}px;
+  margin-top: ${spacing.medium}px;
+  margin-bottom: ${spacing.medium}px;
   justify-content: space-between;
   width: 100%;
+`;
+
+const InfoView = styled.View`
+  margin-bottom: ${spacing.medium}px;
+  justify-content: space-between;
+  width: 100%;
+`;
+
+const ImageWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
+
+const ProfileImagePlaceholder = styled.View`
+  width: 48px;
+  height: 48px;
+  border-radius: 24px;
+  align-items: center;
+  justify-content: center;
+  background-color: ${themedColors.avatarPlaceholderBackground};
 `;
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -83,16 +125,17 @@ const getButtonWidth = () => {
 const visaIcon = require('assets/icons/visa.png');
 const mastercardIcon = require('assets/icons/mastercard.png');
 
-export default class ReceiveModal extends React.Component<Props, *> {
+class ReceiveModal extends React.Component<Props, *> {
   handleAddressShare = () => {
     const { address } = this.props;
 
     Share.share({ title: 'Public address', message: address });
   };
 
-  handleCopyToClipboard = (address: string) => {
+  handleCopyToClipboard = (address: string, ensCopy?: boolean) => {
     Clipboard.setString(address);
-    Toast.show({ message: 'Address copied to clipboard.', type: 'success', title: 'Success' });
+    const message = ensCopy ? 'ENS name copied to clipboard.' : 'Address copied to clipboard.';
+    Toast.show({ message, type: 'success', title: 'Success' });
   }
 
   render() {
@@ -104,18 +147,29 @@ export default class ReceiveModal extends React.Component<Props, *> {
       onModalHidden,
       showBuyTokensButton = false,
       showErc20Note,
+      accounts,
+      user,
+      theme,
     } = this.props;
 
+    const {
+      profileImage,
+      lastUpdateTime = 0,
+      username = '',
+    } = user;
+    const ensName = getEnsName(accounts);
+    const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.SMART_WALLET;
     const buttonWidth = showBuyTokensButton ? getButtonWidth() : 0;
     const needsSmallButtons = showBuyTokensButton && buttonWidth <= 150;
+    const colors = getThemeColors(theme);
 
     return (
       <SlideModal
-        title="Receive"
         isVisible={isVisible}
         onModalHide={onModalHide}
         onModalHidden={onModalHidden}
         noPadding
+        noClose
         headerLeftItems={!!showErc20Note && [{
           custom: (
             <LabelBadge
@@ -126,34 +180,61 @@ export default class ReceiveModal extends React.Component<Props, *> {
             />
           ),
         }]}
+        centerItem={
+          <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
+            {!!profileImage && <ProfileImage
+              uri={`${profileImage}?t=${lastUpdateTime}`}
+              userName={username}
+              diameter={48}
+              borderWidth={0}
+              noShadow
+            />}
+            {!profileImage &&
+            <ProfileImagePlaceholder>
+              <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
+            </ProfileImagePlaceholder>}
+          </ImageWrapper>
+        }
       >
         <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
           <WarningBanner rounded small />
+          {!!ensName && !!isSmartWallet &&
+          <InfoView>
+            <BaseText
+              big
+              onPress={() => this.handleCopyToClipboard(ensName, true)}
+              center
+            >
+              {ensName}
+            </BaseText>
+            <BaseText regular center secondary>Your wallet ENS name</BaseText>
+          </InfoView>
+            }
           <QRCodeWrapper>
-            <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
-              {address}
-            </WalletAddress>
             <View
               style={{
-                overflow: 'hidden',
-                padding: 10,
-              }}
+                  overflow: 'hidden',
+                  padding: 10,
+                }}
             >
               {!!address && <QRCodeWithTheme value={address} size={160} />}
             </View>
+            <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
+              {address}
+            </WalletAddress>
           </QRCodeWrapper>
           <ButtonsRow>
             {showBuyTokensButton && (
-              <Button
-                title="Buy tokens"
-                onPress={handleBuyTokens}
-                positive
-                width={buttonWidth}
-                small={needsSmallButtons}
-                regularText
-                textStyle={{ paddingTop: 4 }}
-              />
-            )}
+            <Button
+              title="Buy tokens"
+              onPress={handleBuyTokens}
+              positive
+              width={buttonWidth}
+              small={needsSmallButtons}
+              regularText
+              textStyle={{ paddingTop: 4 }}
+            />
+              )}
             <Button
               title="Share Address"
               onPress={this.handleAddressShare}
@@ -165,14 +246,24 @@ export default class ReceiveModal extends React.Component<Props, *> {
             />
           </ButtonsRow>
           {showBuyTokensButton && (
-            <IconsContainer>
-              <Image source={visaIcon} />
-              <IconsSpacing />
-              <Image source={mastercardIcon} />
-            </IconsContainer>
-          )}
+          <IconsContainer>
+            <Image source={visaIcon} />
+            <IconsSpacing />
+            <Image source={mastercardIcon} />
+          </IconsContainer>
+            )}
         </ContentWrapper>
       </SlideModal>
     );
   }
 }
+
+const mapStateToProps = ({
+  user: { data: user },
+  accounts: { data: accounts },
+}: RootReducerState): $Shape<Props> => ({
+  user,
+  accounts,
+});
+
+export default withTheme(connect(mapStateToProps)(ReceiveModal));
