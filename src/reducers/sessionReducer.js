@@ -35,7 +35,6 @@ export const initialState = {
   data: {
     isOnline: true,
     fcmToken: '',
-    contactsSmartAddressesSynced: false,
   },
 };
 

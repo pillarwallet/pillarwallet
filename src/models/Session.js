@@ -21,5 +21,4 @@
 export type SessionData = {|
   isOnline: boolean,
   fcmToken: string,
-  contactsSmartAddressesSynced: boolean,
 |};
