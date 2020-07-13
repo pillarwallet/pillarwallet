@@ -211,6 +211,8 @@ export const subscribeToPushNotificationsAction = () => {
       if (notification.type === BADGE) {
         dispatch(fetchBadgesAction());
       }
+      dispatch({ type: ADD_NOTIFICATION, payload: notification });
+      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     }, 500));
   };
 };
