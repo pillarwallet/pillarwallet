@@ -175,11 +175,9 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
 
   const mapStateToProps = ({
     assets: { supportedAssets },
-    contacts: { data: contacts },
     session: { data: session },
     walletConnect: { requests },
   }) => ({
-    contacts,
     session,
     supportedAssets,
     requests,

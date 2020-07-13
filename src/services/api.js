@@ -93,10 +93,6 @@ type RegisterSmartWalletPayload = {
   fcmToken: string,
 };
 
-type MapContactsAddresses = Array<{
-  contactId: string,
-}>;
-
 type VerifyEmail = {|
   walletId: string,
   oneTimePassword: string,
@@ -711,13 +707,6 @@ class SDKWrapper {
       .catch(() => null);
   }
 
-  getContactsSmartAddresses(walletId: string, contacts: MapContactsAddresses) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.user.mapContactsAddresses({ walletId, contacts }))
-      .then(({ data }) => data)
-      .catch(() => false);
-  }
-
   importedEthTransactionHistory(walletAddress: string) {
     if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
     return Promise.resolve()
@@ -733,19 +722,6 @@ class SDKWrapper {
       .then(() => ethplorerSdk.getAddressHistory(walletAddress, { limit: 40 }))
       .then(data => get(data, 'operations', []))
       .then(data => data.filter(validEthplorerTransaction))
-      .catch(() => []);
-  }
-
-  getContacts(walletId: string) {
-    return Promise.resolve()
-      .then(() => this.pillarWalletSdk.connectionV2.list({ walletId }))
-      .then(({ data }) => {
-        if (!Array.isArray(data)) {
-          reportLog('Wrong connections received', { data });
-          return [];
-        }
-        return data;
-      })
       .catch(() => []);
   }
 

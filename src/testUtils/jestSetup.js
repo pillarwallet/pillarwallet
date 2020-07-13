@@ -165,19 +165,6 @@ jest.setMock('react-native-intercom', {
   sendTokenToIntercom: () => Promise.resolve(),
 });
 
-jest.setMock('rn-signal-protocol-messaging', {
-  SignalClient: {
-    getExistingMessages: () => Promise.resolve(),
-    createClient: () => Promise.resolve(),
-    init: () => Promise.resolve(),
-    sendMessageByContact: () => Promise.resolve(),
-    sendSilentMessageByContact: () => Promise.resolve(),
-    receiveNewMessagesByContact: () => Promise.resolve(),
-    registerAccount: () => Promise.resolve(),
-    setFcmId: () => Promise.resolve(),
-  },
-});
-
 const mockCameraView = mockView;
 
 // ouch

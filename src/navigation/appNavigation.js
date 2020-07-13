@@ -34,7 +34,6 @@ import ExchangeScreen from 'screens/Exchange';
 import ExchangeConfirmScreen from 'screens/Exchange/ExchangeConfirm';
 import ExchangeInfoScreen from 'screens/Exchange/ExchangeInfo';
 import ExchangeReceiveExplained from 'screens/Exchange/ExchangeReceiveExplained';
-import ContactScreen from 'screens/Contact';
 import ChangePinCurrentPinScreen from 'screens/ChangePin/CurrentPin';
 import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
@@ -57,7 +56,6 @@ import WalletConnectCallRequest from 'screens/WalletConnect/WalletConnectCallReq
 import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfirm';
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
-import ConnectedContactInfo from 'screens/ContactInfo';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import FundTankScreen from 'screens/Tank/FundTank';
 import FundConfirmScreen from 'screens/Tank/FundConfirm';
@@ -69,7 +67,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import ChatScreen from 'screens/Chat';
 import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
@@ -128,17 +125,11 @@ import {
   startListeningNotificationsAction,
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
-  startListeningChatWebSocketAction,
-  stopListeningChatWebSocketAction,
 } from 'actions/notificationsActions';
-import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
-import { getExistingChatsAction } from 'actions/chatActions';
-import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
-import { signalInitAction } from 'actions/signalClientActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 
@@ -152,7 +143,6 @@ import {
   EXCHANGE_CONFIRM,
   EXCHANGE_INFO,
   EXCHANGE_RECEIVE_EXPLAINED,
-  CONTACT,
   HOME,
   HOME_TAB,
   CHANGE_PIN_FLOW,
@@ -192,13 +182,11 @@ import {
   SETTLE_BALANCE_CONFIRM,
   MANAGE_WALLETS_FLOW,
   MANAGE_DETAILS_SESSIONS,
-  CONTACT_INFO,
   ACCOUNTS,
   PILLAR_NETWORK_INTRO,
   MANAGE_USERS_FLOW,
   ADD_EDIT_USER,
   MENU,
-  CHAT,
   FIAT_EXCHANGE,
   FIAT_CRYPTO,
   SMART_WALLET_INTRO,
@@ -264,8 +252,6 @@ import {
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
-import { TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED } from 'constants/invitationsConstants';
-
 // utils
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
@@ -283,8 +269,6 @@ const iconWallet = require('assets/icons/icon_wallet_outline.png');
 const iconServices = require('assets/icons/icon_services.png');
 const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
-
-const connectionMessagesToExclude = [TYPE_CANCELLED, TYPE_BLOCKED, TYPE_REJECTED, TYPE_DISCONNECTED];
 
 const StackNavigatorModalConfig = {
   transitionConfig: () => ({
@@ -327,12 +311,10 @@ const assetsFlow = createStackNavigator(
     [ASSET]: AssetScreen,
     [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
-    [CONTACT]: ContactScreen,
     [EXCHANGE]: ExchangeScreen,
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [SECURITY_SETTINGS]: SecuritySettingsScreen,
-    [CHAT]: ChatScreen,
     [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
   StackNavigatorConfig,
@@ -387,11 +369,9 @@ const homeFlow = createStackNavigator({
   [HOME]: HomeScreen,
   [OTP]: OTPScreen,
   [CONFIRM_CLAIM]: ConfirmClaimScreen,
-  [CONTACT]: ContactScreen,
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
-  [CHAT]: ChatScreen,
   [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
   [RECOVERY_SETTINGS]: RecoverySettingsScreen,
@@ -537,8 +517,6 @@ const sendTokenFromAssetFlow = createStackNavigator(
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [CHAT]: ChatScreen,
-    [CONTACT]: ContactScreen,
   },
   StackNavigatorModalConfig,
 );
@@ -552,8 +530,6 @@ const sendTokenFromHomeFlow = createStackNavigator(
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [CHAT]: ChatScreen,
-    [CONTACT]: ContactScreen,
   },
   StackNavigatorModalConfig,
 );
@@ -741,7 +717,6 @@ const AppFlowNavigation = createStackNavigator(
     [TANK_WITHDRAWAL_FLOW]: tankWithdrawalFlow,
     [WALLETCONNECT_FLOW]: walletConnectFlow,
     [MANAGE_USERS_FLOW]: manageUsersFlow,
-    [CONTACT_INFO]: ConnectedContactInfo,
     [PILLAR_NETWORK_INTRO]: PillarNetworkIntro,
     [SMART_WALLET_INTRO]: SmartWalletIntroScreen,
     [RECOVERY_PORTAL_SETUP_INTRO]: RecoveryPortalSetupIntoScreen,
@@ -774,27 +749,20 @@ type Props = {
   stopListeningNotifications: Function,
   startListeningIntercomNotifications: Function,
   stopListeningIntercomNotifications: Function,
-  startListeningChatWebSocket: Function,
-  stopListeningChatWebSocket: Function,
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
   fetchTransactionsHistoryNotifications: Function,
-  fetchInviteNotifications: Function,
-  getExistingChats: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
-  hasUnreadChatNotifications: boolean,
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
   backupStatus: Object,
   isPickingImage: boolean,
-  updateSignalInitiatedState: Function,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
   isBrowsingWebView: boolean,
   isOnline: boolean,
-  initSignal: Function,
   endWalkthrough: () => void,
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
@@ -815,10 +783,8 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      fetchInviteNotifications,
       fetchTransactionsHistoryNotifications,
       fetchAllAccountsBalances,
-      getExistingChats,
       fetchAllCollectiblesData,
       initWalletConnect,
       backupStatus,
@@ -836,9 +802,7 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
-    fetchInviteNotifications();
     fetchTransactionsHistoryNotifications();
-    getExistingChats();
     fetchAllCollectiblesData();
     initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
@@ -850,35 +814,15 @@ class AppFlow extends React.Component<Props, State> {
       userState,
       wallet,
       removePrivateKeyFromMemory,
-      isOnline,
-      stopListeningChatWebSocket,
-      initSignal,
     } = this.props;
-    const { notifications: prevNotifications, isOnline: prevIsOnline } = prevProps;
+    const { notifications: prevNotifications } = prevProps;
 
     if (userState === REGISTERED && wallet.privateKey) {
       removePrivateKeyFromMemory();
     }
 
-    if (prevIsOnline !== isOnline) {
-      if (isOnline) {
-        /**
-         * try initializing Signal in case of user user logged
-         * to wallet while being offline and then switched,
-         * this action also includes chat websocket listener action
-         */
-        initSignal();
-      } else {
-        stopListeningChatWebSocket();
-      }
-    }
-
     if (notifications.length && notifications.length !== prevNotifications.length) {
       const lastNotification = notifications[notifications.length - 1];
-
-      if (lastNotification.type === 'CONNECTION' && connectionMessagesToExclude.includes(lastNotification.status)) {
-        return;
-      }
 
       Toast.show({
         message: lastNotification.message,
@@ -893,8 +837,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
-      stopListeningChatWebSocket,
-      updateSignalInitiatedState,
       backupStatus,
     } = this.props;
 
@@ -903,8 +845,6 @@ class AppFlow extends React.Component<Props, State> {
 
     stopListeningNotifications();
     stopListeningIntercomNotifications();
-    stopListeningChatWebSocket();
-    updateSignalInitiatedState(false);
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
@@ -912,9 +852,6 @@ class AppFlow extends React.Component<Props, State> {
     const {
       stopListeningNotifications,
       stopListeningIntercomNotifications,
-      startListeningChatWebSocket,
-      stopListeningChatWebSocket,
-      updateSignalInitiatedState,
       isPickingImage,
       isBrowsingWebView,
       endWalkthrough,
@@ -925,18 +862,14 @@ class AppFlow extends React.Component<Props, State> {
     if (isPickingImage || isBrowsingWebView) return;
     // only checking if background state for logout or websocket channel close
     if (APP_LOGOUT_STATES.includes(nextAppState)) {
-      // close websocket channel instantly to receive PN while in background
-      stopListeningChatWebSocket();
       // close walkthrough shade or tooltips
       endWalkthrough();
       lockTimer = BackgroundTimer.setTimeout(() => {
         stopListeningNotifications();
         stopListeningIntercomNotifications();
-        updateSignalInitiatedState(false);
       }, SLEEP_TIMEOUT);
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
-      startListeningChatWebSocket();
       handleSystemDefaultThemeChange();
     }
     this.setState({ lastAppState: nextAppState });
@@ -948,7 +881,6 @@ class AppFlow extends React.Component<Props, State> {
       profileImage,
       hasUnreadNotifications,
       intercomNotificationsCount,
-      hasUnreadChatNotifications,
       navigation,
       backupStatus,
       theme,
@@ -968,7 +900,6 @@ class AppFlow extends React.Component<Props, State> {
         screenProps={{
           profileImage,
           hasUnreadNotifications,
-          hasUnreadChatNotifications,
           intercomNotificationsCount,
           isWalletBackedUp,
           theme,
@@ -985,7 +916,6 @@ const mapStateToProps = ({
     data: notifications,
     intercomNotificationsCount,
     hasUnreadNotifications,
-    hasUnreadChatNotifications,
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
@@ -997,7 +927,6 @@ const mapStateToProps = ({
   hasUnreadNotifications,
   wallet,
   backupStatus,
-  hasUnreadChatNotifications,
   intercomNotificationsCount,
   isPickingImage,
   isBrowsingWebView,
@@ -1009,21 +938,13 @@ const mapDispatchToProps = dispatch => ({
   startListeningNotifications: () => dispatch(startListeningNotificationsAction()),
   stopListeningIntercomNotifications: () => dispatch(stopListeningIntercomNotificationsAction()),
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
-  stopListeningChatWebSocket: () => dispatch(stopListeningChatWebSocketAction()),
-  startListeningChatWebSocket: () => dispatch(startListeningChatWebSocketAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
   fetchTransactionsHistoryNotifications: () => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
   },
-  fetchInviteNotifications: () => {
-    dispatch(fetchInviteNotificationsAction());
-  },
-  getExistingChats: () => dispatch(getExistingChatsAction()),
-  updateSignalInitiatedState: signalState => dispatch(updateSignalInitiatedStateAction(signalState)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
-  initSignal: () => dispatch(signalInitAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });

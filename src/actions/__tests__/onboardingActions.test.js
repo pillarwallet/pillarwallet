@@ -29,9 +29,7 @@ import {
   DECRYPTED,
 } from 'constants/walletConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-import { UPDATE_CONTACTS } from 'constants/contactsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { SET_USER, REGISTERED } from 'constants/userConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -143,7 +141,7 @@ describe('Wallet actions', () => {
   on registerWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
       user: { data: mockUser },
-      session: { data: { isSignalInitiated: false, isOnline: true } },
+      session: { data: { isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: mockOnboarding,
@@ -158,8 +156,6 @@ describe('Wallet actions', () => {
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
-      { type: UPDATE_CONTACTS, payload: [] },
-      { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: SET_HISTORY, payload: {} },
@@ -179,7 +175,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       {
         type: SET_INITIAL_ASSETS,
@@ -215,7 +210,7 @@ describe('Wallet actions', () => {
   dispatch on registerWalletAction execution when wallet was imported`, () => {
     store = mockStore({
       user: { data: mockUser },
-      session: { data: { isSignalInitiated: false, isOnline: true } },
+      session: { data: { isOnline: true } },
       oAuthTokens: { data: {} },
       wallet: {
         onboarding: {
@@ -233,8 +228,6 @@ describe('Wallet actions', () => {
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
-      { type: UPDATE_CONTACTS, payload: [] },
-      { type: UPDATE_INVITATIONS, payload: [] },
       { type: UPDATE_ASSETS, payload: {} },
       { type: RESET_APP_SETTINGS, payload: {} },
       { type: SET_HISTORY, payload: {} },
@@ -253,7 +246,6 @@ describe('Wallet actions', () => {
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: UPDATE_SESSION, payload: { isSignalInitiated: true } },
       { type: ADD_ACCOUNT, payload: mockKeyBasedAccount },
       {
         type: SET_INITIAL_ASSETS,
