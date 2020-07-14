@@ -110,10 +110,10 @@ describe('Auth actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_USERNAME, payload: registeredMockUser.username },
       { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 
     const pin = '123456';
