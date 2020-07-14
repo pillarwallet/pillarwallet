@@ -146,8 +146,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     let stateToUpdate = {};
     if (!receiver) {
       Toast.show({
-        title: 'Invalid ENS Name',
-        message: 'Could not get address',
+        title: 'Sorry, we could not find that ENS name!',
+        message: 'Could you please check and try again?',
         type: 'warning',
         autoClose: false,
       });

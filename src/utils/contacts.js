@@ -44,8 +44,8 @@ export const getContactsEnsName = async (address: ?string) => {
     const resolvedAddress = await resolveEnsName(address);
     if (!resolvedAddress) {
       Toast.show({
-        title: 'Invalid ENS name',
-        message: 'Could not get address',
+        title: 'Sorry, we could not find that ENS name!',
+        message: 'Could you please check and try again?',
         type: 'warning',
         autoClose: false,
       });
