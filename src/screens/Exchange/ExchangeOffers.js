@@ -44,17 +44,16 @@ import OfferCard from 'components/OfferCard/OfferCard';
 
 // constants
 import { EXCHANGE, PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
-import { EXCHANGE_CONFIRM, FIAT_EXCHANGE, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // services
-import { wyreWidgetUrl } from 'services/sendwyre';
 import smartWalletService from 'services/smartWallet';
 import { calculateGasEstimate } from 'services/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Allowance, ExchangeProvider, FiatOffer, Offer, ProvidersMeta } from 'models/Offer';
+import type { Allowance, ExchangeProvider, Offer, ProvidersMeta } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
@@ -68,12 +67,11 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
-import { getOfferProviderLogo, isFiatProvider, getCryptoProviderName } from 'utils/exchange';
+import { getOfferProviderLogo, getCryptoProviderName } from 'utils/exchange';
 import { formatAmountDisplay, formatFiat, formatTransactionFee } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { openInAppBrowser } from 'utils/inAppBrowser';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
@@ -441,46 +439,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     });
   };
 
-  onFiatOfferPress = (offer: FiatOffer) => {
-    const {
-      navigation,
-      value: {
-        fromInput: {
-          input: selectedSellAmount,
-        },
-      },
-    } = this.props;
-    const { provider } = offer;
-
-    if (provider === 'SendWyre') {
-      this.openSendWyre(selectedSellAmount, offer);
-      return;
-    }
-
-    navigation.navigate(FIAT_EXCHANGE, {
-      fiatOfferOrder: {
-        ...offer,
-        amount: selectedSellAmount,
-      },
-    });
-  };
-
-  openSendWyre(selectedSellAmount: string, offer: FiatOffer) {
-    const { activeAccountAddress } = this.props;
-    const { fromAsset, toAsset } = offer;
-    const { code: fromAssetCode } = fromAsset;
-    const { code: toAssetCode } = toAsset;
-
-    const wyreUrl = wyreWidgetUrl(
-      activeAccountAddress,
-      toAssetCode,
-      fromAssetCode,
-      selectedSellAmount,
-    );
-
-    openInAppBrowser(wyreUrl);
-  }
-
   renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
     const {
       pressedOfferId,
@@ -504,10 +462,6 @@ class ExchangeOffers extends React.Component<Props, State> {
       toAsset,
       fromAsset,
       provider: offerProvider,
-      feeAmount,
-      extraFeeAmount,
-      quoteCurrencyAmount,
-      offerRestricted,
     } = offer;
     let { allowanceSet = true } = offer;
 
@@ -548,10 +502,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       || !allowanceSet
       || (isShapeShift && !shapeshiftAccessToken);
 
-    const isFiat = isFiatProvider(offerProvider);
-
-    const disableFiatExchange = isFiat && (minOrMaxNeeded || !!offerRestricted);
-    const disableOffer = disableNonFiatExchange || disableFiatExchange;
+    const disableOffer = disableNonFiatExchange;
 
     const additionalData = {
       offer,
@@ -567,33 +518,6 @@ class ExchangeOffers extends React.Component<Props, State> {
       setFromAmount,
       onSetTokenAllowancePress: this.onSetTokenAllowancePress,
     };
-
-    if (isFiat) {
-      return (
-        <OfferCardWrapper>
-          <OfferCard
-            isDisabled={isTakeButtonDisabled || disableOffer}
-            onPress={() => this.onFiatOfferPress(offer)}
-            labelTop="Amount total"
-            valueTop={`${askRate} ${fromAssetCode}`}
-            cardImageSource={providerLogo}
-            labelBottom="Fees total"
-            valueBottom={feeAmount ?
-              `${formatAmountDisplay(feeAmount + extraFeeAmount)} ${fromAssetCode}`
-              : 'Will be calculated'
-            }
-            cardButton={{
-              title: `${formatAmountDisplay(quoteCurrencyAmount)} ${toAssetCode}`,
-              onPress: () => this.onFiatOfferPress(offer),
-              disabled: disableFiatExchange,
-              isLoading: isTakeOfferPressed,
-            }}
-            cardNote={offerRestricted}
-            additionalCardButton={getCardAdditionalButtonData(additionalData)}
-          />
-        </OfferCardWrapper>
-      );
-    }
 
     return (
       <OfferCardWrapper>

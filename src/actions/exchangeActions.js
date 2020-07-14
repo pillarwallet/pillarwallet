@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Linking } from 'react-native';
-import { SENDWYRE_ENVIRONMENT } from 'react-native-dotenv';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 
@@ -40,7 +39,6 @@ import {
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -205,37 +203,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       },
     });
 
-    const isTest = SENDWYRE_ENVIRONMENT === 'test';
-
-    if (isFiatCurrency(fromAssetCode)) {
-      const { isAllowed = false, alpha2 = '' } = await exchangeService.getIPInformation();
-      if (isAllowed || isTest) {
-        api.fetchMoonPayOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-          if (!offer.error) {
-            dispatch({
-              type: ADD_OFFER,
-              payload: {
-                ...offer,
-                offerRestricted: (!isAllowed && `Unavailable in ${alpha2}`) || null,
-              },
-            });
-          }
-        }).catch(() => null);
-      }
-      if (alpha2 === 'US' || isTest) {
-        api.fetchSendWyreOffers(fromAssetCode, toAssetCode, fromAmount).then((offer) => {
-          if (!offer.error) {
-            dispatch({
-              type: ADD_OFFER,
-              payload: {
-                ...offer,
-                offerRestricted: (alpha2 !== 'US' && `Unavailable in ${alpha2}`) || null,
-              },
-            });
-          }
-        }).catch(() => null);
-      }
-    } else {
+    if (!isFiatCurrency(fromAssetCode)) {
       const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
       const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
@@ -577,34 +545,9 @@ const getCryptoExchangeSupportedAssetsAction = () => {
   };
 };
 
-const getFiatExchangeSupportedAssetsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      assets: { supportedAssets },
-    } = getState();
-
-    const moonPaySupportedAssets = await api.fetchMoonPaySupportedAssetsTickers();
-    const sendWyreSupportedAssets = await api.fetchSendWyreSupportedAssetsTickers();
-
-    const providersSupportedAssetsTickers = [...new Set([...moonPaySupportedAssets, ...sendWyreSupportedAssets])];
-
-    const fiatExchangeSupportedAssets = supportedAssets
-      .filter(({ symbol }) => providersSupportedAssetsTickers.includes(symbol));
-
-    dispatch({
-      type: SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
-      payload: fiatExchangeSupportedAssets,
-    });
-
-    dispatch(saveDbAction('fiatExchangeSupportedAssets', { fiatExchangeSupportedAssets }, true));
-  };
-};
-
-
 export const getExchangeSupportedAssetsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(getCryptoExchangeSupportedAssetsAction());
-    dispatch(getFiatExchangeSupportedAssetsAction());
   };
 };
 

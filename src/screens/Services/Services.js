@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Image } from 'react-native';
+import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
@@ -30,6 +30,7 @@ import {
   RAMPNETWORK_API_KEY,
   SENDWYRE_WIDGET_URL,
   SENDWYRE_ACCOUNT_ID,
+  SENDWYRE_RETURN_URL,
 } from 'react-native-dotenv';
 
 // actions
@@ -41,7 +42,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // constants
 import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -62,16 +62,12 @@ type Props = {
   theme: Theme,
   providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
   user: Object,
   accounts: Accounts,
 };
-
-const visaIcon = require('assets/icons/visa.png');
-const mastercardIcon = require('assets/icons/mastercard.png');
 
 class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
@@ -85,7 +81,6 @@ class ServicesScreen extends React.Component<Props> {
     const {
       navigation,
       theme,
-      baseFiatCurrency,
       providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
@@ -110,24 +105,6 @@ class ServicesScreen extends React.Component<Props> {
         body: 'Aggregated offers from many decentralized exchanges and token swap services',
         action: () => navigation.navigate(EXCHANGE),
         labelBadge: offersBadge,
-      },
-      {
-        key: 'buyCryptoWithFiat',
-        // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
-        title: [
-          'Buy crypto with ',
-          <Image source={mastercardIcon} style={{ marginBottom: 1 }} height={11} />,
-          ' & ',
-          <Image source={visaIcon} height={11} />,
-        ],
-        body: 'USD, GBP, EUR supported',
-        action: () => navigation.navigate(
-          EXCHANGE,
-          {
-            fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
-            toAssetCode: ETH,
-            displayFiatOptionsFirst: true,
-          }),
       },
       ...this.getBuyCryptoServices(),
       {
@@ -186,6 +163,7 @@ class ServicesScreen extends React.Component<Props> {
           const wyreUrl = `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
             accountId: SENDWYRE_ACCOUNT_ID,
             dest: `ethereum:${address}`,
+            redirectUrl: SENDWYRE_RETURN_URL,
           })}`;
 
           openInAppBrowser(wyreUrl);
@@ -249,12 +227,10 @@ class ServicesScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { providersMeta },
-  appSettings: { data: { baseFiatCurrency } },
   user: { data: user },
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
-  baseFiatCurrency,
   user,
   accounts,
 });
