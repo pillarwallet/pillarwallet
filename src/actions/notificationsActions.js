@@ -26,7 +26,6 @@ import get from 'lodash.get';
 import { Notifications } from 'react-native-notifications';
 
 // actions
-import { fetchInviteNotificationsAction } from 'actions/invitationsActions';
 import {
   fetchSmartWalletTransactionsAction,
   fetchTransactionsHistoryNotificationsAction,
@@ -34,17 +33,6 @@ import {
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
-import {
-  getExistingChatsAction,
-  getChatByContactAction,
-  addContactAndSendWebSocketChatMessageAction,
-  deleteChatAction,
-} from 'actions/chatActions';
-import {
-  addContactAndSendWebSocketTxNoteMessageAction,
-  decryptReceivedWebSocketTxNoteMessageAction,
-} from 'actions/txNoteActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 
 // constants
@@ -52,31 +40,19 @@ import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SET_UNREAD_NOTIFICATIONS_STATUS,
-  SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
-  CONNECTION,
-  SIGNAL,
   BCX,
   COLLECTIBLE,
   BADGE,
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
-import { ADD_WEBSOCKET_RECEIVED_MESSAGE, REMOVE_WEBSOCKET_SENT_MESSAGE } from 'constants/chatConstants';
-import { MESSAGE_DISCONNECTED, UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import {
-  CONNECTION_ACCEPTED_EVENT,
-  CONNECTION_CANCELLED_EVENT,
-  CONNECTION_DISCONNECTED_EVENT,
-  CONNECTION_REJECTED_EVENT,
   CONNECTION_REQUESTED_EVENT,
   COLLECTIBLE_EVENT,
 } from 'constants/socketConstants';
-import { STATUS_MUTED } from 'constants/connectionsConstants';
 
 // services
 import { navigate, getNavigationPathAndParamsState, updateNavigationLastScreenState } from 'services/navigation';
 import Storage from 'services/storage';
-import { WEBSOCKET_MESSAGE_TYPES } from 'services/chatWebSocket';
-import ChatService from 'services/chat';
 import { SOCKET } from 'services/sockets';
 import { firebaseMessaging } from 'services/firebase';
 
@@ -95,8 +71,6 @@ let notificationsListener = null;
 let disabledPushNotificationsListener;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
-
-const chat = new ChatService();
 
 const NOTIFICATION_ROUTES = {
   [BCX]: HOME,
@@ -148,24 +122,16 @@ export const setUnreadNotificationsStatusAction = (status: boolean) => {
   };
 };
 
-export const setUnreadChatNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: status });
-  };
-};
-
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(fetchTransactionsHistoryNotificationsAction());
     dispatch(fetchSmartWalletTransactionsAction());
-    dispatch(fetchInviteNotificationsAction());
     dispatch(fetchAllCollectiblesDataAction());
   };
 };
 
 export const subscribeToSocketEventsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { invitations: { data: invitations } } = getState();
+  return async (dispatch: Dispatch) => {
     if (get(SOCKET, 'socket.readyState') !== 1) return;
 
     SOCKET.onMessage((response) => {
@@ -176,28 +142,6 @@ export const subscribeToSocketEventsAction = () => {
         // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
         reportLog('Platform WebSocket notification parse failed', { response, error });
         return; // unable to parse data, do not proceed
-      }
-
-      const senderUserId = get(data, 'senderUserData.id');
-
-      if (data.type === CONNECTION_REQUESTED_EVENT) {
-        dispatch(fetchInviteNotificationsAction());
-      }
-      if (
-        data.type === CONNECTION_CANCELLED_EVENT ||
-        data.type === CONNECTION_REJECTED_EVENT
-      ) {
-        const updatedInvitations = invitations.filter(({ id }) => id !== senderUserId);
-        dispatch({
-          type: UPDATE_INVITATIONS,
-          payload: updatedInvitations,
-        });
-      }
-      if (
-        data.type === CONNECTION_ACCEPTED_EVENT ||
-        data.type === CONNECTION_DISCONNECTED_EVENT
-      ) {
-        dispatch(updateConnectionsAction());
       }
       if (data.type === COLLECTIBLE_EVENT) {
         dispatch(fetchAllCollectiblesDataAction());
@@ -232,7 +176,6 @@ export const subscribeToPushNotificationsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: wallet },
-      contacts: { data: contacts },
     } = getState();
 
     const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
@@ -268,40 +211,8 @@ export const subscribeToPushNotificationsAction = () => {
       if (notification.type === BADGE) {
         dispatch(fetchBadgesAction());
       }
-      if (notification.type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-        const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-        if (!navParams) return;
-        dispatch({ type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS, payload: true });
-        const contact = contacts.find(c => c.username === notification.navigationParams.username);
-        if (contact) {
-          if (!!navParams.username && navParams.username === contact.username) {
-            // $FlowFixMe - profileImage can be undefined
-            dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-            return;
-          }
-          if (contact.status !== STATUS_MUTED) {
-            dispatch({
-              type: ADD_NOTIFICATION,
-              payload: {
-                ...notification,
-                message: `${notification.message} from ${contact.username}`,
-              },
-            });
-          }
-        }
-      }
-      if (notification.type === CONNECTION) {
-        if (notification.message === MESSAGE_DISCONNECTED) {
-          dispatch(deleteChatAction(notification.title));
-        }
-
-        dispatch(fetchInviteNotificationsAction());
-      }
-      if (notification.type !== SIGNAL) {
-        dispatch({ type: ADD_NOTIFICATION, payload: notification });
-        dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
-      }
+      dispatch({ type: ADD_NOTIFICATION, payload: notification });
+      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
     }, 500));
   };
 };
@@ -334,9 +245,6 @@ export const startListeningOnOpenNotificationAction = () => {
     if (!isEmpty(initialNotification)) {
       checkForSupportAlert(initialNotification.payload);
       const { type, navigationParams } = processNotification(initialNotification.payload) || {};
-      if (type === SIGNAL) {
-        dispatch(getExistingChatsAction());
-      }
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
@@ -370,12 +278,6 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === COLLECTIBLE) {
           dispatch(fetchAllCollectiblesDataAction());
         }
-        if (type === CONNECTION) {
-          dispatch(fetchInviteNotificationsAction());
-        }
-        if (type === SIGNAL) {
-          dispatch(getExistingChatsAction());
-        }
 
         if (type === BADGE) {
           dispatch(fetchBadgesAction(false));
@@ -405,108 +307,3 @@ export const stopListeningOnOpenNotificationAction = () => {
   };
 };
 
-export const startListeningChatWebSocketAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { session: { data: { isOnline } } } = getState();
-    if (!isOnline) return;
-    const chatWebSocket = chat.getWebSocketInstance();
-    chatWebSocket.start(({
-      type: messageType,
-      response: messageResponse,
-      request: messageRequest,
-      receivedSignalMessage,
-    }) => {
-      const {
-        contacts: { data: contacts },
-      } = getState();
-      if (messageType === WEBSOCKET_MESSAGE_TYPES.RESPONSE) {
-        if (messageResponse.message.toLowerCase() === 'gone') {
-          const {
-            chat: { data: { webSocketMessages: { sent: webSocketMessagesSent } } },
-          } = getState();
-          const messageSent = webSocketMessagesSent.find(
-            wsMessageSent => wsMessageSent.requestId === messageResponse.id,
-          );
-          if (messageSent) {
-            const { tag, params } = messageSent;
-            switch (tag) {
-              case 'chat':
-                dispatch(addContactAndSendWebSocketChatMessageAction(tag, params));
-                break;
-              case 'tx-note':
-                dispatch(addContactAndSendWebSocketTxNoteMessageAction(tag, params));
-                break;
-              default:
-                break;
-            }
-          }
-        }
-        if (messageResponse.status === 200) {
-          dispatch({
-            type: REMOVE_WEBSOCKET_SENT_MESSAGE,
-            payload: messageResponse.id,
-          });
-        }
-      }
-      if (!isEmpty(receivedSignalMessage)) {
-        const messageTag = Array.isArray(messageRequest.headers)
-          ? messageRequest.headers.find(entry => entry.match(/message-tag/g)).split(':')[1]
-          : '';
-        const { source: senderUsername } = receivedSignalMessage;
-        receivedSignalMessage.tag = messageTag;
-        receivedSignalMessage.requestId = messageRequest.id;
-        switch (messageTag) {
-          case 'chat':
-            dispatch({
-              type: ADD_WEBSOCKET_RECEIVED_MESSAGE,
-              payload: receivedSignalMessage,
-            });
-            const { params: navParams = null } = getNavigationPathAndParamsState() || {};
-
-            if (!navParams) return;
-            dispatch({
-              type: SET_UNREAD_CHAT_NOTIFICATIONS_STATUS,
-              payload: true,
-            });
-
-            dispatch(getExistingChatsAction());
-
-            const contact = contacts.find(c => c.username === senderUsername) || {};
-
-            if (contact) {
-              if (!!navParams.username && navParams.username === contact.username) {
-                // $FlowFixMe - profileImage can be undefined
-                dispatch(getChatByContactAction(contact.username, contact.id, contact.profileImage));
-                return;
-              }
-
-              const notification = processNotification({ msg: JSON.stringify({ type: 'signal' }) });
-
-              if (notification == null || contact.status === STATUS_MUTED) return;
-
-              dispatch({
-                type: ADD_NOTIFICATION,
-                payload: {
-                  ...notification,
-                  message: `${notification.message} from ${senderUsername}`,
-                },
-              });
-            }
-            break;
-          case 'tx-note':
-            dispatch(decryptReceivedWebSocketTxNoteMessageAction(receivedSignalMessage));
-            break;
-          default:
-            break;
-        }
-      }
-    });
-  };
-};
-
-export const stopListeningChatWebSocketAction = () => {
-  return () => {
-    const chatWebSocket = chat.getWebSocketInstance();
-    chatWebSocket.stop();
-  };
-};

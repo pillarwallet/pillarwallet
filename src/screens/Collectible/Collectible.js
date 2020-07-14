@@ -48,7 +48,6 @@ import { accountCollectiblesHistorySelector, accountCollectiblesSelector } from 
 import { accountHistorySelector } from 'selectors/history';
 
 import type { Collectible } from 'models/Collectible';
-import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -58,9 +57,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   collectibles: Collectible[],
   openSeaTxHistory: Object[],
-  contacts: Object[],
   history: Object[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   theme: Theme,
 };
@@ -179,9 +176,7 @@ class CollectibleScreen extends React.Component<Props, State> {
       navigation,
       collectibles,
       openSeaTxHistory,
-      contacts,
       history,
-      contactsSmartAddresses,
       accounts,
       theme,
     } = this.props;
@@ -202,8 +197,6 @@ class CollectibleScreen extends React.Component<Props, State> {
     const collectiblesTransactions = mapOpenSeaAndBCXTransactionsHistory(openSeaTxHistory, bcxCollectiblesTxHistory);
     const mappedCTransactions = mapTransactionsHistory(
       collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       COLLECTIBLE_TRANSACTION,
     );
@@ -256,11 +249,8 @@ class CollectibleScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
-  contactsSmartAddresses,
   accounts,
 });
 

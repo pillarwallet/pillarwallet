@@ -30,17 +30,12 @@ import ReviewAndConfirm from 'components/ReviewAndConfirm';
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
-// util
-import { findMatchingContact, getUserName } from 'utils/contacts';
-import { noop } from 'utils/common';
-
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 // models, types
 import type { Asset } from 'models/Asset';
 import type { SyntheticTransaction } from 'models/Transaction';
-import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
@@ -48,19 +43,11 @@ type Props = {
   isOnline: boolean,
   supportedAssets: Asset[],
   availableStake: number,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
 };
 
-type State = {
-  note: ?string,
-};
-
-
-class SendSyntheticConfirm extends React.Component<Props, State> {
+class SendSyntheticConfirm extends React.Component<Props> {
   syntheticTransaction: SyntheticTransaction;
   assetData: Asset;
-  state: State = { note: null };
 
   constructor(props: Props) {
     super(props);
@@ -70,7 +57,6 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
   }
 
   onConfirmPress = () => {
-    const { note } = this.state;
     const { fromAmount, receiverEnsName } = this.syntheticTransaction;
     const { symbol, decimals, address: contractAddress } = this.assetData;
     const syntheticTransaction = { ...this.syntheticTransaction };
@@ -81,26 +67,17 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
       symbol,
       contractAddress,
       decimals,
-      note,
       usePPN: true,
       extra: { syntheticTransaction },
     };
     this.props.navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
   };
 
-
-  handleNoteChange = (text) => {
-    this.setState({ note: text });
-  };
-
   render() {
     const {
       isOnline,
       availableStake,
-      contacts,
-      contactsSmartAddresses,
     } = this.props;
-    const { note } = this.state;
 
     const {
       fromAmount,
@@ -114,17 +91,7 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
     if (availableStake < fromAmount) errorMessage = 'Not enough PLR in tank';
     else if (!isOnline) errorMessage = 'Cannot send while offline';
 
-    const contact = findMatchingContact(toAddress, contacts, contactsSmartAddresses);
-    const recipientUsername = getUserName(contact);
-
     const reviewData = [];
-
-    if (recipientUsername) {
-      reviewData.push({
-        label: 'Recipient Username',
-        value: recipientUsername,
-      });
-    }
 
     if (receiverEnsName) {
       reviewData.push({
@@ -166,8 +133,6 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
         onConfirm={this.onConfirmPress}
         isConfirmDisabled={!!errorMessage}
         errorMessage={errorMessage}
-        onTextChange={isOnline && !!recipientUsername ? this.handleNoteChange : noop}
-        textInputValue={note}
       />
     );
   }
@@ -176,12 +141,9 @@ class SendSyntheticConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: { isOnline } },
   assets: { supportedAssets },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
   supportedAssets,
-  contacts,
-  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

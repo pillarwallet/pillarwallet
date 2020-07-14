@@ -29,63 +29,45 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // utils
-import { findMatchingContact, getUserName } from 'utils/contacts';
 import { addressesEqual } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
-import { formatTransactionFee, noop } from 'utils/common';
+import { formatTransactionFee } from 'utils/common';
 
 // types
-import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
-  contacts: Object[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
 };
 
-type State = {
-  note: ?string,
-};
-
-
-class SendTokenConfirm extends React.Component<Props, State> {
+class SendTokenConfirm extends React.Component<Props> {
   source: string;
 
   constructor(props) {
     super(props);
     this.source = this.props.navigation.getParam('source', '');
-    this.state = {
-      note: null,
-    };
   }
 
   handleFormSubmit = () => {
     Keyboard.dismiss();
     const { navigation } = this.props;
-    const transactionPayload = { ...navigation.getParam('transactionPayload', {}), note: this.state.note };
+    const transactionPayload = { ...navigation.getParam('transactionPayload', {}) };
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
       source: this.source,
     });
   };
 
-  handleNoteChange = (text) => {
-    this.setState({ note: text });
-  };
-
   render() {
     const {
-      contacts,
       session,
       navigation,
-      contactsSmartAddresses,
       accounts,
     } = this.props;
-    const { note } = this.state;
     const {
       amount,
       to,
@@ -95,11 +77,9 @@ class SendTokenConfirm extends React.Component<Props, State> {
       gasToken,
     } = navigation.getParam('transactionPayload', {});
 
-    const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
     const feeDisplayValue = txFeeInWei === 0 ? 'free' : formatTransactionFee(txFeeInWei, gasToken);
 
-    const recipientUsername = getUserName(contact);
-    const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
+    const userAccount = accounts.find(({ id }) => addressesEqual(id, to));
 
 
     const reviewData = [
@@ -108,13 +88,6 @@ class SendTokenConfirm extends React.Component<Props, State> {
         value: `${amount} ${symbol}`,
       },
     ];
-
-    if (recipientUsername) {
-      reviewData.push({
-        label: 'Recipient Username',
-        value: recipientUsername,
-      });
-    }
 
     if (receiverEnsName) {
       reviewData.push({
@@ -146,21 +119,16 @@ class SendTokenConfirm extends React.Component<Props, State> {
         reviewData={reviewData}
         isConfirmDisabled={!session.isOnline}
         onConfirm={this.handleFormSubmit}
-        onTextChange={session.isOnline && !!recipientUsername ? this.handleNoteChange : noop}
-        textInputValue={note}
       />
     );
   }
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   session: { data: session },
   accounts: { data: accounts },
-}) => ({
-  contacts,
+}: RootReducerState): $Shape<Props> => ({
   session,
-  contactsSmartAddresses,
   accounts,
 });
 

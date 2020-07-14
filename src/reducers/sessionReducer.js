@@ -34,9 +34,7 @@ export type SessionReducerAction = {|
 export const initialState = {
   data: {
     isOnline: true,
-    isSignalInitiated: false,
     fcmToken: '',
-    contactsSmartAddressesSynced: false,
   },
 };
 

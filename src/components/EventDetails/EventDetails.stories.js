@@ -42,15 +42,6 @@ import {
 const placeholderImage = 'https://picsum.photos/200';
 
 const reduxData = {
-  contacts: [{
-    username: 'alexander', ethAddress: '0xContact', profileImage: placeholderImage, connectionKey: '', id: '',
-  }],
-  contactsSmartAddresses: [{
-    userId: '38dc5545-825a-4a37-ae47-875d8287a9c4',
-    smartWallets: [
-      '0x8Cc0Ff0F2c2466735C4E4c71A7EA7B94b6900BF5',
-    ],
-  }],
   assetDecimals: 18,
   ensRegistry: {
     '0x111111': 'john',
@@ -98,7 +89,6 @@ const reduxData = {
   history: [],
   referralRewardIssuersAddresses: [],
   isPillarRewardCampaignActive: true,
-  txNotes: [],
   collectiblesHistory: [],
   isSmartAccount: true,
 };
@@ -108,7 +98,6 @@ const actions = {
   goToInvitationFlow: noop,
   updateTransactionStatus: noop,
   lookupAddress: noop,
-  getTxNoteByContact: noop,
 };
 
 const commonProps = {

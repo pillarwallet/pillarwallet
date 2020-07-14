@@ -37,11 +37,7 @@ import ratesReducer from './ratesReducer';
 import userReducer from './userReducer';
 import historyReducer from './historyReducer';
 import notificationsReducer from './notificationsReducer';
-import contactsReducer from './contactsReducer';
-import invitationsReducer from './invitationsReducer';
-import chatReducer from './chatReducer';
 import sessionReducer from './sessionReducer';
-import txNoteReducer from './txNoteReducer';
 import oAuthReducer from './oAuthReducer';
 import txCountReducer from './txCountReducer';
 import collectiblesReducer from './collectiblesReducer';
@@ -80,11 +76,7 @@ import type { RatesReducerState } from './ratesReducer';
 import type { UserReducerState } from './userReducer';
 import type { HistoryReducerState, HistoryAction } from './historyReducer';
 import type { NotificationsReducerState } from './notificationsReducer';
-import type { ContactsReducerState } from './contactsReducer';
-import type { InvitationsReducerState } from './invitationsReducer';
-import type { ChatReducerState } from './chatReducer';
 import type { SessionReducerState } from './sessionReducer';
-import type { TxNoteReducerState } from './txNoteReducer';
 import type { OAuthReducerState } from './oAuthReducer';
 import type { TxCountReducerState } from './txCountReducer';
 import type { CollectiblesReducerState, CollectiblesAction } from './collectiblesReducer';
@@ -120,11 +112,7 @@ export type RootReducerState = {|
   user: UserReducerState,
   history: HistoryReducerState,
   notifications: NotificationsReducerState,
-  contacts: ContactsReducerState,
-  invitations: InvitationsReducerState,
-  chat: ChatReducerState,
   session: SessionReducerState,
-  txNotes: TxNoteReducerState,
   oAuthTokens: OAuthReducerState,
   txCount: TxCountReducerState,
   collectibles: CollectiblesReducerState,
@@ -199,11 +187,7 @@ const appReducer = combineReducers({
   user: userReducer,
   history: historyReducer,
   notifications: notificationsReducer,
-  contacts: contactsReducer,
-  invitations: invitationsReducer,
-  chat: chatReducer,
   session: sessionReducer,
-  txNotes: txNoteReducer,
   oAuthTokens: oAuthReducer,
   txCount: txCountReducer,
   collectibles: collectiblesReducer,

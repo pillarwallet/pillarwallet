@@ -28,7 +28,6 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 // components
 import ActivityFeed from 'components/ActivityFeed';
 import styled, { withTheme } from 'styled-components/native';
-import Tabs from 'components/Tabs';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -51,7 +50,6 @@ import {
   WALLETCONNECT,
   POOLTOGETHER_DASHBOARD,
 } from 'constants/navigationConstants';
-import { ALL, TRANSACTIONS } from 'constants/activityConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI } from 'constants/assetsConstants';
@@ -63,12 +61,6 @@ import {
 } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
-import {
-  cancelInvitationAction,
-  acceptInvitationAction,
-  rejectInvitationAction,
-  fetchInviteNotificationsAction,
-} from 'actions/invitationsActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import {
@@ -102,7 +94,6 @@ import { formatAmountDisplay } from 'utils/common';
 // models, types
 import type { Account, Accounts } from 'models/Account';
 import type { Badges, BadgeRewardEvent } from 'models/Badge';
-import type { ContactSmartAddressData } from 'models/Contacts';
 import type { CallRequest, Connector } from 'models/WalletConnect';
 import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
@@ -116,14 +107,9 @@ import WalletsPart from './WalletsPart';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  contacts: Object[],
   user: User,
   fetchTransactionsHistory: Function,
   fetchTransactionsHistoryNotifications: Function,
-  fetchInviteNotifications: Function,
-  acceptInvitation: Function,
-  cancelInvitation: Function,
-  rejectInvitation: Function,
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   intercomNotificationsCount: number,
@@ -135,7 +121,6 @@ type Props = {
   pendingConnector: ?Connector,
   logScreenView: (view: string, screen: string) => void,
   activeAccount: ?Account,
-  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   userEvents: UserEvent[],
   fetchBadgeAwardHistory: () => void,
@@ -166,7 +151,6 @@ type Props = {
 };
 
 type State = {
-  activeTab: string,
   loaderMessage: string,
 };
 
@@ -215,7 +199,6 @@ class HomeScreen extends React.Component<Props, State> {
   forceRender = false;
 
   state = {
-    activeTab: ALL,
     loaderMessage: '',
   };
 
@@ -272,7 +255,6 @@ class HomeScreen extends React.Component<Props, State> {
   refreshScreenData = () => {
     const {
       fetchTransactionsHistoryNotifications,
-      fetchInviteNotifications,
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
@@ -286,7 +268,6 @@ class HomeScreen extends React.Component<Props, State> {
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
-    fetchInviteNotifications();
     fetchAllCollectiblesData();
     fetchBadges();
     fetchBadgeAwardHistory();
@@ -298,13 +279,6 @@ class HomeScreen extends React.Component<Props, State> {
     if (isSmartWalletActive) {
       fetchPoolStats();
     }
-  };
-
-  setActiveTab = (activeTab) => {
-    const { logScreenView } = this.props;
-
-    logScreenView(`View tab Home.${activeTab}`, 'Home');
-    this.setState({ activeTab });
   };
 
   renderBadge = ({ item }) => {
@@ -376,16 +350,11 @@ class HomeScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      cancelInvitation,
-      acceptInvitation,
-      rejectInvitation,
       intercomNotificationsCount,
       navigation,
       history,
       openSeaTxHistory,
-      contacts,
       badges,
-      contactsSmartAddresses,
       accounts,
       userEvents,
       badgesEvents,
@@ -409,7 +378,7 @@ class HomeScreen extends React.Component<Props, State> {
       isSmartWalletActive,
     } = this.props;
 
-    const { activeTab, loaderMessage } = this.state;
+    const { loaderMessage } = this.state;
     const tokenTxHistory = history
       .filter(({ tranType }) => tranType !== 'collectible')
       .filter(historyItem => historyItem.asset !== 'BTC');
@@ -417,8 +386,6 @@ class HomeScreen extends React.Component<Props, State> {
 
     const transactionsOnMainnet = mapTransactionsHistory(
       tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       TRANSACTION_EVENT,
       true,
@@ -430,41 +397,16 @@ class HomeScreen extends React.Component<Props, State> {
 
     const mappedCTransactions = mapTransactionsHistory(
       collectiblesTransactions,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       COLLECTIBLE_TRANSACTION,
       true,
     );
 
-    const activityFeedTabs = [
-      {
-        id: ALL,
-        name: 'All',
-        icon: 'cube',
-        onPress: () => this.setActiveTab(ALL),
-        data: [
-          ...transactionsOnMainnet,
-          ...mappedCTransactions,
-          ...userEvents,
-          ...badgesEvents,
-        ],
-        emptyState: {
-          title: 'Make your first step',
-          bodyText: 'Your activity will appear here.',
-        },
-      },
-      {
-        id: TRANSACTIONS,
-        name: 'Transactions',
-        icon: 'paperPlane',
-        onPress: () => this.setActiveTab(TRANSACTIONS),
-        data: [...transactionsOnMainnet, ...mappedCTransactions],
-        emptyState: {
-          title: 'Make your first step',
-          bodyText: 'Your transactions will appear here. Send or receive tokens to start.',
-        },
-      },
+    const feedData = [
+      ...transactionsOnMainnet,
+      ...mappedCTransactions,
+      ...userEvents,
+      ...badgesEvents,
     ];
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
@@ -525,13 +467,10 @@ class HomeScreen extends React.Component<Props, State> {
         >
           {onScroll => (
             <ActivityFeed
-              onCancelInvitation={cancelInvitation}
-              onRejectInvitation={rejectInvitation}
-              onAcceptInvitation={acceptInvitation}
+              card
+              cardHeaderTitle="History"
               navigation={navigation}
-              tabs={activityFeedTabs}
-              activeTab={activeTab}
-              hideTabs
+              feedData={feedData}
               initialNumToRender={8}
               wrapperStyle={{ flexGrow: 1 }}
               contentContainerStyle={{ flexGrow: 1 }}
@@ -626,13 +565,6 @@ class HomeScreen extends React.Component<Props, State> {
                   }
                 </React.Fragment>
               )}
-              tabsComponent={(
-                <Tabs
-                  tabs={activityFeedTabs}
-                  wrapperStyle={{ paddingTop: 16 }}
-                  activeTab={activeTab}
-                />
-              )}
               flatListProps={{
                 refreshControl: (
                   <RefreshControl
@@ -655,7 +587,6 @@ class HomeScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
   notifications: { intercomNotificationsCount },
   badges: { data: badges, badgesEvents },
@@ -672,12 +603,10 @@ const mapStateToProps = ({
   lending: { depositedAssets, isFetchingDepositedAssets },
   poolTogether: { isFetchingPoolStats },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
   user,
   intercomNotificationsCount,
   badges,
   badgesEvents,
-  contactsSmartAddresses,
   accounts,
   userEvents,
   baseFiatCurrency,
@@ -705,12 +634,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  cancelInvitation: (invitation) => dispatch(cancelInvitationAction(invitation)),
-  acceptInvitation: (invitation) => dispatch(acceptInvitationAction(invitation)),
-  rejectInvitation: (invitation) => dispatch(rejectInvitationAction(invitation)),
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction(true)),
   fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
-  fetchInviteNotifications: () => dispatch(fetchInviteNotificationsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction(true)),
   fetchBadges: () => dispatch(fetchBadgesAction()),
