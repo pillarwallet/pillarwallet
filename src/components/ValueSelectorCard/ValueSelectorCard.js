@@ -25,38 +25,67 @@ import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 
-import type { Assets, Balances, Rates } from 'models/Asset';
+import Spinner from 'components/Spinner';
+
+import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { FormSelector } from 'models/TextInput';
+import type { Option } from 'models/Selector';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { getBalance, getRate, sortAssets, calculateMaxAmount } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount } from 'utils/assets';
 import { themedColors } from 'utils/themes';
-import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
+import {
+  SelectorInputTemplate,
+  selectorStructure,
+  inputFormatter,
+  inputParser,
+  ItemSelectorTemplate,
+} from 'utils/formHelpers';
 import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
-import { accountAssetsSelector } from 'selectors/assets';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
+import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
+
+import { COLLECTIBLES, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
 
 
-type Props = {
-  assets: Assets,
-  balances: Balances,
-  baseFiatCurrency: ?string,
+export type ExternalProps = {
   maxLabel?: string,
   preselectedAsset?: string,
+  preselectedCollectible?: string,
   preselectedValue?: number,
-  rates: Rates,
   getFormValue: (?FormSelector) => void,
   txFeeInfo?: ?TransactionFeeInfo,
-  hideZeroBalanceAssets?: boolean,
+  selectorModalTitle?: string,
+  getError?: (errorMessage: ?string) => void,
+  wrapperStyle?: Object,
+  renderOption?: () => void,
+  isLoading?: boolean,
+  customOptions?: Object[],
+  customBalances?: Balances,
+  activeTokenType?: string,
+  showAllAssetTypes?: boolean,
+};
+
+type Props = ExternalProps & {
+  assets?: Option[],
+  collectibles?: Option[],
+  balances: Balances,
+  baseFiatCurrency: ?string,
+  rates: Rates,
+  showSyntheticOptions?: boolean,
+  customError?: string,
+  syntheticAssets?: Option[],
 };
 
 type FormValue = {
@@ -67,6 +96,7 @@ type State = {
   formOptions: Object,
   value: FormValue,
   errorMessage: string,
+  tokenType: string,
 };
 
 const Wrapper = styled.View`
@@ -92,6 +122,29 @@ const getFormStructure = (balances: Balances, txFeeInfo: ?TransactionFeeInfo) =>
   });
 };
 
+const formatOptions = (options: Object[], balances: Balances, rates: Rates, baseFiatCurrency: ?string) => {
+  if (!options) return [];
+  return options.map((option) => {
+    const { iconUrl, symbol, address } = option;
+    const assetBalance = getBalance(balances, symbol);
+    const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+    const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    return {
+      imageUrl,
+      formattedBalanceInFiat,
+      balance: !!formattedBalanceInFiat && {
+        balance: assetBalance,
+        value: formattedBalanceInFiat,
+        token: symbol,
+      },
+      token: symbol,
+      value: symbol,
+      contractAddress: address,
+      ...option,
+    };
+  });
+};
+
 export class ValueSelectorCard extends React.Component<Props, State> {
   form: Form;
 
@@ -102,6 +155,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         formSelector: {
           selector: {},
           input: '',
+          dontCheckBalance: false,
         },
       },
       formOptions: {
@@ -115,12 +169,14 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               options: [],
               placeholderSelector: 'select',
               placeholderInput: '0',
-              inputWrapperStyle: { width: '100%' },
+              inputWrapperStyle: { width: '100%', paddingTop: 4, paddingBottom: 0 },
               rightLabel: '',
               customInputHeight: 56,
               selectorModalTitle: 'Select',
-              inputHeaderStyle: { marginBottom: 16, alignItems: 'center', minHeight: 22 },
+              inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
               onPressRightLabel: this.handleUseMax,
+              activeTabOnItemClick: COLLECTIBLES,
+              activeTabOnOptionOpenClick: TOKENS,
             },
             transformer: {
               parse: inputParser,
@@ -130,67 +186,108 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         },
       },
       errorMessage: '',
+      tokenType: TOKENS,
     };
   }
 
   componentDidMount() {
-    this.addCustomFormInfo();
+    this.handleCustomInfo();
   }
+
+  componentDidUpdate(prevProps: Props) {
+    const { preselectedAsset, preselectedCollectible, isLoading } = this.props;
+    const { value } = this.state;
+    const selectedAsset = get(value, 'formSelector.selector.symbol');
+    const preselectedAssetChanged = !selectedAsset && ((!prevProps.preselectedAsset && preselectedAsset)
+      || (!prevProps.preselectedCollectible && preselectedCollectible));
+    const finishedLoading = prevProps.isLoading && !isLoading;
+    if (preselectedAssetChanged || finishedLoading) {
+      this.handleCustomInfo();
+    }
+  }
+
+  handleCustomInfo = () => {
+    const { value } = this.state;
+    const { activeTokenType, preselectedCollectible } = this.props;
+    const selectedTokenType = preselectedCollectible || activeTokenType === COLLECTIBLES
+      ? COLLECTIBLES
+      : TOKENS;
+    this.manageFormType(selectedTokenType, value, this.addCustomFormInfo);
+  };
 
   addCustomFormInfo = () => {
     const {
       assets,
-      balances,
-      baseFiatCurrency,
-      rates,
+      syntheticAssets,
       maxLabel,
+      selectorModalTitle,
+      renderOption,
+      showSyntheticOptions,
+      customOptions,
+      balances,
+      rates,
+      baseFiatCurrency,
+      showAllAssetTypes,
+      collectibles = [],
       preselectedAsset,
-      hideZeroBalanceAssets,
+      preselectedCollectible,
       preselectedValue,
     } = this.props;
     const { formOptions, value } = this.state;
 
-    const assetsOptions = sortAssets(assets).reduce((options, asset) => {
-      const { symbol, iconUrl } = asset;
-      const rawBalance = getBalance(balances, symbol);
-      const assetBalance = formatAmount(rawBalance);
-      if (hideZeroBalanceAssets && rawBalance <= 0) return options;
-      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const option = {
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        ...asset,
-        assetBalance,
-        formattedBalanceInFiat,
-      };
-      return [...options, option];
-    }, []);
+    const customOptionsFormatted = customOptions && formatOptions(customOptions, balances, rates, baseFiatCurrency);
+    const assetsAsOptions = showSyntheticOptions ? syntheticAssets : assets;
 
-    const thisStateFormOptionsCopy = { ...formOptions };
-    thisStateFormOptionsCopy.fields.formSelector.config.options = assetsOptions;
+    const basicOptions: Option[] = customOptionsFormatted || assetsAsOptions || [];
+
+    let options = [];
+    let optionTabs;
+    if (showAllAssetTypes) {
+      optionTabs = [
+        { name: 'Tokens', options: basicOptions, id: TOKENS },
+        { name: 'Collectibles', options: collectibles, id: COLLECTIBLES },
+      ];
+    } else {
+      options = basicOptions;
+    }
 
     const newValue = { ...value };
 
-    const preselectedOption = preselectedAsset &&
-      assetsOptions.find(({ symbol }) => symbol === preselectedAsset);
+    const allOptions = optionTabs
+      ? optionTabs.reduce((combinedOptions, tab) => {
+        const tabOptions = tab.options || [];
+        return [...combinedOptions, ...tabOptions];
+      }, [])
+      : options;
 
-    const singleOption = assetsOptions.length === 1 && assetsOptions[0];
+    let preselectedOption;
+    if (preselectedAsset) {
+      preselectedOption = allOptions.find(({ symbol }) => symbol === preselectedAsset);
+    } else if (preselectedCollectible) {
+      preselectedOption = allOptions.find(({ tokenId }) => tokenId === preselectedCollectible);
+    }
 
+    const singleOption = allOptions.length === 1 && allOptions[0];
     const pickedAsset = preselectedOption || singleOption || {};
+
     newValue.formSelector.selector = pickedAsset;
     if (preselectedValue) {
       newValue.formSelector.input = preselectedValue.toString();
     }
     const { symbol } = pickedAsset;
+    const label = maxLabel || 'Max';
 
     const newOptions = t.update(formOptions, {
       fields: {
         formSelector: {
           config: {
-            options: { $set: assetsOptions },
-            rightLabel: { $set: maxLabel || 'Max' },
+            options: { $set: options },
+            optionTabs: { $set: optionTabs },
+            rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
+            optionsOpenText: { $set: 'Send token instead' },
+            selectorModalTitle: { $set: selectorModalTitle || 'Select' },
+            renderOption: { $set: renderOption },
           },
         },
       },
@@ -205,6 +302,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       amountValueInFiat,
       selectedAssetSymbol,
     } = this.getMaxBalanceOfSelectedAsset(false, symbol);
+
     if (!selectedAssetBalance || !symbol) return null;
 
     return (
@@ -212,12 +310,72 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     );
   };
 
-  handleFromChange = (value: FormValue) => {
-    const { getFormValue, baseFiatCurrency, rates } = this.props;
+  onFromChange = (value: FormValue) => {
+    const { formSelector } = value;
+    const { selector } = formSelector;
+    const selectedTokenType = selector.tokenType || TOKENS;
+
+    this.manageFormType(selectedTokenType, value, this.handleFormChange);
+  };
+
+  manageFormType = (newTokenType: string, value: FormValue, callback: (value: FormValue) => void) => {
+    const { tokenType, formOptions } = this.state;
+
+    if (newTokenType !== tokenType) {
+      const updatedValue = { ...value };
+      let newOptions = t.update(formOptions, {
+        fields: {
+          formSelector: {
+            template: { $set: SelectorInputTemplate },
+            config: {
+              label: { $set: '' },
+            },
+          },
+        },
+      });
+
+      if (newTokenType === COLLECTIBLES) {
+        updatedValue.formSelector.input = '1';
+        updatedValue.formSelector.dontCheckBalance = true;
+        newOptions = t.update(formOptions, {
+          fields: {
+            formSelector: {
+              template: { $set: ItemSelectorTemplate },
+              config: {
+                label: { $set: 'Collectible' },
+              },
+            },
+          },
+        });
+      } else {
+        updatedValue.formSelector.input = '0';
+        updatedValue.formSelector.dontCheckBalance = false;
+      }
+      this.setState({ formOptions: newOptions, tokenType: newTokenType, value: updatedValue },
+        () => callback(updatedValue));
+    } else {
+      callback(value);
+    }
+  };
+
+  handleFormChange = (value: FormValue) => {
+    const {
+      getFormValue,
+      baseFiatCurrency,
+      rates,
+      maxLabel,
+      getError,
+    } = this.props;
+
+    const { formSelector } = value;
+    const { selector, input: amount } = formSelector;
+
     const { errorMessage, formOptions } = this.state;
     const formValue = this.form.getValue();
+
     const validation = this.form.validate();
     const currentErrorMessage = get(validation, 'errors[0].message', '');
+    if (getError) getError(currentErrorMessage);
 
     const stateUpdates = {};
     stateUpdates.value = value;
@@ -225,8 +383,6 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       stateUpdates.errorMessage = currentErrorMessage;
     }
 
-    const { formSelector } = value;
-    const { selector, input: amount } = formSelector;
     let valueInFiat;
 
     if (amount && parseFloat(amount) > 0 && !isEmpty(selector)) {
@@ -235,6 +391,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       const totalInFiat = parseFloat(amount) * getRate(rates, symbol, fiatCurrency);
       valueInFiat = symbol ? formatFiat(totalInFiat, baseFiatCurrency) : null;
     }
+    const label = maxLabel || 'Max';
 
     const newOptions = t.update(formOptions, {
       fields: {
@@ -242,6 +399,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
+            rightLabel: { $set: formSelector ? label : '' },
           },
         },
       },
@@ -259,17 +417,27 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       txFeeInfo,
+      showSyntheticOptions,
+      syntheticAssets = [],
     } = this.props;
     const { value } = this.state;
     const selectedAssetSymbol = symbol || get(value, 'formSelector.selector.symbol');
     if (!selectedAssetSymbol) return {};
 
-    const rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
-    const selectedAssetBalance = forSending
-      ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
-      : formatAmount(rawSelectedAssetBalance);
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
+    let selectedAssetBalance;
+    let rawSelectedAssetBalance;
+    if (showSyntheticOptions) {
+      const syntheticAsset = syntheticAssets.find(({ symbol: _symbol }) => _symbol === selectedAssetSymbol);
+      rawSelectedAssetBalance = get(syntheticAsset, 'availableBalance', 0);
+      selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
+    } else {
+      rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
+      selectedAssetBalance = forSending
+        ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
+        : formatAmount(rawSelectedAssetBalance);
+    }
     const totalInFiat = parseFloat(rawSelectedAssetBalance) * getRate(rates, selectedAssetSymbol, fiatCurrency);
     const amountValueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
@@ -277,8 +445,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   };
 
   handleUseMax = () => {
-    const { getFormValue } = this.props;
     const { value, formOptions } = this.state;
+    const { getFormValue } = this.props;
+
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
     const newValue = { ...value };
@@ -295,32 +464,59 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     });
 
     this.setState({ value: newValue, formOptions: newOptions });
-
     getFormValue(newValue?.formSelector);
   };
 
   render() {
     const { value, formOptions, errorMessage } = this.state;
-    const { balances, txFeeInfo } = this.props;
-    const formStructure = getFormStructure(balances, txFeeInfo);
+    const {
+      balances,
+      txFeeInfo,
+      wrapperStyle,
+      showSyntheticOptions,
+      syntheticAssets = [],
+      customError,
+      isLoading,
+      customBalances,
+    } = this.props;
+
+    const syntheticBalances = !showSyntheticOptions || !syntheticAssets.length
+      ? {}
+      : syntheticAssets.reduce((synthBalances, asset) => {
+        const symbol = get(asset, 'symbol', 0);
+        const balance = get(asset, 'availableBalance', 0);
+        if (!symbol) return synthBalances;
+        synthBalances[symbol] = { symbol, balance };
+        return synthBalances;
+      }, {});
+    const assetBalances = showSyntheticOptions ? syntheticBalances : balances;
+    const balancesForValidation = customBalances || assetBalances;
+    const formStructure = getFormStructure(balancesForValidation, txFeeInfo);
+    const errorToShow = customError || errorMessage;
 
     return (
-      <Wrapper>
+      <Wrapper style={wrapperStyle}>
         <ShadowedCard
           wrapperStyle={{ marginBottom: 10, width: '100%' }}
           contentWrapperStyle={{ padding: 20, paddingTop: 16 }}
+          borderRadius={10}
         >
           <FormWrapper>
-            <Form
-              ref={node => { this.form = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleFromChange}
-            />
+            {isLoading
+              ? <Spinner style={{ alignSelf: 'center' }} />
+              : (
+                <Form
+                  ref={node => { this.form = node; }}
+                  type={formStructure}
+                  options={formOptions}
+                  value={value}
+                  onChange={this.onFromChange}
+                />
+              )
+            }
           </FormWrapper>
         </ShadowedCard>
-        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {!!errorToShow && <ErrorMessage>{errorToShow}</ErrorMessage>}
       </Wrapper>
     );
   }
@@ -336,7 +532,9 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  assets: accountAssetsSelector,
+  assets: visibleActiveAccountAssetsWithBalanceSelector,
+  collectibles: activeAccountMappedCollectiblesSelector,
+  syntheticAssets: activeSyntheticAssetsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

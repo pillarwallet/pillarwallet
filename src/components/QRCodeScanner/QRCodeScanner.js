@@ -41,6 +41,7 @@ type Props = {
   dataFormatter: (code: string) => string,
   rectangleColor: string,
   isActive: boolean,
+  onModalHidden?: () => void,
 };
 
 type State = {
@@ -178,10 +179,13 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
   onModalClosed = () => {
     const { code } = this.state;
+    const { onRead, dataFormatter, onModalHidden } = this.props;
 
     if (code) {
-      this.props.onRead(this.props.dataFormatter(code));
+      onRead(dataFormatter(code));
     }
+
+    if (onModalHidden) onModalHidden();
   };
 
   render() {
