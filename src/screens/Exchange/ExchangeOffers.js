@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { InAppBrowser } from '@matt-block/react-native-in-app-browser';
+import InAppBrowser from 'react-native-inappbrowser-reborn';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 
@@ -478,9 +478,9 @@ class ExchangeOffers extends React.Component<Props, State> {
       selectedSellAmount,
     );
 
-    InAppBrowser.open(wyreUrl).catch(error => {
-      reportOrWarn('InAppBrowser.error', error, 'warning');
-    });
+    InAppBrowser.isAvailable()
+    .then(result => result && InAppBrowser.open(wyreUrl))
+    .catch(error => reportOrWarn('InAppBrowser.error', error, 'warning'));
   }
 
   renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
