@@ -598,7 +598,7 @@ export const initWalletConnectSessions = () => {
       Toast.show({
         type: 'warning',
         title: 'Session error',
-        message: 'Some WalletConnect sessions could not be started',
+        message: 'Some WalletConnect sessions could not be started. Please try again.',
         autoClose: false,
       });
     }
