@@ -913,7 +913,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
               ]
             }
           >
-            Collectible from Key wallet
+            Collectible from 0xKeyW…Wallet
           </Text>
         </View>
         <View
@@ -1182,7 +1182,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
               ]
             }
           >
-            Collectible from Smart Wallet
+            Collectible from 0xSmar…Wallet
           </Text>
         </View>
         <View
@@ -2258,7 +2258,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
               ]
             }
           >
-            Collectible to Key wallet
+            Collectible to 0xKeyW…Wallet
           </Text>
         </View>
         <View
@@ -2527,7 +2527,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
               ]
             }
           >
-            Collectible to Smart Wallet
+            Collectible to 0xSmar…Wallet
           </Text>
         </View>
         <View
@@ -2598,904 +2598,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
               >
                 Sent
               </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
-exports[`Storyshots ActivityFeedItem Connection established 1`] = `
-<View
-  style={
-    Array [
-      Object {
-        "flexDirection": "column",
-        "width": "100%",
-      },
-      undefined,
-    ]
-  }
->
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "justifyContent": "center",
-        "opacity": 1,
-        "paddingBottom": 14,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 14,
-        "width": "100%",
-      }
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "paddingRight": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
-        }
-      />
-    </View>
-    <View
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            },
-            undefined,
-          ]
-        }
-        type="DEFAULT"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexBasis": 0,
-                "flexDirection": "column",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "flexGrow": 1,
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ],
-                  ],
-                ]
-              }
-              type="DEFAULT"
-            >
-              john
-            </Text>
-          </View>
-        </View>
-        <View
-          rightColumn={true}
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-end",
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "marginLeft": 10,
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "maxWidth": "50%",
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                undefined,
-                Object {
-                  "flexWrap": "wrap",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "justifyContent": "center",
-                  },
-                  undefined,
-                ]
-              }
-            >
-              <Text
-                color="#8B939E"
-                style={
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 14,
-                        "lineHeight": 22,
-                        "marginBottom": 0,
-                        "marginLeft": "auto",
-                        "paddingBottom": 6,
-                        "paddingLeft": 0,
-                        "paddingRight": 0,
-                        "paddingTop": 6,
-                      },
-                      undefined,
-                    ],
-                  ]
-                }
-              >
-                Connected
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
-exports[`Storyshots ActivityFeedItem Connection outgoing request 1`] = `
-<View
-  style={
-    Array [
-      Object {
-        "flexDirection": "column",
-        "width": "100%",
-      },
-      undefined,
-    ]
-  }
->
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "justifyContent": "center",
-        "opacity": 1,
-        "paddingBottom": 14,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 14,
-        "width": "100%",
-      }
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "paddingRight": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
-        }
-      />
-    </View>
-    <View
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            },
-            undefined,
-          ]
-        }
-        type="DEFAULT"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexBasis": 0,
-                "flexDirection": "column",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "flexGrow": 1,
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ],
-                  ],
-                ]
-              }
-              type="DEFAULT"
-            >
-              john
-            </Text>
-          </View>
-        </View>
-        <View
-          rightColumn={true}
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-end",
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "marginLeft": 10,
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "maxWidth": "50%",
-              },
-            ]
-          }
-          type="DEFAULT"
-        >
-          <View
-            style={
-              Array [
-                undefined,
-                Object {
-                  "flexWrap": "wrap",
-                },
-              ]
-            }
-          >
-            <View
-              accessible={true}
-              focusable={true}
-              isTVSelectable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "alignSelf": "auto",
-                  "backgroundColor": "#e6f1f9",
-                  "borderColor": "#EDEDED",
-                  "borderRadius": 3,
-                  "borderStyle": "solid",
-                  "borderWidth": 0,
-                  "flexDirection": "row",
-                  "height": 32,
-                  "justifyContent": "center",
-                  "marginBottom": 0,
-                  "marginLeft": 0,
-                  "marginRight": 0,
-                  "marginTop": 0,
-                  "opacity": 1,
-                  "paddingBottom": 0,
-                  "paddingLeft": 9,
-                  "paddingRight": 9,
-                  "paddingTop": 0,
-                  "width": "auto",
-                }
-              }
-            >
-              <Text
-                customTheme={
-                  Object {
-                    "borderWidth": 0,
-                    "shadow": false,
-                  }
-                }
-                small={true}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 12,
-                      "lineHeight": 18,
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#007AFF",
-                        "fontSize": 14,
-                        "lineHeight": 14,
-                        "marginBottom": 0,
-                        "marginTop": 2.52,
-                      },
-                      undefined,
-                    ],
-                  ]
-                }
-                theme={
-                  Object {
-                    "colors": Object {
-                      "PPNSurface": "#0a0c78",
-                      "PPNText": "#f33726",
-                      "accent": "#818EB3",
-                      "activeTabBarIcon": "#007AFF",
-                      "avatarPlaceholderBackground": "#e0eeff",
-                      "avatarPlaceholderText": "#6690eb",
-                      "border": "#EDEDED",
-                      "buttonSecondaryBackground": "#e6f1f9",
-                      "card": "#FFFFFF",
-                      "control": "#FCFDFF",
-                      "danger": "#ff0005",
-                      "helpIcon": "#f7931a",
-                      "iconBackground": "#ebf0f5",
-                      "inactiveTabBarIcon": "#D4D9DB",
-                      "indicator": "#F8E71C",
-                      "labelTertiary": "#818eb3",
-                      "legacyWallet": "#FA574F",
-                      "link": "#007aff",
-                      "negative": "#BD573A",
-                      "notice": "#ea480e",
-                      "orange": "#f57c00",
-                      "poolTogetherPink": "#e51fff",
-                      "popularSwaps": "#d08cb1",
-                      "positive": "#2AA057",
-                      "primary": "#007AFF",
-                      "progressBarEnd": "#f04cfa",
-                      "progressBarStart": "#ca17e1",
-                      "secondaryAccent": "#EBF0F5",
-                      "secondaryText": "#8B939E",
-                      "smartWallet": "#3C71FE",
-                      "smartWalletSurface": "#f3f7ff",
-                      "smartWalletText": "#1D24D8",
-                      "surface": "#e6f1f9",
-                      "synthetic": "#2329d6",
-                      "tertiary": "#EBF0F6",
-                      "text": "#007AFF",
-                      "transactionReceivedIcon": "#497391",
-                      "userAvatar": "#d1d9e4",
-                      "warning": "#ECA93A",
-                    },
-                    "current": "lightTheme",
-                  }
-                }
-              >
-                Requested
-              </Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
-exports[`Storyshots ActivityFeedItem Connection request 1`] = `
-<View
-  style={
-    Array [
-      Object {
-        "flexDirection": "column",
-        "width": "100%",
-      },
-      undefined,
-    ]
-  }
->
-  <View
-    accessible={true}
-    focusable={true}
-    isTVSelectable={true}
-    onClick={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderRelease={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    style={
-      Object {
-        "alignItems": "center",
-        "flexDirection": "row",
-        "justifyContent": "center",
-        "opacity": 1,
-        "paddingBottom": 14,
-        "paddingLeft": 20,
-        "paddingRight": 20,
-        "paddingTop": 14,
-        "width": "100%",
-      }
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "alignItems": "center",
-            "justifyContent": "center",
-            "paddingRight": 12,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
-        style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
-        }
-      />
-    </View>
-    <View
-      style={
-        Object {
-          "flex": 1,
-        }
-      }
-    >
-      <View
-        style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "space-between",
-              "width": "100%",
-            },
-            undefined,
-          ]
-        }
-        type="ACTION"
-      >
-        <View
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-start",
-                "flexBasis": 0,
-                "flexDirection": "column",
-                "flexGrow": 1,
-                "flexShrink": 1,
-                "justifyContent": "center",
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "flexGrow": 1,
-              },
-            ]
-          }
-          type="ACTION"
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "justifyContent": "space-between",
-                },
-                undefined,
-              ]
-            }
-          >
-            <Text
-              ellipsizeMode="tail"
-              numberOfLines={2}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 18,
-                        "lineHeight": 28,
-                        "width": "100%",
-                      },
-                      undefined,
-                    ],
-                  ],
-                ]
-              }
-              type="ACTION"
-            >
-              john
-            </Text>
-          </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            Connection request
-          </Text>
-        </View>
-        <View
-          rightColumn={true}
-          style={
-            Array [
-              Object {
-                "alignItems": "flex-end",
-                "flexDirection": "column",
-                "justifyContent": "center",
-                "marginLeft": 10,
-                "marginTop": 0,
-                "minHeight": 54,
-              },
-              Object {
-                "maxWidth": "50%",
-              },
-            ]
-          }
-          type="ACTION"
-        >
-          <View
-            style={
-              Array [
-                undefined,
-                Object {
-                  "flexWrap": "wrap",
-                },
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "flexDirection": "row",
-                    "marginLeft": "auto",
-                  },
-                  undefined,
-                ]
-              }
-            >
-              <View
-                accessible={true}
-                focusable={true}
-                isTVSelectable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "transparent",
-                    "borderRadius": 17,
-                    "height": 24,
-                    "justifyContent": "center",
-                    "marginBottom": 0,
-                    "marginLeft": 10,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                    "opacity": 1,
-                    "paddingBottom": 0,
-                    "paddingLeft": 0,
-                    "paddingRight": 0,
-                    "paddingTop": 0,
-                    "width": 24,
-                  }
-                }
-              >
-                <View
-                  name="close"
-                  style={
-                    Object {
-                      "color": "#8B939E",
-                      "fontSize": 14,
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 0,
-                      "marginTop": 0,
-                      "paddingTop": 0,
-                    }
-                  }
-                />
-              </View>
-              <View
-                accessible={true}
-                focusable={true}
-                isTVSelectable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "backgroundColor": "#007AFF",
-                    "borderRadius": 17,
-                    "height": 24,
-                    "justifyContent": "center",
-                    "marginBottom": 0,
-                    "marginLeft": 10,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                    "opacity": 1,
-                    "paddingBottom": 0,
-                    "paddingLeft": 0,
-                    "paddingRight": 0,
-                    "paddingTop": 0,
-                    "width": 24,
-                  }
-                }
-              >
-                <View
-                  name="check"
-                  style={
-                    Object {
-                      "color": "#FCFDFF",
-                      "fontSize": 12,
-                      "marginBottom": 0,
-                      "marginLeft": 0,
-                      "marginRight": 0,
-                      "marginTop": 0,
-                      "paddingTop": 0,
-                    }
-                  }
-                />
-              </View>
             </View>
           </View>
         </View>
@@ -4476,33 +3578,37 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
       }
     >
       <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
+        backgroundColor={null}
+        diameter={48}
         style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#EBF0F6",
+              "borderRadius": 24,
+              "height": 48,
+              "justifyContent": "center",
+              "overflow": "hidden",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
         }
-      />
+      >
+        <View
+          name="received"
+          style={
+            Array [
+              Object {
+                "color": "#497391",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
     </View>
     <View
       style={
@@ -5338,33 +4444,37 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
       }
     >
       <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
+        backgroundColor={null}
+        diameter={48}
         style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#EBF0F6",
+              "borderRadius": 24,
+              "height": 48,
+              "justifyContent": "center",
+              "overflow": "hidden",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
         }
-      />
+      >
+        <View
+          name="sent"
+          style={
+            Array [
+              Object {
+                "color": "#BD573A",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
     </View>
     <View
       style={
@@ -8926,33 +8036,37 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
       }
     >
       <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
+        backgroundColor={null}
+        diameter={48}
         style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#EBF0F6",
+              "borderRadius": 24,
+              "height": 48,
+              "justifyContent": "center",
+              "overflow": "hidden",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
         }
-      />
+      >
+        <View
+          name="received"
+          style={
+            Array [
+              Object {
+                "color": "#497391",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
     </View>
     <View
       style={
@@ -9788,33 +8902,37 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
       }
     >
       <View
-        accessible={true}
-        focusable={false}
-        isTVSelectable={true}
-        onClick={[Function]}
-        onResponderGrant={[Function]}
-        onResponderMove={[Function]}
-        onResponderRelease={[Function]}
-        onResponderTerminate={[Function]}
-        onResponderTerminationRequest={[Function]}
-        onStartShouldSetResponder={[Function]}
+        backgroundColor={null}
+        diameter={48}
         style={
-          Object {
-            "alignItems": "center",
-            "borderColor": "#FFFFFF",
-            "borderRadius": 24,
-            "borderStyle": "solid",
-            "borderWidth": 0,
-            "display": "flex",
-            "height": 48,
-            "justifyContent": "center",
-            "opacity": 1,
-            "overflow": "hidden",
-            "position": "relative",
-            "width": 48,
-          }
+          Array [
+            Object {
+              "alignItems": "center",
+              "backgroundColor": "#EBF0F6",
+              "borderRadius": 24,
+              "height": 48,
+              "justifyContent": "center",
+              "overflow": "hidden",
+              "textAlign": "center",
+              "width": 48,
+            },
+            undefined,
+          ]
         }
-      />
+      >
+        <View
+          name="sent"
+          style={
+            Array [
+              Object {
+                "color": "#BD573A",
+                "fontSize": 48,
+              },
+              undefined,
+            ]
+          }
+        />
+      </View>
     </View>
     <View
       style={
@@ -10379,6 +9497,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
         style={
           Object {
             "alignItems": "center",
+            "backgroundColor": "#d1d9e4",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -10392,7 +9511,50 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "height": "100%",
+                "justifyContent": "center",
+                "position": "absolute",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#FCFDFF",
+                      "fontSize": 16,
+                    },
+                    undefined,
+                  ],
+                ],
+              ]
+            }
+          >
+            J
+          </Text>
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -10627,6 +9789,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
         style={
           Object {
             "alignItems": "center",
+            "backgroundColor": "#d1d9e4",
             "borderColor": "#FFFFFF",
             "borderRadius": 24,
             "borderStyle": "solid",
@@ -10640,7 +9803,50 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
             "width": 48,
           }
         }
-      />
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "height": "100%",
+                "justifyContent": "center",
+                "position": "absolute",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#FCFDFF",
+                      "fontSize": 16,
+                    },
+                    undefined,
+                  ],
+                ],
+              ]
+            }
+          >
+            J
+          </Text>
+        </View>
+      </View>
     </View>
     <View
       style={
@@ -11097,20 +10303,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -11126,7 +10318,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -11370,20 +10562,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -11399,7 +10577,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -11750,20 +10928,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -11779,7 +10943,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -12003,20 +11167,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -12032,7 +11182,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -12075,34 +11225,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -12225,6 +11347,132 @@ Array [
         Object {
           "alignItems": "center",
           "alignSelf": "auto",
+          "backgroundColor": "#e6f1f9",
+          "borderColor": "#EDEDED",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": false,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#EDEDED",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#e6f1f9",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        Send back
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
           "backgroundColor": "transparent",
           "borderColor": "transparent",
           "borderRadius": 6,
@@ -12323,7 +11571,7 @@ Array [
           }
         }
       >
-        Send back
+        Invite to Pillar
       </Text>
     </View>
     <View
@@ -12412,20 +11660,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -12441,7 +11675,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -12949,20 +12183,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -12978,7 +12198,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -13486,20 +12706,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -13515,7 +12721,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -14008,20 +13214,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -14037,7 +13229,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -14486,20 +13678,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -14515,7 +13693,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -15008,20 +14186,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -15037,7 +14201,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -15530,20 +14694,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -15559,7 +14709,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -15932,20 +15082,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -15961,7 +15097,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -16004,34 +15140,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -16350,20 +15458,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -16379,7 +15473,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -16422,34 +15516,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -16766,20 +15832,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -16795,7 +15847,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -17412,20 +16464,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -17441,7 +16479,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -17920,20 +16958,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -17949,7 +16973,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -18428,20 +17452,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -18457,7 +17467,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -18808,20 +17818,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -18837,7 +17833,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -19188,20 +18184,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -19217,7 +18199,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -19713,20 +18695,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -19742,7 +18710,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -20238,20 +19206,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -20267,7 +19221,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -20763,20 +19717,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -20792,7 +19732,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -21288,20 +20228,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -21317,7 +20243,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -21360,34 +20286,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -21622,7 +20520,7 @@ Array [
           }
         }
       >
-        Send back
+        Invite to Pillar
       </Text>
     </View>
     <View
@@ -21711,20 +20609,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -21740,7 +20624,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -21783,34 +20667,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -21933,6 +20789,132 @@ Array [
         Object {
           "alignItems": "center",
           "alignSelf": "auto",
+          "backgroundColor": "#e6f1f9",
+          "borderColor": "#EDEDED",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": false,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#EDEDED",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#e6f1f9",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        Send back
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
           "backgroundColor": "transparent",
           "borderColor": "transparent",
           "borderRadius": 6,
@@ -22031,7 +21013,7 @@ Array [
           }
         }
       >
-        Send back
+        Invite to Pillar
       </Text>
     </View>
     <View
@@ -22120,20 +21102,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -22149,7 +21117,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -22545,20 +21513,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -22574,7 +21528,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -23082,20 +22036,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -23111,7 +22051,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -23154,34 +22094,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -23416,7 +22328,7 @@ Array [
           }
         }
       >
-        Send more
+        Invite to Pillar
       </Text>
     </View>
     <View
@@ -23505,20 +22417,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -23534,7 +22432,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -23577,34 +22475,6 @@ Array [
           },
           undefined,
         ]
-      }
-    />
-    <View
-      accessible={true}
-      focusable={false}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "alignItems": "center",
-          "borderColor": "#FFFFFF",
-          "borderRadius": 32,
-          "borderStyle": "solid",
-          "borderWidth": 0,
-          "display": "flex",
-          "height": 64,
-          "justifyContent": "center",
-          "opacity": 1,
-          "overflow": "hidden",
-          "position": "relative",
-          "width": 64,
-        }
       }
     />
   </View>,
@@ -23727,6 +22597,132 @@ Array [
         Object {
           "alignItems": "center",
           "alignSelf": "auto",
+          "backgroundColor": "#e6f1f9",
+          "borderColor": "#EDEDED",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": false,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#EDEDED",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#e6f1f9",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        Send more
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
           "backgroundColor": "transparent",
           "borderColor": "transparent",
           "borderRadius": 6,
@@ -23825,7 +22821,7 @@ Array [
           }
         }
       >
-        Send more
+        Invite to Pillar
       </Text>
     </View>
     <View
@@ -23914,20 +22910,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -23943,7 +22925,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -24339,20 +23321,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -24368,7 +23336,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -24876,20 +23844,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -24905,7 +23859,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -25258,20 +24212,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -25287,7 +24227,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -25766,20 +24706,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -25795,7 +24721,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -26244,20 +25170,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -26273,7 +25185,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}
@@ -26594,20 +25506,6 @@ Array [
         tiny={true}
       />
     </View>
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    />
   </View>,
   <View
     h={10}
@@ -26623,7 +25521,7 @@ Array [
   />,
   <View
     accessible={true}
-    focusable={true}
+    focusable={false}
     isTVSelectable={true}
     onClick={[Function]}
     onResponderGrant={[Function]}

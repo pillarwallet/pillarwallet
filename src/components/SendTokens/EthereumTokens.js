@@ -47,7 +47,6 @@ import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getContactsEnsName } from 'utils/contacts';
-import { getAccountName } from 'utils/accounts';
 
 // services
 import { buildERC721TransactionData, calculateGasEstimate } from 'services/assets';
@@ -60,7 +59,6 @@ import {
   useGasTokenSelector,
 } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
-import { contactsForSendFlowSelector } from 'selectors/contacts';
 import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
@@ -116,7 +114,6 @@ type Props = {
   isGasTokenSupported: boolean,
   isSmartAccount: boolean,
   useGasToken: boolean,
-  contacts: Option[],
   inactiveUserAccounts: Option[],
   assetsWithBalance: Option[],
   collectibles: Option[],
@@ -198,13 +195,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
   }
 
   setPreselectedValues = () => {
-    const {
-      navigation,
-      assetsWithBalance,
-      contacts,
-      inactiveUserAccounts,
-      collectibles,
-    } = this.props;
+    const { navigation, assetsWithBalance, collectibles } = this.props;
     const assetData = navigation.getParam('assetData');
     const contact = navigation.getParam('contact');
     if (assetData) {
@@ -217,9 +208,13 @@ class SendEthereumTokens extends React.Component<Props, State> {
       if (formattedSelectedAsset) this.handleAmountChange({ selector: formattedSelectedAsset, input: '' });
     }
     if (contact) {
-      const formattedContact = [...contacts, ...inactiveUserAccounts]
-        .find(({ name }) => name === contact.username || name === getAccountName(contact.type));
-      if (formattedContact) this.setReceiver(formattedContact);
+      const { userName, ethAddress } = contact;
+      const receiver = {
+        name: userName || ethAddress,
+        ethAddress,
+        value: ethAddress,
+      };
+      this.setReceiver(receiver);
     }
   };
 
@@ -563,7 +558,6 @@ class SendEthereumTokens extends React.Component<Props, State> {
       accountHistory,
       isGasTokenSupported,
       isSmartAccount,
-      contacts,
       inactiveUserAccounts,
       session,
     } = this.props;
@@ -597,7 +591,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
       <SendContainer
         customSelectorProps={{
           onOptionSelect: this.handleReceiverSelect,
-          options: contacts,
+          options: [],
           selectedOption: selectedContact,
           horizontalOptionsData: [{ data: [...inactiveUserAccounts] }],
         }}
@@ -662,7 +656,6 @@ const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
-  contacts: contactsForSendFlowSelector,
   inactiveUserAccounts: innactiveUserWalletForSendSellector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,

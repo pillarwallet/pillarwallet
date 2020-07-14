@@ -64,7 +64,6 @@ import {
 
 // types
 import type { Accounts } from 'models/Account';
-import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -100,8 +99,6 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   PPNTransactions: Transaction[],
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   history: Object[],
   fetchTransactionsHistory: () => void,
   theme: Theme,
@@ -268,8 +265,6 @@ class PPNView extends React.Component<Props, State> {
       accounts,
       smartWalletState,
       PPNTransactions,
-      contacts,
-      contactsSmartAddresses,
       baseFiatCurrency,
       rates,
       history,
@@ -305,8 +300,6 @@ class PPNView extends React.Component<Props, State> {
 
     const PPNTransactionsMapped = mapTransactionsHistory(
       PPNTransactions,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       TRANSACTION_EVENT,
     );
@@ -484,15 +477,12 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   balances: { data: balances },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  contacts,
-  contactsSmartAddresses,
   balances,
 });
 

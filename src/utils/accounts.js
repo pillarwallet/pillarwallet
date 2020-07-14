@@ -170,3 +170,11 @@ export const getSmartWalletAddress = (accounts: Accounts): ?string => {
 const getSupportedAccountTypes = () => Object.values(ACCOUNT_TYPES);
 
 export const isSupportedAccountType = (accountType: string) => getSupportedAccountTypes().includes(accountType);
+
+export const getInitials = (fullName: string = '') => {
+  return fullName
+    .split(' ')
+    .map(name => name.substring(0, 1))
+    .join('')
+    .toUpperCase();
+};

@@ -63,7 +63,6 @@ import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // services
 import Storage from 'services/storage';
-import ChatService from 'services/chat';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
@@ -76,7 +75,6 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
-import { signalInitAction } from './signalClientActions';
 import { initOnLoginSmartWalletAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
@@ -89,7 +87,6 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { labelUserAsLegacyAction } from './userActions';
-import { updateConnectionsAction } from './connectionsActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
 import {
@@ -99,7 +96,6 @@ import {
 
 
 const storage = Storage.getInstance('db');
-const chat = new ChatService();
 
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -171,16 +167,8 @@ export const loginAction = (
       }
 
       if (userState === REGISTERED) {
-        // signal credentials
-        const signalCredentials = {
-          userId: user.id,
-          username: user.username,
-          walletId: user.walletId,
-          ethAddress: wallet.address,
-        };
-
         // oauth fallback method for expired access token
-        const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+        const updateOAuth = updateOAuthTokensCB(dispatch);
 
         // oauth fallback method for all tokens expired or invalid
         const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
@@ -217,9 +205,6 @@ export const loginAction = (
           // and show exchange button on supported asset screen only
           dispatch(getExchangeSupportedAssetsAction());
         }
-
-        // perform signal init
-        dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
 
         // init smart wallet
         if (wallet.privateKey && userHasSmartWallet(accounts)) {
@@ -277,7 +262,6 @@ export const loginAction = (
       }
 
       dispatch(fetchTransactionsHistoryAction());
-      if (user.walletId) dispatch(updateConnectionsAction());
       dispatch(fetchReferralRewardAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
@@ -408,7 +392,6 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete().catch(() => {});
-  await chat.client.resetAccount().catch(() => null);
   await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();

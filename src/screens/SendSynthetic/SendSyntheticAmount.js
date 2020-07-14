@@ -22,7 +22,6 @@ import * as React from 'react';
 import { Alert, Keyboard } from 'react-native';
 import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 
@@ -47,10 +46,6 @@ import {
   SEND_SYNTHETIC_CONFIRM,
   SEND_TOKEN_CONFIRM,
 } from 'constants/navigationConstants';
-import { CHAT } from 'constants/chatConstants';
-
-// selectors
-import { contactsByWalletForSendSelector } from 'selectors/contacts';
 
 // models, types
 import type { AssetData } from 'models/Asset';
@@ -64,10 +59,8 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isOnline: boolean,
   fetchSingleAssetRates: (assetCode: string) => void,
-  contactsSmartAddressesSynced: boolean,
   isOnline: boolean,
   isFetchingSyntheticAssets: boolean,
-  contactsByWallet: Option[],
   fetchAvailableSyntheticAssets: () => void,
 };
 
@@ -116,17 +109,22 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   }
 
   setPreselectedValues = () => {
-    const { navigation, contactsByWallet } = this.props;
+    const { navigation } = this.props;
     const contact = navigation.getParam('contact');
     if (contact) {
-      const formattedContact = contactsByWallet.find(({ name }) => name === contact.username);
-      if (formattedContact) this.setReceiver(formattedContact);
+      const { userName, ethAddress } = contact;
+      const receiver = {
+        name: userName || ethAddress,
+        ethAddress,
+        value: ethAddress,
+      };
+      this.setReceiver(receiver);
     }
   };
 
   handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
     const { navigation } = this.props;
-    const { name, hasSmartWallet } = value;
+    const { hasSmartWallet } = value;
 
     if (hasSmartWallet) {
       this.setReceiver(value, onSuccess);
@@ -135,7 +133,6 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         'This user is not on Pillar Network',
         'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
         [
-          { text: 'Open Chat', onPress: () => navigation.navigate(CHAT, { username: name }) },
           { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
           { text: 'Cancel', style: 'cancel' },
         ],
@@ -249,7 +246,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOnline, contactsByWallet, isFetchingSyntheticAssets } = this.props;
+    const { isOnline, isFetchingSyntheticAssets } = this.props;
     const {
       value,
       submitPressed,
@@ -268,7 +265,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       <SendContainer
         customSelectorProps={{
           onOptionSelect: this.handleReceiverSelect,
-          options: contactsByWallet,
+          options: [],
           selectedOption: selectedContact,
         }}
         customValueSelectorProps={{
@@ -293,21 +290,11 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  session: { data: { isOnline, contactsSmartAddressesSynced } },
+  session: { data: { isOnline } },
   synthetics: { isFetching: isFetchingSyntheticAssets },
 }: RootReducerState): $Shape<Props> => ({
   isOnline,
-  contactsSmartAddressesSynced,
   isFetchingSyntheticAssets,
-});
-
-const structuredSelector = createStructuredSelector({
-  contactsByWallet: contactsByWalletForSendSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -316,4 +303,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAmount);
+export default connect(mapStateToProps, mapDispatchToProps)(SendSyntheticAmount);

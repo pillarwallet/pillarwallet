@@ -363,6 +363,7 @@ class SelectorOptions extends React.Component<Props, State> {
       horizontalOptionsData = [],
       searchPlaceholder,
       iconProps,
+      allowEnteringCustomAddress,
     } = this.props;
     const {
       query,
@@ -393,6 +394,7 @@ class SelectorOptions extends React.Component<Props, State> {
 
     const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
       && !filteredHorizontalOptionsData.some(({ data }) => data.length);
+    const emptyStateMessage = allowEnteringCustomAddress ? 'Enter valid address' : 'Nothing found';
 
     const extendedHeaderItems = {
       value: 'extendedHeaderItems',
@@ -403,7 +405,7 @@ class SelectorOptions extends React.Component<Props, State> {
           <OptionsHeader>{optionsTitle}</OptionsHeader>}
           {showEmptyState &&
           <EmptyStateWrapper fullScreen>
-            <EmptyStateParagraph title="Nothing found" />
+            <EmptyStateParagraph title={emptyStateMessage} />
           </EmptyStateWrapper>
           }
         </>),

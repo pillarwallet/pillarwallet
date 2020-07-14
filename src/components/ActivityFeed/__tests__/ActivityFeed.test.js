@@ -29,10 +29,8 @@ import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 import { initialState as historyState } from 'reducers/historyReducer';
-import { initialState as contactsState } from 'reducers/contactsReducer';
 import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
-import { initialState as txNotesState } from 'reducers/txNoteReducer';
 import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as referralsState } from 'reducers/referralsReducer';
@@ -41,11 +39,9 @@ import { initialState as referralsState } from 'reducers/referralsReducer';
 const mockStore = configureMockStore([thunk]);
 
 const initialStore = mockStore({
-  contacts: contactsState,
   assets: assetsState,
   accounts: accountsState,
   history: historyState,
-  txNotes: txNotesState,
   ensRegistry: ensRegistryState,
   smartWallet: smartWalletState,
   referrals: referralsState,

@@ -17,40 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import isEmpty from 'lodash.isempty';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
-import { signalInitAction } from 'actions/signalClientActions';
 import { saveDbAction } from 'actions/dbActions';
 import { lockScreenAction } from 'actions/authActions';
-import { updateSignalInitiatedStateAction } from 'actions/sessionActions';
-import { stopListeningChatWebSocketAction } from 'actions/notificationsActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
-import type { SignalCredentials } from 'models/Config';
-
 
 export type OAuthTokens = {
   refreshToken: ?string,
   accessToken: ?string,
 };
 
-export const updateOAuthTokensCB = (dispatch: Dispatch, signalCredentials?: SignalCredentials) => {
+export const updateOAuthTokensCB = (dispatch: Dispatch) => {
   return async (oAuthTokens: OAuthTokens) => {
     dispatch({
       type: UPDATE_OAUTH_TOKENS,
       payload: oAuthTokens,
     });
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
-    if (!isEmpty(signalCredentials) && !isEmpty(oAuthTokens)) {
-      await dispatch(signalInitAction({ ...signalCredentials, ...oAuthTokens }));
-    }
   };
 };
 
 export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
-    dispatch(stopListeningChatWebSocketAction());
-    dispatch(updateSignalInitiatedStateAction(false));
     dispatch(lockScreenAction(
       refreshTokensCallback,
       'Login session expired, please enter your PIN to proceed.',

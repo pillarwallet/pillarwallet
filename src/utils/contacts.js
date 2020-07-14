@@ -18,12 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
-import { STATUS_BLOCKED } from 'constants/connectionsConstants';
 import Toast from 'components/Toast';
-import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
-import { addressesEqual } from './assets';
-import { isCaseInsensitiveMatch, resolveEnsName } from './common';
+import { resolveEnsName } from './common';
 import { isEnsName } from './validators';
 
 export const getUserName = (contact: ?Object) => {
@@ -37,28 +33,6 @@ export const getInitials = (fullName: string = '') => {
     .map(name => name.substring(0, 1))
     .join('')
     .toUpperCase();
-};
-
-export const findMatchingContact = (
-  address: string,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
-) => {
-  return contacts.find(({ id: contactId, ethAddress }) =>
-    addressesEqual(address, ethAddress) || !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
-      isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
-    ),
-  );
-};
-
-export const isContactAvailable = (contact: ApiUser) => {
-  // if no contact status at all then it means disconnected status
-  return !!contact.status && contact.status !== STATUS_BLOCKED;
-};
-
-export const findContactIdByUsername = (contacts: ApiUser[], username: string): string => {
-  const foundContact = contacts.find(contact => isCaseInsensitiveMatch(contact.username, username));
-  return get(foundContact, 'id', '');
 };
 
 export const getContactsEnsName = async (address: ?string) => {

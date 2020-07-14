@@ -72,10 +72,6 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
 
 export const featureFlagsSelector = ({ featureFlags }: RootReducerState) => featureFlags.data;
 
-export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
-export const contactsSmartWalletAddressesSelector = ({ contacts }: RootReducerState) =>
-  contacts.contactsSmartAddresses.addresses;
-
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
 export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
 

@@ -172,13 +172,14 @@ class Selector extends React.Component<Props, State> {
     const { areOptionsVisible, isScanning } = this.state;
     const hasValue = !isEmpty(selectedOption);
     const hasOptions = !!options?.length;
-    const placeholderText = hasOptions ? `${placeholder}...` : 'no options to select';
+    const disabled = !hasOptions && !allowEnteringCustomAddress;
+    const placeholderText = !disabled ? `${placeholder}...` : 'no options to select';
 
     return (
       <>
         <Wrapper style={wrapperStyle}>
           <MediumText regular accent>{label}: </MediumText>
-          <SelectedOption onPress={this.openOptions} disabled={!hasOptions}>
+          <SelectedOption onPress={this.openOptions} disabled={disabled}>
             {hasValue
               ? this.renderOption(selectedOption, this.openOptions)
               : <MediumText big style={{ paddingHorizontal: spacing.layoutSides }}>{placeholderText}</MediumText>}
