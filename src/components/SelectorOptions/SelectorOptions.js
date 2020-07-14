@@ -72,10 +72,10 @@ type Props = {
 };
 
 type State = {
-  query: string,
+  query: ?string,
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
-  activeTab?: string,
+  activeTab: ?string,
 };
 
 
@@ -149,10 +149,10 @@ class SelectorOptions extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
-      query: '',
+      query: null,
       customAddressAsAnOption: null,
       hasSearchError: false,
-      activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : '',
+      activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
   }
 
@@ -303,7 +303,7 @@ class SelectorOptions extends React.Component<Props, State> {
 
   resetOptions = () => {
     const { onHidden } = this.props;
-    this.setState({ query: '' });
+    this.setState({ query: null });
     Keyboard.dismiss();
     if (onHidden) onHidden();
   };

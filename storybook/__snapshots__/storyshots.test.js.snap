@@ -27719,7 +27719,7 @@ exports[`Storyshots Selector default 1`] = `
                               "autoCapitalize": "none",
                               "onChange": [Function],
                               "validator": [Function],
-                              "value": "",
+                              "value": null,
                             }
                           }
                           inputRef={[Function]}
@@ -27863,7 +27863,7 @@ exports[`Storyshots Selector default 1`] = `
                               }
                               underlineColorAndroid="transparent"
                               validator={[Function]}
-                              value=""
+                              value={null}
                             />
                             <View
                               accessible={true}
@@ -29024,7 +29024,7 @@ exports[`Storyshots Selector no options 1`] = `
                               "autoCapitalize": "none",
                               "onChange": [Function],
                               "validator": [Function],
-                              "value": "",
+                              "value": null,
                             }
                           }
                           inputRef={[Function]}
@@ -29164,7 +29164,7 @@ exports[`Storyshots Selector no options 1`] = `
                               }
                               underlineColorAndroid="transparent"
                               validator={[Function]}
-                              value=""
+                              value={null}
                             />
                             <View
                               accessible={true}
@@ -30172,7 +30172,7 @@ exports[`Storyshots Selector selected option 1`] = `
                               "autoCapitalize": "none",
                               "onChange": [Function],
                               "validator": [Function],
-                              "value": "",
+                              "value": null,
                             }
                           }
                           inputRef={[Function]}
@@ -30316,7 +30316,7 @@ exports[`Storyshots Selector selected option 1`] = `
                               }
                               underlineColorAndroid="transparent"
                               validator={[Function]}
-                              value=""
+                              value={null}
                             />
                             <View
                               accessible={true}
@@ -31477,7 +31477,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                               "autoCapitalize": "none",
                               "onChange": [Function],
                               "validator": [Function],
-                              "value": "",
+                              "value": null,
                             }
                           }
                           inputRef={[Function]}
@@ -31621,7 +31621,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                               }
                               underlineColorAndroid="transparent"
                               validator={[Function]}
-                              value=""
+                              value={null}
                             />
                             <View
                               accessible={true}
@@ -32782,7 +32782,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               "autoCapitalize": "none",
                               "onChange": [Function],
                               "validator": [Function],
-                              "value": "",
+                              "value": null,
                             }
                           }
                           inputRef={[Function]}
@@ -32967,7 +32967,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               }
                               underlineColorAndroid="transparent"
                               validator={[Function]}
-                              value=""
+                              value={null}
                             />
                             <View
                               accessible={true}
@@ -34569,7 +34569,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           "autoCapitalize": "none",
                                           "onChange": [Function],
                                           "validator": [Function],
-                                          "value": "",
+                                          "value": null,
                                         }
                                       }
                                       inputRef={[Function]}
@@ -34748,7 +34748,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           }
                                           underlineColorAndroid="transparent"
                                           validator={[Function]}
-                                          value=""
+                                          value={null}
                                         />
                                         <View
                                           accessible={true}
@@ -36288,7 +36288,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           "autoCapitalize": "none",
                                           "onChange": [Function],
                                           "validator": [Function],
-                                          "value": "",
+                                          "value": null,
                                         }
                                       }
                                       inputRef={[Function]}
@@ -36467,7 +36467,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           }
                                           underlineColorAndroid="transparent"
                                           validator={[Function]}
-                                          value=""
+                                          value={null}
                                         />
                                         <View
                                           accessible={true}
@@ -37867,7 +37867,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           "autoCapitalize": "none",
                                           "onChange": [Function],
                                           "validator": [Function],
-                                          "value": "",
+                                          "value": null,
                                         }
                                       }
                                       inputRef={[Function]}
@@ -38046,7 +38046,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           }
                                           underlineColorAndroid="transparent"
                                           validator={[Function]}
-                                          value=""
+                                          value={null}
                                         />
                                         <View
                                           accessible={true}
