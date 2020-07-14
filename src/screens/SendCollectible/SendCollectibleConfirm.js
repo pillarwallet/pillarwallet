@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import { BackHandler, Keyboard, Platform } from 'react-native';
+import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -17,12 +17,11 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // constants
-import { SEND_COLLECTIBLE_CONTACTS, SEND_TOKEN_ASSETS, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { findMatchingContact, getUserName } from 'utils/contacts';
-import { formatTransactionFee, getEthereumProvider, noop } from 'utils/common';
+import { formatTransactionFee, getEthereumProvider } from 'utils/common';
 import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getAccountName } from 'utils/accounts';
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -46,13 +45,10 @@ import type { GasInfo } from 'models/GasInfo';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset, Assets, Balances } from 'models/Asset';
-import type { ContactSmartAddressData } from 'models/Contacts';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
-  contacts: Object[],
   fetchGasInfo: Function,
   gasInfo: GasInfo,
   wallet: Object,
@@ -61,13 +57,11 @@ type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   balances: Balances,
-  contactsSmartAddresses: ContactSmartAddressData[],
   isSmartAccount: boolean,
   useGasToken: boolean,
 };
 
 type State = {
-  note: ?string,
   rinkebyETH: string,
   gettingFee: boolean,
   gasLimit: number,
@@ -91,7 +85,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.isRopstenNetwork = NETWORK_PROVIDER === 'ropsten';
 
     this.state = {
-      note: null,
       rinkebyETH: '',
       gasLimit: 0,
       gettingFee: true,
@@ -101,7 +94,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   componentDidMount() {
     const { fetchGasInfo, isSmartAccount } = this.props;
-    if (Platform.OS === 'android') BackHandler.addEventListener('hardwareBackPress', this.handleBackAction);
     if (!isSmartAccount) {
       fetchGasInfo();
     }
@@ -119,13 +111,9 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     }
   }
 
-  componentWillUnmount() {
-    if (Platform.OS === 'android') BackHandler.removeEventListener('hardwareBackPress', this.handleBackAction);
-  }
-
   getTransactionPayload = (): CollectibleTransactionPayload => {
     const { activeAccountAddress } = this.props;
-    const { txFeeInfo, note } = this.state;
+    const { txFeeInfo } = this.state;
     const {
       name,
       tokenType,
@@ -142,7 +130,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       tokenType,
       tokenId,
       txFeeInWei: txFeeInfo?.fee || new BigNumber(0),
-      note,
     };
   };
 
@@ -150,27 +137,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.setState({ gettingFee: true }, () => {
       this.calculateTransactionFee();
     });
-  };
-
-  handleBackAction = () => {
-    const { navigation, contacts } = this.props;
-    const backTo = navigation.getParam('backTo');
-    switch (backTo) {
-      case SEND_COLLECTIBLE_CONTACTS:
-        navigation.navigate(SEND_COLLECTIBLE_CONTACTS, { assetData: this.assetData });
-        break;
-      case SEND_TOKEN_ASSETS:
-        const contact = contacts.find(({ ethAddress }) => addressesEqual(this.receiver, ethAddress));
-        if (!contact) {
-          // this is impossible, but rather dismiss whole flow than follow faulty
-          navigation.dismiss();
-          break;
-        }
-        navigation.navigate(SEND_TOKEN_ASSETS, { contact });
-        break;
-      default:
-        navigation.goBack();
-    }
   };
 
   fetchETHBalanceInRinkeby = async () => {
@@ -264,31 +230,22 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     });
   };
 
-  handleNoteChange = (text) => {
-    this.setState({ note: text });
-  };
-
   render() {
     const {
-      contacts,
       session,
       accounts,
-      contactsSmartAddresses,
       balances,
     } = this.props;
     const {
       rinkebyETH,
       gettingFee,
-      note,
       txFeeInfo,
     } = this.state;
     const { name } = this.assetData;
 
     // recipient
     const to = this.receiver;
-    const contact = findMatchingContact(to, contacts, contactsSmartAddresses);
-    const recipientUsername = getUserName(contact);
-    const userAccount = !recipientUsername ? accounts.find(({ id }) => addressesEqual(id, to)) : null;
+    const userAccount = accounts.find(({ id }) => addressesEqual(id, to));
 
     let isEnoughForFee = true;
     let feeDisplayValue = '';
@@ -322,13 +279,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         value: name,
       },
     ];
-
-    if (recipientUsername) {
-      reviewData.push({
-        label: 'Recipient Username',
-        value: recipientUsername,
-      });
-    }
 
     if (this.receiverEnsName) {
       reviewData.push({
@@ -370,33 +320,24 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         onConfirm={this.handleFormSubmit}
         submitButtonTitle={confirmButtonTitle}
         contentContainerStyle={{ marginTop: 40 }}
-        customOnBack={this.handleBackAction}
         errorMessage={errorMessage}
-        onTextChange={session.isOnline && !!recipientUsername ? this.handleNoteChange : noop}
-        textInputValue={note}
       />
     );
   }
 }
 
 const mapStateToProps = ({
-  contacts: {
-    data: contacts,
-    contactsSmartAddresses: { addresses: contactsSmartAddresses },
-  },
   session: { data: session },
   history: { gasInfo },
   wallet: { data: wallet },
   accounts: { data: accounts },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
   session,
   gasInfo,
   wallet,
   accounts,
   supportedAssets,
-  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

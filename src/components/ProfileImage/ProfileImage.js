@@ -22,7 +22,7 @@ import { ImageBackground } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { fontSizes } from 'utils/variables';
-import { getInitials } from 'utils/contacts';
+import { getInitials } from 'utils/accounts';
 import { getThemeType, themedColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 import { Shadow } from 'components/Shadow';

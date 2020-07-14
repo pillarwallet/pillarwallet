@@ -29,10 +29,6 @@ import Icon from 'components/Icon';
 
 import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-} from 'constants/invitationsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -78,18 +74,6 @@ const getEventInfo = (eventType, eventStatus, colors) => {
     return {
       title: 'Pending',
       iconName: 'pending-circle',
-    };
-  }
-  if (eventStatus === TYPE_RECEIVED) {
-    return {
-      title: 'Incoming connection',
-      iconName: 'connection-circle',
-    };
-  }
-  if (eventStatus === TYPE_ACCEPTED) {
-    return {
-      title: 'Connection established',
-      iconName: 'connection-circle',
     };
   }
   if (eventType === COLLECTIBLE_TRANSACTION) {

@@ -32,7 +32,7 @@ import type { EventData } from 'components/ActivityFeed/ActivityFeedItem';
 // components
 import Title from 'components/Title';
 import Tabs from 'components/Tabs';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
 import EventDetails from 'components/EventDetails';
@@ -43,15 +43,11 @@ import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // constants
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { USER_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 
 const ActivityFeedList = styled.FlatList`
@@ -86,6 +82,22 @@ const EmptyStateWrapper = styled.View`
   justify-content: center;
 `;
 
+const CardHeaderWrapper = styled.View`
+  border-top-left-radius: 30px;
+  border-top-right-radius: 30px;
+  background-color: ${themedColors.card};
+  padding: 13px 20px 17px;
+  margin-top: 16px;
+  ${({ theme }) => theme.current === LIGHT_THEME && `
+    box-shadow: 0px 2px 7px rgba(0,0,0,.1);
+    elevation: 1;
+  `}
+`;
+
+const CardBackgroundWrapper = styled.View`
+  background-color: ${({ theme, card }) => card ? theme.colors.card : theme.colors.surface};
+`;
+
 type EmptyState = {|
   title?: string,
   textBody?: string,
@@ -104,9 +116,6 @@ type Tab = {|
 |};
 
 type Props = {
-  onAcceptInvitation: Function,
-  onCancelInvitation: Function,
-  onRejectInvitation: Function,
   navigation: NavigationScreenProp<*>,
   feedTitle?: string,
   wrapperStyle?: Object,
@@ -126,6 +135,8 @@ type Props = {
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
+  card?: boolean,
+  cardHeaderTitle?: string,
 };
 
 type State = {|
@@ -141,6 +152,7 @@ const ITEM_TYPE = {
   SECTION: 'SECTION',
   ITEM: 'ITEM',
   EMPTY_STATE: 'EMPTY_STATE',
+  CARD_HEADER: 'CARD_HEADER',
 };
 
 class ActivityFeed extends React.Component<Props, State> {
@@ -156,7 +168,7 @@ class ActivityFeed extends React.Component<Props, State> {
   };
 
   generateFeedSections = memoize(
-    (tabs, activeTab, feedData, headerComponent, tabsComponent) => {
+    (tabs, activeTab, feedData, headerComponent, tabsComponent, card) => {
       let feedList = feedData || [];
 
       if (tabs.length) {
@@ -174,6 +186,9 @@ class ActivityFeed extends React.Component<Props, State> {
       if (!filteredFeedList.length) {
         items.push({ type: ITEM_TYPE.EMPTY_STATE });
       } else {
+        if (card) {
+          items.push({ type: ITEM_TYPE.CARD_HEADER });
+        }
         dataSections.forEach(({ data, ...section }) => {
           items.push({ type: ITEM_TYPE.SECTION, section });
           data.forEach(item => items.push({ type: ITEM_TYPE.ITEM, item }));
@@ -216,12 +231,18 @@ class ActivityFeed extends React.Component<Props, State> {
   shouldRenderActivityItem = (item: Object) => {
     const typesThatRender = [
       USER_EVENT, TRANSACTION_EVENT, COLLECTIBLE_TRANSACTION, BADGE_REWARD_EVENT,
-      TYPE_SENT, TYPE_RECEIVED, TYPE_ACCEPTED,
     ];
     return typesThatRender.includes(item.type);
   };
 
   renderActivityFeedItem = ({ item }) => {
+    const {
+      isPPNView,
+      isForAllAccounts,
+      isAssetView,
+      card,
+      cardHeaderTitle,
+    } = this.props;
     switch (item.type) {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
@@ -235,28 +256,29 @@ class ActivityFeed extends React.Component<Props, State> {
         );
       case ITEM_TYPE.SECTION:
         return (
-          <SectionHeaderWrapper>
-            <SectionHeader>{item.section.title}</SectionHeader>
-          </SectionHeaderWrapper>
+          <CardBackgroundWrapper card={card}>
+            <SectionHeaderWrapper>
+              <SectionHeader>{item.section.title}</SectionHeader>
+            </SectionHeaderWrapper>
+          </CardBackgroundWrapper>
+        );
+      case ITEM_TYPE.CARD_HEADER:
+        return (
+          <CardHeaderWrapper>
+            <MediumText big>{cardHeaderTitle}</MediumText>
+          </CardHeaderWrapper>
         );
       default:
-        const {
-          onRejectInvitation,
-          onAcceptInvitation,
-          isPPNView,
-          isForAllAccounts,
-          isAssetView,
-        } = this.props;
         return (
-          <ActivityFeedItem
-            event={item.item}
-            selectEvent={this.selectEvent}
-            rejectInvitation={onRejectInvitation}
-            acceptInvitation={onAcceptInvitation}
-            isPPNView={isPPNView}
-            isAssetView={isAssetView}
-            isForAllAccounts={isForAllAccounts}
-          />
+          <CardBackgroundWrapper card={card}>
+            <ActivityFeedItem
+              event={item.item}
+              selectEvent={this.selectEvent}
+              isPPNView={isPPNView}
+              isAssetView={isAssetView}
+              isForAllAccounts={isForAllAccounts}
+            />
+          </CardBackgroundWrapper>
         );
     }
   };
@@ -277,6 +299,7 @@ class ActivityFeed extends React.Component<Props, State> {
       case ITEM_TYPE.HEADER:
       case ITEM_TYPE.TABS:
       case ITEM_TYPE.EMPTY_STATE:
+      case ITEM_TYPE.CARD_HEADER:
         return item.type;
       case ITEM_TYPE.SECTION:
         return item.section.title;
@@ -306,9 +329,8 @@ class ActivityFeed extends React.Component<Props, State> {
       headerComponent,
       tabsComponent,
       flatListProps,
-      onRejectInvitation,
-      onAcceptInvitation,
       isForAllAccounts,
+      card,
     } = this.props;
 
     const {
@@ -318,7 +340,9 @@ class ActivityFeed extends React.Component<Props, State> {
       selectedEventItemData,
     } = this.state;
 
-    const formattedFeedData = this.generateFeedSections(tabs, activeTab, feedData, headerComponent, tabsComponent);
+    const formattedFeedData = this.generateFeedSections(
+      tabs, activeTab, feedData, headerComponent, tabsComponent, card,
+    );
 
     const firstTab = tabs.length ? tabs[0].id : '';
 
@@ -361,8 +385,6 @@ class ActivityFeed extends React.Component<Props, State> {
             itemData={selectedEventItemData}
             navigation={navigation}
             onClose={this.handleClose}
-            rejectInvitation={onRejectInvitation}
-            acceptInvitation={onAcceptInvitation}
             isForAllAccounts={isForAllAccounts}
           />
         }

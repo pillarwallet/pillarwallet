@@ -26,6 +26,7 @@ type Props = {
   onRead: (code: string) => void,
   onCancel: () => void,
   isActive: boolean,
+  onModalHidden?: () => void,
 };
 
 const AddressScanner = (props: Props) => {
@@ -36,6 +37,7 @@ const AddressScanner = (props: Props) => {
       isActive={props.isActive}
       onCancel={props.onCancel}
       onRead={props.onRead}
+      onModalHidden={props.onModalHidden}
     />
   );
 };

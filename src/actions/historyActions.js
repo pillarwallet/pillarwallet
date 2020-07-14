@@ -83,7 +83,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 // actions
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
-import { getExistingTxNotesAction } from './txNoteActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
@@ -136,7 +135,6 @@ export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: n
 
     if (!history.length) return;
 
-    dispatch(getExistingTxNotesAction());
     syncAccountHistory(history, accountId, dispatch, getState);
   };
 };
@@ -183,7 +181,6 @@ export const fetchSmartWalletTransactionsAction = () => {
       dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
     }
 
-    dispatch(getExistingTxNotesAction());
     syncAccountHistory(history, accountId, dispatch, getState);
     dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
   };

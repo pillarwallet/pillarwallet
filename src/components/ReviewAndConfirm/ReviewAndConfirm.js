@@ -28,7 +28,6 @@ import { ScrollWrapper } from 'components/Layout';
 import { Label, MediumText, Paragraph } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 
 import { fontSizes, spacing } from 'utils/variables';
@@ -45,8 +44,6 @@ type Props = {
   reviewData: Data[],
   isConfirmDisabled?: boolean,
   onConfirm: () => void | Promise<void>,
-  onTextChange?: (text: string) => void,
-  textInputValue?: ?string,
   submitButtonTitle?: string,
   contentContainerStyle?: Object,
   customOnBack?: () => void,
@@ -87,8 +84,6 @@ const ReviewAndConfirm = (props: Props) => {
     reviewData = [],
     isConfirmDisabled,
     onConfirm,
-    onTextChange,
-    textInputValue,
     submitButtonTitle,
     contentContainerStyle,
     customOnBack,
@@ -128,20 +123,6 @@ const ReviewAndConfirm = (props: Props) => {
             </LabeledRow>
           );
         })
-        }
-        {!!onTextChange &&
-        <TextInput
-          inputProps={{
-            onChange: (text) => onTextChange(text),
-            value: textInputValue,
-            autoCapitalize: 'none',
-            multiline: true,
-            numberOfLines: 3,
-            placeholder: 'Add a note to this transaction',
-          }}
-          keyboardAvoidance
-          inputWrapperStyle={{ marginTop: spacing.medium }}
-        />
         }
       </ScrollWrapper>
     </ContainerWithHeader>

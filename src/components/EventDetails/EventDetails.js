@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { View, Linking, Alert } from 'react-native';
+import { View, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
@@ -35,13 +35,11 @@ import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
-import ProfileImage from 'components/ProfileImage';
 import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
-import ButtonText from 'components/ButtonText';
 import Spinner from 'components/Spinner';
 
 // utils
@@ -62,8 +60,6 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { createAlert } from 'utils/alerts';
-import { findMatchingContact } from 'utils/contacts';
 import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
@@ -72,12 +68,6 @@ import { isPoolTogetherAddress } from 'utils/poolTogether';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
-import {
-  TYPE_RECEIVED,
-  TYPE_ACCEPTED,
-  TYPE_REJECTED,
-  TYPE_SENT,
-} from 'constants/invitationsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -106,10 +96,9 @@ import {
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_FROM_HOME_FLOW,
-  SEND_SYNTHETIC_ASSET,
+  SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
-  CONTACT,
   LENDING_ENTER_WITHDRAW_AMOUNT,
   LENDING_ENTER_DEPOSIT_AMOUNT,
   LENDING_VIEW_DEPOSITED_ASSET,
@@ -139,13 +128,11 @@ import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { getTxNoteByContactAction } from 'actions/txNoteActions';
 import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Rates, Assets, Asset, DepositedAsset } from 'models/Asset';
-import type { ContactSmartAddressData, ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
@@ -156,7 +143,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
-import type { TxNote } from 'reducers/txNoteReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 
@@ -166,12 +152,8 @@ type Props = {
   event: Object,
   isVisible: boolean,
   onClose: (?(() => void)) => void,
-  rejectInvitation: (event: Object) => void,
-  acceptInvitation: (event: Object) => void,
   rates: Rates,
   baseFiatCurrency: ?string,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   user: Object,
   accounts: Accounts,
   ensRegistry: EnsRegistry,
@@ -195,8 +177,6 @@ type Props = {
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
-  getTxNoteByContact: (username: string) => void,
-  txNotes: TxNote[],
   collectiblesHistory: CollectibleTrx[],
   updateCollectibleTransaction: (hash: string) => void,
   updatingTransaction: string,
@@ -231,7 +211,6 @@ type EventData = {
   imageBorder?: boolean,
   imageBackground?: ?string,
   collectibleUrl?: ?string,
-  transactionNote?: string,
   isFailed?: boolean;
   errorMessage?: string,
 };
@@ -353,10 +332,9 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { event, getTxNoteByContact } = this.props;
-    const { type, username } = event;
+    const { event } = this.props;
+    const { type } = event;
     if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
-    getTxNoteByContact(username);
     const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
     if (!txInfo) return;
     this.syncEnsRegistry(txInfo);
@@ -364,8 +342,8 @@ export class EventDetail extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { event, isVisible, getTxNoteByContact } = this.props;
-    const { type, username } = event;
+    const { event, isVisible } = this.props;
+    const { type } = event;
     if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
     const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
     const trxStatus = txInfo?.status;
@@ -374,7 +352,6 @@ export class EventDetail extends React.Component<Props, State> {
         this.syncEnsRegistry(txInfo);
         this.syncTxStatus(txInfo);
       }
-      getTxNoteByContact(username);
     }
     if (prevProps.isVisible && !isVisible) {
       this.cleanup();
@@ -474,11 +451,6 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  sendTokensToContact = (contact: ApiUser) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, { contact });
-    this.props.onClose();
-  };
-
   sendTokensToAddress = (address: string) => {
     const { ensRegistry } = this.props;
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, {
@@ -488,20 +460,6 @@ export class EventDetail extends React.Component<Props, State> {
       },
     });
     this.props.onClose();
-  };
-
-  acceptInvitation = () => {
-    const { event, onClose, acceptInvitation } = this.props;
-    onClose();
-    acceptInvitation(event);
-  };
-
-  rejectInvitation = () => {
-    const { event, onClose, rejectInvitation } = this.props;
-    createAlert(TYPE_REJECTED, event, () => {
-      onClose();
-      rejectInvitation(event);
-    });
   };
 
   viewOnTheBlockchain = () => {
@@ -640,11 +598,15 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
-  sendSynthetic = async () => {
-    const { onClose, navigation } = this.props;
+  sendSynthetic = async (relatedAddress: string) => {
+    const { onClose, navigation, ensRegistry } = this.props;
     onClose();
     await this.switchToSW();
-    navigation.navigate(SEND_SYNTHETIC_ASSET);
+
+    const contactFromAddress = relatedAddress
+      && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
+    const contact = contactFromAddress;
+    navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
 
   settle = async () => {
@@ -718,18 +680,6 @@ export class EventDetail extends React.Component<Props, State> {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return 'Refer friends';
     return 'Invite friends';
-  };
-
-  getTrxNote = (event: Object) => {
-    const { txNotes } = this.props;
-    let transactionNote = event.note;
-    if (txNotes && txNotes.length > 0) {
-      const txNote = txNotes.find(txn => txn.txHash === event.hash);
-      if (txNote) {
-        transactionNote = txNote.text;
-      }
-    }
-    return transactionNote;
   };
 
   renderPoolTogetherTickets = (event: Object) => {
@@ -865,8 +815,6 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       assetDecimals,
       accounts,
-      contacts,
-      contactsSmartAddresses,
       isPPNActivated,
       itemData,
       referralRewardIssuersAddresses,
@@ -876,7 +824,6 @@ export class EventDetail extends React.Component<Props, State> {
 
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
-    const contact = findMatchingContact(relevantAddress, contacts, contactsSmartAddresses) || {};
     const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
@@ -1088,7 +1035,6 @@ export class EventDetail extends React.Component<Props, State> {
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
-        const transactionNote = this.getTrxNote(event);
 
         if (isPPNTransaction) {
           eventData = {
@@ -1100,7 +1046,6 @@ export class EventDetail extends React.Component<Props, State> {
               />
             ),
             actionSubtitle: !isTrxBetweenSWAccount ? `${isReceived ? 'to' : 'from'} Pillar Network` : '',
-            transactionNote,
           };
 
           if (isReceived) {
@@ -1110,7 +1055,7 @@ export class EventDetail extends React.Component<Props, State> {
               eventData.buttons = [
                 {
                   title: 'Send back',
-                  onPress: this.sendSynthetic,
+                  onPress: () => this.sendSynthetic(relevantAddress),
                   squarePrimary: true,
                 },
               ];
@@ -1119,7 +1064,7 @@ export class EventDetail extends React.Component<Props, State> {
             eventData.buttons = [
               {
                 title: 'Send more',
-                onPress: this.sendSynthetic,
+                onPress: () => this.sendSynthetic(relevantAddress),
                 secondary: true,
               },
             ];
@@ -1137,28 +1082,14 @@ export class EventDetail extends React.Component<Props, State> {
         } else {
           eventData = {
             actionTitle: fullItemValue,
-            transactionNote,
           };
 
           let buttons = [];
-          const contactFound = Object.keys(contact).length > 0;
           const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
-
-          const sendBackButtonSecondary = {
-            title: 'Send back',
-            onPress: () => this.sendTokensToContact(contact),
-            squarePrimary: true,
-          };
 
           const inviteToPillarButton = {
             title: 'Invite to Pillar',
             onPress: this.referFriends,
-            squarePrimary: true,
-          };
-
-          const sendMoreButtonSecondary = {
-            title: 'Send more',
-            onPress: () => this.sendTokensToContact(contact),
             squarePrimary: true,
           };
 
@@ -1199,15 +1130,11 @@ export class EventDetail extends React.Component<Props, State> {
               buttons = [sendFromSW, topUpMore];
             } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
               buttons = [sendFromKW];
-            } else if (contactFound) {
-              buttons = [sendBackButtonSecondary];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
-          } else if (contactFound) {
-            buttons = [sendMoreButtonSecondary];
           } else if (isBetweenAccounts) {
             buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
@@ -1238,11 +1165,9 @@ export class EventDetail extends React.Component<Props, State> {
     const { subtext, isReceived } = itemData;
 
     const isPending = isPendingTransaction(event);
-    const transactionNote = this.getTrxNote(event);
 
     let eventData: EventData = {
       actionSubtitle: subtext,
-      transactionNote,
     };
 
     if (isReceived) {
@@ -1289,53 +1214,6 @@ export class EventDetail extends React.Component<Props, State> {
     };
   };
 
-  getSocialEventData = (event: Object): ?EventData => {
-    const { contacts } = this.props;
-    const { type, username, profileImage } = event;
-    const acceptedContact = contacts.find(contact => contact.username === username);
-
-    if (type === TYPE_RECEIVED) {
-      return {
-        name: username,
-        profileImage,
-        actionTitle: 'Connection request',
-        buttons: [
-          {
-            title: 'Accept',
-            onPress: this.acceptInvitation,
-            secondary: true,
-          },
-          {
-            title: 'Reject',
-            onPress: this.rejectInvitation,
-            secondaryDanger: true,
-          },
-        ],
-        username,
-      };
-    }
-
-    if (!acceptedContact) return null;
-
-    if (type === TYPE_ACCEPTED) {
-      return {
-        name: username,
-        profileImage,
-        actionTitle: 'Connected',
-        buttons: [
-          {
-            title: 'Send tokens',
-            onPress: () => this.sendTokensToContact(acceptedContact),
-            squarePrimary: true,
-          },
-        ],
-        username,
-      };
-    }
-
-    return null;
-  };
-
   getEventData = (event: Object): ?EventData => {
     let eventData = null;
     switch (event.type) {
@@ -1351,11 +1229,6 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case BADGE_REWARD_EVENT:
         eventData = this.getBadgeRewardEventData(event);
-        break;
-      case TYPE_SENT:
-      case TYPE_RECEIVED:
-      case TYPE_ACCEPTED:
-        eventData = this.getSocialEventData(event);
         break;
       default:
         eventData = null;
@@ -1374,8 +1247,6 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       itemImageUrl,
       itemImageSource,
-      avatarUrl,
-      label,
       iconName,
       iconColor,
       iconBackgroundColor,
@@ -1429,16 +1300,7 @@ export class EventDetail extends React.Component<Props, State> {
         </IconCircle>
       );
     }
-
-    return (
-      <ProfileImage
-        uri={avatarUrl}
-        userName={label}
-        noShadow
-        borderWidth={0}
-        diameter={64}
-      />
-    );
+    return null;
   };
 
   getColor = (color: ?string): ?string => {
@@ -1510,16 +1372,6 @@ export class EventDetail extends React.Component<Props, State> {
     );
   };
 
-  showNote = (note: string) => {
-    return Alert.alert(
-      null,
-      note,
-      [
-        { text: 'OK' },
-      ],
-    );
-  };
-
   renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
     if (isReceived) return null;
@@ -1531,22 +1383,12 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  goToProfile = () => {
-    const { navigation, itemData: { username }, onClose } = this.props;
-
-    if (username) {
-      onClose();
-      navigation.navigate(CONTACT, { username });
-    }
-  };
-
   renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
     const { itemData } = this.props;
     const {
       date, name,
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
-      transactionNote,
       errorMessage,
     } = eventData;
 
@@ -1556,7 +1398,6 @@ export class EventDetail extends React.Component<Props, State> {
       fullItemValue,
       subtext,
       valueColor,
-      username,
       isReceived,
       statusIconColor,
     } = itemData;
@@ -1576,12 +1417,9 @@ export class EventDetail extends React.Component<Props, State> {
           <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
             <BaseText tiny secondary>{eventTime}</BaseText>
           </EventTimeHolder>
-          <ButtonHolder>
-            {!!transactionNote && <ButtonText onPress={() => this.showNote(transactionNote)} buttonText="Note" />}
-          </ButtonHolder>
         </Row>
         <Spacing h={10} />
-        <AvatarWrapper onPress={this.goToProfile} disabled={!username}>
+        <AvatarWrapper disabled>
           <BaseText medium>{label}</BaseText>
           <Spacing h={20} />
           {this.renderImage(itemData)}
@@ -1674,22 +1512,18 @@ export class EventDetail extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   user: { data: user },
   accounts: { data: accounts },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
   history: { data: history, updatingTransaction },
   referrals: { referralRewardIssuersAddresses, isPillarRewardCampaignActive },
-  txNotes: { data: txNotes },
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  contacts,
-  contactsSmartAddresses,
   user,
   accounts,
   ensRegistry,
@@ -1697,7 +1531,6 @@ const mapStateToProps = ({
   history,
   referralRewardIssuersAddresses,
   isPillarRewardCampaignActive,
-  txNotes,
   updatingTransaction,
   updatingCollectibleTransaction,
   depositedAssets,
@@ -1728,7 +1561,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
-  getTxNoteByContact: (username) => dispatch(getTxNoteByContactAction(username)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));

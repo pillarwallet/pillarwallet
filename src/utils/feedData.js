@@ -22,7 +22,6 @@ import BigNumber from 'bignumber.js';
 import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
 
-import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { CollectibleTrx } from 'models/Collectible';
@@ -41,14 +40,11 @@ import {
   getAccountTypeByAddress,
 } from 'utils/accounts';
 import { addressesEqual } from 'utils/assets';
-import { findMatchingContact, getUserName } from './contacts';
 import { uniqBy } from './common';
 
 
 export function mapTransactionsHistory(
   history: Object[],
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   accounts: Accounts,
   eventType: string,
   keepHashDuplicatesIfBetweenAccounts?: boolean,
@@ -63,18 +59,13 @@ export function mapTransactionsHistory(
     })
     .map(({ ...rest }) => ({ ...rest, type: eventType }))
     .map(({ to, from, ...rest }) => {
-      const contact = findMatchingContact(to, contacts, contactsSmartAddresses)
-        || findMatchingContact(from, contacts, contactsSmartAddresses);
-
       // apply to wallet accounts only if received from other account address
-      const account = !contact && eventType !== COLLECTIBLE_TRANSACTION
+      const account = eventType !== COLLECTIBLE_TRANSACTION
         && (findAccountByAddress(from, getInactiveUserAccounts(accounts))
           || findAccountByAddress(to, getInactiveUserAccounts(accounts))
         );
 
-      const username = account
-        ? getAccountName(account.type)
-        : getUserName(contact);
+      const username = account ? getAccountName(account.type) : '';
 
       const accountType = account ? account.type : null;
 
@@ -209,17 +200,6 @@ export const isKWAddress = (address: string, accounts: Accounts) => {
   return (!!account && checkIfKeyBasedAccount(account));
 };
 
-export const getContactWithAddress = (contacts: ApiUser[], address: string) => {
-  return contacts.find(({ ethAddress }) => addressesEqual(address, ethAddress));
-};
-
-export const getUsernameOrAddress = (event: Object, address: string, contacts: ApiUser[]) => {
-  if (event.username) {
-    return event.username;
-  }
-  const contact = getContactWithAddress(contacts, address);
-  if (contact) {
-    return contact.username;
-  }
+export const getElipsizeAddress = (address: string) => {
   return elipsizeAddress(address);
 };

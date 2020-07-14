@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import type { HorizontalOption, Option, OptionTabs } from './Selector';
 
 type Value = string | number;
 
@@ -50,15 +51,14 @@ export type InputPropsType = {
 };
 
 export type SelectorOptions = {
-  options?: Array<Object>,
-  horizontalOptions?: Array<Object>,
-  fiatOptions?: Array<Object>,
+  options?: Option[],
+  horizontalOptions: HorizontalOption[],
+  optionTabs: OptionTabs[],
   selectorPlaceholder?: 'string',
   fullWidth?: boolean,
   showOptionsTitles?: boolean,
   horizontalOptionsTitle?: string,
   optionsTitle?: string,
-  fiatOptionsTitle?: string,
   selectorModalTitle?: string,
   optionsSearchPlaceholder?: string,
   displayFiatOptionsFirst?: boolean,
@@ -67,4 +67,5 @@ export type SelectorOptions = {
 export type FormSelector = {
   selector: Object,
   input: string,
+  dontCheckBalance?: boolean,
 };

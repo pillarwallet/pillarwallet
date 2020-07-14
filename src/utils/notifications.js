@@ -25,18 +25,7 @@ import isEmpty from 'lodash.isempty';
 import BadgeAndroid from 'react-native-android-badge';
 
 // constants
-import {
-  TYPE_ACCEPTED,
-  TYPE_CANCELLED,
-  TYPE_BLOCKED,
-  TYPE_REJECTED,
-  TYPE_RECEIVED,
-  TYPE_DISCONNECTED,
-  MESSAGE_ACCEPTED,
-  MESSAGE_DISCONNECTED,
-  MESSAGE_REQUEST,
-} from 'constants/invitationsConstants';
-import { COLLECTIBLE, CONNECTION, BCX, BADGE } from 'constants/notificationConstants';
+import { COLLECTIBLE, BCX, BADGE } from 'constants/notificationConstants';
 
 // utils
 import { reportLog } from 'utils/common';
@@ -76,49 +65,11 @@ const validCollectibleTransaction = (transaction: ?Object): boolean => {
   return true;
 };
 
-const connectionEvents = [
-  TYPE_ACCEPTED,
-  TYPE_CANCELLED,
-  TYPE_BLOCKED,
-  TYPE_REJECTED,
-  TYPE_RECEIVED,
-  TYPE_DISCONNECTED,
-];
-
 export const processNotification = (notification: Object, myEthAddress?: string): ?Object => {
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
 
-  if (connectionEvents.includes(parsedNotification.type)) {
-    if (parsedNotification.type === 'connectionRequestedEvent') {
-      result = {
-        title: parsedNotification.senderUserData.username,
-        message: MESSAGE_REQUEST,
-        type: CONNECTION,
-        status: TYPE_RECEIVED,
-      };
-    } else if (parsedNotification.type === TYPE_ACCEPTED) {
-      result = {
-        title: parsedNotification.senderUserData.username,
-        message: MESSAGE_ACCEPTED,
-        type: CONNECTION,
-        status: TYPE_ACCEPTED,
-      };
-    } else if (parsedNotification.type === TYPE_DISCONNECTED) {
-      result = {
-        title: parsedNotification.senderUserData.username,
-        message: MESSAGE_DISCONNECTED,
-        type: CONNECTION,
-        status: TYPE_REJECTED,
-      };
-    } else {
-      result = {
-        message: 'Connection update',
-        type: CONNECTION,
-      };
-    }
-  }
   if (notification.type === BCX) {
     if (!parsedNotification || !validBcxTransaction(parsedNotification)) return result;
 

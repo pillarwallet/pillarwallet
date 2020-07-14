@@ -33,7 +33,6 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 // types
-import type { ApiUser } from 'models/Contacts';
 import type { Theme } from 'models/Theme';
 
 // utils
@@ -46,8 +45,6 @@ type Props = {
   onModalHide: () => void,
   onConfirm: (status: ?string) => void,
   isVisible: boolean,
-  manageContactType: string,
-  contact: ApiUser,
   onEnable: () => void,
   enableData: EnableData,
   theme: Theme,

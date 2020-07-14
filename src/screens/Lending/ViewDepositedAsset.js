@@ -58,8 +58,6 @@ import { smartAccountHistorySelector } from 'selectors/history';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset, Rates } from 'models/Asset';
 import type { Accounts } from 'models/Account';
-import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
-
 
 type Props = {
   depositedAssets: DepositedAsset[],
@@ -69,8 +67,6 @@ type Props = {
   rates: Rates,
   accounts: Accounts,
   smartAccountHistory: Object[],
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   navigation: NavigationScreenProp<*>,
 };
 
@@ -143,8 +139,6 @@ const ViewDepositedAsset = ({
   baseFiatCurrency,
   accounts,
   smartAccountHistory,
-  contacts,
-  contactsSmartAddresses,
   depositedAssets,
 }: Props) => {
   const depositedAsset: DepositedAsset = navigation.getParam('depositedAsset', {});
@@ -164,8 +158,6 @@ const ViewDepositedAsset = ({
   const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);
   const aaveTransactions = mapTransactionsHistory(
     smartAccountHistory.filter(({ tag }) => isAaveTransactionTag(tag)),
-    contacts,
-    contactsSmartAddresses,
     accounts,
     TRANSACTION_EVENT,
   );
@@ -258,15 +250,12 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   accounts: { data: accounts },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
 }: RootReducerState): $Shape<Props> => ({
   depositedAssets,
   isFetchingDepositedAssets,
   rates,
   baseFiatCurrency,
   accounts,
-  contacts,
-  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -18,18 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
-import { STATUS_BLOCKED } from 'constants/connectionsConstants';
-import type { ApiUser, ContactSmartAddressData } from 'models/Contacts';
-import { addressesEqual } from './assets';
-import { isCaseInsensitiveMatch } from './common';
-
-export const getUserName = (contact: ?Object) => {
-  if (!contact || !contact.username) {
-    return '';
-  }
-  return contact.username;
-};
+import Toast from 'components/Toast';
+import { resolveEnsName } from './common';
+import { isEnsName } from './validators';
 
 export const getInitials = (fullName: string = '') => {
   return fullName
@@ -39,24 +30,27 @@ export const getInitials = (fullName: string = '') => {
     .toUpperCase();
 };
 
-export const findMatchingContact = (
-  address: string,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
-) => {
-  return contacts.find(({ id: contactId, ethAddress }) =>
-    addressesEqual(address, ethAddress) || !!contactsSmartAddresses.find(({ userId, smartWallets = [] }) =>
-      isCaseInsensitiveMatch(userId, contactId) && addressesEqual(address, smartWallets[0] || ''),
-    ),
-  );
-};
+export const getContactsEnsName = async (address: ?string) => {
+  let receiverEnsName = '';
+  let receiver = '';
+  if (!address) return Promise.resolve({ receiverEnsName, receiver });
 
-export const isContactAvailable = (contact: ApiUser) => {
-  // if no contact status at all then it means disconnected status
-  return !!contact.status && contact.status !== STATUS_BLOCKED;
-};
+  if (isEnsName(address)) {
+    const resolvedAddress = await resolveEnsName(address);
+    if (!resolvedAddress) {
+      Toast.show({
+        title: 'Sorry, we could not find that ENS name!',
+        message: 'Could you please check and try again?',
+        type: 'warning',
+        autoClose: false,
+      });
+      return Promise.resolve({ receiverEnsName, receiver });
+    }
+    receiverEnsName = address;
+    receiver = resolvedAddress;
+  } else {
+    receiver = address;
+  }
 
-export const findContactIdByUsername = (contacts: ApiUser[], username: string): string => {
-  const foundContact = contacts.find(contact => isCaseInsensitiveMatch(contact.username, username));
-  return get(foundContact, 'id', '');
+  return { receiverEnsName, receiver };
 };
