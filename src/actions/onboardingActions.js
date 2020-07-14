@@ -89,7 +89,6 @@ import { setAppThemeAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -216,7 +215,6 @@ export const finishRegistration = async ({
   await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
 
   await dispatch(fetchTransactionsHistoryAction());
-  dispatch(labelUserAsLegacyAction());
 
   dispatch(managePPNInitFlagAction());
 

@@ -49,17 +49,21 @@ import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { delay, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
-import { userHasSmartWallet } from 'utils/smartWallet';
 import { clearWebViewCookies } from 'utils/exchange';
 import {
-  setKeychainDataObject, resetKeychainDataObject, getWalletFromPkByPin, canLoginWithPkFromPin,
+  setKeychainDataObject,
+  resetKeychainDataObject,
+  getWalletFromPkByPin,
+  canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+import { findFirstSmartAccount, getActiveAccountType } from 'utils/accounts';
 
 // services
 import Storage from 'services/storage';
@@ -75,7 +79,7 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
-import { initOnLoginSmartWalletAccountAction } from './accountsActions';
+import { initOnLoginSmartWalletAccountAction, setActiveAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
   checkForWalletBackupToastAction,
@@ -86,7 +90,6 @@ import { setAppThemeAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
-import { labelUserAsLegacyAction } from './userActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
 import {
@@ -145,19 +148,20 @@ export const loginAction = (
         wallet = await decryptWallet(encryptedWallet, saltedPin);
         // no further code will be executed if pin is wrong
         // migrate older users for keychain access OR fallback for biometrics login
-        await setKeychainDataObject(
-          {
-            pin,
-            privateKey: wallet.privateKey,
-            mnemonic: wallet?.mnemonic?.phrase || '',
-          },
-          useBiometrics);
+        const keychainDataObject = {
+          pin,
+          privateKey: wallet.privateKey,
+          mnemonic: wallet?.mnemonic?.phrase || '',
+        };
+        await setKeychainDataObject(keychainDataObject, useBiometrics);
       } else if (privateKey) {
         wallet = constructWalletFromPrivateKey(privateKey);
       } else {
         // nothing provided, invalid login
         throw new Error();
       }
+
+      if (!wallet?.privateKey) throw new Error();
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
@@ -177,7 +181,7 @@ export const loginAction = (
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
 
         // execute login success callback
-        if (onLoginSuccess && wallet.privateKey) {
+        if (onLoginSuccess) {
           let { privateKey: privateKeyParam } = wallet;
           privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
           await onLoginSuccess(privateKeyParam);
@@ -207,8 +211,12 @@ export const loginAction = (
         }
 
         // init smart wallet
-        if (wallet.privateKey && userHasSmartWallet(accounts)) {
-          await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+        await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+
+        // part of key based wallet migration – switch to smart wallet if key based was active
+        const activeAccountType = getActiveAccountType(accounts);
+        if (activeAccountType === ACCOUNT_TYPES.KEY_BASED) {
+          dispatch(setActiveAccountAction(findFirstSmartAccount(accounts)?.id));
         }
 
         /**
@@ -231,16 +239,12 @@ export const loginAction = (
         payload: { user, state: userState },
       });
 
-      if (userState === REGISTERED) {
-        dispatch(labelUserAsLegacyAction());
-      }
-
       const { address } = wallet;
       dispatch({
         type: DECRYPT_WALLET,
         payload: {
           address,
-          privateKey: (userState === PENDING) ? wallet.privateKey : undefined,
+          privateKey: userState === PENDING ? wallet.privateKey : undefined,
         },
       });
 
