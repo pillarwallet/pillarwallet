@@ -44,6 +44,7 @@ type Props = {
   isVisible: boolean,
   items: ItemType[],
   doNotCloseOnPress?: boolean,
+  storybook?: boolean,
 };
 
 type ItemProps = {
@@ -112,11 +113,27 @@ class ActionModal extends React.Component<Props> {
     );
   };
 
+  renderContent = () => {
+    const { items } = this.props;
+    return (
+      <SafeAreaView>
+        <MainContainer>
+          {items.map(this.renderItem)}
+        </MainContainer>
+      </SafeAreaView>
+    );
+  };
+
   render() {
     const {
-      theme, onModalClose, isVisible, items,
+      theme,
+      onModalClose,
+      isVisible,
+      storybook,
     } = this.props;
     const colors = getThemeColors(theme);
+
+    if (storybook) return this.renderContent();
 
     return (
       <SlideModal
@@ -127,11 +144,7 @@ class ActionModal extends React.Component<Props> {
         onModalHide={onModalClose}
         sideMargins={spacing.large}
       >
-        <SafeAreaView>
-          <MainContainer>
-            {items.map(this.renderItem)}
-          </MainContainer>
-        </SafeAreaView>
+        {this.renderContent()}
       </SlideModal>
     );
   }

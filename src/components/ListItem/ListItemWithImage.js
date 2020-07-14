@@ -102,6 +102,7 @@ type Props = {
   iconImageResizeMode?: string,
   iconImageSize?: number,
   statusIconColor?: string,
+  padding?: string,
   itemImageRoundedSquare?: boolean,
   cornerIcon?: any,
 };
@@ -141,7 +142,7 @@ const InnerWrapper = styled.TouchableOpacity`
   flex-direction: row;
   align-items: ${props => props.horizontalAlign || 'center'};
   justify-content: center;
-  padding: 14px 20px;
+  padding: ${({ padding }) => padding || `14px ${spacing.large}px`};
   width: 100%;
 `;
 
@@ -644,7 +645,7 @@ const Addon = (props: AddonProps) => {
             />}
             {custom && <View style={{ marginLeft: 10 }}>{custom}</View>}
           </View>
-          <BalanceFiatValue>{value}</BalanceFiatValue>
+          {!!value && <BalanceFiatValue>{value}</BalanceFiatValue>}
         </Wrapper>
         {customOnRight}
       </View>
@@ -696,6 +697,7 @@ class ListItemWithImage extends React.Component<Props, {}> {
       theme,
       badge,
       customLabel,
+      padding,
     } = this.props;
 
     const type = getType(this.props);
@@ -704,7 +706,13 @@ class ListItemWithImage extends React.Component<Props, {}> {
 
     return (
       <ItemWrapper wrapperOpacity={wrapperOpacity}>
-        <InnerWrapper type={type} onPress={onPress} disabled={!onPress} horizontalAlign={innerWrapperHorizontalAlign}>
+        <InnerWrapper
+          type={type}
+          onPress={onPress}
+          disabled={!onPress}
+          horizontalAlign={innerWrapperHorizontalAlign}
+          padding={padding}
+        >
           <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
             <ItemImage {...this.props} />
             {hasImageAddon && <ImageAddon {...this.props} />}

@@ -49,8 +49,8 @@ import {
   SETTLE_BALANCE,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
-  SEND_SYNTHETIC_ASSET,
   EXCHANGE,
+  SEND_SYNTHETIC_AMOUNT,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -410,7 +410,7 @@ class PPNView extends React.Component<Props, State> {
               <CircleButton
                 label="Send"
                 fontIcon="paperPlane"
-                onPress={() => navigation.navigate(SEND_SYNTHETIC_ASSET)}
+                onPress={() => navigation.navigate(SEND_SYNTHETIC_AMOUNT)}
                 disabled={availableStake <= 0}
               />
             </AssetButtonsWrapper>

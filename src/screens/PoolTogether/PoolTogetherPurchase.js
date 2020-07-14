@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 
 // actions
@@ -324,9 +325,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       };
     }
 
-    const assetOptions = {
-      [poolToken]: getAssetData(getAssetsAsList(assets), supportedAssets, poolToken),
-    };
+    const poolTokenItem = getAssetData(getAssetsAsList(assets), supportedAssets, poolToken);
+    const assetOptions = !isEmpty(poolTokenItem) ? [poolTokenItem] : [];
 
     return (
       <ContainerWithHeader
@@ -353,7 +353,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
                 maxLabel="Spend max"
-                assets={assetOptions}
+                customOptions={assetOptions}
                 balances={balances}
                 baseFiatCurrency={baseFiatCurrency}
                 rates={rates}

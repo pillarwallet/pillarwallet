@@ -58,6 +58,8 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
+export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
+
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
@@ -69,6 +71,11 @@ export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 
 export const featureFlagsSelector = ({ featureFlags }: RootReducerState) => featureFlags.data;
+
+export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
+export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
+
+export const ratesSelector = ({ rates }: RootReducerState) => rates.data;
 
 export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
   get(poolTogether, 'poolStats', {});

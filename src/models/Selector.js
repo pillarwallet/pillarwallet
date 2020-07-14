@@ -17,11 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { AssetData } from 'models/Asset';
 
-export type SendNavigateOptions = {
-  assetData: AssetData,
-  receiver: string,
-  receiverEnsName?: string,
-  source: string,
+export type Option = {
+  name: string,
+  value: string,
+  token?: string,
+  symbol?: string,
+  tokenId?: string,
+  imageUrl?: string,
+  lastUpdateTime?: string,
+  imageSource?: string,
+  ethAddress?: string,
+  opacity?: number,
+  hasSmartWallet?: number,
+  disabled?: boolean,
 };
+
+export type HorizontalOption = {
+  title?: string,
+  data: Option[],
+};
+
+export type OptionTabs = {
+  name: string,
+  id: string,
+  options?: Option[],
+}

@@ -23,6 +23,7 @@ import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 import debounce from 'lodash.debounce';
 import { formatAmount, formatFiat } from 'utils/common';
 import t from 'tcomb-form-native';
@@ -61,7 +62,6 @@ import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser }
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
@@ -73,6 +73,8 @@ import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { FormSelector } from 'models/TextInput';
+import type { Option } from 'models/Selector';
+
 
 // partials
 import { HotSwapsHorizontalList } from './HotSwapsList';
@@ -90,7 +92,6 @@ type Props = {
   authorizeWithShapeshift: Function,
   balances: Balances,
   resetOffers: () => void,
-  paymentNetworkBalances: Balances,
   exchangeSearchRequest: ExchangeSearchRequest,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
@@ -157,6 +158,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     super(props);
     this.listeners = [];
     const displayFiatOptionsFirst = get(props, 'navigation.state.params.displayFiatOptionsFirst');
+
     this.state = {
       shapeshiftAuthPressed: false,
       isSubmitted: false,
@@ -181,15 +183,10 @@ class ExchangeScreen extends React.Component<Props, State> {
               label: 'Sell',
               hasInput: true,
               options: [],
-              horizontalOptions: [],
-              horizontalOptionsTitle: 'Popular',
-              fiatOptions: [],
-              fiatOptionsTitle: 'Fiat',
               optionsTitle: 'Crypto',
               placeholderSelector: 'select',
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
-              displayFiatOptionsFirst,
               inputWrapperStyle: { width: '100%' },
               rightLabel: displayFiatOptionsFirst ? '' : 'Sell max',
               onPressRightLabel: this.handleSellMax,
@@ -204,8 +201,6 @@ class ExchangeScreen extends React.Component<Props, State> {
             config: {
               label: 'Buy',
               options: [],
-              horizontalOptions: [],
-              horizontalOptionsTitle: 'Popular',
               optionsTitle: 'All tokens',
               wrapperStyle: { marginTop: spacing.mediumLarge },
               placeholderSelector: 'Select asset',
@@ -336,7 +331,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
 
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
-    const fiatOptionsFrom = this.generateFiatOptions();
 
     const popularOptions = POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
       const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
@@ -344,16 +338,45 @@ class ExchangeScreen extends React.Component<Props, State> {
       return popularAssetsList;
     }, []);
 
+
     const thisStateFormOptionsCopy = { ...this.state.formOptions };
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
-    thisStateFormOptionsCopy.fields.fromInput.config.fiatOptions = fiatOptionsFrom;
-    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = popularOptions;
+    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = this.generateHorizontalOptions(popularOptions);
     thisStateFormOptionsCopy.fields.toInput.config.options = assetsOptionsBuying;
-    thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions = popularOptions;
+    thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions =
+      this.generateHorizontalOptions(popularOptions, true);
 
     this.setState({
       formOptions: thisStateFormOptionsCopy,
     });
+  };
+
+  generateHorizontalOptions = (popularOptions: Option[], justPopular?: boolean) => {
+    const popularHorizontalOptions = {
+      title: 'Popular',
+      data: popularOptions,
+    };
+
+    if (justPopular) {
+      return [popularHorizontalOptions];
+    }
+
+    const displayFiatOptionsFirst = get(this.props, 'navigation.state.params.displayFiatOptionsFirst');
+    const fiatHorizontalOptions = {
+      title: 'Fiat',
+      data: this.generateFiatOptions(),
+    };
+
+    const horizontalOptions = [];
+    if (displayFiatOptionsFirst) {
+      horizontalOptions.push(fiatHorizontalOptions);
+      horizontalOptions.push(popularHorizontalOptions);
+    } else {
+      horizontalOptions.push(popularHorizontalOptions);
+      horizontalOptions.push(fiatHorizontalOptions);
+    }
+
+    return horizontalOptions;
   };
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
@@ -452,15 +475,26 @@ class ExchangeScreen extends React.Component<Props, State> {
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+        const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
         return ({
           key: symbol,
           value: symbol,
+          imageUrl,
           icon: iconUrl,
           iconUrl,
           symbol,
           ...rest,
           assetBalance,
           formattedBalanceInFiat,
+          customProps: {
+            balance: !!formattedBalanceInFiat && {
+              balance: assetBalance,
+              value: formattedBalanceInFiat,
+              token: symbol,
+            },
+            rightColumnInnerStyle: { alignItems: 'flex-end' },
+          },
         });
       });
   };
@@ -468,12 +502,11 @@ class ExchangeScreen extends React.Component<Props, State> {
   generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
     key: symbol,
     value: symbol,
-    icon: iconUrl,
+    imageUrl: iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '',
     iconUrl,
     symbol,
     ...rest,
     assetBalance: null,
-    paymentNetworkBalance: null,
   }));
 
   generateSupportedAssetsOptions = (assets: Asset[]) => {
@@ -484,15 +517,26 @@ class ExchangeScreen extends React.Component<Props, State> {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+        const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
         return {
           key: symbol,
           value: symbol,
           icon: iconUrl,
+          imageUrl,
           iconUrl,
           symbol,
           ...rest,
           assetBalance,
           formattedBalanceInFiat,
+          customProps: {
+            balance: !!formattedBalanceInFiat && {
+              balance: assetBalance,
+              value: formattedBalanceInFiat,
+              token: symbol,
+            },
+            rightColumnInnerStyle: { alignItems: 'flex-end' },
+          },
         };
       }).filter(asset => asset.key !== 'BTC');
   };
@@ -725,7 +769,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   assets: accountAssetsSelector,
   isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });

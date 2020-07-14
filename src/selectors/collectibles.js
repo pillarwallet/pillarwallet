@@ -47,3 +47,15 @@ export const combinedCollectiblesHistorySelector = createSelector(
     }, []);
   },
 );
+
+export const activeAccountMappedCollectiblesSelector = createSelector(accountCollectiblesSelector, (collectibles) => {
+  return collectibles.map((collectible) => {
+    const { icon, id } = collectible;
+    return {
+      imageUrl: icon,
+      value: id,
+      tokenId: id,
+      ...collectible,
+    };
+  });
+});
