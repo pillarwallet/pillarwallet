@@ -96,6 +96,7 @@ import {
   checkIfRecoveredSmartWalletFinishedAction,
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
+import { importSmartWalletAccountsAction, initSmartWalletSdkAction } from './smartWalletActions';
 
 
 const storage = Storage.getInstance('db');
@@ -161,7 +162,8 @@ export const loginAction = (
         throw new Error();
       }
 
-      if (!wallet?.privateKey) throw new Error();
+      const decryptedPrivateKey = wallet?.privateKey;
+      if (!decryptedPrivateKey) throw new Error();
 
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
@@ -182,9 +184,10 @@ export const loginAction = (
 
         // execute login success callback
         if (onLoginSuccess) {
-          let { privateKey: privateKeyParam } = wallet;
-          privateKeyParam = privateKeyParam.indexOf('0x') === 0 ? privateKeyParam.slice(2) : privateKeyParam;
-          await onLoginSuccess(privateKeyParam);
+          const rawPrivateKey = decryptedPrivateKey.indexOf('0x') === 0
+            ? decryptedPrivateKey.slice(2)
+            : decryptedPrivateKey;
+          await onLoginSuccess(rawPrivateKey);
         }
 
         // set API username (local method)
@@ -211,12 +214,20 @@ export const loginAction = (
         }
 
         // init smart wallet
-        await dispatch(initOnLoginSmartWalletAccountAction(wallet.privateKey));
+        await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
 
-        // part of key based wallet migration – switch to smart wallet if key based was active
+        // key based wallet migration – switch to smart wallet if key based was active
         const activeAccountType = getActiveAccountType(accounts);
         if (activeAccountType === ACCOUNT_TYPES.KEY_BASED) {
-          dispatch(setActiveAccountAction(findFirstSmartAccount(accounts)?.id));
+          const smartWalletAccount = findFirstSmartAccount(accounts);
+          if (smartWalletAccount) {
+            dispatch(setActiveAccountAction(smartWalletAccount.id));
+          } else {
+            // very old user that doesn't have any smart wallet, let's create one and migrate safe
+            const initialAssets = await api.fetchInitialAssets(user.walletId);
+            await dispatch(initSmartWalletSdkAction(decryptedPrivateKey));
+            await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey, true, initialAssets));
+          }
         }
 
         /**
@@ -244,7 +255,7 @@ export const loginAction = (
         type: DECRYPT_WALLET,
         payload: {
           address,
-          privateKey: userState === PENDING ? wallet.privateKey : undefined,
+          privateKey: userState === PENDING ? decryptedPrivateKey : undefined,
         },
       });
 
@@ -258,7 +269,7 @@ export const loginAction = (
         api.init();
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
         await smartWalletService.init(
-          wallet.privateKey,
+          decryptedPrivateKey,
           (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
         );
         dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
