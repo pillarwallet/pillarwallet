@@ -22,11 +22,6 @@ import Toast from 'components/Toast';
 import { resolveEnsName } from './common';
 import { isEnsName } from './validators';
 
-export const getUserName = (contact: ?Object) => {
-  if (!contact || !contact.username) return '';
-  return contact.username;
-};
-
 export const getInitials = (fullName: string = '') => {
   return fullName
     .split(' ')

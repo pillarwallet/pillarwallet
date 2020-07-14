@@ -293,8 +293,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       },
     });
 
-    // this.setState({ formOptions: newOptions, value: newValue });
-    this.setState({ formOptions: newOptions });
+    this.setState({ formOptions: newOptions, value: newValue });
   };
 
   renderCustomLabel = (symbol?: string) => {

@@ -53,10 +53,12 @@ export type Props = {
   activeAccountAddress?: string,
   allowEnteringCustomAddress?: boolean,
 };
+
 type State = {
   areOptionsVisible: boolean,
   isScanning: boolean,
 };
+
 
 const Wrapper = styled.View`
   width: 100%;
