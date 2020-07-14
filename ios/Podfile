@@ -43,4 +43,6 @@ target 'pillarwallet' do
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
 
   use_native_modules!
+  pod 'RNLocalize', :path => '../node_modules/react-native-localize'
+
 end

@@ -238,6 +238,7 @@ android {
 }
 
 dependencies {
+    implementation project(':react-native-localize')
     implementation project(':react-native-notifications')
     implementation 'com.google.firebase:firebase-core:16.0.0' // react-native-notifications
     implementation 'com.google.firebase:firebase-messaging:20.1.1' // react-native-notifications override for Intercom PN handler implementation

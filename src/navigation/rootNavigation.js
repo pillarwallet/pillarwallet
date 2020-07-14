@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
 
@@ -71,6 +73,10 @@ import {
 
 import AppFlow from './appNavigation';
 
+type Props = {
+  language: string,
+}
+
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
     header: null,
@@ -120,4 +126,13 @@ const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
   [APP_FLOW]: AppFlow,
 });
 
-export default createAppContainer(RootSwitch);
+// to pass in language prop so stacks would rerender on language change
+class WrappedRootSwitch extends React.Component<Props> {
+  static router = RootSwitch.router;
+  render() {
+    const { language } = this.props;
+    return <RootSwitch screenProps={{ language }} {...this.props} />;
+  }
+}
+
+export default createAppContainer(WrappedRootSwitch);

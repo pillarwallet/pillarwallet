@@ -4,6 +4,7 @@ import android.content.Context;
 import androidx.multidex.MultiDexApplication;
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.reactcommunity.rnlocalize.RNLocalizePackage;
 import io.branch.rnbranch.RNBranchModule;
 import io.intercom.android.sdk.Intercom;
 import nativeShadow.NativeShadowPackage;

@@ -25,6 +25,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
+import { withTranslation } from 'react-i18next';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -273,6 +274,7 @@ import { modalTransition, addAppStateChangeListener, removeAppStateChangeListene
 import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
+import type { I18n } from 'models/Translations';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -798,6 +800,7 @@ type Props = {
   endWalkthrough: () => void,
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
+  i18n: I18n,
 }
 
 type State = {
@@ -952,7 +955,9 @@ class AppFlow extends React.Component<Props, State> {
       navigation,
       backupStatus,
       theme,
+      i18n,
     } = this.props;
+
 
     // wallet might be created, but recovery is pending and no user assigned yet
     if (!backupStatus.isRecoveryPending) {
@@ -972,6 +977,7 @@ class AppFlow extends React.Component<Props, State> {
           intercomNotificationsCount,
           isWalletBackedUp,
           theme,
+          language: i18n.language,
         }}
         navigation={navigation}
       />
@@ -1028,10 +1034,10 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
-const ConnectedAppFlow = connect(
+const ConnectedAppFlow = withTranslation()(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(AppFlow);
+)(AppFlow));
 ConnectedAppFlow.router = AppFlowNavigation.router;
 ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 
