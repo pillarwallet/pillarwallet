@@ -80,7 +80,6 @@ import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import type { Assets, Balances, Asset } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Account, Accounts } from 'models/Account';
-import type { ContactSmartAddressData } from 'models/Contacts';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // local components
@@ -106,7 +105,6 @@ type Props = {
   rates: Object,
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
-  contacts: Object[],
   resetHideRemoval?: Function,
   smartWalletState: Object,
   accounts: Accounts,
@@ -115,7 +113,6 @@ type Props = {
   history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
   availableStake: number,
-  contactsSmartAddresses: ContactSmartAddressData[],
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
@@ -303,9 +300,7 @@ class AssetScreen extends React.Component<Props, State> {
       smartWalletState,
       accounts,
       history,
-      contacts,
       availableStake,
-      contactsSmartAddresses,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
       isActiveAccountSmartWallet,
@@ -338,8 +333,6 @@ class AssetScreen extends React.Component<Props, State> {
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mappedTransactions = mapTransactionsHistory(
       tokenTxHistory,
-      contacts,
-      contactsSmartAddresses,
       accounts,
       TRANSACTION_EVENT,
     );
@@ -479,19 +472,16 @@ class AssetScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   exchange: { exchangeSupportedAssets },
 }: RootReducerState): $Shape<Props> => ({
-  contacts,
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
-  contactsSmartAddresses,
   exchangeSupportedAssets,
 });
 

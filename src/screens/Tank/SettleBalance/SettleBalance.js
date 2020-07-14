@@ -46,6 +46,7 @@ import { SETTLE_BALANCE_CONFIRM } from 'constants/navigationConstants';
 import type { Assets, Balances, Rates } from 'models/Asset';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Theme } from 'models/Theme';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // utils
 import {
@@ -63,18 +64,12 @@ import { getThemeColors, themedColors } from 'utils/themes';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
-import { findMatchingContact } from 'utils/contacts';
-
-import type {
-  ApiUser,
-  ContactSmartAddressData,
-} from 'models/Contacts';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   assetsOnNetwork: Object[],
   paymentNetworkBalances: Balances,
-  baseFiatCurrency: string,
+  baseFiatCurrency: ?string,
   rates: Rates,
   assets: Assets,
   session: Object,
@@ -82,8 +77,6 @@ type Props = {
   availableToSettleTx: Object[],
   isFetched: boolean,
   fetchAvailableTxToSettle: Function,
-  contacts: ApiUser[],
-  contactsSmartAddresses: ContactSmartAddressData[],
   theme: Theme,
 };
 
@@ -163,8 +156,6 @@ class SettleBalance extends React.Component<Props, State> {
       baseFiatCurrency,
       assets,
       rates,
-      contacts,
-      contactsSmartAddresses,
       theme,
     } = this.props;
     const { txToSettle } = this.state;
@@ -182,9 +173,7 @@ class SettleBalance extends React.Component<Props, State> {
       createdAt: item.createdAt,
     };
 
-    const contact = findMatchingContact(senderAddress, contacts, contactsSmartAddresses) || {};
-    const itemImage = contact.profileImage || '';
-    const nameOrAddress = contact.username || `${senderAddress.slice(0, 6)}…${senderAddress.slice(-6)}`;
+    const nameOrAddress = `${senderAddress.slice(0, 6)}…${senderAddress.slice(-6)}`;
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);
@@ -196,9 +185,9 @@ class SettleBalance extends React.Component<Props, State> {
       <ListItemWithImage
         onPress={() => this.toggleItemToTransfer(assetInfo)}
         label={nameOrAddress}
-        avatarUrl={itemImage}
+        avatarUrl=""
         valueColor={colors.positive}
-        imageUpdateTimeStamp={contact.lastUpdateTime || 0}
+        imageUpdateTimeStamp={0}
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
@@ -325,27 +314,24 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   paymentNetwork: { availableToSettleTx: { data: availableToSettleTx, isFetched } },
-  contacts: { data: contacts, contactsSmartAddresses: { addresses: contactsSmartAddresses } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   session,
   availableToSettleTx,
   isFetched,
-  contacts,
-  contactsSmartAddresses,
 });
 
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAvailableTxToSettle: () => dispatch(fetchAvailableTxToSettleAction()),
 });
 

@@ -33,13 +33,11 @@ import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { getUserName } from 'utils/contacts';
 import { isEnoughBalanceForTransactionFee, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { images } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
@@ -72,12 +70,8 @@ type Props = {
   accounts: Account[],
   navigation: NavigationScreenProp<*>,
   requests: CallRequest[],
-  session: Object,
-  contacts: Object[],
   balances: Balances,
   theme: Theme,
-  note: ?string,
-  handleNoteChange: (text: string) => void,
   getTransactionDetails: (request: ?CallRequest) => Object,
   getTransactionPayload: (estimate: Object, request: ?CallRequest) => TokenTransactionPayload,
   isUnsupportedTransaction: (transaction: Object) => boolean,
@@ -216,13 +210,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      contacts,
       balances,
-      session,
       theme,
       getTransactionPayload,
-      note,
-      handleNoteChange,
     } = this.props;
 
     const { txFeeInfo, gettingFee } = this.state;
@@ -288,8 +278,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
         const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
 
-        const contact = contacts.find(({ ethAddress }) => to.toUpperCase() === ethAddress.toUpperCase());
-        const recipientUsername = getUserName(contact);
         const { genericToken } = images(theme);
 
         body = (
@@ -317,12 +305,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 <Value>{amount} {symbol}</Value>
               </LabeledRow>
             }
-            {!!recipientUsername && (
-              <LabeledRow>
-                <Label>Recipient Username</Label>
-                <Value>{recipientUsername}</Value>
-              </LabeledRow>
-            )}
             <LabeledRow>
               <Label>Recipient Address</Label>
               <Value>{to}</Value>
@@ -344,19 +326,6 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 <Value>{data}</Value>
               </LabeledRow>
             )}
-            {session.isOnline && !!recipientUsername &&
-              <TextInput
-                inputProps={{
-                  onChange: text => handleNoteChange(text),
-                  value: note,
-                  autoCapitalize: 'none',
-                  multiline: true,
-                  numberOfLines: 3,
-                  placeholder: 'Add a note to this transaction',
-                }}
-                keyboardAvoidance
-              />
-            }
           </ScrollWrapper>
         );
         break;
@@ -437,14 +406,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  contacts: { data: contacts },
-  session: { data: session },
   assets: { supportedAssets },
   accounts: { data: accounts },
 }) => ({
   accounts,
-  contacts,
-  session,
   supportedAssets,
 });
 

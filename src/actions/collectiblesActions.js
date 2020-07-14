@@ -40,7 +40,6 @@ import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 
 import { saveDbAction } from './dbActions';
-import { getExistingTxNotesAction } from './txNoteActions';
 
 const parseCollectibleMedia = (data) => {
   const {
@@ -200,7 +199,6 @@ export const fetchCollectiblesHistoryAction = (accountToFetchFor?: Account) => {
       [accountId]: accountCollectiblesHistory,
     };
 
-    dispatch(getExistingTxNotesAction());
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedCollectiblesHistory });
   };
@@ -283,7 +281,6 @@ export const updateCollectibleTransactionAction = (hash: string) => {
       return { ...history, [accountId]: accountHistory };
     }, {});
 
-    dispatch(getExistingTxNotesAction());
     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedHistory }, true));
     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedHistory });
   };

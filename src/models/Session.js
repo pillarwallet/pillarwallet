@@ -20,7 +20,5 @@
 
 export type SessionData = {|
   isOnline: boolean,
-  isSignalInitiated: boolean,
   fcmToken: string,
-  contactsSmartAddressesSynced: boolean,
 |};

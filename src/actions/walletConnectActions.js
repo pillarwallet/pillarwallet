@@ -373,7 +373,7 @@ const sessionRequestTimedOut = () => {
     Toast.show({
       type: 'warning',
       title: 'Session error',
-      message: 'Cannot start Wallet Connect session',
+      message: 'Cannot start Wallet Connect session. Please try again.',
       autoClose: false,
     });
 

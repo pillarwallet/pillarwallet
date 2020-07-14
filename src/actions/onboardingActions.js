@@ -45,8 +45,6 @@ import {
   RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
 import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-import { UPDATE_CONTACTS } from 'constants/contactsConstants';
-import { UPDATE_INVITATIONS } from 'constants/invitationsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -73,7 +71,6 @@ import { firebaseMessaging } from 'services/firebase';
 import smartWalletService from 'services/smartWallet';
 
 // actions
-import { signalInitAction } from 'actions/signalClientActions';
 import {
   initSmartWalletSdkAction,
   importSmartWalletAccountsAction,
@@ -95,13 +92,11 @@ import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
-import { updateConnectionsAction } from 'actions/connectionsActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { SignalCredentials } from 'models/Config';
 import type SDKWrapper from 'services/api';
 
 
@@ -221,7 +216,6 @@ export const finishRegistration = async ({
   await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
 
   await dispatch(fetchTransactionsHistoryAction());
-  dispatch(updateConnectionsAction());
   dispatch(labelUserAsLegacyAction());
 
   dispatch(managePPNInitFlagAction());
@@ -279,8 +273,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     }
 
     dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
-    dispatch({ type: UPDATE_CONTACTS, payload: [] });
-    dispatch({ type: UPDATE_INVITATIONS, payload: [] });
     dispatch({ type: UPDATE_ASSETS, payload: {} });
     dispatch({ type: RESET_APP_SETTINGS, payload: {} });
 
@@ -340,28 +332,15 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     api.init();
     const {
-      sdkWallet,
       userInfo,
-      fcmToken,
       registrationSucceed,
       oAuthTokens,
     } = await getTokenWalletAndRegister(wallet.privateKey, api, user, dispatch);
 
     if (!registrationSucceed) { return; }
 
-    const signalCredentials: SignalCredentials = {
-      userId: sdkWallet.userId,
-      username: user.username,
-      walletId: sdkWallet.walletId,
-      ethAddress: wallet.address,
-      fcmToken,
-      ...oAuthTokens,
-    };
-
-    await dispatch(signalInitAction(signalCredentials));
-
     // re-init API with OAuth update callback
-    const updateOAuth = updateOAuthTokensCB(dispatch, signalCredentials);
+    const updateOAuth = updateOAuthTokensCB(dispatch);
     api.init(updateOAuth, oAuthTokens);
     // STEP 5: finish registration
     await finishRegistration({
