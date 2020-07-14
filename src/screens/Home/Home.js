@@ -477,7 +477,10 @@ class HomeScreen extends React.Component<Props, State> {
               isForAllAccounts
               headerComponent={(
                 <React.Fragment>
-                  <WalletsPart handleWalletChange={this.handleWalletChange} />
+                  <WalletsPart
+                    rewardActive={isPillarRewardCampaignActive}
+                    handleWalletChange={this.handleWalletChange}
+                  />
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&
