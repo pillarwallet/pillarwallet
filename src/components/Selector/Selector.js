@@ -38,7 +38,7 @@ import { activeAccountAddressSelector } from 'selectors';
 
 export type Props = {
   selectedOption?: ?Option,
-  onOptionSelect?: (option: Option, onSuccess?: () => void) => void,
+  onOptionSelect?: (option: Option, onSuccess?: () => void) => void | Promise<void>,
   onOptionImagePress?: (option: Option) => void,
   label?: string,
   placeholder?: string,

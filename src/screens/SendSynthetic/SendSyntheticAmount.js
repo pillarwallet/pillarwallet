@@ -53,6 +53,9 @@ import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Trans
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
 
+// services
+import smartWalletService from 'services/smartWallet';
+
 
 type Props = {
   initSyntheticsService: () => void,
@@ -118,20 +121,23 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         ethAddress,
         value: ethAddress,
       };
-      this.setReceiver(receiver);
+      this.handleReceiverSelect(receiver);
     }
   };
 
-  handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
+  handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
     const { navigation } = this.props;
-    const { hasSmartWallet } = value;
+    const { ethAddress } = value;
 
-    if (hasSmartWallet) {
+    const userInfo = !!ethAddress && await smartWalletService.searchAccount(ethAddress).catch(null);
+
+    if (userInfo) {
       this.setReceiver(value, onSuccess);
     } else {
       Alert.alert(
-        'This user is not on Pillar Network',
-        'You both should be connected to Pillar Network in order to be able to send instant transactions for free',
+        'This address is not on Pillar Network',
+        'Invite it\'s owner to install Pillar wallet in order to be able to send instant transactions ' +
+        'for free or switch to Ethereum Mainet to send regular transaction.',
         [
           { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
           { text: 'Cancel', style: 'cancel' },
