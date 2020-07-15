@@ -56,6 +56,7 @@ type Props = {
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
+  featureFlags: ?Object,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -198,9 +199,11 @@ class ServicesScreen extends React.Component<Props> {
 const mapStateToProps = ({
   exchange: { providersMeta },
   appSettings: { data: { baseFiatCurrency } },
+  featureFlags: { data: featureFlags },
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
   baseFiatCurrency,
+  featureFlags,
 });
 
 const structuredSelector = createStructuredSelector({

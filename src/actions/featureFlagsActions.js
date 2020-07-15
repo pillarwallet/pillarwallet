@@ -18,50 +18,32 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
-
+import remoteConfig from '@react-native-firebase/remote-config';
 import {
-  DEVELOPMENT_FEATURE_FLAGS,
   INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
-import { saveDbAction } from 'actions/dbActions';
-import Storage from 'services/storage';
-import { isProdEnv, isTest } from 'utils/environment';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
+import type { Dispatch } from 'reducers/rootReducer';
+import { reportOrWarn } from 'utils/common';
 
-const storage = Storage.getInstance('db');
+type FeatureFlags = {[key: string]: { value: string, source: string }}
 
-export const loadFeatureFlagsAction = (userInfo?: any) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const isOnline = get(getState(), 'session.data.isOnline');
+export const loadFeatureFlagsAction = () => {
+  return async (dispatch: Dispatch) => {
+    remoteConfig()
+      .setDefaults(INITIAL_FEATURE_FLAGS)
+      .then(() => remoteConfig().fetchAndActivate())
+      .then(activated => {
+        if (!activated) {
+          reportOrWarn('Failed to fetch feature flags, using defaults', null, 'warning');
+        }
+        const featureFlags: FeatureFlags = remoteConfig().getAll();
+        const parsedFeatureFlags = Object.keys(featureFlags).map((key: string) => {
+          return { [key]: !!featureFlags[key].value };
+        });
 
-    // do not override existing feature flags if offline
-    if (!isOnline) return;
-
-    // fetch latest userInfo if it was not provided
-    if (isEmpty(userInfo)) {
-      let walletId = get(getState(), 'user.data.walletId');
-      if (!walletId) {
-        walletId = get(await storage.get('user'), 'user.walletId');
-      }
-      userInfo = await api.userInfo(walletId);
-    }
-
-    /**
-     * (isProdEnv && !__DEV__) to make sure that it's really dev env and not prod env (mainnet) running in dev
-     * isTest check to run test suites against prod env
-     */
-    const userFeatureFlags = (isProdEnv && !__DEV__) || isTest
-      ? get(userInfo, 'featureFlags', {})
-      : DEVELOPMENT_FEATURE_FLAGS;
-
-    // combine initial with fetched
-    const featureFlags = { ...INITIAL_FEATURE_FLAGS, ...userFeatureFlags };
-
-    dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
-    dispatch(saveDbAction('featureFlags', { featureFlags }, true));
+        dispatch({ type: SET_FEATURE_FLAGS, payload: parsedFeatureFlags });
+      })
+      .catch(e => { reportOrWarn('Failed to fetch feature flags or initialize with defaults', e, 'warning'); });
   };
 };

@@ -20,8 +20,6 @@
 import {
   INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
-  ENABLE_FEATURE_FLAG,
-  DISABLE_FEATURE_FLAG,
 } from 'constants/featureFlagsConstants';
 
 export type FeatureFlagsReducerState = {|
@@ -48,22 +46,6 @@ const featureFlagsReducer = (
       return {
         ...state,
         data: action.payload,
-      };
-    case ENABLE_FEATURE_FLAG:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          [action.payload]: true,
-        },
-      };
-    case DISABLE_FEATURE_FLAG:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          [action.payload]: false,
-        },
       };
     default:
       return state;
