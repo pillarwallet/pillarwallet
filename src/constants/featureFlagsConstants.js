@@ -21,7 +21,13 @@
 export const SET_FEATURE_FLAGS = 'SET_FEATURE_FLAGS';
 export const ENABLE_FEATURE_FLAG = 'ENABLE_FEATURE_FLAG';
 export const DISABLE_FEATURE_FLAG = 'DISABLE_FEATURE_FLAG';
-export const INITIAL_FEATURE_FLAGS = {};
+export const INITIAL_FEATURE_FLAGS = {
+  offersEngine: true,
+  buyWithFiat: true,
+  aave: false,
+  poolTogether: false,
+  peerToPeer: true,
+};
 export const DEVELOPMENT_FEATURE_FLAGS = {};
 
 // Services screen features
