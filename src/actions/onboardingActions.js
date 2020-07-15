@@ -56,7 +56,7 @@ import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
-import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConstants';
+import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 // utils
 import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
@@ -334,7 +334,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
 
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
-    if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
     // STEP 7: check if user ir referred to install the app
     const referralToken = get(getState(), 'referrals.referralToken');

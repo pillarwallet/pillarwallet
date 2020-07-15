@@ -31,6 +31,7 @@ import {
   BADGE_REWARD_EVENT,
   SET_BADGE_AWARD_EVENTS,
 } from 'constants/badgesConstants';
+import { WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -111,17 +112,30 @@ export const fetchBadgeAwardHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       user: { data: { walletId } },
+      userEvents: { data: userEvents = [] },
     } = getState();
     const badgeAwardEvents: ApiNotification[] = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
     const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
+    const walletCreateEvent = userEvents.find(({ subType }) => subType === WALLET_CREATE_EVENT);
     const formattedBadgeAwardEvents = badgeAwardEventsWithRequiredData
       .map(({
         _id,
         type,
         payload,
-        createdAt,
+        createdAt: originalCreatedAt,
       }) => {
-        const { name, imageUrl, id } = payload;
+        const {
+          name,
+          imageUrl,
+          id,
+          badgeType,
+        } = payload;
+
+        // part of key wallet remove migration – wallet create badge in history should be after smart wallet creation
+        const createdAt = walletCreateEvent && badgeType === 'wallet-created'
+          ? Number(walletCreateEvent.createdAt) + 1
+          : originalCreatedAt;
+
         return {
           _id,
           type,

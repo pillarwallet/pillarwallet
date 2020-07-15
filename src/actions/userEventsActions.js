@@ -48,9 +48,6 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
       case ACCOUNT_TYPES.SMART_WALLET:
         eventTitle = 'Smart Wallet created';
         break;
-      case WALLET_IMPORT_EVENT:
-        eventTitle = 'Wallet imported';
-        break;
       default:
         eventTitle = 'Unknown event';
     }
@@ -110,9 +107,10 @@ export const getWalletsCreationEventsAction = () => {
     const userAccounts = await api.listAccounts(user.walletId);
     if (!userAccounts.length) return;
 
-    const walletCreatedEventsPromises = userAccounts.map(async acc => {
-      return dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000));
-    });
+    const walletCreatedEventsPromises = userAccounts
+      .filter((acc) => acc.type !== ACCOUNT_TYPES.KEY_BASED)
+      .map((acc) => dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000)));
+
     await Promise.all(walletCreatedEventsPromises);
   };
 };
