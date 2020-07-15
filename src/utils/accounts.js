@@ -110,10 +110,6 @@ export const getAccountName = (accountType: AccountTypes | string): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
       return 'Smart Wallet';
-
-    case ACCOUNT_TYPES.KEY_BASED:
-      return 'Key wallet';
-
     default:
       return '';
   }

@@ -89,6 +89,7 @@ export const images = (theme: Theme) => {
       lightTheme: moonPayLogoLight,
       darkTheme: moonPayLogoDark,
     }),
+    // TODO: REMOVE
     keyWalletIcon: getImageByTheme(currentTheme, {
       lightTheme: keyWalletIcon,
       darkTheme: keyWalletIconDark,
