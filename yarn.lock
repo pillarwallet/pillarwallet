@@ -2423,6 +2423,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-firebase/perf/-/perf-7.2.2.tgz#1adf5cc8ee96815528be8c503ec12bdb81162604"
   integrity sha512-EzsUYqPGBgPnBLodeDyqlRhnJqa//YU/TTFZ1KKZLpCahr8KmC1xSwHaLmnHXrjcxq14VAHf4UTz/02Iut4PJg==
 
+"@react-native-firebase/remote-config@^7.2.2":
+  version "7.2.2"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/remote-config/-/remote-config-7.2.2.tgz#6c59a7d1442483a4b1d5bc78e5d2374a841c7db3"
+  integrity sha512-7cJ8EecCq0VqWB6Uo9XyPIeTtn0DEO9JodUz6nM5B4XA/a+PXt5XFSxh9co2kzpzl55nj3yljC3C42OOb4Glsg==
+
 "@react-navigation/core@~3.5.1":
   version "3.5.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@react-navigation/core/-/core-3.5.2.tgz#3a3d147b8419e5839e0f2ad4dea086bd2d307fe3"

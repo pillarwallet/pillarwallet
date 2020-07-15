@@ -30,6 +30,9 @@ PODS:
   - Firebase/Performance (6.27.1):
     - Firebase/CoreOnly
     - FirebasePerformance (~> 3.1.11)
+  - Firebase/RemoteConfig (6.27.1):
+    - Firebase/CoreOnly
+    - FirebaseRemoteConfig (~> 4.6.0)
   - FirebaseABTesting (3.3.0):
     - FirebaseCore (~> 6.8)
     - Protobuf (>= 3.9.2, ~> 3.9)
@@ -441,6 +444,11 @@ PODS:
     - Firebase/Performance (~> 6.27.0)
     - React
     - RNFBApp
+  - RNFBRemoteConfig (7.2.2):
+    - Firebase/Analytics (~> 6.27.0)
+    - Firebase/RemoteConfig (~> 6.27.0)
+    - React
+    - RNFBApp
   - RNGestureHandler (1.6.1):
     - React
   - RNImageCropPicker (0.26.2):
@@ -541,6 +549,7 @@ DEPENDENCIES:
   - "RNFBIid (from `../node_modules/@react-native-firebase/iid`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBPerf (from `../node_modules/@react-native-firebase/perf`)"
+  - "RNFBRemoteConfig (from `../node_modules/@react-native-firebase/remote-config`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
@@ -700,6 +709,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNFBPerf:
     :path: "../node_modules/@react-native-firebase/perf"
+  RNFBRemoteConfig:
+    :path: "../node_modules/@react-native-firebase/remote-config"
   RNGestureHandler:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
@@ -809,6 +820,7 @@ SPEC CHECKSUMS:
   RNFBIid: 071e8628049ad9aa5a02ed21506bb5a573096a8a
   RNFBMessaging: d884c58a92ce90687ae8b5a5772cf5d3d5223dfb
   RNFBPerf: 7e0b7d7697aa69205bd1b19e8f118e2833fb7653
+  RNFBRemoteConfig: 1db0561c5c3580766a78270cabbca63f085f4c50
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNKeychain: 7cab1c45629f265ebccd8d737cd4cb5b23a865df
