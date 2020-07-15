@@ -50,7 +50,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { addressesEqual } from 'utils/assets';
-import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
+import { generateMnemonicPhrase } from 'utils/wallet';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 
 // services
@@ -139,7 +139,6 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       dispatch,
       getState,
       userInfo,
-      address: normalizeWalletAddress(activeDeviceAddress),
       privateKey,
       isImported: true,
     });

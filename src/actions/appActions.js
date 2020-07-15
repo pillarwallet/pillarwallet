@@ -49,7 +49,7 @@ import {
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
-import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -84,7 +84,8 @@ import { activeBlockchainSelector } from 'selectors';
 
 // actions
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
+import { switchAccountAction } from './accountsActions';
+
 
 const storage = Storage.getInstance('db');
 
@@ -200,13 +201,6 @@ export const initAppAndRedirectAction = () => {
           lastPinAttempt,
         },
       });
-
-      // in case Bitcoin is set as active as we kill Bitcoin access
-      const activeBlockchain = activeBlockchainSelector(getState());
-      if (!isSupportedBlockchain(activeBlockchain)) {
-        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-        dispatch(fallbackToSmartOrKeyAccountAction());
-      }
 
       const {
         upgradeStatus = null,

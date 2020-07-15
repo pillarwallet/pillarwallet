@@ -82,7 +82,6 @@ import {
   encryptAndSaveWalletAction,
   generateWalletMnemonicAction,
 } from 'actions/walletActions';
-import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { setAppThemeAction } from 'actions/appSettingsActions';
@@ -172,47 +171,31 @@ export const finishRegistration = async ({
   dispatch,
   userInfo,
   privateKey,
-  address,
   isImported,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
-  address: string,
   isImported: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
-
-  // create default key-based account if needed
-  await dispatch(initDefaultAccountAction(address, userInfo.walletId, false));
 
   // get & store initial assets
   const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
   const rates = await getExchangeRates(Object.keys(initialAssets));
   dispatch(setRatesAction(rates));
 
-  dispatch({
-    type: SET_INITIAL_ASSETS,
-    payload: {
-      accountId: address,
-      assets: initialAssets,
-    },
-  });
-
-  const assets = { [address]: initialAssets };
-  dispatch(saveDbAction('assets', { assets }, true));
-
-  dispatch(fetchBadgesAction(false));
-
-  dispatch(loadFeatureFlagsAction(userInfo));
-
   // create smart wallet account only for new wallets
   await smartWalletService.reset();
   const createNewAccount = !isImported;
   await dispatch(initSmartWalletSdkAction(privateKey));
   await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
+
+  dispatch(fetchBadgesAction(false));
+
+  dispatch(loadFeatureFlagsAction(userInfo));
 
   await dispatch(fetchTransactionsHistoryAction());
 
@@ -345,7 +328,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       api,
       dispatch,
       userInfo,
-      address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
       isImported,
     });
@@ -409,7 +391,6 @@ export const registerOnBackendAction = () => {
       api,
       dispatch,
       userInfo,
-      address: normalizeWalletAddress(walletData.address),
       privateKey: walletPrivateKey,
       isImported,
     });

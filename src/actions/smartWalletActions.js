@@ -1337,7 +1337,11 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
   };
 };
 
-export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean, initAssets: Assets) => {
+export const importSmartWalletAccountsAction = (
+  privateKey: string,
+  createNewAccount: boolean,
+  initialAssets: Assets,
+) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
@@ -1379,9 +1383,11 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
         type: SET_INITIAL_ASSETS,
         payload: {
           accountId,
-          assets: initAssets,
+          assets: initialAssets,
         },
       });
+      const assets = { [accountId]: initialAssets };
+      dispatch(saveDbAction('assets', { assets }, true));
       dispatch(fetchAssetsBalancesAction());
       dispatch(fetchCollectiblesAction());
     }

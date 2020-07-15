@@ -17,59 +17,34 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import * as React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
+import isEmpty from 'lodash.isempty';
+import { createStructuredSelector } from 'reselect';
 
 // components
 import styled from 'styled-components/native';
 import CircleButton from 'components/CircleButton';
-import ActionModal from 'components/ActionModal';
-import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 
 // constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
-import { RECEIVE, SEND } from 'constants/walletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 
-// actions
-import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-
-// utils
-import { calculateBalanceInFiat } from 'utils/assets';
-import { formatFiat } from 'utils/common';
-import { isSupportedAccountType } from 'utils/accounts';
+// selectors
+import { activeAccountAddressSelector } from 'selectors';
 
 // models, types
-import type { Account } from 'models/Account';
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Asset, BalancesStore, Rates } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
-  rates: Rates,
-  balances: BalancesStore,
-  supportedAssets: Asset[],
-  wallets: Account[],
-  activeWallet: Account,
-  changeWalletAction: (acc: Account, callback: () => void) => void,
-  blockchainNetwork: ?string,
-  setActiveBlockchainNetwork: (id: string) => void,
+  isSendButtonActive: boolean,
+  activeAccountAddress: string,
 };
-
-type State = {
-  visibleActionModal: string,
-  receiveAddress: string,
-};
-
 
 const Sizer = styled.View`
   max-width: 350px;
@@ -84,233 +59,56 @@ const ActionButtonsWrapper = styled.View`
   justify-content: space-between;
 `;
 
-
-const getModalActionsInfo = (actionType: string) => {
-  switch (actionType) {
-    case ACCOUNT_TYPES.SMART_WALLET:
-      return {
-        title: 'Smart Wallet',
-        paragraph: 'You are able to recover your wallet using another device, i.e. desktop computer.',
-        children: (
-          <LabelBadge label="Recommended" positive containerStyle={{ marginTop: 11, alignSelf: 'flex-start' }} />
-        ),
-      };
-
-    case ACCOUNT_TYPES.KEY_BASED:
-      return {
-        title: 'Key Wallet',
-        paragraph: 'Needs to be backed up in order to enable Smart Wallet recovery.',
-      };
-    default:
-      return {};
-  }
+const ActionButtons = ({
+  isSendButtonActive,
+  navigation,
+  activeAccountAddress,
+}: Props) => {
+  const [receiveAddress, setReceiveAddress] = useState('');
+  return (
+    <React.Fragment>
+      <Sizer>
+        <ActionButtonsWrapper>
+          <CircleButton
+            label="Receive"
+            fontIcon="qrDetailed"
+            onPress={() => setReceiveAddress(activeAccountAddress)}
+          />
+          <CircleButton
+            label="Send"
+            fontIcon="paperPlane"
+            onPress={() => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW)}
+            disabled={!isSendButtonActive}
+          />
+          <CircleButton
+            label="Exchange"
+            fontIcon="exchange"
+            onPress={() => navigation.navigate(EXCHANGE)}
+          />
+        </ActionButtonsWrapper>
+      </Sizer>
+      <ReceiveModal
+        isVisible={!!receiveAddress}
+        address={receiveAddress}
+        onModalHide={() => setReceiveAddress('')}
+      />
+    </React.Fragment>
+  );
 };
 
-
-class ActionButtons extends React.Component<Props, State> {
-  state = {
-    visibleActionModal: '',
-    receiveAddress: '',
-  };
-
-  openActionModal = (actionModalType: string) => {
-    this.setState({ visibleActionModal: actionModalType });
-  };
-
-  closeActionModal = (callback: () => void) => {
-    this.setState({ visibleActionModal: '' }, () => {
-      if (callback) {
-        const timer = setTimeout(() => {
-          callback();
-          clearTimeout(timer);
-        }, 500);
-      }
-    });
-  };
-
-  closeReceiveModal = () => {
-    this.setState({ receiveAddress: '' });
-  };
-
-  getModalActions = () => {
-    const { visibleActionModal } = this.state;
-    const {
-      rates,
-      balances,
-      baseFiatCurrency,
-      wallets,
-    } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    const accountsInfo = wallets.map((account) => {
-      const { type, id } = account;
-      const accBalance = calculateBalanceInFiat(rates, balances[id] || {}, fiatCurrency);
-
-      return {
-        ...account,
-        balance: accBalance,
-        formattedBalance: formatFiat(accBalance, fiatCurrency),
-        address: id,
-        additionalInfo: getModalActionsInfo(type),
-        sendFlow: SEND_TOKEN_FROM_HOME_FLOW,
-        exchangeFlow: EXCHANGE,
-      };
-    });
-
-    switch (visibleActionModal) {
-      case RECEIVE:
-        return accountsInfo.map(({
-          type,
-          formattedBalance,
-          additionalInfo,
-          address,
-        }) => ({
-          key: type,
-          value: formattedBalance,
-          ...additionalInfo,
-          onPress: () => this.setState({ receiveAddress: address }),
-          label: `To ${additionalInfo.title}`,
-        }),
-        );
-      case SEND:
-        return accountsInfo.map((acc) => {
-          const {
-            type,
-            formattedBalance,
-            balance,
-            additionalInfo,
-            sendFlow,
-          } = acc;
-
-          return {
-            key: type,
-            value: formattedBalance,
-            ...additionalInfo,
-            onPress: () => this.navigateToAction(acc, sendFlow),
-            label: `From ${additionalInfo.title}`,
-            isDisabled: balance <= 0,
-          };
-        });
-      case EXCHANGE:
-        return accountsInfo.filter(({ type }) => isSupportedAccountType(type)).map((acc) => {
-          const {
-            type,
-            formattedBalance,
-            additionalInfo,
-            exchangeFlow,
-          } = acc;
-          return {
-            key: type,
-            value: formattedBalance,
-            ...additionalInfo,
-            onPress: () => this.navigateToAction(acc, exchangeFlow),
-            label: `From ${additionalInfo.title}`,
-          };
-        });
-      default:
-        return [];
-    }
-  };
-
-  navigateToAction = (acc: Account, navigateTo: string) => {
-    const {
-      navigation,
-      activeWallet,
-      changeWalletAction,
-      blockchainNetwork,
-      setActiveBlockchainNetwork,
-    } = this.props;
-    const { type: walletType } = acc;
-    const { type: activeAccType } = activeWallet;
-
-    switch (walletType) {
-      case ACCOUNT_TYPES.SMART_WALLET:
-        if (blockchainNetwork !== BLOCKCHAIN_NETWORK_TYPES.ETHEREUM) {
-          setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
-        }
-        if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
-          changeWalletAction(acc, () => navigation.navigate(navigateTo));
-        } else {
-          navigation.navigate(navigateTo);
-        }
-        break;
-
-      case ACCOUNT_TYPES.KEY_BASED:
-        if (blockchainNetwork !== BLOCKCHAIN_NETWORK_TYPES.ETHEREUM) {
-          setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
-        }
-        if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
-          changeWalletAction(acc, () => navigation.navigate(navigateTo));
-        } else {
-          navigation.navigate(navigateTo);
-        }
-        break;
-
-      default:
-        break;
-    }
-  };
-
-  render() {
-    const { visibleActionModal, receiveAddress } = this.state;
-    const { balances } = this.props;
-    const modalActions = this.getModalActions();
-    const isSendButtonActive = !!Object.keys(balances).length;
-
-    return (
-      <React.Fragment>
-        <Sizer>
-          <ActionButtonsWrapper>
-            <CircleButton
-              label="Receive"
-              fontIcon="qrDetailed"
-              onPress={() => this.openActionModal(RECEIVE)}
-            />
-            <CircleButton
-              label="Send"
-              fontIcon="paperPlane"
-              onPress={() => this.openActionModal(SEND)}
-              disabled={!isSendButtonActive}
-            />
-            <CircleButton
-              label="Exchange"
-              fontIcon="exchange"
-              onPress={() => this.openActionModal(EXCHANGE)}
-            />
-          </ActionButtonsWrapper>
-        </Sizer>
-        <ActionModal
-          onModalClose={this.closeActionModal}
-          isVisible={!!visibleActionModal}
-          items={modalActions}
-        />
-        <ReceiveModal
-          isVisible={!!receiveAddress}
-          address={receiveAddress}
-          onModalHide={this.closeReceiveModal}
-        />
-      </React.Fragment>
-    );
-  }
-}
-
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency, blockchainNetwork } },
-  rates: { data: rates },
   balances: { data: balances },
-  assets: {
-    supportedAssets,
-  },
 }: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
-  blockchainNetwork,
-  rates,
-  balances,
-  supportedAssets,
+  isSendButtonActive: !isEmpty(balances),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
+const structuredSelector = createStructuredSelector({
+  activeAccountAddress: activeAccountAddressSelector,
 });
 
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(ActionButtons));
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default withNavigation(connect(combinedMapStateToProps)(ActionButtons));

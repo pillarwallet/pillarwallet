@@ -218,7 +218,7 @@ export const loginAction = (
 
         // key based wallet migration – switch to smart wallet if key based was active
         const activeAccountType = getActiveAccountType(accounts);
-        if (activeAccountType === ACCOUNT_TYPES.KEY_BASED) {
+        if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
           const smartWalletAccount = findFirstSmartAccount(accounts);
           if (smartWalletAccount) {
             dispatch(setActiveAccountAction(smartWalletAccount.id));
