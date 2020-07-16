@@ -22,19 +22,24 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import languageDetector from './deviceLanguageDetector';
 import translationLoader from './translationLoader';
-import { DEFAULT_NAMESPACE, NAMESPACES } from './config';
-
+import { DEFAULT_NAMESPACE, NAMESPACES, POST_PROCESSORS } from './config';
+import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
 
 i18n
   .use(initReactI18next)
   .use(languageDetector)
   .use(translationLoader)
+  .use(PunctuationPostProcessor)
+  .use(SuffixPrefixPostProcessor)
+  .use(CapitalizationPostProcessor)
   .init({
+    transSupportBasicHtmlNodes: false,
     interpolation: {
       escapeValue: false,
     },
     ns: NAMESPACES,
     defaultNS: DEFAULT_NAMESPACE,
+    postProcess: POST_PROCESSORS,
 
     debug: !!__DEV__,
   });
