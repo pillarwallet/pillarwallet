@@ -100,7 +100,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { BalancesStore, Assets } from 'models/Asset';
+import type { BalancesStore } from 'models/Asset';
 import type {
   SmartWalletAccount,
   SmartWalletAccountDevice,
@@ -146,7 +146,7 @@ import {
   reportLog,
 } from 'utils/common';
 import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
-import { getPrivateKeyFromPin } from 'utils/wallet';
+import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
 
 // actions
 import { addAccountAction, setActiveAccountAction, switchAccountAction } from './accountsActions';
@@ -1337,19 +1337,17 @@ export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions)
   };
 };
 
-export const importSmartWalletAccountsAction = (
-  privateKey: string,
-  createNewAccount: boolean,
-  initialAssets: Assets,
-) => {
+export const importSmartWalletAccountsAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+    await dispatch(initSmartWalletSdkAction(privateKey));
+
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { user = {} } = await storage.get('user');
     const { session: { data: session } } = getState();
 
     const smartAccounts = await smartWalletService.getAccounts();
-    if (!smartAccounts.length && createNewAccount) {
+    if (isEmpty(smartAccounts)) {
       const newSmartAccount = await smartWalletService.createAccount(user.username);
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
@@ -1375,10 +1373,11 @@ export const importSmartWalletAccountsAction = (
     await Promise.all(newAccountsPromises);
 
     if (smartAccounts.length) {
-      const accountId = smartAccounts[0].address;
+      const accountId = normalizeWalletAddress(smartAccounts[0].address);
       await dispatch(connectSmartWalletAccountAction(accountId));
       await dispatch(setActiveAccountAction(accountId));
       // set default assets for smart wallet
+      const initialAssets = await api.fetchInitialAssets(user.walletId);
       await dispatch({
         type: SET_INITIAL_ASSETS,
         payload: {

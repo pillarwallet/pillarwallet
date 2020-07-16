@@ -44,7 +44,7 @@ import {
   REFERRAL_INCOMING_REWARD,
   RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -59,7 +59,7 @@ import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 // utils
-import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
+import { generateMnemonicPhrase } from 'utils/wallet';
 import { delay } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 
@@ -72,7 +72,6 @@ import smartWalletService from 'services/smartWallet';
 
 // actions
 import {
-  initSmartWalletSdkAction,
   importSmartWalletAccountsAction,
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
@@ -86,7 +85,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
-import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
+import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
@@ -171,7 +170,6 @@ export const finishRegistration = async ({
   dispatch,
   userInfo,
   privateKey,
-  isImported,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
@@ -189,9 +187,7 @@ export const finishRegistration = async ({
 
   // create smart wallet account only for new wallets
   await smartWalletService.reset();
-  const createNewAccount = !isImported;
-  await dispatch(initSmartWalletSdkAction(privateKey));
-  await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
+  await dispatch(importSmartWalletAccountsAction(privateKey));
 
   dispatch(fetchBadgesAction(false));
 
@@ -329,7 +325,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       dispatch,
       userInfo,
       privateKey: wallet.privateKey,
-      isImported,
     });
 
     // STEP 6: add wallet created / imported events
@@ -362,7 +357,6 @@ export const registerOnBackendAction = () => {
           privateKey,
           importedWallet,
         },
-        backupStatus: { isImported },
       },
     } = getState();
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
@@ -391,7 +385,6 @@ export const registerOnBackendAction = () => {
       dispatch,
       userInfo,
       privateKey: walletPrivateKey,
-      isImported,
     });
 
     dispatch(checkForWalletBackupToastAction());

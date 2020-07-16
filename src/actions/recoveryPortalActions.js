@@ -62,6 +62,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type SDKWrapper from 'services/api';
 
+
 export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     await dispatch(addConnectedDeviceAction(DEVICE_CATEGORIES.SMART_WALLET_DEVICE, deviceAddress, payWithGasToken));
@@ -137,10 +138,8 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     await finishRegistration({
       api,
       dispatch,
-      getState,
       userInfo,
       privateKey,
-      isImported: true,
     });
 
     // technically key based wallet is not imported

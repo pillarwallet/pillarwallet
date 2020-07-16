@@ -96,7 +96,7 @@ import {
   checkIfRecoveredSmartWalletFinishedAction,
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
-import { importSmartWalletAccountsAction, initSmartWalletSdkAction } from './smartWalletActions';
+import { importSmartWalletAccountsAction } from './smartWalletActions';
 
 
 const storage = Storage.getInstance('db');
@@ -221,12 +221,10 @@ export const loginAction = (
         if (activeAccountType !== ACCOUNT_TYPES.SMART_WALLET) {
           const smartWalletAccount = findFirstSmartAccount(accounts);
           if (smartWalletAccount) {
-            dispatch(setActiveAccountAction(smartWalletAccount.id));
+            await dispatch(setActiveAccountAction(smartWalletAccount.id));
           } else {
             // very old user that doesn't have any smart wallet, let's create one and migrate safe
-            const initialAssets = await api.fetchInitialAssets(user.walletId);
-            await dispatch(initSmartWalletSdkAction(decryptedPrivateKey));
-            await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey, true, initialAssets));
+            await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
           }
         }
 
