@@ -57,6 +57,7 @@ import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
+import type { User } from 'models/User';
 
 type Props = {
   theme: Theme,
@@ -65,7 +66,7 @@ type Props = {
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
-  user: Object,
+  user: User,
   accounts: Accounts,
 };
 

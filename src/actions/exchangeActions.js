@@ -45,7 +45,6 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 // utils
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
-import { isFiatCurrency } from 'utils/exchange';
 
 // selectors
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
@@ -203,61 +202,59 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       },
     });
 
-    if (!isFiatCurrency(fromAssetCode)) {
-      const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
-      const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
+    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
-      if (!fromAsset || !toAsset) {
+    if (!fromAsset || !toAsset) {
+      Toast.show({
+        title: 'Exchange service failed',
+        type: 'warning',
+        message: 'Could not find asset',
+      });
+      return;
+    }
+
+    let { address: fromAddress } = fromAsset;
+    let { address: toAddress } = toAsset;
+
+    // we need PROD assets' addresses in order to get offers when on ropsten network
+    // as v2 requests require to provide addresses not tickers
+    if (__DEV__) {
+      const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
+      fromAddress = prodAssetsAddress[fromAssetCode];
+      toAddress = prodAssetsAddress[toAssetCode];
+    }
+
+    const excludedProviders = isSmartWallet ? EXCLUDED_SMARTWALLET_PROVIDERS : EXCLUDED_KEYWALLET_PROVIDERS;
+
+    connectExchangeService(getState());
+    exchangeService.onOffers(offers =>
+      offers
+        .filter(({ askRate, provider }) => !!askRate && !excludedProviders.includes(provider))
+        .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
+    );
+    // we're requesting although it will start delivering when connection is established
+    const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, activeWalletId);
+    const responseError = get(response, 'error');
+
+    if (responseError) {
+      const responseErrorMessage = get(responseError, 'response.data.error.message');
+      const message = responseErrorMessage || 'Unable to connect';
+      if (message.toString().toLowerCase().startsWith('access token')) {
+        /**
+         * access token is expired or malformed,
+         * let's hit with user info endpoint to update access tokens
+         * or redirect to pin screen (logic being sdk init)
+         * after it's complete (access token's updated) let's dispatch same action again
+         * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
+         */
+        await api.userInfo(userWalletId).catch(() => null);
+      } else {
         Toast.show({
           title: 'Exchange service failed',
           type: 'warning',
-          message: 'Could not find asset',
+          message,
         });
-        return;
-      }
-
-      let { address: fromAddress } = fromAsset;
-      let { address: toAddress } = toAsset;
-
-      // we need PROD assets' addresses in order to get offers when on ropsten network
-      // as v2 requests require to provide addresses not tickers
-      if (__DEV__) {
-        const prodAssetsAddress = await exchangeService.getProdAssetsAddress();
-        fromAddress = prodAssetsAddress[fromAssetCode];
-        toAddress = prodAssetsAddress[toAssetCode];
-      }
-
-      const excludedProviders = isSmartWallet ? EXCLUDED_SMARTWALLET_PROVIDERS : EXCLUDED_KEYWALLET_PROVIDERS;
-
-      connectExchangeService(getState());
-      exchangeService.onOffers(offers =>
-        offers
-          .filter(({ askRate, provider }) => !!askRate && !excludedProviders.includes(provider))
-          .map((offer: Offer) => dispatch({ type: ADD_OFFER, payload: offer })),
-      );
-      // we're requesting although it will start delivering when connection is established
-      const response = await exchangeService.requestOffers(fromAddress, toAddress, fromAmount, activeWalletId);
-      const responseError = get(response, 'error');
-
-      if (responseError) {
-        const responseErrorMessage = get(responseError, 'response.data.error.message');
-        const message = responseErrorMessage || 'Unable to connect';
-        if (message.toString().toLowerCase().startsWith('access token')) {
-          /**
-           * access token is expired or malformed,
-           * let's hit with user info endpoint to update access tokens
-           * or redirect to pin screen (logic being sdk init)
-           * after it's complete (access token's updated) let's dispatch same action again
-           * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
-           */
-          await api.userInfo(userWalletId).catch(() => null);
-        } else {
-          Toast.show({
-            title: 'Exchange service failed',
-            type: 'warning',
-            message,
-          });
-        }
       }
     }
   };

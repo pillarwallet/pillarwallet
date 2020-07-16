@@ -54,7 +54,6 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 // utils, services
 import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
-import { isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
@@ -294,7 +293,6 @@ class ExchangeScreen extends React.Component<Props, State> {
   shouldShowSellMax = () => {
     const { balances } = this.props;
     const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
-    if (isFiatCurrency(selectedAssetSymbol)) return false;
     const assetBalance = getBalance(balances, selectedAssetSymbol);
     return !!assetBalance;
   }
@@ -351,20 +349,19 @@ class ExchangeScreen extends React.Component<Props, State> {
   }];
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
-    const initialFormState = { ...this.state.value };
-
     const { assets, exchangeSupportedAssets } = this.props;
     const assetsData = getAssetsAsList(assets);
 
-    if (!isFiatCurrency(fromAssetCode)) {
-      const fromAsset = getAssetData(assetsData, exchangeSupportedAssets, fromAssetCode);
-      const selectedAssetOptions = this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
+    const fromAsset = getAssetData(assetsData, exchangeSupportedAssets, fromAssetCode);
+    const selectedAssetOptions = this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
 
-      initialFormState.fromInput = {
+    const initialFormState = {
+      ...this.state.value,
+      fromInput: {
         selector: selectedAssetOptions,
         input: fromAmount ? fromAmount.toString() : '',
-      };
-    }
+      },
+    };
 
     if (toAssetCode) {
       const toAsset = getAssetData(assetsData, exchangeSupportedAssets, toAssetCode);
@@ -402,19 +399,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ isSubmitted: true });
     searchOffers(from, to, amount);
 
-    // if it's not supported currecy, we show the empty message immadietely, otherwise we wait for 5 sec
-    if (!this.isSupportedExchange(from, to)) {
-      this.setState({ showEmptyMessage: true });
-    } else {
-      this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
-    }
-  };
-
-  isSupportedExchange = (from: string, to: string) => {
-    const {
-      fiatExchangeSupportedAssets,
-    } = this.props;
-    return !(isFiatCurrency(from) && !fiatExchangeSupportedAssets.some(({ symbol }) => symbol === to));
+    this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 
   setFromAmount = amount => {
@@ -609,9 +594,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       isSubmitted,
       showEmptyMessage,
     } = this.state;
-    const { fromInput, toInput } = value;
-    const { selector: selectedFromOption } = fromInput;
-    const { selector: selectedToOption } = toInput;
 
     const formStructure = generateFormStructure(balances);
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
@@ -635,13 +617,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       && !deploymentData.error;
 
-    const isSelectedFiat = !isEmpty(selectedFromOption) && isFiatCurrency(selectedFromOption.symbol);
-    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
+    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
 
     const swaps = this.generatePopularSwaps();
-
-    const isSupportedExchange = selectedFromOption &&
-      this.isSupportedExchange(selectedFromOption.symbol, selectedToOption.symbol);
 
     return (
       <ContainerWithHeader
@@ -686,7 +664,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <ExchangeOffers
             value={value}
             disableNonFiatExchange={disableNonFiatExchange}
-            isExchangeActive={isSubmitted && isSupportedExchange}
+            isExchangeActive={isSubmitted}
             showEmptyMessage={showEmptyMessage}
             setFromAmount={this.setFromAmount}
             navigation={navigation}

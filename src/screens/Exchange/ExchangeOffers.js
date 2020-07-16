@@ -502,8 +502,6 @@ class ExchangeOffers extends React.Component<Props, State> {
       || !allowanceSet
       || (isShapeShift && !shapeshiftAccessToken);
 
-    const disableOffer = disableNonFiatExchange;
-
     const additionalData = {
       offer,
       minOrMaxNeeded,
@@ -522,7 +520,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     return (
       <OfferCardWrapper>
         <OfferCard
-          isDisabled={isTakeButtonDisabled || disableOffer}
+          isDisabled={isTakeButtonDisabled || disableNonFiatExchange}
           onPress={() => this.onOfferPress(offer)}
           labelTop="Exchange rate"
           valueTop={formatAmountDisplay(askRate)}
