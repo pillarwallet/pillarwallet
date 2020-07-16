@@ -18,6 +18,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components';
+import t from 'translations/translate';
 
 // actions
 import { lockScreenAction } from 'actions/authActions';
@@ -63,11 +64,8 @@ const WalletRecoveryOptions = (props: Props) => {
           dotStyle={{ marginHorizontal: 7 }}
           numAllDots={3}
         />
-        <Title center>Smart Wallet is now being recovered</Title>
-        <Paragraph small light center>
-          Your Smart Wallet device recovery transaction is sent.
-          You will be able to use your recovered wallet once transaction is confirmed.
-        </Paragraph>
+        <Title center>{t('auth:recoveryPortal.title.smartWalletIsBeingRecovered')}</Title>
+        <Paragraph small light center>{t('auth:recoveryPortal.paragraph.smartWalletIsBeingRecovered')}</Paragraph>
       </ScrollWrapper>
     </ContainerWithHeader>
   );

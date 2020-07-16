@@ -20,6 +20,7 @@ import { Alert } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // constants
 import { BACKUP_WALLET_IN_SETTINGS_FLOW } from 'constants/navigationConstants';
@@ -57,11 +58,11 @@ const Title = styled(MediumText)`
 `;
 
 const skipPrompt = (callback) => Alert.alert(
-  'Are you sure?',
-  'You are going to skip your Private Key backup, but no worries at all – you can still do it later!',
+  t('auth:title.areYouSure'),
+  t('auth:recoveryPortal.alert.skippingPrivateKeyBackup'),
   [
-    { text: 'Confirm skip', onPress: () => callback() },
-    { text: 'Dismiss', style: 'cancel' },
+    { text: t('auth:button.confirmSkip'), onPress: () => callback() },
+    { text: t('auth:button.dismiss'), style: 'cancel' },
   ],
   { cancelable: true },
 );
@@ -84,7 +85,7 @@ const RecoveryPortalSetupComplete = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: 'Recovery Portal' }],
+        centerItems: [{ title: t('auth.recoveryPortal.title.RecoveryPortal') }],
         rightItems: [{ close: true }],
         noBack: true,
         onClose: dismissNavigation,
@@ -93,16 +94,12 @@ const RecoveryPortalSetupComplete = ({
       <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
         <Wrapper flex={1} center regularPadding>
           <Animation source={animationSuccess} />
-          <Title center>Recovery device setup is now complete</Title>
-          <Paragraph small>
-            It is important that you also write down and secure your private key back up phrase
-            in order to recover your primary Pillar account. This is the only way to recover your
-            password to the Pillar Recovery Portal. Pillar cannot help you retrieve your wallet.
-          </Paragraph>
+          <Title center>{t('auth:recoveryPortal.recoveryDeviceSetupComplete')}</Title>
+          <Paragraph small>{t('auth:recoveryPortal.paragraph.importantToBackupPrivateKey')}</Paragraph>
           {isWalletBackupNeeded &&
             <Button
               block
-              title="Backup my Seed Phrase"
+              title={t('auth:button.backupSeedPhrase')}
               onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
               marginTop={50}
               marginBottom={spacing.large}
@@ -110,7 +107,7 @@ const RecoveryPortalSetupComplete = ({
           }
           {isWalletBackupNeeded &&
             <ButtonText
-              buttonText="Skip (at my own risk)"
+              buttonText={t('auth:button.skipAtOwnRisk')}
               onPress={() => skipPrompt(dismissNavigation)}
               color={colors.negative}
               fontSize={fontSizes.medium}
@@ -120,7 +117,7 @@ const RecoveryPortalSetupComplete = ({
           {!isWalletBackupNeeded &&
             <Button
               block
-              title="Magic"
+              title={t('auth:button.magic')}
               onPress={() => navigation.dismiss()}
               marginTop={50}
             />

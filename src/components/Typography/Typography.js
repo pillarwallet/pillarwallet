@@ -57,6 +57,7 @@ const getTextStyle = (props) => {
   if (props.tertiary) textProps.color = colors.tertiary;
   if (props.accent) textProps.color = colors.accent;
   if (props.synthetic) textProps.color = colors.synthetic;
+  if (props.link) textProps.color = colors.link;
   if (props.color) textProps.color = props.color; // for custom color
 
   // positioning
@@ -148,6 +149,7 @@ export const Paragraph = styled(BaseText)`
 export const TextLink = styled(BaseText)`
   ${fontStyles.medium};
   color: ${themedColors.link};
+  ${(props) => getTextStyle(props)}
 `;
 
 export const Label = styled(MediumText)`

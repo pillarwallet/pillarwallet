@@ -20,15 +20,17 @@
 import * as React from 'react';
 import { Animated } from 'react-native';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import type { TranslatedString } from 'models/Translations';
 
 type Props = {
-  messages?: Array<string>,
+  messages?: Array<TranslatedString>,
   noMessages?: boolean,
   firstMessageWithoutDelay?: boolean,
 };
@@ -37,11 +39,6 @@ type State = {
   visibleMessageId: number,
   showMessage: boolean,
 }
-
-const defaultMessages = [
-  'It might take a bit.',
-  'Loading...',
-];
 
 const ContentHolder = styled.View`
   position: relative;
@@ -61,6 +58,11 @@ const AnimatedMessageText = Animated.createAnimatedComponent(MessageText);
 export default class Loader extends React.Component<Props, State> {
   timerToChangeMessage: ?IntervalID;
   startTimeout: ?TimeoutID;
+
+  defaultMessages = [
+    t('auth:loadingMessage.mightTakeABit', { suffix: '.' }),
+    t('auth:loadingMessage.loading', { suffix: '...' }),
+  ];
 
   constructor(props: Props) {
     super(props);
@@ -91,7 +93,7 @@ export default class Loader extends React.Component<Props, State> {
   changeMessages = () => {
     const { visibleMessageId } = this.state;
     const { messages } = this.props;
-    const messagesToShow = messages || defaultMessages;
+    const messagesToShow = messages || this.defaultMessages;
     if (messagesToShow.length < 2) return;
     const lastMessageId = messagesToShow.length - 1;
     const nextMessageId = visibleMessageId === lastMessageId ? 0 : visibleMessageId + 1;
@@ -101,7 +103,7 @@ export default class Loader extends React.Component<Props, State> {
   render() {
     const { visibleMessageId, showMessage } = this.state;
     const { messages } = this.props;
-    const messagesToShow = messages || defaultMessages;
+    const messagesToShow = messages || this.defaultMessages;
     const message = messagesToShow[visibleMessageId] || '';
 
     return (

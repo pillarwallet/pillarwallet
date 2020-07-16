@@ -20,15 +20,16 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Keyboard, Platform } from 'react-native';
-import t from 'tcomb-form-native';
+import * as tForm from 'tcomb-form-native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import debounce from 'lodash.debounce';
+import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Wrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText, Paragraph, TextLink } from 'components/Typography';
+import { BaseText, MediumText, Paragraph } from 'components/Typography';
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import Button from 'components/Button';
 import ProfileImage from 'components/ProfileImage';
@@ -80,16 +81,12 @@ const CheckboxText = styled(BaseText)`
   color: ${themedColors.accent};
 `;
 
-const StyledTextLink = styled(TextLink)`
-  ${fontStyles.regular};
-`;
-
 const FooterWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px 20px;
   width: 100%;
 `;
 
-const formStructure = t.struct({
+const formStructure = tForm.struct({
   username: Username,
 });
 
@@ -150,7 +147,7 @@ const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
 const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 
 class NewProfile extends React.Component<Props, State> {
-  _form: t.form;
+  _form: tForm.form;
 
   constructor(props: Props) {
     super(props);
@@ -182,7 +179,7 @@ class NewProfile extends React.Component<Props, State> {
     // Because the idea is to display the inputError label on proper circumstances
     // here we don't validate minimum length, that's done on
     // this.renderChooseUsernameScreen() const shouldNextButtonBeDisabled
-    const validateUsername = t.validate(value, formStructure);
+    const validateUsername = tForm.validate(value, formStructure);
     const isValidUsername = validateUsername.isValid();
     const { message: errorMessage = '' } = validateUsername.firstError() || {};
     const hasError = !isValidUsername && value.username;
@@ -190,7 +187,7 @@ class NewProfile extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const statusIcon = hasError ? 'close' : null;
     const iconColor = hasError ? colors.negative : 'transparent';
-    const options = t.update(this.state.formOptions, {
+    const options = tForm.update(this.state.formOptions, {
       fields: {
         username: {
           hasError: { $set: hasError },
@@ -233,9 +230,11 @@ class NewProfile extends React.Component<Props, State> {
     if (prevProps.walletState === walletState) return;
 
     if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
-      const errorMessage = walletState === USERNAME_EXISTS ? 'Username taken' : 'Invalid username';
+      const errorMessage = walletState === USERNAME_EXISTS
+        ? t('auth:error.takenUsername')
+        : t('auth:error.invalidUsername');
 
-      const options = t.update(this.state.formOptions, {
+      const options = tForm.update(this.state.formOptions, {
         fields: {
           username: {
             hasError: { $set: true },
@@ -252,7 +251,7 @@ class NewProfile extends React.Component<Props, State> {
     }
 
     if (walletState === CHECKING_USERNAME) {
-      const options = t.update(this.state.formOptions, {
+      const options = tForm.update(this.state.formOptions, {
         fields: {
           username: {
             config: {
@@ -266,7 +265,7 @@ class NewProfile extends React.Component<Props, State> {
     }
 
     if (walletState === USERNAME_OK) {
-      const options = t.update(this.state.formOptions, {
+      const options = tForm.update(this.state.formOptions, {
         fields: {
           username: {
             config: {
@@ -312,7 +311,7 @@ class NewProfile extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChange}
         />
-        <BaseText regular>This cannot be changed later</BaseText>
+        <BaseText regular>{t('auth:cannotBeChanged')}</BaseText>
       </StyledWrapper>
     );
   }
@@ -329,13 +328,12 @@ class NewProfile extends React.Component<Props, State> {
           initialsSize={48}
         />
         <UsernameWrapper>
-          <Text>Welcome back,</Text>
-          <Text>{apiUser.username}.</Text>
+          <Text>{t('auth:title.welcomeBack', { username: apiUser.username })}</Text>
         </UsernameWrapper>
         <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
-          Your Pillar Wallet is now restored. We are happy to see you again.
+          {t('auth:paragraph.successfullyRestoredWallet')}
         </Paragraph>
-        <Button marginBottom="20px" onPress={this.handleSubmit} title="Next" />
+        <Button marginBottom="20px" onPress={this.handleSubmit} title={t('auth:button.next')} />
       </Wrapper>
     );
   }
@@ -375,7 +373,7 @@ class NewProfile extends React.Component<Props, State> {
       ? {
         centerItems: [
           {
-            title: 'Choose a username',
+            title: t('auth:title.chooseUsername'),
           },
         ],
       }
@@ -403,12 +401,10 @@ class NewProfile extends React.Component<Props, State> {
                 checked={hasAgreedToTerms}
               >
                 <CheckboxText>
-                  {'I have read, understand, and agree to the '}
-                  <StyledTextLink
-                    onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
-                  >
-                    Terms of Use
-                  </StyledTextLink>
+                  {t('auth:withLink.readUnderstandAgreeTo', {
+                    linkedText: t('auth:termsOfUse'),
+                    onPress: () => this.setState({ visibleModal: TERMS_OF_USE_MODAL }),
+                  })}
                 </CheckboxText>
               </Checkbox>
               <Checkbox
@@ -418,18 +414,16 @@ class NewProfile extends React.Component<Props, State> {
                 checked={hasAgreedToPolicy}
               >
                 <CheckboxText>
-                  {'I have read, understand, and agree to the '}
-                  <StyledTextLink
-                    onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
-                  >
-                    Privacy policy
-                  </StyledTextLink>
+                  {t('auth:withLink.readUnderstandAgreeTo', {
+                    linkedText: t('auth:privacyPolicy'),
+                    onPress: () => this.setState({ visibleModal: PRIVACY_POLICY_MODAL }),
+                  })}
                 </CheckboxText>
               </Checkbox>
             </React.Fragment>}
             <Spacing h={22} />
             <Button
-              title="Next"
+              title={t('auth:button.next')}
               onPress={this.handleSubmit}
               disabled={!allowNext}
             />

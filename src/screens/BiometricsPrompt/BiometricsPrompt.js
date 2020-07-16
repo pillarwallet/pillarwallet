@@ -25,6 +25,7 @@ import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { registerWalletAction } from 'actions/onboardingActions';
@@ -131,15 +132,15 @@ class BiometricsPrompt extends React.Component<Props> {
     const biometryTypeTitle = getBiometryType(biometryType);
     const imageSource = getBiometryImage(biometryType);
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Make crypto easy' }] }}>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.biometricsPromptOnLoging') }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
-          <HeaderText>{`Would you like to use\n${biometryTypeTitle} with your\nwallet?`}</HeaderText>
+          <HeaderText>{t('auth:paragraph.biometricsPrompt', { biometryTypeTitle })}</HeaderText>
           <ContentInnerWrapper>
             <TouchIdImage source={imageSource} />
             <ButtonsWrapper>
-              <Button title="Yes, please" onPress={() => this.proceedToRegisterWallet(true)} />
+              <Button title={t('auth:button.yesPlease')} onPress={() => this.proceedToRegisterWallet(true)} />
               <ButtonText
-                buttonText="I'm happy with PIN only"
+                buttonText={t('auth:button.okToUsePinCodeOnly')}
                 onPress={() => this.proceedToRegisterWallet(false)}
                 fontSize={fontSizes.medium}
                 wrapperStyle={{ marginTop: spacing.large }}

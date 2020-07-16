@@ -22,6 +22,7 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 // actions
 import { hasSeenRecoveryPortalIntroAction } from 'actions/appSettingsActions';
@@ -88,17 +89,13 @@ const RecoveryPortalSetupIntro = ({
     <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
       <CustomWrapper>
         <FeatureIcon source={deviceRecoveryIcon} />
-        <Title>Recovery device</Title>
-        <BodyText>
-          Recovery agents are individuals, services or secondary devices, like,
-          hardware wallets that you choose to assist you with recovering access
-          to your Smart Wallet if you happen to lose your device or master key.
-        </BodyText>
+        <Title>{t('auth:recoveryPortal.title.recoverySetupIntro')}</Title>
+        <BodyText>{t('auth:recoveryPortal.paragraph.recoverySetupIntro')}</BodyText>
       </CustomWrapper>
       <ButtonWrapper>
         <Button
           block
-          title="Next"
+          title={t('auth:button.next')}
           onPress={() => {
             hasSeenRecoveryPortalIntro();
             navigation.navigate(RECOVERY_PORTAL_SETUP_SIGN_UP);

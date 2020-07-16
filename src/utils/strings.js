@@ -17,26 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Trans } from 'react-i18next';
-import { BaseText } from 'components/Typography';
 
-export type I18n = {
-  language: string,
-}
-
-export type TranslationOptions = {
-  exclamation?: boolean,
-  questionMark?: boolean,
-  suffix?: string,
-  prefix?: string,
-  capitalize?: boolean,
-  linkedText?: string,
-  onPress?: () => void,
+export const capitalize = (str: string) => {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 };
-
-export type TranslationResource = {
-  [key: string]: string,
-};
-
-
-export type TranslatedString = string | Trans | BaseText;

@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import {
@@ -127,11 +128,11 @@ const BackupWordText = styled(BaseText)`
 
 const getButtonLabel = (currentWordIndex, error) => {
   if (error && currentWordIndex === 12) {
-    return { text: 'Try again', showArrow: false };
+    return { text: t('auth:button.tryAgain'), showArrow: false };
   } else if (currentWordIndex < 12) {
-    return { text: 'Next', showArrow: true };
+    return { text: t('auth:button.next'), showArrow: true };
   }
-  return { text: 'Finish', showArrow: false };
+  return { text: t('auth:button.finish'), showArrow: false };
 };
 
 class ImportWallet extends React.Component<Props, State> {
@@ -154,7 +155,7 @@ class ImportWallet extends React.Component<Props, State> {
     const { walletState, error } = nextProps.wallet;
 
     if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
-      const errorMessage = 'Incorrect backup phrase';
+      const errorMessage = t('auth:error.incorrectBackupPhrase');
       return {
         ...prevState,
         errorMessage,
@@ -263,7 +264,7 @@ class ImportWallet extends React.Component<Props, State> {
             return (<BackupWordText key={key}>{`${key}. ${backupPhrase[key]}`}</BackupWordText>);
           })}
         </Row>
-        <Label>{`Word ${currentWordIndex}`}</Label>
+        <Label>{t('auth:seedWord', { wordNumber: currentWordIndex })}</Label>
         <TextInput
           getInputRef={(ref) => { this.backupPhraseInput = ref; }}
           inputProps={inputProps}
@@ -293,7 +294,7 @@ class ImportWallet extends React.Component<Props, State> {
       return (
         <ButtonsWrapper isRow>
           {!!showPrev && <StyledButton
-            title="Prev"
+            title={t('auth:button.prev')}
             onPress={this.showPrevWord}
             leftIconName="back"
             disabled={isImporting}
@@ -314,7 +315,7 @@ class ImportWallet extends React.Component<Props, State> {
     return (
       <Button
         disabled={!tabsInfo[activeTab].value || isImporting}
-        title="Re-import"
+        title={t('auth:button.reimport')}
         onPress={this.handleImportSubmit}
         isLoading={isImporting}
       />
@@ -363,7 +364,7 @@ class ImportWallet extends React.Component<Props, State> {
     const restoreWalletTabs = [
       {
         id: TWORDSPHRASE,
-        name: 'Backup phrase',
+        name: t('auth:title.backupPhrase'),
         onPress: () => this.setActiveTab(TWORDSPHRASE),
       },
     ];
@@ -378,13 +379,13 @@ class ImportWallet extends React.Component<Props, State> {
 
     const tabsInfo = {
       TWORDSPHRASE: {
-        inputLabel: 'Backup phrase',
+        inputLabel: t('auth:label.backupPhrase'),
         changeName: 'currentBPWord',
         value: currentBPWord,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
       DEV: {
-        inputLabel: 'Backup phrase',
+        inputLabel: t('auth:label.backupPhrase'),
         changeName: 'tWordsPhrase',
         value: tWordsPhrase,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
@@ -393,7 +394,7 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={({ centerItems: [{ title: 'Re-import wallet' }] })}
+        headerProps={({ centerItems: [{ title: t('auth:title.reimportWallet') }] })}
         footer={(
           <FooterWrapper>
             {this.renderFooterButtons(tabsInfo)}
@@ -407,7 +408,11 @@ class ImportWallet extends React.Component<Props, State> {
         >
           {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />}
           <Wrapper regularPadding>
-            {!__DEV__ && <MediumText center style={{ marginTop: spacing.large }}>Enter your 12 words</MediumText>}
+            {!__DEV__ &&
+            <MediumText center style={{ marginTop: spacing.large }}>
+              {t('auth:label.enterSeedPhrase')}
+            </MediumText>
+            }
             <InputWrapper>
               <FormWrapper>
                 {this.renderForm(tabsInfo)}

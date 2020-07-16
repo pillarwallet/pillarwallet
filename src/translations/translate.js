@@ -18,10 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import * as React from 'react';
 import i18next from 'i18next';
-import type { TranslationOptions } from 'models/Translations';
+import { Trans } from 'react-i18next';
+import { BaseText } from 'components/Typography';
+import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
-const t = (key: string, options?: TranslationOptions) => {
+const t = (key: string, options?: TranslationOptions = {}): TranslatedString => {
+  const { linkedText, onPress } = options;
+  if (linkedText) {
+    return (
+      <Trans
+        i18nKey={key}
+        components={onPress ? [<BaseText {...options} link />] : []}
+        values={{ linkedText }}
+      />
+    );
+  }
   return i18next.t(key, options);
 };
 

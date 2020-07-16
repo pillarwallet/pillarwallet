@@ -22,17 +22,21 @@ import type { TranslationResource } from 'models/Translations';
 
 // en
 const COMMON_EN = require('./locales/en/common.json');
+const AUTH_EN = require('./locales/en/auth.json');
 
 // fr
 const COMMON_FR = require('./locales/fr/common.json');
+const AUTH_FR = require('./locales/fr/auth.json');
 
 
 const sources = {
   en: {
     common: () => COMMON_EN,
+    auth: () => AUTH_EN,
   },
   fr: {
     common: () => COMMON_FR,
+    auth: () => AUTH_FR,
   },
 };
 

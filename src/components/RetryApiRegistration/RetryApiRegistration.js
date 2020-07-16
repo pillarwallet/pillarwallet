@@ -17,9 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import NewProfile from 'screens/NewProfile';
 import { registerOnBackendAction } from 'actions/onboardingActions';
 import { Container } from 'components/Layout';
@@ -31,6 +34,12 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { fontStyles } from 'utils/variables';
 
 
+type Props = {
+  wallet: Object,
+  registerOnBackend: () => void,
+};
+
+
 const Text = styled(MediumText)`
   ${fontStyles.big};
   width: 100%;
@@ -39,10 +48,6 @@ const Text = styled(MediumText)`
   margin-bottom: 20px;
 `;
 
-type Props = {
-  wallet: Object,
-  registerOnBackend: () => void,
-};
 
 const USERNAME_STATUS = [USERNAME_EXISTS, CHECKING_USERNAME, USERNAME_OK];
 
@@ -60,7 +65,7 @@ class RetryApiRegistration extends React.Component<Props> {
     return (
       <Container center>
         {walletState !== REGISTRATION_FAILED && (
-          <Loader messages={['Registering on backend']} />
+          <Loader messages={[t('auth.loadingMessage.registering')]} />
         )}
         {walletState === REGISTRATION_FAILED && (
           <>

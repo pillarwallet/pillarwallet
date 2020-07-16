@@ -19,6 +19,7 @@ import { WebView } from 'react-native-webview';
 import { RECOVERY_PORTAL_URL } from 'react-native-dotenv';
 import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -79,7 +80,7 @@ const RecoveryPortalWebView = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: title || 'Recovery Portal' }],
+        centerItems: [{ title: title || t('auth:recoveryPortal.title.recoveryPortal') }],
         customOnBack: handleNavigationBack,
       }}
     >

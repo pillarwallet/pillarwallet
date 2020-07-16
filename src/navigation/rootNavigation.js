@@ -23,14 +23,9 @@ import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
 import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
 
 // screens
-import OnboardingScreen from 'screens/Onboarding';
 import NewWalletScreen from 'screens/NewWallet';
 import NewProfileScreen from 'screens/NewProfile';
-import SecurityConfirmScreen from 'screens/SecurityConfirm';
 import PermissionsScreen from 'screens/Permissions';
-import BackupPhraseScreen from 'screens/BackupPhrase';
-import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
-import LegalTermsScreen from 'screens/LegalTerms';
 import ImportWalletScreen from 'screens/ImportWallet';
 import ImportWalletLegalsScreen from 'screens/ImportWallet/ImportWalletLegals';
 import SetWalletPinCodeScreen from 'screens/SetWalletPinCode';
@@ -42,7 +37,6 @@ import BiometricsPromptScreen from 'screens/BiometricsPrompt';
 import WalletRecoveryOptionsScreen from 'screens/ImportWallet/WalletRecoveryOptions';
 import RecoveryPortalWalletRecoveryIntroScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryIntro';
 import RecoveryPortalWalletRecoveryScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecovery';
-// import SandboxScreen from 'screens/Sandbox/Index';
 
 import { modalTransition } from 'utils/common';
 
@@ -50,17 +44,12 @@ import {
   APP_FLOW,
   ONBOARDING_FLOW,
   AUTH_FLOW,
-  SECURITY_CONFIRM,
-  BACKUP_PHRASE,
-  BACKUP_PHRASE_VALIDATE,
   SET_WALLET_PIN_CODE,
   NEW_WALLET,
   NEW_PROFILE,
-  LEGAL_TERMS,
   IMPORT_WALLET,
   PIN_CODE_CONFIRMATION,
   PIN_CODE_UNLOCK,
-  ONBOARDING_HOME,
   WELCOME,
   FORGOT_PIN,
   PERMISSIONS,
@@ -92,7 +81,6 @@ const onBoardingFlow = createStackNavigator({
     },
   },
   [PERMISSIONS]: PermissionsScreen,
-  [ONBOARDING_HOME]: OnboardingScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     defaultNavigationOptions: {
@@ -104,18 +92,13 @@ const onBoardingFlow = createStackNavigator({
   [WALLET_RECOVERY_OPTIONS]: WalletRecoveryOptionsScreen,
   [RECOVERY_PORTAL_WALLET_RECOVERY_INTRO]: RecoveryPortalWalletRecoveryIntroScreen,
   [RECOVERY_PORTAL_WALLET_RECOVERY]: RecoveryPortalWalletRecoveryScreen,
-  [SECURITY_CONFIRM]: SecurityConfirmScreen,
-  [BACKUP_PHRASE]: BackupPhraseScreen,
-  [BACKUP_PHRASE_VALIDATE]: BackupPhraseValidateScreen,
   [SET_WALLET_PIN_CODE]: SetWalletPinCodeScreen,
   [PIN_CODE_CONFIRMATION]: PinCodeConfirmationScreen,
   [BIOMETRICS_PROMPT]: BiometricsPromptScreen,
   [NEW_PROFILE]: NewProfileScreen,
-  [LEGAL_TERMS]: LegalTermsScreen,
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
-  // 'SANDBOX': SandboxScreen,
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
