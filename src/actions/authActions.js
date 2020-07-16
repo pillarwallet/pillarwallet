@@ -186,12 +186,11 @@ export const loginAction = (
         // set API username (local method)
         api.setUsername(user.username);
 
-        await dispatch(loadFeatureFlagsAction());
-
         if (isOnline) {
           // make first api call which can also trigger OAuth fallback methods
           const userInfo = await api.userInfo(user.walletId);
 
+          await dispatch(loadFeatureFlagsAction());
 
           // update FCM
           dispatch(updateFcmTokenAction(user.walletId));
