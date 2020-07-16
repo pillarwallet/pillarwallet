@@ -25,22 +25,19 @@ import {
 } from 'constants/featureFlagsConstants';
 import type { Dispatch } from 'reducers/rootReducer';
 import { reportOrWarn } from 'utils/common';
+import { parseFeatureFlags } from 'utils/featureFlags';
+import type { FeatureFlags } from 'models/FeatureFlags';
 
-type FeatureFlags = {[key: string]: { value: string, source: string }}
+type ResponseFeatureFlags = {[key: string]: { value: string, source: string }}
 
 export const loadFeatureFlagsAction = () => {
   return async (dispatch: Dispatch) => {
     remoteConfig()
       .setDefaults(INITIAL_FEATURE_FLAGS)
       .then(() => remoteConfig().fetchAndActivate())
-      .then(activated => {
-        if (!activated) {
-          reportOrWarn('Failed to fetch feature flags, using defaults', null, 'warning');
-        }
-        const featureFlags: FeatureFlags = remoteConfig().getAll();
-        const parsedFeatureFlags = Object.keys(featureFlags).map((key: string) => {
-          return { [key]: !!featureFlags[key].value };
-        });
+      .then(() => {
+        const featureFlags: ResponseFeatureFlags = remoteConfig().getAll();
+        const parsedFeatureFlags: FeatureFlags = parseFeatureFlags(featureFlags);
 
         dispatch({ type: SET_FEATURE_FLAGS, payload: parsedFeatureFlags });
       })

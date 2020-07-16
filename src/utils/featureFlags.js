@@ -18,22 +18,26 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_FEATURE_FLAGS = 'SET_FEATURE_FLAGS';
+import {
+  AAVE,
+  RAMP,
+  WYRE,
+  POOL_TOGETHER,
+  PEER_TO_PEER,
+  OFFERS_ENGINE,
+} from 'constants/featureFlagsConstants';
 
-// Services screen features
-export const OFFERS_ENGINE = 'feature_services_offers_engine';
-export const AAVE = 'feature_services_aave';
-export const POOL_TOGETHER = 'feature_services_pool_together';
-export const RAMP = 'feature_services_ramp';
-export const WYRE = 'feature_services_wyre';
-export const PEER_TO_PEER = 'feature_services_peer_to_peer';
+type ResponseFeatureFlags = {[key: string]: { value: string, source: string }}
 
-// These are used as a fallback in case firebase fails to fetch actual values
-export const INITIAL_FEATURE_FLAGS = {
-  [OFFERS_ENGINE]: true,
-  [RAMP]: true,
-  [WYRE]: true,
-  [AAVE]: false,
-  [POOL_TOGETHER]: false,
-  [PEER_TO_PEER]: true,
+export const parseFeatureFlags = (featureFlags: ResponseFeatureFlags) => {
+  // note: boolean flags are fetched as 0/1, hence the !!s
+  return {
+    aave: !!featureFlags[AAVE].value,
+    poolTogether: !!featureFlags[POOL_TOGETHER].value,
+    ramp: !!featureFlags[RAMP].value,
+    peerToPeer: !!featureFlags[PEER_TO_PEER].value,
+    offersEngine: !!featureFlags[OFFERS_ENGINE].value,
+    wyre: !!featureFlags[WYRE].value,
+  };
 };
+

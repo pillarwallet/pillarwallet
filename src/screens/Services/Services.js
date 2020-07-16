@@ -47,6 +47,7 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { FeatureFlags } from 'models/FeatureFlags';
 
 type Props = {
   theme: Theme,
@@ -56,7 +57,7 @@ type Props = {
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
-  featureFlags: ?Object,
+  featureFlags: FeatureFlags,
 };
 
 const visaIcon = require('assets/icons/visa.png');
@@ -78,9 +79,9 @@ class ServicesScreen extends React.Component<Props> {
       providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
+      featureFlags,
     } = this.props;
     const colors = getThemeColors(theme);
-
     const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
       label: `${providersMeta.length} exchanges`,
       color: colors.primary,
@@ -91,16 +92,22 @@ class ServicesScreen extends React.Component<Props> {
     if (aaveServiceDisabled) {
       aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
-
-    return [
-      {
+    const {
+      aave, poolTogether, offersEngine, ramp, wyre, peerToPeer,
+    } = featureFlags;
+    const services = [];
+    if (offersEngine) {
+      services.push({
         key: 'offersEngine',
         title: 'Offers engine',
         body: 'Aggregated offers from many decentralized exchanges and token swap services',
         action: () => navigation.navigate(EXCHANGE),
         labelBadge: offersBadge,
-      },
-      {
+      });
+    }
+    // TODO change when we introduce actual Ramp/Wyre support
+    if (ramp || wyre) {
+      services.push({
         key: 'buyCryptoWithFiat',
         // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
         title: [
@@ -117,30 +124,37 @@ class ServicesScreen extends React.Component<Props> {
             toAssetCode: ETH,
             displayFiatOptionsFirst: true,
           }),
-      },
-      {
+      });
+    }
+    if (aave) {
+      services.push({
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
         disabled: aaveServiceDisabled,
         label: aaveServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
-      },
-      {
+      });
+    }
+    if (poolTogether) {
+      services.push({
         key: 'poolTogether',
         title: 'Pool Together savings game',
         body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
         hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
-      },
-      {
+      });
+    }
+    if (peerToPeer) {
+      services.push({
         key: 'peerToPeerTrading',
         title: 'Peer-to-peer trading',
         body: 'Swap tokens directly with others. Safe, secure, anonymous',
         disabled: true,
         label: 'soon',
-      },
-    ];
+      });
+    }
+    return services;
   };
 
   renderServicesItem = ({ item }) => {

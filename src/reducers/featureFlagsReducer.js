@@ -18,13 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  INITIAL_FEATURE_FLAGS,
   SET_FEATURE_FLAGS,
 } from 'constants/featureFlagsConstants';
 
 export type FeatureFlagsReducerState = {|
   data: {
-    [flag: string]: boolean,
+    offersEngine: boolean,
+    ramp: boolean,
+    wyre: boolean,
+    aave: boolean,
+    poolTogether: boolean,
+    peerToPeer: boolean,
   },
 |};
 
@@ -34,7 +38,14 @@ export type FeatureFlagsReducerAction = {|
 |};
 
 export const initialState = {
-  data: INITIAL_FEATURE_FLAGS,
+  data: {
+    offersEngine: true,
+    ramp: true,
+    wyre: true,
+    aave: false,
+    poolTogether: false,
+    peerToPeer: false,
+  },
 };
 
 const featureFlagsReducer = (
