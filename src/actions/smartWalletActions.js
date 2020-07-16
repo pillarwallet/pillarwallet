@@ -1372,10 +1372,9 @@ export const importSmartWalletAccountsAction = (privateKey: string) => {
     });
     await Promise.all(newAccountsPromises);
 
-    if (smartAccounts.length) {
+    if (!isEmpty(smartAccounts)) {
       const accountId = normalizeWalletAddress(smartAccounts[0].address);
       await dispatch(connectSmartWalletAccountAction(accountId));
-      await dispatch(setActiveAccountAction(accountId));
       // set default assets for smart wallet
       const initialAssets = await api.fetchInitialAssets(user.walletId);
       await dispatch({

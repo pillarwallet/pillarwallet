@@ -30,11 +30,7 @@ import { migrate } from 'services/dataMigration';
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import {
-  UPDATE_ASSETS,
-  UPDATE_BALANCES,
-  UPDATE_SUPPORTED_ASSETS,
-} from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_BALANCES, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -49,7 +45,7 @@ import {
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
-import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   SET_SMART_WALLET_ACCOUNTS,
   SET_SMART_WALLET_DEPLOYMENT_DATA,
@@ -64,27 +60,14 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import {
-  INITIAL_FEATURE_FLAGS,
-  SET_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
+import { INITIAL_FEATURE_FLAGS, SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-
-// selectors
-import { activeBlockchainSelector } from 'selectors';
-
-// actions
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { switchAccountAction } from './accountsActions';
 
 
 const storage = Storage.getInstance('db');

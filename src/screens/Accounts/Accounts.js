@@ -84,19 +84,11 @@ type NetworkItem = {|
   ...commonItemsParams,
 |};
 
-type NewItem = {|
-  type: 'NEW_SMART_WALLET',
-  isSmartWallet: boolean,
-  ...commonItemsParams,
-|};
-
-type AccountItem = {|
+type WalletsListItem = {|
   type: 'ACCOUNT',
-  isSmartWallet: boolean,
   ...commonItemsParams,
 |};
 
-type WalletsListItem = AccountItem | NewItem;
 type ListItem = WalletsListItem | NetworkItem;
 
 type ListElement = {| item: ListItem |};

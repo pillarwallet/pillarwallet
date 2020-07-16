@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+// constants
 import {
   SENDING_OTP,
   OTP_SENT,
@@ -28,14 +30,20 @@ import {
   USER_EMAIL_VERIFIED,
 } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { OTP_DIGITS } from 'constants/referralsConstants';
+
+// utils
+import { isCaseInsensitiveMatch } from 'utils/common';
+
+// actions
+import { saveDbAction } from 'actions/dbActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { completeReferralsEventAction } from 'actions/referralsActions';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import { isCaseInsensitiveMatch } from 'utils/common';
-import { saveDbAction } from './dbActions';
+
 
 const sendingOneTimePasswordAction = () => ({
   type: SENDING_OTP,

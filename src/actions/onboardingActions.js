@@ -175,7 +175,6 @@ export const finishRegistration = async ({
   dispatch: Dispatch,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
-  isImported: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);

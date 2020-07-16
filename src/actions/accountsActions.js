@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { sdkConstants } from '@smartwallet/sdk';
-import {
-  ADD_ACCOUNT,
-  UPDATE_ACCOUNTS,
-  ACCOUNT_TYPES,
-  CHANGING_ACCOUNT,
-} from 'constants/accountsConstants';
+
+// constants
+import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PIN_CODE } from 'constants/navigationConstants';
+import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+
+// actions
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
@@ -35,27 +36,22 @@ import {
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
-import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
-import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
-import { PIN_CODE } from 'constants/navigationConstants';
-import Storage from 'services/storage';
-import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
-import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
-import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
-import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
-import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+
+// utils
 import { findFirstSmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
-import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+
+// services
 import { navigate } from 'services/navigation';
 
+// selectors
+import { activeAccountSelector } from 'selectors';
+
+// types
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
-import { activeAccountSelector } from 'selectors';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
 
 export const addAccountAction = (
@@ -129,7 +125,6 @@ export const setActiveAccountAction = (accountId: string) => {
       },
     } = getState();
 
-
     const account = accounts.find(acc => acc.id === accountId);
     if (!account) return;
 
@@ -200,7 +195,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(initSmartWalletSdkAction(privateKey));
 
     const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType === ACCOUNT_TYPES.SMART_WALLET; // set to active routine
+    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
     await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
     dispatch(fetchVirtualAccountBalanceAction());
 

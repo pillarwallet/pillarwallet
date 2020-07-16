@@ -18,20 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
 import {
   ADD_USER_EVENT,
   USER_EVENT,
   PPN_INIT_EVENT,
   WALLET_CREATE_EVENT,
-  WALLET_IMPORT_EVENT,
   WALLET_BACKUP_EVENT,
 } from 'constants/userEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+// actions
+import { saveDbAction } from 'actions/dbActions';
+
+// types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
-import { saveDbAction } from './dbActions';
 
 export const addWalletCreationEventAction = (type: string, createdAt: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
