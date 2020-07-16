@@ -19,7 +19,7 @@
 */
 
 export const DEFAULT_LANGUAGE = 'en';
-export const SUPPORTED_LANGUAGES = ['en', 'fr'];
+export const SUPPORTED_LANGUAGES = ['en'];
 
 export const DEFAULT_NAMESPACE = 'common';
 export const NAMESPACES = ['common', 'auth'];
