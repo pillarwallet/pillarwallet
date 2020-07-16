@@ -522,7 +522,7 @@ export const getMetaDataAction = () => {
   };
 };
 
-const getCryptoExchangeSupportedAssetsAction = () => {
+export const getExchangeSupportedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { supportedAssets },
@@ -541,10 +541,3 @@ const getCryptoExchangeSupportedAssetsAction = () => {
     dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
   };
 };
-
-export const getExchangeSupportedAssetsAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch(getCryptoExchangeSupportedAssetsAction());
-  };
-};
-

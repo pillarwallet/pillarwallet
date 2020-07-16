@@ -135,7 +135,7 @@ class ServicesScreen extends React.Component<Props> {
 
   getBuyCryptoServices = () => {
     const {
-      user: { email = '' },
+      user: { email = null },
       accounts,
     } = this.props;
 
@@ -147,11 +147,13 @@ class ServicesScreen extends React.Component<Props> {
         title: 'Buy with Ramp.Network (EU)',
         body: 'Buy Now',
         action: () => {
-          const rampUrl = `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify({
+          const params = {
             hostApiKey: RAMPNETWORK_API_KEY,
-            userEmailAddress: email,
             userAddress: address,
-          })}`;
+            ...(email === null ? {} : { userEmailAddress: email }),
+          };
+
+          const rampUrl = `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 
           openInAppBrowser(rampUrl);
         },

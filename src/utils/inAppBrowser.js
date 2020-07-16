@@ -25,22 +25,20 @@ import type { InAppBrowserOptions } from 'react-native-inappbrowser-reborn';
 
 // NOTE: On Android devices, for react-native-inappbrowser-reborn to work there
 // needs to be an application that supports Custom Tabs. Otherwise,
-// InAppBrowser.isAvailable method should return false. However, sometimes in
-// that case it can return wrong value, which results in the app crashing after
-// calling inAppBrowser.open.
+// InAppBrowser.isAvailable method should return false. However, the current
+// release (3.4.0) doesn't include this check, which results in the app
+// crashing after calling inAppBrowser.open.
 //
 // For testing, uninstall or disable Chrome and any other browsers.
 //
 // see: https://github.com/proyecto26/react-native-inappbrowser/pull/108
 
 export const openInAppBrowser = async (url: string, options?: InAppBrowserOptions) => {
-  try {
-    if (await InAppBrowser.isAvailable()) {
-      await InAppBrowser.open(url, options);
-    } else {
-      reportOrWarn('InAppBrowser.isAvailable() returned false', null, 'warning');
-    }
-  } catch (error) {
-    reportOrWarn('InAppBrowser.error', error, 'warning');
+  if (await InAppBrowser.isAvailable()) {
+    await InAppBrowser
+      .open(url, options)
+      .catch(error => reportOrWarn('InAppBrowser.error', error, 'warning'));
+  } else {
+    reportOrWarn('InAppBrowser.isAvailable() returned false', null, 'warning');
   }
 };
