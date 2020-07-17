@@ -155,7 +155,7 @@ class ImportWallet extends React.Component<Props, State> {
     const { walletState, error } = nextProps.wallet;
 
     if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
-      const errorMessage = t('auth:error.incorrectBackupPhrase');
+      const errorMessage = t('auth:error.incorrectBackupPhrase.default');
       return {
         ...prevState,
         errorMessage,

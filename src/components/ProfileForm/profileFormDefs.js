@@ -22,15 +22,15 @@ const UsernameDef = tForm.refinement(tForm.String, (username): boolean => {
 
 UsernameDef.getValidationErrorMessage = (username): TranslatedString => {
   if (!usernameRegex.test(username)) {
-    if (startsWithNumberRegex.test(username)) return t('auth:error.invalidUsername_cantStartWithNumber');
-    if (startsOrEndsWithDash.test(username)) return t('auth:error.invalidUsername_cantStartEndWithDash');
-    return t('auth:error.invalidUsername_useAlphanumericSymbolsOnly');
+    if (startsWithNumberRegex.test(username)) return t('auth:error.invalidUsername.cantStartWithNumber');
+    if (startsOrEndsWithDash.test(username)) return t('auth:error.invalidUsername.cantStartEndWithDash');
+    return t('auth:error.invalidUsername.useAlphanumericSymbolsOnly');
   }
   if (username.length < MIN_USERNAME_LENGTH) {
-    return t('auth:error.invalidUsername_tooShort', { requiredLength: MIN_USERNAME_LENGTH - 1 });
+    return t('auth:error.invalidUsername.tooShort', { requiredLength: MIN_USERNAME_LENGTH - 1 });
   }
   if (username.length > MAX_USERNAME_LENGTH) {
-    return t('auth:error.invalidUsername_tooLong', { requiredLength: MAX_USERNAME_LENGTH + 1 });
+    return t('auth:error.invalidUsername.tooLong', { requiredLength: MAX_USERNAME_LENGTH + 1 });
   }
 
   return t('auth:error.missingData', { missingData: t('auth:formData.username') });
@@ -46,16 +46,16 @@ const PhoneStructDef = tForm.refinement(tForm.Object, ({ input }): boolean => {
 
 EmailStructDef.getValidationErrorMessage = (email): string => {
   if (email && !isValidEmail(email)) {
-    return t('auth:invalidEmailAddress');
+    return t('auth:invalidEmailAddress.default');
   } else if (email && email.length > maxLength) {
-    return t('auth:invalidEMailAddress_tooLong', { requiredLength: maxLength });
+    return t('auth:invalidEmailAddress.tooLong', { requiredLength: maxLength });
   }
   return '';
 };
 
 PhoneStructDef.getValidationErrorMessage = (phone): string => {
   if (phone && !isValidPhoneWithoutCountryCode(phone)) {
-    return t('auth:invalidPhoneNumber');
+    return t('auth:invalidPhoneNumber.default');
   }
   return '';
 };

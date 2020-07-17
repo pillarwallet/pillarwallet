@@ -209,7 +209,7 @@ class CheckAuth extends React.Component<Props, State> {
   getPinError = (walletState: string) => {
     switch (walletState) {
       case INVALID_PASSWORD:
-        return t('auth:error.invalidPincode');
+        return t('auth:error.invalidPin.default');
       default:
         return null;
     }

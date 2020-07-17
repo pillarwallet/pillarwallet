@@ -29,11 +29,11 @@ type AddressValidator = {
 
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
-    return t('auth:error.invalidPin_tooLong', { requiredLength: 6 });
+    return t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
   } else if (!pin.match(/^\d+$/)) {
-    return t('auth:error.invalidPin_useNumericSymbolsOnly');
+    return t('auth:error.invalidPin.useNumericSymbolsOnly');
   } else if (confirmationPin && pin !== confirmationPin) {
-    return t('auth:error.invalidPin_doesNotMatchPrevious');
+    return t('auth:error.invalidPin.doesNotMatchPrevious');
   }
   return '';
 };
@@ -79,7 +79,7 @@ export const addressValidator = (token: string): AddressValidator => {
   const validators = {
     [ETH]: {
       validator: isValidETHAddress,
-      message: t('auth:error.invalidEthereumAddress'),
+      message: t('auth:error.invalidEthereumAddress.default'),
     },
   };
 
@@ -90,7 +90,7 @@ export const addressValidator = (token: string): AddressValidator => {
 
   return {
     validator: isValidAddress,
-    message: t('auth:error.invalidAddress'),
+    message: t('auth:error.invalidAddress.default'),
   };
 };
 

@@ -231,8 +231,8 @@ class NewProfile extends React.Component<Props, State> {
 
     if (walletState === USERNAME_EXISTS || walletState === INVALID_USERNAME) {
       const errorMessage = walletState === USERNAME_EXISTS
-        ? t('auth:error.takenUsername')
-        : t('auth:error.invalidUsername');
+        ? t('auth:error.invalidUsername.taken')
+        : t('auth:error.invalidUsername.default');
 
       const options = tForm.update(this.state.formOptions, {
         fields: {

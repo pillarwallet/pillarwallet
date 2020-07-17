@@ -254,7 +254,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   render() {
     const { walletState } = this.props.wallet;
     const { waitingTime, showPin } = this.state;
-    const pinError = walletState === INVALID_PASSWORD ? t('auth:error.invalidPincode') : (this.errorMessage || null);
+    const pinError = walletState === INVALID_PASSWORD
+      ? t('auth:error.invalidPin.default')
+      : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING) {
