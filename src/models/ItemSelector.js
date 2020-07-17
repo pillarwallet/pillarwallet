@@ -18,9 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
-import type { HorizontalOption, Option, OptionTabs } from './Selector';
-
 type Value = string | number;
 
 type SelectorValueType = {
@@ -32,40 +29,11 @@ type SelectorValueType = {
   }
 };
 
-export type InputPropsType = {
-  placeholder?: string,
-  onChange: (Value | SelectorValueType) => void,
-  onBlur?: (Value | SelectorValueType) => void,
-  onSubmit?: () => void,
-  value: Value,
-  selectorValue: SelectorValueType,
-  onSelectorClose: () => void,
-  multiline?: boolean,
+export type ItemSelectorType = {
   onSelectorOpen?: () => void,
-  onSelectorChange?: () => void,
+  onSelectorClose?: () => void,
+  onChange: (Value | SelectorValueType) => void,
+  selectorValue: SelectorValueType,
   label?: string,
-  rightLabel?: string,
-  onPressRightLabel?: () => void,
-  inputHeaderStyle?: Object,
-  customLabel?: React.Node,
-};
-
-export type SelectorOptions = {
-  options?: Option[],
-  horizontalOptions: HorizontalOption[],
-  optionTabs: OptionTabs[],
-  selectorPlaceholder?: 'string',
-  fullWidth?: boolean,
-  showOptionsTitles?: boolean,
-  horizontalOptionsTitle?: string,
-  optionsTitle?: string,
-  selectorModalTitle?: string,
-  optionsSearchPlaceholder?: string,
-  displayFiatOptionsFirst?: boolean,
-};
-
-export type FormSelector = {
-  selector: Object,
-  input: string,
-  dontCheckBalance?: boolean,
+  optionsOpenText?: string,
 };

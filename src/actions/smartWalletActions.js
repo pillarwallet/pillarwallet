@@ -17,11 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Alert } from 'react-native';
+
 import { sdkModules, sdkConstants } from '@smartwallet/sdk';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { NavigationActions } from 'react-navigation';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
@@ -74,13 +73,7 @@ import {
   RESET_ESTIMATED_WITHDRAWAL_FEE,
   RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
-import {
-  SEND_TOKEN_AMOUNT,
-  ACCOUNTS,
-  SEND_SYNTHETIC_AMOUNT,
-  PIN_CODE,
-  WALLET_ACTIVATED,
-} from 'constants/navigationConstants';
+import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 
@@ -110,12 +103,13 @@ import type {
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
-import type { SendNavigateOptions } from 'models/Navigation';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
+import type SDKWrapper from 'services/api';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
+  findAccountById,
   findFirstSmartAccount,
   getActiveAccountAddress,
   getActiveAccountId,
@@ -145,7 +139,6 @@ import {
   printLog,
   reportLog,
 } from 'utils/common';
-import { isPillarPaymentNetworkActive } from 'utils/blockchainNetworks';
 import { getPrivateKeyFromPin } from 'utils/wallet';
 
 // actions
@@ -1280,63 +1273,6 @@ export const cleanSmartWalletAccountsAction = () => {
   };
 };
 
-export const navigateToSendTokenAmountAction = (navOptions: SendNavigateOptions) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      blockchainNetwork: { data: blockchainNetworks },
-      accounts: { data: accounts },
-    } = getState();
-
-    const standardSendFlow = NavigationActions.navigate({
-      routeName: SEND_TOKEN_AMOUNT,
-      params: navOptions,
-    });
-
-    const ppnSendFlow = NavigationActions.navigate({
-      routeName: SEND_SYNTHETIC_AMOUNT,
-      params: navOptions,
-    });
-
-    if (isPillarPaymentNetworkActive(blockchainNetworks)) {
-      if (!smartWalletService || !smartWalletService.sdkInitialized) {
-        notifySmartWalletNotInitialized();
-        return;
-      }
-
-      const activeAccountAddress = getActiveAccountAddress(accounts);
-
-      // prevent PPN self sending
-      if (addressesEqual(navOptions.receiver, activeAccountAddress)) {
-        Toast.show({
-          title: 'Wrong receiver address',
-          message: 'Cannot send synthetic asset to yourself',
-          type: 'warning',
-          autoClose: false,
-        });
-        return;
-      }
-
-      const userInfo = await smartWalletService.searchAccount(navOptions.receiver).catch(null);
-      if (userInfo) {
-        navigate(ppnSendFlow);
-        return;
-      }
-      Alert.alert(
-        'This address is not on Pillar Network',
-        'Address should be connected to Pillar Network in order to be able to send instant transactions for free',
-        [
-          { text: 'Switch to Ethereum Mainnet', onPress: () => navigate(ACCOUNTS) },
-          { text: 'Cancel', style: 'cancel' },
-        ],
-        { cancelable: true },
-      );
-      return;
-    }
-
-    navigate(standardSendFlow);
-  };
-};
-
 export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean, initAssets: Assets) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
@@ -1553,5 +1489,53 @@ export const switchToGasTokenRelayerAction = () => {
     });
     dispatch(insertTransactionAction(historyTx, accountId));
     dispatch(fetchConnectedAccountAction());
+  };
+};
+
+export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartWalletAccountId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      accounts: { data: accounts },
+      user: { data: { walletId } },
+      session: { data: session },
+    } = getState();
+
+    const account = findAccountById(smartWalletAccountId, accounts);
+    if (!account || account.walletId) return;
+
+    // No walletId set means we fail to register that account on the backend
+    const accountAddress = getAccountAddress(account);
+    const result = await api.registerSmartWallet({
+      walletId,
+      privateKey,
+      ethAddress: accountAddress,
+      fcmToken: session.fcmToken || '',
+    });
+
+    if (result?.error) {
+      reportLog('Unable to register smart wallet', { reason: result.reason });
+      return;
+    }
+
+    // validate the account was registered correctly
+    const backendAccounts = await api.listAccounts(walletId);
+    const registeredAccount = backendAccounts.find(({ ethAddress }) => addressesEqual(ethAddress, accountAddress));
+
+    if (!registeredAccount || !registeredAccount.walletId) {
+      reportLog('Unable to register smart wallet', { smartWalletAccountId });
+      return;
+    }
+
+    const { accounts: { data: currentAccounts } } = getState();
+    const updatedAccounts = currentAccounts.map(acc => ({
+      ...acc,
+      walletId: acc.id === smartWalletAccountId ? registeredAccount.walletId : acc.walletId,
+    }));
+
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: updatedAccounts,
+    });
+    dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };

@@ -21,36 +21,35 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
-import t from 'tcomb-form-native';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import styled from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
 import isEqual from 'lodash.isequal';
 import { createStructuredSelector } from 'reselect';
+import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
 
 // components
-import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { TextLink, Label, BaseText } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SlideModal from 'components/Modals/SlideModal';
-import SendTokenDetails from 'components/SendTokenDetails';
 import Spinner from 'components/Spinner';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import { Spacing } from 'components/Layout';
+import SendContainer from 'containers/SendContainer';
+import Toast from 'components/Toast';
 
 // utils
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, getEthereumProvider } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
+import { getBalance, getRate } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
+import { getContactsEnsName } from 'utils/contacts';
 
 // services
-import { calculateGasEstimate } from 'services/assets';
+import { buildERC721TransactionData, calculateGasEstimate } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 
 // selectors
@@ -60,6 +59,9 @@ import {
   useGasTokenSelector,
 } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
+import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
+import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
+import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -68,20 +70,15 @@ import type { TokenTransactionPayload, Transaction, TransactionFeeInfo } from 'm
 import type { Balances, Rates, AssetData, Assets } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
+import type { Option } from 'models/Selector';
 
 // constants
-import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS } from 'constants/assetsConstants';
+import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { ETH, SPEED_TYPES, SPEED_TYPE_LABELS, COLLECTIBLES } from 'constants/assetsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 
-
-const ActionsWrapper = styled.View`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-`;
 
 const SendTokenDetailsValue = styled(BaseText)`
   ${fontStyles.medium};
@@ -98,22 +95,9 @@ const Btn = styled(Button)`
   justify-content: space-between;
 `;
 
-const FooterInner = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: flex-end;
-  width: 100%;
-  padding: ${spacing.large}px;
-`;
-
-const BackgroundWrapper = styled.View`
-  flexGrow: 1;
-`;
 
 type Props = {
-  assetData: AssetData,
   receiver: string,
-  receiverEnsName: string,
   source: string,
   navigation: NavigationScreenProp<*>,
   balances: Balances,
@@ -130,20 +114,25 @@ type Props = {
   isGasTokenSupported: boolean,
   isSmartAccount: boolean,
   useGasToken: boolean,
+  inactiveUserAccounts: Option[],
+  assetsWithBalance: Option[],
+  collectibles: Option[],
+  baseFiatCurrency: ?string,
 };
 
 type State = {
-  value: ?{
-    amount: ?string,
-  },
+  amount: ?string,
+  assetData: ?AssetData,
   showTransactionSpeedModal: boolean,
   gasLimit: number,
   gettingFee: boolean,
-  calculatingMaxValue: boolean,
   inputHasError: boolean,
   txFeeInfo: ?TransactionFeeInfo,
   submitPressed: boolean,
   showRelayerMigrationModal: boolean,
+  receiver?: string,
+  receiverEnsName?: string,
+  selectedContact: ?Option,
 };
 
 type FooterProps = {
@@ -153,35 +142,30 @@ type FooterProps = {
   isLoading: boolean,
 };
 
-
-const { Form } = t.form;
-const MIN_TX_AMOUNT = 0.000000000000000001;
-
-
 class SendEthereumTokens extends React.Component<Props, State> {
-  _form: t.form;
-  formSubmitted: boolean = false;
-
-  state = {
-    value: null,
-    showTransactionSpeedModal: false,
-    gasLimit: 0,
-    gettingFee: true,
-    calculatingMaxValue: false,
-    inputHasError: false,
-    txFeeInfo: null,
-    submitPressed: false,
-    showRelayerMigrationModal: false,
-  };
-
   constructor(props: Props) {
     super(props);
 
     this.updateTxFee = debounce(this.updateTxFee, 500);
     this.updateKeyWalletGasLimitAndTxFee = debounce(this.updateKeyWalletGasLimitAndTxFee, 500);
+    this.state = {
+      amount: null,
+      showTransactionSpeedModal: false,
+      gasLimit: 0,
+      gettingFee: true,
+      inputHasError: false,
+      txFeeInfo: null,
+      submitPressed: false,
+      showRelayerMigrationModal: false,
+      selectedContact: null,
+      receiver: '',
+      receiverEnsName: '',
+      assetData: null,
+    };
   }
 
   componentDidMount() {
+    this.setPreselectedValues();
     if (!this.props.isSmartAccount) {
       this.props.fetchGasInfo();
     }
@@ -202,13 +186,88 @@ class SendEthereumTokens extends React.Component<Props, State> {
     }
 
     // do nothing if value is not set yet
-    if (this.state.value === null) return;
+    if (this.state.amount === null) return;
 
     // if gas token was updated after switching to gas token relayer or gasInfo updated
     if (prevProps.useGasToken !== useGasToken || !isEqual(prevProps.gasInfo, gasInfo)) {
       this.handleAmountChange();
     }
   }
+
+  setPreselectedValues = () => {
+    const { navigation, assetsWithBalance, collectibles } = this.props;
+    const assetData = navigation.getParam('assetData');
+    const contact = navigation.getParam('contact');
+    if (assetData) {
+      let formattedSelectedAsset;
+      if (assetData.tokenType === COLLECTIBLES) {
+        formattedSelectedAsset = collectibles.find(({ tokenId }) => assetData.id === tokenId);
+      } else {
+        formattedSelectedAsset = assetsWithBalance.find(({ token }) => assetData.token === token);
+      }
+      if (formattedSelectedAsset) this.handleAmountChange({ selector: formattedSelectedAsset, input: '' });
+    }
+    if (contact) {
+      const { userName, ethAddress } = contact;
+      const receiver = {
+        name: userName || ethAddress,
+        ethAddress,
+        value: ethAddress,
+      };
+      this.setReceiver(receiver);
+    }
+  };
+
+
+  // form methods
+
+  setReceiver = async (value: Option, onSuccess?: () => void) => {
+    this.setState({ gettingFee: true });
+    const { receiverEnsName, receiver } = await getContactsEnsName(value?.ethAddress);
+    if (receiver) {
+      this.setState({ selectedContact: value, receiver, receiverEnsName }, () => {
+        this.updateTxFee();
+        if (onSuccess) onSuccess();
+      });
+    }
+  };
+
+  handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
+    if (!value?.ethAddress) {
+      this.setState({ selectedContact: null, receiver: '', receiverEnsName: '' }, () => {
+        if (onSuccess) onSuccess();
+        this.updateTxFee();
+      });
+    } else {
+      this.setReceiver(value, onSuccess);
+    }
+  };
+
+  handleAmountChange = (value: ?Object) => {
+    const { isSmartAccount } = this.props;
+    this.setState({
+      gettingFee: true,
+      amount: value?.input || '0',
+      assetData: value?.selector,
+    }, () => {
+      if (isSmartAccount) {
+        this.updateTxFee();
+        return;
+      }
+
+      const amount = parseFloat(get(value, 'input') || 0);
+      this.updateKeyWalletGasLimitAndTxFee(amount);
+    });
+  };
+
+  manageFormErrorState = (errorMessage: ?string) => {
+    const { inputHasError } = this.state;
+    const newErrorState = !!errorMessage;
+    if (inputHasError !== newErrorState) this.setState({ inputHasError: newErrorState });
+  };
+
+
+  // transaction estimation methods
 
   getTxSpeed = () => {
     return this.props.transactionSpeed || SPEED_TYPES.NORMAL;
@@ -219,134 +278,30 @@ class SendEthereumTokens extends React.Component<Props, State> {
     this.setState({ showTransactionSpeedModal: false });
   };
 
-  handleAmountChange = (value: ?Object) => {
-    const { isSmartAccount } = this.props;
-    let updateState = { gettingFee: true };
-    if (!isEmpty(value)) updateState = { ...updateState, value };
-
-    this.setState(updateState);
-    this.checkFormInputErrors();
-
-    if (isSmartAccount) {
-      this.updateTxFee();
-      return;
-    }
-
-    const amount = parseFloat(get(value, 'amount', 0));
-    this.updateKeyWalletGasLimitAndTxFee(amount);
-  };
-
   updateTxFee = async () => {
     const { isSmartAccount } = this.props;
+    this.setState({ gettingFee: true });
 
     const txFeeInfo = isSmartAccount
       ? await this.getSmartWalletTxFee()
       : this.getKeyWalletTxFee();
 
     this.setState({ txFeeInfo, gettingFee: false });
-    this.checkFormInputErrors();
-  };
-
-  handleFormSubmit = async () => {
-    const { submitPressed, txFeeInfo, gasLimit } = this.state;
-    if (submitPressed || !txFeeInfo) return;
-
-    this.formSubmitted = true;
-    this.setState({ submitPressed: true });
-
-    const value = this._form.getValue();
-    if (!value) return;
-
-    const {
-      receiver,
-      receiverEnsName,
-      assetData,
-      source,
-      navigation,
-      isSmartAccount,
-    } = this.props;
-
-    // $FlowFixMe
-    let transactionPayload: TokenTransactionPayload = {
-      to: receiver,
-      receiverEnsName,
-      amount: value.amount,
-      txFeeInWei: txFeeInfo.fee,
-      symbol: assetData.token,
-      contractAddress: assetData.contractAddress,
-      decimals: assetData.decimals,
-    };
-
-    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
-
-    if (!isSmartAccount) {
-      const transactionSpeed = this.getTxSpeed();
-      const gasPrice = gasLimit ? txFeeInfo.fee.div(gasLimit).toNumber() : 0;
-      transactionPayload = {
-        ...transactionPayload,
-        gasPrice,
-        gasLimit,
-        txSpeed: transactionSpeed,
-      };
-    }
-
-    Keyboard.dismiss();
-
-    this.setState({ submitPressed: false }, () => {
-      navigation.navigate(SEND_TOKEN_CONFIRM, {
-        transactionPayload,
-        source,
-      });
-    });
-  };
-
-  useMaxValue = async () => {
-    const { balances, isSmartAccount, assetData } = this.props;
-    const { calculatingMaxValue } = this.state;
-
-    if (calculatingMaxValue) return;
-
-    this.setState({ calculatingMaxValue: true, gettingFee: true, inputHasError: false }, async () => {
-      const { token } = assetData;
-      const balance = getBalance(balances, token);
-      const updatedState = {};
-      let txFeeInfo;
-
-      if (isSmartAccount) {
-        txFeeInfo = await this.getSmartWalletTxFee(balance);
-      } else {
-        const gasLimit = await this.getGasLimitForKeyWallet(balance); // calculate gas limit for max available balance
-        const transactionSpeed = this.getTxSpeed();
-        txFeeInfo = this.getKeyWalletTxFee(transactionSpeed, gasLimit);
-        updatedState.gasLimit = gasLimit;
-      }
-
-      const maxAmount = calculateMaxAmount(token, balance, txFeeInfo.fee, txFeeInfo.gasToken);
-      const amount = formatAmount(maxAmount);
-
-      this.setState({
-        ...updatedState,
-        value: { amount },
-        gettingFee: false,
-        calculatingMaxValue: false,
-        txFeeInfo,
-      }, () => this.checkFormInputErrors());
-    });
   };
 
   getGasLimitForKeyWallet = (amount: number) => {
+    const { assetData, receiver } = this.state;
+    if (!assetData) return Promise.resolve(0);
+
     const {
-      assetData: {
-        token: symbol,
-        contractAddress,
-        decimals,
-      },
-      receiver,
-    } = this.props;
+      token: symbol,
+      contractAddress,
+      decimals,
+      tokenType,
+    } = assetData;
 
-    // cannot be set if value is zero or not present, fee select will be hidden
-    if (!amount) return Promise.resolve(0);
-
+    // cannot be set if value is zero or not present (if sending token), fee select will be hidden
+    if (tokenType !== COLLECTIBLES && !amount) return Promise.resolve(0);
     const { activeAccountAddress } = this.props;
 
     return calculateGasEstimate({
@@ -380,26 +335,126 @@ class SendEthereumTokens extends React.Component<Props, State> {
   };
 
   getSmartWalletTxFee = async (amount?: number): Promise<TransactionFeeInfo> => {
-    const { receiver, assetData, useGasToken } = this.props;
-    const { inputHasError } = this.state;
+    const { useGasToken, activeAccountAddress } = this.props;
+    const {
+      inputHasError,
+      assetData,
+      receiver,
+      receiverEnsName,
+    } = this.state;
 
-    const value = Number(amount || get(this.state, 'value.amount', 0));
+    const value = Number(amount || get(this.state, 'amount', 0));
     const defaultResponse = { fee: new BigNumber(0) };
+    const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
-    if (inputHasError || !value) return defaultResponse;
+    if (inputHasError || (!value && !isCollectible) || !assetData || !receiver) return defaultResponse;
 
-    const transaction = { recipient: receiver, value };
+    let data;
+    if (isCollectible) {
+      const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+      const {
+        name,
+        id,
+        contractAddress,
+        tokenType,
+      } = assetData;
+      const collectibleTransaction = {
+        from: activeAccountAddress,
+        to: receiver,
+        receiverEnsName,
+        name,
+        tokenId: id,
+        contractAddress,
+        tokenType,
+      };
+      data = await buildERC721TransactionData(collectibleTransaction, provider);
+    }
+
+    const transaction = { recipient: receiver, value, data };
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
-      .then(data => buildTxFeeInfo(data, useGasToken))
+      .then(res => buildTxFeeInfo(res, useGasToken))
       .catch(() => null);
 
-    if (!estimated) { // TODO: maybe we should show a Toast?
+
+    if (!estimated) {
+      Toast.show({
+        message: 'Could not estimate transaction fee',
+        type: 'warning',
+      });
       return defaultResponse;
     }
 
     return estimated;
   };
+
+
+  // form submit
+
+  handleFormSubmit = async () => {
+    const {
+      submitPressed,
+      txFeeInfo,
+      gasLimit,
+      amount,
+      assetData,
+      receiver,
+      receiverEnsName,
+    } = this.state;
+    if (submitPressed || !txFeeInfo || !amount || !receiver || !assetData) return;
+
+    this.setState({ submitPressed: true });
+
+    const { source, navigation, isSmartAccount } = this.props;
+
+    if (assetData.tokenType === COLLECTIBLES) {
+      this.setState({ submitPressed: false }, () => {
+        navigation.navigate(SEND_COLLECTIBLE_CONFIRM, {
+          assetData,
+          receiver,
+          source,
+          receiverEnsName,
+        });
+      });
+      return;
+    }
+
+    // $FlowFixMe
+    let transactionPayload: TokenTransactionPayload = {
+      to: receiver,
+      receiverEnsName,
+      amount,
+      txFeeInWei: txFeeInfo.fee,
+      symbol: assetData.token,
+      contractAddress: assetData.contractAddress,
+      decimals: assetData.decimals,
+    };
+
+    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+
+    if (!isSmartAccount) {
+      const transactionSpeed = this.getTxSpeed();
+      const gasPrice = gasLimit ? txFeeInfo.fee.div(gasLimit).toNumber() : 0;
+      transactionPayload = {
+        ...transactionPayload,
+        gasPrice,
+        gasLimit,
+        txSpeed: transactionSpeed,
+      };
+    }
+
+    Keyboard.dismiss();
+
+    this.setState({ submitPressed: false }, () => {
+      navigation.navigate(SEND_TOKEN_CONFIRM, {
+        transactionPayload,
+        source,
+      });
+    });
+  };
+
+
+  // render methods
 
   renderRelayerMigrationButton = () => {
     return (
@@ -433,18 +488,26 @@ class SendEthereumTokens extends React.Component<Props, State> {
     });
   };
 
-  checkFormInputErrors = () => {
-    if (!this._form) return;
-    const { inputHasError } = this.state;
-    if (!isEmpty(get(this._form.validate(), 'errors'))) {
-      this.setState({ inputHasError: true });
-    } else if (inputHasError) {
-      this.setState({ inputHasError: false });
-    }
+  getTransactionFeeString = () => {
+    const { rates, fiatCurrency } = this.props;
+    const txSpeed = this.getTxSpeed();
+    const feeInEth = formatAmount(utils.formatEther(this.getKeyWalletTxFee(txSpeed).fee));
+    const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
+    const formattedFeeInFiat = formatFiat(feeInFiat, fiatCurrency);
+
+    return `${feeInEth} ETH (${formattedFeeInFiat})`;
   };
 
-  renderFooterLeftSide = (props: FooterProps) => {
+  renderFeeToggle = (showFee: boolean) => {
     const { txFeeInfo } = this.state;
+    if (showFee && txFeeInfo) {
+      const { fee, gasToken } = txFeeInfo;
+      return <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />;
+    }
+    return null;
+  };
+
+  renderFee = (props: FooterProps) => {
     const {
       showTransactionSpeeds,
       showRelayerMigration,
@@ -460,152 +523,101 @@ class SendEthereumTokens extends React.Component<Props, State> {
       return (
         <TouchableOpacity onPress={() => this.setState({ showTransactionSpeedModal: true })}>
           <SendTokenDetailsValue>
-            <Label small>Fee: </Label>
-            <TextLink>{SPEED_TYPE_LABELS[this.getTxSpeed()]}</TextLink>
+            <BaseText secondary>Fee: {this.getTransactionFeeString()}</BaseText>
           </SendTokenDetailsValue>
         </TouchableOpacity>
       );
     } else if (showRelayerMigration) {
-      return this.renderRelayerMigrationButton();
-    } else if (showFee && txFeeInfo) {
-      const { fee, gasToken } = txFeeInfo;
       return (
-        <FeeLabelToggle
-          txFeeInWei={fee}
-          gasToken={gasToken}
-        />
-      );
+        <>
+          {this.renderFeeToggle(showFee)}
+          <Spacing h={spacing.medium} />
+          {this.renderRelayerMigrationButton()}
+        </>);
     }
-    return <Label>&nbsp;</Label>;
+    return this.renderFeeToggle(showFee);
   };
 
   render() {
     const {
-      value,
+      amount,
       showTransactionSpeedModal,
       gasLimit,
       gettingFee,
-      calculatingMaxValue,
       inputHasError,
       txFeeInfo,
-      submitPressed,
       showRelayerMigrationModal,
+      assetData,
+      selectedContact,
+      submitPressed,
+      receiver,
     } = this.state;
     const {
-      session,
       balances,
-      rates,
-      assetData,
-      fiatCurrency,
       accountAssets,
       accountHistory,
       isGasTokenSupported,
       isSmartAccount,
+      inactiveUserAccounts,
+      session,
     } = this.props;
 
-    const { token, iconColor, decimals } = assetData;
-    const feeSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
+    const token = get(assetData, 'token');
+    const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
+
+    // value
+    const currentValue = parseFloat(amount || 0);
 
     // balance
     const balance = getBalance(balances, token);
 
-    // value
-    const currentValue = parseFloat(get(value, 'amount', 0));
-
-    // fee
-    let isEnoughForFee = true;
-    if (txFeeInfo) {
-      const balanceCheckTransaction = {
-        txFeeInWei: txFeeInfo.fee,
-        amount: currentValue,
-        decimals,
-        symbol: token,
-        gasToken: txFeeInfo.gasToken,
-      };
-      isEnoughForFee = isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
-    }
-
-    // max amount
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInfo?.fee, txFeeInfo?.gasToken);
-
-    // value in fiat
-    const valueInFiat = currentValue * getRate(rates, token, fiatCurrency);
-    const valueInFiatOutput = formatFiat(valueInFiat, fiatCurrency);
-
-    // form
-    const formStructure = makeAmountForm(
-      maxAmount,
-      MIN_TX_AMOUNT,
-      isEnoughForFee,
-      this.formSubmitted,
-      decimals,
-      feeSymbol,
-    );
-    const formFields = getAmountFormFields({
-      icon: iconColor,
-      currency: token,
-      valueInFiatOutput,
-      customProps: { inputWrapperStyle: { marginTop: spacing.large } },
-    });
-
     const enteredMoreThanBalance = currentValue > balance;
-    const showNextButton = !submitPressed && !!value && !!parseFloat(value.amount) && !inputHasError && !gettingFee;
-    const showFee = !enteredMoreThanBalance && !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0);
-    const isNextButtonDisabled = gettingFee || !session.isOnline;
+    const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!receiver;
+
+    const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && !!amount && !!parseFloat(amount);
+    const showFeeForCollectible = hasAllFeeData;
+    const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
+    const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
 
     const showRelayerMigration = showFee && isSmartAccount && !isGasTokenSupported;
     const showTransactionSpeeds = !inputHasError && !!gasLimit && !isSmartAccount && !showRelayerMigration;
 
+    const hasAllData = isCollectible ? (!!receiver && !!assetData) : (!inputHasError && !!receiver && !!currentValue);
+
+    const showNextButton = !gettingFee && hasAllData;
+    const isNextButtonDisabled = !session.isOnline;
+
     return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: `Send ${assetData.token}` }] }}
-        footer={(
-          <FooterInner>
-            {this.renderFooterLeftSide({
-              showTransactionSpeeds,
-              showRelayerMigration,
-              showFee,
-              isLoading: gettingFee && !!value && !!parseFloat(value.amount) && !inputHasError,
-            })}
-            {showNextButton &&
-              <Button
-                disabled={isNextButtonDisabled}
-                small
-                flexRight
-                title="Next"
-                onPress={this.handleFormSubmit}
-              />
-            }
-            {submitPressed && <Spinner width={20} height={20} />}
-          </FooterInner>
-        )}
-        minAvoidHeight={200}
+      <SendContainer
+        customSelectorProps={{
+          onOptionSelect: this.handleReceiverSelect,
+          options: [],
+          selectedOption: selectedContact,
+          horizontalOptionsData: [{ data: [...inactiveUserAccounts] }],
+        }}
+        customValueSelectorProps={{
+          getFormValue: this.handleAmountChange,
+          getError: this.manageFormErrorState,
+          txFeeInfo,
+          preselectedAsset: token,
+          preselectedCollectible,
+          showAllAssetTypes: true,
+        }}
+        footerProps={{
+          isNextButtonVisible: showNextButton,
+          buttonProps: {
+            onPress: this.handleFormSubmit,
+            isLoading: submitPressed,
+            disabled: isNextButtonDisabled,
+          },
+          footerTopAddon: !!receiver && this.renderFee({
+            showTransactionSpeeds,
+            showRelayerMigration,
+            showFee,
+            isLoading: gettingFee && !inputHasError,
+          }),
+        }}
       >
-        <BackgroundWrapper>
-          <Wrapper regularPadding>
-            <Form
-              ref={node => { this._form = node; }}
-              type={formStructure}
-              options={formFields}
-              value={value}
-              onChange={this.handleAmountChange}
-            />
-            <ActionsWrapper>
-              <SendTokenDetails
-                rates={rates}
-                fiatCurrency={fiatCurrency}
-                balance={balance}
-                token={token}
-              />
-              {!calculatingMaxValue &&
-                <TouchableOpacity onPress={this.useMaxValue}>
-                  <TextLink>Send all</TextLink>
-                </TouchableOpacity>
-              }
-              {calculatingMaxValue && <Spinner width={20} height={20} />}
-            </ActionsWrapper>
-          </Wrapper>
-        </BackgroundWrapper>
         {showTransactionSpeeds &&
           <SlideModal
             isVisible={showTransactionSpeedModal}
@@ -625,15 +637,18 @@ class SendEthereumTokens extends React.Component<Props, State> {
             accountHistory={accountHistory}
           />
         }
-      </ContainerWithHeader>
+      </SendContainer>
     );
   }
 }
 
 const mapStateToProps = ({
   history: { gasInfo },
+  appSettings: { data: { baseFiatCurrency, transactionSpeed } },
 }: RootReducerState): $Shape<Props> => ({
   gasInfo,
+  baseFiatCurrency,
+  transactionSpeed,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -641,6 +656,9 @@ const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
+  inactiveUserAccounts: innactiveUserWalletForSendSellector,
+  assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
+  collectibles: activeAccountMappedCollectiblesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

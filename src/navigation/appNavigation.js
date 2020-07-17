@@ -40,8 +40,6 @@ import ChangePinNewPinScreen from 'screens/ChangePin/NewPin';
 import ChangePinConfirmNewPinScreen from 'screens/ChangePin/ConfirmNewPin';
 import RevealBackupPhraseScreen from 'screens/RevealBackupPhrase';
 import SendTokenAmountScreen from 'screens/SendToken/SendTokenAmount';
-import SendTokenContactsScreen from 'screens/SendToken/SendTokenContacts';
-import SendTokenAssetsScreen from 'screens/SendToken/SendTokenAssets';
 import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScreen';
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
@@ -72,10 +70,8 @@ import FiatExchangeScreen from 'screens/FiatExchange';
 import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
-import SendSyntheticAssetScreen from 'screens/SendSynthetic/SendSyntheticAsset';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
 import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
-import SendSyntheticUnavailableScreen from 'screens/SendSynthetic/SendSyntheticUnavailable';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
@@ -152,8 +148,6 @@ import {
   CHANGE_PIN_CONFIRM_NEW_PIN,
   TAB_NAVIGATION,
   SEND_TOKEN_AMOUNT,
-  SEND_TOKEN_CONTACTS,
-  SEND_TOKEN_ASSETS,
   SEND_TOKEN_CONFIRM,
   SEND_TOKEN_TRANSACTION,
   SEND_TOKEN_FROM_ASSET_FLOW,
@@ -166,7 +160,6 @@ import {
   COLLECTIBLE,
   SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   SEND_COLLECTIBLE_CONFIRM,
-  SEND_COLLECTIBLE_CONTACTS,
   WALLETCONNECT_FLOW,
   WALLETCONNECT,
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
@@ -198,10 +191,8 @@ import {
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
-  SEND_SYNTHETIC_ASSET,
-  SEND_SYNTHETIC_CONFIRM,
   SEND_SYNTHETIC_AMOUNT,
-  SEND_SYNTHETIC_UNAVAILABLE,
+  SEND_SYNTHETIC_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
@@ -216,7 +207,6 @@ import {
   ADDRESS_BOOK_PERMISSION,
   REFERRAL_CONTACTS,
   CONNECT_TAB,
-  SEND_COLLECTIBLE_CONTACTS_CONFIRM,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
@@ -511,48 +501,17 @@ const tabNavigation = createBottomTabNavigator(
   },
 );
 
-// SEND TOKEN FROM ASSET FLOW
-const sendTokenFromAssetFlow = createStackNavigator(
+// SEND TOKEN FLOW
+const sendTokenFlow = createStackNavigator(
   {
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
+    [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
   },
   StackNavigatorModalConfig,
 );
-
-// SEND TOKEN FROM HOME FLOW
-const sendTokenFromHomeFlow = createStackNavigator(
-  {
-    [SEND_TOKEN_CONTACTS]: { screen: SendTokenContactsScreen, params: { sendFromHomeFlow: true } },
-    [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-    [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// SEND COLLECTIBLE FROM ASSET FLOW
-const sendCollectibleFromAssetFlow = createStackNavigator({
-  [SEND_COLLECTIBLE_CONTACTS]: SendTokenContactsScreen,
-  [SEND_COLLECTIBLE_CONTACTS_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
-
-// SEND TOKEN FROM CONTACT FLOW
-const sendTokenFromContactFlow = createStackNavigator({
-  [SEND_TOKEN_ASSETS]: SendTokenAssetsScreen,
-  [SEND_COLLECTIBLE_CONFIRM]: SendCollectibleConfirmScreen,
-  [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
-  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-}, StackNavigatorModalConfig);
 
 const changePinFlow = createStackNavigator({
   [CHANGE_PIN_CURRENT_PIN]: ChangePinCurrentPinScreen,
@@ -577,14 +536,11 @@ const ppnSendTokenFromAssetFlow = createStackNavigator(
 // PPN SEND SYNTHETIC ASSET FULL FLOW
 const ppnSendSyntheticAssetFlow = createStackNavigator(
   {
-    [SEND_SYNTHETIC_ASSET]: SendSyntheticAssetScreen,
-    [SEND_TOKEN_CONTACTS]: SendTokenContactsScreen,
     // synthetic
     [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
     [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    [SEND_SYNTHETIC_UNAVAILABLE]: SendSyntheticUnavailableScreen,
     // other
     [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
@@ -704,11 +660,11 @@ lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
-    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFromAssetFlow,
+    [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
     [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
     [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
-    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFromContactFlow,
-    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendCollectibleFromAssetFlow,
+    [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFlow,
+    [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
     [REVEAL_BACKUP_PHRASE]: RevealBackupPhraseScreen,
     [BACKUP_WALLET_IN_SETTINGS_FLOW]: backupWalletFlow,
@@ -728,7 +684,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONNECTED_DEVICES_FLOW]: connectedDevicesFlow,
     [LOGOUT_PENDING]: LogoutPendingScreen,
     [MENU_FLOW]: menuFlow,
-    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFromHomeFlow,
+    [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
     [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,

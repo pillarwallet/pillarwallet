@@ -96,7 +96,7 @@ import {
   TANK_FUND_FLOW,
   SEND_TOKEN_AMOUNT,
   SEND_TOKEN_FROM_HOME_FLOW,
-  SEND_SYNTHETIC_ASSET,
+  SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   LENDING_ENTER_WITHDRAW_AMOUNT,
@@ -598,11 +598,15 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
-  sendSynthetic = async () => {
-    const { onClose, navigation } = this.props;
+  sendSynthetic = async (relatedAddress: string) => {
+    const { onClose, navigation, ensRegistry } = this.props;
     onClose();
     await this.switchToSW();
-    navigation.navigate(SEND_SYNTHETIC_ASSET);
+
+    const contactFromAddress = relatedAddress
+      && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
+    const contact = contactFromAddress;
+    navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
 
   settle = async () => {
@@ -1051,7 +1055,7 @@ export class EventDetail extends React.Component<Props, State> {
               eventData.buttons = [
                 {
                   title: 'Send back',
-                  onPress: this.sendSynthetic,
+                  onPress: () => this.sendSynthetic(relevantAddress),
                   squarePrimary: true,
                 },
               ];
@@ -1060,7 +1064,7 @@ export class EventDetail extends React.Component<Props, State> {
             eventData.buttons = [
               {
                 title: 'Send more',
-                onPress: this.sendSynthetic,
+                onPress: () => this.sendSynthetic(relevantAddress),
                 secondary: true,
               },
             ];
