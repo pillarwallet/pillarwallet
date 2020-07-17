@@ -24,6 +24,7 @@ import { Trans } from 'react-i18next';
 import { BaseText } from 'components/Typography';
 import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
+
 const t = (key: string, options?: TranslationOptions = {}): TranslatedString => {
   const { linkedText, onPress } = options;
   if (linkedText) {

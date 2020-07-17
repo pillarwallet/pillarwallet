@@ -25,6 +25,7 @@ import translationLoader from './translationLoader';
 import { DEFAULT_NAMESPACE, NAMESPACES, POST_PROCESSORS } from './config';
 import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
 
+
 i18n
   .use(initReactI18next)
   .use(languageDetector)

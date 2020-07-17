@@ -20,6 +20,7 @@
 
 import type { TranslationResource } from 'models/Translations';
 
+
 // en
 const COMMON_EN = require('./locales/en/common.json');
 const AUTH_EN = require('./locales/en/auth.json');

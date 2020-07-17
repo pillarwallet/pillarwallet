@@ -39,5 +39,6 @@ const languageDetector = {
   init: () => {},
   cacheUserLanguage: () => {},
 };
+
 export default languageDetector;
 

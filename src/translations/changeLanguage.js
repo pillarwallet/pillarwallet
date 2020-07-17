@@ -33,7 +33,7 @@ const changeLanguage = (code: string) => {
     })
     .catch(() => {
       Toast.show({
-        message: 'Could not change language',
+        message: 'Sorry, there was an issue changing language. Please try again later.',
         type: 'warning',
         title: '',
       });

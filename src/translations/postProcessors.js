@@ -23,6 +23,7 @@ import { capitalize } from 'utils/strings';
 import type { TranslationOptions } from 'models/Translations';
 import { CAPITALIZATION_POSTPROCESSOR, PUNCTUATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR } from './config';
 
+
 export const PunctuationPostProcessor = {
   type: 'postProcessor',
   name: PUNCTUATION_POSTPROCESSOR,
