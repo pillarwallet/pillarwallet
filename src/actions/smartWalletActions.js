@@ -104,10 +104,12 @@ import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
+import type SDKWrapper from 'services/api';
 
 // utils
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
+  findAccountById,
   findFirstSmartAccount,
   getActiveAccountAddress,
   getActiveAccountId,
@@ -1487,5 +1489,53 @@ export const switchToGasTokenRelayerAction = () => {
     });
     dispatch(insertTransactionAction(historyTx, accountId));
     dispatch(fetchConnectedAccountAction());
+  };
+};
+
+export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartWalletAccountId: string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      accounts: { data: accounts },
+      user: { data: { walletId } },
+      session: { data: session },
+    } = getState();
+
+    const account = findAccountById(smartWalletAccountId, accounts);
+    if (!account || account.walletId) return;
+
+    // No walletId set means we fail to register that account on the backend
+    const accountAddress = getAccountAddress(account);
+    const result = await api.registerSmartWallet({
+      walletId,
+      privateKey,
+      ethAddress: accountAddress,
+      fcmToken: session.fcmToken || '',
+    });
+
+    if (result?.error) {
+      reportLog('Unable to register smart wallet', { reason: result.reason });
+      return;
+    }
+
+    // validate the account was registered correctly
+    const backendAccounts = await api.listAccounts(walletId);
+    const registeredAccount = backendAccounts.find(({ ethAddress }) => addressesEqual(ethAddress, accountAddress));
+
+    if (!registeredAccount || !registeredAccount.walletId) {
+      reportLog('Unable to register smart wallet', { smartWalletAccountId });
+      return;
+    }
+
+    const { accounts: { data: currentAccounts } } = getState();
+    const updatedAccounts = currentAccounts.map(acc => ({
+      ...acc,
+      walletId: acc.id === smartWalletAccountId ? registeredAccount.walletId : acc.walletId,
+    }));
+
+    dispatch({
+      type: UPDATE_ACCOUNTS,
+      payload: updatedAccounts,
+    });
+    dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
   };
 };
