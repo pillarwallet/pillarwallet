@@ -27,7 +27,7 @@ import {
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED, SET_USERNAME } from 'constants/userConstants';
-import { INITIAL_FEATURE_FLAGS, SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
@@ -72,7 +72,7 @@ describe('Auth actions', () => {
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [] },
-      featureFlags: { data: INITIAL_FEATURE_FLAGS },
+      featureFlags: { data: {} },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
       smartWallet: {},
@@ -109,7 +109,7 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_USERNAME, payload: registeredMockUser.username },
-      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
+      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },

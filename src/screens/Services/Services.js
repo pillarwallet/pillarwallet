@@ -81,6 +81,7 @@ class ServicesScreen extends React.Component<Props> {
       isSmartWalletActivated,
       featureFlags,
     } = this.props;
+    console.warn(JSON.stringify(featureFlags))
     const colors = getThemeColors(theme);
     const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
       label: `${providersMeta.length} exchanges`,

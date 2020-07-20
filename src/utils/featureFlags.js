@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import isEmpty from 'lodash.isempty';
 import {
   AAVE,
   RAMP,
@@ -29,15 +30,21 @@ import {
 
 type ResponseFeatureFlags = {[key: string]: { value: string, source: string }}
 
+const getBooleanValue = (featureFlags: ResponseFeatureFlags, key: string) => {
+  const value = featureFlags[key]?.value;
+  // note: boolean flags are fetched as 0/1, hence the !!
+  return !!value;
+};
+
 export const parseFeatureFlags = (featureFlags: ResponseFeatureFlags) => {
-  // note: boolean flags are fetched as 0/1, hence the !!s
+  if (isEmpty(featureFlags)) return {};
   return {
-    aave: !!featureFlags[AAVE].value,
-    poolTogether: !!featureFlags[POOL_TOGETHER].value,
-    ramp: !!featureFlags[RAMP].value,
-    peerToPeer: !!featureFlags[PEER_TO_PEER].value,
-    offersEngine: !!featureFlags[OFFERS_ENGINE].value,
-    wyre: !!featureFlags[WYRE].value,
+    aave: getBooleanValue(featureFlags, AAVE),
+    poolTogether: getBooleanValue(featureFlags, POOL_TOGETHER),
+    ramp: getBooleanValue(featureFlags, RAMP),
+    peerToPeer: getBooleanValue(featureFlags, PEER_TO_PEER),
+    offersEngine: getBooleanValue(featureFlags, OFFERS_ENGINE),
+    wyre: getBooleanValue(featureFlags, WYRE),
   };
 };
 

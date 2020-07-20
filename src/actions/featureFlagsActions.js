@@ -35,9 +35,9 @@ export const loadFeatureFlagsAction = () => {
     remoteConfig()
       .setDefaults(INITIAL_FEATURE_FLAGS)
       .then(() => remoteConfig().fetchAndActivate())
-      .then(() => {
-        const featureFlags: ResponseFeatureFlags = remoteConfig().getAll();
-        const parsedFeatureFlags: FeatureFlags = parseFeatureFlags(featureFlags);
+      .then(() => remoteConfig().getAll())
+      .then((featureFlags: ResponseFeatureFlags) => {
+        const parsedFeatureFlags: FeatureFlags | {} = parseFeatureFlags(featureFlags);
 
         dispatch({ type: SET_FEATURE_FLAGS, payload: parsedFeatureFlags });
       })
