@@ -22,7 +22,7 @@ import { BaseText } from 'components/Typography';
 
 export type I18n = {
   language: string,
-}
+};
 
 export type TranslationOptions = {
   exclamation?: boolean,

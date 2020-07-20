@@ -64,7 +64,7 @@ import AppFlow from './appNavigation';
 
 type Props = {
   language: string,
-}
+};
 
 const StackNavigatorConfig = {
   defaultNavigationOptions: {

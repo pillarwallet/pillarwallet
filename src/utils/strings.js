@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const capitalize = (str: string) => {
+export const capitalize = (str: string): string => {
+  if (typeof str !== 'string') return '';
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
