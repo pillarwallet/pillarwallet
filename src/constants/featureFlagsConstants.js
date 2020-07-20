@@ -33,7 +33,7 @@ export const INITIAL_FEATURE_FLAGS = {
   [OFFERS_ENGINE]: true,
   [RAMP]: true,
   [WYRE]: true,
-  [AAVE]: false,
-  [POOL_TOGETHER]: false,
+  [AAVE]: true,
+  [POOL_TOGETHER]: true,
   [PEER_TO_PEER]: true,
 };
