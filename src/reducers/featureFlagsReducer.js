@@ -42,9 +42,9 @@ export const initialState = {
     offersEngine: true,
     ramp: true,
     wyre: true,
-    aave: false,
-    poolTogether: false,
-    peerToPeer: false,
+    aave: true,
+    poolTogether: true,
+    peerToPeer: true,
   },
 };
 
