@@ -16687,7 +16687,7 @@ react-native-share@^1.1.1:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-share/-/react-native-share-1.2.1.tgz#3756a3cf383c1489a6a0edf2b529ec025ee8f8f7"
   integrity sha1-N1ajzzg8FImmoO3ytSnsAl7o+Pc=
 
-react-native-splash-screen@^3.1.1:
+react-native-splash-screen@^3.2.0:
   version "3.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-splash-screen/-/react-native-splash-screen-3.2.0.tgz#d47ec8557b1ba988ee3ea98d01463081b60fff45"
   integrity sha1-1H7IVXsbqYjuPqmNAUYwgbYP/0U=
