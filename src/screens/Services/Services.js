@@ -39,6 +39,7 @@ import { getMetaDataAction } from 'actions/exchangeActions';
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
 
 // constants
 import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
@@ -47,7 +48,12 @@ import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'consta
 import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { openInAppBrowser } from 'utils/inAppBrowser';
-import { getActiveAccountAddress } from 'utils/accounts';
+import {
+  getActiveAccount,
+  getAccountAddress,
+  checkIfSmartWalletAccount,
+} from 'utils/accounts';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -58,6 +64,8 @@ import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
+import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
 
 type Props = {
   theme: Theme,
@@ -68,9 +76,18 @@ type Props = {
   isSmartWalletActivated: boolean,
   user: User,
   accounts: Accounts,
+  smartWalletState: SmartWalletReducerState,
 };
 
-class ServicesScreen extends React.Component<Props> {
+type State = {
+  buyCryptoModalMessage: null | ModalMessage,
+};
+
+class ServicesScreen extends React.Component<Props, State> {
+  state = {
+    buyCryptoModalMessage: null,
+  };
+
   componentDidMount() {
     const { getMetaData, providersMeta } = this.props;
     if (!Array.isArray(providersMeta) || !providersMeta?.length) {
@@ -134,28 +151,23 @@ class ServicesScreen extends React.Component<Props> {
   };
 
   getBuyCryptoServices = () => {
-    const {
-      user: { email = null },
-      accounts,
-    } = this.props;
-
-    const address = getActiveAccountAddress(accounts);
-
     return [
       {
         key: 'ramp',
         title: 'Buy with Ramp.Network (EU)',
         body: 'Buy Now',
         action: () => {
-          const params = {
-            hostApiKey: RAMPNETWORK_API_KEY,
-            userAddress: address,
-            ...(email === null ? {} : { userEmailAddress: email }),
-          };
+          this.handleBuyCryptoAction(userAddress => {
+            const { user: { email = null } } = this.props;
 
-          const rampUrl = `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+            const params = {
+              hostApiKey: RAMPNETWORK_API_KEY,
+              userAddress,
+              ...(email === null ? {} : { userEmailAddress: email }),
+            };
 
-          openInAppBrowser(rampUrl);
+            return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+          });
         },
       },
       {
@@ -163,16 +175,39 @@ class ServicesScreen extends React.Component<Props> {
         title: 'Buy with Wyre (Non-EU)',
         body: 'Buy Now',
         action: () => {
-          const wyreUrl = `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
+          this.handleBuyCryptoAction(address => `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
             accountId: SENDWYRE_ACCOUNT_ID,
             dest: `ethereum:${address}`,
             redirectUrl: SENDWYRE_RETURN_URL,
-          })}`;
-
-          openInAppBrowser(wyreUrl);
+          })}`);
         },
       },
     ];
+  }
+
+  handleBuyCryptoAction = (getUrlWithAddress: string => string) => {
+    const { accounts, smartWalletState } = this.props;
+
+    const activeAccount = getActiveAccount(accounts);
+    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+
+    if (!smartWalletStatus.hasAccount) {
+      this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.NO_SW_ACCOUNT });
+      return;
+    }
+
+    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
+      this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE });
+      return;
+    }
+
+    const address: string = getAccountAddress(activeAccount);
+    const url = getUrlWithAddress(address);
+    openInAppBrowser(url);
+  }
+
+  onBuyCryptoModalClose = () => {
+    this.setState({ buyCryptoModalMessage: null });
   }
 
   renderServicesItem = ({ item }) => {
@@ -203,6 +238,8 @@ class ServicesScreen extends React.Component<Props> {
 
   render() {
     const services = this.getServices();
+    const { buyCryptoModalMessage } = this.state;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -214,14 +251,21 @@ class ServicesScreen extends React.Component<Props> {
         tab
       >
         {onScroll => (
-          <FlatList
-            data={services}
-            keyExtractor={(item) => item.key}
-            renderItem={this.renderServicesItem}
-            contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-          />
+          <React.Fragment>
+            <FlatList
+              data={services}
+              keyExtractor={(item) => item.key}
+              renderItem={this.renderServicesItem}
+              contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+            />
+            <BuyCryptoAccountWarnModal
+              navigation={this.props.navigation}
+              message={buyCryptoModalMessage}
+              onClose={this.onBuyCryptoModalClose}
+            />
+          </React.Fragment>
         )}
       </ContainerWithHeader>
     );
@@ -232,10 +276,12 @@ const mapStateToProps = ({
   exchange: { providersMeta },
   user: { data: user },
   accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
   user,
   accounts,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({
