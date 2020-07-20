@@ -37,13 +37,14 @@ import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
 import Button from 'components/Button';
+import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
-import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
+import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
@@ -121,6 +122,8 @@ type Props = {
   fetchReferralRewardsIssuerAddresses: () => void,
   isActiveAccountSmartWallet: boolean,
   inactiveUserAccounts: Option[],
+  goToInvitationFlow: () => void,
+  rewardActive?: boolean,
 };
 
 type State = {
@@ -134,6 +137,7 @@ type State = {
     },
   },
   showDescriptionModal: boolean,
+  visibleActionOptionsModal: boolean,
 };
 
 const AssetCardWrapper = styled.View`
@@ -208,6 +212,7 @@ class AssetScreen extends React.Component<Props, State> {
   state = {
     activeModal: activeModalResetState,
     showDescriptionModal: false,
+    visibleActionOptionsModal: false,
   };
 
   componentDidMount() {
@@ -292,6 +297,61 @@ class AssetScreen extends React.Component<Props, State> {
     }
   }
 
+  getModalActionOptions = () => {
+    const {
+      navigation,
+      baseFiatCurrency,
+      rewardActive,
+      goToInvitationFlow,
+      balances,
+      exchangeSupportedAssets,
+    } = this.props;
+    const { assetData } = navigation.state.params;
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const { token } = assetData;
+    const balance = getBalance(balances, token);
+    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
+    return [
+      {
+        key: 'buy',
+        label: 'Buy with card or Apple Pay',
+        iconName: 'wallet',
+        onPress: () => this.goToExchangeFlow(fiatCurrency, token),
+      },
+      {
+        key: 'receive',
+        label: 'Send from another wallet',
+        iconName: 'qrDetailed',
+        onPress: () => this.openReceiveTokenModal({ ...assetData, balance }),
+      },
+      {
+        key: 'exchange',
+        label: 'Exchange',
+        iconName: 'flip',
+        onPress: () => this.goToExchangeFlow(token),
+        hide: !isSupportedByExchange,
+      },
+      {
+        key: 'invite',
+        label: 'Invite and earn free tokens',
+        iconName: 'present',
+        hide: !rewardActive,
+        onPress: goToInvitationFlow,
+      },
+    ];
+  }
+
+  closeActionOptionsModal = (callback: () => void) => {
+    this.setState({ visibleActionOptionsModal: false }, () => {
+      if (callback) {
+        const timer = setTimeout(() => {
+          callback();
+          clearTimeout(timer);
+        }, 500);
+      }
+    });
+  };
+
   render() {
     const {
       rates,
@@ -310,7 +370,7 @@ class AssetScreen extends React.Component<Props, State> {
       isActiveAccountSmartWallet,
       inactiveUserAccounts,
     } = this.props;
-    const { showDescriptionModal } = this.state;
+    const { showDescriptionModal, visibleActionOptionsModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token, isSynthetic = false } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -364,6 +424,8 @@ class AssetScreen extends React.Component<Props, State> {
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
     const smartWalletAccount = inactiveUserAccounts
       .find(({ name }) => name === getAccountName(ACCOUNT_TYPES.SMART_WALLET));
+
+    const modalActionOptions = this.getModalActionOptions();
 
     return (
       <ContainerWithHeader
@@ -422,7 +484,7 @@ class AssetScreen extends React.Component<Props, State> {
           </DataWrapper>
           <AssetCardWrapper>
             <AssetButtons
-              onPressReceive={() => this.openReceiveTokenModal({ ...assetData, balance })}
+              onPressReceive={() => this.setState({ visibleActionOptionsModal: true })}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
@@ -452,7 +514,12 @@ class AssetScreen extends React.Component<Props, State> {
             isAssetView
           />}
         </ScrollWrapper>
-
+        <ActionOptionsModal
+          onModalClose={this.closeActionOptionsModal}
+          isVisible={!!visibleActionOptionsModal}
+          items={modalActionOptions}
+          title="Add funds to Pillar"
+        />
         <ReceiveModal
           isVisible={this.state.activeModal.type === RECEIVE}
           onModalHide={() => {
@@ -461,8 +528,6 @@ class AssetScreen extends React.Component<Props, State> {
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
-          showBuyTokensButton
-          handleBuyTokens={this.handleBuyTokens}
           onModalHidden={this.handleModalHidden}
           showErc20Note
         />
@@ -484,12 +549,14 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   exchange: { exchangeSupportedAssets },
+  referrals: { isPillarRewardCampaignActive: rewardActive },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
   exchangeSupportedAssets,
+  rewardActive,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -520,6 +587,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   },
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);
