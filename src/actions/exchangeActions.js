@@ -45,6 +45,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 // utils
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
+import { reportLog } from 'utils/common';
 
 // selectors
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
@@ -207,9 +208,9 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     if (!fromAsset || !toAsset) {
       Toast.show({
-        title: 'Exchange service failed',
+        title: 'Exchange Service',
         type: 'warning',
-        message: 'Could not find asset',
+        message: 'Sorry, we could not find the asset. Could you please check and try again?',
       });
       return;
     }
@@ -248,7 +249,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
          * after it's complete (access token's updated) let's dispatch same action again
          * TODO: change SDK user info endpoint to simple SDK token refresh method when it is reachable within SDK
          */
-        await api.userInfo(userWalletId).catch(() => null);
+        await api.userInfo(userWalletId)
+          .catch(error => reportLog(error.message));
       } else {
         Toast.show({
           title: 'Exchange service failed',
