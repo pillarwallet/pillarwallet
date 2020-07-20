@@ -132,7 +132,7 @@ class BiometricsPrompt extends React.Component<Props> {
     const biometryTypeTitle = getBiometryType(biometryType);
     const imageSource = getBiometryImage(biometryType);
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.biometricsPromptOnLoging') }] }}>
+      <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.biometricsPromptOnLogin') }] }}>
         <ContentWrapper contentContainerStyle={{ paddingVertical: 20, paddingHorizontal: 30, flexGrow: 1 }}>
           <HeaderText>{t('auth:paragraph.biometricsPrompt', { biometryTypeTitle })}</HeaderText>
           <ContentInnerWrapper>

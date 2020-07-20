@@ -46,16 +46,16 @@ const PhoneStructDef = tForm.refinement(tForm.Object, ({ input }): boolean => {
 
 EmailStructDef.getValidationErrorMessage = (email): string => {
   if (email && !isValidEmail(email)) {
-    return t('auth:invalidEmailAddress.default');
+    return t('auth:error.invalidEmailAddress.default');
   } else if (email && email.length > maxLength) {
-    return t('auth:invalidEmailAddress.tooLong', { requiredLength: maxLength });
+    return t('auth:error.invalidEmailAddress.tooLong', { requiredLength: maxLength });
   }
   return '';
 };
 
 PhoneStructDef.getValidationErrorMessage = (phone): string => {
   if (phone && !isValidPhoneWithoutCountryCode(phone)) {
-    return t('auth:invalidPhoneNumber.default');
+    return t('auth:error.invalidPhoneNumber.default');
   }
   return '';
 };

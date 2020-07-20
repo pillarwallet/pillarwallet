@@ -174,9 +174,9 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
 
     let errorMessage;
     if (!isOnline) {
-      errorMessage = t('auth:recoveryPortal.error.cantConnectDevice_deviceIsOffline');
+      errorMessage = t('auth:recoveryPortal.error.cantConnectDevice.deviceIsOffline');
     } else if (!isEnoughForFee) {
-      errorMessage = t('auth:recoveryPortal.error.cantConnectDevice_insufficientBalance', { token: feeSymbol });
+      errorMessage = t('auth:recoveryPortal.error.cantConnectDevice.insufficientBalance', { token: feeSymbol });
     }
 
     const submitButtonTitle = isOnline && gettingFee
@@ -189,7 +189,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
     return (
       <React.Fragment>
         <DetailsLine>
-          <DetailsTitle>{t('auth.recoveryPortal:label.recoveryDeviceAddress')}</DetailsTitle>
+          <DetailsTitle>{t('auth:recoveryPortal.label.recoveryDeviceAddress')}</DetailsTitle>
           <DetailsValue>{this.deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
@@ -228,7 +228,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
           <Paragraph small style={{ margin: spacing.large }}>
-            {t('auth.recoveryPortal.paragraph.doubleCheckDataBeforeConnectingToPortal')}
+            {t('auth:recoveryPortal.paragraph.doubleCheckDataBeforeConnectingToPortal')}
           </Paragraph>
           <DetailsWrapper>
             {showSpinner && this.renderSpinner()}

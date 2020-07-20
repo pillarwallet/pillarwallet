@@ -65,7 +65,7 @@ class RetryApiRegistration extends React.Component<Props> {
     return (
       <Container center>
         {walletState !== REGISTRATION_FAILED && (
-          <Loader messages={[t('auth.loadingMessage.registering')]} />
+          <Loader messages={[t('auth:loadingMessage.registering')]} />
         )}
         {walletState === REGISTRATION_FAILED && (
           <>

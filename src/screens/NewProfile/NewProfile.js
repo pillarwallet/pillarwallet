@@ -311,7 +311,7 @@ class NewProfile extends React.Component<Props, State> {
           value={value}
           onChange={this.handleChange}
         />
-        <BaseText regular>{t('auth:cannotBeChanged')}</BaseText>
+        <BaseText regular>{t('auth:label.cannotBeChanged')}</BaseText>
       </StyledWrapper>
     );
   }

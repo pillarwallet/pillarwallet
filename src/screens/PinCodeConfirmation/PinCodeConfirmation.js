@@ -120,7 +120,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
         }
         <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
           <HeaderText>
-            {t('auth.reenterToConfirm')}
+            {t('auth:label.reenterToConfirm')}
           </HeaderText>
           <PinCode
             onPinEntered={this.handlePinSubmit}

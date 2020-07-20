@@ -85,7 +85,7 @@ const RecoveryPortalSetupComplete = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: t('auth.recoveryPortal.title.RecoveryPortal') }],
+        centerItems: [{ title: t('auth:recoveryPortal.title.RecoveryPortal') }],
         rightItems: [{ close: true }],
         noBack: true,
         onClose: dismissNavigation,
