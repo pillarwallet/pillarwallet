@@ -19,23 +19,24 @@
 */
 
 import * as React from 'react';
-import { Platform } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 
-import { Container, Footer, Wrapper } from 'components/Layout';
+import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
-import AnimatedBackground from 'components/AnimatedBackground';
 import ButtonText from 'components/ButtonText';
 
-import { fontSizes } from 'utils/variables';
+import { fontSizes, spacing } from 'utils/variables';
 import { images } from 'utils/images';
+import { getDeviceWidth } from 'utils/common';
 
 import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
 import type { Theme } from 'models/Theme';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { LIGHT_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 
 type Props = {
@@ -44,40 +45,44 @@ type Props = {
   theme: Theme,
 };
 
-type State = {
-  shouldAnimate: boolean,
-};
 
+const screenWidth = getDeviceWidth();
 
-const PillarLogo = styled(CachedImage)`
-  height: 60px;
-  width: 120px;
+const Background = styled.View`
+  flex: 1;
+  background-color: #00ff24;
+  width: 100%;
 `;
 
-class Welcome extends React.Component<Props, State> {
-  listeners: Object[];
+const Pattern = styled(CachedImage)`
+  width: 100%;
+  height: ${({ height }) => height}px;
+`;
 
-  constructor(props: Props) {
-    super(props);
-    this.listeners = [];
-    this.state = {
-      shouldAnimate: true,
-    };
-  }
+const PillarLogo = styled(CachedImage)`
+  height: 56px;
+  width: 192px;
+`;
 
-  componentDidMount() {
-    const { navigation } = this.props;
+const LogoWrapper = styled.View`
+  flex: 2.5;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
+`;
 
-    this.listeners = [
-      navigation.addListener('willFocus', () => this.setState({ shouldAnimate: true })),
-      navigation.addListener('willBlur', () => this.setState({ shouldAnimate: false })),
-    ];
-  }
+const ButtonsWrapper = styled.View`
+  flex: 2;
+  width: 100%;
+  padding: 30px ${spacing.layoutSides}px;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 40px;
+`;
 
-  componentWillUnmount() {
-    this.listeners.forEach(listenerItem => listenerItem.remove());
-  }
+const IMAGE_RATIO = 270 / 375;
 
+class Welcome extends React.PureComponent<Props> {
   loginAction = () => {
     this.props.navigateToNewWalletPage();
   };
@@ -88,30 +93,41 @@ class Welcome extends React.Component<Props, State> {
   };
 
   render() {
-    const { shouldAnimate } = this.state;
     const { theme } = this.props;
-    const { pillarLogo } = images(theme);
+    const { pillarLogo, landingPattern } = images(theme);
 
     return (
-      <Container>
-        <AnimatedBackground
-          shouldAnimate={shouldAnimate}
-          disabledAnimation={Platform.OS === 'android' && Platform.Version < 24}
-        />
-        <Wrapper fullScreen center>
-          <PillarLogo source={pillarLogo} />
-        </Wrapper>
-        <Footer
-          style={{ paddingBottom: 30 }}
+      <Background>
+        <Pattern source={landingPattern} resizeMode="cover" height={2 + (screenWidth * IMAGE_RATIO)} />
+        <ContainerWithHeader
+          backgroundColor="transparent"
+          statusbarColor={{
+            [LIGHT_THEME]: LIGHT_CONTENT,
+          }}
         >
-          <Button roundedCorners marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
-          <ButtonText
-            buttonText="Recover wallet"
-            onPress={this.navigateToWalletImportPage}
-            fontSize={fontSizes.big}
-          />
-        </Footer>
-      </Container>
+          <Wrapper fullScreen center>
+            <LogoWrapper>
+              <PillarLogo source={pillarLogo} />
+            </LogoWrapper>
+            <ButtonsWrapper>
+              <Button
+                roundedCorners
+                marginBottom={spacing.mediumLarge}
+                onPress={this.loginAction}
+                title="Create new wallet"
+                style={{ backgroundColor: '#000000' }}
+                block
+              />
+              <ButtonText
+                buttonText="Import wallet"
+                onPress={this.navigateToWalletImportPage}
+                fontSize={fontSizes.big}
+                textStyle={{ color: '#0a1427' }}
+              />
+            </ButtonsWrapper>
+          </Wrapper>
+        </ContainerWithHeader>
+      </Background>
     );
   }
 }
