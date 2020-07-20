@@ -191,7 +191,7 @@ class ActionButtons extends React.Component<Props, State> {
             label: 'Invite and earn free tokens',
             iconName: 'present',
             hide: !rewardActive,
-            onPress: () => goToInvitationFlow(),
+            onPress: goToInvitationFlow,
           },
         ];
       case SEND:
@@ -284,7 +284,7 @@ class ActionButtons extends React.Component<Props, State> {
         <Sizer>
           <ActionButtonsWrapper>
             <CircleButton
-              label="Receive"
+              label="Add Funds"
               fontIcon="qrDetailed"
               onPress={() => this.openActionModal(RECEIVE)}
             />
@@ -301,20 +301,17 @@ class ActionButtons extends React.Component<Props, State> {
             />
           </ActionButtonsWrapper>
         </Sizer>
-        {visibleActionModal === RECEIVE &&
-          <ActionOptionsModal
-            onModalClose={this.closeActionModal}
-            isVisible={!!visibleActionModal}
-            items={modalActions}
-          />
-        }
-        {visibleActionModal !== RECEIVE &&
+        <ActionOptionsModal
+          onModalClose={this.closeActionModal}
+          isVisible={!!visibleActionModal && visibleActionModal === RECEIVE}
+          items={modalActions}
+          title="Add funds to Pillar"
+        />
         <ActionModal
           onModalClose={this.closeActionModal}
-          isVisible={!!visibleActionModal}
+          isVisible={!!visibleActionModal && visibleActionModal !== RECEIVE}
           items={modalActions}
         />
-        }
         <ReceiveModal
           isVisible={!!receiveAddress}
           address={receiveAddress}

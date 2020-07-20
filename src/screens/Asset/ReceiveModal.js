@@ -22,10 +22,9 @@ import { connect } from 'react-redux';
 import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
-import { withTheme } from 'styled-components';
 
 // components
-import { BaseText, MediumText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
@@ -37,19 +36,17 @@ import ProfileImage from 'components/ProfileImage';
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { getEnsName, getAccountTypeByAddress } from 'utils/accounts';
-import { getThemeColors, themedColors } from 'utils/themes';
 
 // models and types
 import type { Accounts } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 import type { User } from 'models/User';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 const ContentWrapper = styled(SafeAreaView)`
-  padding: 0 ${spacing.layoutSides}px 50px;
+  padding: 0 ${spacing.layoutSides}px 60px;
   align-items: center;
 `;
 
@@ -63,7 +60,6 @@ type Props = {
   showBuyTokensButton?: boolean,
   showErc20Note?: boolean,
   user: User,
-  theme: Theme,
 };
 
 const QRCodeWrapper = styled.View`
@@ -106,15 +102,6 @@ const ImageWrapper = styled.View`
   justify-content: center;
 `;
 
-const ProfileImagePlaceholder = styled.View`
-  width: 48px;
-  height: 48px;
-  border-radius: 24px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${themedColors.avatarPlaceholderBackground};
-`;
-
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
 const getButtonWidth = () => {
@@ -149,7 +136,6 @@ class ReceiveModal extends React.Component<Props, *> {
       showErc20Note,
       accounts,
       user,
-      theme,
     } = this.props;
 
     const {
@@ -161,7 +147,7 @@ class ReceiveModal extends React.Component<Props, *> {
     const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.SMART_WALLET;
     const buttonWidth = showBuyTokensButton ? getButtonWidth() : 0;
     const needsSmallButtons = showBuyTokensButton && buttonWidth <= 150;
-    const colors = getThemeColors(theme);
+    const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
     return (
       <SlideModal
@@ -180,19 +166,15 @@ class ReceiveModal extends React.Component<Props, *> {
             />
           ),
         }]}
-        centerItem={
+        centerFloatingItem={
           <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
-            {!!profileImage && <ProfileImage
-              uri={`${profileImage}?t=${lastUpdateTime}`}
+            <ProfileImage
+              uri={profileImageURI}
               userName={username}
               diameter={48}
               borderWidth={0}
               noShadow
-            />}
-            {!profileImage &&
-            <ProfileImagePlaceholder>
-              <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
-            </ProfileImagePlaceholder>}
+            />
           </ImageWrapper>
         }
       >
@@ -266,4 +248,4 @@ const mapStateToProps = ({
   accounts,
 });
 
-export default withTheme(connect(mapStateToProps)(ReceiveModal));
+export default connect(mapStateToProps)(ReceiveModal);

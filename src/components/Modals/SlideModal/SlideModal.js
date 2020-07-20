@@ -54,7 +54,7 @@ type Props = {
   showHeader?: boolean,
   hideHeader?: boolean,
   centerTitle?: boolean,
-  centerItem: Object,
+  centerFloatingItem?: React.Node,
   noWrapTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
@@ -234,7 +234,7 @@ class SlideModal extends React.Component<Props, *> {
       noTopPadding,
       headerProps = {},
       insetTop,
-      centerItem,
+      centerFloatingItem,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -341,7 +341,7 @@ class SlideModal extends React.Component<Props, *> {
                 <ContentWrapper />
               </Backdrop>
             }
-            {!!centerItem &&
+            {!!centerFloatingItem &&
               <Wrapper
                 style={{
                   elevation: 2,
@@ -350,7 +350,7 @@ class SlideModal extends React.Component<Props, *> {
                   marginBottom: 0,
                 }}
               >
-                {centerItem}
+                {centerFloatingItem}
               </Wrapper>
             }
             {modalContent()}

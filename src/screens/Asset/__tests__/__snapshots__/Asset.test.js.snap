@@ -1042,7 +1042,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   ]
                 }
               >
-                Receive
+                Add funds
               </Text>
             </View>
             <View
@@ -1462,47 +1462,35 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 }
               >
                 <View
+                  accessible={true}
+                  focusable={false}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
                   style={
-                    Array [
-                      Object {
-                        "alignItems": "center",
-                        "backgroundColor": "#e0eeff",
-                        "borderRadius": 24,
-                        "height": 48,
-                        "justifyContent": "center",
-                        "width": 48,
-                      },
-                      undefined,
-                    ]
+                    Object {
+                      "alignItems": "center",
+                      "backgroundColor": "#d1d9e4",
+                      "borderColor": "#FFFFFF",
+                      "borderRadius": 24,
+                      "borderStyle": "solid",
+                      "borderWidth": 0,
+                      "display": "flex",
+                      "height": 48,
+                      "justifyContent": "center",
+                      "opacity": 1,
+                      "overflow": "hidden",
+                      "position": "relative",
+                      "width": 48,
+                    }
                   }
                 >
-                  <Text
-                    big={true}
-                    color="#6690eb"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#6690eb",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 18,
-                          "lineHeight": 28,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#6690eb",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 18,
-                            "lineHeight": 28,
-                            "textAlignVertical": "center",
-                          },
-                          undefined,
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
+                  
                 </View>
               </View>
             </View>
@@ -1710,7 +1698,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "paddingBottom": 50,
+                      "paddingBottom": 60,
                       "paddingLeft": 16,
                       "paddingRight": 16,
                       "paddingTop": 0,

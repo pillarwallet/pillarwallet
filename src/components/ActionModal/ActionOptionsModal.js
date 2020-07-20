@@ -19,16 +19,17 @@
 */
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
+import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
-import type { Theme } from 'models/Theme';
 
 type ItemType = {
   label: string,
   key: string,
+  iconName?: string,
   onPress: () => void,
   value?: string,
   isDisabled?: boolean,
@@ -36,67 +37,58 @@ type ItemType = {
 }
 
 type Props = {
-  theme: Theme,
-  onModalClose: (?() => void) => void,
+  onModalClose: (Function) => void,
   isVisible: boolean,
   items: ItemType[],
   doNotCloseOnPress?: boolean,
+  title?: string,
 };
-
-type ItemProps = {
-  label: string,
-  onPress: Function,
-  value: string,
-  isDisabled?: boolean,
-  iconName?: string,
-};
-
 
 const MainContainer = styled.View`
-  padding: 20px ${spacing.layoutSides}px 30px;
+  padding: 22px ${spacing.layoutSides}px 50px;
 `;
 
-const Item = ({
-  label, onPress, isDisabled, iconName,
-}: ItemProps) => (
-  <ListItemWithImage
-    label={label}
-    disabled={isDisabled}
-    onPress={onPress}
-    diameter={48}
-    iconName={iconName}
-    iconColor={themedColors.link}
-    iconDiameter={24}
-  />
-);
-
 class ActionOptionsModal extends React.Component<Props> {
-  renderItem = (item) => {
+  renderItem = (item: ItemType) => {
     const { onModalClose, doNotCloseOnPress } = this.props;
-    const { onPress } = item;
+    const {
+      label,
+      onPress,
+      isDisabled,
+      iconName,
+      key,
+    } = item;
     return (
-      <Item
-        {...item}
+      <ListItemWithImage
+        key={key}
+        customLabel={(
+          <BaseText medium>{label}</BaseText>
+        )}
+        disabled={isDisabled}
         onPress={() => doNotCloseOnPress ? onPress() : onModalClose(onPress)}
+        diameter={48}
+        iconName={iconName}
+        iconColor={themedColors.link}
+        iconDiameter={24}
+        padding={`5px ${spacing.layoutSides}px`}
       />
     );
   };
 
   render() {
     const {
-      theme, onModalClose, isVisible, items,
+      onModalClose, isVisible, items, title,
     } = this.props;
-    const colors = getThemeColors(theme);
 
     return (
       <SlideModal
         isVisible={isVisible}
         noClose
-        background={colors.card}
         hideHeader
         onModalHide={onModalClose}
       >
         <SafeAreaView>
+          <BaseText style={{ paddingTop: 24 }} center big>{title}</BaseText>
           <MainContainer>
             {items.filter(({ hide }) => !hide).map(this.renderItem)}
           </MainContainer>
@@ -106,4 +98,4 @@ class ActionOptionsModal extends React.Component<Props> {
   }
 }
 
-export default withTheme(ActionOptionsModal);
+export default ActionOptionsModal;

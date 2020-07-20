@@ -48,7 +48,7 @@ const AssetButtons = (props: Props) => {
       {showReceive &&
       <CircleButton
         disabled={props.isReceiveDisabled}
-        label="Receive"
+        label="Add funds"
         fontIcon="qrDetailed"
         onPress={props.onPressReceive}
       />
