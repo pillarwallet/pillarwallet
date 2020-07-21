@@ -18,24 +18,34 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as Keychain from 'react-native-keychain';
-import t from 'translations/translate';
+import type { TranslationResource } from 'models/Translations';
 
 
-export const getBiometryType = (biometryType?: string) => {
-  switch (biometryType) {
-    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
-      return t('auth:biometryType.touchId');
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return t('auth:biometryType.faceId');
-    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      /**
-       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
-       * TODO: check constantly for lib updates to update this
-       */
-      return t('auth:biometryType.androidBiometricUnlock');
-    default:
-      return t('auth:biometryType.genericBiometricLogin');
-  }
+// en
+const COMMON_EN = require('./locales/en/common.json');
+const AUTH_EN = require('./locales/en/auth.json');
+
+
+const sources = {
+  en: {
+    common: () => COMMON_EN,
+    auth: () => AUTH_EN,
+  },
 };
 
+const translationLoader = {
+  type: 'backend',
+  init: () => {},
+  read: (language: string, namespace: string, callback: (error: ?Error, resource: ?TranslationResource) => void) => {
+    let resource;
+    let error;
+    try {
+      resource = sources[language][namespace]();
+    } catch (_error) {
+      error = _error;
+    }
+    callback(error, resource);
+  },
+};
+
+export default translationLoader;

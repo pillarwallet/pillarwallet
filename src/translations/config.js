@@ -18,24 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as Keychain from 'react-native-keychain';
-import t from 'translations/translate';
+export const DEFAULT_LANGUAGE = 'en';
+export const SUPPORTED_LANGUAGES = ['en'];
 
+export const DEFAULT_NAMESPACE = 'common';
+export const NAMESPACES = ['common', 'auth'];
 
-export const getBiometryType = (biometryType?: string) => {
-  switch (biometryType) {
-    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
-      return t('auth:biometryType.touchId');
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return t('auth:biometryType.faceId');
-    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      /**
-       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
-       * TODO: check constantly for lib updates to update this
-       */
-      return t('auth:biometryType.androidBiometricUnlock');
-    default:
-      return t('auth:biometryType.genericBiometricLogin');
-  }
-};
-
+export const CAPITALIZATION_POSTPROCESSOR = 'capitalization';
+export const PUNCTUATION_POSTPROCESSOR = 'punctuation';
+export const SUFFIX_PREFIX_POSTPROCESSOR = 'suffixPrefix';
+export const POST_PROCESSORS = [PUNCTUATION_POSTPROCESSOR, CAPITALIZATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR];

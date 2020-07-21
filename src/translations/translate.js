@@ -18,24 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as Keychain from 'react-native-keychain';
-import t from 'translations/translate';
+import * as React from 'react';
+import i18next from 'i18next';
+import { Trans } from 'react-i18next';
+import { BaseText } from 'components/Typography';
+import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
 
-export const getBiometryType = (biometryType?: string) => {
-  switch (biometryType) {
-    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
-      return t('auth:biometryType.touchId');
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return t('auth:biometryType.faceId');
-    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      /**
-       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
-       * TODO: check constantly for lib updates to update this
-       */
-      return t('auth:biometryType.androidBiometricUnlock');
-    default:
-      return t('auth:biometryType.genericBiometricLogin');
+const t = (key: string, options?: TranslationOptions = {}): TranslatedString => {
+  const { linkedText, onPress } = options;
+  if (linkedText) {
+    return (
+      <Trans
+        i18nKey={key}
+        components={onPress ? [<BaseText {...options} link />] : []}
+        values={{ linkedText }}
+      />
+    );
   }
+  return i18next.t(key, options);
 };
 
+export default t;

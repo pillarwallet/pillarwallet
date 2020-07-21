@@ -24,6 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import { Container, Footer, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
@@ -104,9 +105,15 @@ class Welcome extends React.Component<Props, State> {
         <Footer
           style={{ paddingBottom: 30 }}
         >
-          <Button roundedCorners marginBottom="20px" onPress={this.loginAction} title="Create account" width="auto" />
+          <Button
+            roundedCorners
+            marginBottom="20px"
+            onPress={this.loginAction}
+            title={t('auth:button.createAccount')}
+            width="auto"
+          />
           <ButtonText
-            buttonText="Recover wallet"
+            buttonText={t('auth:button.recoverWallet')}
             onPress={this.navigateToWalletImportPage}
             fontSize={fontSizes.big}
           />

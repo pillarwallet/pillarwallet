@@ -18,24 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as Keychain from 'react-native-keychain';
-import t from 'translations/translate';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import languageDetector from './deviceLanguageDetector';
+import translationLoader from './translationLoader';
+import { DEFAULT_NAMESPACE, NAMESPACES, POST_PROCESSORS } from './config';
+import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
 
 
-export const getBiometryType = (biometryType?: string) => {
-  switch (biometryType) {
-    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
-      return t('auth:biometryType.touchId');
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return t('auth:biometryType.faceId');
-    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      /**
-       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
-       * TODO: check constantly for lib updates to update this
-       */
-      return t('auth:biometryType.androidBiometricUnlock');
-    default:
-      return t('auth:biometryType.genericBiometricLogin');
-  }
-};
+i18n
+  .use(initReactI18next)
+  .use(languageDetector)
+  .use(translationLoader)
+  .use(PunctuationPostProcessor)
+  .use(SuffixPrefixPostProcessor)
+  .use(CapitalizationPostProcessor)
+  .init({
+    transSupportBasicHtmlNodes: false,
+    interpolation: {
+      escapeValue: false,
+    },
+    ns: NAMESPACES,
+    defaultNS: DEFAULT_NAMESPACE,
+    postProcess: POST_PROCESSORS,
 
+    debug: !!__DEV__,
+  });
+
+export default i18n;

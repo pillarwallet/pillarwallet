@@ -21,12 +21,16 @@ import * as React from 'react';
 import { Platform, BackHandler } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { WALLET_RECOVERY_OPTIONS } from 'constants/navigationConstants';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { TextLink, BaseText } from 'components/Typography';
+import { BaseText } from 'components/Typography';
 import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
+
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
@@ -62,10 +66,6 @@ const ButtonWrapper = styled.View`
 const CheckboxText = styled(BaseText)`
   ${fontStyles.regular};
   color: ${themedColors.accent};
-`;
-
-const StyledTextLink = styled(TextLink)`
-  ${fontStyles.regular};
 `;
 
 const StyledButton = styled(Button)`
@@ -126,7 +126,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={({
-          centerItems: [{ title: 'Recover wallet' }],
+          centerItems: [{ title: t('auth:title.recoverWallet') }],
           customOnBack: this.handleBackAction,
         })}
       >
@@ -140,12 +140,10 @@ class ImportWalletLegals extends React.Component<Props, State> {
               checked={hasAgreedToTerms}
             >
               <CheckboxText>
-                {'I have read, understand, and agree to the '}
-                <StyledTextLink
-                  onPress={() => { this.setState({ visibleModal: TERMS_OF_USE_MODAL }); }}
-                >
-                  Terms of Use
-                </StyledTextLink>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:termsOfUse'),
+                  onPress: () => this.setState({ visibleModal: TERMS_OF_USE_MODAL }),
+                })}
               </CheckboxText>
             </Checkbox>
             <Checkbox
@@ -155,19 +153,17 @@ class ImportWalletLegals extends React.Component<Props, State> {
               checked={hasAgreedToPolicy}
             >
               <CheckboxText>
-                {'I have read, understand, and agree to the '}
-                <StyledTextLink
-                  onPress={() => { this.setState({ visibleModal: PRIVACY_POLICY_MODAL }); }}
-                >
-                  Privacy policy
-                </StyledTextLink>
+                {t('auth:withLink.readUnderstandAgreeTo', {
+                  linkedText: t('auth:privacyPolicy'),
+                  onPress: () => this.setState({ visibleModal: PRIVACY_POLICY_MODAL }),
+                })}
               </CheckboxText>
             </Checkbox>
           </ContentWrapper>
           <ButtonWrapper>
             <StyledButton
               disabled={!canGoNext}
-              title="Proceed"
+              title={t('auth:button.proceed')}
               onPress={() => navigation.navigate(WALLET_RECOVERY_OPTIONS)}
             />
           </ButtonWrapper>

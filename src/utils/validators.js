@@ -20,6 +20,7 @@
 import { utils } from 'ethers';
 import { ETH } from 'constants/assetsConstants';
 import { pipe, decodeETHAddress } from 'utils/common';
+import t from 'translations/translate';
 
 type AddressValidator = {
   validator: (address: string) => boolean,
@@ -28,11 +29,11 @@ type AddressValidator = {
 
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
-    return 'Invalid pin\'s length (should be 6 numbers)';
+    return t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
   } else if (!pin.match(/^\d+$/)) {
-    return 'Pin could contain numbers only';
+    return t('auth:error.invalidPin.useNumericSymbolsOnly');
   } else if (confirmationPin && pin !== confirmationPin) {
-    return 'Pincode doesn\'t match the previous pin';
+    return t('auth:error.invalidPin.doesNotMatchPrevious');
   }
   return '';
 };
@@ -78,7 +79,7 @@ export const addressValidator = (token: string): AddressValidator => {
   const validators = {
     [ETH]: {
       validator: isValidETHAddress,
-      message: 'Invalid Ethereum address',
+      message: t('auth:error.invalidEthereumAddress.default'),
     },
   };
 
@@ -89,7 +90,7 @@ export const addressValidator = (token: string): AddressValidator => {
 
   return {
     validator: isValidAddress,
-    message: 'Invalid address',
+    message: t('auth:error.invalidAddress.default'),
   };
 };
 

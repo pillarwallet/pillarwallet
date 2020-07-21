@@ -450,6 +450,8 @@ PODS:
     - React
   - RNKeychain (6.1.0):
     - React
+  - RNLocalize (1.4.0):
+    - React
   - RNOS (1.2.6):
     - React
   - RNPermissions (2.1.5):
@@ -544,6 +546,7 @@ DEPENDENCIES:
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -706,6 +709,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-inappbrowser-reborn"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNPermissions:
@@ -812,6 +817,7 @@ SPEC CHECKSUMS:
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
   RNKeychain: 7cab1c45629f265ebccd8d737cd4cb5b23a865df
+  RNLocalize: b6df30cc25ae736d37874f9bce13351db2f56796
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: ad71dd4f767ec254f2cd57592fbee02afee75467
   RNScreens: f28b48b8345f2f5f39ed6195518291515032a788
@@ -827,6 +833,6 @@ SPEC CHECKSUMS:
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: f2ba0fe274339047de37310773222c70414cf4da
+PODFILE CHECKSUM: ed0ceb5f5b7e2fb6af13dda5f02a607b7aa4fc96
 
 COCOAPODS: 1.9.1

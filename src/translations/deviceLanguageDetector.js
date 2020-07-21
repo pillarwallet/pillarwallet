@@ -18,24 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as Keychain from 'react-native-keychain';
-import t from 'translations/translate';
+import * as RNLocalize from 'react-native-localize';
+import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
 
 
-export const getBiometryType = (biometryType?: string) => {
-  switch (biometryType) {
-    case Keychain.BIOMETRY_TYPE.TOUCH_ID:
-      return t('auth:biometryType.touchId');
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return t('auth:biometryType.faceId');
-    case Keychain.BIOMETRY_TYPE.FINGERPRINT:
-      /**
-       * for Android it always return "fingerprint" even though face unlock is available (Android 10)
-       * TODO: check constantly for lib updates to update this
-       */
-      return t('auth:biometryType.androidBiometricUnlock');
-    default:
-      return t('auth:biometryType.genericBiometricLogin');
-  }
+const userPreferredLocales = RNLocalize.getLocales();
+const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
+
+const getSupportedLanguage = () => {
+  const language = userPreferredLanguages.find((languageCode) => SUPPORTED_LANGUAGES.includes(languageCode));
+  return language || DEFAULT_LANGUAGE;
 };
+
+const languageDetector = {
+  type: 'languageDetector',
+  async: true,
+  detect: (callback: (lang: string) => void) => {
+    callback(getSupportedLanguage());
+  },
+  init: () => {},
+  cacheUserLanguage: () => {},
+};
+
+export default languageDetector;
 
