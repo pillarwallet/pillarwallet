@@ -54,6 +54,7 @@ type Props = {
   onPress?: ?Function,
   avatarUrl?: string,
   iconName?: ?string,
+  iconDiameter?: ?number,
   itemImageUrl?: string,
   fallbackSource?: string,
   timeSent?: string,
@@ -396,6 +397,7 @@ const ItemImage = (props: Props) => {
     iconImageSize,
     itemImageRoundedSquare,
     cornerIcon,
+    iconDiameter,
   } = props;
 
   let { fallbackSource } = props;
@@ -410,7 +412,7 @@ const ItemImage = (props: Props) => {
         border={iconBorder}
         borderRadius={roundedImageCustomBorderRadius}
       >
-        <ItemIcon name={iconName} iconColor={iconColor} />
+        <ItemIcon fontSize={iconDiameter} name={iconName} iconColor={iconColor} />
       </IconRounded>
     );
   }

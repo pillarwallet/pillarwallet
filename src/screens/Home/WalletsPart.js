@@ -59,6 +59,7 @@ type Props = {
   hideBalance: boolean,
   toggleBalance: () => void,
   handleWalletChange: (message: string) => void,
+  rewardActive?: boolean,
 };
 
 type State = {
@@ -122,6 +123,7 @@ class WalletsPart extends React.Component<Props, State> {
       activeWallet,
       toggleBalance,
       hideBalance,
+      rewardActive,
     } = this.props;
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -137,6 +139,7 @@ class WalletsPart extends React.Component<Props, State> {
           wallets={availableWallets}
           changeWalletAction={this.changeAcc}
           activeWallet={activeWallet}
+          rewardActive={rewardActive}
         />
       </Wrapper>
     );
