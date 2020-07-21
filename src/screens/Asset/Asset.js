@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, Platform } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -314,7 +314,7 @@ class AssetScreen extends React.Component<Props, State> {
     return [
       {
         key: 'buy',
-        label: 'Buy with card or Apple Pay',
+        label: `Buy with a card${Platform.OS === 'ios' ? ' or Apple Pay' : ''}`,
         iconName: 'wallet',
         onPress: () => this.goToExchangeFlow(fiatCurrency, token),
       },

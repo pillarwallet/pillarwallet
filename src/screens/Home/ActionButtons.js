@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
@@ -170,7 +171,7 @@ class ActionButtons extends React.Component<Props, State> {
         return [
           {
             key: 'buy',
-            label: 'Buy with card or Apple Pay',
+            label: `Buy with a card${Platform.OS === 'ios' ? ' or Apple Pay' : ''}`,
             iconName: 'wallet',
             onPress: () => this.navigateToAction(activeWallet, EXCHANGE, { fromAssetCode: fiatCurrency }),
           },

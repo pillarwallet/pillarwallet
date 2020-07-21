@@ -88,7 +88,7 @@ class ActionOptionsModal extends React.Component<Props> {
         onModalHide={onModalClose}
       >
         <SafeAreaView>
-          <BaseText style={{ paddingTop: 24 }} center big>{title}</BaseText>
+          <BaseText style={{ paddingTop: 24, fontWeight: '500' }} center big>{title}</BaseText>
           <MainContainer>
             {items.filter(({ hide }) => !hide).map(this.renderItem)}
           </MainContainer>

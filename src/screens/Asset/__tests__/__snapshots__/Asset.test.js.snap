@@ -1498,6 +1498,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           "textAlignVertical": "center",
                         },
                         Object {
+                          "fontWeight": "500",
                           "paddingTop": 24,
                         },
                       ]
@@ -1666,7 +1667,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                     ]
                                   }
                                 >
-                                  Buy with card or Apple Pay
+                                  Buy with a card or Apple Pay
                                 </Text>
                               </View>
                             </View>
