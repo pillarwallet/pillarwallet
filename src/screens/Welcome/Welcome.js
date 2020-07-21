@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
@@ -46,13 +47,20 @@ type Props = {
   theme: Theme,
 };
 
+type State = {
+  translateY: Animated.Value,
+};
+
 
 const screenWidth = getDeviceWidth();
+const LOGO_HEIGHT = 56;
+const INITIAL_TOP_MARGIN = LOGO_HEIGHT / 2;
 
 const Background = styled.View`
-  flex: 1;
   background-color: #00ff24;
   width: 100%;
+  height: 100%;
+  position: relative;
 `;
 
 const Pattern = styled(CachedImage)`
@@ -61,11 +69,20 @@ const Pattern = styled(CachedImage)`
 `;
 
 const PillarLogo = styled(CachedImage)`
-  height: 56px;
+  height: ${LOGO_HEIGHT}px;
   width: 192px;
 `;
 
 const LogoWrapper = styled.View`
+  position: absolute;
+  left: 0;
+  top: 50%;
+  width: 100%;
+  align-items: center;
+  margin-top: -${INITIAL_TOP_MARGIN}px;
+`;
+
+const Spacer = styled.View`
   flex: 2.5;
   width: 100%;
   align-items: center;
@@ -81,12 +98,35 @@ const ButtonsWrapper = styled.View`
   margin-bottom: 40px;
 `;
 
+const AnimatedLogoWrapper = Animated.createAnimatedComponent(LogoWrapper);
+
+
 const IMAGE_RATIO = 270 / 375;
 
-class Welcome extends React.PureComponent<Props> {
+class Welcome extends React.Component<Props, State> {
+  state = {
+    translateY: new Animated.Value(0),
+  };
+
   loginAction = () => {
     this.props.navigateToNewWalletPage();
   };
+
+  animatePositioning = () => {
+    Animated.timing(
+      this.state.translateY,
+      {
+        toValue: -20,
+        easing: Easing.elastic(1),
+        duration: 2000,
+        userNativeDriver: true,
+      },
+    ).start();
+  };
+
+  componentDidMount() {
+    this.animatePositioning();
+  }
 
   navigateToWalletImportPage = () => {
     const { navigation } = this.props;
@@ -95,10 +135,14 @@ class Welcome extends React.PureComponent<Props> {
 
   render() {
     const { theme } = this.props;
+    const { translateY } = this.state;
     const { pillarLogo, landingPattern } = images(theme);
 
     return (
       <Background>
+        <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
+          <PillarLogo source={pillarLogo} />
+        </AnimatedLogoWrapper>
         <Pattern source={landingPattern} resizeMode="cover" height={2 + (screenWidth * IMAGE_RATIO)} />
         <ContainerWithHeader
           backgroundColor="transparent"
@@ -106,10 +150,8 @@ class Welcome extends React.PureComponent<Props> {
             [LIGHT_THEME]: LIGHT_CONTENT,
           }}
         >
-          <Wrapper fullScreen center>
-            <LogoWrapper>
-              <PillarLogo source={pillarLogo} />
-            </LogoWrapper>
+          <Wrapper fullScreen>
+            <Spacer />
             <ButtonsWrapper>
               <Button
                 roundedCorners
