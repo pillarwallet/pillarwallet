@@ -42,7 +42,7 @@ import {
   COLLECTIBLES,
   defaultFiatCurrency,
 } from 'constants/assetsConstants';
-import { EXCHANGE, ASSET_SEARCH } from 'constants/navigationConstants';
+import { SERVICES, ASSET_SEARCH } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
@@ -313,7 +313,7 @@ class WalletView extends React.Component<Props, State> {
             {!balance &&
             <ListItemChevron
               label="Buy tokens with credit card"
-              onPress={() => navigation.navigate(EXCHANGE, { fromAssetCode: baseFiatCurrency || defaultFiatCurrency })}
+              onPress={() => navigation.navigate(SERVICES)}
               bordered
               addon={(<LabelBadge label="NEW" />)}
             />}

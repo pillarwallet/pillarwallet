@@ -66,8 +66,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import FiatExchangeScreen from 'screens/FiatExchange';
-import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
@@ -181,8 +179,6 @@ import {
   MANAGE_USERS_FLOW,
   ADD_EDIT_USER,
   MENU,
-  FIAT_EXCHANGE,
-  FIAT_CRYPTO,
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
@@ -321,8 +317,6 @@ const servicesFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
-  [FIAT_EXCHANGE]: FiatExchangeScreen,
-  [FIAT_CRYPTO]: FiatCryptoScreen,
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,

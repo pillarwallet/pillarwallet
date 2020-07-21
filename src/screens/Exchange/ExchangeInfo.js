@@ -46,7 +46,6 @@ import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import { getProviderDisplayName } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
 
 // models, types
@@ -135,7 +134,7 @@ class ExchangeInfo extends React.Component<Props, State> {
     const { providersMeta } = this.props;
     const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
     const { name } = providerInfo;
-    const providerName = name || getProviderDisplayName(provider);
+    const providerName = name || 'Unknown';
     return (
       <ProviderItem>
         <ProviderName>{providerName}</ProviderName>

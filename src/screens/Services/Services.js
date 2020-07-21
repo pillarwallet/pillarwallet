@@ -18,12 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList, Image } from 'react-native';
+import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import querystring from 'querystring';
+import {
+  RAMPNETWORK_WIDGET_URL,
+  RAMPNETWORK_API_KEY,
+  SENDWYRE_WIDGET_URL,
+  SENDWYRE_ACCOUNT_ID,
+  SENDWYRE_RETURN_URL,
+} from 'react-native-dotenv';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
@@ -31,14 +39,21 @@ import { getMetaDataAction } from 'actions/exchangeActions';
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
 
 // constants
 import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // utils
 import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
+import { openInAppBrowser } from 'utils/inAppBrowser';
+import {
+  getActiveAccount,
+  getAccountAddress,
+  checkIfSmartWalletAccount,
+} from 'utils/accounts';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -47,21 +62,32 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { Accounts } from 'models/Account';
+import type { User } from 'models/User';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
+import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
 
 type Props = {
   theme: Theme,
   providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
+  user: User,
+  accounts: Accounts,
+  smartWalletState: SmartWalletReducerState,
 };
 
-const visaIcon = require('assets/icons/visa.png');
-const mastercardIcon = require('assets/icons/mastercard.png');
+type State = {
+  buyCryptoModalMessage: null | ModalMessage,
+};
 
-class ServicesScreen extends React.Component<Props> {
+class ServicesScreen extends React.Component<Props, State> {
+  state = {
+    buyCryptoModalMessage: null,
+  };
+
   componentDidMount() {
     const { getMetaData, providersMeta } = this.props;
     if (!Array.isArray(providersMeta) || !providersMeta?.length) {
@@ -73,7 +99,6 @@ class ServicesScreen extends React.Component<Props> {
     const {
       navigation,
       theme,
-      baseFiatCurrency,
       providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
@@ -99,24 +124,7 @@ class ServicesScreen extends React.Component<Props> {
         action: () => navigation.navigate(EXCHANGE),
         labelBadge: offersBadge,
       },
-      {
-        key: 'buyCryptoWithFiat',
-        // hack to avoid inline images because of iOS13 issue. Likely can be dropped in RN 0.62
-        title: [
-          'Buy crypto with ',
-          <Image source={mastercardIcon} style={{ marginBottom: 1 }} height={11} />,
-          ' & ',
-          <Image source={visaIcon} height={11} />,
-        ],
-        body: 'USD, GBP, EUR supported',
-        action: () => navigation.navigate(
-          EXCHANGE,
-          {
-            fromAssetCode: baseFiatCurrency || defaultFiatCurrency,
-            toAssetCode: ETH,
-            displayFiatOptionsFirst: true,
-          }),
-      },
+      ...this.getBuyCryptoServices(),
       {
         key: 'depositPool',
         title: 'AAVE Deposit',
@@ -141,6 +149,66 @@ class ServicesScreen extends React.Component<Props> {
       },
     ];
   };
+
+  getBuyCryptoServices = () => {
+    return [
+      {
+        key: 'ramp',
+        title: 'Buy with Ramp.Network (EU)',
+        body: 'Buy Now',
+        action: () => {
+          this.handleBuyCryptoAction(userAddress => {
+            const { user: { email = null } } = this.props;
+
+            const params = {
+              hostApiKey: RAMPNETWORK_API_KEY,
+              userAddress,
+              ...(email === null ? {} : { userEmailAddress: email }),
+            };
+
+            return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+          });
+        },
+      },
+      {
+        key: 'wyre',
+        title: 'Buy with Wyre (Non-EU)',
+        body: 'Buy Now',
+        action: () => {
+          this.handleBuyCryptoAction(address => `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
+            accountId: SENDWYRE_ACCOUNT_ID,
+            dest: `ethereum:${address}`,
+            redirectUrl: SENDWYRE_RETURN_URL,
+          })}`);
+        },
+      },
+    ];
+  }
+
+  handleBuyCryptoAction = (getUrlWithAddress: string => string) => {
+    const { accounts, smartWalletState } = this.props;
+
+    const activeAccount = getActiveAccount(accounts);
+    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+
+    if (!smartWalletStatus.hasAccount) {
+      this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.NO_SW_ACCOUNT });
+      return;
+    }
+
+    if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
+      this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE });
+      return;
+    }
+
+    const address: string = getAccountAddress(activeAccount);
+    const url = getUrlWithAddress(address);
+    openInAppBrowser(url);
+  }
+
+  onBuyCryptoModalClose = () => {
+    this.setState({ buyCryptoModalMessage: null });
+  }
 
   renderServicesItem = ({ item }) => {
     const {
@@ -170,6 +238,8 @@ class ServicesScreen extends React.Component<Props> {
 
   render() {
     const services = this.getServices();
+    const { buyCryptoModalMessage } = this.state;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -181,14 +251,21 @@ class ServicesScreen extends React.Component<Props> {
         tab
       >
         {onScroll => (
-          <FlatList
-            data={services}
-            keyExtractor={(item) => item.key}
-            renderItem={this.renderServicesItem}
-            contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
-            onScroll={onScroll}
-            scrollEventThrottle={16}
-          />
+          <React.Fragment>
+            <FlatList
+              data={services}
+              keyExtractor={(item) => item.key}
+              renderItem={this.renderServicesItem}
+              contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
+              onScroll={onScroll}
+              scrollEventThrottle={16}
+            />
+            <BuyCryptoAccountWarnModal
+              navigation={this.props.navigation}
+              message={buyCryptoModalMessage}
+              onClose={this.onBuyCryptoModalClose}
+            />
+          </React.Fragment>
         )}
       </ContainerWithHeader>
     );
@@ -197,10 +274,14 @@ class ServicesScreen extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { providersMeta },
-  appSettings: { data: { baseFiatCurrency } },
+  user: { data: user },
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
-  baseFiatCurrency,
+  user,
+  accounts,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({
