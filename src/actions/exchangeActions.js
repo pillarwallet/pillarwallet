@@ -240,7 +240,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     if (responseError) {
       const responseErrorMessage = get(responseError, 'response.data.error.message');
-      const message = responseErrorMessage || 'Unable to connect';
+      const message = responseErrorMessage || 'Unable to connect - please try again.';
       if (message.toString().toLowerCase().startsWith('access token')) {
         /**
          * access token is expired or malformed,
