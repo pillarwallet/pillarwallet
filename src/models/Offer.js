@@ -39,19 +39,6 @@ export type Offer = {
   trackId: string,
 }
 
-export type FiatOffer = {
-  provider: string,
-  askRate: number | string,
-  fromAsset: { code: string },
-  toAsset: { code: string },
-  feeAmount: number | string,
-  extraFeeAmount: number | string,
-  quoteCurrencyAmount: number,
-  minQuantity: number,
-  maxQuantity: number,
-  offerRestricted: ?string,
-}
-
 export type OfferRequest = {
   quantity: number,
   provider: string,

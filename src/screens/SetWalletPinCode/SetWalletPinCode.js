@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import { BackHandler, Platform } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // actions
 import { setPinForNewWalletAction } from 'actions/walletActions';
@@ -101,13 +102,13 @@ class SetWalletPinCode extends React.Component<Props, State> {
     const { error } = this.state;
     const { navigation, importedWallet } = this.props;
     const username = navigation.getParam('username', '');
-    let welcomeText = 'Welcome to Pillar';
+    let welcomeText = t('auth:title.welcomeToPillar');
     if (username) welcomeText += `,\n${username}`;
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Create PIN code' }],
+          centerItems: [{ title: t('auth:title.createPin') }],
           noBack: this.noBack,
         }}
       >
@@ -117,12 +118,11 @@ class SetWalletPinCode extends React.Component<Props, State> {
             {`${welcomeText}!`}
           </HeaderText>}
           <Paragraph center>
-            Now let’s create a PIN code to secure your account.
+            {t('auth:paragraph.createPin')}
           </Paragraph>
           <PinCode
             onPinEntered={this.handlePinSubmit}
             onPinChanged={this.handlePinChange}
-            pageInstructions="Setup your Pincode"
             showForgotButton={false}
             pinError={!!error}
             flex={false}

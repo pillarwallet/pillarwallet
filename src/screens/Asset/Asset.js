@@ -47,7 +47,7 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SERVICES } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
@@ -207,7 +207,7 @@ const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props, State> {
   forceRender = false;
-  isNavigatingToExchangeFlow = false;
+  isNavigatingToServices = false;
 
   state = {
     activeModal: activeModalResetState,
@@ -284,16 +284,14 @@ class AssetScreen extends React.Component<Props, State> {
   handleBuyTokens = () => {
     // wait for the modal to be completely hidden and then navigate to exchange
     // navigating while the modal is hiding leads to keyboard flickering etc.
-    this.isNavigatingToExchangeFlow = true;
+    this.isNavigatingToServices = true;
     this.setState({ activeModal: activeModalResetState });
   };
 
   handleModalHidden = () => {
-    if (this.isNavigatingToExchangeFlow) {
-      this.isNavigatingToExchangeFlow = false;
-      const fiatCurrency = this.props.baseFiatCurrency || defaultFiatCurrency;
-      const { assetData: { token } } = this.props.navigation.state.params;
-      this.goToExchangeFlow(fiatCurrency, token);
+    if (this.isNavigatingToServices) {
+      this.isNavigatingToServices = false;
+      this.props.navigation.navigate(SERVICES);
     }
   }
 

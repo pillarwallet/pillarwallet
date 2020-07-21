@@ -17,25 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
-} from 'react-native-dotenv';
 
-export const wyreWidgetUrl = (
-  destAddress: string,
-  destCurrency: string,
-  sourceCurrency: string,
-  sourceAmount: string,
-): string => {
-  const url = `${SENDWYRE_WIDGET_URL}`
-    + `?destCurrency=${destCurrency}`
-    + `&dest=ethereum:${destAddress}`
-    + `&sourceAmount=${sourceAmount}`
-    + `&sourceCurrency=${sourceCurrency}`
-    + `&accountId=${SENDWYRE_ACCOUNT_ID}`
-    + `&redirectUrl=${escape(SENDWYRE_RETURN_URL)}`;
+import i18n from 'i18next';
+import Toast from 'components/Toast';
 
-  return url;
+
+const changeLanguage = (code: string) => {
+  i18n.changeLanguage(code)
+    .then(() => {
+      Toast.show({
+        message: 'Language has been changed',
+        type: 'info',
+        title: '',
+      });
+    })
+    .catch(() => {
+      Toast.show({
+        message: 'Sorry, there was an issue changing language. Please try again later.',
+        type: 'warning',
+        title: '',
+      });
+    });
 };
+
+export default changeLanguage;

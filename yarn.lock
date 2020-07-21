@@ -972,6 +972,13 @@
   dependencies:
     regenerator-runtime "^0.13.4"
 
+"@babel/runtime@^7.10.1":
+  version "7.10.4"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@babel/runtime/-/runtime-7.10.4.tgz#a6724f1a6b8d2f6ea5236dbfe58c7d7ea9c5eb99"
+  integrity sha1-pnJPGmuNL26lI22/5Yx9fqnF65k=
+  dependencies:
+    regenerator-runtime "^0.13.4"
+
 "@babel/template@7.0.0-beta.44":
   version "7.0.0-beta.44"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@babel/template/-/template-7.0.0-beta.44.tgz#f8832f4fdcee5d59bf515e595fc5106c529b394f"
@@ -1052,11 +1059,6 @@
   dependencies:
     exec-sh "^0.3.2"
     minimist "^1.2.0"
-
-"@ctrl/tinycolor@^3.1.0":
-  version "3.1.2"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ctrl/tinycolor/-/tinycolor-3.1.2.tgz#f9dfa17147a229de32b75f4cef20f81e0dda0b8e"
-  integrity sha1-+d+hcUeiKd4yt19M7yD4Hg3aC44=
 
 "@egjs/hammerjs@^2.0.17":
   version "2.0.17"
@@ -2185,13 +2187,6 @@
   dependencies:
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
-
-"@matt-block/react-native-in-app-browser@^3.2.0":
-  version "3.2.1"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@matt-block/react-native-in-app-browser/-/react-native-in-app-browser-3.2.1.tgz#478e60d4754b8c55ade22d51f7cfedc9046c8bbb"
-  integrity sha1-R45g1HVLjFWt4i1R98/tyQRsi7s=
-  dependencies:
-    "@ctrl/tinycolor" "^3.1.0"
 
 "@mrmlnc/readdir-enhanced@^2.2.1":
   version "2.2.1"
@@ -10000,6 +9995,13 @@ html-minifier-terser@^5.0.1:
     relateurl "^0.2.7"
     terser "^4.6.3"
 
+html-parse-stringify2@2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/html-parse-stringify2/-/html-parse-stringify2-2.0.1.tgz#dc5670b7292ca158b7bc916c9a6735ac8872834a"
+  integrity sha1-3FZwtyksoVi3vJFsmmc1rIhyg0o=
+  dependencies:
+    void-elements "^2.0.1"
+
 html-webpack-plugin@^4.0.0-beta.2:
   version "4.3.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/html-webpack-plugin/-/html-webpack-plugin-4.3.0.tgz#53bf8f6d696c4637d5b656d3d9863d89ce8174fd"
@@ -10126,6 +10128,13 @@ humanize-ms@^1.2.1:
   integrity sha1-xG4xWaKT9riW2ikxbYtv6Lt5u+0=
   dependencies:
     ms "^2.0.0"
+
+i18next@^19.5.6:
+  version "19.5.6"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/i18next/-/i18next-19.5.6.tgz#4fa27b1bfc1486c4b10dec807e24de9c57467a84"
+  integrity sha1-T6J7G/wUhsSxDeyAfiTenFdGeoQ=
+  dependencies:
+    "@babel/runtime" "^7.10.1"
 
 iconv-lite@0.4.24, iconv-lite@^0.4.17, iconv-lite@^0.4.24, iconv-lite@~0.4.13:
   version "0.4.24"
@@ -16360,6 +16369,14 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
+react-i18next@^11.7.0:
+  version "11.7.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-i18next/-/react-i18next-11.7.0.tgz#f27c4c237a274e007a48ac1210db83e33719908b"
+  integrity sha1-8nxMI3onTgB6SKwSENuD4zcZkIs=
+  dependencies:
+    "@babel/runtime" "^7.3.1"
+    html-parse-stringify2 "2.0.1"
+
 react-inspector@^4.0.0:
   version "4.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-inspector/-/react-inspector-4.0.1.tgz#0f888f78ff7daccbc7be5d452b20c96dc6d5fbb8"
@@ -16557,6 +16574,14 @@ react-native-image-zoom-viewer@^3.0.0:
   dependencies:
     react-native-image-pan-zoom "^2.1.12"
 
+react-native-inappbrowser-reborn@^3.4.0:
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/react-native-inappbrowser-reborn/-/react-native-inappbrowser-reborn-3.4.0.tgz#fe449722e309c1611fa5e3a742a7e449aaf5a9e5"
+  integrity sha512-buHTc8xvjtO1pDKrGxgXetyV1D3XdmXJ+b8x1AW+PrKeLg8lzBdlVmSUtpIQBg98WPwK3FA08l/CvShocmvOyg==
+  dependencies:
+    invariant "^2.2.4"
+    opencollective-postinstall "^2.0.2"
+
 react-native-intercom@^13.1.0:
   version "13.2.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-intercom/-/react-native-intercom-13.2.0.tgz#22181547d26bcd008bc184cab15f18db6d413b4b"
@@ -16592,6 +16617,11 @@ react-native-linear-gradient@2.5.4:
   version "2.5.4"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-linear-gradient/-/react-native-linear-gradient-2.5.4.tgz#dce133526f5a5510a639af94544f1ed0c984bd1e"
   integrity sha1-3OEzUm9aVRCmOa+UVE8e0MmEvR4=
+
+react-native-localize@^1.4.0:
+  version "1.4.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-localize/-/react-native-localize-1.4.0.tgz#4653596d066d0941c48f5404dc1c0d08b6950443"
+  integrity sha1-RlNZbQZtCUHEj1QE3BwNCLaVBEM=
 
 react-native-modal@^9.0.0:
   version "9.0.0"
@@ -20248,6 +20278,11 @@ vm-browserify@^1.0.1:
   version "1.1.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/vm-browserify/-/vm-browserify-1.1.2.tgz#78641c488b8e6ca91a75f511e7a3b32a86e5dda0"
   integrity sha1-eGQcSIuObKkadfUR56OzKobl3aA=
+
+void-elements@^2.0.1:
+  version "2.0.1"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
+  integrity sha1-wGavtYK7HLQSjWDqkjkulNXp2+w=
 
 vuvuzela@1.0.3:
   version "1.0.3"
