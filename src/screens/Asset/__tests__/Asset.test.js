@@ -37,6 +37,7 @@ import { initialState as featureFlagsState } from 'reducers/featureFlagsReducer'
 import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
 import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
 import { initialState as exchangeState } from 'reducers/exchangeReducer';
+import { initialState as referralsState } from 'reducers/referralsReducer';
 
 import { defaultTheme } from 'utils/themes';
 
@@ -55,6 +56,7 @@ const initialStore = mockStore({
   appSettings: appSettingsState,
   userSettings: userSettingsState,
   exchange: exchangeState,
+  referrals: referralsState,
 });
 
 const Component = (store, navigation) => (

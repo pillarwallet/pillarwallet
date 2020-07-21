@@ -32,7 +32,6 @@ type Props = {
   onPinEntered: Function,
   onPinChanged?: Function,
   onForgotPin?: Function,
-  pageInstructions?: string,
   showForgotButton?: boolean,
   pinError?: boolean,
   flex: boolean,
@@ -60,8 +59,6 @@ export default class PinCode extends React.Component<Props, State> {
   resetPinCodeTimeout: any | TimeoutID;
 
   static defaultProps = {
-    pageHeading: 'Enter Passcode',
-    pageInstructions: 'Setup your Passcode',
     showForgotButton: true,
     flex: true,
   };

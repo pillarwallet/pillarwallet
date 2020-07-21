@@ -22,6 +22,7 @@ import { AppState } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
@@ -208,7 +209,7 @@ class CheckAuth extends React.Component<Props, State> {
   getPinError = (walletState: string) => {
     switch (walletState) {
       case INVALID_PASSWORD:
-        return 'Invalid pincode';
+        return t('auth:error.invalidPin.default');
       default:
         return null;
     }
@@ -218,7 +219,7 @@ class CheckAuth extends React.Component<Props, State> {
     const { modalProps } = this.props;
     if (!modalProps) return null;
     const {
-      title = 'Enter pincode',
+      title = t('auth:enterPincode'),
       centerTitle = true,
       fullScreen = true,
       showHeader = true,
@@ -247,7 +248,7 @@ class CheckAuth extends React.Component<Props, State> {
   renderWrappedPin = () => {
     const { headerProps, errorMessage } = this.props;
     if (!headerProps) return null;
-    const { title = 'Enter pincode', centerTitle = true } = headerProps;
+    const { title = t('auth:enterPincode'), centerTitle = true } = headerProps;
     return (
       <Container>
         <Header {...headerProps} title={title} centerTitle={centerTitle} />
@@ -265,7 +266,6 @@ class CheckAuth extends React.Component<Props, State> {
         {!!pinError && <ErrorMessage>{pinError}</ErrorMessage>}
         <PinCode
           onPinEntered={this.handlePinSubmit}
-          pageInstructions=""
           showForgotButton={false}
           pinError={!!pinError}
         />
@@ -282,7 +282,7 @@ class CheckAuth extends React.Component<Props, State> {
     if (!hideLoader && (walletState === DECRYPTING || isChecking)) {
       return (
         <Container style={{ flex: 1, width: '100%' }} center>
-          <Loader messages={['Checking']} />
+          <Loader messages={[t('auth:checking', { capitalize: true })]} />
         </Container>
       );
     }

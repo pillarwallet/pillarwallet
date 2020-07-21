@@ -141,6 +141,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               "padding": "0 16px",
             }
           }
+          onLayout={[Function]}
           style={
             Array [
               Object {

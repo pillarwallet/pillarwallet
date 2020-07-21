@@ -24,18 +24,19 @@ import {
   isValidEmail,
   isValidPhone,
 } from 'utils/validators';
+import t from 'translations/translate';
 
 describe('Validators', () => {
   describe('validatePin', () => {
     it('should validate the length of provided pincode', () => {
       const pin = '123456';
-      const expectedErrorMessage = 'Invalid pin\'s length (should be 6 numbers)';
+      const expectedErrorMessage = t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
       expect(validatePin(pin)).toHaveLength(0);
       expect(validatePin('1')).toBe(expectedErrorMessage);
     });
 
     it('should allow only digits', () => {
-      const expectedErrorMessage = 'Pin could contain numbers only';
+      const expectedErrorMessage = t('auth:error.invalidPin.useNumericSymbolsOnly');
       expect(validatePin('1asdsd')).toBe(expectedErrorMessage);
     });
   });
