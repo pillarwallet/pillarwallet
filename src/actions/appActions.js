@@ -17,10 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
-import SplashScreen from 'react-native-splash-screen';
 
 // services
 import Storage from 'services/storage';
@@ -78,6 +78,7 @@ import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+import { delay } from 'utils/common';
 
 // selectors
 import { activeBlockchainSelector } from 'selectors';
@@ -90,6 +91,7 @@ const storage = Storage.getInstance('db');
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
+    const startTimeStamp = new Date();
     dispatch({ type: RESET_APP_LOADED });
 
     let storageData = await storage.getAll();
@@ -244,8 +246,17 @@ export const initAppAndRedirectAction = () => {
       navAction = { routeName: ONBOARDING_FLOW };
     }
 
+    const endTimeStamp = new Date();
+    const initDuration = (endTimeStamp.getTime() - startTimeStamp.getTime()) / 1000;
+
+    const minSplashDuration = 2000;
+    const remainingSplashDuration = minSplashDuration - initDuration;
+
+    if (remainingSplashDuration > 0) {
+      await delay(remainingSplashDuration);
+    }
+
     navigate(NavigationActions.navigate(navAction));
-    SplashScreen.hide();
   };
 };
 

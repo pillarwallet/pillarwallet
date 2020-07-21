@@ -40,7 +40,7 @@ import BiometricsPromptScreen from 'screens/BiometricsPrompt';
 import WalletRecoveryOptionsScreen from 'screens/ImportWallet/WalletRecoveryOptions';
 import RecoveryPortalWalletRecoveryIntroScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecoveryIntro';
 import RecoveryPortalWalletRecoveryScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecovery';
-// import SandboxScreen from 'screens/Sandbox/Index';
+import SplashScreen from 'screens/Splash';
 
 import { modalTransition } from 'utils/common';
 
@@ -67,6 +67,7 @@ import {
   WALLET_RECOVERY_OPTIONS,
   RECOVERY_PORTAL_WALLET_RECOVERY,
   RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
+  SPLASH_SCREEN,
 } from 'constants/navigationConstants';
 
 import AppFlow from './appNavigation';
@@ -109,12 +110,12 @@ const onBoardingFlow = createStackNavigator({
 }, StackNavigatorConfig);
 
 const authFlow = createStackNavigator({
-  // 'SANDBOX': SandboxScreen,
   [PIN_CODE_UNLOCK]: PinCodeUnlockScreen,
   [FORGOT_PIN]: ForgotPinScreen,
 }, modalTransition);
 
 const RootSwitch: SwitchNavigatorType = createSwitchNavigator({
+  [SPLASH_SCREEN]: SplashScreen,
   [ONBOARDING_FLOW]: onBoardingFlow,
   [AUTH_FLOW]: authFlow,
   [APP_FLOW]: AppFlow,

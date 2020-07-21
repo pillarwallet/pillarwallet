@@ -29,6 +29,7 @@ import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
+import SplashScreen from 'react-native-splash-screen';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -93,6 +94,7 @@ type Props = {
   handleSystemDefaultThemeChange: () => void,
 }
 
+
 class App extends React.Component<Props, *> {
   removeNetInfoEventListener: NetInfoSubscription;
 
@@ -126,6 +128,7 @@ class App extends React.Component<Props, *> {
   }
 
   async componentDidMount() {
+    SplashScreen.hide();
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
@@ -195,16 +198,9 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const {
-      isFetched,
-      themeType,
-      setAppTheme,
-      activeWalkthroughSteps,
-    } = this.props;
+    const { themeType, setAppTheme, activeWalkthroughSteps } = this.props;
     const theme = getThemeByType(themeType);
     const { colors, current } = theme;
-
-    if (!isFetched) return null;
 
     return (
       <AppearanceProvider>
