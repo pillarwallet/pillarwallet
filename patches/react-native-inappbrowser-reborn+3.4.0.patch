@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native-inappbrowser-reborn/index.js b/node_modules/react-native-inappbrowser-reborn/index.js
+index e1c9c4d..63d295d 100644
+--- a/node_modules/react-native-inappbrowser-reborn/index.js
++++ b/node_modules/react-native-inappbrowser-reborn/index.js
+@@ -74,7 +74,7 @@ type InAppBrowserAndroidOptions = {
+   headers?: { [key: string]: string },
+ };
+
+-type InAppBrowserOptions = InAppBrowserAndroidOptions | InAppBrowseriOSOptions;
++export type InAppBrowserOptions = InAppBrowserAndroidOptions & InAppBrowseriOSOptions;
+
+ async function open(
+   url: string,

@@ -49,7 +49,7 @@ import {
   SETTLE_BALANCE,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
-  EXCHANGE,
+  SERVICES,
   SEND_SYNTHETIC_AMOUNT,
 } from 'constants/navigationConstants';
 import {
@@ -166,9 +166,8 @@ class PPNView extends React.Component<Props, State> {
   };
 
   navigateToBuyPillar = () => {
-    const { navigation, baseFiatCurrency } = this.props;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    navigation.navigate(EXCHANGE, { fromAssetCode: fiatCurrency, toAssetCode: PLR });
+    const { navigation } = this.props;
+    navigation.navigate(SERVICES);
   };
 
   navigateToFundTank = () => {

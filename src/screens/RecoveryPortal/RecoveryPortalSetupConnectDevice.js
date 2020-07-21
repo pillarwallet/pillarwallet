@@ -25,6 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -100,11 +101,11 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 const cancelPrompt = (callback) => Alert.alert(
-  'Are you sure?',
-  'You are going to cancel Recovery Portal setup.',
+  t('auth:title.areYouSure'),
+  t('auth:recoveryPortal.alert.cancelingRecovery'),
   [
-    { text: 'Confirm cancel', onPress: () => callback() },
-    { text: 'Dismiss', style: 'cancel' },
+    { text: t('auth:button.confirmSkip'), onPress: () => callback() },
+    { text: t('auth:button.dismiss'), style: 'cancel' },
   ],
   { cancelable: true },
 );
@@ -173,14 +174,14 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
 
     let errorMessage;
     if (!isOnline) {
-      errorMessage = 'You need to be online in order to connect Recovery Portal as device.';
+      errorMessage = t('auth:recoveryPortal.error.cantConnectDevice.deviceIsOffline');
     } else if (!isEnoughForFee) {
-      errorMessage = `Not enough ${feeSymbol} for transaction fee`;
+      errorMessage = t('auth:recoveryPortal.error.cantConnectDevice.insufficientBalance', { token: feeSymbol });
     }
 
     const submitButtonTitle = isOnline && gettingFee
-      ? 'Getting fee..'
-      : 'Confirm';
+      ? t('auth:button.gettingFee')
+      : t('auth:button.confirm');
 
     const isSubmitDisabled = !isEmpty(errorMessage) || gettingFee;
     const isDeviceBeingAdded = addressesEqual(addingDeviceAddress, this.deviceAddress);
@@ -188,11 +189,11 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
     return (
       <React.Fragment>
         <DetailsLine>
-          <DetailsTitle>Recovery Portal device address</DetailsTitle>
+          <DetailsTitle>{t('auth:recoveryPortal.label.recoveryDeviceAddress')}</DetailsTitle>
           <DetailsValue>{this.deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
-          <DetailsTitle>Est. fee for connect transaction</DetailsTitle>
+          <DetailsTitle>{t('auth:recoveryPortal.label.estimatedFeeForConnectingToPortal')}</DetailsTitle>
           {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
@@ -207,7 +208,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
               marginBottom={spacing.large}
             />
             <ButtonText
-              buttonText="Cancel"
+              buttonText={t('auth:button.cancel')}
               onPress={() => cancelPrompt(() => navigation.goBack())}
               fontSize={fontSizes.medium}
             />
@@ -223,11 +224,11 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
     const showSpinner = !gasInfo.isFetched || isDeviceBeingAdded;
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Confirm' }] }}
+        headerProps={{ centerItems: [{ title: t('auth:recoveryPortal.title.confirmConnectingToPortal') }] }}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
           <Paragraph small style={{ margin: spacing.large }}>
-            Please confirm that the details below are correct before connecting Recovery Portal as device.
+            {t('auth:recoveryPortal.paragraph.doubleCheckDataBeforeConnectingToPortal')}
           </Paragraph>
           <DetailsWrapper>
             {showSpinner && this.renderSpinner()}

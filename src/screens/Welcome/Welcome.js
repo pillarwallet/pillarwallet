@@ -23,6 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
@@ -114,12 +115,12 @@ class Welcome extends React.PureComponent<Props> {
                 roundedCorners
                 marginBottom={spacing.mediumLarge}
                 onPress={this.loginAction}
-                title="Create new wallet"
+                title={t('auth:button.createAccount')}
                 style={{ backgroundColor: '#000000' }}
                 block
               />
               <ButtonText
-                buttonText="Import wallet"
+                buttonText={t('auth:button.recoverWallet')}
                 onPress={this.navigateToWalletImportPage}
                 fontSize={fontSizes.big}
                 textStyle={{ color: '#0a1427' }}

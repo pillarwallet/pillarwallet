@@ -20,16 +20,19 @@
 import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, Platform, Linking, Text, TouchableOpacity } from 'react-native';
+import { StatusBar, Platform, Linking } from 'react-native';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK } from 'react-native-dotenv';
+import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK, SHOW_LANG_TOGGLE } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
 import SplashScreen from 'react-native-splash-screen';
+import { withTranslation } from 'react-i18next';
+
+import 'translations/setup';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -52,16 +55,19 @@ import Root from 'components/Root';
 import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
+import Button from 'components/Button';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
+import changeLanguage from 'translations/changeLanguage';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Steps } from 'reducers/walkthroughsReducer';
+import type { I18n } from 'models/Translations';
 
 // other
 import RootNavigation from 'navigation/rootNavigation';
@@ -92,6 +98,7 @@ type Props = {
   setAppTheme: (themeType: string) => void,
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
+  i18n: I18n,
 }
 
 
@@ -198,9 +205,14 @@ class App extends React.Component<Props, *> {
   };
 
   render() {
-    const { themeType, setAppTheme, activeWalkthroughSteps } = this.props;
+    const {
+      themeType,
+      setAppTheme,
+      activeWalkthroughSteps,
+      i18n,
+    } = this.props;
     const theme = getThemeByType(themeType);
-    const { colors, current } = theme;
+    const { current } = theme;
 
     return (
       <AppearanceProvider>
@@ -213,23 +225,20 @@ class App extends React.Component<Props, *> {
                   setTopLevelNavigator(node);
                 }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'}
+                language={i18n.language}
               />
               {!!SHOW_THEME_TOGGLE &&
-              <TouchableOpacity
-                style={{
-                  padding: 20,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  alignItems: 'center',
-                  backgroundColor: colors.card,
-                }}
+              <Button
+                title={`THEME: ${current}`}
                 onPress={() => {
                   const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
                   setAppTheme(themeToChangeTo);
                 }}
-              >
-                <Text style={{ color: colors.text }}>{`THEME: ${current}`}</Text>
-              </TouchableOpacity>}
+              />}
+              {!!SHOW_LANG_TOGGLE && <Button
+                title={`Change lang (current: ${i18n.language})`}
+                onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
+              />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
             </Root>
           </React.Fragment>
@@ -262,7 +271,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
-const AppWithNavigationState = connect(mapStateToProps, mapDispatchToProps)(App);
+const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));
 
 const AppRoot = () => (
   <Provider store={store}>

@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { confirmPinForNewWalletAction } from 'actions/walletActions';
@@ -110,7 +111,7 @@ class PinCodeConfirmation extends React.Component<Props, State> {
     const { errorMessage } = this.state;
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Confirm PIN code' }] }}
+        headerProps={{ centerItems: [{ title: t('auth:title.confirmPin') }] }}
       >
         {!!errorMessage &&
         <ErrorMessage wrapperStyle={{ marginTop: 0 }}>
@@ -119,12 +120,11 @@ class PinCodeConfirmation extends React.Component<Props, State> {
         }
         <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
           <HeaderText>
-            Re-enter to confirm
+            {t('auth:label.reenterToConfirm')}
           </HeaderText>
           <PinCode
             onPinEntered={this.handlePinSubmit}
             onPinChanged={this.handlePinChange}
-            pageInstructions="Confirm your Pincode"
             showForgotButton={false}
             pinError={!!errorMessage}
             flex={false}
