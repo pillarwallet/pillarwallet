@@ -17,8 +17,6 @@ public class MainActivity extends ReactActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        boolean isDarkTheme = (getResources().getConfiguration().uiMode & Configuration.UI_MODE_NIGHT_MASK) == Configuration.UI_MODE_NIGHT_YES;
-        setTheme(isDarkTheme ? R.style.DarkTheme : R.style.LightTheme);
         SplashScreen.show(this, true);  // react-native-splashscreen
         super.onCreate(savedInstanceState);
     }
