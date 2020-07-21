@@ -52,10 +52,8 @@ import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
-import { fiatCurrencies } from 'fixtures/assets';
 import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
-import { isFiatCurrency } from 'utils/exchange';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
@@ -157,7 +155,6 @@ class ExchangeScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.listeners = [];
-    const displayFiatOptionsFirst = get(props, 'navigation.state.params.displayFiatOptionsFirst');
 
     this.state = {
       shapeshiftAuthPressed: false,
@@ -188,7 +185,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               placeholderInput: '0',
               inputRef: (ref) => { this.fromInputRef = ref; },
               inputWrapperStyle: { width: '100%' },
-              rightLabel: displayFiatOptionsFirst ? '' : 'Sell max',
+              rightLabel: '',
               onPressRightLabel: this.handleSellMax,
             },
             transformer: {
@@ -217,7 +214,6 @@ class ExchangeScreen extends React.Component<Props, State> {
   componentDidMount() {
     const {
       exchangeSearchRequest = {},
-      baseFiatCurrency,
       navigation,
       getMetaData,
       getExchangeSupportedAssets,
@@ -225,9 +221,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     this._isMounted = true;
     getMetaData();
     getExchangeSupportedAssets();
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-    const defaultFrom = this.checkIfAssetsExchangeIsAllowed() ? ETH : fiatCurrency;
+    const defaultFrom = ETH;
     const { fromAmount } = exchangeSearchRequest;
     const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest.fromAssetCode || defaultFrom;
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest.toAssetCode;
@@ -298,7 +293,6 @@ class ExchangeScreen extends React.Component<Props, State> {
   shouldShowSellMax = () => {
     const { balances } = this.props;
     const selectedAssetSymbol = this.getSelectedFromAssetSymbol();
-    if (isFiatCurrency(selectedAssetSymbol)) return false;
     const assetBalance = getBalance(balances, selectedAssetSymbol);
     return !!assetBalance;
   }
@@ -329,7 +323,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { assets, exchangeSupportedAssets } = this.props;
 
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
 
     const popularOptions = POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
@@ -343,50 +336,25 @@ class ExchangeScreen extends React.Component<Props, State> {
     thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
     thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = this.generateHorizontalOptions(popularOptions);
     thisStateFormOptionsCopy.fields.toInput.config.options = assetsOptionsBuying;
-    thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions =
-      this.generateHorizontalOptions(popularOptions, true);
+    thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions = this.generateHorizontalOptions(popularOptions);
 
     this.setState({
       formOptions: thisStateFormOptionsCopy,
     });
   };
 
-  generateHorizontalOptions = (popularOptions: Option[], justPopular?: boolean) => {
-    const popularHorizontalOptions = {
-      title: 'Popular',
-      data: popularOptions,
-    };
-
-    if (justPopular) {
-      return [popularHorizontalOptions];
-    }
-
-    const displayFiatOptionsFirst = get(this.props, 'navigation.state.params.displayFiatOptionsFirst');
-    const fiatHorizontalOptions = {
-      title: 'Fiat',
-      data: this.generateFiatOptions(),
-    };
-
-    const horizontalOptions = [];
-    if (displayFiatOptionsFirst) {
-      horizontalOptions.push(fiatHorizontalOptions);
-      horizontalOptions.push(popularHorizontalOptions);
-    } else {
-      horizontalOptions.push(popularHorizontalOptions);
-      horizontalOptions.push(fiatHorizontalOptions);
-    }
-
-    return horizontalOptions;
-  };
+  generateHorizontalOptions = (popularOptions: Option[]) => [{
+    title: 'Popular',
+    data: popularOptions,
+  }];
 
   setInitialSelection = (fromAssetCode: string, toAssetCode?: string, fromAmount?: number) => {
     const { assets, exchangeSupportedAssets } = this.props;
     const assetsData = getAssetsAsList(assets);
-    const fromAsset = fiatCurrencies.find(currency => currency.symbol === fromAssetCode)
-      || getAssetData(assetsData, exchangeSupportedAssets, fromAssetCode);
-    const selectedAssetOptions = isFiatCurrency(fromAssetCode)
-      ? this.generateFiatOptions().find(({ symbol }) => symbol === fromAssetCode)
-      : this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
+
+    const fromAsset = getAssetData(assetsData, exchangeSupportedAssets, fromAssetCode);
+    const selectedAssetOptions = this.generateAssetsOptions({ [fromAssetCode]: fromAsset })[0];
+
     const initialFormState = {
       ...this.state.value,
       fromInput: {
@@ -394,6 +362,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         input: fromAmount ? fromAmount.toString() : '',
       },
     };
+
     if (toAssetCode) {
       const toAsset = getAssetData(assetsData, exchangeSupportedAssets, toAssetCode);
       if (toAsset) {
@@ -404,7 +373,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         };
       }
     }
-    this.setState({ value: initialFormState });
+
+    this.setState({ value: initialFormState }, () => this.updateOptions(initialFormState));
   };
 
   triggerSearch = () => {
@@ -429,19 +399,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({ isSubmitted: true });
     searchOffers(from, to, amount);
 
-    // if it's not supported currecy, we show the empty message immadietely, otherwise we wait for 5 sec
-    if (!this.isSupportedExchange(from, to)) {
-      this.setState({ showEmptyMessage: true });
-    } else {
-      this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
-    }
-  };
-
-  isSupportedExchange = (from: string, to: string) => {
-    const {
-      fiatExchangeSupportedAssets,
-    } = this.props;
-    return !(isFiatCurrency(from) && !fiatExchangeSupportedAssets.some(({ symbol }) => symbol === to));
+    this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 
   setFromAmount = amount => {
@@ -499,16 +457,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       });
   };
 
-  generateFiatOptions = () => fiatCurrencies.map(({ symbol, iconUrl, ...rest }) => ({
-    key: symbol,
-    value: symbol,
-    imageUrl: iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '',
-    iconUrl,
-    symbol,
-    ...rest,
-    assetBalance: null,
-  }));
-
   generateSupportedAssetsOptions = (assets: Asset[]) => {
     if (!Array.isArray(assets)) return [];
     const { balances, baseFiatCurrency, rates } = this.props;
@@ -565,7 +513,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  updateOptions = (value: FormValue, callback: () => void) => {
+  updateOptions = (value: FormValue, callback?: () => void) => {
     const {
       assets,
       exchangeSupportedAssets,
@@ -646,9 +594,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       isSubmitted,
       showEmptyMessage,
     } = this.state;
-    const { fromInput, toInput } = value;
-    const { selector: selectedFromOption } = fromInput;
-    const { selector: selectedToOption } = toInput;
 
     const formStructure = generateFormStructure(balances);
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
@@ -672,15 +617,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       && !deploymentData.error;
 
-    const isSelectedFiat = !isEmpty(selectedFromOption) &&
-      fiatCurrencies.some(({ symbol }) => symbol === selectedFromOption.symbol);
-    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed() && !isSelectedFiat;
-
+    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
 
     const swaps = this.generatePopularSwaps();
-
-    const isSupportedExchange = selectedFromOption &&
-      this.isSupportedExchange(selectedFromOption.symbol, selectedToOption.symbol);
 
     return (
       <ContainerWithHeader
@@ -725,7 +664,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           <ExchangeOffers
             value={value}
             disableNonFiatExchange={disableNonFiatExchange}
-            isExchangeActive={isSubmitted && isSupportedExchange}
+            isExchangeActive={isSubmitted}
             showEmptyMessage={showEmptyMessage}
             setFromAmount={this.setFromAmount}
             navigation={navigation}

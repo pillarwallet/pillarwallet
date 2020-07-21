@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { EXCHANGE_URL, MOONPAY_API_URL, MOONPAY_KEY } from 'react-native-dotenv';
+import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 import axios, { AxiosError, AxiosResponse } from 'axios';
 
@@ -52,7 +52,6 @@ export default class ExchangeService {
   isConnected: boolean;
   apiConfig: Object;
   tokens: Object;
-  ipInfo: Object;
 
   connect(accessToken: string, shapeshiftAccessToken?: string) {
     this.stop();
@@ -101,10 +100,6 @@ export default class ExchangeService {
         delete this.io;
       });
     }
-  }
-
-  setIPInfo(value: Object) {
-    this.ipInfo = value;
   }
 
   setConnected(value: boolean) {
@@ -172,19 +167,6 @@ export default class ExchangeService {
     return axios.get(buildApiUrl(urlPath), this.apiConfig)
       .then(({ data }: AxiosResponse) => data)
       .catch((error: AxiosError) => ({ error }));
-  }
-
-  getIPInformation() {
-    if (!this.ipInfo) {
-      return axios.get(`${MOONPAY_API_URL}/v3/ip_address?apiKey=${MOONPAY_KEY}`)
-        .then(({ data }: AxiosResponse) => data)
-        .then(data => {
-          this.setIPInfo(data);
-          return data;
-        })
-        .catch(() => ({}));
-    }
-    return Promise.resolve(this.ipInfo);
   }
 
   getMetaData() {
