@@ -1477,10 +1477,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   pointerEvents="box-none"
                   style={
                     Object {
-                      "paddingBottom": 0,
+                      "paddingBottom": 40,
                       "paddingLeft": 0,
                       "paddingRight": 0,
-                      "paddingTop": 20,
+                      "paddingTop": 24,
                     }
                   }
                 >
@@ -1497,10 +1497,20 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           "textAlign": "center",
                           "textAlignVertical": "center",
                         },
-                        Object {
-                          "fontWeight": "500",
-                          "paddingTop": 24,
-                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlign": "center",
+                            "textAlignVertical": "center",
+                          },
+                          Object {
+                            "paddingBottom": 22,
+                            "paddingHorizontal": 16,
+                          },
+                        ],
                       ]
                     }
                   >
@@ -1510,48 +1520,86 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     style={
                       Array [
                         Object {
-                          "paddingBottom": 50,
-                          "paddingLeft": 16,
-                          "paddingRight": 16,
-                          "paddingTop": 22,
+                          "flexDirection": "column",
+                          "width": "100%",
                         },
                         undefined,
                       ]
                     }
                   >
                     <View
+                      accessible={true}
+                      focusable={true}
+                      isTVSelectable={true}
+                      onClick={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
                       style={
-                        Array [
-                          Object {
-                            "flexDirection": "column",
-                            "width": "100%",
-                          },
-                          undefined,
-                        ]
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "center",
+                          "opacity": 1,
+                          "paddingBottom": 5,
+                          "paddingLeft": 14,
+                          "paddingRight": 14,
+                          "paddingTop": 5,
+                          "width": "100%",
+                        }
                       }
                     >
                       <View
-                        accessible={true}
-                        focusable={true}
-                        isTVSelectable={true}
-                        onClick={[Function]}
-                        onResponderGrant={[Function]}
-                        onResponderMove={[Function]}
-                        onResponderRelease={[Function]}
-                        onResponderTerminate={[Function]}
-                        onResponderTerminationRequest={[Function]}
-                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Array [
+                            Object {
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "paddingRight": 12,
+                            },
+                            undefined,
+                          ]
+                        }
+                      >
+                        <View
+                          diameter={48}
+                          style={
+                            Array [
+                              Object {
+                                "alignItems": "center",
+                                "backgroundColor": "#EBF0F6",
+                                "borderRadius": 24,
+                                "height": 48,
+                                "justifyContent": "center",
+                                "overflow": "hidden",
+                                "textAlign": "center",
+                                "width": 48,
+                              },
+                              undefined,
+                            ]
+                          }
+                        >
+                          <View
+                            name="wallet"
+                            style={
+                              Array [
+                                Object {
+                                  "color": "#007aff",
+                                  "fontSize": 24,
+                                },
+                                undefined,
+                              ]
+                            }
+                          />
+                        </View>
+                      </View>
+                      <View
                         style={
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "center",
-                            "opacity": 1,
-                            "paddingBottom": 5,
-                            "paddingLeft": 16,
-                            "paddingRight": 16,
-                            "paddingTop": 5,
-                            "width": "100%",
+                            "flex": 1,
                           }
                         }
                       >
@@ -1560,62 +1608,31 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             Array [
                               Object {
                                 "alignItems": "center",
-                                "justifyContent": "center",
-                                "paddingRight": 12,
+                                "flexDirection": "row",
+                                "justifyContent": "space-between",
+                                "width": "100%",
                               },
                               undefined,
                             ]
                           }
+                          type="ACTION"
                         >
                           <View
-                            diameter={48}
                             style={
                               Array [
                                 Object {
-                                  "alignItems": "center",
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderRadius": 24,
-                                  "height": 48,
+                                  "alignItems": "flex-start",
+                                  "flexBasis": 0,
+                                  "flexDirection": "column",
+                                  "flexGrow": 1,
+                                  "flexShrink": 1,
                                   "justifyContent": "center",
-                                  "overflow": "hidden",
-                                  "textAlign": "center",
-                                  "width": 48,
+                                  "marginTop": 0,
+                                  "minHeight": 54,
                                 },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <View
-                              name="wallet"
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#007aff",
-                                    "fontSize": 24,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                            />
-                          </View>
-                        </View>
-                        <View
-                          style={
-                            Object {
-                              "flex": 1,
-                            }
-                          }
-                        >
-                          <View
-                            style={
-                              Array [
                                 Object {
-                                  "alignItems": "center",
-                                  "flexDirection": "row",
-                                  "justifyContent": "space-between",
-                                  "width": "100%",
+                                  "flexGrow": 1,
                                 },
-                                undefined,
                               ]
                             }
                             type="ACTION"
@@ -1624,120 +1641,151 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "alignItems": "flex-start",
-                                    "flexBasis": 0,
-                                    "flexDirection": "column",
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "justifyContent": "center",
-                                    "marginTop": 0,
-                                    "minHeight": 54,
+                                    "alignItems": "center",
+                                    "flexDirection": "row",
+                                    "justifyContent": "space-between",
                                   },
-                                  Object {
-                                    "flexGrow": 1,
-                                  },
+                                  undefined,
                                 ]
                               }
-                              type="ACTION"
                             >
-                              <View
+                              <Text
+                                medium={true}
                                 style={
                                   Array [
                                     Object {
-                                      "alignItems": "center",
-                                      "flexDirection": "row",
-                                      "justifyContent": "space-between",
+                                      "color": "#0A1427",
+                                      "fontFamily": "EuclidCircularB-Regular",
+                                      "fontSize": 16,
+                                      "lineHeight": 24,
+                                      "textAlignVertical": "center",
                                     },
                                     undefined,
                                   ]
                                 }
                               >
-                                <Text
-                                  medium={true}
-                                  style={
-                                    Array [
-                                      Object {
-                                        "color": "#0A1427",
-                                        "fontFamily": "EuclidCircularB-Regular",
-                                        "fontSize": 16,
-                                        "lineHeight": 24,
-                                        "textAlignVertical": "center",
-                                      },
-                                      undefined,
-                                    ]
-                                  }
-                                >
-                                  Buy with a card or Apple Pay
-                                </Text>
-                              </View>
+                                Buy with a card or Apple Pay
+                              </Text>
                             </View>
+                          </View>
+                          <View
+                            rightColumn={true}
+                            style={
+                              Array [
+                                Object {
+                                  "alignItems": "flex-end",
+                                  "flexDirection": "column",
+                                  "justifyContent": "center",
+                                  "marginLeft": 10,
+                                  "marginTop": 0,
+                                  "minHeight": 54,
+                                },
+                                Object {
+                                  "maxWidth": "50%",
+                                },
+                              ]
+                            }
+                            type="ACTION"
+                          >
                             <View
-                              rightColumn={true}
                               style={
                                 Array [
+                                  undefined,
                                   Object {
-                                    "alignItems": "flex-end",
-                                    "flexDirection": "column",
-                                    "justifyContent": "center",
-                                    "marginLeft": 10,
-                                    "marginTop": 0,
-                                    "minHeight": 54,
-                                  },
-                                  Object {
-                                    "maxWidth": "50%",
+                                    "flexWrap": "wrap",
                                   },
                                 ]
                               }
-                              type="ACTION"
-                            >
-                              <View
-                                style={
-                                  Array [
-                                    undefined,
-                                    Object {
-                                      "flexWrap": "wrap",
-                                    },
-                                  ]
-                                }
-                              />
-                            </View>
+                            />
                           </View>
                         </View>
                       </View>
                     </View>
+                  </View>
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "flexDirection": "column",
+                          "width": "100%",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
                     <View
+                      accessible={true}
+                      focusable={true}
+                      isTVSelectable={true}
+                      onClick={[Function]}
+                      onResponderGrant={[Function]}
+                      onResponderMove={[Function]}
+                      onResponderRelease={[Function]}
+                      onResponderTerminate={[Function]}
+                      onResponderTerminationRequest={[Function]}
+                      onStartShouldSetResponder={[Function]}
                       style={
-                        Array [
-                          Object {
-                            "flexDirection": "column",
-                            "width": "100%",
-                          },
-                          undefined,
-                        ]
+                        Object {
+                          "alignItems": "center",
+                          "flexDirection": "row",
+                          "justifyContent": "center",
+                          "opacity": 1,
+                          "paddingBottom": 5,
+                          "paddingLeft": 14,
+                          "paddingRight": 14,
+                          "paddingTop": 5,
+                          "width": "100%",
+                        }
                       }
                     >
                       <View
-                        accessible={true}
-                        focusable={true}
-                        isTVSelectable={true}
-                        onClick={[Function]}
-                        onResponderGrant={[Function]}
-                        onResponderMove={[Function]}
-                        onResponderRelease={[Function]}
-                        onResponderTerminate={[Function]}
-                        onResponderTerminationRequest={[Function]}
-                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Array [
+                            Object {
+                              "alignItems": "center",
+                              "justifyContent": "center",
+                              "paddingRight": 12,
+                            },
+                            undefined,
+                          ]
+                        }
+                      >
+                        <View
+                          diameter={48}
+                          style={
+                            Array [
+                              Object {
+                                "alignItems": "center",
+                                "backgroundColor": "#EBF0F6",
+                                "borderRadius": 24,
+                                "height": 48,
+                                "justifyContent": "center",
+                                "overflow": "hidden",
+                                "textAlign": "center",
+                                "width": 48,
+                              },
+                              undefined,
+                            ]
+                          }
+                        >
+                          <View
+                            name="qrDetailed"
+                            style={
+                              Array [
+                                Object {
+                                  "color": "#007aff",
+                                  "fontSize": 24,
+                                },
+                                undefined,
+                              ]
+                            }
+                          />
+                        </View>
+                      </View>
+                      <View
                         style={
                           Object {
-                            "alignItems": "center",
-                            "flexDirection": "row",
-                            "justifyContent": "center",
-                            "opacity": 1,
-                            "paddingBottom": 5,
-                            "paddingLeft": 16,
-                            "paddingRight": 16,
-                            "paddingTop": 5,
-                            "width": "100%",
+                            "flex": 1,
                           }
                         }
                       >
@@ -1746,62 +1794,31 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             Array [
                               Object {
                                 "alignItems": "center",
-                                "justifyContent": "center",
-                                "paddingRight": 12,
+                                "flexDirection": "row",
+                                "justifyContent": "space-between",
+                                "width": "100%",
                               },
                               undefined,
                             ]
                           }
+                          type="ACTION"
                         >
                           <View
-                            diameter={48}
                             style={
                               Array [
                                 Object {
-                                  "alignItems": "center",
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderRadius": 24,
-                                  "height": 48,
+                                  "alignItems": "flex-start",
+                                  "flexBasis": 0,
+                                  "flexDirection": "column",
+                                  "flexGrow": 1,
+                                  "flexShrink": 1,
                                   "justifyContent": "center",
-                                  "overflow": "hidden",
-                                  "textAlign": "center",
-                                  "width": 48,
+                                  "marginTop": 0,
+                                  "minHeight": 54,
                                 },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <View
-                              name="qrDetailed"
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#007aff",
-                                    "fontSize": 24,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                            />
-                          </View>
-                        </View>
-                        <View
-                          style={
-                            Object {
-                              "flex": 1,
-                            }
-                          }
-                        >
-                          <View
-                            style={
-                              Array [
                                 Object {
-                                  "alignItems": "center",
-                                  "flexDirection": "row",
-                                  "justifyContent": "space-between",
-                                  "width": "100%",
+                                  "flexGrow": 1,
                                 },
-                                undefined,
                               ]
                             }
                             type="ACTION"
@@ -1810,83 +1827,62 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               style={
                                 Array [
                                   Object {
-                                    "alignItems": "flex-start",
-                                    "flexBasis": 0,
-                                    "flexDirection": "column",
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "justifyContent": "center",
-                                    "marginTop": 0,
-                                    "minHeight": 54,
+                                    "alignItems": "center",
+                                    "flexDirection": "row",
+                                    "justifyContent": "space-between",
                                   },
-                                  Object {
-                                    "flexGrow": 1,
-                                  },
+                                  undefined,
                                 ]
                               }
-                              type="ACTION"
                             >
-                              <View
+                              <Text
+                                medium={true}
                                 style={
                                   Array [
                                     Object {
-                                      "alignItems": "center",
-                                      "flexDirection": "row",
-                                      "justifyContent": "space-between",
+                                      "color": "#0A1427",
+                                      "fontFamily": "EuclidCircularB-Regular",
+                                      "fontSize": 16,
+                                      "lineHeight": 24,
+                                      "textAlignVertical": "center",
                                     },
                                     undefined,
                                   ]
                                 }
                               >
-                                <Text
-                                  medium={true}
-                                  style={
-                                    Array [
-                                      Object {
-                                        "color": "#0A1427",
-                                        "fontFamily": "EuclidCircularB-Regular",
-                                        "fontSize": 16,
-                                        "lineHeight": 24,
-                                        "textAlignVertical": "center",
-                                      },
-                                      undefined,
-                                    ]
-                                  }
-                                >
-                                  Send from another wallet
-                                </Text>
-                              </View>
+                                Send from another wallet
+                              </Text>
                             </View>
+                          </View>
+                          <View
+                            rightColumn={true}
+                            style={
+                              Array [
+                                Object {
+                                  "alignItems": "flex-end",
+                                  "flexDirection": "column",
+                                  "justifyContent": "center",
+                                  "marginLeft": 10,
+                                  "marginTop": 0,
+                                  "minHeight": 54,
+                                },
+                                Object {
+                                  "maxWidth": "50%",
+                                },
+                              ]
+                            }
+                            type="ACTION"
+                          >
                             <View
-                              rightColumn={true}
                               style={
                                 Array [
+                                  undefined,
                                   Object {
-                                    "alignItems": "flex-end",
-                                    "flexDirection": "column",
-                                    "justifyContent": "center",
-                                    "marginLeft": 10,
-                                    "marginTop": 0,
-                                    "minHeight": 54,
-                                  },
-                                  Object {
-                                    "maxWidth": "50%",
+                                    "flexWrap": "wrap",
                                   },
                                 ]
                               }
-                              type="ACTION"
-                            >
-                              <View
-                                style={
-                                  Array [
-                                    undefined,
-                                    Object {
-                                      "flexWrap": "wrap",
-                                    },
-                                  ]
-                                }
-                              />
-                            </View>
+                            />
                           </View>
                         </View>
                       </View>

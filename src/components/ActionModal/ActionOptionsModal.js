@@ -21,7 +21,7 @@ import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
@@ -44,8 +44,8 @@ type Props = {
   title?: string,
 };
 
-const MainContainer = styled.View`
-  padding: 22px ${spacing.layoutSides}px 50px;
+const MainContainer = styled(SafeAreaView)`
+  padding: 24px 0 40px;
 `;
 
 class ActionOptionsModal extends React.Component<Props> {
@@ -70,7 +70,7 @@ class ActionOptionsModal extends React.Component<Props> {
         iconName={iconName}
         iconColor={themedColors.link}
         iconDiameter={24}
-        padding={`5px ${spacing.layoutSides}px`}
+        padding="5px 14px"
       />
     );
   };
@@ -87,12 +87,17 @@ class ActionOptionsModal extends React.Component<Props> {
         hideHeader
         onModalHide={onModalClose}
       >
-        <SafeAreaView>
-          <BaseText style={{ paddingTop: 24, fontWeight: '500' }} center big>{title}</BaseText>
-          <MainContainer>
-            {items.filter(({ hide }) => !hide).map(this.renderItem)}
-          </MainContainer>
-        </SafeAreaView>
+        <MainContainer>
+          {!!title &&
+          <MediumText
+            style={{ paddingBottom: 22, paddingHorizontal: spacing.layoutSides }}
+            center
+            big
+          >
+            {title}
+          </MediumText>}
+          {items.filter(({ hide }) => !hide).map(this.renderItem)}
+        </MainContainer>
       </SlideModal>
     );
   }
