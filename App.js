@@ -29,7 +29,6 @@ import { AppearanceProvider } from 'react-native-appearance';
 import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK, SHOW_LANG_TOGGLE } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
-import SplashScreen from 'react-native-splash-screen';
 import { withTranslation } from 'react-i18next';
 
 import 'translations/setup';
@@ -135,7 +134,6 @@ class App extends React.Component<Props, *> {
   }
 
   async componentDidMount() {
-    SplashScreen.hide();
     const {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
@@ -206,6 +204,7 @@ class App extends React.Component<Props, *> {
 
   render() {
     const {
+      isFetched,
       themeType,
       setAppTheme,
       activeWalkthroughSteps,
@@ -213,6 +212,8 @@ class App extends React.Component<Props, *> {
     } = this.props;
     const theme = getThemeByType(themeType);
     const { current } = theme;
+
+    if (!isFetched) return null;
 
     return (
       <AppearanceProvider>
