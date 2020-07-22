@@ -95,7 +95,7 @@ const ChooseAssetDeposit = ({
     </ListItemWithImage>
   );
 
-  const assetsByHighestInterest = orderBy(assetsToDeposit, ['updatedAt'], ['desc']);
+  const assetsByHighestInterest = orderBy(assetsToDeposit, ['earnInterestRate'], ['desc']);
   const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 
   return (
