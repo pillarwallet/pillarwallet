@@ -19,6 +19,7 @@
 */
 
 import * as React from 'react';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 
@@ -28,6 +29,7 @@ import CircleButton from 'components/CircleButton';
 import ActionModal from 'components/ActionModal';
 import { LabelBadge } from 'components/LabelBadge';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -39,6 +41,7 @@ import { EXCHANGE } from 'constants/exchangeConstants';
 
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
@@ -63,6 +66,8 @@ type Props = {
   changeWalletAction: (acc: Account, callback: () => void) => void,
   blockchainNetwork: ?string,
   setActiveBlockchainNetwork: (id: string) => void,
+  goToInvitationFlow: () => void,
+  rewardActive?: boolean,
 };
 
 type State = {
@@ -139,8 +144,12 @@ class ActionButtons extends React.Component<Props, State> {
       balances,
       baseFiatCurrency,
       wallets,
+      activeWallet,
+      rewardActive,
+      goToInvitationFlow,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const { id: activeAddress } = activeWallet;
 
     const accountsInfo = wallets.map((account) => {
       const { type, id } = account;
@@ -159,19 +168,33 @@ class ActionButtons extends React.Component<Props, State> {
 
     switch (visibleActionModal) {
       case RECEIVE:
-        return accountsInfo.map(({
-          type,
-          formattedBalance,
-          additionalInfo,
-          address,
-        }) => ({
-          key: type,
-          value: formattedBalance,
-          ...additionalInfo,
-          onPress: () => this.setState({ receiveAddress: address }),
-          label: `To ${additionalInfo.title}`,
-        }),
-        );
+        return [
+          {
+            key: 'buy',
+            label: `Buy with a card${Platform.OS === 'ios' ? ' or Apple Pay' : ''}`,
+            iconName: 'wallet',
+            onPress: () => this.navigateToAction(activeWallet, EXCHANGE, { fromAssetCode: fiatCurrency }),
+          },
+          {
+            key: 'receive',
+            label: 'Send from another wallet',
+            iconName: 'qrDetailed',
+            onPress: () => this.setState({ receiveAddress: activeAddress }),
+          },
+          {
+            key: 'exchange',
+            label: 'Exchange',
+            iconName: 'flip',
+            onPress: () => this.navigateToAction(activeWallet, EXCHANGE),
+          },
+          {
+            key: 'invite',
+            label: 'Invite and earn free tokens',
+            iconName: 'present',
+            hide: !rewardActive,
+            onPress: goToInvitationFlow,
+          },
+        ];
       case SEND:
         return accountsInfo.map((acc) => {
           const {
@@ -212,7 +235,7 @@ class ActionButtons extends React.Component<Props, State> {
     }
   };
 
-  navigateToAction = (acc: Account, navigateTo: string) => {
+  navigateToAction = (acc: Account, navigateTo: string, params?: Object) => {
     const {
       navigation,
       activeWallet,
@@ -229,9 +252,9 @@ class ActionButtons extends React.Component<Props, State> {
           setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
         }
         if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
-          changeWalletAction(acc, () => navigation.navigate(navigateTo));
+          changeWalletAction(acc, () => navigation.navigate(navigateTo, params));
         } else {
-          navigation.navigate(navigateTo);
+          navigation.navigate(navigateTo, params);
         }
         break;
 
@@ -240,9 +263,9 @@ class ActionButtons extends React.Component<Props, State> {
           setActiveBlockchainNetwork(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM);
         }
         if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
-          changeWalletAction(acc, () => navigation.navigate(navigateTo));
+          changeWalletAction(acc, () => navigation.navigate(navigateTo, params));
         } else {
-          navigation.navigate(navigateTo);
+          navigation.navigate(navigateTo, params);
         }
         break;
 
@@ -262,7 +285,7 @@ class ActionButtons extends React.Component<Props, State> {
         <Sizer>
           <ActionButtonsWrapper>
             <CircleButton
-              label="Receive"
+              label="Add Funds"
               fontIcon="qrDetailed"
               onPress={() => this.openActionModal(RECEIVE)}
             />
@@ -279,9 +302,15 @@ class ActionButtons extends React.Component<Props, State> {
             />
           </ActionButtonsWrapper>
         </Sizer>
+        <ActionOptionsModal
+          onModalClose={this.closeActionModal}
+          isVisible={!!visibleActionModal && visibleActionModal === RECEIVE}
+          items={modalActions}
+          title="Add funds to Pillar"
+        />
         <ActionModal
           onModalClose={this.closeActionModal}
-          isVisible={!!visibleActionModal}
+          isVisible={!!visibleActionModal && visibleActionModal !== RECEIVE}
           items={modalActions}
         />
         <ReceiveModal
@@ -311,6 +340,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setActiveBlockchainNetwork: (id: string) => dispatch(setActiveBlockchainNetworkAction(id)),
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(ActionButtons));

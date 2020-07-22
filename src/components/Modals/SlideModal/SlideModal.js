@@ -54,6 +54,7 @@ type Props = {
   showHeader?: boolean,
   hideHeader?: boolean,
   centerTitle?: boolean,
+  centerFloatingItem?: React.Node,
   noWrapTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
@@ -167,6 +168,13 @@ class SlideModal extends React.Component<Props, *> {
     titleStyles: {},
   };
 
+  constructor(props) {
+    super(props);
+    this.state = {
+      contentHeight: 0,
+    };
+  }
+
   hideModal = () => {
     const { onSwipeComplete } = this.props;
     Keyboard.dismiss();
@@ -190,6 +198,15 @@ class SlideModal extends React.Component<Props, *> {
     }
     if (handleScrollTo) handleScrollTo(p);
   };
+
+  onModalBoxLayout = (event) => {
+    const height = event.nativeEvent?.layout?.height || 0;
+    if (this.state.contentHeight !== height) {
+      this.setState({
+        contentHeight: height,
+      });
+    }
+  }
 
   render() {
     const {
@@ -217,6 +234,7 @@ class SlideModal extends React.Component<Props, *> {
       noTopPadding,
       headerProps = {},
       insetTop,
+      centerFloatingItem,
     } = this.props;
 
     const customTheme = getTheme(this.props);
@@ -268,7 +286,7 @@ class SlideModal extends React.Component<Props, *> {
     const modalContent = () => {
       if (fullScreen) {
         return (
-          <Wrapper fullScreen>
+          <Wrapper onLayout={this.onModalBoxLayout} fullScreen>
             {modalInner}
           </Wrapper>
         );
@@ -276,14 +294,14 @@ class SlideModal extends React.Component<Props, *> {
 
       if (eventDetail) {
         return (
-          <ModalBackground customTheme={customTheme} sideMargins={sideMargins}>
+          <ModalBackground onLayout={this.onModalBoxLayout} customTheme={customTheme} sideMargins={sideMargins}>
             { children }
           </ModalBackground>
         );
       }
 
       return (
-        <ModalBackground customTheme={customTheme} sideMargins={sideMargins}>
+        <ModalBackground onLayout={this.onModalBoxLayout} customTheme={customTheme} sideMargins={sideMargins}>
           { modalInner }
         </ModalBackground>
       );
@@ -322,6 +340,18 @@ class SlideModal extends React.Component<Props, *> {
               <Backdrop onPress={this.hideModal}>
                 <ContentWrapper />
               </Backdrop>
+            }
+            {!!centerFloatingItem &&
+              <Wrapper
+                style={{
+                  elevation: 2,
+                  zIndex: 11,
+                  marginTop: -1 * this.state.contentHeight,
+                  marginBottom: 0,
+                }}
+              >
+                {centerFloatingItem}
+              </Wrapper>
             }
             {modalContent()}
           </ContentWrapper>

@@ -20,6 +20,7 @@
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import { Container, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
@@ -56,7 +57,7 @@ class NewWallet extends React.PureComponent<Props> {
             <BaseText style={{ marginBottom: 20 }} bigText={!failedToRegister}>
               Registration failed
             </BaseText>
-            <Button title="Try again" onPress={tryToReRegister} />
+            <Button title={t('auth:button.tryAgain')} onPress={tryToReRegister} />
           </Wrapper>
         )}
       </Container>

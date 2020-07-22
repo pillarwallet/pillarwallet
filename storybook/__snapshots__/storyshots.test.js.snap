@@ -26755,6 +26755,7 @@ Array [
                 "padding": "0 16px",
               }
             }
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -27498,6 +27499,7 @@ exports[`Storyshots Selector default 1`] = `
         >
           <View
             fullScreen={true}
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -28803,6 +28805,7 @@ exports[`Storyshots Selector no options 1`] = `
         >
           <View
             fullScreen={true}
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -29951,6 +29954,7 @@ exports[`Storyshots Selector selected option 1`] = `
         >
           <View
             fullScreen={true}
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -31256,6 +31260,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
         >
           <View
             fullScreen={true}
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -32561,6 +32566,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
         >
           <View
             fullScreen={true}
+            onLayout={[Function]}
             style={
               Array [
                 Object {
@@ -34348,6 +34354,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                     >
                       <View
                         fullScreen={true}
+                        onLayout={[Function]}
                         style={
                           Array [
                             Object {
@@ -35678,10 +35685,18 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           },
                           Array [
                             Object {
-                              "color": "#007aff",
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
                               "fontSize": 14,
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#007aff",
+                                "fontSize": 14,
+                              },
+                              undefined,
+                            ],
                           ],
                         ]
                       }
@@ -36067,6 +36082,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                     >
                       <View
                         fullScreen={true}
+                        onLayout={[Function]}
                         style={
                           Array [
                             Object {
@@ -37646,6 +37662,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                     >
                       <View
                         fullScreen={true}
+                        onLayout={[Function]}
                         style={
                           Array [
                             Object {

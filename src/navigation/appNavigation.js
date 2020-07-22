@@ -25,6 +25,7 @@ import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
+import { withTranslation } from 'react-i18next';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -65,8 +66,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import PillarNetworkIntro from 'screens/PillarNetwork/PillarNetworkIntro';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
-import FiatExchangeScreen from 'screens/FiatExchange';
-import FiatCryptoScreen from 'screens/FiatExchange/FiatCrypto';
 import SmartWalletIntroScreen from 'screens/SmartWalletIntro';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
 import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
@@ -180,8 +179,6 @@ import {
   MANAGE_USERS_FLOW,
   ADD_EDIT_USER,
   MENU,
-  FIAT_EXCHANGE,
-  FIAT_CRYPTO,
   SMART_WALLET_INTRO,
   PPN_SEND_TOKEN_AMOUNT,
   PPN_SEND_TOKEN_FROM_ASSET_FLOW,
@@ -249,6 +246,7 @@ import { modalTransition, addAppStateChangeListener, removeAppStateChangeListene
 import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
+import type { I18n } from 'models/Translations';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -319,8 +317,6 @@ const servicesFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
-  [FIAT_EXCHANGE]: FiatExchangeScreen,
-  [FIAT_CRYPTO]: FiatCryptoScreen,
   [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
@@ -722,6 +718,7 @@ type Props = {
   endWalkthrough: () => void,
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
+  i18n: I18n,
 }
 
 type State = {
@@ -840,7 +837,9 @@ class AppFlow extends React.Component<Props, State> {
       navigation,
       backupStatus,
       theme,
+      i18n,
     } = this.props;
+
 
     // wallet might be created, but recovery is pending and no user assigned yet
     if (!backupStatus.isRecoveryPending) {
@@ -859,6 +858,7 @@ class AppFlow extends React.Component<Props, State> {
           intercomNotificationsCount,
           isWalletBackedUp,
           theme,
+          language: i18n.language,
         }}
         navigation={navigation}
       />
@@ -905,10 +905,10 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
-const ConnectedAppFlow = connect(
+const ConnectedAppFlow = withTranslation()(connect(
   mapStateToProps,
   mapDispatchToProps,
-)(AppFlow);
+)(AppFlow));
 ConnectedAppFlow.router = AppFlowNavigation.router;
 ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 

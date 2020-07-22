@@ -17,6 +17,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // constants
 import { RECOVERY_PORTAL_WALLET_RECOVERY_PENDING } from 'constants/navigationConstants';
@@ -47,13 +48,11 @@ const RecoveryPortalWalletRecoveryStarted = (props: Props) => (
   <Container>
     <Wrapper flex={1} center regularPadding>
       <Animation source={animationSuccess} />
-      <Title center>Smart Wallet recovered successfully</Title>
-      <Paragraph small light center>
-        It will be settled in a few moments, depending on your gas price settings and Ethereum network load
-      </Paragraph>
+      <Title center>{t('auth:recoveryPortal.title.smartWalletRecovered')}</Title>
+      <Paragraph small light center>{t('auth:recoveryPortal.paragraph.smartWalletRecovered')}</Paragraph>
       <Button
         block
-        title="Magic!"
+        title={t('auth:button.magic', { exclamation: true })}
         onPress={() => props.navigation.navigate(RECOVERY_PORTAL_WALLET_RECOVERY_PENDING)}
         marginTop={50}
       />

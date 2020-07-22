@@ -1,6 +1,0 @@
-{
-  "name": "SecurityConfirm",
-  "version": "0.0.0",
-  "private": true,
-  "main": "./SecurityConfirm.js"
-}

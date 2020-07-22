@@ -42,6 +42,7 @@ export const LOGOUT_PENDING = 'LOGOUT_PENDING';
 export const STORYBOOK = 'STORYBOOK';
 export const CONNECT_TAB = 'CONNECT_TAB';
 export const PIN_CODE = 'PIN_CODE';
+export const SPLASH_SCREEN = 'SPLASH_SCREEN';
 
 // ASSETS FLOW
 export const ACCOUNTS = 'ACCOUNTS';
@@ -56,7 +57,6 @@ export const CHANGE_PIN_CONFIRM_NEW_PIN = 'CHANGE_PIN_CONFIRM_NEW_PIN';
 
 // ONBOARDING FLOW
 export const ONBOARDING_FLOW = 'ONBOARDING_FLOW';
-export const ONBOARDING_HOME = 'ONBOARDING_HOME';
 export const NEW_WALLET = 'NEW_WALLET';
 export const NEW_PROFILE = 'NEW_PROFILE';
 export const IMPORT_WALLET = 'IMPORT_WALLET';
@@ -65,7 +65,6 @@ export const BACKUP_PHRASE = 'BACKUP_PHRASE';
 export const BACKUP_PHRASE_VALIDATE = 'BACKUP_PHRASE_VALIDATE';
 export const SET_WALLET_PIN_CODE = 'SET_WALLET_PIN_CODE';
 export const PIN_CODE_CONFIRMATION = 'PIN_CODE_CONFIRMATION';
-export const LEGAL_TERMS = 'LEGAL_TERMS';
 export const PERMISSIONS = 'PERMISSIONS';
 export const BIOMETRICS_PROMPT = 'BIOMETRICS_PROMPT';
 export const WALLET_RECOVERY_OPTIONS = 'WALLET_RECOVERY_OPTIONS';
@@ -76,7 +75,6 @@ export const PIN_CODE_UNLOCK = 'PIN_CODE_UNLOCK';
 export const FORGOT_PIN = 'FORGOT_PIN';
 
 // SIGNUP/OTP FLOW
-export const SECURITY_CONFIRM = 'SECURITY_CONFIRM';
 export const SIGN_UP_FLOW = 'SIGN_UP_FLOW';
 export const WELCOME = 'WELCOME';
 export const SIGN_IN = 'SIGN_IN';
@@ -108,8 +106,6 @@ export const CONTACT = 'CONTACT';
 // HOME FLOW
 export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
-export const FIAT_EXCHANGE = 'FIAT_EXCHANGE';
-export const FIAT_CRYPTO = 'FIAT_CRYPTO';
 
 // EXCHANGE FLOW
 export const EXCHANGE = 'EXCHANGE';
