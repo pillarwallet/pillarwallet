@@ -35685,10 +35685,18 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           },
                           Array [
                             Object {
-                              "color": "#007aff",
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
                               "fontSize": 14,
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#007aff",
+                                "fontSize": 14,
+                              },
+                              undefined,
+                            ],
                           ],
                         ]
                       }

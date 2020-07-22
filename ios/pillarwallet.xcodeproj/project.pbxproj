@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04FADAD824C585F3009328BE /* Launch Screen Pixel.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04FADAD724C585F3009328BE /* Launch Screen Pixel.storyboard */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -14,7 +15,6 @@
 		2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 2862B28966EF4024B1921B80 /* Roboto_medium.ttf */; };
 		41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 7FC6FE44C3D94405A67ABDA3 /* Roboto.ttf */; };
 		696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */; };
-		696ACF1224049931009B0BEC /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF1124049931009B0BEC /* LaunchScreen.xib */; };
 		696ACF5524049EBC009B0BEC /* EuclidCircularB-Bold.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5324049C74009B0BEC /* EuclidCircularB-Bold.otf */; };
 		696ACF5624049EBC009B0BEC /* EuclidCircularB-Light.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */; };
 		696ACF5724049EBC009B0BEC /* EuclidCircularB-Medium.otf in Resources */ = {isa = PBXBuildFile; fileRef = 696ACF5424049C74009B0BEC /* EuclidCircularB-Medium.otf */; };
@@ -27,6 +27,7 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
+		04FADAD724C585F3009328BE /* Launch Screen Pixel.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = "Launch Screen Pixel.storyboard"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
@@ -38,7 +39,6 @@
 		60E31104F5582BB0EA747855 /* Pods-pillarwallet.staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-pillarwallet.staging.release.xcconfig"; path = "Pods/Target Support Files/Pods-pillarwallet/Pods-pillarwallet.staging.release.xcconfig"; sourceTree = "<group>"; };
 		693DE4BC2405A31E00587060 /* pillarwallet.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = pillarwallet.entitlements; path = pillarwallet/pillarwallet.entitlements; sourceTree = "<group>"; };
 		696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = SOURCE_ROOT; };
-		696ACF1124049931009B0BEC /* LaunchScreen.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = LaunchScreen.xib; sourceTree = "<group>"; };
 		696ACF2624049C74009B0BEC /* EuclidCircularB-Light.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Light.otf"; path = "../src/assets/fonts/EuclidCircularB-Light.otf"; sourceTree = "<group>"; };
 		696ACF5124049C74009B0BEC /* PillarIcons.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = PillarIcons.ttf; path = ../src/assets/fonts/PillarIcons.ttf; sourceTree = "<group>"; };
 		696ACF5224049C74009B0BEC /* EuclidCircularB-Regular.otf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "EuclidCircularB-Regular.otf"; path = "../src/assets/fonts/EuclidCircularB-Regular.otf"; sourceTree = "<group>"; };
@@ -72,7 +72,6 @@
 			isa = PBXGroup;
 			children = (
 				693DE4BC2405A31E00587060 /* pillarwallet.entitlements */,
-				696ACF1124049931009B0BEC /* LaunchScreen.xib */,
 				696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -82,6 +81,7 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				69D2EB03240865F60039EA75 /* SwiftBridge.swift */,
 				69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */,
+				04FADAD724C585F3009328BE /* Launch Screen Pixel.storyboard */,
 			);
 			name = pillarwallet;
 			sourceTree = "<group>";
@@ -241,11 +241,11 @@
 				696ACF5824049EBC009B0BEC /* EuclidCircularB-Regular.otf in Resources */,
 				696ACF5924049EBC009B0BEC /* PillarIcons.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				04FADAD824C585F3009328BE /* Launch Screen Pixel.storyboard in Resources */,
 				2C5005634DBF4D2A97891E6E /* Roboto_medium.ttf in Resources */,
 				41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */,
 				C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */,
 				696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */,
-				696ACF1224049931009B0BEC /* LaunchScreen.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

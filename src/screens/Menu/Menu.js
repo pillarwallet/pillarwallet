@@ -105,7 +105,7 @@ const LockScreenSection = styled.View`
 `;
 
 const HeaderLogo = styled(CachedImage)`
-  width: 40px;
+  width: 68px;
   height: 20px;
 `;
 
