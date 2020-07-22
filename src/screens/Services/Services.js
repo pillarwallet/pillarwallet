@@ -24,14 +24,6 @@ import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
-import querystring from 'querystring';
-import {
-  RAMPNETWORK_WIDGET_URL,
-  RAMPNETWORK_API_KEY,
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
-} from 'react-native-dotenv';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
@@ -40,6 +32,7 @@ import { getMetaDataAction } from 'actions/exchangeActions';
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -60,6 +53,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { rampWidgetUrl, wyreWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -206,17 +200,10 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Ramp.Network (EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(userAddress => {
-            const { user: { email = null } } = this.props;
-
-            const params = {
-              hostApiKey: RAMPNETWORK_API_KEY,
-              userAddress,
-              ...(email === null ? {} : { userEmailAddress: email }),
-            };
-
-            return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
-          });
+          const { user: { email } } = this.props;
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email));
         },
       });
     }
@@ -227,11 +214,9 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Wyre (Non-EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(address => `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
-            accountId: SENDWYRE_ACCOUNT_ID,
-            dest: `ethereum:${address}`,
-            redirectUrl: SENDWYRE_RETURN_URL,
-          })}`);
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(wyreWidgetUrl(address));
         },
       });
     }
@@ -239,7 +224,7 @@ class ServicesScreen extends React.Component<Props, State> {
     return buyCryptoServices;
   }
 
-  handleBuyCryptoAction = (getUrlWithAddress: string => string) => {
+  getCryptoPurchaseAddress = (): string | null => {
     const { accounts, smartWalletState } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
@@ -247,18 +232,27 @@ class ServicesScreen extends React.Component<Props, State> {
 
     if (!smartWalletStatus.hasAccount) {
       this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.NO_SW_ACCOUNT });
-      return;
+      return null;
     }
 
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE });
-      return;
+      return null;
     }
 
-    const address: string = getAccountAddress(activeAccount);
-    const url = getUrlWithAddress(address);
-    openInAppBrowser(url);
+    return getAccountAddress(activeAccount);
   }
+
+  tryOpenCryptoPurchaseUrl = (url: string | null) => {
+    if (url) {
+      openInAppBrowser(url);
+    } else {
+      Toast.show({
+        type: 'warning',
+        message: 'Unable to prepare transaction. Please try again later.',
+      });
+    }
+  };
 
   onBuyCryptoModalClose = () => {
     this.setState({ buyCryptoModalMessage: null });
