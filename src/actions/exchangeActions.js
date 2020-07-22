@@ -20,6 +20,8 @@
 import { Linking } from 'react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import { ChainId, Token, Route, Fetcher } from '@uniswap/sdk';
+import { toChecksumAddress } from '@netgum/utils';
 
 // components
 import Toast from 'components/Toast';
@@ -57,6 +59,7 @@ import ExchangeService from 'services/exchange';
 import type SDKWrapper from 'services/api';
 import type { Offer, OfferOrder } from 'models/Offer';
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
+import type { Asset } from 'models/Asset';
 
 // config
 import { EXCLUDED_SMARTWALLET_PROVIDERS, EXCLUDED_KEYWALLET_PROVIDERS } from 'configs/exchangeConfig';
@@ -183,6 +186,25 @@ export const resetOffersAction = () => {
   };
 };
 
+const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      address: fromAddress, symbol: fromSymbol, decimals: fromDecimals, name: fromName
+    } = fromAsset;
+    const {
+      address: toAddress, symbol: toSymbol, decimals: toDecimals, name: toName
+    } = toAsset;
+    debugger
+    const fromToken = new Token(ChainId.MAINNET, toChecksumAddress(fromAddress), fromDecimals, fromSymbol, fromName);
+    debugger
+    const toToken = new Token(ChainId.MAINNET, toChecksumAddress(toAddress), toDecimals, toSymbol, toName);
+    debugger
+    const pair = await Fetcher.fetchPairData(fromToken, toToken);
+    debugger
+    const route = new Route([pair], fromToken);
+  };
+};
+
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
@@ -203,9 +225,9 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       },
     });
 
-    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
-    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
-
+    const fromAsset: Asset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+    const toAsset: Asset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
+    dispatch(searchUniswapAction(fromAsset, toAsset, 100)); // TODO test
     if (!fromAsset || !toAsset) {
       Toast.show({
         title: 'Exchange Service',
