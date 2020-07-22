@@ -29,7 +29,6 @@ import { Notifications } from 'react-native-notifications';
 import {
   fetchSmartWalletTransactionsAction,
   fetchTransactionsHistoryNotificationsAction,
-  fetchAssetTransactionsAction,
 } from 'actions/historyActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
@@ -149,7 +148,6 @@ export const subscribeToSocketEventsAction = () => {
       if (data.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchSmartWalletTransactionsAction());
-        dispatch(fetchAssetTransactionsAction(data.asset));
         dispatch(fetchAssetsBalancesAction());
       }
       if (data.type === BADGE) {
@@ -202,7 +200,6 @@ export const subscribeToPushNotificationsAction = () => {
       if (notification.type === BCX) {
         dispatch(fetchTransactionsHistoryNotificationsAction());
         dispatch(fetchSmartWalletTransactionsAction());
-        dispatch(fetchAssetTransactionsAction(notification.asset));
         dispatch(fetchAssetsBalancesAction());
       }
       if (notification.type === COLLECTIBLE) {
@@ -262,7 +259,7 @@ export const startListeningOnOpenNotificationAction = () => {
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
       const currentFlow = pathAndParams.path.split('/')[0];
-      const { type, asset, navigationParams = {} } = processNotification(openedNotificationPayload) || {};
+      const { type, navigationParams = {} } = processNotification(openedNotificationPayload) || {};
       const notificationRoute = NOTIFICATION_ROUTES[type] || null;
       updateNavigationLastScreenState({
         lastActiveScreen: notificationRoute,
@@ -272,7 +269,6 @@ export const startListeningOnOpenNotificationAction = () => {
         if (type === BCX) {
           dispatch(fetchTransactionsHistoryNotificationsAction());
           dispatch(fetchSmartWalletTransactionsAction());
-          dispatch(fetchAssetTransactionsAction(asset));
           dispatch(fetchAssetsBalancesAction());
         }
         if (type === COLLECTIBLE) {
