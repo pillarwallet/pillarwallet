@@ -502,8 +502,6 @@ jobs:
           no_output_timeout: 20m
           name: Upload to TestFlight
           command: |
-            chmod +x setReleaseInfo.sh
-            . ./setReleaseInfo.sh
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             cd ios && bundle exec fastlane deploy_prod APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Wallet"
@@ -646,13 +644,10 @@ jobs:
       - run:
           name: Fastlane deploy to Google Play
           command: |
-            chmod +x setReleaseInfo.sh
-            . ./setReleaseInfo.sh
             cd android
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export GOOGLE_JSON_DATA=$(echo "$GOOGLE_JSON_BASE64_ENCODED" | base64 --decode)
-            echo $RELEASE_DESCRIPTION > fastlane/metadata/android/en-US/changelogs/$APP_BUILD_NUMBER.txt
             bundle exec fastlane deploy_internal --verbose
           environment:
             BUNDLE_PATH: vendor/bundle
