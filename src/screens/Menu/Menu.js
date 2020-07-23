@@ -49,6 +49,7 @@ import {
   ADD_EDIT_USER,
   STORYBOOK,
   BACKUP_WALLET_IN_SETTINGS_FLOW,
+  KEY_BASED_ASSET_TRANSFER_CHOOSE,
 } from 'constants/navigationConstants';
 
 // actions
@@ -200,6 +201,13 @@ class Menu extends React.Component<Props, State> {
         icon: 'dictionary',
         iconColor: colors.positive,
         action: () => Intercom.displayHelpCenter(),
+      },
+      {
+        key: 'assetsMigration',
+        title: 'Transfer assets to Smart Wallet',
+        icon: 'send-asset',
+        iconColor: colors.accent,
+        action: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE),
       },
       {
         key: 'storybook',
