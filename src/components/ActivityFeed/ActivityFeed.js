@@ -305,7 +305,7 @@ class ActivityFeed extends React.Component<Props, State> {
         return item.section.title;
       default:
         const { createdAt = '' } = item.item;
-        return `${createdAt.toString()}${item.item.id || item.item._id || item.item.hash || ''}`;
+        return `${createdAt.toString()}${item.item.id || item.item._id || item.item.hash || ''}${item.item.from || ''}`;
     }
   };
 
