@@ -38,4 +38,5 @@ export type BadgeRewardEvent = {
   createdAt: number,
   badgeId: string,
   imageUrl: string,
+  badgeType: string,
 };
