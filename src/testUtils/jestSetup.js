@@ -309,3 +309,4 @@ jest.setMock('react-native-notifications');
 jest.setMock('@react-native-community/netinfo');
 
 jest.setMock('react-native-appearance', {});
+
