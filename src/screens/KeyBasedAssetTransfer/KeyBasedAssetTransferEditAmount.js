@@ -19,11 +19,11 @@
 */
 import React, { useState } from 'react';
 import { FlatList, ScrollView, RefreshControl } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import {
@@ -201,7 +201,7 @@ const KeyBasedAssetTransferEditAmount = ({
           contentContainerStyle={{ flexGrow: 1 }}
           ListEmptyComponent={(
             <Wrapper
-              fullScreen
+              flex={1}
               style={{
                 paddingTop: 90,
                 paddingBottom: 90,

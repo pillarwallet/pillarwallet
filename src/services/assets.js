@@ -393,7 +393,7 @@ export async function calculateGasEstimate(transaction: Object) {
   const provider = getEthereumProvider(tokenId ? COLLECTIBLES_NETWORK : NETWORK_PROVIDER);
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
-    : '0x';
+    : '';
   try {
     if (tokenId) {
       data = await buildERC721TransactionData(transaction, provider);

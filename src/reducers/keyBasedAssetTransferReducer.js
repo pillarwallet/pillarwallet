@@ -20,6 +20,7 @@
 import {
   SET_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
   SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
+  SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS,
   SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
   SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
   SET_KEY_BASED_ASSETS_TO_TRANSFER,
@@ -34,6 +35,7 @@ export type KeyBasedAssetTransferReducerState = {|
   availableCollectibles: Collectibles,
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,
+  isCalculatingGas: boolean,
 |};
 
 export type KeyBasedAssetTransferReducerAction = {|
@@ -47,6 +49,7 @@ const initialState = {
   availableCollectibles: [],
   isFetchingAvailableBalances: false,
   isFetchingAvailableCollectibles: false,
+  isCalculatingGas: false,
 };
 
 const keyBasedAssetTransferReducer = (
@@ -80,6 +83,11 @@ const keyBasedAssetTransferReducer = (
         ...state,
         availableCollectibles: action.payload,
         isFetchingAvailableCollectibles: false,
+      };
+    case SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS:
+      return {
+        ...state,
+        isCalculatingGas: action.payload,
       };
     default:
       return state;

@@ -114,6 +114,8 @@ import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionC
 import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
 import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
+import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
+import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -253,6 +255,9 @@ import {
   POOLTOGETHER_WITHDRAW_CONFIRM,
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT,
+  KEY_BASED_ASSET_TRANSFER_CONFIRM,
+  KEY_BASED_ASSET_TRANSFER_UNLOCK,
+  KEY_BASED_ASSET_TRANSFER_FLOW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -702,6 +707,16 @@ const lendingWithdrawDepositsFlow = createStackNavigator({
 
 lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const keyBasedAssetTransferFlow = createStackNavigator({
+  [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
+  [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
+  [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,
+  [KEY_BASED_ASSET_TRANSFER_UNLOCK]: KeyBasedAssetTransferUnlockScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+keyBasedAssetTransferFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -741,8 +756,7 @@ const AppFlowNavigation = createStackNavigator(
     [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
     [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
     [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
-    [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
-    [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
+    [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
   },
   modalTransition,
 );

@@ -19,15 +19,16 @@
 */
 import React, { useEffect, useState } from 'react';
 import { FlatList, RefreshControl, ScrollView } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
 import {
   addKeyBasedAssetToTransferAction,
+  calculateKeyBasedAssetsToTransferTransactionGasAction,
   fetchAvailableBalancesToTransferAction,
   fetchAvailableCollectiblesToTransferAction,
   removeKeyBasedAssetToTransferAction,
@@ -50,7 +51,7 @@ import { formatFullAmount } from 'utils/common';
 
 // constants
 import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
-import { KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
+import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 
 // types
 import type { Asset, Balances, KeyBasedAssetTransfer } from 'models/Asset';
@@ -70,6 +71,7 @@ type Props = {
   removeKeyBasedAssetToTransfer: (asset: Asset | Collectible) => void,
   supportedAssets: Asset[],
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
+  calculateTransactionsGas: () => void,
 };
 
 const FooterInner = styled.View`
@@ -89,7 +91,7 @@ const CheckboxWrapper = styled.View`
 
 const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
   <Wrapper
-    fullScreen
+    flex={1}
     style={{
       paddingTop: 90,
       paddingBottom: 90,
@@ -103,10 +105,11 @@ const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
 const isMatchingAssetToTransfer = (
   assetToTransfer: KeyBasedAssetTransfer,
   asset: Asset | Collectible,
-) => (asset?.tokenType === COLLECTIBLES
-    && assetToTransfer?.asset?.id === asset?.id
-    && addressesEqual(assetToTransfer?.asset?.contractAddress, asset?.contractAddress))
-  || assetToTransfer?.asset?.symbol === asset?.symbol;
+) => {
+  if (asset?.tokenType !== COLLECTIBLES) return assetToTransfer?.asset?.symbol === asset?.symbol;
+  return assetToTransfer?.asset?.id === asset?.id
+    && addressesEqual(assetToTransfer?.asset?.contractAddress, asset?.contractAddress);
+};
 
 const renderCheckbox = (onPress, isChecked, wrapperStyle = {}) => (
   <CheckboxWrapper>
@@ -131,6 +134,7 @@ const KeyBasedAssetTransferChoose = ({
   addKeyBasedAssetToTransfer,
   removeKeyBasedAssetToTransfer,
   keyBasedAssetsToTransfer,
+  calculateTransactionsGas,
 }: Props) => {
   const [activeTab, setActiveTab] = useState(TOKENS);
   const [inSearchMode, setInSearchMode] = useState(false);
@@ -175,14 +179,11 @@ const KeyBasedAssetTransferChoose = ({
       symbol: assetSymbol,
     } = item;
     const assetBalance = getBalance(availableBalances, assetSymbol);
-    const selectedAsset = keyBasedAssetsToTransfer.find(
+    const checkedAsset = keyBasedAssetsToTransfer.find(
       (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
     );
-    const assetAmount = selectedAsset?.asset?.amount || assetBalance;
+    const assetAmount = checkedAsset?.asset?.amount || assetBalance;
     const formattedAmount = formatFullAmount(assetAmount);
-    const isChecked = keyBasedAssetsToTransfer.some(
-      (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
-    );
     const onCheck = () => onAssetSelect({ ...item, amount: assetAmount });
     return (
       <ListItemWithImage
@@ -191,7 +192,7 @@ const KeyBasedAssetTransferChoose = ({
         itemValue={`${formattedAmount} ${assetSymbol}`}
         fallbackToGenericToken
         onPress={onCheck}
-        customAddon={renderCheckbox(onCheck, isChecked, { marginLeft: 12 })}
+        customAddon={renderCheckbox(onCheck, !!checkedAsset, { marginLeft: 12 })}
         rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
       />
     );
@@ -204,7 +205,6 @@ const KeyBasedAssetTransferChoose = ({
       keyExtractor={(item) => item.symbol}
       renderItem={renderAsset}
       initialNumToRender={9}
-      contentContainerStyle={{ flexGrow: 1 }}
       ListEmptyComponent={renderEmptyResult('No assets found', isFetchingAvailableBalances)}
       refreshControl={
         <RefreshControl
@@ -231,29 +231,27 @@ const KeyBasedAssetTransferChoose = ({
         fallbackToGenericToken
         onPress={onCheck}
         customAddon={renderCheckbox(onCheck, isChecked, { marginRight: 4 })}
+        rightColumnInnerStyle={{ flexDirection: 'row', paddingRight: 40 }}
       />
     );
   };
 
-  const renderCollectibles = () => {
-    return (
-      <FlatList
-        data={filteredAvailableCollectibles}
-        scrollEnabled={!inSearchMode}
-        keyExtractor={(item) => `${item.assetContract}${item.id}`}
-        renderItem={renderCollectible}
-        initialNumToRender={9}
-        contentContainerStyle={{ flexGrow: 1 }}
-        ListEmptyComponent={renderEmptyResult('No collectibles found', isFetchingAvailableCollectibles)}
-        refreshControl={
-          <RefreshControl
-            refreshing={isFetchingAvailableCollectibles}
-            onRefresh={onAvailableCollectiblesRefresh}
-          />
-        }
-      />
-    );
-  };
+  const renderCollectibles = () => (
+    <FlatList
+      data={filteredAvailableCollectibles}
+      scrollEnabled={!inSearchMode}
+      keyExtractor={(item) => `${item.assetContract}${item.id}`}
+      renderItem={renderCollectible}
+      initialNumToRender={9}
+      ListEmptyComponent={renderEmptyResult('No collectibles found', isFetchingAvailableCollectibles)}
+      refreshControl={
+        <RefreshControl
+          refreshing={isFetchingAvailableCollectibles}
+          onRefresh={onAvailableCollectiblesRefresh}
+        />
+      }
+    />
+  );
 
   const assetsTabs = [
     {
@@ -268,17 +266,32 @@ const KeyBasedAssetTransferChoose = ({
     },
   ];
 
-  const hasAssetsSelected = !isEmpty(keyBasedAssetsToTransfer);
+  const hasTokensSelected = !isEmpty(keyBasedAssetsToTransfer.filter(({ asset }) => asset?.tokenType !== COLLECTIBLES));
 
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: 'Choose assets to transfer' }],
-        rightItems: [hasAssetsSelected
+        rightItems: [hasTokensSelected
           ? { link: 'Edit', onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT) }
           : {},
         ],
       }}
+      footer={!isEmpty(keyBasedAssetsToTransfer) && !inSearchMode && (
+        <Footer>
+          <FooterInner>
+            <Button
+              style={{ marginLeft: 'auto' }}
+              small
+              title="Next"
+              onPress={() => {
+                calculateTransactionsGas(); // start calculating
+                navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
+              }}
+            />
+          </FooterInner>
+        </Footer>
+      )}
     >
       <ScrollView
         stickyHeaderIndices={[1]}
@@ -298,18 +311,6 @@ const KeyBasedAssetTransferChoose = ({
         {activeTab === TOKENS && renderAssets()}
         {activeTab === COLLECTIBLES && renderCollectibles()}
       </ScrollView>
-      {hasAssetsSelected && !inSearchMode && (
-        <Footer>
-          <FooterInner>
-            <Button
-              style={{ marginLeft: 'auto' }}
-              small
-              title="Next"
-              onPress={() => {}}
-            />
-          </FooterInner>
-        </Footer>
-      )}
     </ContainerWithHeader>
   );
 };
@@ -337,6 +338,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addKeyBasedAssetToTransfer: (asset: Asset | Collectible) => dispatch(addKeyBasedAssetToTransferAction(asset)),
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
   fetchAvailableCollectiblesToTransfer: () => dispatch(fetchAvailableCollectiblesToTransferAction()),
+  calculateTransactionsGas: () => dispatch(calculateKeyBasedAssetsToTransferTransactionGasAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferChoose);
