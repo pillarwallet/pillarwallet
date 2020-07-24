@@ -21,6 +21,7 @@ import 'utils/setup';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking } from 'react-native';
+import remoteConfig from '@react-native-firebase/remote-config';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -47,6 +48,7 @@ import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // components
 import { Container } from 'components/Layout';
@@ -58,6 +60,7 @@ import Button from 'components/Button';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
+import { log } from 'utils/logger';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
@@ -138,6 +141,19 @@ class App extends React.Component<Props, *> {
       startListeningOnOpenNotification,
       startReferralsListener,
     } = this.props;
+
+    /**
+     * Before we continue, load Firebase Remote Config
+     * and inject our defaults values. This allows us to access
+     * any default remote config values immediately. We'll
+     * dispatch an action later to try and get the latest
+     * values available online.
+     */
+    remoteConfig()
+      .setDefaults(INITIAL_FEATURE_FLAGS)
+      .then(() => log.info('Firebase Config: Defaults loaded and available.'))
+      .catch(e => log.error('Firebase Config: An error occured loading defaults:', e));
+
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
       .then((netInfoState) => this.setOnlineStatus(netInfoState.isInternetReachable))

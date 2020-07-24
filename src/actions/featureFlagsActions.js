@@ -31,7 +31,7 @@ import type { FeatureFlags } from 'models/FeatureFlags';
 type ResponseFeatureFlags = {[key: string]: { value: string, source: string }}
 
 export const loadFeatureFlagsAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     remoteConfig()
       .setDefaults(INITIAL_FEATURE_FLAGS)
       .then(() => remoteConfig().fetchAndActivate())
