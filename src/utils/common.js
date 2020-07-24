@@ -612,3 +612,7 @@ export const humanizeHexString = (hexString: ?string) => {
 
   return hexString;
 };
+
+export function convertToBaseUnits(decimals: BigNumber, quantity: BigNumber): BigNumber {
+  return quantity.multipliedBy(new BigNumber(10).pow(decimals));
+}
