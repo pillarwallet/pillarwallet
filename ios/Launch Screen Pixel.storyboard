@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15705" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" launchScreen="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="01J-lp-oVM">
+    <device id="retina6_5" orientation="portrait" appearance="light"/>
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15706"/>
+        <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <scenes>
+        <!--View Controller-->
+        <scene sceneID="EHf-IW-A2E">
+            <objects>
+                <viewController id="01J-lp-oVM" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="TopLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashImageBottom" translatesAutoresizingMaskIntoConstraints="NO" id="mkR-T3-AHE">
+                                <rect key="frame" x="145" y="752.66666666666663" width="269" height="143.33333333333337"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="mkR-T3-AHE" secondAttribute="height" multiplier="15:8" id="IFP-JO-Mne"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="162" id="RZR-7P-jGF"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="269" id="ffC-Cd-7pB"/>
+                                    <constraint firstAttribute="width" constant="269" id="qDy-6m-I6m"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="SplashLogo" translatesAutoresizingMaskIntoConstraints="NO" id="rMB-4T-9nb">
+                                <rect key="frame" x="0.0" y="420" width="414" height="56"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="56" id="VZ4-M1-1cd"/>
+                                </constraints>
+                            </imageView>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="bottomLeft" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="SplashImageTop" translatesAutoresizingMaskIntoConstraints="NO" id="Ne5-U3-pgr">
+                                <rect key="frame" x="0.0" y="0.0" width="216" height="270"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="Ne5-U3-pgr" secondAttribute="height" multiplier="4:5" id="46a-7m-fla"/>
+                                    <constraint firstAttribute="height" constant="270" id="MjF-4H-uqL"/>
+                                    <constraint firstAttribute="height" relation="lessThanOrEqual" constant="270" id="PiK-tV-usC"/>
+                                    <constraint firstAttribute="width" relation="lessThanOrEqual" constant="216" id="lb6-9z-gfY"/>
+                                </constraints>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" red="0.10311106590000001" green="0.99975067380000004" blue="0.14097335929999999" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <constraints>
+                            <constraint firstAttribute="bottom" secondItem="mkR-T3-AHE" secondAttribute="bottom" id="6QU-Co-YAX"/>
+                            <constraint firstItem="rMB-4T-9nb" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="DL9-JJ-Y4S"/>
+                            <constraint firstItem="mkR-T3-AHE" firstAttribute="trailing" secondItem="Bcu-3y-fUS" secondAttribute="trailing" id="YqF-I4-WPZ"/>
+                            <constraint firstItem="rMB-4T-9nb" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Ne5-U3-pgr" secondAttribute="bottom" constant="108" id="bFG-uo-Q2Q"/>
+                            <constraint firstItem="Ne5-U3-pgr" firstAttribute="top" relation="lessThanOrEqual" secondItem="Bcu-3y-fUS" secondAttribute="top" constant="-1" id="eE9-AD-inV"/>
+                            <constraint firstItem="rMB-4T-9nb" firstAttribute="leading" secondItem="Bcu-3y-fUS" secondAttribute="leading" id="hLr-Ht-FCm"/>
+                            <constraint firstItem="rMB-4T-9nb" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="izu-zj-Y0d"/>
+                            <constraint firstItem="Bcu-3y-fUS" firstAttribute="trailing" secondItem="rMB-4T-9nb" secondAttribute="trailing" id="rl0-bD-pIx"/>
+                        </constraints>
+                        <viewLayoutGuide key="safeArea" id="Bcu-3y-fUS"/>
+                    </view>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="iYj-Kq-Ea1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="78.260869565217391" y="401.11607142857139"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="SplashImageBottom" width="270" height="162"/>
+        <image name="SplashImageTop" width="216" height="270"/>
+        <image name="SplashLogo" width="192" height="56"/>
+    </resources>
+</document>

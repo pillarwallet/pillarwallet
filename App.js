@@ -103,6 +103,7 @@ type Props = {
   i18n: I18n,
 }
 
+
 class App extends React.Component<Props, *> {
   removeNetInfoEventListener: NetInfoSubscription;
 

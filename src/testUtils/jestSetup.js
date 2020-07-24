@@ -198,16 +198,6 @@ jest.setMock('react-native-vector-icons', {
   createIconSet: () => mockView,
 });
 
-
-function BCXSDK() {
-  return {
-    txHistory: () => Promise.resolve({ txHistory: { txHistory: [] } }),
-    getBalance: () => Promise.resolve({ balance: { ticker: 'ETH', balance: 1 } }),
-  };
-}
-
-jest.setMock('blockchain-explorer-sdk', BCXSDK);
-
 const mockExchangeRates = {
   ETH: {
     EUR: 624.21,

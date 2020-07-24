@@ -19,12 +19,10 @@
 */
 import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
-import BCX from 'blockchain-explorer-sdk';
 import { Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import {
   SDK_PROVIDER,
-  BCX_URL,
   NETWORK_PROVIDER,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
@@ -34,6 +32,7 @@ import {
 } from 'react-native-dotenv';
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
+import { GasPriceOracle } from 'gas-price-oracle';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -47,7 +46,6 @@ import { normalizeWalletAddress } from 'utils/wallet';
 
 // models, types
 import type { Asset } from 'models/Asset';
-import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
@@ -68,14 +66,6 @@ import { getLimitedData } from './opensea';
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
-
-type HistoryPayload = {
-  address1: string,
-  address2?: string,
-  asset?: string,
-  nbTx?: number,
-  fromIndex: number,
-};
 
 type BalancePayload = {
   address: string,
@@ -114,15 +104,15 @@ type ValidatedUserResponse = $Shape<{
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 class SDKWrapper {
-  BCXSdk: BCX = null;
   pillarWalletSdk: PillarSdk = null;
+  gasOracle: GasPriceOracle = null;
 
   init(
     updateOAuth?: ?Function,
     oAuthTokensStored?: ?OAuthTokens,
     onOAuthTokensFailed?: ?Function,
   ) {
-    this.BCXSdk = new BCX({ apiUrl: BCX_URL });
+    this.gasOracle = new GasPriceOracle();
     this.pillarWalletSdk = new PillarSdk({
       apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
       notificationsUrl: NOTIFICATIONS_URL,
@@ -519,9 +509,9 @@ class SDKWrapper {
   }
 
   fetchGasInfo() {
-    return this.BCXSdk.gasStation()
+    return this.gasOracle.fetchGasPricesOffChain()
       .then(data => ({
-        min: data.safeLow,
+        min: data.low,
         avg: data.standard,
         max: data.fast,
       }))
@@ -530,27 +520,6 @@ class SDKWrapper {
 
   fetchTxInfo(hash: string, network?: string) {
     return fetchTransactionInfo(hash, network);
-  }
-
-  fetchHistory(payload: HistoryPayload) {
-    return this.BCXSdk.txHistory(payload)
-      .then(({ txHistory: { txHistory } }) => txHistory)
-      .then(history => {
-        return history.map(({
-          fromAddress,
-          toAddress,
-          txHash,
-          timestamp,
-          ...rest
-        }): Transaction => ({
-          to: toAddress,
-          from: fromAddress,
-          hash: txHash,
-          createdAt: timestamp || 0,
-          ...rest,
-        }));
-      })
-      .catch(() => []);
   }
 
   fetchTransactionReceipt(hash: string, network?: string) {
