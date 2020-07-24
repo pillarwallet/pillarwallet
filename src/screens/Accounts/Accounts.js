@@ -24,6 +24,7 @@ import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -147,7 +148,6 @@ const ToggleText = styled(BaseText)`
 
 
 class AccountsScreen extends React.Component<Props, State> {
-  switchToWallet: ?Account = null;
   forceRender = false;
 
   constructor(props) {
@@ -329,14 +329,16 @@ class AccountsScreen extends React.Component<Props, State> {
     );
 
     if (ppnNetwork) {
-      const { title, isActive } = ppnNetwork;
+      const { isActive } = ppnNetwork;
       const availableStakeFormattedAmount = formatMoney(availableStake);
 
       networks.push({
         id: `NETWORK_${ppnNetwork.id}`,
         type: 'NETWORK',
-        title,
-        balance: userHasSmartWallet(accounts) ? `${availableStakeFormattedAmount} ${PPN_TOKEN}` : 'N/A',
+        title: t('pillarNetwork'),
+        balance: userHasSmartWallet(accounts)
+          ? `${availableStakeFormattedAmount} ${PPN_TOKEN}`
+          : t('label.notApplicable'),
         isInitialised: isTankInitialised,
         mainAction: this.setPPNAsActiveNetwork,
         initialiseAction: this.initialisePPN,
@@ -361,11 +363,7 @@ class AccountsScreen extends React.Component<Props, State> {
       <CollapsibleListItem
         open={isLegacyWalletVisible}
         onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
-        customToggle={(
-          <ToggleText>
-            Legacy wallet (advanced)
-          </ToggleText>
-        )}
+        customToggle={<ToggleText>{t('label.keyWalletVisibilityToggle')}</ToggleText>}
         toggleWrapperStyle={{
           justifyContent: 'flex-start',
           paddingHorizontal: spacing.large,
@@ -411,7 +409,7 @@ class AccountsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Accounts' }],
+          centerItems: [{ title: t('title.accounts') }],
           leftItems: [{ close: true, dismiss: true }],
         }}
       >

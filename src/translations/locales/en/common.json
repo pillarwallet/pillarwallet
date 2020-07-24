@@ -1,1 +1,12 @@
-{}
+{
+  "smartWallet": "Smart Wallet",
+  "keyWallet": "Key wallet",
+  "pillarNetwork": "Pillar network",
+  "title": {
+    "accounts": "Accounts"
+  },
+  "label": {
+    "keyWalletVisibilityToggle": "Legacy wallet (advanced)",
+    "notApplicable": "N/A"
+  }
+}
