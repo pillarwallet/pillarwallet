@@ -21,6 +21,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
+import remoteConfig from '@react-native-firebase/remote-config';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
@@ -62,7 +63,6 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { FeatureFlags } from 'models/FeatureFlags';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
@@ -75,7 +75,6 @@ type Props = {
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
   isSmartWalletActivated: boolean,
-  featureFlags: FeatureFlags,
   user: User,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
@@ -104,7 +103,6 @@ class ServicesScreen extends React.Component<Props, State> {
       providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
-      featureFlags,
     } = this.props;
     const colors = getThemeColors(theme);
     const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
@@ -117,11 +115,17 @@ class ServicesScreen extends React.Component<Props, State> {
     if (aaveServiceDisabled) {
       aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
-    const {
-      aave, poolTogether, offersEngine, peerToPeer,
-    } = featureFlags;
+
+    /**
+     * Retrieve boolean flags for services from Remote Config.
+     */
+    const isOffersEngineEnabled = remoteConfig().getBoolean('feature_services_offers_engine');
+    const isAaveEnabled = remoteConfig().getBoolean('feature_services_aave');
+    const isPoolTogetherEnabled = remoteConfig().getBoolean('feature_services_pool_together');
+    const isPeerToPeerEnabled = remoteConfig().getBoolean('feature_services_peer_to_peer');
+
     const services = [];
-    if (offersEngine) {
+    if (isOffersEngineEnabled) {
       services.push({
         key: 'offersEngine',
         title: 'Offers engine',
@@ -131,7 +135,7 @@ class ServicesScreen extends React.Component<Props, State> {
       });
     }
     services.push(...this.getBuyCryptoServices());
-    if (aave) {
+    if (isAaveEnabled) {
       services.push({
         key: 'depositPool',
         title: 'AAVE Deposit',
@@ -141,7 +145,7 @@ class ServicesScreen extends React.Component<Props, State> {
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       });
     }
-    if (poolTogether) {
+    if (isPoolTogetherEnabled) {
       services.push({
         key: 'poolTogether',
         title: 'Pool Together savings game',
@@ -150,7 +154,7 @@ class ServicesScreen extends React.Component<Props, State> {
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       });
     }
-    if (peerToPeer) {
+    if (isPeerToPeerEnabled) {
       services.push({
         key: 'peerToPeerTrading',
         title: 'Peer-to-peer trading',
@@ -163,9 +167,15 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   getBuyCryptoServices = () => {
-    const { ramp, wyre } = this.props.featureFlags;
+    /**
+     * Retrieve boolean flags for services from Remote Config.
+     */
+    const isWyreEnabled = remoteConfig().getBoolean('feature_services_wyre');
+    const isRampEnabled = remoteConfig().getBoolean('feature_services_ramp');
+
     const buyCryptoServices = [];
-    if (ramp) {
+
+    if (isRampEnabled) {
       buyCryptoServices.push({
         key: 'ramp',
         title: 'Buy with Ramp.Network (EU)',
@@ -185,7 +195,8 @@ class ServicesScreen extends React.Component<Props, State> {
         },
       });
     }
-    if (wyre) {
+
+    if (isWyreEnabled) {
       buyCryptoServices.push({
         key: 'wyre',
         title: 'Buy with Wyre (Non-EU)',
@@ -199,6 +210,7 @@ class ServicesScreen extends React.Component<Props, State> {
         },
       });
     }
+
     return buyCryptoServices;
   }
 
@@ -294,13 +306,11 @@ const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-  featureFlags: { data: featureFlags },
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
   user,
   accounts,
   smartWalletState,
-  featureFlags,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -19,27 +19,22 @@
 */
 
 import remoteConfig from '@react-native-firebase/remote-config';
-import {
-  INITIAL_FEATURE_FLAGS,
-  SET_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
-import type { Dispatch } from 'reducers/rootReducer';
 import { reportOrWarn } from 'utils/common';
-import { parseFeatureFlags } from 'utils/featureFlags';
-import type { FeatureFlags } from 'models/FeatureFlags';
-
-type ResponseFeatureFlags = {[key: string]: { value: string, source: string }}
+import { log } from 'utils/logger';
 
 export const loadFeatureFlagsAction = () => {
-  return (dispatch: Dispatch) => {
+  return async () => {
+    /**
+     * Instruct Remote Config to fetch the latest config
+     * values available online. When the app is next launched,
+     * the app will activate() the latest values available.
+     *
+     * @url https://rnfirebase.io/reference/remote-config#fetch
+     */
     remoteConfig()
-      .setDefaults(INITIAL_FEATURE_FLAGS)
-      .then(() => remoteConfig().fetchAndActivate())
-      .then(() => remoteConfig().getAll())
-      .then((featureFlags: ResponseFeatureFlags) => {
-        const parsedFeatureFlags: FeatureFlags | {} = parseFeatureFlags(featureFlags);
-
-        dispatch({ type: SET_FEATURE_FLAGS, payload: parsedFeatureFlags });
+      .fetch(__DEV__ ? 0 : null) // Are we in dev mode? Don't cache.
+      .then(() => {
+        log.info('Firebase Config: Fetched the latest remote config values, if any.');
       })
       .catch(e => { reportOrWarn('Failed to fetch feature flags or initialize with defaults', e, 'warning'); });
   };

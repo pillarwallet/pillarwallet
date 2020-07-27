@@ -144,15 +144,30 @@ class App extends React.Component<Props, *> {
     } = this.props;
 
     /**
-     * Before we continue, load Firebase Remote Config
-     * and inject our defaults values. This allows us to access
-     * any default remote config values immediately. We'll
-     * dispatch an action later to try and get the latest
-     * values available online.
+     * First, we need to set the defaults for Remote Config.
+     * This makes the default values immedidately available
+     * on app load and can be used.
+     *
+     * @url https://rnfirebase.io/reference/remote-config#setDefaults
      */
+
     remoteConfig()
       .setDefaults(INITIAL_FEATURE_FLAGS)
       .then(() => log.info('Firebase Config: Defaults loaded and available.'))
+      .catch(e => log.error('Firebase Config: An error occured loading defaults:', e));
+
+    /**
+     * Secondly, we need to activate any remotely fetched values
+     * if they exist at all. The values that have been fetched
+     * and activated override the default values above (see @url
+     * above).
+     *
+     * @url https://rnfirebase.io/reference/remote-config#activate
+     */
+
+    remoteConfig()
+      .activate()
+      .then((r) => log.info('Firebase Config: Activation result was:', r))
       .catch(e => log.error('Firebase Config: An error occured loading defaults:', e));
 
     // hold the UI and wait until network status finished for later app connectivity checks
