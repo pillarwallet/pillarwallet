@@ -88,8 +88,6 @@ import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeAction
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
-const TRANSACTIONS_HISTORY_STEP = 10;
-
 const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
@@ -114,29 +112,6 @@ const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
   });
 
   dispatch(afterHistoryUpdatedAction());
-};
-
-// NOTE: use this action for key based accounts only
-export const fetchAssetTransactionsAction = (asset: string = 'ALL', fromIndex: number = 0) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { accounts: { data: accounts } } = getState();
-
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
-    const accountId = getAccountId(activeAccount);
-    const accountAddress = getAccountAddress(activeAccount);
-
-    const history = await api.fetchHistory({
-      address1: accountAddress,
-      asset,
-      nbTx: TRANSACTIONS_HISTORY_STEP,
-      fromIndex,
-    });
-
-    if (!history.length) return;
-
-    syncAccountHistory(history, accountId, dispatch, getState);
-  };
 };
 
 export const fetchSmartWalletTransactionsAction = () => {
@@ -183,30 +158,6 @@ export const fetchSmartWalletTransactionsAction = () => {
 
     syncAccountHistory(history, accountId, dispatch, getState);
     dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
-  };
-};
-
-// NOTE: use this action for key based accounts only
-export const fetchContactTransactionsAction = (contactAddress: string, asset: string = 'ALL') => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { accounts: { data: accounts } } = getState();
-
-    const activeAccount = getActiveAccount(accounts);
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
-
-    const accountId = getAccountId(activeAccount);
-    const accountAddress = getAccountAddress(activeAccount);
-
-    const history = await api.fetchHistory({
-      address1: accountAddress,
-      address2: contactAddress,
-      asset,
-      nbTx: TRANSACTIONS_HISTORY_STEP,
-      fromIndex: 0,
-    });
-    if (!history.length) return;
-
-    syncAccountHistory(history, accountId, dispatch, getState);
   };
 };
 

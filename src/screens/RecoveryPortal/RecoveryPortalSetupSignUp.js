@@ -17,6 +17,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import RecoveryPortalWebView from 'components/RecoveryPortalWebView';
@@ -68,7 +69,7 @@ const RecoveryPortalSetupSignUp = ({
 
   return (
     <RecoveryPortalWebView
-      title="Recovery Portal Sign Up"
+      title={t('auth:recoveryPortal.title.portalSignUp')}
       onWebViewMessage={onWebViewMessage}
       navigation={navigation}
       urlPath={signUpPath}

@@ -110,7 +110,6 @@ class ConfirmNewPin extends React.Component<Props, State> {
         <PinCode
           onPinEntered={this.handlePinSubmit}
           onPinChanged={this.handlePinChange}
-          pageInstructions=""
           showForgotButton={false}
           pinError={!!pinError}
         />

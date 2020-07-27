@@ -38,6 +38,11 @@ const SearchHolder = styled.View`
   margin-bottom: ${props => props.marginBottom || 20}px;
   margin-top: ${props => props.marginTop || 0}px;
   display: flex;
+  align-items: center;
+`;
+
+const Row = styled.View`
+  width: 100%;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -54,6 +59,7 @@ const InputField = styled(TextInput)`
   flex: 1;
   height: 42px;
   padding-left: 14px;
+  padding-right: 46px;
   color: ${themedColors.text};
   font-size: ${fontSizes.regular}px;
   font-family: ${appFont.regular};
@@ -75,6 +81,12 @@ const InputWrapper = styled.View`
   width: 100%;
 `;
 
+const Error = styled(BaseText)`
+  text-align: center;
+  color: ${themedColors.negative};
+  margin-top: ${spacing.medium}px;
+`;
+
 type Value = ?string;
 
 type InputPropsType = {
@@ -84,6 +96,7 @@ type InputPropsType = {
   onBlur?: (Value) => void,
   onFocus?: () => void,
   value: Value,
+  validator?: (val: string) => string,
 };
 
 type CommonComponentsProps = {
@@ -91,6 +104,8 @@ type CommonComponentsProps = {
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: RNTextInput,
+  inputIconName?: string,
+  iconProps?: Object,
 };
 
 type Props = CommonComponentsProps & {
@@ -105,6 +120,7 @@ type Props = CommonComponentsProps & {
 type State = {
   animShrink: Object,
   isFocused: boolean,
+  errorMessage: string,
 };
 
 type EventLike = {
@@ -119,6 +135,13 @@ type SearchInputProps = CommonComponentsProps & {
   onChange: (e: EventLike) => void,
   onBlur: () => void,
   handleSubmit: () => void,
+  borderColor: string,
+};
+
+const getBorderColor = ({ isFocused, error, colors }) => {
+  if (error) return colors.negative;
+  if (isFocused) return colors.primary;
+  return colors.tertiary;
 };
 
 const SearchInput = (props: SearchInputProps) => {
@@ -134,10 +157,18 @@ const SearchInput = (props: SearchInputProps) => {
     onChange,
     onBlur,
     handleSubmit,
+    iconProps = {},
+    borderColor,
   } = props;
+
+  const { icon, style: iconStyle = {}, onPress } = iconProps;
+  const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
+  const onIconPress = onPress || defaultOnIconPress;
+  const iconName = icon || 'search';
+
   return (
     <InputWrapper
-      borderColor={isFocused ? colors.primary : colors.tertiary}
+      borderColor={borderColor}
       backgroundColor={backgroundColor || colors.tertiary}
     >
       <InputField
@@ -153,13 +184,14 @@ const SearchInput = (props: SearchInputProps) => {
         innerRef={inputRef}
       />
       <InputIcon
-        icon="search"
-        onPress={isFocused ? handleSubmit : onFocus}
+        icon={iconName}
+        onPress={onIconPress}
         iconStyle={{
           width: 24,
           height: 24,
           color: colors.primary,
           fontSize: 24,
+          ...iconStyle,
         }}
       />
     </InputWrapper>
@@ -176,6 +208,7 @@ class SearchBar extends React.Component<Props, State> {
     this.state = {
       animShrink: new Animated.Value(forceShowCloseButton ? inputShrinkSize : 100),
       isFocused: !!forceShowCloseButton,
+      errorMessage: '',
     };
   }
 
@@ -186,9 +219,18 @@ class SearchBar extends React.Component<Props, State> {
   };
 
   handleChange = (e: EventLike) => {
-    const { inputProps: { onChange } } = this.props;
+    const { inputProps: { onChange, validator } } = this.props;
+    const { errorMessage } = this.state;
     this.value = e.nativeEvent.text;
     if (onChange) onChange(this.value);
+    if (validator) {
+      const error = validator(this.value);
+      if (error) {
+        this.setState({ errorMessage: error });
+      } else if (errorMessage) {
+        this.setState({ errorMessage: '' });
+      }
+    }
   };
 
   handleBlur = () => {
@@ -254,13 +296,12 @@ class SearchBar extends React.Component<Props, State> {
       forceShowCloseButton,
       theme,
       noClose,
+      iconProps,
     } = this.props;
-    const {
-      animShrink,
-      isFocused,
-    } = this.state;
+    const { animShrink, isFocused, errorMessage } = this.state;
     const { value = '' } = inputProps;
     const colors = getThemeColors(theme);
+    const borderColor = getBorderColor({ isFocused, error: !!errorMessage, colors });
 
     const customInputProps = {
       inputProps,
@@ -274,33 +315,39 @@ class SearchBar extends React.Component<Props, State> {
       onChange: this.handleChange,
       onBlur: this.handleBlur,
       handleSubmit: this.handleSubmit,
+      error: errorMessage,
+      borderColor,
     };
 
     if (noClose) {
       return (
         <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
-          <SearchInput {...customInputProps} />
+          <SearchInput {...customInputProps} iconProps={iconProps} />
+          {!!errorMessage && <Error>{errorMessage}</Error>}
         </SearchHolder>
       );
     }
 
     return (
       <SearchHolder marginTop={marginTop} marginBottom={marginBottom}>
-        <Animated.View
-          style={{
-            width: animShrink.interpolate({
-              inputRange: [0, 1],
-              outputRange: ['0%', '1%'],
-            }),
-          }}
-        >
-          <SearchInput {...customInputProps} />
-        </Animated.View>
-        {(isFocused || !!value || forceShowCloseButton) &&
-        <CancelButton onPress={customCloseAction || this.handleCancel}>
-          <BaseText style={{ color: colors.link }}>Close</BaseText>
-        </CancelButton>
-        }
+        <Row>
+          <Animated.View
+            style={{
+              width: animShrink.interpolate({
+                inputRange: [0, 1],
+                outputRange: ['0%', '1%'],
+              }),
+            }}
+          >
+            <SearchInput {...customInputProps} />
+          </Animated.View>
+          {(isFocused || !!value || forceShowCloseButton) &&
+          <CancelButton onPress={customCloseAction || this.handleCancel}>
+            <BaseText style={{ color: colors.link }}>Close</BaseText>
+          </CancelButton>
+          }
+        </Row>
+        {!!errorMessage && <Error>{errorMessage}</Error>}
       </SearchHolder>
     );
   }

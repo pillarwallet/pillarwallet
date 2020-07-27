@@ -18,6 +18,7 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // constants
 import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY } from 'constants/navigationConstants';
@@ -72,34 +73,25 @@ const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
   const { navigation, theme } = props;
   const colors = getThemeColors(theme);
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Recovery options' }] }}>
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:recoveryPortal.title.recoveryOptions') }] }}>
       <ScrollWrapper regularPadding>
-        <Title center>Recover Pillar Smart Wallet</Title>
-        <Paragraph small>
-          This method of recovery is available for Smart Wallet you
-          have created previously with Pillar app. Log in to Recovery
-          Portal and scan QR code from your linked device.
-        </Paragraph>
+        <Title center>{t('auth:recoveryPortal.title.recoverSmartWallet')}</Title>
+        <Paragraph small>{t('auth:recoveryPortal.paragraph.intro')}</Paragraph>
         <WarningTitleRow>
           <WarningIcon name="warning" />
-          <WarningTitle>Warning</WarningTitle>
+          <WarningTitle>{t('auth:recoveryPortal.title.warning')}</WarningTitle>
         </WarningTitleRow>
-        <HelpText color={colors.negative} noPadding>
-          After recovering your Smart Wallet you will be given a new Key wallet.
-          You will not be able to retain access to your old Key wallet attached to Smart Wallet
-          you are about to recover. Please ensure you have another option of recovering Key wallet,
-          such as recover by entering your 12 words seed phrase or private key.
-        </HelpText>
+        <HelpText color={colors.negative} noPadding>{t('auth:recoveryPortal.paragraph.introWarning')}</HelpText>
         <View style={{ alignItems: 'center' }}>
           <Button
             block
-            title="Proceed"
+            title={t('auth:button.proceed')}
             onPress={() => navigation.navigate(RECOVERY_PORTAL_WALLET_RECOVERY)}
             marginTop={50}
             marginBottom={spacing.large}
           />
           <ButtonText
-            buttonText="Recover Key wallet first"
+            buttonText={t('auth:button.recoverKeyWalletFirst')}
             onPress={() => navigation.navigate(IMPORT_WALLET)}
             fontSize={fontSizes.medium}
             medium

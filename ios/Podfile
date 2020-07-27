@@ -2,6 +2,9 @@ platform :ios, '9.0'
 require_relative '../node_modules/@react-native-community/cli-platform-ios/native_modules'
 
 target 'pillarwallet' do
+  # pod for splash gif
+  pod 'SwiftyGif'
+  
   # Pods for pillarwallet
   pod 'FBLazyVector', :path => "../node_modules/react-native/Libraries/FBLazyVector"
   pod 'FBReactNativeSpec', :path => "../node_modules/react-native/Libraries/FBReactNativeSpec"
@@ -43,4 +46,6 @@ target 'pillarwallet' do
   pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
 
   use_native_modules!
+  pod 'RNLocalize', :path => '../node_modules/react-native-localize'
+
 end

@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 
 // actions
@@ -321,9 +322,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       };
     }
 
-    const assetOptions = {
-      [poolToken]: getAssetData(getAssetsAsList(assets), supportedAssets, poolToken),
-    };
+    const poolTokenItem = getAssetData(getAssetsAsList(assets), supportedAssets, poolToken);
+    const assetOptions = !isEmpty(poolTokenItem) ? [poolTokenItem] : [];
 
     const balanceOptions = {
       [poolToken]: {
@@ -362,7 +362,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
                 maxLabel="Withdraw all"
-                assets={assetOptions}
+                customOptions={assetOptions}
                 balances={balanceOptions}
                 baseFiatCurrency={baseFiatCurrency}
                 rates={rates}

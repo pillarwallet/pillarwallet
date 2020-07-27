@@ -17,7 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import React, { useState } from 'react';
+import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
@@ -27,23 +29,33 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import CircleButton from 'components/CircleButton';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // constants
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 
+// actions
+import { goToInvitationFlowAction } from 'actions/referralsActions';
+
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
+import { accountBalancesSelector } from 'selectors/balances';
 
 // models, types
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  isSendButtonActive: boolean,
+  baseFiatCurrency: ?string,
   activeAccountAddress: string,
+  activeAccountBalances: Balances,
+  goToInvitationFlow: () => void,
+  rewardActive?: boolean,
 };
 
 const Sizer = styled.View`
@@ -60,19 +72,65 @@ const ActionButtonsWrapper = styled.View`
 `;
 
 const ActionButtons = ({
-  isSendButtonActive,
   navigation,
   activeAccountAddress,
+  activeAccountBalances,
+  baseFiatCurrency,
+  rewardActive,
+  goToInvitationFlow,
 }: Props) => {
   const [receiveAddress, setReceiveAddress] = useState('');
+  const [visibleAddFundsModal, setVisibleAddFundsModal] = useState(false);
+
+  const isSendButtonActive = !isEmpty(activeAccountBalances);
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+
+  const addFundsModalOptions = [
+    {
+      key: 'buy',
+      label: `Buy with a card${Platform.OS === 'ios' ? ' or Apple Pay' : ''}`,
+      iconName: 'wallet',
+      onPress: () => navigation.navigate(EXCHANGE, { fromAssetCode: fiatCurrency }),
+    },
+    {
+      key: 'receive',
+      label: 'Send from another wallet',
+      iconName: 'qrDetailed',
+      onPress: () => setReceiveAddress(activeAccountAddress),
+    },
+    {
+      key: 'exchange',
+      label: 'Exchange',
+      iconName: 'flip',
+      onPress: () => navigation.navigate(EXCHANGE),
+    },
+    {
+      key: 'invite',
+      label: 'Invite and earn free tokens',
+      iconName: 'present',
+      hide: !rewardActive,
+      onPress: goToInvitationFlow,
+    },
+  ];
+
+  const closeAddFundsModal = (callback?: () => void) => {
+    setVisibleAddFundsModal(false);
+    if (callback) {
+      const timer = setTimeout(() => {
+        callback();
+        clearTimeout(timer);
+      }, 500);
+    }
+  };
+
   return (
     <React.Fragment>
       <Sizer>
         <ActionButtonsWrapper>
           <CircleButton
-            label="Receive"
+            label="Add Funds"
             fontIcon="qrDetailed"
-            onPress={() => setReceiveAddress(activeAccountAddress)}
+            onPress={() => setVisibleAddFundsModal(true)}
           />
           <CircleButton
             label="Send"
@@ -87,8 +145,14 @@ const ActionButtons = ({
           />
         </ActionButtonsWrapper>
       </Sizer>
+      <ActionOptionsModal
+        onModalClose={closeAddFundsModal}
+        isVisible={visibleAddFundsModal}
+        items={addFundsModalOptions}
+        title="Add funds to Pillar"
+      />
       <ReceiveModal
-        isVisible={!!receiveAddress}
+        isVisible={!isEmpty(receiveAddress)}
         address={receiveAddress}
         onModalHide={() => setReceiveAddress('')}
       />
@@ -97,13 +161,14 @@ const ActionButtons = ({
 };
 
 const mapStateToProps = ({
-  balances: { data: balances },
+  appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
-  isSendButtonActive: !isEmpty(balances),
+  baseFiatCurrency,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
+  activeAccountBalances: accountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -111,4 +176,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-export default withNavigation(connect(combinedMapStateToProps)(ActionButtons));
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+});
+
+export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(ActionButtons));

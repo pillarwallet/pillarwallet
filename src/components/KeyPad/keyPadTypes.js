@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { KEYPAD_BUTTON_DELETE, KEYPAD_BUTTON_FORGOT, KEYPAD_BUTTON_DOT } from 'constants/keyPadButtonsConstants';
+import t from 'translations/translate';
 
 const backspaceIMG = require('assets/icons/backspace.png');
 const backspaceDarkThemeIMG = require('assets/icons/backspace_dark_theme.png');
@@ -42,7 +43,7 @@ const numbers = [
 const getPincode = (props: Object): KeyPadButton[] => {
   const finalRow = [
     props.showForgotButton ? {
-      label: 'Forgot?',
+      label: t('auth:forgot', { capitalize: true, questionMark: true }),
       type: 'string',
       value: KEYPAD_BUTTON_FORGOT,
     } : { label: '', value: '' },

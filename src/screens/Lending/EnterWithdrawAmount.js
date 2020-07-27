@@ -125,11 +125,6 @@ const EnterWithdrawAmount = ({
     { amount: depositAmount, asset: depositedAsset },
   );
 
-  const assetSelectOptions = depositedAssets.reduce((assetsObject, asset) => ({
-    ...assetsObject,
-    [asset.symbol]: asset,
-  }), {});
-
   const depositedAssetsBalances: Balances = depositedAssets.reduce(
     (balancesObj, { currentBalance: balance, symbol }) => ({ ...balancesObj, [symbol]: { symbol, balance } }),
     {},
@@ -190,7 +185,7 @@ const EnterWithdrawAmount = ({
     >
       <ValueSelectorCard
         preselectedAsset={preselectedAssetSymbol}
-        assets={assetSelectOptions}
+        customOptions={depositedAssets}
         balances={depositedAssetsBalances}
         baseFiatCurrency={baseFiatCurrency}
         rates={rates}

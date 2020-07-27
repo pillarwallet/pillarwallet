@@ -26,18 +26,13 @@ const patternPlaceholderLight = require('assets/images/no_logo.png');
 const patternPlaceholderDark = require('assets/images/no_logo_dark.png');
 const genericTokenLight = require('assets/images/tokens/genericTokenLight.png');
 const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
-const pillarLogoLight = require('assets/images/landing-pillar-logo.png');
-const pillarLogoDark = require('assets/images/landing-pillar-logo-dark-theme.png');
-const pillarLogoSmallLight = require('assets/images/landing-pillar-logo.png');
-const pillarLogoSmallDark = require('assets/images/landing-pillar-logo-dark-theme.png');
+const pillarLogo = require('assets/images/pillar-logo-pixel.png');
+const pillarLogoSmallLight = require('assets/images/logo-small-on-light.png');
+const pillarLogoSmallDark = require('assets/images/logo-small-on-dark.png');
 const actionButtonBackgroundLight = require('assets/images/bg_action_button.png');
 const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
 const actionButtonBackgroundLightDisabled = require('assets/images/bg_action_button_disabled.png');
 const actionButtonBackgroundDarkDisabled = require('assets/images/bg_action_button_dark_disabled.png');
-const sendWyreLogoLight = require('assets/images/exchangeProviders/wyre.png');
-const moonPayLogoLight = require('assets/images/exchangeProviders/moon_pay.png');
-const sendWyreLogoDark = require('assets/images/exchangeProviders/wyre_dark.png');
-const moonPayLogoDark = require('assets/images/exchangeProviders/moon_pay_dark.png');
 const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
 const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
@@ -49,6 +44,11 @@ const emailIconLight = require('assets/icons/icon_email_light.png');
 const emailIconDark = require('assets/icons/icon_email_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_phone_dark.png');
+
+// patterns
+const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
+const splashPatternTop = require('assets/images/patterns/splash_pattern_top.png');
+const splashPatternBottom = require('assets/images/patterns/splash_pattern_bottom.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -66,8 +66,8 @@ export const images = (theme: Theme) => {
       darkTheme: genericTokenDark,
     }),
     pillarLogo: getImageByTheme(currentTheme, {
-      lightTheme: pillarLogoLight,
-      darkTheme: pillarLogoDark,
+      lightTheme: pillarLogo,
+      darkTheme: pillarLogo,
     }),
     pillarLogoSmall: getImageByTheme(currentTheme, {
       lightTheme: pillarLogoSmallLight,
@@ -81,15 +81,6 @@ export const images = (theme: Theme) => {
       lightTheme: actionButtonBackgroundLightDisabled,
       darkTheme: actionButtonBackgroundDarkDisabled,
     }),
-    sendWyreLogoHorizontal: getImageByTheme(currentTheme, {
-      lightTheme: sendWyreLogoLight,
-      darkTheme: sendWyreLogoDark,
-    }),
-    moonPayLogoHorizontal: getImageByTheme(currentTheme, {
-      lightTheme: moonPayLogoLight,
-      darkTheme: moonPayLogoDark,
-    }),
-    // TODO: REMOVE
     keyWalletIcon: getImageByTheme(currentTheme, {
       lightTheme: keyWalletIcon,
       darkTheme: keyWalletIconDark,
@@ -113,6 +104,18 @@ export const images = (theme: Theme) => {
     roundedPhoneIcon: getImageByTheme(currentTheme, {
       lightTheme: phoneIconLight,
       darkTheme: phoneIconDark,
+    }),
+    landingPattern: getImageByTheme(currentTheme, {
+      lightTheme: landingPattern,
+      darkTheme: landingPattern,
+    }),
+    splashPatternTop: getImageByTheme(currentTheme, {
+      lightTheme: splashPatternTop,
+      darkTheme: splashPatternTop,
+    }),
+    splashPatternBottom: getImageByTheme(currentTheme, {
+      lightTheme: splashPatternBottom,
+      darkTheme: splashPatternBottom,
     }),
   };
 };

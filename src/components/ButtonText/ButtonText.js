@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { Platform, TouchableOpacity, TouchableNativeFeedback } from 'react-native';
 import styled from 'styled-components/native';
-import { BaseText } from 'components/Typography';
+import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import type { IconProps } from 'components/Icon';
@@ -30,6 +30,7 @@ import { themedColors } from 'utils/themes';
 type CommonProps = {
   disabled?: boolean,
   isLoading?: boolean,
+  textStyle?: Object,
 };
 
 type WrapperProps = CommonProps & {
@@ -59,7 +60,7 @@ const Wrapper = styled.View`
   align-items: center;
 `;
 
-const ButtonLabel = styled(BaseText)`
+const ButtonLabel = styled(MediumText)`
   font-size: ${props => props.fontSize ? props.fontSize : fontSizes.regular}px;
   color: ${({ secondary, theme }) => secondary ? theme.colors.secondaryText : theme.colors.link};
 `;
@@ -105,11 +106,12 @@ const ButtonContent = (props: ContentProps) => {
     buttonText,
     fontSize,
     secondary,
+    textStyle,
   } = props;
   if (isLoading) {
     return <Spinner width={20} height={20} />;
   } else if (buttonText) {
-    return <ButtonLabel fontSize={fontSize} secondary={secondary}>{buttonText}</ButtonLabel>;
+    return <ButtonLabel fontSize={fontSize} secondary={secondary} style={textStyle}>{buttonText}</ButtonLabel>;
   }
   return null;
 };
@@ -125,12 +127,13 @@ const ButtonText = (props: Props) => {
     secondary,
     disabled,
     isLoading,
+    textStyle,
   } = props;
 
   return (
     <Touchable onPress={onPress} wrapperStyle={wrapperStyle} disabled={disabled || isLoading}>
       {!!leftIconProps && <StyledIcon {...leftIconProps} isLeft />}
-      <ButtonContent buttonText={buttonText} fontSize={fontSize} secondary={secondary} />
+      <ButtonContent buttonText={buttonText} fontSize={fontSize} secondary={secondary} textStyle={textStyle} />
       {!!rightIconProps && <StyledIcon {...rightIconProps} />}
     </Touchable>
   );

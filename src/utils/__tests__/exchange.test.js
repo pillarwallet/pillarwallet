@@ -17,16 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isFiatProvider, isFiatCurrency } from 'utils/exchange';
+import { isFiatCurrency } from 'utils/exchange';
 
 describe('Exchange Utility function tests', () => {
-  it('Should call isFiatProvider for MoonPay and SendWyre and get true, for others returns false.', () => {
-    expect(isFiatProvider('MoonPay')).toBeTruthy();
-    expect(isFiatProvider('SendWyre')).toBeTruthy();
-    expect(isFiatProvider('0x')).toBeFalsy();
-    expect(isFiatProvider('')).toBeFalsy();
-  });
-
   it('Should call isFiatCurrency for EUR, GBP and USD to return true, for other symbols returns false.', () => {
     expect(isFiatCurrency('EUR')).toBeTruthy();
     expect(isFiatCurrency('GBP')).toBeTruthy();

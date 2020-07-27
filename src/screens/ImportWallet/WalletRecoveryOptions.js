@@ -18,6 +18,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // constants
 import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY_INTRO } from 'constants/navigationConstants';
@@ -68,12 +69,12 @@ const WalletRecoveryOptions = (props: Props) => {
   };
 
   const recoveryOptions = [
-    { title: 'Enter 12 words seed phrase', route: IMPORT_WALLET },
-    { title: 'Use Recovery Portal (for Smart Wallet only)', route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO },
+    { title: t('auth:button.enterWordsSeed'), route: IMPORT_WALLET },
+    { title: t('auth:button.useRecoveryPortal'), route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO },
   ];
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Recovery options' }] }}>
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.recoveryOptions') }] }}>
       <ScrollWrapper>
         <RecoveryIcon
           source={imageRecovery}

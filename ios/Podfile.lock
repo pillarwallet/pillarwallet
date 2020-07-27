@@ -349,8 +349,6 @@ PODS:
     - React
   - react-native-cookies (3.2.0):
     - React
-  - react-native-in-app-browser (3.2.1):
-    - React
   - react-native-intercom (13.2.0):
     - Intercom (~> 5.5.1)
     - React
@@ -448,7 +446,11 @@ PODS:
     - React-Core
     - React-RCTImage
     - RSKImageCropper
+  - RNInAppBrowser (3.4.0):
+    - React
   - RNKeychain (6.1.0):
+    - React
+  - RNLocalize (1.4.0):
     - React
   - RNOS (1.2.6):
     - React
@@ -477,6 +479,7 @@ PODS:
   - Sentry (5.1.9):
     - Sentry/Core (= 5.1.9)
   - Sentry/Core (5.1.9)
+  - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
     - React
   - Yoga (1.14.0)
@@ -510,7 +513,6 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
-  - "react-native-in-app-browser (from `../node_modules/@matt-block/react-native-in-app-browser/ios`)"
   - react-native-intercom (from `../node_modules/react-native-intercom`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-notifications (from `../node_modules/react-native-notifications`)
@@ -543,7 +545,9 @@ DEPENDENCIES:
   - "RNFBPerf (from `../node_modules/@react-native-firebase/perf`)"
   - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNImageCropPicker (from `../node_modules/react-native-image-crop-picker`)
+  - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - RNOS (from `../node_modules/react-native-os`)
   - RNPermissions (from `../node_modules/react-native-permissions`)
   - RNScreens (from `../node_modules/react-native-screens`)
@@ -552,6 +556,7 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - SwiftyGif
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -586,6 +591,7 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
+    - SwiftyGif
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -640,8 +646,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-contacts"
   react-native-cookies:
     :path: "../node_modules/react-native-cookies/ios"
-  react-native-in-app-browser:
-    :path: "../node_modules/@matt-block/react-native-in-app-browser/ios"
   react-native-intercom:
     :path: "../node_modules/react-native-intercom"
   react-native-netinfo:
@@ -704,8 +708,12 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-gesture-handler"
   RNImageCropPicker:
     :path: "../node_modules/react-native-image-crop-picker"
+  RNInAppBrowser:
+    :path: "../node_modules/react-native-inappbrowser-reborn"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNOS:
     :path: "../node_modules/react-native-os"
   RNPermissions:
@@ -779,7 +787,6 @@ SPEC CHECKSUMS:
   react-native-camera: 8ab02aac456a7db830980cef5f3772644fe96e1f
   react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
-  react-native-in-app-browser: fd1f47f321de31c824a202383aa6e33e1c03abb4
   react-native-intercom: 25ceddd224fdf63be29d4e25e95a893e5befe18f
   react-native-netinfo: cb74e17062b2af5a16a4b137f32495f241df1a8e
   react-native-notifications: 3d1c66c8a3eb1857577f283f9f6e9aa505f16346
@@ -811,7 +818,9 @@ SPEC CHECKSUMS:
   RNFBPerf: 7e0b7d7697aa69205bd1b19e8f118e2833fb7653
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
+  RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
   RNKeychain: 7cab1c45629f265ebccd8d737cd4cb5b23a865df
+  RNLocalize: b6df30cc25ae736d37874f9bce13351db2f56796
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNPermissions: ad71dd4f767ec254f2cd57592fbee02afee75467
   RNScreens: f28b48b8345f2f5f39ed6195518291515032a788
@@ -824,9 +833,10 @@ SPEC CHECKSUMS:
   SDWebImage: 112503ec94a5a2a41869503844a15e8d8f1ead5c
   SDWebImageWebPCoder: 36f8f47bd9879a8aea6044765c1351120fd8e3a8
   Sentry: 81f7f2bd3cb041137ea7efcde3aa5ad0d5a67632
+  SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: f2ba0fe274339047de37310773222c70414cf4da
+PODFILE CHECKSUM: 7815d3ff68b0a771eabc580f13327a92f35a9199
 
 COCOAPODS: 1.9.1

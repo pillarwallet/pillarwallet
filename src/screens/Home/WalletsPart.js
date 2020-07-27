@@ -21,7 +21,6 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
-import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 
 // components
@@ -29,22 +28,16 @@ import PortfolioBalance from 'components/PortfolioBalance';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
-import { switchAccountAction } from 'actions/accountsActions';
 import { toggleBalanceAction } from 'actions/appSettingsActions';
 
 // utils
 import { themedColors } from 'utils/themes';
 
 // models, types
-import type { Account } from 'models/Account';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
-
-// selectors
-import { activeWalletSelector, availableWalletsSelector } from 'selectors/wallets';
 
 // partials
 import ActionButtons from './ActionButtons';
@@ -53,16 +46,9 @@ import ActionButtons from './ActionButtons';
 type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
-  switchAccount: (accountId: string) => void,
-  activeWallet: Account,
-  availableWallets: Account[],
   hideBalance: boolean,
   toggleBalance: () => void,
-  handleWalletChange: (message: string) => void,
-};
-
-type State = {
-  isChangingAccount: boolean,
+  rewardActive?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -72,76 +58,21 @@ const Wrapper = styled.View`
   border-bottom-color: ${themedColors.border};
 `;
 
-class WalletsPart extends React.Component<Props, State> {
-  state = {
-    isChangingAccount: false,
-  };
-
-  componentDidUpdate(prevProps: Props) {
-    const { activeWallet } = this.props;
-    const { isChangingAccount } = this.state;
-    if (isChangingAccount && prevProps.activeWallet !== activeWallet) {
-      this.endChanging();
-    }
-  }
-
-  endChanging = () => {
-    const { handleWalletChange } = this.props;
-    handleWalletChange('');
-    this.setState({ isChangingAccount: false });
-  };
-
-  changeAcc = (nextWallet: Account, callback?: () => void, noFullScreenLoader?: boolean) => {
-    const {
-      switchAccount,
-      handleWalletChange,
-    } = this.props;
-
-    this.setState({ isChangingAccount: true });
-    if (!noFullScreenLoader) {
-      handleWalletChange('Changing wallet');
-    }
-
-    const { type: newWalletType, id } = nextWallet;
-
-    switch (newWalletType) {
-      case ACCOUNT_TYPES.SMART_WALLET:
-      case ACCOUNT_TYPES.KEY_BASED:
-        switchAccount(id);
-        if (callback) callback();
-        break;
-      default:
-        break;
-    }
-  };
-
-  render() {
-    const {
-      availableWallets,
-      baseFiatCurrency,
-      activeWallet,
-      toggleBalance,
-      hideBalance,
-    } = this.props;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    return (
-      <Wrapper>
-        <PortfolioBalance
-          fiatCurrency={fiatCurrency}
-          showBalance={!hideBalance}
-          toggleBalanceVisibility={toggleBalance}
-        />
-        <ActionButtons
-          wallets={availableWallets}
-          changeWalletAction={this.changeAcc}
-          activeWallet={activeWallet}
-        />
-      </Wrapper>
-    );
-  }
-}
+const WalletsPart = ({
+  baseFiatCurrency,
+  toggleBalance,
+  hideBalance,
+  rewardActive,
+}: Props) => (
+  <Wrapper>
+    <PortfolioBalance
+      fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
+      showBalance={!hideBalance}
+      toggleBalanceVisibility={toggleBalance}
+    />
+    <ActionButtons rewardActive={rewardActive} />
+  </Wrapper>
+);
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, hideBalance } },
@@ -150,20 +81,8 @@ const mapStateToProps = ({
   hideBalance,
 });
 
-const structuredSelector = createStructuredSelector({
-  activeWallet: activeWalletSelector,
-  availableWallets: availableWalletsSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   toggleBalance: () => dispatch(toggleBalanceAction()),
 });
 
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(WalletsPart));
+export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(WalletsPart));

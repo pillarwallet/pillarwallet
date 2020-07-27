@@ -20,10 +20,14 @@
 
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { createSelector } from 'reselect';
+import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { images } from 'utils/images';
+import { getThemeByType } from 'utils/themes';
 import {
   accountsSelector,
   activeAccountSelector,
   activeBlockchainSelector,
+  themeSelector,
   featureFlagsSelector,
 } from './selectors';
 
@@ -52,5 +56,26 @@ export const availableWalletsSelector = createSelector(
     }
 
     return availableWallets;
+  },
+);
+
+export const innactiveUserWalletForSendSellector = createSelector(
+  accountsSelector, themeSelector, (accounts, themeType) => {
+    return getInactiveUserAccounts(accounts).map(account => {
+      const accountName = getAccountName(account.type);
+      const theme = getThemeByType(themeType);
+      const { smartWalletIcon } = images(theme);
+      const { keyWalletIcon } = images(theme);
+      const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
+
+      return {
+        ...account,
+        ethAddress: getAccountAddress(account),
+        username: accountName,
+        name: accountName,
+        isUserAccount: true,
+        imageSource: walletIcon,
+      };
+    });
   },
 );

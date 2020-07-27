@@ -26,13 +26,10 @@ import {
   TextInput as RNInput,
   TouchableWithoutFeedback,
   Keyboard,
-  FlatList,
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 
-import { ETH } from 'constants/assetsConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
 import IconButton from 'components/IconButton';
@@ -40,26 +37,20 @@ import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
-import SearchBar from 'components/SearchBar';
-import SlideModal from 'components/Modals/SlideModal';
-import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import TankAssetBalance from 'components/TankAssetBalance';
-import ProfileImage from 'components/ProfileImage';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
+import SelectorOptions from 'components/SelectorOptions';
 
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { formatMoney, noop } from 'utils/common';
+import { noop } from 'utils/common';
 import { images } from 'utils/images';
-import { getMatchingSortedData, resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'utils/textInput';
+import { resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'utils/textInput';
 
 import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
-import type { InputPropsType, SelectorOptions } from 'models/TextInput';
+import type { InputPropsType, SelectorOptions as SelectorOptionsType } from 'models/TextInput';
 
 type Props = {
   errorMessage?: string,
@@ -79,7 +70,7 @@ type Props = {
   leftSideText?: string,
   numeric?: boolean,
   iconProps?: IconButtonProps,
-  selectorOptions?: SelectorOptions,
+  selectorOptions?: SelectorOptionsType,
   errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
   rightPlaceholder?: string,
@@ -94,20 +85,11 @@ type Props = {
 type State = {
   isFocused: boolean,
   showOptionsSelector: boolean,
-  query: string,
 };
 
 type EventLike = {
   nativeEvent: Object,
 };
-
-const viewConfig = {
-  minimumViewTime: 300,
-  viewAreaCoveragePercentThreshold: 100,
-  waitForInteraction: true,
-};
-
-const MIN_QUERY_LENGTH = 2;
 
 const ErrorMessage = styled(BaseText)`
   color: ${themedColors.negative};
@@ -236,44 +218,6 @@ const SelectorChevron = styled(Icon)`
   margin-left: 15px;
 `;
 
-const Wrapper = styled.View`
-`;
-
-const SearchBarWrapper = styled.View`
-  padding: ${spacing.mediumLarge}px ${spacing.layoutSides}px 0;
-`;
-
-const HorizontalOptions = styled.View`
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${themedColors.border};
-  padding-bottom: ${spacing.small}px;
-`;
-
-const HorizontalOptionItem = styled.TouchableOpacity`
-  align-items: center;
-  width: 68px;
-`;
-
-const HorizontalOptionItemName = styled(BaseText)`
-  ${fontStyles.small};
-  color: ${themedColors.secondaryText};
-  padding: 0 4px;
-  margin-top: 10px;
-`;
-
-const OptionsHeader = styled(MediumText)`
-  margin: ${spacing.large}px ${spacing.layoutSides}px 0;
-  ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
-`;
-
-const EmptyStateWrapper = styled(Wrapper)`
-  padding-top: 90px;
-  padding-bottom: 90px;
-  align-items: center;
-`;
-
 const InputLabel = styled(MediumText)`
   margin-bottom: 8px;
 `;
@@ -294,7 +238,6 @@ class TextInput extends React.Component<Props, State> {
     this.state = {
       isFocused: false,
       showOptionsSelector: false,
-      query: '',
     };
   }
 
@@ -364,7 +307,7 @@ class TextInput extends React.Component<Props, State> {
   handleSubmit = () => {
     const { onSubmit } = this.props.inputProps;
     if (onSubmit) onSubmit();
-  }
+  };
 
   openSelector = () => {
     Keyboard.dismiss();
@@ -374,76 +317,19 @@ class TextInput extends React.Component<Props, State> {
     if (onSelectorOpen) onSelectorOpen();
   };
 
-  renderOption = ({ item: option }: Object) => {
-    if (option.value === 'extendedHeaderItems') {
-      return option.component;
-    }
-    const { renderOption } = this.props;
-    if (renderOption) {
-      return renderOption(option, () => this.selectValue(option));
-    }
-    const {
-      name,
-      symbol,
-      assetBalance,
-      formattedBalanceInFiat,
-      paymentNetworkBalance,
-    } = option;
-    const iconUrl = option.icon ? `${SDK_PROVIDER}/${option.icon}?size=3` : null;
-    const paymentNetworkBalanceFormatted = formatMoney(paymentNetworkBalance, 4);
-
-    return (
-      <ListItemWithImage
-        onPress={() => this.selectValue(option)}
-        label={name}
-        itemImageUrl={iconUrl}
-        fallbackToGenericToken
-        balance={!!formattedBalanceInFiat && {
-          balance: assetBalance,
-          value: formattedBalanceInFiat,
-          token: symbol,
-        }}
-        customAddon={!!paymentNetworkBalance &&
-          <TankAssetBalance
-            amount={paymentNetworkBalanceFormatted}
-            isSynthetic={symbol !== ETH}
-          />
-        }
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-      />
-    );
+  closeSelector = () => {
+    this.setState({ showOptionsSelector: false });
+    const { inputProps } = this.props;
+    const { onSelectorClose } = inputProps;
+    if (onSelectorClose) onSelectorClose();
   };
 
-  renderHorizontalOption = ({ item }) => {
-    const { theme } = this.props;
-    const { symbol, iconUrl } = item;
-    const iconUri = iconUrl && `${SDK_PROVIDER}/${iconUrl}?size=3`;
-    const { genericToken } = images(theme);
-
-    return (
-      <HorizontalOptionItem
-        key={symbol}
-        onPress={() => this.selectValue(item)}
-      >
-        <ProfileImage
-          uri={iconUri}
-          userName={symbol}
-          diameter={64}
-          textStyle={{ fontSize: fontSizes.medium }}
-          noShadow
-          borderWidth={0}
-          fallbackImage={genericToken}
-        />
-        <HorizontalOptionItemName numberOfLines={1}>{symbol}</HorizontalOptionItemName>
-      </HorizontalOptionItem>
-    );
-  };
-
-  selectValue = (selectedValue: Object) => {
+  selectValue = (selectedValue: Object, onSuccess: () => void) => {
     const { inputProps: { onChange, selectorValue } } = this.props;
     const { input } = selectorValue;
     if (onChange) onChange({ selector: selectedValue, input });
     this.setState({ showOptionsSelector: false });
+    if (onSuccess) onSuccess();
   };
 
   focusInput = () => {
@@ -452,35 +338,6 @@ class TextInput extends React.Component<Props, State> {
 
   onMultilineInputFieldPress = () => {
     if (this.multilineInputField) this.multilineInputField.focus();
-  };
-
-  handleSearch = (query: string) => {
-    const formattedQuery = !query ? '' : query.trim();
-
-    this.setState({
-      query: formattedQuery,
-    });
-  };
-
-  renderHorizontalOptions = (data, title) => {
-    if (!data.length) return null;
-    const { selectorOptions: { showOptionsTitles } = {} } = this.props;
-    return (
-      <HorizontalOptions>
-        {(showOptionsTitles && !!title) &&
-          <OptionsHeader>{title}</OptionsHeader>
-        }
-        <FlatList
-          data={data}
-          keyExtractor={({ name }) => name}
-          keyboardShouldPersistTaps="always"
-          renderItem={this.renderHorizontalOption}
-          horizontal
-          contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
-          ItemSeparatorComponent={() => <View style={{ width: 26, height: 1 }} />}
-        />
-      </HorizontalOptions>
-    );
   };
 
   renderSelector = () => {
@@ -502,7 +359,6 @@ class TextInput extends React.Component<Props, State> {
       return <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>;
     }
 
-
     const optionImageSource = resolveAssetSource(selectedOptionIcon);
     return (
       <ValueWrapper>
@@ -515,14 +371,14 @@ class TextInput extends React.Component<Props, State> {
         <SelectorValue>{selectedValue}</SelectorValue>
       </ValueWrapper>
     );
-  }
+  };
 
   optionKeyExtractor = (option) => {
     const { optionKeyExtractor } = this.props;
     if (optionKeyExtractor) {
       return optionKeyExtractor(option);
     }
-    return option.value;
+    return option?.value;
   };
 
   renderInputHeader = () => {
@@ -547,17 +403,16 @@ class TextInput extends React.Component<Props, State> {
       }}
       >
         {customLabel}
-        {!!label &&
-        <InputLabel>{label}</InputLabel>
-        }
+        {!!label && <InputLabel>{label}</InputLabel>}
         {!!rightLabel &&
-        <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />}
+          <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
+        }
       </View>
     );
   };
 
   render() {
-    const { isFocused, query, showOptionsSelector } = this.state;
+    const { isFocused, showOptionsSelector } = this.state;
     const {
       inputProps,
       errorMessage,
@@ -580,13 +435,12 @@ class TextInput extends React.Component<Props, State> {
       errorMessageOnTop,
       customInputHeight,
       inputWrapperStyle = {},
+      renderOption,
     } = this.props;
     let { fallbackSource } = this.props;
 
     const colors = getThemeColors(theme);
-    const {
-      value = '', selectorValue = {}, multiline, onSelectorClose,
-    } = inputProps;
+    const { value = '', selectorValue = {}, multiline } = inputProps;
     const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     const { genericToken } = images(theme);
@@ -603,59 +457,27 @@ class TextInput extends React.Component<Props, State> {
 
     const {
       options = [],
-      horizontalOptions = [],
+      optionTabs,
       fullWidth: fullWidthSelector,
-      showOptionsTitles,
-      horizontalOptionsTitle,
-      optionsTitle,
       selectorModalTitle,
       optionsSearchPlaceholder,
-      fiatOptions = [],
-      fiatOptionsTitle,
-      displayFiatOptionsFirst,
+      horizontalOptions,
     } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
     const showRightAddon = !!iconProps || loading || rightPlaceholder;
+    const horizontalOptionsLength = !horizontalOptions ? 0 : horizontalOptions.reduce((sum, item) => {
+      if (item.data?.length) sum += item.data?.length;
+      return sum;
+    }, 0);
+    const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
+      if (tab.options?.length) sum += tab.options?.length;
+      return sum;
+    }, 0);
 
-    const selectorOptionsCount = options.length + horizontalOptions.length;
-    let filteredHorizontalListData = horizontalOptions;
-    let filteredListData = options;
-
-    const isSearchQuery = query && query.length >= MIN_QUERY_LENGTH;
-    if (isSearchQuery && showOptionsSelector) {
-      filteredListData = getMatchingSortedData(filteredListData, query);
-      filteredHorizontalListData = getMatchingSortedData(filteredHorizontalListData, query);
-    }
+    const selectorOptionsCount = options.length + horizontalOptionsLength + optionsInTabsLength;
 
     const imageSource = resolveAssetSource(innerImageURI);
-
-    const renderedFiatHorizontalOptions = this.renderHorizontalOptions(fiatOptions, fiatOptionsTitle);
-
-    const renderedHorizontalOptions = this.renderHorizontalOptions(filteredHorizontalListData, horizontalOptionsTitle);
-
-    const extendedHeaderItems = {
-      value: 'extendedHeaderItems',
-      component: (
-        <>
-          {!!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
-          {!!filteredHorizontalListData && renderedHorizontalOptions}
-          {!displayFiatOptionsFirst && renderedFiatHorizontalOptions}
-          {(showOptionsTitles && !!optionsTitle) && !!filteredListData.length &&
-          <OptionsHeader>{optionsTitle}</OptionsHeader>}
-          {(!filteredListData.length && !filteredHorizontalListData.length) &&
-          <EmptyStateWrapper fullScreen>
-            <EmptyStateParagraph title="Nothing found" />
-          </EmptyStateWrapper>
-          }
-        </>),
-    };
-
-    let allFeedListData = [extendedHeaderItems];
-    if (filteredListData.length) {
-      allFeedListData = [extendedHeaderItems, ...filteredListData];
-    }
-
 
     const errorTop = !!errorMessage && !!errorMessageOnTop;
     const errorBottom = !!errorMessage && !errorMessageOnTop;
@@ -745,57 +567,19 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
         </InputFooter>}
-
-        <SlideModal
+        <SelectorOptions
           isVisible={showOptionsSelector}
-          fullScreen
-          onModalShow={this.focusInput}
-          onModalHidden={() => {
-            this.setState({ query: '' });
-            Keyboard.dismiss();
-            if (onSelectorClose) onSelectorClose();
-          }}
-          noSwipeToDismiss
-          noClose
-          backgroundColor={colors.card}
-        >
-          <ContainerWithHeader
-            headerProps={{
-              noPaddingTop: true,
-              customOnBack: () => {
-                this.setState({ showOptionsSelector: false, query: '' });
-                Keyboard.dismiss();
-              },
-              centerItems: [{ title: selectorModalTitle }],
-            }}
-          >
-            <FlatList
-              stickyHeaderIndices={[0]}
-              data={allFeedListData}
-              renderItem={this.renderOption}
-              keyExtractor={this.optionKeyExtractor}
-              keyboardShouldPersistTaps="always"
-              initialNumToRender={10}
-              viewabilityConfig={viewConfig}
-              ListHeaderComponent={
-                <SearchBarWrapper>
-                  <SearchBar
-                    inputProps={{
-                      onChange: this.handleSearch,
-                      value: query,
-                      autoCapitalize: 'none',
-                    }}
-                    placeholder={optionsSearchPlaceholder}
-                    inputRef={ref => { this.searchInput = ref; }}
-                    noClose
-                    marginBottom="0"
-                  />
-                </SearchBarWrapper>}
-              windowSize={10}
-              hideModalContentWhileAnimating
-            />
-          </ContainerWithHeader>
-        </SlideModal>
+          onHide={this.closeSelector}
+          title={selectorModalTitle}
+          options={options}
+          optionTabs={optionTabs}
+          searchPlaceholder={optionsSearchPlaceholder}
+          optionKeyExtractor={this.optionKeyExtractor}
+          onOptionSelect={this.selectValue}
+          renderOption={renderOption}
+          horizontalOptionsData={horizontalOptions}
+
+        />
       </View>
     );
   }

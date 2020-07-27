@@ -22,6 +22,7 @@ import { AppState } from 'react-native';
 import { connect } from 'react-redux';
 import { DEFAULT_PIN } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
@@ -253,7 +254,9 @@ class PinCodeUnlock extends React.Component<Props, State> {
   render() {
     const { walletState } = this.props.wallet;
     const { waitingTime, showPin } = this.state;
-    const pinError = walletState === INVALID_PASSWORD ? 'Invalid pincode' : (this.errorMessage || null);
+    const pinError = walletState === INVALID_PASSWORD
+      ? t('auth:error.invalidPin.default')
+      : (this.errorMessage || null);
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
     if (walletState === DECRYPTING) {
@@ -266,15 +269,16 @@ class PinCodeUnlock extends React.Component<Props, State> {
     if (showPin) {
       return (
         <Container>
-          <Header centerTitle title="Enter pincode" />
+          <Header centerTitle title={t('auth:enterPincode')} />
           {showError}
           {waitingTime > 0 &&
-            <ErrorMessage>Too many attempts, please try again in {waitingTime.toFixed(0)} seconds.</ErrorMessage>
+            <ErrorMessage>
+              {t('auth:error.tooManyAttemptsTryAgain', { waitDuration: waitingTime.toFixed(0) })}
+            </ErrorMessage>
           }
           {waitingTime <= 0 &&
             <PinCode
               onPinEntered={this.handlePinSubmit}
-              pageInstructions=""
               onForgotPin={this.handleForgotPasscode}
               pinError={!!pinError}
             />

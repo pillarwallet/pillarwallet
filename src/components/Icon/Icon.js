@@ -87,6 +87,7 @@ const glyphMap = {
   failed: '\uE880',
   'count-plus': '\uE83F',
   'count-minus': '\uE840',
+  wallet: '\uE842',
 };
 
 export type IconProps = {

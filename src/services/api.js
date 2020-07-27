@@ -19,28 +19,23 @@
 */
 import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
-import BCX from 'blockchain-explorer-sdk';
 import { Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import {
   SDK_PROVIDER,
-  BCX_URL,
   NETWORK_PROVIDER,
   NOTIFICATIONS_URL,
   INVESTMENTS_URL,
   OPEN_SEA_API,
   OPEN_SEA_API_KEY,
   ETHPLORER_API_KEY,
-  SENDWYRE_API_URL,
-  MOONPAY_API_URL,
-  MOONPAY_KEY,
 } from 'react-native-dotenv';
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
+import { GasPriceOracle } from 'gas-price-oracle';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
-import { MIN_MOONPAY_FIAT_VALUE } from 'constants/exchangeConstants';
 
 // utils
 import { transformAssetsToObject } from 'utils/assets';
@@ -51,7 +46,6 @@ import { normalizeWalletAddress } from 'utils/wallet';
 
 // models, types
 import type { Asset } from 'models/Asset';
-import type { Transaction } from 'models/Transaction';
 import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/Badge';
 import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
@@ -72,14 +66,6 @@ import { getLimitedData } from './opensea';
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
-
-type HistoryPayload = {
-  address1: string,
-  address2?: string,
-  asset?: string,
-  nbTx?: number,
-  fromIndex: number,
-};
 
 type BalancePayload = {
   address: string,
@@ -118,15 +104,15 @@ type ValidatedUserResponse = $Shape<{
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 class SDKWrapper {
-  BCXSdk: BCX = null;
   pillarWalletSdk: PillarSdk = null;
+  gasOracle: GasPriceOracle = null;
 
   init(
     updateOAuth?: ?Function,
     oAuthTokensStored?: ?OAuthTokens,
     onOAuthTokensFailed?: ?Function,
   ) {
-    this.BCXSdk = new BCX({ apiUrl: BCX_URL });
+    this.gasOracle = new GasPriceOracle();
     this.pillarWalletSdk = new PillarSdk({
       apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
       notificationsUrl: NOTIFICATIONS_URL,
@@ -523,9 +509,9 @@ class SDKWrapper {
   }
 
   fetchGasInfo() {
-    return this.BCXSdk.gasStation()
+    return this.gasOracle.fetchGasPricesOffChain()
       .then(data => ({
-        min: data.safeLow,
+        min: data.low,
         avg: data.standard,
         max: data.fast,
       }))
@@ -534,27 +520,6 @@ class SDKWrapper {
 
   fetchTxInfo(hash: string, network?: string) {
     return fetchTransactionInfo(hash, network);
-  }
-
-  fetchHistory(payload: HistoryPayload) {
-    return this.BCXSdk.txHistory(payload)
-      .then(({ txHistory: { txHistory } }) => txHistory)
-      .then(history => {
-        return history.map(({
-          fromAddress,
-          toAddress,
-          txHash,
-          timestamp,
-          ...rest
-        }): Transaction => ({
-          to: toAddress,
-          from: fromAddress,
-          hash: txHash,
-          createdAt: timestamp || 0,
-          ...rest,
-        }));
-      })
-      .catch(() => []);
   }
 
   fetchTransactionReceipt(hash: string, network?: string) {
@@ -736,90 +701,6 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressInfo(walletAddress))
       .then(data => get(data, 'tokens', []))
-      .catch(() => []);
-  }
-
-  fetchMoonPayOffers(fromAsset: string, toAsset: string, amount: number) {
-    const amountToGetOffer = amount < MIN_MOONPAY_FIAT_VALUE ? MIN_MOONPAY_FIAT_VALUE : amount;
-    const url = `${MOONPAY_API_URL}/v3/currencies/${toAsset.toLowerCase()}/quote/?apiKey=${MOONPAY_KEY}`
-    + `&baseCurrencyAmount=${amountToGetOffer}&baseCurrencyCode=${fromAsset.toLowerCase()}`;
-
-    return Promise.resolve()
-      .then(() => axios.get(url, defaultAxiosRequestConfig))
-      .then(({ data }: AxiosResponse) => data)
-      .then(data => {
-        if (data.totalAmount) {
-          const {
-            feeAmount,
-            extraFeeAmount,
-            quoteCurrencyAmount,
-          } = data;
-
-          const extraFeeAmountForAmountProvided = (extraFeeAmount / amountToGetOffer) * amount;
-          const totalAmount = amount + feeAmount + extraFeeAmountForAmountProvided;
-
-          return {
-            provider: 'MoonPay',
-            askRate: totalAmount,
-            fromAsset: { code: fromAsset },
-            toAsset: { code: toAsset },
-            feeAmount,
-            extraFeeAmount: extraFeeAmountForAmountProvided,
-            quoteCurrencyAmount,
-            _id: 'moonpay',
-            minQuantity: MIN_MOONPAY_FIAT_VALUE,
-            maxQuantity: 9999999,
-          };
-        }
-        return { error: true };
-      })
-      .catch(() => ({ error: true }));
-  }
-
-  fetchMoonPaySupportedAssetsTickers() {
-    const url = `${MOONPAY_API_URL}/v3/currencies`;
-    return axios.get(url, defaultAxiosRequestConfig)
-      .then(({ data }: AxiosResponse) => data)
-      .then(data => {
-        return data.filter(({ isSuspended, code }) => !isSuspended && !!code).map(({ code }) => code.toUpperCase());
-      })
-      .catch(() => []);
-  }
-
-  fetchSendWyreOffers(fromAsset: string, toAsset: string, amount: number) {
-    return Promise.resolve()
-      .then(() => axios.get(`${SENDWYRE_API_URL}/v3/rates?as=MULTIPLIER`, defaultAxiosRequestConfig))
-      .then(({ data }: AxiosResponse) => data)
-      .then(data => {
-        if (data[fromAsset + toAsset]) {
-          return {
-            provider: 'SendWyre',
-            askRate: amount,
-            fromAsset: { code: fromAsset },
-            toAsset: { code: toAsset },
-            feeAmount: '',
-            extraFeeAmount: '',
-            quoteCurrencyAmount: amount * data[fromAsset + toAsset],
-            _id: 'sendwyre',
-            minQuantity: 0.01,
-            maxQuantity: 9999999,
-          };
-        }
-        return { error: true };
-      })
-      .catch(() => ({ error: true }));
-  }
-
-  fetchSendWyreSupportedAssetsTickers() {
-    return axios.get(`${SENDWYRE_API_URL}/v3/rates`, defaultAxiosRequestConfig)
-      .then(({ data }: AxiosResponse) => data)
-      .then(data => {
-        const exchangePairs = Object.keys(data);
-        const exchangePairsWithSupportedFiatAsFirstItem = exchangePairs.filter((pair) =>
-          (pair.startsWith('USD') && !pair.startsWith('USDC')) || pair.startsWith('EUR') || pair.startsWith('GBP'));
-
-        return exchangePairsWithSupportedFiatAsFirstItem.map((key) => key.substring(3));
-      })
       .catch(() => []);
   }
 }

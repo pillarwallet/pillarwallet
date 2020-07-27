@@ -31,6 +31,7 @@ import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
+  checkIfSmartWalletWasRegisteredAction,
   connectSmartWalletAccountAction,
   initSmartWalletSdkAction,
   setSmartWalletUpgradeStatusAction,
@@ -208,6 +209,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     }
 
     dispatch(setUserEnsIfEmptyAction());
+    dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };
 

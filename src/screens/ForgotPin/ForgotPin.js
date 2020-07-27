@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import t from 'translations/translate';
 
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -59,7 +60,7 @@ class ForgotPin extends React.Component<Props, {}> {
     return (
       <ContainerWithHeader
         headerProps={({
-          centerItems: [{ title: 'Forgot PIN' }],
+          centerItems: [{ title: t('auth:title.forgotPin') }],
           rightItems: [{ close: true }],
           noBack: true,
           onClose: this.goBackToPin,
@@ -67,7 +68,7 @@ class ForgotPin extends React.Component<Props, {}> {
         footer={(
           <FooterWrapper>
             <FooterParagraph>
-              It is impossible to restore your wallet without the backup phrase, be careful.
+              {t('auth:paragraph.restoreWalletWarning')}
             </FooterParagraph>
             <Button
               leftIconName="down-arrow"
@@ -75,19 +76,15 @@ class ForgotPin extends React.Component<Props, {}> {
               danger
               marginBottom={`${spacing.rhythm}px`}
               onPress={this.toImportWallet}
-              title="Import wallet"
+              title={t('auth:title.importWallet')}
             />
-            <Button block onPress={this.goBackToPin} secondary title="Try entering PIN again" />
+            <Button block onPress={this.goBackToPin} secondary title={t('auth:button.backToPin')} />
           </FooterWrapper>
         )}
       >
         <Wrapper regularPadding style={{ marginTop: spacing.layoutSides }}>
-          <Paragraph>You can restore access to your wallet by re-importing
-            it using 12-word backup phrase generated for you during the wallet creation.
-          </Paragraph>
-          <Paragraph light>
-            Please have the backup phrase ready and re-import your wallet.
-          </Paragraph>
+          <Paragraph>{t('auth:paragraph.restoreWalletInstructions')}</Paragraph>
+          <Paragraph light>{t('auth:paragraph.restoreWalletGetReady')}</Paragraph>
         </Wrapper>
       </ContainerWithHeader>
     );
