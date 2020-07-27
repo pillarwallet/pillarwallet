@@ -46,7 +46,6 @@ import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'const
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';

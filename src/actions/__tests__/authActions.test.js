@@ -27,7 +27,6 @@ import {
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED, SET_USERNAME } from 'constants/userConstants';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
