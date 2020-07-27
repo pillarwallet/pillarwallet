@@ -43,9 +43,12 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 
+// utils
+import { calculateBalanceInFiat } from 'utils/assets';
+
 // models, types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
-import type { Balances } from 'models/Asset';
+import type { Balances, Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 
 
@@ -56,6 +59,7 @@ type Props = {
   activeAccountBalances: Balances,
   goToInvitationFlow: () => void,
   rewardActive?: boolean,
+  rates: Rates,
 };
 
 const Sizer = styled.View`
@@ -78,12 +82,13 @@ const ActionButtons = ({
   baseFiatCurrency,
   rewardActive,
   goToInvitationFlow,
+  rates,
 }: Props) => {
   const [receiveAddress, setReceiveAddress] = useState('');
   const [visibleAddFundsModal, setVisibleAddFundsModal] = useState(false);
 
-  const isSendButtonActive = !isEmpty(activeAccountBalances);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const isSendButtonActive = calculateBalanceInFiat(rates, activeAccountBalances, fiatCurrency);
 
   const addFundsModalOptions = [
     {
@@ -162,8 +167,10 @@ const ActionButtons = ({
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
+  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({
