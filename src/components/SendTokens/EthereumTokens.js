@@ -517,7 +517,10 @@ class SendEthereumTokens extends React.Component<Props, State> {
         <>
           <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />
           {!!feeError &&
-            <BaseText secondary>Not enough {gasTokenSymbol} for the transaction fee</BaseText>
+            <BaseText center secondary>
+              Sorry, you do not have enough {gasTokenSymbol} in your wallet to make this transaction.
+              Please top up your wallet and try again.
+            </BaseText>
           }
         </>
       );
@@ -545,7 +548,10 @@ class SendEthereumTokens extends React.Component<Props, State> {
             <BaseText center secondary>Fee: {this.getTransactionFeeString()}</BaseText>
           </SendTokenDetailsValue>
           {!!feeError &&
-            <BaseText center secondary>Not enough ETH for the transaction fee</BaseText>
+            <BaseText center secondary>
+              Sorry, you do not have enough ETH in your wallet to make this transaction.
+              Please top up your wallet and try again.
+            </BaseText>
           }
         </TouchableOpacity>
       );
