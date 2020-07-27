@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { NativeModules } from 'react-native';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
@@ -31,6 +33,7 @@ describe('App actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({});
+    NativeModules.SplashManager = { hide: jest.fn() };
   });
 
   it(`initAppAndRedirectAction - should trigger the app settings updated 
