@@ -81,6 +81,7 @@ const mapOffer = (
     extra: undefined,
     // _id: localConfig.get('shim_name'),
     description: '',
+    provider: 'UNISWAPV2-SHIM',
   };
 };
 
@@ -122,18 +123,15 @@ const getRoute = async (fromAsset: Asset, toAsset: Asset): Promise<Route | undef
     address: toAddress, symbol: toSymbol, name: toName,
   } = toAsset;
 
-  const fromAssetAddress = toChecksumAddress(fromSymbol === 'ETH' ? WETH[chainId]?.address : fromAddress);
-  const toAssetAddress = toChecksumAddress(toSymbol === 'ETH' ? WETH[chainId]?.address : toAddress);
-
   try {
-    const token1 = await Token.fetchData(chainId, fromAssetAddress, undefined, fromSymbol, fromName);
-    const token2 = await Token.fetchData(chainId, toAssetAddress, undefined, toSymbol, toName);
+    const token1 = await Token.fetchData(chainId, fromAddress, undefined, fromSymbol, fromName);
+    const token2 = await Token.fetchData(chainId, toAddress, undefined, toSymbol, toName);
     const pair = await Pair.fetchData(token1, token2);
 
     const route = new Route([pair], token1);
     return route;
   } catch (e) {
-    return getBackupRoute(fromAssetAddress, toAssetAddress);
+    return getBackupRoute(fromAddress, toAddress);
   }
 };
 
@@ -153,12 +151,20 @@ const getAskRate = (trade: Trade): string => {
   return excutionPriceBN.toFixed();
 };
 
+const parseAssets = (assets: Asset[]) => {
+  assets.forEach(asset => {
+    asset.address = toChecksumAddress(asset.symbol === 'ETH' ? WETH[chainId]?.address : asset.address);
+    asset.code = asset.symbol;
+  });
+};
+
 export const getOffer = async (
   allowances: Allowance[],
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
 ) => {
+  parseAssets([fromAsset, toAsset]);
   const decimalsBN = new BigNumber(fromAsset.decimals);
   const quantityBN = new BigNumber(quantity);
   const fromAssetQuantityBaseUnits = convertToBaseUnits(decimalsBN, quantityBN);

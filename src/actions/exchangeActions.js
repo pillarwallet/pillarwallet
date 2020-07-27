@@ -109,7 +109,6 @@ export const takeOfferAction = (
     const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
     const activeWalletId = getPreferredWalletId(accounts);
-
     if (!fromAsset || !toAsset) {
       Toast.show({
         title: 'Exchange service failed',
@@ -192,7 +191,7 @@ const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: numbe
     } = getState();
 
     const offer = await getOffer(allowances, fromAsset, toAsset, fromAmount);
-    // TODO continue
+    dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
@@ -218,7 +217,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const fromAsset: Asset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
     const toAsset: Asset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
-    await dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount)); // TODO test
     if (!fromAsset || !toAsset) {
       Toast.show({
         title: 'Exchange Service',
@@ -227,6 +225,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       });
       return;
     }
+
+    await dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount));
 
     let { address: fromAddress } = fromAsset;
     let { address: toAddress } = toAsset;
