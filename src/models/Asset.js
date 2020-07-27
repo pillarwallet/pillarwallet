@@ -95,6 +95,7 @@ export type KeyBasedAssetTransfer = {|
   transactionHash?: string,
   asset: Asset | Collectible,
   calculatedGasLimit?: number,
+  gasPrice?: number,
   signedTransaction?: string,
   status?: string,
 |};

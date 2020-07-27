@@ -97,6 +97,7 @@ import {
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
 import { importSmartWalletAccountsAction } from './smartWalletActions';
+import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
 
 
 const storage = Storage.getInstance('db');
@@ -294,6 +295,7 @@ export const loginAction = (
 
       dispatch(checkForWalletBackupToastAction());
       dispatch(getWalletsCreationEventsAction());
+      dispatch(checkKeyBasedAssetTransferTransactionsAction());
 
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()

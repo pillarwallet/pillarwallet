@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -26,9 +26,6 @@ import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
-
-// actions
-import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -40,7 +37,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import { formatFullAmount, getGasPriceWei, humanizeHexString } from 'utils/common';
+import { formatFullAmount, humanizeHexString } from 'utils/common';
 import { getBalance } from 'utils/assets';
 
 // constants
@@ -52,16 +49,13 @@ import { activeAccountAddressSelector } from 'selectors';
 
 // types
 import type { Balances, KeyBasedAssetTransfer } from 'models/Asset';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { GasInfo } from 'models/GasInfo';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   isCalculatingGas: boolean,
-  gasInfo: GasInfo,
-  fetchGasInfo: () => void,
   availableBalances: Balances,
   activeAccountAddress: string,
   keyBasedWalletAddress: string,
@@ -95,16 +89,12 @@ const NotEnoughFee = styled(BaseText)`
 const KeyBasedAssetTransferConfirm = ({
   keyBasedAssetsToTransfer,
   isCalculatingGas,
-  fetchGasInfo,
-  gasInfo,
   availableBalances,
   activeAccountAddress,
   keyBasedWalletAddress,
   navigation,
 }: Props) => {
-  useEffect(() => { fetchGasInfo(); }, []);
-
-  const isLoading = isCalculatingGas || isEmpty(gasInfo);
+  const isLoading = isCalculatingGas;
   const tokensTransfer = keyBasedAssetsToTransfer.filter(({ asset }) => asset?.tokenType !== COLLECTIBLES);
   const collectiblesTransfer = keyBasedAssetsToTransfer.filter(({ asset }) => asset?.tokenType === COLLECTIBLES);
 
@@ -113,11 +103,12 @@ const KeyBasedAssetTransferConfirm = ({
     const totalTransferFeeWeiBN = isCalculatingGas
       ? null
       : keyBasedAssetsToTransfer.reduce(
-        (a: BigNumber, b: any) => a.plus(getGasPriceWei(gasInfo).mul(b.calculatedGasLimit)),
+        (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
         new BigNumber(0),
       );
     const totalTransferFeeBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
     const notEnoughFee = !isCalculatingGas && totalTransferFeeBN.isGreaterThan(ethBalanceBN);
+
     return (
       <Footer>
         <FooterInner>
@@ -188,11 +179,9 @@ const mapStateToProps = ({
     availableBalances,
   },
   wallet: { data: { address: keyBasedWalletAddress } },
-  history: { gasInfo },
 }: RootReducerState): $Shape<Props> => ({
   keyBasedAssetsToTransfer,
   isCalculatingGas,
-  gasInfo,
   availableBalances,
   keyBasedWalletAddress,
 });
@@ -206,8 +195,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
-});
-
-export default connect(combinedMapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferConfirm);
+export default connect(combinedMapStateToProps)(KeyBasedAssetTransferConfirm);

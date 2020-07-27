@@ -137,6 +137,7 @@ const KeyBasedAssetTransferEditAmount = ({
     const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
     const displayAmount = updatedAssets[symbol]?.amount || '';
     const errorMessage = errorMessages[symbol];
+    const value = isEmpty(updatedAssets[symbol]) ? amount.toString() : displayAmount;
     return (
       <ListItemWithImage
         label={name}
@@ -147,7 +148,7 @@ const KeyBasedAssetTransferEditAmount = ({
           <AmountInputWrapper>
             <AmountInput
               onChangeText={(text) => handleAmountChange(text, item)}
-              value={isEmpty(updatedAssets[symbol]) ? amount : displayAmount}
+              value={value}
               placeholder={formattedAssetBalance}
               keyboardType="decimal-pad"
             />

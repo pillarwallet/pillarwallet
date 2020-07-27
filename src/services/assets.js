@@ -129,7 +129,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   };
   if (!signOnly) return wallet.sendTransaction(transaction);
 
-  const signedHash = await wallet.sign(transaction);
+  const signedHash = await wallet.signTransaction(transaction);
   return { signedHash, value: contractAmount };
 }
 
@@ -231,7 +231,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
       data,
     };
 
-    if (signOnly) return wallet.sign({ ...transaction, data });
+    if (signOnly) return wallet.signTransaction({ ...transaction, data });
 
     return wallet.sendTransaction(transaction);
   }
@@ -266,7 +266,7 @@ export async function transferETH(options: ETHTransferOptions) {
   };
   const wallet = walletInstance.connect(getEthereumProvider(NETWORK_PROVIDER));
   if (!signOnly) return wallet.sendTransaction(trx);
-  const signedHash = await wallet.sign(trx);
+  const signedHash = await wallet.signTransaction(trx);
   return { signedHash, value };
 }
 

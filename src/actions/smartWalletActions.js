@@ -157,6 +157,7 @@ import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './h
 import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchDepositedAssetsAction } from './lendingActions';
+import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
 
 
 const storage = Storage.getInstance('db');
@@ -647,6 +648,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const {
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
+        wallet: { data: { address: keyBasedWalletAddress } },
       } = getState();
       let { history: { data: currentHistory } } = getState();
       const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -660,65 +662,71 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
-      if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
-        const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
-        const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
-
-        let notificationMessage;
-        if (txType === transactionTypes.TopUp) {
-          notificationMessage = 'Your Pillar Tank was successfully funded!';
-        } else if (txType === transactionTypes.Withdrawal) {
-          notificationMessage = 'Withdrawal process completed!';
-        } else if (txType === transactionTypes.Settlement) {
-          notificationMessage = 'Settlement process completed!';
-        } else if (txType === transactionTypes.Erc20Transfer) {
-          notificationMessage = 'New transaction received!';
-        } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
-          notificationMessage = 'Your funds have been deposited!';
-          dispatch(fetchDepositedAssetsAction());
-        } else if (aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(txReceiverAddress, aaveTokenAddress))) {
-          notificationMessage = 'Your funds have been withdrawn!';
-          dispatch(fetchDepositedAssetsAction());
-        } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
-          notificationMessage = 'Transaction was successfully sent!';
+      if (txStatus === TRANSACTION_COMPLETED) {
+        if (addressesEqual(txSenderAddress, keyBasedWalletAddress)) {
+          dispatch(checkKeyBasedAssetTransferTransactionsAction());
         }
 
-        if (notificationMessage) {
-          Toast.show({
-            message: notificationMessage,
-            type: 'success',
-            title: 'Success',
-            autoClose: true,
-          });
-        }
+        if (!skipNotifications.includes(txType)) {
+          const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
+          const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
 
-        if (txToListenFound) {
-          const { txUpdated, updatedHistory } = updateHistoryRecord(
-            currentHistory,
-            txHash,
-            (transaction) => ({
-              ...transaction,
-              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
-              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-              status: TX_CONFIRMED_STATUS,
-            }));
-
-          if (txUpdated) {
-            dispatch(saveDbAction('history', { history: updatedHistory }, true));
-            dispatch({
-              type: SET_HISTORY,
-              payload: updatedHistory,
-            });
-            dispatch({
-              type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-              payload: txHash,
-            });
-            currentHistory = getState().history.data;
+          let notificationMessage;
+          if (txType === transactionTypes.TopUp) {
+            notificationMessage = 'Your Pillar Tank was successfully funded!';
+          } else if (txType === transactionTypes.Withdrawal) {
+            notificationMessage = 'Withdrawal process completed!';
+          } else if (txType === transactionTypes.Settlement) {
+            notificationMessage = 'Settlement process completed!';
+          } else if (txType === transactionTypes.Erc20Transfer) {
+            notificationMessage = 'New transaction received!';
+          } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
+            notificationMessage = 'Your funds have been deposited!';
+            dispatch(fetchDepositedAssetsAction());
+          } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
+            notificationMessage = 'Your funds have been withdrawn!';
+            dispatch(fetchDepositedAssetsAction());
+          } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
+            notificationMessage = 'Transaction was successfully sent!';
           }
-        } else {
-          dispatch(fetchSmartWalletTransactionsAction());
+
+          if (notificationMessage) {
+            Toast.show({
+              message: notificationMessage,
+              type: 'success',
+              title: 'Success',
+              autoClose: true,
+            });
+          }
+
+          if (txToListenFound) {
+            const { txUpdated, updatedHistory } = updateHistoryRecord(
+              currentHistory,
+              txHash,
+              (transaction) => ({
+                ...transaction,
+                gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
+                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+                status: TX_CONFIRMED_STATUS,
+              }));
+
+            if (txUpdated) {
+              dispatch(saveDbAction('history', { history: updatedHistory }, true));
+              dispatch({
+                type: SET_HISTORY,
+                payload: updatedHistory,
+              });
+              dispatch({
+                type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+                payload: txHash,
+              });
+              currentHistory = getState().history.data;
+            }
+          } else {
+            dispatch(fetchSmartWalletTransactionsAction());
+          }
+          dispatch(fetchAssetsBalancesAction());
         }
-        dispatch(fetchAssetsBalancesAction());
       }
 
       if (txStatus === TRANSACTION_CREATED && txType === transactionTypes.UpdateAccountEnsName) {

@@ -86,7 +86,7 @@ export function signTransaction(trx: Object, walletInstance: Object): Promise<st
   if (signTx && signTx.from) {
     delete signTx.from;
   }
-  return wallet.sign(signTx);
+  return wallet.signTransaction(signTx);
 }
 
 // handle eth_sign
