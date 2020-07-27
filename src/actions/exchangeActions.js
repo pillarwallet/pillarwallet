@@ -46,13 +46,13 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
 import { reportLog } from 'utils/common';
-import { getOffer } from 'utils/uniswap';
 
 // selectors
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // services
 import ExchangeService from 'services/exchange';
+import { getOffer } from 'services/uniswap';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -215,8 +215,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       },
     });
 
-    const fromAsset: Asset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
-    const toAsset: Asset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
+    const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
+    const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
     if (!fromAsset || !toAsset) {
       Toast.show({
         title: 'Exchange Service',
