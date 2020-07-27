@@ -21,6 +21,8 @@ import * as React from 'react';
 import { Provider, connect } from 'react-redux';
 import { ThemeProvider } from 'styled-components';
 import { getThemeByType } from 'utils/themes';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'translations/testing';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 
@@ -54,7 +56,9 @@ const StoryWrapperWithState = connect(mapStateToProps)(StoryWrapper);
 export default (story: Function) => (
   <Provider store={store}>
     <StoryWrapperWithState>
-      {story()}
+      <I18nextProvider i18n={i18n}>
+        {story()}
+      </I18nextProvider>
     </StoryWrapperWithState>
   </Provider>
 );

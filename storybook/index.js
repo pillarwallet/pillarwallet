@@ -25,6 +25,7 @@ import { loadStories } from './storyLoader';
 import withTheme from './withTheme';
 import './rn-addons';
 
+
 configure(loadStories, module);
 addDecorator(withTheme);
 

@@ -1,12 +1,116 @@
 {
-  "smartWallet": "Smart Wallet",
+  "aaveDeposit": "Aave deposit",
+  "ensName": "ENS name",
   "keyWallet": "Key wallet",
-  "pillarNetwork": "Pillar network",
+  "pillarNetwork": "Pillar Network",
+  "poolTogether": "Pool Together",
+  "smartWallet": "Smart Wallet",
+
+  "ticketAmount": "{{count}} ticket",
+  "ticketAmount_plural": "{{count}} tickets",
+
+  "positiveValue": "+ {{value}}",
+  "negativeValue": "- {{value}}",
+  "totalValue": "Total {{value}}",
+
   "title": {
-    "accounts": "Accounts"
+    "accounts": "Accounts",
+    "addFundsToWallet": "Add funds to Pillar",
+    "publicAddress": "Public address",
+    "success": "Success",
+    "transactions": "Transactions"
   },
+
   "label": {
+    "activate": "Activate",
+    "activated": "Activated",
+    "added": "Added",
+    "adding": "Adding",
+    "backedUp": "Backup secured",
+    "badge": "Badge",
+    "collectibleFromUser": "Collectible from {{username}}",
+    "collectibleToUser": "Collectible to {{username}}",
+    "created": "Created",
+    "enabled": "Enabled",
+    "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
+    "enabling": "Enabling",
+    "erc20TokensOnly": "ERC-20 tokens only",
+    "feeToken": "Fee {{tokenValue}}",
+    "feeTokenFiat": "Fee {{tokenValue}} ({{fiatValue}})",
+    "fromPPN": "from Pillar network",
+    "fromSmartWallet": "from Smart Wallet",
+    "imported": "Imported",
+    "inviteFiends": "Invite friends",
     "keyWalletVisibilityToggle": "Legacy wallet (advanced)",
-    "notApplicable": "N/A"
+    "newSmartWalletAccountDevice": "New Smart Wallet account device",
+    "notApplicable": "N/A",
+    "purchase": "Purchase",
+    "received": "Received",
+    "receiving": "Receiving",
+    "referFriends": "Refer friends",
+    "referralReward": "Referral reward",
+    "registered": "Registered",
+    "registerEnsName": "Register ENS label",
+    "removed": "Removed",
+    "removing": "Removing",
+    "requested": "Requested",
+    "sending": "Sending",
+    "sent": "Sent",
+    "settle": "Settle",
+    "smartWalletAccountDevice": "Smart Wallet account device",
+    "smartWalletAccountDeviceAdded": "New account device added",
+    "smartWalletAccountDeviceRemoved": "Account device removed",
+    "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
+    "toPPN": "to Pillar Network",
+    "topUp": "Top up",
+    "toSmartWallet": "to Smart Wallet",
+    "withdraw": "Withdraw",
+    "withdrawal": "Withdrawal",
+    "yourEnsName": "Your wallet ENS name"
+  },
+
+  "button": {
+    "activate": "Activate",
+    "activatePPN": "Activate Pillar Network",
+    "addFunds": "Add funds",
+    "buyTokens": "Buy tokens",
+    "buyWithCard": "Buy with a card",
+    "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
+    "depositMore": "Deposit more",
+    "exchange": "Exchange",
+    "inviteAndGetTokens": "Invite and earn free tokens",
+    "inviteToPillar": "Invite to Pillar",
+    "purchaseMore": "Purchase more",
+    "send": "Send",
+    "sendBack": "Send back",
+    "sendFromAnotherWallet": "Send from another wallet",
+    "sendMore": "Send more",
+    "settleMore": "Settle more",
+    "shareAddress": "Share Address",
+    "topUp": "Top up",
+    "topUpMore": "Top up more",
+    "transferToSmartWallet": "Transfer to Smart Wallet",
+    "viewBadge": "View badge",
+    "viewDeposit": "View deposit",
+    "viewOnBlockchain": "View on the blockchain",
+    "viewPullTogetherPool": "View pool",
+    "withdrawMore": "Withdraw more"
+  },
+
+  "paragraph": {
+    "addressCopiedToClipboard": "Address copied to clipboard.",
+    "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
+    "ensNameCopiedToClipboard": "ENS name copied to clipboard."
+  },
+
+  "error": {
+    "transactionFailed": {
+      "timeOut": "Transaction timed out",
+      "default": "Transaction failed"
+    }
+  },
+
+  "badgeText": {
+    "needToActivate": "Need to activate"
   }
 }
