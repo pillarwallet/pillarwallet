@@ -41,6 +41,7 @@ import { TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstan
 import { getAllOwnedAssets } from 'actions/assetsActions';
 import { collectibleFromResponse } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
+import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getAssetsAsList, transformBalancesToObject } from 'utils/assets';
@@ -233,13 +234,12 @@ export const setAndStoreKeyBasedAssetsToTransferAction = (keyBasedAssetsToTransf
 };
 
 export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       wallet: { data: { address: keyBasedWalletAddress } },
       accounts: { data: accounts },
       keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer, isCalculatingGas },
     } = getState();
-    let { history: { gasInfo } } = getState();
 
     const firstSmartAccount = findFirstSmartAccount(accounts);
     if (!firstSmartAccount) {
@@ -250,7 +250,8 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     if (isCalculatingGas) return;
     dispatch({ type: SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS, payload: true });
 
-    if (isEmpty(gasInfo) || !gasInfo?.isFetched) gasInfo = await api.fetchGasInfo();
+    await dispatch(fetchGasInfoAction());
+    const { history: { gasInfo } } = getState();
     const gasPrice = getGasPriceWei(gasInfo);
 
     const keyBasedAssetsToTransferUpdated = await Promise.all(
