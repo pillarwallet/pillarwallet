@@ -85,7 +85,7 @@ const RecoveryPortalSetupComplete = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: t('auth:recoveryPortal.title.RecoveryPortal') }],
+        centerItems: [{ title: t('auth:recoveryPortal.title.recoveryPortal') }],
         rightItems: [{ close: true }],
         noBack: true,
         onClose: dismissNavigation,
@@ -94,7 +94,7 @@ const RecoveryPortalSetupComplete = ({
       <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
         <Wrapper flex={1} center regularPadding>
           <Animation source={animationSuccess} />
-          <Title center>{t('auth:recoveryPortal.recoveryDeviceSetupComplete')}</Title>
+          <Title center>{t('auth:recoveryPortal.title.recoveryDeviceSetupComplete')}</Title>
           <Paragraph small>{t('auth:recoveryPortal.paragraph.importantToBackupPrivateKey')}</Paragraph>
           {isWalletBackupNeeded &&
             <Button
