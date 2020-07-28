@@ -103,7 +103,9 @@ const KeyBasedAssetTransferConfirm = ({
   );
 
   const renderFooter = () => {
-    const ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
+    let ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
+    const ethTransfer = keyBasedAssetsToTransfer.find(({ assetData }) => assetData?.token === ETH);
+    if (ethTransfer) ethBalanceBN = ethBalanceBN.minus(new BigNumber(ethTransfer.amount));
     const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransfer.reduce(
       (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
       new BigNumber(0),
@@ -117,7 +119,7 @@ const KeyBasedAssetTransferConfirm = ({
           <FeeLabelToggle
             labelText="Fee"
             txFeeInWei={totalTransferFeeWeiBN}
-            showFiatDefault
+            showFiatDefault={!notEnoughFee}
           />
           {!!notEnoughFee && <NotEnoughFee negative>Not enough ETH left for transaction fee</NotEnoughFee>}
           <Button
