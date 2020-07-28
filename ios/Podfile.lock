@@ -479,6 +479,7 @@ PODS:
   - Sentry (5.1.9):
     - Sentry/Core (= 5.1.9)
   - Sentry/Core (5.1.9)
+  - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
     - React
   - Yoga (1.14.0)
@@ -555,6 +556,7 @@ DEPENDENCIES:
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
+  - SwiftyGif
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
@@ -589,6 +591,7 @@ SPEC REPOS:
     - SDWebImage
     - SDWebImageWebPCoder
     - Sentry
+    - SwiftyGif
 
 EXTERNAL SOURCES:
   BVLinearGradient:
@@ -830,9 +833,10 @@ SPEC CHECKSUMS:
   SDWebImage: 112503ec94a5a2a41869503844a15e8d8f1ead5c
   SDWebImageWebPCoder: 36f8f47bd9879a8aea6044765c1351120fd8e3a8
   Sentry: 81f7f2bd3cb041137ea7efcde3aa5ad0d5a67632
+  SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: ed0ceb5f5b7e2fb6af13dda5f02a607b7aa4fc96
+PODFILE CHECKSUM: 7815d3ff68b0a771eabc580f13327a92f35a9199
 
 COCOAPODS: 1.9.1

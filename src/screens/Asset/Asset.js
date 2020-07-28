@@ -41,7 +41,6 @@ import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
@@ -58,7 +57,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { checkIfSmartWalletAccount, getAccountName } from 'utils/accounts';
+import { getAccountName } from 'utils/accounts';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
@@ -103,7 +102,6 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: () => void,
-  fetchAssetTransactions: (asset: string, indexFrom?: number) => void,
   assets: Assets,
   balances: Balances,
   rates: Object,
@@ -217,7 +215,6 @@ class AssetScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      fetchAssetTransactions,
       navigation,
       logScreenView,
       getExchangeSupportedAssets,
@@ -225,7 +222,6 @@ class AssetScreen extends React.Component<Props, State> {
       fetchReferralRewardsIssuerAddresses,
     } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
-    fetchAssetTransactions(token);
     fetchReferralRewardsIssuerAddresses();
     if (resetHideRemoval) resetHideRemoval();
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
@@ -264,21 +260,6 @@ class AssetScreen extends React.Component<Props, State> {
         opts: { address: assetData.address },
       },
     });
-  };
-
-  handleScrollWrapperEndDrag = e => {
-    const { fetchAssetTransactions, history, activeAccount } = this.props;
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
-
-    const { assetData: { token } } = this.props.navigation.state.params;
-    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
-    const contentHeight = e.nativeEvent.contentSize.height;
-    const offsetY = e.nativeEvent.contentOffset.y;
-    const indexFrom = history.filter(({ asset }) => asset === token).length;
-
-    if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchAssetTransactions(token, indexFrom);
-    }
   };
 
   handleBuyTokens = () => {
@@ -356,7 +337,6 @@ class AssetScreen extends React.Component<Props, State> {
       balances,
       paymentNetworkBalances,
       fetchAssetsBalances,
-      fetchAssetTransactions,
       baseFiatCurrency,
       navigation,
       smartWalletState,
@@ -441,13 +421,11 @@ class AssetScreen extends React.Component<Props, State> {
         inset={{ bottom: 0 }}
       >
         <ScrollWrapper
-          onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances();
-                fetchAssetTransactions(token);
                 fetchReferralRewardsIssuerAddresses();
               }}
             />
@@ -576,9 +554,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
-  },
-  fetchAssetTransactions: (asset, indexFrom) => {
-    dispatch(fetchAssetTransactionsAction(asset, indexFrom));
   },
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));

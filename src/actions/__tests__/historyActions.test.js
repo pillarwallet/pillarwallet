@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { fetchAssetTransactionsAction, restoreTransactionHistoryAction } from 'actions/historyActions';
+import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
@@ -171,10 +171,7 @@ const transformedImportedPlrTransaction = buildHistoryTransaction({
 });
 
 describe('History Actions', () => {
-  const transactionsHistoryStep = 10;
-
   const api: $Shape<SDKWrapper> = {
-    fetchHistory: jest.fn(),
     fetchSupportedAssets: jest.fn(),
     importedEthTransactionHistory: jest.fn(),
     importedErc20TransactionHistory: jest.fn(),
@@ -184,65 +181,6 @@ describe('History Actions', () => {
 
   afterEach(() => {
     (dispatchMock: any).mockClear();
-  });
-
-  describe('fetchAssetTransactionsAction()', () => {
-    afterEach(() => {
-      (getState: any).mockRestore();
-      api.fetchHistory.mockRestore();
-    });
-
-    describe('when transactions are found', () => {
-      const asset = 'ASSET';
-      const transactions = [{}];
-      const accountTransactions = {
-        [mockAccounts[0].id]: transactions,
-      };
-
-      beforeEach(async () => {
-        (getState: any).mockImplementation(() => ({
-          accounts: { data: mockAccounts },
-          history: { data: {} },
-          wallet: { data: mockWallet },
-        }));
-        api.fetchHistory.mockImplementation(() => Promise.resolve(transactions));
-
-        await fetchAssetTransactionsAction(asset)(dispatchMock, getState, api);
-      });
-
-      it('should call the api.fetchHistory function', () => {
-        expect(api.fetchHistory).toBeCalledWith({
-          address1: walletAddress,
-          asset,
-          nbTx: transactionsHistoryStep,
-          fromIndex: 0,
-        });
-      });
-
-      it('should call the dispatch function', () => {
-        expect(dispatchMock).toBeCalledWith({
-          type: SET_HISTORY,
-          payload: accountTransactions,
-        });
-      });
-    });
-
-    describe('when transactions are NOT found', () => {
-      beforeEach(async () => {
-        (getState: any).mockImplementation(() => ({
-          accounts: { data: mockAccounts },
-          history: { data: {} },
-          wallet: { data: mockWallet },
-        }));
-        api.fetchHistory.mockImplementation(() => Promise.resolve([]));
-
-        await fetchAssetTransactionsAction()(dispatchMock, getState, api);
-      });
-
-      it('should NOT call the dispatch function', () => {
-        expect(dispatchMock).not.toBeCalled();
-      });
-    });
   });
 
   describe('restoreTransactionHistoryAction()', () => {

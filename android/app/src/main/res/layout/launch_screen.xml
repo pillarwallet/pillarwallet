@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- react-native-splashscreen -->
+
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,23 +10,10 @@
     android:background="@color/main"
     android:gravity="center">
 
-    <ImageView
-        android:layout_width="0dp"
-        android:layout_height="170dp"
-        android:scaleType="fitEnd"
-        android:src="@drawable/splash_pattern_bottom"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="1.0" />
-
-    <ImageView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:cropToPadding="false"
-        android:scaleType="fitCenter"
-        android:src="@drawable/logo"
+    <pl.droidsonroids.gif.GifImageView
+        android:layout_width="192dp"
+        android:layout_height="192dp"
+        android:src="@drawable/animated_logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -35,17 +22,30 @@
 
     <ImageView
         android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:adjustViewBounds="false"
-        android:cropToPadding="false"
-        android:scaleType="fitStart"
-        android:src="@drawable/splash_pattern_top"
+        android:layout_height="0dp"
+        android:maxHeight="270dp"
+        android:scaleType="fitEnd"
+        android:src="@drawable/splash_pattern_bottom"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_percent="0.35"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <ImageView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        android:maxHeight="270dp"
+        android:scaleType="fitStart"
+        android:src="@drawable/splash_pattern_top"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHeight_max="wrap"
+        app:layout_constraintHeight_percent="0.35"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.0" />
+        app:layout_constraintTop_toTopOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
