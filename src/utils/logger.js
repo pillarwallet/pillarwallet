@@ -17,25 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { logger } from 'react-native-logs';
+import { colorConsoleAfterInteractions } from 'react-native-logs/dist/transports/colorConsoleAfterInteractions';
 
-import remoteConfig from '@react-native-firebase/remote-config';
-import { reportOrWarn } from 'utils/common';
-import { log } from 'utils/logger';
+/**
+ * Define the configuration for the logger.
+ * @url https://github.com/onubo/react-native-logs
+ *
+ * Note: colorConsoleAfterInteractions ensures that the UI
+ * is not frozen.
+ */
+const config = {
+  transport: (msg, level, options) => {
+    // Write to non-blocking transport.
+    colorConsoleAfterInteractions(msg, level, options);
 
-export const loadFeatureFlagsAction = () => {
-  return async () => {
-    /**
-     * Instruct Remote Config to fetch the latest config
-     * values available online. When the app is next launched,
-     * the app will activate() the latest values available.
-     *
-     * @url https://rnfirebase.io/reference/remote-config#fetch
-     */
-    remoteConfig()
-      .fetch(__DEV__ ? 0 : null) // Are we in dev mode? Don't cache.
-      .then(() => {
-        log.info('Firebase Config: Fetched the latest remote config values, if any.');
-      })
-      .catch(e => { reportOrWarn('Failed to fetch feature flags or initialize with defaults', e, 'warning'); });
-  };
+    // TODO: Write to non-blocking fs - we will read / ship
+    // these logs from the upcoming developer screen if needed.
+    // rnFsFileAsync(msg, level, options);
+  },
 };
+
+// Build out our logger instance...
+const log = logger.createLogger(config);
+
+// Export.
+export { log };
