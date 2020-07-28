@@ -20,17 +20,16 @@
 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import * as data from 'translations/locales/en/common.json';
+import { DEFAULT_NAMESPACE, NAMESPACES } from './config';
 
 i18n
   .use(initReactI18next)
   .init({
     lng: 'en',
     fallbackLng: 'en',
-    ns: ['custom'],
-    defaultNS: 'custom',
+    ns: DEFAULT_NAMESPACE,
+    defaultNS: NAMESPACES,
     debug: true,
-    resources: { en: { custom: data } },
   });
 
 export default i18n;

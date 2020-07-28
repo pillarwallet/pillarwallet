@@ -1000,7 +1000,7 @@ export class EventDetail extends React.Component<Props, State> {
           }
           buttons.push(
             {
-              title: t('button.viewPullTogetherPool'),
+              title: t('button.viewPoolTogetherPool'),
               onPress: () => this.goToPoolTogetherPool(symbol),
               squarePrimary: true,
             },
@@ -1055,7 +1055,7 @@ export class EventDetail extends React.Component<Props, State> {
           }
         } else if (isPoolTogetherAddress(event.to)) {
           const buttons = [{
-            title: t('button.viewPullTogetherPool'),
+            title: t('button.viewPoolTogetherPool'),
             onPress: () => this.goToPoolTogetherPool(DAI),
             squarePrimary: true,
           }];

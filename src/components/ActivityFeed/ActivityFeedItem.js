@@ -258,7 +258,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { event } = this.props;
     if (!event?.extra) return '';
     const { amount, symbol, decimals }: AaveExtra = event.extra;
-    if (!amount) return '';
+    if (!amount || !symbol) return '';
     const value = formatUnits(amount, decimals);
     return getValueWithSymbol(`${formatAmount(value, getDecimalPlaces(symbol))} ${symbol}`, isPositive, !value);
   };
@@ -285,7 +285,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: STATUSES.CREATED,
-          badge: isSmartWalletActivated ? null : t('badgeText.needToActivate'),
+          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case 'Wallet imported':
         return {
@@ -309,7 +309,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: NAMES.PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: STATUSES.CREATED,
-          badge: isSmartWalletActivated ? null : t('badgeText.needToActivate'),
+          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case WALLET_BACKUP_EVENT:
         return {

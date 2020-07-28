@@ -375,7 +375,7 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
               ]
             }
           >
-            Badge
+            label.badge
           </Text>
         </View>
         <View
@@ -444,7 +444,7 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
                   ]
                 }
               >
-                Received
+                label.received
               </Text>
             </View>
           </View>
@@ -644,7 +644,7 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
               ]
             }
           >
-            Collectible from 0x1234…123456
+            label.collectibleFromUser
           </Text>
         </View>
         <View
@@ -713,7 +713,7 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
                   ]
                 }
               >
-                Received
+                label.received
               </Text>
             </View>
           </View>
@@ -913,7 +913,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
               ]
             }
           >
-            Collectible from 0xKeyW…Wallet
+            label.collectibleFromUser
           </Text>
         </View>
         <View
@@ -982,7 +982,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
                   ]
                 }
               >
-                Received
+                label.received
               </Text>
             </View>
           </View>
@@ -1182,7 +1182,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
               ]
             }
           >
-            Collectible from 0xSmar…Wallet
+            label.collectibleFromUser
           </Text>
         </View>
         <View
@@ -1251,7 +1251,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
                   ]
                 }
               >
-                Received
+                label.received
               </Text>
             </View>
           </View>
@@ -1451,7 +1451,7 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
               ]
             }
           >
-            Collectible from Key wallet
+            label.collectibleFromUser
           </Text>
         </View>
         <View
@@ -1520,7 +1520,7 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
                   ]
                 }
               >
-                Received
+                label.received
               </Text>
             </View>
           </View>
@@ -1720,7 +1720,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
               ]
             }
           >
-            Collectible to 0x1234…123465
+            label.collectibleToUser
           </Text>
         </View>
         <View
@@ -1789,7 +1789,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
                   ]
                 }
               >
-                Sent
+                label.sent
               </Text>
             </View>
           </View>
@@ -1989,7 +1989,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
               ]
             }
           >
-            Collectible to Smart Wallet
+            label.collectibleToUser
           </Text>
         </View>
         <View
@@ -2058,7 +2058,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                   ]
                 }
               >
-                Sent
+                label.sent
               </Text>
             </View>
           </View>
@@ -2258,7 +2258,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
               ]
             }
           >
-            Collectible to 0xKeyW…Wallet
+            label.collectibleToUser
           </Text>
         </View>
         <View
@@ -2327,7 +2327,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
                   ]
                 }
               >
-                Sent
+                label.sent
               </Text>
             </View>
           </View>
@@ -2527,7 +2527,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
               ]
             }
           >
-            Collectible to 0xSmar…Wallet
+            label.collectibleToUser
           </Text>
         </View>
         <View
@@ -2596,7 +2596,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
                   ]
                 }
               >
-                Sent
+                label.sent
               </Text>
             </View>
           </View>
@@ -2741,7 +2741,7 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
               }
               type="ACTION"
             >
-              Smart Wallet
+              smartWallet
             </Text>
           </View>
           <View
@@ -2775,7 +2775,7 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
               ]
             }
           >
-            Register ENS label
+            label.registerEnsName
           </Text>
         </View>
         <View
@@ -2948,7 +2948,7 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
               }
               type="DEFAULT"
             >
-              Key wallet
+              keyWallet
             </Text>
           </View>
         </View>
@@ -3018,7 +3018,7 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
                   ]
                 }
               >
-                Created
+                label.created
               </Text>
             </View>
           </View>
@@ -3163,7 +3163,7 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
               }
               type="DEFAULT"
             >
-              Key wallet
+              keyWallet
             </Text>
           </View>
         </View>
@@ -3233,7 +3233,7 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
                   ]
                 }
               >
-                Imported
+                label.imported
               </Text>
             </View>
           </View>
@@ -3443,7 +3443,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -3517,7 +3517,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                negativeValue
               </Text>
             </View>
           </View>
@@ -3727,7 +3727,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -3801,7 +3801,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
                   ]
                 }
               >
-                + 1 ETH
+                positiveValue
               </Text>
             </View>
           </View>
@@ -4011,7 +4011,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -4085,7 +4085,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                negativeValue
               </Text>
               <View
                 name="pending"
@@ -4309,7 +4309,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -4383,7 +4383,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                   ]
                 }
               >
-                + 1 ETH
+                positiveValue
               </Text>
             </View>
           </View>
@@ -4593,7 +4593,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -4667,7 +4667,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                negativeValue
               </Text>
             </View>
           </View>
@@ -4877,7 +4877,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -4951,7 +4951,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                   ]
                 }
               >
-                + 1 ETH
+                positiveValue
               </Text>
               <View
                 name="pending"
@@ -5141,7 +5141,7 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
               }
               type="ACTION"
             >
-              Referral reward
+              label.referralReward
             </Text>
           </View>
           <View
@@ -5175,7 +5175,7 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
               ]
             }
           >
-            Key wallet
+            keyWallet
           </Text>
         </View>
         <View
@@ -5249,7 +5249,7 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
                   ]
                 }
               >
-                + 250 PLR
+                positiveValue
               </Text>
             </View>
           </View>
@@ -5394,7 +5394,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
               }
               type="DEFAULT"
             >
-              Pillar Network
+              pillarNetwork
             </Text>
           </View>
           <View
@@ -5410,7 +5410,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
             }
           />
           <View
-            label="Need to activate"
+            label="label.needToActivate"
             labelStyle={
               Object {
                 "fontSize": 10,
@@ -5460,7 +5460,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                 ]
               }
             >
-              Need to activate
+              label.needToActivate
             </Text>
           </View>
         </View>
@@ -5530,7 +5530,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                   ]
                 }
               >
-                Created
+                label.created
               </Text>
             </View>
           </View>
@@ -5675,7 +5675,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               }
               type="ACTION"
             >
-              Pillar Network
+              pillarNetwork
             </Text>
           </View>
           <View
@@ -5709,7 +5709,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
               ]
             }
           >
-            Top up
+            label.topUp
           </Text>
         </View>
         <View
@@ -5783,7 +5783,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                   ]
                 }
               >
-                + 1 PLR
+                positiveValue
               </Text>
             </View>
           </View>
@@ -5928,7 +5928,7 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
               }
               type="ACTION"
             >
-              Pillar Network
+              pillarNetwork
             </Text>
           </View>
           <View
@@ -5962,7 +5962,7 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
               ]
             }
           >
-            Withdrawal
+            label.withdrawal
           </Text>
         </View>
         <View
@@ -6036,7 +6036,7 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
                   ]
                 }
               >
-                - 1 PLR
+                negativeValue
               </Text>
             </View>
           </View>
@@ -6181,7 +6181,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit DAI 1`] = `
               }
               type="DEFAULT"
             >
-              Pool Together
+              poolTogether
             </Text>
           </View>
         </View>
@@ -6256,7 +6256,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit DAI 1`] = `
                   ]
                 }
               >
-                - 1 DAI
+                negativeValue
               </Text>
             </View>
           </View>
@@ -6401,7 +6401,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit USDC 1`] = `
               }
               type="DEFAULT"
             >
-              Pool Together
+              poolTogether
             </Text>
           </View>
         </View>
@@ -6476,7 +6476,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit USDC 1`] = `
                   ]
                 }
               >
-                - 1 USDC
+                negativeValue
               </Text>
             </View>
           </View>
@@ -6621,7 +6621,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw DAI 1`] = `
               }
               type="DEFAULT"
             >
-              Pool Together
+              poolTogether
             </Text>
           </View>
         </View>
@@ -6696,7 +6696,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw DAI 1`] = `
                   ]
                 }
               >
-                + 1 DAI
+                positiveValue
               </Text>
             </View>
           </View>
@@ -6841,7 +6841,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
               }
               type="DEFAULT"
             >
-              Pool Together
+              poolTogether
             </Text>
           </View>
         </View>
@@ -6916,7 +6916,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
                   ]
                 }
               >
-                + 1 USDC
+                positiveValue
               </Text>
             </View>
           </View>
@@ -7061,7 +7061,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
               }
               type="DEFAULT"
             >
-              Smart Wallet
+              smartWallet
             </Text>
           </View>
         </View>
@@ -7131,7 +7131,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                   ]
                 }
               >
-                Activated
+                label.activated
               </Text>
             </View>
           </View>
@@ -7276,7 +7276,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
               }
               type="ACTION"
             >
-              Settle
+              label.settle
             </Text>
           </View>
           <View
@@ -7310,7 +7310,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
               ]
             }
           >
-            to Smart Wallet
+            label.toSmartWallet
           </Text>
         </View>
         <View
@@ -7410,7 +7410,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                   ]
                 }
               >
-                + 3 PLR
+                positiveValue
               </Text>
             </View>
           </View>
@@ -7555,7 +7555,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
               }
               type="DEFAULT"
             >
-              Smart Wallet
+              smartWallet
             </Text>
           </View>
           <View
@@ -7571,7 +7571,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
             }
           />
           <View
-            label="Need to activate"
+            label="label.needToActivate"
             labelStyle={
               Object {
                 "fontSize": 10,
@@ -7621,7 +7621,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                 ]
               }
             >
-              Need to activate
+              label.needToActivate
             </Text>
           </View>
         </View>
@@ -7691,7 +7691,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                   ]
                 }
               >
-                Created
+                label.created
               </Text>
             </View>
           </View>
@@ -7901,7 +7901,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               ]
             }
           >
-            Smart Wallet
+            smartWallet
           </Text>
         </View>
         <View
@@ -7975,7 +7975,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                negativeValue
               </Text>
             </View>
           </View>
@@ -8185,7 +8185,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
               ]
             }
           >
-            Smart Wallet
+            smartWallet
           </Text>
         </View>
         <View
@@ -8259,7 +8259,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
                   ]
                 }
               >
-                + 1 ETH
+                positiveValue
               </Text>
             </View>
           </View>
@@ -8469,7 +8469,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               ]
             }
           >
-            Smart Wallet
+            smartWallet
           </Text>
         </View>
         <View
@@ -8543,7 +8543,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                negativeValue
               </Text>
               <View
                 name="pending"
@@ -8767,7 +8767,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               ]
             }
           >
-            Smart Wallet
+            smartWallet
           </Text>
         </View>
         <View
@@ -8841,7 +8841,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                   ]
                 }
               >
-                + 1 ETH
+                positiveValue
               </Text>
             </View>
           </View>
@@ -9051,7 +9051,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
               ]
             }
           >
-            Smart Wallet
+            smartWallet
           </Text>
         </View>
         <View
@@ -9125,7 +9125,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
                   ]
                 }
               >
-                - 1 ETH
+                negativeValue
               </Text>
             </View>
           </View>
@@ -9335,7 +9335,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               ]
             }
           >
-            Smart Wallet
+            smartWallet
           </Text>
         </View>
         <View
@@ -9409,7 +9409,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                   ]
                 }
               >
-                + 1 ETH
+                positiveValue
               </Text>
               <View
                 name="pending"
@@ -9713,7 +9713,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                       ]
                     }
                   >
-                    + 1 PLR
+                    positiveValue
                   </Text>
                 </View>
               </View>
@@ -10005,7 +10005,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                       ]
                     }
                   >
-                    - 1 PLR
+                    negativeValue
                   </Text>
                 </View>
               </View>
@@ -10152,7 +10152,7 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
               }
               type="DEFAULT"
             >
-              Key wallet
+              keyWallet
             </Text>
           </View>
         </View>
@@ -10222,7 +10222,7 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
                   ]
                 }
               >
-                Backup secured
+                label.backedUp
               </Text>
             </View>
           </View>
@@ -10434,7 +10434,7 @@ Array [
         ]
       }
     >
-      Received
+      label.received
     </Text>
   </View>,
   <View
@@ -10839,7 +10839,7 @@ Array [
           }
         }
       >
-        Send
+        button.send
       </Text>
     </View>
     <View
@@ -11443,7 +11443,7 @@ Array [
           }
         }
       >
-        Send back
+        button.sendBack
       </Text>
     </View>
     <View
@@ -11571,7 +11571,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -11966,7 +11966,7 @@ Array [
           }
         }
       >
-        Send back
+        button.sendBack
       </Text>
     </View>
     <View
@@ -12094,7 +12094,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -12489,7 +12489,7 @@ Array [
           }
         }
       >
-        Send more
+        button.sendMore
       </Text>
     </View>
     <View
@@ -12617,7 +12617,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -12997,7 +12997,7 @@ Array [
           }
         }
       >
-        Top up
+        button.topUp
       </Text>
     </View>
     <View
@@ -13125,7 +13125,7 @@ Array [
           }
         }
       >
-        Refer friends
+        label.referFriends
       </Text>
     </View>
     <View
@@ -13461,7 +13461,7 @@ Array [
           }
         }
       >
-        Top up
+        button.topUp
       </Text>
     </View>
     <View
@@ -13589,7 +13589,7 @@ Array [
           }
         }
       >
-        Refer friends
+        label.referFriends
       </Text>
     </View>
     <View
@@ -13969,7 +13969,7 @@ Array [
           }
         }
       >
-        Top up
+        button.topUp
       </Text>
     </View>
     <View
@@ -14097,7 +14097,7 @@ Array [
           }
         }
       >
-        Refer friends
+        label.referFriends
       </Text>
     </View>
     <View
@@ -14297,7 +14297,7 @@ Array [
         ]
       }
     >
-      Activated
+      label.activated
     </Text>
   </View>,
   <View
@@ -14477,7 +14477,7 @@ Array [
           }
         }
       >
-        Send
+        button.send
       </Text>
     </View>
     <View
@@ -14605,7 +14605,7 @@ Array [
           }
         }
       >
-        Top up
+        button.topUp
       </Text>
     </View>
     <View
@@ -14805,7 +14805,7 @@ Array [
         ]
       }
     >
-      Created
+      label.created
     </Text>
   </View>,
   <View
@@ -14993,7 +14993,7 @@ Array [
           }
         }
       >
-        Top up
+        button.topUp
       </Text>
     </View>
     <View
@@ -15232,7 +15232,7 @@ Array [
       ]
     }
   >
-    to Pillar Network
+    label.toPPN
   </Text>,
   <View
     h={16}
@@ -15369,7 +15369,7 @@ Array [
           }
         }
       >
-        Send back
+        button.sendBack
       </Text>
     </View>
     <View
@@ -15608,7 +15608,7 @@ Array [
       ]
     }
   >
-    from Pillar network
+    label.fromPPN
   </Text>,
   <View
     h={16}
@@ -15743,7 +15743,7 @@ Array [
           }
         }
       >
-        Send more
+        button.sendMore
       </Text>
     </View>
     <View
@@ -16206,7 +16206,7 @@ Array [
           ]
         }
       >
-        to Smart Wallet
+        label.toSmartWallet
       </Text>
       <View>
         <Text
@@ -16225,7 +16225,7 @@ Array [
             ]
           }
         >
-          + 1.0 PLR
+          positiveValue
         </Text>
         <Text
           large={true}
@@ -16243,7 +16243,7 @@ Array [
             ]
           }
         >
-          + 2.0 ETH
+          positiveValue
         </Text>
       </View>
     </View>
@@ -16369,7 +16369,7 @@ Array [
           }
         }
       >
-        Settle more
+        button.settleMore
       </Text>
     </View>
     <View
@@ -16735,7 +16735,7 @@ Array [
           }
         }
       >
-        Send
+        button.send
       </Text>
     </View>
     <View
@@ -16863,7 +16863,7 @@ Array [
           }
         }
       >
-        Top up more
+        button.topUpMore
       </Text>
     </View>
     <View
@@ -17229,7 +17229,7 @@ Array [
           }
         }
       >
-        Send
+        button.send
       </Text>
     </View>
     <View
@@ -17357,7 +17357,7 @@ Array [
           }
         }
       >
-        Top up more
+        button.topUpMore
       </Text>
     </View>
     <View
@@ -17723,7 +17723,7 @@ Array [
           }
         }
       >
-        Withdraw more
+        button.withdrawMore
       </Text>
     </View>
     <View
@@ -18089,7 +18089,7 @@ Array [
           }
         }
       >
-        Withdraw more
+        button.withdrawMore
       </Text>
     </View>
     <View
@@ -18224,7 +18224,7 @@ Array [
         ]
       }
     >
-      Pool Together
+      poolTogether
     </Text>
     <View
       h={20}
@@ -18290,7 +18290,7 @@ Array [
           ]
         }
       >
-        Purchase
+        label.purchase
       </Text>
       <Text
         color="#0A1427"
@@ -18317,7 +18317,7 @@ Array [
           ]
         }
       >
-        - 1 DAI
+        negativeValue
       </Text>
       <Text
         medium={true}
@@ -18335,7 +18335,7 @@ Array [
           ]
         }
       >
-        (1 ticket)
+        (ticketAmount)
       </Text>
     </View>
   </View>,
@@ -18472,7 +18472,7 @@ Array [
           }
         }
       >
-        Purchase more
+        button.purchaseMore
       </Text>
     </View>
     <View
@@ -18600,7 +18600,7 @@ Array [
           }
         }
       >
-        View pool
+        button.viewPoolTogetherPool
       </Text>
     </View>
     <View
@@ -18735,7 +18735,7 @@ Array [
         ]
       }
     >
-      Pool Together
+      poolTogether
     </Text>
     <View
       h={20}
@@ -18801,7 +18801,7 @@ Array [
           ]
         }
       >
-        Purchase
+        label.purchase
       </Text>
       <Text
         color="#0A1427"
@@ -18828,7 +18828,7 @@ Array [
           ]
         }
       >
-        - 2 USDC
+        negativeValue
       </Text>
       <Text
         medium={true}
@@ -18846,7 +18846,7 @@ Array [
           ]
         }
       >
-        (2 tickets)
+        (ticketAmount)
       </Text>
     </View>
   </View>,
@@ -18983,7 +18983,7 @@ Array [
           }
         }
       >
-        Purchase more
+        button.purchaseMore
       </Text>
     </View>
     <View
@@ -19111,7 +19111,7 @@ Array [
           }
         }
       >
-        View pool
+        button.viewPoolTogetherPool
       </Text>
     </View>
     <View
@@ -19246,7 +19246,7 @@ Array [
         ]
       }
     >
-      Pool Together
+      poolTogether
     </Text>
     <View
       h={20}
@@ -19312,7 +19312,7 @@ Array [
           ]
         }
       >
-        Withdraw
+        label.withdraw
       </Text>
       <Text
         color="#2AA057"
@@ -19339,7 +19339,7 @@ Array [
           ]
         }
       >
-        + 1 DAI
+        positiveValue
       </Text>
       <Text
         medium={true}
@@ -19357,7 +19357,7 @@ Array [
           ]
         }
       >
-        (1 ticket)
+        (ticketAmount)
       </Text>
     </View>
   </View>,
@@ -19494,7 +19494,7 @@ Array [
           }
         }
       >
-        Withdraw more
+        button.withdrawMore
       </Text>
     </View>
     <View
@@ -19622,7 +19622,7 @@ Array [
           }
         }
       >
-        View pool
+        button.viewPoolTogetherPool
       </Text>
     </View>
     <View
@@ -19757,7 +19757,7 @@ Array [
         ]
       }
     >
-      Pool Together
+      poolTogether
     </Text>
     <View
       h={20}
@@ -19823,7 +19823,7 @@ Array [
           ]
         }
       >
-        Withdraw
+        label.withdraw
       </Text>
       <Text
         color="#2AA057"
@@ -19850,7 +19850,7 @@ Array [
           ]
         }
       >
-        + 2 USDC
+        positiveValue
       </Text>
       <Text
         medium={true}
@@ -19868,7 +19868,7 @@ Array [
           ]
         }
       >
-        (2 tickets)
+        (ticketAmount)
       </Text>
     </View>
   </View>,
@@ -20005,7 +20005,7 @@ Array [
           }
         }
       >
-        Withdraw more
+        button.withdrawMore
       </Text>
     </View>
     <View
@@ -20133,7 +20133,7 @@ Array [
           }
         }
       >
-        View pool
+        button.viewPoolTogetherPool
       </Text>
     </View>
     <View
@@ -20514,7 +20514,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -20879,7 +20879,7 @@ Array [
           }
         }
       >
-        Send back
+        button.sendBack
       </Text>
     </View>
     <View
@@ -21007,7 +21007,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -21418,7 +21418,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -21813,7 +21813,7 @@ Array [
           }
         }
       >
-        Send back
+        button.sendBack
       </Text>
     </View>
     <View
@@ -21941,7 +21941,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -22322,7 +22322,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -22687,7 +22687,7 @@ Array [
           }
         }
       >
-        Send more
+        button.sendMore
       </Text>
     </View>
     <View
@@ -22815,7 +22815,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -23226,7 +23226,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -23621,7 +23621,7 @@ Array [
           }
         }
       >
-        Send more
+        button.sendMore
       </Text>
     </View>
     <View
@@ -23749,7 +23749,7 @@ Array [
           }
         }
       >
-        Invite to Pillar
+        button.inviteToPillar
       </Text>
     </View>
     <View
@@ -24117,7 +24117,7 @@ Array [
           }
         }
       >
-        Top up more
+        button.topUpMore
       </Text>
     </View>
     <View
@@ -24483,7 +24483,7 @@ Array [
           }
         }
       >
-        Send
+        button.send
       </Text>
     </View>
     <View
@@ -24611,7 +24611,7 @@ Array [
           }
         }
       >
-        Top up more
+        button.topUpMore
       </Text>
     </View>
     <View
@@ -24811,7 +24811,7 @@ Array [
         ]
       }
     >
-      Activated
+      label.activated
     </Text>
   </View>,
   <View
@@ -24947,7 +24947,7 @@ Array [
           }
         }
       >
-        Activate Pillar Network
+        button.activatePPN
       </Text>
     </View>
     <View
@@ -25075,7 +25075,7 @@ Array [
           }
         }
       >
-        Refer friends
+        label.referFriends
       </Text>
     </View>
     <View
@@ -25275,7 +25275,7 @@ Array [
         ]
       }
     >
-      Activated
+      label.activated
     </Text>
   </View>,
   <View
@@ -25411,7 +25411,7 @@ Array [
           }
         }
       >
-        Refer friends
+        label.referFriends
       </Text>
     </View>
     <View
@@ -25755,7 +25755,7 @@ Array [
           }
         }
       >
-        Activate
+        button.activate
       </Text>
     </View>
     <View
