@@ -173,7 +173,7 @@ export default class KeyBasedWalletProvider {
     return Promise.resolve({ nonce, transactionCount });
   }
 
-  async getTransactionCount(walletAddress: string) {
+  getTransactionCount(walletAddress: string) {
     return this.wallet.provider.getTransactionCount(walletAddress, 'pending');
   }
 }

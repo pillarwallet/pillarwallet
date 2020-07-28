@@ -20,6 +20,9 @@
 import { Wallet } from 'ethers';
 import isEmpty from 'lodash.isempty';
 
+// components
+import Toast from 'components/Toast';
+
 // constants
 import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 import {
@@ -40,7 +43,7 @@ import { collectibleFromResponse } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
-import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
+import { addressesEqual, getAssetsAsList, transformBalancesToObject } from 'utils/assets';
 import { getGasPriceWei, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 
@@ -51,32 +54,31 @@ import CryptoWallet from 'services/cryptoWallet';
 // types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { Collectible } from 'models/Collectible';
-import type { Asset, KeyBasedAssetTransfer } from 'models/Asset';
+import type { AssetData, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Account } from 'models/Account';
 
 
-const buildAssetTransferTransaction = (asset: Asset | Collectible, transactionExtra: Object) => {
+const buildAssetTransferTransaction = (asset: AssetData, transactionExtra: Object) => {
   if (asset?.tokenType === COLLECTIBLES) {
     const { id: tokenId, contractAddress } = asset;
     return { tokenId, contractAddress, ...transactionExtra };
   }
   const {
-    symbol,
-    address: contractAddress,
+    token: symbol,
+    contractAddress,
     decimals,
-    amount,
   } = asset;
   return {
     symbol,
     contractAddress,
     decimals,
-    amount,
     ...transactionExtra,
   };
 };
 
 const signKeyBasedAssetTransferTransaction = async (
+  keyBasedWalletAddress: string,
+  smartWalletAddress: string,
   keyBasedAssetTransfer: KeyBasedAssetTransfer,
   wallet: Wallet,
   dispatch: Dispatch,
@@ -93,11 +95,6 @@ const signKeyBasedAssetTransferTransaction = async (
   const cryptoWallet = new CryptoWallet(wallet.privateKey, keyBasedAccount);
   const walletProvider = await cryptoWallet.getProvider();
 
-  const {
-    wallet: { data: { address: keyBasedWalletAddress } },
-    accounts: { data: accounts },
-  } = getState();
-
   // sync local nonce
   const transactionCount = await walletProvider.getTransactionCount(keyBasedWalletAddress);
   dispatch({
@@ -109,23 +106,30 @@ const signKeyBasedAssetTransferTransaction = async (
   });
 
   // get only signed transaction
-  const { gasPrice, calculatedGasLimit: gasLimit, asset } = keyBasedAssetTransfer;
-  const transaction = buildAssetTransferTransaction(asset, {
+  const {
+    calculatedGasLimit: gasLimit,
+    gasPrice,
+    assetData,
+    amount,
+  } = keyBasedAssetTransfer;
+  const transaction = buildAssetTransferTransaction(assetData, {
     from: keyBasedWalletAddress,
-    to: getAccountAddress(findFirstSmartAccount(accounts)),
+    to: smartWalletAddress,
     gasPrice,
     gasLimit,
+    amount,
     signOnly: true,
   });
 
   let signedTransaction;
-  if (keyBasedAssetTransfer?.asset?.tokenType === COLLECTIBLES) {
+  if (keyBasedAssetTransfer?.assetData?.tokenType === COLLECTIBLES) {
+    // $FlowFixMe note: added per current implementation
     signedTransaction = await walletProvider.transferERC721(
       keyBasedAccount,
       transaction,
       getState(),
     );
-  } else if (keyBasedAssetTransfer?.asset?.symbol === ETH) {
+  } else if (keyBasedAssetTransfer?.assetData?.token === ETH) {
     signedTransaction = await walletProvider.transferETH(
       keyBasedAccount,
       transaction,
@@ -156,25 +160,26 @@ const signKeyBasedAssetTransferTransaction = async (
   return signedTransaction;
 };
 
-export const removeKeyBasedAssetToTransferAction = (asset: Asset | Collectible) => {
+export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
 
     // filter out matching
-    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.filter(({ asset: transferAssetData }) => {
-      if (transferAssetData?.tokenType !== COLLECTIBLES) return transferAssetData?.symbol !== asset.symbol;
-      return transferAssetData?.id !== asset?.id
-        || (transferAssetData?.id !== asset?.id && transferAssetData?.contractAddress !== asset?.contractAddress);
+    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.filter(({ assetData: transferAssetData }) => {
+      if (transferAssetData?.tokenType !== COLLECTIBLES) return transferAssetData?.token !== assetData.token;
+      const isMatchingCollectible = transferAssetData?.id === assetData?.id
+        && addressesEqual(transferAssetData?.contractAddress, assetData?.contractAddress);
+      return !isMatchingCollectible;
     });
 
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: updatedKeyBasedAssetsToTransfer });
   };
 };
 
-export const addKeyBasedAssetToTransferAction = (asset: Asset | Collectible) => {
+export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
-    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ asset });
+    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, amount });
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: updatedKeyBasedAssetsToTransfer });
   };
 };
@@ -222,7 +227,6 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
 
 export const setAndStoreKeyBasedAssetsToTransferAction = (keyBasedAssetsToTransfer: KeyBasedAssetTransfer[]) => {
   return (dispatch: Dispatch) => {
-    // always make sure ETH is last transaction
     dispatch(saveDbAction('keyBasedAssetTransfer', { keyBasedAssetsToTransfer }, true));
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
   };
@@ -237,6 +241,12 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     } = getState();
     let { history: { gasInfo } } = getState();
 
+    const firstSmartAccount = findFirstSmartAccount(accounts);
+    if (!firstSmartAccount) {
+      reportLog('Failed to find smart wallet account in key based estimate calculations.');
+      return;
+    }
+
     if (isCalculatingGas) return;
     dispatch({ type: SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS, payload: true });
 
@@ -245,10 +255,11 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
 
     const keyBasedAssetsToTransferUpdated = await Promise.all(
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {
-        const { asset } = keyBasedAssetToTransfer;
-        const estimateTransaction = buildAssetTransferTransaction(asset, {
+        const { assetData, amount } = keyBasedAssetToTransfer;
+        const estimateTransaction = buildAssetTransferTransaction(assetData, {
+          amount,
           from: keyBasedWalletAddress,
-          to: getAccountAddress(findFirstSmartAccount(accounts)),
+          to: getAccountAddress(firstSmartAccount),
         });
         const gasLimit = await calculateGasEstimate(estimateTransaction);
         return { ...keyBasedAssetToTransfer, gasPrice, calculatedGasLimit: gasLimit };
@@ -280,27 +291,39 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
     // submit new in queue if no pending
     const hasPending = keyBasedAssetsToTransferUpdated.some(({ status }) => status === TX_PENDING_STATUS);
     const transferTransactionsInQueue = keyBasedAssetsToTransferUpdated.filter(({ status }) => !status);
-    if (!hasPending && !isEmpty(transferTransactionsInQueue)) {
-      // submit first in queue
-      const assetToTransferTransaction = transferTransactionsInQueue[0].signedTransaction;
-      const transactionSent = await transferSigned(assetToTransferTransaction.signedHash).catch((error) => ({ error }));
-      if (!transactionSent?.hash || transactionSent.error) {
-        reportLog('Failed to send key based asset transger signed transaction', {
-          signedTransaction: assetToTransferTransaction,
-          error: transactionSent.error,
-        });
-        return;
-      }
+    if (!hasPending) {
+      if (!isEmpty(transferTransactionsInQueue)) {
+        // submit first in queue
+        const assetToTransferTransaction = transferTransactionsInQueue[0].signedTransaction;
+        const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash || '')
+          .catch((error) => ({ error }));
+        if (!transactionSent?.hash || transactionSent.error) {
+          reportLog('Failed to send key based asset transger signed transaction', {
+            signedTransaction: assetToTransferTransaction,
+            error: transactionSent.error,
+          });
+          return;
+        }
 
-      // update with pending status
-      const updatedTransaction = {
-        ...transferTransactionsInQueue[0],
-        status: TX_PENDING_STATUS,
-        transactionHash: transactionSent.hash,
-      };
-      keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
-        .filter(({ signedTransaction }) => signedTransaction.signedHash === updatedTransaction.signedHash)
-        .concat(updatedTransaction);
+        // update with pending status
+        const updatedTransaction: KeyBasedAssetTransfer = {
+          ...transferTransactionsInQueue[0],
+          status: TX_PENDING_STATUS,
+          transactionHash: transactionSent.hash,
+        };
+        const updatedTransactionSignedHash = updatedTransaction?.signedTransaction?.signedHash;
+        keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
+          .filter(({ signedTransaction }) => signedTransaction?.signedHash === updatedTransactionSignedHash)
+          .concat(updatedTransaction);
+      } else if (!isEmpty(keyBasedAssetsToTransferUpdated)) {
+        // transfer done, reset
+        keyBasedAssetsToTransferUpdated = [];
+        Toast.show({
+          message: 'Key based assets transfer complete!',
+          type: 'success',
+          title: 'Success',
+        });
+      }
     }
 
     dispatch(setAndStoreKeyBasedAssetsToTransferAction(keyBasedAssetsToTransferUpdated));
@@ -309,7 +332,18 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
 
 export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
+    const {
+      wallet: { data: { address: keyBasedWalletAddress } },
+      accounts: { data: accounts },
+      keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer },
+    } = getState();
+
+    const firstSmartAccount = findFirstSmartAccount(accounts);
+    if (!firstSmartAccount) {
+      reportLog('Failed to find smart wallet account in key based asset transfer creation.');
+      return;
+    }
+
     /**
      * we need this to be sequential and wait for each to complete because of local nonce increment
      * side note: eslint ignored because of "async for" not allowed, however, we need it for sequential calls
@@ -317,6 +351,8 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
     const keyBasedAssetsToTransferUpdated = [];
     for (const keyBasedAssetTransfer of keyBasedAssetsToTransfer) { // eslint-disable-line
       const signedTransaction = await signKeyBasedAssetTransferTransaction( // eslint-disable-line
+        keyBasedWalletAddress,
+        getAccountAddress(firstSmartAccount),
         keyBasedAssetTransfer,
         wallet,
         dispatch,

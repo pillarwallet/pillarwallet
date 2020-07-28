@@ -17,8 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import type { Collectible } from './Collectible';
-
 export type AssetData = {|
   token: string,
   contractAddress?: string,
@@ -94,9 +92,10 @@ export type DepositedAsset = Asset & {
 
 export type KeyBasedAssetTransfer = {|
   transactionHash?: string,
-  asset: Asset | Collectible,
+  assetData: AssetData,
+  amount?: number,
   calculatedGasLimit?: number,
   gasPrice?: number,
-  signedTransaction?: string,
+  signedTransaction?: Object,
   status?: string,
 |};

@@ -95,17 +95,19 @@ const KeyBasedAssetTransferConfirm = ({
   navigation,
 }: Props) => {
   const isLoading = isCalculatingGas;
-  const tokensTransfer = keyBasedAssetsToTransfer.filter(({ asset }) => asset?.tokenType !== COLLECTIBLES);
-  const collectiblesTransfer = keyBasedAssetsToTransfer.filter(({ asset }) => asset?.tokenType === COLLECTIBLES);
+  const tokensTransfer = keyBasedAssetsToTransfer.filter(
+    ({ assetData }) => assetData?.tokenType !== COLLECTIBLES,
+  );
+  const collectiblesTransfer = keyBasedAssetsToTransfer.filter(
+    ({ assetData }) => assetData?.tokenType === COLLECTIBLES,
+  );
 
   const renderFooter = () => {
     const ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
-    const totalTransferFeeWeiBN = isCalculatingGas
-      ? null
-      : keyBasedAssetsToTransfer.reduce(
-        (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
-        new BigNumber(0),
-      );
+    const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransfer.reduce(
+      (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
+      new BigNumber(0),
+    );
     const totalTransferFeeBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
     const notEnoughFee = !isCalculatingGas && totalTransferFeeBN.isGreaterThan(ethBalanceBN);
 
@@ -144,15 +146,15 @@ const KeyBasedAssetTransferConfirm = ({
         {!isEmpty(tokensTransfer) && (
           <DetailsLine>
             <DetailsTitle>Tokens to transfer</DetailsTitle>
-            {tokensTransfer.map(({ asset: { symbol, amount } }) => (
-              <DetailsValue key={symbol}>{formatFullAmount(amount)} {symbol}</DetailsValue>
+            {tokensTransfer.map(({ assetData: { token: symbol }, amount }) => (
+              <DetailsValue key={symbol}>{formatFullAmount(amount || '')} {symbol}</DetailsValue>
             ))}
           </DetailsLine>
         )}
         {!isEmpty(collectiblesTransfer) && (
           <DetailsLine>
             <DetailsTitle>Collectibles to transfer</DetailsTitle>
-            {collectiblesTransfer.map(({ asset: { name } }) => (
+            {collectiblesTransfer.map(({ assetData: { name } }) => (
               <DetailsValue key={name}>{name}</DetailsValue>
             ))}
           </DetailsLine>

@@ -22,7 +22,6 @@ import { FlatList, RefreshControl, ScrollView } from 'react-native';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -46,7 +45,13 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
 import { spacing } from 'utils/variables';
-import { addressesEqual, getAssetData, getBalance } from 'utils/assets';
+import {
+  addressesEqual,
+  getAssetData,
+  getBalance,
+  mapAssetToAssetData,
+  mapCollectibleToAssetData,
+} from 'utils/assets';
 import { formatFullAmount } from 'utils/common';
 
 // constants
@@ -54,8 +59,8 @@ import { TOKENS, COLLECTIBLES } from 'constants/assetsConstants';
 import { KEY_BASED_ASSET_TRANSFER_CONFIRM, KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT } from 'constants/navigationConstants';
 
 // types
-import type { Asset, Balances, KeyBasedAssetTransfer } from 'models/Asset';
-import type { Collectible, Collectibles } from 'models/Collectible';
+import type { Asset, AssetData, Balances, KeyBasedAssetTransfer } from 'models/Asset';
+import type { Collectibles } from 'models/Collectible';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
@@ -67,8 +72,8 @@ type Props = {
   isFetchingAvailableCollectibles: boolean,
   availableBalances: Balances,
   availableCollectibles: Collectibles,
-  addKeyBasedAssetToTransfer: (asset: Asset | Collectible) => void,
-  removeKeyBasedAssetToTransfer: (asset: Asset | Collectible) => void,
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => void,
+  removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
   supportedAssets: Asset[],
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   calculateTransactionsGas: () => void,
@@ -104,11 +109,11 @@ const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
 
 const isMatchingAssetToTransfer = (
   assetToTransfer: KeyBasedAssetTransfer,
-  asset: Asset | Collectible,
+  assetData: AssetData,
 ) => {
-  if (asset?.tokenType !== COLLECTIBLES) return assetToTransfer?.asset?.symbol === asset?.symbol;
-  return assetToTransfer?.asset?.id === asset?.id
-    && addressesEqual(assetToTransfer?.asset?.contractAddress, asset?.contractAddress);
+  if (assetData?.tokenType !== COLLECTIBLES) return assetToTransfer?.assetData?.token === assetData?.token;
+  return assetToTransfer?.assetData?.id === assetData?.id
+    && addressesEqual(assetToTransfer?.assetData?.contractAddress, assetData?.contractAddress);
 };
 
 const renderCheckbox = (onPress, isChecked, wrapperStyle = {}) => (
@@ -158,37 +163,40 @@ const KeyBasedAssetTransferChoose = ({
 
   const availableAssets = Object.keys(availableBalances)
     .map((symbol) => getAssetData(supportedAssets, [], symbol))
-    .filter((asset) => !isEmpty(asset));
+    .filter((assetData) => !isEmpty(assetData))
+    .map(mapAssetToAssetData);
 
   const filteredAvailableAssets = !searchQuery || searchQuery.trim().length < 2
     ? availableAssets
-    : availableAssets.filter((asset: Asset) => asset.name.toUpperCase().includes(searchQuery.toUpperCase()));
-
-  const onAssetSelect = (asset: Asset | Collectible) => {
-    const assetExist = keyBasedAssetsToTransfer.some(
-      (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, asset),
+    : availableAssets.filter(
+      (assetData: AssetData) => !!assetData.name && assetData.name.toUpperCase().includes(searchQuery.toUpperCase()),
     );
-    removeKeyBasedAssetToTransfer(asset);
-    if (!assetExist) addKeyBasedAssetToTransfer(asset);
+
+  const onAssetSelect = (assetData: AssetData, amount?: number) => {
+    const assetExist = keyBasedAssetsToTransfer.some(
+      (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, assetData),
+    );
+    removeKeyBasedAssetToTransfer(assetData);
+    if (!assetExist) addKeyBasedAssetToTransfer(assetData, amount);
   };
 
   const renderAsset = ({ item }) => {
     const {
-      iconUrl,
+      icon,
       name: assetName,
-      symbol: assetSymbol,
+      token: assetSymbol,
     } = item;
     const assetBalance = getBalance(availableBalances, assetSymbol);
     const checkedAsset = keyBasedAssetsToTransfer.find(
       (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
     );
-    const assetAmount = checkedAsset?.asset?.amount || assetBalance;
+    const assetAmount = checkedAsset?.amount || assetBalance;
     const formattedAmount = formatFullAmount(assetAmount);
-    const onCheck = () => onAssetSelect({ ...item, amount: assetAmount });
+    const onCheck = () => onAssetSelect(item, assetAmount);
     return (
       <ListItemWithImage
         label={assetName}
-        itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
+        itemImageUrl={icon}
         itemValue={`${formattedAmount} ${assetSymbol}`}
         fallbackToGenericToken
         onPress={onCheck}
@@ -202,7 +210,7 @@ const KeyBasedAssetTransferChoose = ({
     <FlatList
       data={filteredAvailableAssets}
       scrollEnabled={!inSearchMode}
-      keyExtractor={(item) => item.symbol}
+      keyExtractor={(item) => item.token}
       renderItem={renderAsset}
       initialNumToRender={9}
       ListEmptyComponent={renderEmptyResult('No assets found', isFetchingAvailableBalances)}
@@ -215,9 +223,12 @@ const KeyBasedAssetTransferChoose = ({
     />
   );
 
+  const mappedAvailableCollectible = availableCollectibles.map(mapCollectibleToAssetData);
   const filteredAvailableCollectibles = !searchQuery || searchQuery.trim().length < 2
-    ? availableCollectibles
-    : availableCollectibles.filter((asset: any) => asset.name.toUpperCase().includes(searchQuery.toUpperCase()));
+    ? mappedAvailableCollectible
+    : mappedAvailableCollectible.filter(
+      (assetData: AssetData) => !!assetData.name && assetData.name.toUpperCase().includes(searchQuery.toUpperCase()),
+    );
 
   const renderCollectible = ({ item }) => {
     const isChecked = keyBasedAssetsToTransfer.some(
@@ -240,7 +251,7 @@ const KeyBasedAssetTransferChoose = ({
     <FlatList
       data={filteredAvailableCollectibles}
       scrollEnabled={!inSearchMode}
-      keyExtractor={(item) => `${item.assetContract}${item.id}`}
+      keyExtractor={(item) => `${item.contractAddress}${item.id}`}
       renderItem={renderCollectible}
       initialNumToRender={9}
       ListEmptyComponent={renderEmptyResult('No collectibles found', isFetchingAvailableCollectibles)}
@@ -266,16 +277,20 @@ const KeyBasedAssetTransferChoose = ({
     },
   ];
 
-  const hasTokensSelected = !isEmpty(keyBasedAssetsToTransfer.filter(({ asset }) => asset?.tokenType !== COLLECTIBLES));
+  const editAmountSetting = {
+    link: 'Edit',
+    onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT),
+  };
+
+  const hasTokensSelected = !isEmpty(
+    keyBasedAssetsToTransfer.filter(({ assetData }) => assetData?.tokenType !== COLLECTIBLES),
+  );
 
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: 'Choose assets to transfer' }],
-        rightItems: [hasTokensSelected
-          ? { link: 'Edit', onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT) }
-          : {},
-        ],
+        rightItems: [hasTokensSelected && activeTab !== COLLECTIBLES ? editAmountSetting : {}],
       }}
       footer={!isEmpty(keyBasedAssetsToTransfer) && !inSearchMode && (
         <Footer>
@@ -334,8 +349,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  removeKeyBasedAssetToTransfer: (asset: Asset | Collectible) => dispatch(removeKeyBasedAssetToTransferAction(asset)),
-  addKeyBasedAssetToTransfer: (asset: Asset | Collectible) => dispatch(addKeyBasedAssetToTransferAction(asset)),
+  removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => dispatch(
+    addKeyBasedAssetToTransferAction(assetData, amount),
+  ),
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
   fetchAvailableCollectiblesToTransfer: () => dispatch(fetchAvailableCollectiblesToTransferAction()),
   calculateTransactionsGas: () => dispatch(calculateKeyBasedAssetsToTransferTransactionGasAction()),

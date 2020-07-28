@@ -21,7 +21,6 @@ import React, { useState } from 'react';
 import { FlatList, ScrollView, RefreshControl } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -51,15 +50,15 @@ import { getBalance } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 
 // types
-import type { Balances, Asset, KeyBasedAssetTransfer } from 'models/Asset';
+import type { Balances, KeyBasedAssetTransfer, AssetData } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   fetchAvailableBalancesToTransfer: () => void,
-  removeKeyBasedAssetToTransfer: (asset: Asset) => void,
-  addKeyBasedAssetToTransfer: (asset: Asset) => void,
+  removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount: number) => void,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   availableBalances: Balances,
   isFetchingAvailableBalances: boolean,
@@ -99,7 +98,7 @@ const KeyBasedAssetTransferEditAmount = ({
   addKeyBasedAssetToTransfer,
 }: Props) => {
   const [inSearchMode, setInSearchMode] = useState(false);
-  const [updatedAssets, setUpdatedAssets] = useState({});
+  const [updatedValues, setUpdatedValues] = useState({});
   const [errorMessages, setErrorMessages] = useState({});
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -108,8 +107,8 @@ const KeyBasedAssetTransferEditAmount = ({
     fetchAvailableBalancesToTransfer();
   };
 
-  const handleAmountChange = (text: string, asset: Asset) => {
-    const { symbol, decimals } = asset;
+  const handleAmountChange = (text: string, assetData: AssetData) => {
+    const { token: symbol, decimals } = assetData;
     const balance = getBalance(availableBalances, symbol);
     const amountFormatted = text.toString().replace(/,/g, '.');
     const amount = parseNumber(text);
@@ -126,28 +125,27 @@ const KeyBasedAssetTransferEditAmount = ({
     // resets or sets new
     setErrorMessages({ ...errorMessages, [symbol]: errorMessage });
 
-    const updated = { ...asset, amount: amountFormatted || 0 };
-    setUpdatedAssets({ ...updatedAssets, [symbol]: updated });
+    const updated = { assetData, amount: amountFormatted || 0 };
+    setUpdatedValues({ ...updatedValues, [symbol]: updated });
   };
 
   const renderAsset = ({ item }) => {
-    const { symbol, amount, name } = item;
+    const { assetData: { token: symbol, name, icon }, amount } = item;
     const assetBalance = getBalance(availableBalances, symbol);
     const formattedAssetBalance = formatFullAmount(assetBalance);
-    const fullIconUrl = `${SDK_PROVIDER}/${item.iconUrl}?size=3`;
-    const displayAmount = updatedAssets[symbol]?.amount || '';
+    const displayAmount = updatedValues[symbol]?.amount || '';
     const errorMessage = errorMessages[symbol];
-    const value = isEmpty(updatedAssets[symbol]) ? amount.toString() : displayAmount;
+    const value = isEmpty(updatedValues[symbol]) ? amount.toString() : displayAmount;
     return (
       <ListItemWithImage
         label={name}
-        itemImageUrl={fullIconUrl}
+        itemImageUrl={icon}
         fallbackToGenericToken
         rightColumnInnerStyle={{ flex: 1, justifyContent: 'center' }}
         customAddon={(
           <AmountInputWrapper>
             <AmountInput
-              onChangeText={(text) => handleAmountChange(text, item)}
+              onChangeText={(text) => handleAmountChange(text, item.assetData)}
               value={value}
               placeholder={formattedAssetBalance}
               keyboardType="decimal-pad"
@@ -159,28 +157,32 @@ const KeyBasedAssetTransferEditAmount = ({
     );
   };
 
-  const onNextPress = async () => {
-    Object.values(updatedAssets).forEach((asset) => {
+  const onNextPress = () => {
+    Object.values(updatedValues).forEach((updatedValue: any) => {
       // toggle with new amount
-      removeKeyBasedAssetToTransfer(asset);
-      if (asset?.amount > 0) addKeyBasedAssetToTransfer(asset);
+      removeKeyBasedAssetToTransfer(updatedValue.assetData);
+      if (!!updatedValue?.amount && updatedValue.amount > 0) {
+        addKeyBasedAssetToTransfer(updatedValue.assetData, updatedValue.amount);
+      }
     });
     navigation.goBack();
   };
 
-  const assets = keyBasedAssetsToTransfer
-    .filter((assetTransfer) => assetTransfer?.asset?.tokenType !== COLLECTIBLES)
-    .map((assetTransfer) => assetTransfer?.asset);
+  const assetTransfers = keyBasedAssetsToTransfer.filter(
+    (assetTransfer) => assetTransfer?.assetData?.tokenType !== COLLECTIBLES,
+  );
 
-  const filteredAssets = !searchQuery || searchQuery.trim().length < 2
-    ? assets
-    : assets.filter((asset) => asset.name.toUpperCase().includes(searchQuery.toUpperCase()));
+  const filteredAssetTransfers = !searchQuery || searchQuery.trim().length < 2
+    ? assetTransfers
+    : assetTransfers.filter(
+      ({ assetData }) => !!assetData.name && assetData.name.toUpperCase().includes(searchQuery.toUpperCase()),
+    );
 
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: 'Edit amount' }],
-        rightItems: [!isEmpty(updatedAssets) ? { link: 'Save', onPress: onNextPress } : {}],
+        rightItems: [!isEmpty(updatedValues) ? { link: 'Save', onPress: onNextPress } : {}],
       }}
     >
       <ScrollView scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
@@ -194,9 +196,9 @@ const KeyBasedAssetTransferEditAmount = ({
           onSearchBlur={() => setInSearchMode(false)}
         />
         <FlatList
-          data={filteredAssets}
+          data={filteredAssetTransfers}
           scrollEnabled={!inSearchMode}
-          keyExtractor={item => item.symbol}
+          keyExtractor={item => item.assetData.token}
           renderItem={renderAsset}
           initialNumToRender={9}
           contentContainerStyle={{ flexGrow: 1 }}
@@ -241,8 +243,10 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAvailableBalancesToTransfer: () => dispatch(fetchAvailableBalancesToTransferAction()),
-  removeKeyBasedAssetToTransfer: (asset: Asset) => dispatch(removeKeyBasedAssetToTransferAction(asset)),
-  addKeyBasedAssetToTransfer: (asset: Asset) => dispatch(addKeyBasedAssetToTransferAction(asset)),
+  removeKeyBasedAssetToTransfer: (assetData: AssetData) => dispatch(removeKeyBasedAssetToTransferAction(assetData)),
+  addKeyBasedAssetToTransfer: (assetData: AssetData, amount: number) => dispatch(
+    addKeyBasedAssetToTransferAction(assetData, amount),
+  ),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(KeyBasedAssetTransferEditAmount);

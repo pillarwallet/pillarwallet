@@ -28,7 +28,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
+import { TX_DETAILS_URL } from 'react-native-dotenv';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -45,7 +45,7 @@ import Spinner from 'components/Spinner';
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { getRate, getAssetData, getAssetsAsList } from 'utils/assets';
+import { getRate } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -60,7 +60,7 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
+import { getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -81,7 +81,6 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
@@ -94,7 +93,6 @@ import {
   BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
-  SEND_TOKEN_AMOUNT,
   SEND_TOKEN_FROM_HOME_FLOW,
   SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
@@ -124,7 +122,6 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
-import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
@@ -141,7 +138,6 @@ import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
-
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 
@@ -165,7 +161,6 @@ type Props = {
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
-  switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
@@ -173,7 +168,6 @@ type Props = {
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
-  setActiveBlockchainNetwork: (id: string) => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
@@ -475,28 +469,6 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(BADGE, { badgeId });
   };
 
-  switchToKW = async () => {
-    const {
-      accounts, switchAccount,
-    } = this.props;
-    const keyBasedAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.KEY_BASED) || {};
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
-      await switchAccount(keyBasedAccount.id);
-    }
-  };
-
-  switchToSW = async () => {
-    const {
-      accounts, switchAccount,
-    } = this.props;
-    const swAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
-      await switchAccount(swAccount.id);
-    }
-  };
-
   showReceiveModal = (receiveWalletAddress: string) => {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true, receiveWalletAddress }));
   };
@@ -525,38 +497,9 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.onClose(() => this.setState({ SWActivationModalVisible: true }));
   };
 
-  sendETHFromKWToSW = async () => {
-    const {
-      onClose, navigation, accounts, accountAssets, supportedAssets,
-    } = this.props;
-    const SWAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-
-    const assetsData = getAssetsAsList(accountAssets);
-    const assetData = getAssetData(assetsData, supportedAssets, ETH);
-    const fullIconUrl = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
-    const fullIconMonoUrl = `${SDK_PROVIDER}/${assetData.iconMonoUrl}?size=2`;
-
-    const params = {
-      assetData: {
-        token: assetData.symbol,
-        contractAddress: assetData.address,
-        decimals: assetData.decimals,
-        icon: fullIconMonoUrl,
-        iconColor: fullIconUrl,
-      },
-      receiver: SWAccount.id,
-      source: 'Home',
-    };
-
-    onClose();
-    await this.switchToKW();
-    navigation.navigate(SEND_TOKEN_AMOUNT, params);
-  };
-
-  topUpPillarNetwork = async () => {
+  topUpPillarNetwork = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(TANK_FUND_FLOW);
   };
 
@@ -566,53 +509,42 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
   };
 
-  onAaveDepositMore = async () => {
+  onAaveDepositMore = () => {
     const { onClose, navigation, event } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
-  onAaveWithdrawMore = async () => {
+  onAaveWithdrawMore = () => {
     const { onClose, navigation, event } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
-  PPNWithdraw = async () => {
+  PPNWithdraw = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(TANK_WITHDRAWAL_FLOW);
   };
 
-  send = async (isFromKW?: boolean) => {
+  send = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    if (!isFromKW) {
-      await this.switchToSW();
-    } else {
-      await this.switchToKW();
-    }
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
-  sendSynthetic = async (relatedAddress: string) => {
+  sendSynthetic = (relatedAddress: string) => {
     const { onClose, navigation, ensRegistry } = this.props;
     onClose();
-    await this.switchToSW();
-
     const contactFromAddress = relatedAddress
       && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
     const contact = contactFromAddress;
     navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
 
-  settle = async () => {
+  settle = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(SETTLE_BALANCE);
   };
 
@@ -824,7 +756,7 @@ export class EventDetail extends React.Component<Props, State> {
 
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
-    const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
+    const { fullItemValue, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
     let directionSymbol = isReceived ? '+' : '-';
@@ -1105,38 +1037,22 @@ export class EventDetail extends React.Component<Props, State> {
             secondary: true,
           };
 
-          const sendFromKW = {
-            title: 'Send',
-            onPress: () => this.send(true),
-            secondary: true,
-          };
-
           const sendFromSW = {
             title: 'Send',
             onPress: () => this.send(),
             secondary: true,
           };
 
-          const topUpMore = {
-            title: 'Top up more',
-            onPress: this.sendETHFromKWToSW,
-            squarePrimary: true,
-          };
-
           if (isReferralRewardTransaction) {
             buttons = [];
           } else if (isReceived) {
             if (isFromKWToSW) {
-              buttons = [sendFromSW, topUpMore];
-            } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
-              buttons = [sendFromKW];
+              buttons = [sendFromSW];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
-          } else if (isBetweenAccounts) {
-            buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
             buttons = [inviteToPillarButton];
           } else {
@@ -1556,7 +1472,6 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),

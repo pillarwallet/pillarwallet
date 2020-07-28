@@ -170,7 +170,7 @@ const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
 
-class HomeScreen extends React.Component<Props, State> {
+class HomeScreen extends React.Component<Props> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
 
@@ -207,8 +207,8 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus.remove();
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+  shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqual(this.props, nextProps);
     const isFocused = this.props.navigation.isFocused();
 
     if (!isFocused) {
