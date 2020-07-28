@@ -68,6 +68,14 @@ import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
 
+// Config constants, to be overwritten in componentDidMount
+let isOffersEngineEnabled = true;
+let isAaveEnabled = true;
+let isPoolTogetherEnabled = true;
+let isPeerToPeerEnabled = true;
+let isWyreEnabled = true;
+let isRampEnabled = true;
+
 type Props = {
   theme: Theme,
   providersMeta: ProvidersMeta,
@@ -94,6 +102,16 @@ class ServicesScreen extends React.Component<Props, State> {
     if (!Array.isArray(providersMeta) || !providersMeta?.length) {
       getMetaData();
     }
+
+    /**
+     * Retrieve boolean flags for services from Remote Config.
+     */
+    isOffersEngineEnabled = remoteConfig().getBoolean('feature_services_offers_engine');
+    isAaveEnabled = remoteConfig().getBoolean('feature_services_aave');
+    isPoolTogetherEnabled = remoteConfig().getBoolean('feature_services_pool_together');
+    isPeerToPeerEnabled = remoteConfig().getBoolean('feature_services_peer_to_peer');
+    isWyreEnabled = remoteConfig().getBoolean('feature_services_wyre');
+    isRampEnabled = remoteConfig().getBoolean('feature_services_ramp');
   }
 
   getServices = () => {
@@ -115,14 +133,6 @@ class ServicesScreen extends React.Component<Props, State> {
     if (aaveServiceDisabled) {
       aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
-
-    /**
-     * Retrieve boolean flags for services from Remote Config.
-     */
-    const isOffersEngineEnabled = remoteConfig().getBoolean('feature_services_offers_engine');
-    const isAaveEnabled = remoteConfig().getBoolean('feature_services_aave');
-    const isPoolTogetherEnabled = remoteConfig().getBoolean('feature_services_pool_together');
-    const isPeerToPeerEnabled = remoteConfig().getBoolean('feature_services_peer_to_peer');
 
     const services = [];
     if (isOffersEngineEnabled) {
@@ -167,12 +177,6 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   getBuyCryptoServices = () => {
-    /**
-     * Retrieve boolean flags for services from Remote Config.
-     */
-    const isWyreEnabled = remoteConfig().getBoolean('feature_services_wyre');
-    const isRampEnabled = remoteConfig().getBoolean('feature_services_ramp');
-
     const buyCryptoServices = [];
 
     if (isRampEnabled) {
