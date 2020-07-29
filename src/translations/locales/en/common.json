@@ -12,6 +12,7 @@
 
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
+  "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
 
   "title": {
@@ -214,18 +215,18 @@
   },
 
   "smartWalletContent": {
-    "activationModal": {
-      "title": "Activate Smart Wallet",
-      "paragraph": "To start sending and exchanging assets you need to activate your wallet."
-    },
     "activationCard": {
+      "button": {
+        "activate": "Activate Smart Wallet"
+      },
       "description": {
         "activating": "Activating your account",
         "default": "To start sending assets you need to activate Smart Wallet"
-      },
-      "button": {
-        "activate": "Activate Smart Wallet"
       }
+    },
+    "activationModal": {
+      "paragraph": "To start sending and exchanging assets you need to activate your wallet.",
+      "title": "Activate Smart Wallet"
     }
   },
 

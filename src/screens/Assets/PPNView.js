@@ -387,7 +387,7 @@ class PPNView extends React.Component<Props, State> {
           <TopPartWrapper>
             <TankBalanceWrapper>
               <TankBalance>
-                {`${availableFormattedAmount} PLR`}
+                {t('tokenValue', { value: availableFormattedAmount, token: 'PLR' })}
               </TankBalance>
             </TankBalanceWrapper>
             <AssetButtonsWrapper>
