@@ -371,7 +371,6 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     const { selector, input: amount } = formSelector;
 
     const { errorMessage, formOptions } = this.state;
-    const formValue = this.form.getValue();
 
     const validation = this.form.validate();
     const currentErrorMessage = get(validation, 'errors[0].message', '');
@@ -406,9 +405,10 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     });
 
     stateUpdates.formOptions = newOptions;
-
     this.setState({ ...stateUpdates });
-    getFormValue(formValue?.formSelector);
+    if (isEmpty(currentErrorMessage)) {
+      getFormValue(value?.formSelector);
+    }
   };
 
   getMaxBalanceOfSelectedAsset = (forSending: boolean, symbol?: string) => {
