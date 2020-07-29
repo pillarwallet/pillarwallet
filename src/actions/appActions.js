@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { Platform, NativeModules } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
@@ -64,10 +66,6 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import {
-  INITIAL_FEATURE_FLAGS,
-  SET_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
@@ -87,6 +85,15 @@ import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
 
 const storage = Storage.getInstance('db');
+
+const hideSplash = () => {
+  if (Platform.OS === 'ios') {
+    const { SplashManager } = NativeModules;
+    SplashManager.hide();
+  } else {
+    SplashScreen.hide();
+  }
+};
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -177,9 +184,6 @@ export const initAppAndRedirectAction = () => {
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
-      const { featureFlags = INITIAL_FEATURE_FLAGS } = get(storageData, 'featureFlags', {});
-      dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
-
       const { userEvents = [] } = get(storageData, 'userEvents', {});
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
@@ -245,7 +249,8 @@ export const initAppAndRedirectAction = () => {
     }
 
     navigate(NavigationActions.navigate(navAction));
-    SplashScreen.hide();
+
+    hideSplash();
   };
 };
 

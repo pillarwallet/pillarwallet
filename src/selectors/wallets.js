@@ -28,7 +28,6 @@ import {
   activeAccountSelector,
   activeBlockchainSelector,
   themeSelector,
-  featureFlagsSelector,
 } from './selectors';
 
 export const activeWalletSelector = createSelector(
@@ -41,7 +40,6 @@ export const activeWalletSelector = createSelector(
 
 export const availableWalletsSelector = createSelector(
   accountsSelector,
-  featureFlagsSelector,
   activeBlockchainSelector,
   (accounts) => {
     const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
