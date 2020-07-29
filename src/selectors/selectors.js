@@ -70,8 +70,6 @@ export const supportedAssetsSelector = ({ assets }: RootReducerState) =>
 export const activeBlockchainSelector = ({ appSettings }: RootReducerState) =>
   get(appSettings, 'data.blockchainNetwork', 'Ethereum');
 
-export const featureFlagsSelector = ({ featureFlags }: RootReducerState) => featureFlags.data;
-
 export const themeSelector = ({ appSettings }: RootReducerState) => appSettings.data.themeType;
 export const baseFiatCurrencySelector = ({ appSettings }: RootReducerState) => appSettings.data.baseFiatCurrency;
 

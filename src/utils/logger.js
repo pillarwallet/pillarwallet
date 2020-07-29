@@ -17,6 +17,29 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import '@storybook/addon-actions/register';
-import '@storybook/addon-links/register';
-import 'storybook-addon-i18next/register';
+import { logger } from 'react-native-logs';
+import { colorConsoleAfterInteractions } from 'react-native-logs/dist/transports/colorConsoleAfterInteractions';
+
+/**
+ * Define the configuration for the logger.
+ * @url https://github.com/onubo/react-native-logs
+ *
+ * Note: colorConsoleAfterInteractions ensures that the UI
+ * is not frozen.
+ */
+const config = {
+  transport: (msg, level, options) => {
+    // Write to non-blocking transport.
+    colorConsoleAfterInteractions(msg, level, options);
+
+    // TODO: Write to non-blocking fs - we will read / ship
+    // these logs from the upcoming developer screen if needed.
+    // rnFsFileAsync(msg, level, options);
+  },
+};
+
+// Build out our logger instance...
+const log = logger.createLogger(config);
+
+// Export.
+export { log };

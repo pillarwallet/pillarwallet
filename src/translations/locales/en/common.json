@@ -70,7 +70,6 @@
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
-    "tokens": "Tokens",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
     "topUp": "Top up",
@@ -82,10 +81,11 @@
 
   "button": {
     "activate": "Activate",
+    "activatePPN": "Activate Pillar Network",
     "addFunds": "Add funds",
     "buyPLR": "Buy PLR",
-    "buyTokens": "Buy tokens",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
+    "buyTokens": "Buy tokens",
     "buyWithCard": "Buy with a card",
     "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
     "close": "Close",
@@ -196,7 +196,6 @@
   },
 
   "badgeText": {
-    "needToActivate": "Need to activate",
     "new": "NEW"
   },
 

@@ -18,50 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import get from 'lodash.get';
-import isEmpty from 'lodash.isempty';
+import remoteConfig from '@react-native-firebase/remote-config';
+import { reportOrWarn } from 'utils/common';
+import { log } from 'utils/logger';
 
-import {
-  DEVELOPMENT_FEATURE_FLAGS,
-  INITIAL_FEATURE_FLAGS,
-  SET_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
-import { saveDbAction } from 'actions/dbActions';
-import Storage from 'services/storage';
-import { isProdEnv, isTest } from 'utils/environment';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
-
-const storage = Storage.getInstance('db');
-
-export const loadFeatureFlagsAction = (userInfo?: any) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const isOnline = get(getState(), 'session.data.isOnline');
-
-    // do not override existing feature flags if offline
-    if (!isOnline) return;
-
-    // fetch latest userInfo if it was not provided
-    if (isEmpty(userInfo)) {
-      let walletId = get(getState(), 'user.data.walletId');
-      if (!walletId) {
-        walletId = get(await storage.get('user'), 'user.walletId');
-      }
-      userInfo = await api.userInfo(walletId);
-    }
-
+export const loadFeatureFlagsAction = () => {
+  return async () => {
     /**
-     * (isProdEnv && !__DEV__) to make sure that it's really dev env and not prod env (mainnet) running in dev
-     * isTest check to run test suites against prod env
+     * Instruct Remote Config to fetch the latest config
+     * values available online. When the app is next launched,
+     * the app will activate() the latest values available.
+     *
+     * @url https://rnfirebase.io/reference/remote-config#fetch
      */
-    const userFeatureFlags = (isProdEnv && !__DEV__) || isTest
-      ? get(userInfo, 'featureFlags', {})
-      : DEVELOPMENT_FEATURE_FLAGS;
-
-    // combine initial with fetched
-    const featureFlags = { ...INITIAL_FEATURE_FLAGS, ...userFeatureFlags };
-
-    dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
-    dispatch(saveDbAction('featureFlags', { featureFlags }, true));
+    remoteConfig()
+      .fetch(__DEV__ ? 0 : null) // Are we in dev mode? Don't cache.
+      .then(() => {
+        log.info('Firebase Config: Fetched the latest remote config values, if any.');
+      })
+      .catch(e => { reportOrWarn('Failed to fetch feature flags or initialize with defaults', e, 'warning'); });
   };
 };

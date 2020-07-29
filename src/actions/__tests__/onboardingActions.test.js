@@ -46,7 +46,6 @@ import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'const
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 import { registerWalletAction } from 'actions/onboardingActions';
@@ -166,7 +165,6 @@ describe('Wallet actions', () => {
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
       { type: SET_USER_SETTINGS, payload: {} },
-      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
@@ -183,7 +181,6 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
@@ -238,7 +235,6 @@ describe('Wallet actions', () => {
       { type: RESET_SMART_WALLET },
       { type: RESET_PAYMENT_NETWORK },
       { type: SET_USER_SETTINGS, payload: {} },
-      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -254,7 +250,6 @@ describe('Wallet actions', () => {
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: SET_FEATURE_FLAGS, payload: {} },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
       { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },

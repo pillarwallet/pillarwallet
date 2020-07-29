@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "811306482558-9q9avmqc22nf7bd5atofn8qsg6chph90.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pillarproject.wallet",
+            "certificate_hash": "21ccb6e270cab1680b016bc9c2026adf8083e34c"
+          }
+        },
+        {
           "client_id": "811306482558-ofan08girk0dnqg9ot2ijfb3v8om0shn.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -25,15 +33,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811306482558-ofan08girk0dnqg9ot2ijfb3v8om0shn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "811306482558-7j26pelon7k4vn2l77mv482embp7pi1q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pillarproject.wallet.staging"
+              }
+            }
+          ]
         }
       }
     },
@@ -46,6 +59,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "811306482558-80jn6qf6gk192quh2a35jtc7gn4ekini.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.pillarproject.wallet.staging",
+            "certificate_hash": "4f4674f27cac21e7e44e6bf32947941338bcdaaf"
+          }
+        },
+        {
           "client_id": "811306482558-ofan08girk0dnqg9ot2ijfb3v8om0shn.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -56,15 +77,20 @@
         }
       ],
       "services": {
-        "analytics_service": {
-          "status": 1
-        },
         "appinvite_service": {
-          "status": 1,
-          "other_platform_oauth_client": []
-        },
-        "ads_service": {
-          "status": 2
+          "other_platform_oauth_client": [
+            {
+              "client_id": "811306482558-ofan08girk0dnqg9ot2ijfb3v8om0shn.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "811306482558-7j26pelon7k4vn2l77mv482embp7pi1q.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.pillarproject.wallet.staging"
+              }
+            }
+          ]
         }
       }
     }

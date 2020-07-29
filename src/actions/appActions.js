@@ -66,10 +66,6 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import {
-  INITIAL_FEATURE_FLAGS,
-  SET_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
@@ -187,9 +183,6 @@ export const initAppAndRedirectAction = () => {
 
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
-
-      const { featureFlags = INITIAL_FEATURE_FLAGS } = get(storageData, 'featureFlags', {});
-      dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
 
       const { userEvents = [] } = get(storageData, 'userEvents', {});
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });

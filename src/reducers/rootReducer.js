@@ -46,7 +46,6 @@ import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
-import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import userEventsReducer from './userEventsReducer';
@@ -85,7 +84,6 @@ import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeRedu
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
 import type { BalancesReducerState, BalancesAction } from './balancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
-import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './featureFlagsReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
@@ -121,7 +119,6 @@ export type RootReducerState = {|
   accounts: AccountsReducerState,
   balances: BalancesReducerState,
   paymentNetwork: PaymentNetworkReducerState,
-  featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
   userEvents: UserEventsReducerState,
@@ -146,7 +143,6 @@ type RootReducerAction =
   | BlockchainNetworkReducerState
   | CollectiblesAction
   | ExchangeReducerAction
-  | FeatureFlagsReducerAction
   | HistoryAction
   | PaymentNetworkAction
   | SmartWalletReducerAction
@@ -196,7 +192,6 @@ const appReducer = combineReducers({
   accounts: accountsReducer,
   balances: balancesReducer,
   paymentNetwork: paymentNetworkReducer,
-  featureFlags: featureFlagsReducer,
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,
   userEvents: userEventsReducer,
