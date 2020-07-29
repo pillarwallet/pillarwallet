@@ -72,8 +72,8 @@ class WalletActivation extends React.PureComponent<Props> {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Title>{t('title.smartWalletActivating')}</Title>
-        <Text>{t('paragraph.smartWalletActivating')}</Text>
+        <Title>{t('smartWalletContent.walletActivationView.title')}</Title>
+        <Text>{t('smartWalletContent.walletActivationView.paragraph.smartWalletActivating')}</Text>
         <ButtonsWrapper>
           <Button
             title={t('button.smartWalletFAQ')}

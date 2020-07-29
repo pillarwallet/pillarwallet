@@ -163,8 +163,9 @@ class WalletView extends React.Component<Props, State> {
   getAssetTab = (id: string, name: string, onPress: () => void) => ({ id, name, onPress });
 
   getAssetTabs = () => [
-    this.getAssetTab(TOKENS, t('label.tokens'), () => this.setActiveTab(TOKENS)),
-    this.getAssetTab(COLLECTIBLES, t('label.collectibles'), () => this.setActiveTab(COLLECTIBLES)),
+    this.getAssetTab(TOKENS, t('smartWalletContent.tabs.tokens.title'), () => this.setActiveTab(TOKENS)),
+    this.getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'),
+      () => this.setActiveTab(COLLECTIBLES)),
   ];
 
   isAllInsightListDone = () => !this.props.insightList.some(({ status, key }) => !status && key !== 'biometric');

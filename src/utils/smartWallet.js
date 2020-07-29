@@ -92,7 +92,7 @@ const getMessage = (
       // TODO: get average time
       return {
         title: t('insight.smartWalletActivate.isBeingDeployed.title'),
-        message: t('insight.smartWalletActivate.isBeingDeployed.descriptionWaitingTime', { waitingTimeInMinutes: 4 }),
+        message: t('insight.smartWalletActivate.isBeingDeployed.description.waitingTime', { waitingTimeInMinutes: 4 }),
       };
     default:
       return {};

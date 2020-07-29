@@ -192,7 +192,7 @@ class PPNView extends React.Component<Props, State> {
               center
               style={{ marginTop: 20 }}
             >
-              {t('paragraph.smartWalletActivatingStatusCard')}
+              {t('insight.pillarNetworkActivate.deploying.description.smartWalletActivatingStatusCard')}
             </BaseText>
           }
         />
@@ -226,7 +226,7 @@ class PPNView extends React.Component<Props, State> {
         return (
           <InsightWithButton
             title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
-            description={t('insight.pillarNetworkActivate.hasNoPPNBalance.descriptionArray')}
+            description={t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit')}
             {...insightProps}
           />
         );

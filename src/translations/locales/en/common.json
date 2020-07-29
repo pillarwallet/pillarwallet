@@ -19,7 +19,6 @@
     "accounts": "Accounts",
     "addFundsToWallet": "Add funds to Pillar",
     "publicAddress": "Public address",
-    "smartWalletActivating": "Smart Wallet is being activated",
     "success": "Success",
     "transactions": "Transactions"
   },
@@ -32,7 +31,6 @@
     "backedUp": "Backup secured",
     "badge": "Badge",
     "collectibleFromUser": "Collectible from {{username}}",
-    "collectibles": "Collectibles",
     "collectibleToUser": "Collectible to {{username}}",
     "created": "Created",
     "enabled": "Enabled",
@@ -123,9 +121,7 @@
   "paragraph": {
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
-    "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
-    "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet",
-    "smartWalletActivatingStatusCard": "Activating your Smart Wallet. It will be ready shortly."
+    "ensNameCopiedToClipboard": "ENS name copied to clipboard."
   },
 
   "insight": {
@@ -152,6 +148,11 @@
         "button": {
           "activatePPN": "Activate Pillar Network"
         }
+      },
+      "deploying": {
+        "description": {
+          "smartWalletActivatingStatusCard": "Activating your Smart Wallet. It will be ready shortly."
+        }
       }
     },
     "smartWalletIntro": {
@@ -173,7 +174,9 @@
       },
       "isBeingDeployed": {
         "title": "Smart Wallet is being deployed now",
-        "descriptionWaitingTime": "You will be able to send assets once it's deployed. Current average waiting time is {{waitingTimeInMinutes}} mins."
+        "description": {
+          "waitingTime": "You will be able to send assets once it's deployed. Current average waiting time is {{waitingTimeInMinutes}} mins."
+        }
       },
       "activationFailed": {
         "title": "Smart Wallet activation failed",
@@ -227,6 +230,20 @@
     "activationModal": {
       "paragraph": "To start sending and exchanging assets you need to activate your wallet.",
       "title": "Activate Smart Wallet"
+    },
+    "walletActivationView": {
+      "title": "Smart Wallet is being activated",
+      "paragraph": {
+        "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet"
+      }
+    },
+    "tabs": {
+      "tokens": {
+        "title": "Tokens"
+      },
+      "collectibles": {
+        "title": "Collectibles"
+      }
     }
   },
 
