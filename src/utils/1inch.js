@@ -17,10 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber } from 'bignumber.js';
+import axios from 'axios';
 
 import type { Asset } from 'models/Asset';
 
-import { convertToBaseUnits } from 'utils/common';
+import { convertToBaseUnits, reportOrWarn } from 'utils/common';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const EXCHANGE_URL = 'https://api.1inch.exchange/v1.1';
@@ -44,13 +46,34 @@ export const get1inchCommonUrlParams = (
   );
   const amount = quantityInBaseUnits.toFixed();
 
-  const safeFromAddress = fromAsset.code === 'ETH'
+  const safeFromAddress = fromAsset.symbol === 'ETH'
     ? EXCHANGE_ETH_ADDRESS
     : fromAsset.address;
 
-  const safeToAddress = toAsset.code === 'ETH'
+  const safeToAddress = toAsset.symbol === 'ETH'
     ? EXCHANGE_ETH_ADDRESS
     : toAsset.address;
 
   return { amount, safeToAddress, safeFromAddress };
+};
+
+export const getResponseData = async (url: string): Object => {
+  // TODO this is ugly
+  let response;
+  try {
+    response = await axios.get(url);
+  } catch (e) {
+    reportOrWarn('Unable to fetch offers', e, 'error');
+  }
+  if (!response?.data) {
+    reportOrWarn('Unable to fetch offers', null, 'error');
+    return null;
+  }
+  return response.data;
+};
+
+export const parseAssets = (assets: Asset[]) => {
+  assets.forEach(asset => {
+    asset.code = asset.symbol;
+  });
 };

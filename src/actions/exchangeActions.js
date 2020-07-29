@@ -42,7 +42,7 @@ import {
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
-import { getActiveAccountAddress } from 'utils/accounts';
+import { getSmartWalletAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
 
 // services
@@ -55,6 +55,7 @@ import type { Asset } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
+import { get1inchOffer } from '../services/1inch';
 
 
 const exchangeService = new ExchangeService();
@@ -94,7 +95,7 @@ export const takeOfferAction = (
       accounts: { data: accounts },
     } = getState();
 
-    const clientAddress = toChecksumAddress(getActiveAccountAddress(accounts));
+    const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
 
     let order;
     if (provider === 'UNISWAPV2-SHIM') {
@@ -119,7 +120,7 @@ export const takeOfferAction = (
     const transactionData = {
       fromAsset,
       toAsset,
-      from: getActiveAccountAddress(accounts),
+      from: getSmartWalletAddress(accounts), // TODO change to SW?
       payQuantity: fromAmount,
       amount: fromAmount,
       symbol: fromAsset.symbol,
@@ -151,6 +152,18 @@ const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: numbe
   };
 };
 
+const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+    const address = getSmartWalletAddress(accounts);
+
+    const offer = await get1inchOffer(fromAsset, toAsset, fromAmount, address);
+    dispatch({ type: ADD_OFFER, payload: offer });
+  };
+};
+
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -178,7 +191,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       return;
     }
 
-    await dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount));
+    dispatch(search1inchAction(fromAsset, toAsset, fromAmount));
+    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount));
   };
 };
 
@@ -307,7 +321,7 @@ export const setTokenAllowanceAction = (
     }
     const { data: { to: payToAddress, data, gasLimit } } = response;
     const asset = supportedAssets.find(a => a.symbol === formAssetCode);
-    const from = getActiveAccountAddress(accounts);
+    const from = getSmartWalletAddress(accounts);
     const transactionPayload = {
       from,
       to: payToAddress,

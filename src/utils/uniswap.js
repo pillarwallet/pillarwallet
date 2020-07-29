@@ -77,7 +77,7 @@ export const mapOffer = (
     maxQuantity: '0',
     minQuantity: '0',
     extra: undefined,
-    // _id: localConfig.get('shim_name'),
+    _id: 'UNISWAPV2-SHIM',
     description: '',
     provider: 'UNISWAPV2-SHIM',
   };

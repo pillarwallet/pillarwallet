@@ -18,41 +18,42 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import axios from 'axios';
 import { ethers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 
-import { reportOrWarn, getEthereumProvider, convertToNominalUnits } from 'utils/common';
+import { getEthereumProvider, convertToNominalUnits } from 'utils/common';
 
 import {
   EXCHANGE_URL,
   EXCHANGE_ADDRESS,
   get1inchCommonUrlParams,
+  getResponseData,
+  parseAssets,
 } from 'utils/1inch';
 
 import ERC20_ABI from 'abi/erc20.json';
 
 const provider = getEthereumProvider(NETWORK_PROVIDER);
 
-export const getOffers = async (
+export const get1inchOffer = async (
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
   clientAddress: string,
 ): Promise<Object> => {
+  parseAssets([fromAsset, toAsset]);
+
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
 
   const url =
     `${EXCHANGE_URL}/quote?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}&amount=${amount}`;
 
-  const response = axios.get(url).then(({ data }) => data).catch(e => {
-    reportOrWarn('Unable to fetch offers', e, 'error');
-  });
-
+  const response = await getResponseData(url);
+  if (!response) return null;
 
   let allowanceSet = true;
-  if (fromAsset.code !== 'ETH') {
+  if (fromAsset.symbol !== 'ETH') {
     const assetContract = new ethers.Contract(safeFromAddress, ERC20_ABI, provider);
     const allowance: BigNumber = await assetContract.allowance(clientAddress, EXCHANGE_ADDRESS);
     allowanceSet = allowance.gt(0);
@@ -75,10 +76,11 @@ export const getOffers = async (
     toAsset,
     allowanceSet,
     askRate: askRate.toFixed(),
-    // _id: localConfig.get('shim_name'),
+    _id: 'ONEINCH-SHIM',
     description: '',
     minQuantity: '0',
     maxQuantity: '0',
+    provider: 'ONEINCH-SHIM',
   };
 };
 
@@ -94,11 +96,8 @@ export const create1inchOrder = async (
     `${EXCHANGE_URL}/swap?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}` +
     `&amount=${amount}&disableEstimate=true&slippage=3`;
 
-  const response = axios.get(url).then(({ data }) => data).catch(e => {
-    reportOrWarn('Unable to fetch offers', e, 'error');
-  });
-
-
+  const response = await getResponseData(url);
+  if (!response) return null;
   const txCount = await provider.getTransactionCount(clientSendAddress);
 
   const txObject = {
