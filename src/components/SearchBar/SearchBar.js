@@ -216,7 +216,6 @@ class SearchBar extends React.Component<Props, State> {
   static defaultProps = {
     inputType: 'default',
     trim: true,
-    placeholder: t('label.search'),
   };
 
   handleChange = (e: Event) => {
@@ -288,7 +287,7 @@ class SearchBar extends React.Component<Props, State> {
   render() {
     const {
       inputProps,
-      placeholder,
+      placeholder = t('label.search'),
       backgroundColor,
       marginTop,
       marginBottom,
