@@ -21,6 +21,7 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
+import t from 'translations/translate';
 
 // constants
 import {
@@ -62,6 +63,7 @@ import type {
 import type { Asset } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { EstimatePayload } from 'services/smartWallet';
+import type { TranslatedString } from 'models/Translations';
 
 // utils
 import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
@@ -77,21 +79,20 @@ const AccountTransactionTypes = { ...sdkConstants.AccountTransactionTypes };
 const getMessage = (
   status: ?string,
   isSmartWalletActive: boolean,
-) => {
+): { title?: TranslatedString, message?: TranslatedString } => {
   switch (status) {
     case SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED:
       if (!isSmartWalletActive) return {};
       return {
-        title: 'To send assets, activate Smart Wallet first',
-        message: 'You will have to pay a small fee',
+        title: t('insight.smartWalletActivate.default.title'),
+        message: t('insight.smartWalletActivate.default.description'),
       };
     case SMART_WALLET_UPGRADE_STATUSES.DEPLOYING:
       if (!isSmartWalletActive) return {};
       // TODO: get average time
       return {
-        title: 'Smart Wallet is being deployed now',
-        message: 'You will be able to send assets once it\'s deployed.' +
-          '\nCurrent average waiting time is 4 mins',
+        title: t('insight.smartWalletActivate.isBeingDeployed.title'),
+        message: t('insight.smartWalletActivate.isBeingDeployed.descriptionWaitingTime', { waitingTimeInMinutes: 4 }),
       };
     default:
       return {};
@@ -131,10 +132,10 @@ export const getSmartWalletStatus = (
 export const isConnectedToSmartAccount = (connectedAccountRecord: ?Object) => !isEmpty(connectedAccountRecord);
 
 export const getDeployErrorMessage = (errorType: string) => ({
-  title: 'Smart Wallet activation failed',
+  title: t('insight.smartWalletActivate.activationFailed.title'),
   message: errorType === SMART_WALLET_DEPLOYMENT_ERRORS.INSUFFICIENT_FUNDS
-    ? 'You need to top up your Smart Account first'
-    : 'There was an error on our server. Please try to re-activate the account by clicking the button bellow',
+    ? t('insight.smartWalletActivate.activationFailed.error.needToSetupSmartAccount')
+    : t('insight.smartWalletActivate.activationFailed.error.default'),
 });
 
 export const isSmartWalletDeviceDeployed = (

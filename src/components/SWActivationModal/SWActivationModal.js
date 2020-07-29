@@ -24,6 +24,7 @@ import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -80,9 +81,9 @@ class SWActivationModal extends React.Component<Props> {
       const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET));
       if (!smartAccount) {
         Toast.show({
-          message: 'Smart Wallet not found',
+          message: t('toast.smartWallet.noSmartAccountDuringActivation.message'),
           type: 'warning',
-          title: 'Could not activate Smart Wallet',
+          title: t('toast.smartWallet.noSmartAccountDuringActivation.title'),
           autoClose: false,
         });
         return;
@@ -107,20 +108,18 @@ class SWActivationModal extends React.Component<Props> {
       >
         <SafeAreaView>
           <ModalContainer>
-            <MediumText center medium>Activate Smart Wallet</MediumText>
+            <MediumText center medium>{t('smartWalletContent.activationModal.title')}</MediumText>
             <Spacing h={18} />
             <CachedImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
               source={smartWalletIcon}
             />
             <Spacing h={20} />
-            <BaseText medium>
-              To start sending and exchanging assets you need to activate your wallet.
-            </BaseText>
+            <BaseText medium>{t('smartWalletContent.activationModal.paragraph')}</BaseText>
             <Spacing h={34} />
             <Button
               secondary
-              title="Activate"
+              title={t('button.activate')}
               onPress={this.activateSW}
               regularText
             />

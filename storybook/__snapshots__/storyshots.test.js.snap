@@ -26463,30 +26463,6 @@ Array [
               ]
             }
           >
-            <Text
-              medium={true}
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 16,
-                    "lineHeight": 24,
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "marginBottom": 20,
-                    },
-                    Object {
-                      "marginBottom": 24,
-                    },
-                  ],
-                ]
-              }
-            >
-              To start sending assets you need to activate Smart Wallet
-            </Text>
             <View
               accessible={true}
               focusable={true}
@@ -26530,86 +26506,7 @@ Array [
                   "width": "auto",
                 }
               }
-            >
-              <Text
-                customTheme={
-                  Object {
-                    "borderWidth": 0,
-                    "shadow": true,
-                  }
-                }
-                small={true}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 12,
-                      "lineHeight": 18,
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#FCFDFF",
-                        "fontSize": 14,
-                        "lineHeight": 14,
-                        "marginBottom": 0,
-                        "marginTop": 2.52,
-                      },
-                      undefined,
-                    ],
-                  ]
-                }
-                theme={
-                  Object {
-                    "colors": Object {
-                      "PPNSurface": "#0a0c78",
-                      "PPNText": "#f33726",
-                      "accent": "#818EB3",
-                      "activeTabBarIcon": "#007AFF",
-                      "avatarPlaceholderBackground": "#e0eeff",
-                      "avatarPlaceholderText": "#6690eb",
-                      "border": "#007AFF",
-                      "buttonSecondaryBackground": "#e6f1f9",
-                      "card": "#FFFFFF",
-                      "control": "#FCFDFF",
-                      "danger": "#ff0005",
-                      "helpIcon": "#f7931a",
-                      "iconBackground": "#ebf0f5",
-                      "inactiveTabBarIcon": "#D4D9DB",
-                      "indicator": "#F8E71C",
-                      "labelTertiary": "#818eb3",
-                      "legacyWallet": "#FA574F",
-                      "link": "#007aff",
-                      "negative": "#BD573A",
-                      "notice": "#ea480e",
-                      "orange": "#f57c00",
-                      "poolTogetherPink": "#e51fff",
-                      "popularSwaps": "#d08cb1",
-                      "positive": "#2AA057",
-                      "primary": "#007AFF",
-                      "progressBarEnd": "#f04cfa",
-                      "progressBarStart": "#ca17e1",
-                      "secondaryAccent": "#EBF0F5",
-                      "secondaryText": "#8B939E",
-                      "smartWallet": "#3C71FE",
-                      "smartWalletSurface": "#f3f7ff",
-                      "smartWalletText": "#1D24D8",
-                      "surface": "#007AFF",
-                      "synthetic": "#2329d6",
-                      "tertiary": "#EBF0F6",
-                      "text": "#FCFDFF",
-                      "transactionReceivedIcon": "#497391",
-                      "userAvatar": "#d1d9e4",
-                      "warning": "#ECA93A",
-                    },
-                    "current": "lightTheme",
-                  }
-                }
-              >
-                Activate Smart Wallet
-              </Text>
-            </View>
+            />
           </View>
         </View>
       </View>
@@ -26831,9 +26728,7 @@ Array [
                       ],
                     ]
                   }
-                >
-                  Activate Smart Wallet
-                </Text>
+                />
                 <View
                   h={18}
                   style={
@@ -26872,9 +26767,7 @@ Array [
                       undefined,
                     ]
                   }
-                >
-                  To start sending and exchanging assets you need to activate your wallet.
-                </Text>
+                />
                 <View
                   h={34}
                   style={
@@ -26922,85 +26815,7 @@ Array [
                       "width": "auto",
                     }
                   }
-                >
-                  <Text
-                    customTheme={
-                      Object {
-                        "borderWidth": 0,
-                        "shadow": false,
-                      }
-                    }
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 12,
-                          "lineHeight": 18,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#007AFF",
-                            "fontSize": 18,
-                            "lineHeight": 18,
-                            "marginBottom": 0,
-                            "marginTop": 3.2399999999999998,
-                          },
-                          undefined,
-                        ],
-                      ]
-                    }
-                    theme={
-                      Object {
-                        "colors": Object {
-                          "PPNSurface": "#0a0c78",
-                          "PPNText": "#f33726",
-                          "accent": "#818EB3",
-                          "activeTabBarIcon": "#007AFF",
-                          "avatarPlaceholderBackground": "#e0eeff",
-                          "avatarPlaceholderText": "#6690eb",
-                          "border": "#EDEDED",
-                          "buttonSecondaryBackground": "#e6f1f9",
-                          "card": "#FFFFFF",
-                          "control": "#FCFDFF",
-                          "danger": "#ff0005",
-                          "helpIcon": "#f7931a",
-                          "iconBackground": "#ebf0f5",
-                          "inactiveTabBarIcon": "#D4D9DB",
-                          "indicator": "#F8E71C",
-                          "labelTertiary": "#818eb3",
-                          "legacyWallet": "#FA574F",
-                          "link": "#007aff",
-                          "negative": "#BD573A",
-                          "notice": "#ea480e",
-                          "orange": "#f57c00",
-                          "poolTogetherPink": "#e51fff",
-                          "popularSwaps": "#d08cb1",
-                          "positive": "#2AA057",
-                          "primary": "#007AFF",
-                          "progressBarEnd": "#f04cfa",
-                          "progressBarStart": "#ca17e1",
-                          "secondaryAccent": "#EBF0F5",
-                          "secondaryText": "#8B939E",
-                          "smartWallet": "#3C71FE",
-                          "smartWalletSurface": "#f3f7ff",
-                          "smartWalletText": "#1D24D8",
-                          "surface": "#e6f1f9",
-                          "synthetic": "#2329d6",
-                          "tertiary": "#EBF0F6",
-                          "text": "#007AFF",
-                          "transactionReceivedIcon": "#497391",
-                          "userAvatar": "#d1d9e4",
-                          "warning": "#ECA93A",
-                        },
-                        "current": "lightTheme",
-                      }
-                    }
-                  >
-                    Activate
-                  </Text>
-                </View>
+                />
               </View>
             </View>
             <View

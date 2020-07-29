@@ -17,10 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { ScrollView, Linking } from 'react-native';
 import { TX_DETAILS_URL } from 'react-native-dotenv';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -45,7 +48,8 @@ const ButtonsWrapper = styled.View`
 
 type Props = {
   deploymentHash: string,
-}
+};
+
 
 class WalletActivation extends React.PureComponent<Props> {
   handleFaq = () => {
@@ -68,21 +72,18 @@ class WalletActivation extends React.PureComponent<Props> {
         }}
         showsVerticalScrollIndicator={false}
       >
-        <Title>Smart Wallet is being activated</Title>
-        <Text>
-          It won’t take long. While activation is in progress,
-          feel free to explore exciting features of Pillar Smart Wallet
-        </Text>
+        <Title>{t('title.smartWalletActivating')}</Title>
+        <Text>{t('paragraph.smartWalletActivating')}</Text>
         <ButtonsWrapper>
           <Button
-            title="Smart Wallet FAQ"
+            title={t('button.smartWalletFAQ')}
             onPress={this.handleFaq}
             textStyle={fontStyles.medium}
           />
           <Spacing h={4} />
           <Button
             primaryInverted
-            title="See on Etherscan"
+            title={t('button.seeOnEtherscan')}
             onPress={this.handleEtherscan}
             textStyle={fontStyles.medium}
             style={{ borderColor: 'transparent' }}
