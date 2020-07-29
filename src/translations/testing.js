@@ -17,6 +17,19 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import '@storybook/addon-actions/register';
-import '@storybook/addon-links/register';
-import 'storybook-addon-i18next/register';
+
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+import { DEFAULT_NAMESPACE, NAMESPACES } from './config';
+
+i18n
+  .use(initReactI18next)
+  .init({
+    lng: 'en',
+    fallbackLng: 'en',
+    ns: DEFAULT_NAMESPACE,
+    defaultNS: NAMESPACES,
+    debug: true,
+  });
+
+export default i18n;

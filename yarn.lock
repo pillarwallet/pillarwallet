@@ -1022,7 +1022,7 @@
     "@emotion/serialize" "^0.11.15"
     "@emotion/utils" "0.11.3"
 
-"@emotion/styled@^10.0.17":
+"@emotion/styled@^10.0.17", "@emotion/styled@^10.0.27":
   version "10.0.27"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@emotion/styled/-/styled-10.0.27.tgz#12cb67e91f7ad7431e1875b1d83a94b814133eaf"
   dependencies:
@@ -2368,7 +2368,7 @@
     regenerator-runtime "^0.13.3"
     ts-dedent "^1.1.0"
 
-"@storybook/addons@5.3.19", "@storybook/addons@^5.3.12":
+"@storybook/addons@5.3.19", "@storybook/addons@^5.3.12", "@storybook/addons@^5.3.17":
   version "5.3.19"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/addons/-/addons-5.3.19.tgz#3a7010697afd6df9a41b8c8a7351d9a06ff490a4"
   dependencies:
@@ -2458,7 +2458,7 @@
   dependencies:
     core-js "^3.0.1"
 
-"@storybook/components@5.3.19":
+"@storybook/components@5.3.19", "@storybook/components@^5.3.17":
   version "5.3.19"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/components/-/components-5.3.19.tgz#aac1f9eea1247cc85bd93b10fca803876fb84a6b"
   dependencies:
@@ -2484,7 +2484,7 @@
     simplebar-react "^1.0.0-alpha.6"
     ts-dedent "^1.1.0"
 
-"@storybook/core-events@5.3.19":
+"@storybook/core-events@5.3.19", "@storybook/core-events@^5.3.17":
   version "5.3.19"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/core-events/-/core-events-5.3.19.tgz#18020cd52e0d8ef0973a8e9622a10d5f99796f79"
   dependencies:
@@ -2633,7 +2633,7 @@
     qs "^6.6.0"
     util-deprecate "^1.0.2"
 
-"@storybook/theming@5.3.19":
+"@storybook/theming@5.3.19", "@storybook/theming@^5.3.17":
   version "5.3.19"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@storybook/theming/-/theming-5.3.19.tgz#177d9819bd64f7a1a6ea2f1920ffa5baf9a5f467"
   dependencies:
@@ -14087,7 +14087,7 @@ react-hotkeys@2.0.0:
   dependencies:
     prop-types "^15.6.1"
 
-react-i18next@^11.7.0:
+react-i18next@^11.3.3, react-i18next@^11.7.0:
   version "11.7.0"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-i18next/-/react-i18next-11.7.0.tgz#f27c4c237a274e007a48ac1210db83e33719908b"
   dependencies:
@@ -16080,6 +16080,19 @@ stealthy-require@^1.1.1:
 store2@^2.7.1:
   version "2.11.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/store2/-/store2-2.11.2.tgz#a298e5e97b21b3ce7419b732540bc7c79cb007db"
+
+storybook-addon-i18next@^1.3.0:
+  version "1.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/storybook-addon-i18next/-/storybook-addon-i18next-1.3.0.tgz#0577c12e9f4ac64aeafa093542031518ed6f59e6"
+  integrity sha1-BXfBLp9Kxkrq+gk1QgMVGO1vWeY=
+  dependencies:
+    "@emotion/styled" "^10.0.27"
+    "@storybook/addons" "^5.3.17"
+    "@storybook/components" "^5.3.17"
+    "@storybook/core-events" "^5.3.17"
+    "@storybook/theming" "^5.3.17"
+    prop-types "^15.7.2"
+    react-i18next "^11.3.3"
 
 stream-browserify@^1.0.0:
   version "1.0.0"

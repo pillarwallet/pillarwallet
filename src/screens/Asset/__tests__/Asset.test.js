@@ -23,7 +23,9 @@ import Asset from 'screens/Asset';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components/native';
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'translations/testing';
 
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as balancesState } from 'reducers/balancesReducer';
@@ -39,6 +41,7 @@ import { initialState as exchangeState } from 'reducers/exchangeReducer';
 import { initialState as referralsState } from 'reducers/referralsReducer';
 
 import { defaultTheme } from 'utils/themes';
+
 
 const mockStore = configureMockStore([thunk]);
 
@@ -57,12 +60,16 @@ const initialStore = mockStore({
   referrals: referralsState,
 });
 
+
 const Component = (store, navigation) => (
-  <ThemeProvider theme={defaultTheme}>
-    <Provider store={store}>
-      <Asset navigation={navigation} />
-    </Provider>
-  </ThemeProvider>
+  renderer.create(
+    <ThemeProvider theme={defaultTheme}>
+      <Provider store={store}>
+        <I18nextProvider i18n={i18n}>
+          <Asset navigation={navigation} />
+        </I18nextProvider>
+      </Provider>
+    </ThemeProvider>)
 );
 
 describe('Asset', () => {
@@ -83,7 +90,7 @@ describe('Asset', () => {
   });
 
   it('renders the Asset Screen correctly', () => {
-    const component = renderer.create(Component(initialStore, navigation)).toJSON();
+    const component = Component(initialStore, navigation).toJSON();
     expect(component).toMatchSnapshot();
   });
 });

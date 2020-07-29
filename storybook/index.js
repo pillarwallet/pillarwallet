@@ -21,12 +21,31 @@ import React from 'react';
 import { View } from 'react-native';
 import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
 import AsyncStorage from '@react-native-community/async-storage';
+import { withI18next } from 'storybook-addon-i18next';
+import i18n from 'i18next';
+import { initReactI18next } from 'react-i18next';
+
 import { loadStories } from './storyLoader';
 import withTheme from './withTheme';
 import './rn-addons';
 
+
+i18n
+  .use(initReactI18next)
+  .init({
+    whitelist: ['en'],
+    lng: 'en',
+    fallbackLng: 'en',
+  });
+
 configure(loadStories, module);
 addDecorator(withTheme);
+addDecorator(withI18next({
+  i18n,
+  languages: {
+    en: 'English',
+  },
+}));
 
 const StorybookUIRoot = () => {
   const StorybookComponent = getStorybookUI({

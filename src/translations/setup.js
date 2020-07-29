@@ -35,9 +35,6 @@ i18n
   .use(CapitalizationPostProcessor)
   .init({
     transSupportBasicHtmlNodes: false,
-    interpolation: {
-      escapeValue: false,
-    },
     ns: NAMESPACES,
     defaultNS: DEFAULT_NAMESPACE,
     postProcess: POST_PROCESSORS,
