@@ -81,9 +81,9 @@ class SWActivationModal extends React.Component<Props> {
       const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET));
       if (!smartAccount) {
         Toast.show({
-          message: t('toast.smartWallet.noSmartAccountDuringActivation.message'),
+          message: t('toast.noSmartAccountDuringActivation.message'),
           type: 'warning',
-          title: t('toast.smartWallet.noSmartAccountDuringActivation.title'),
+          title: t('toast.noSmartAccountDuringActivation.title'),
           autoClose: false,
         });
         return;

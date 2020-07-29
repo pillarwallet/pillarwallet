@@ -91,12 +91,14 @@
     "close": "Close",
     "depositMore": "Deposit more",
     "exchange": "Exchange",
+    "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
     "inviteToPillar": "Invite to Pillar",
     "notEnoughPLR": "Not enough PLR",
     "purchaseMore": "Purchase more",
     "retry": "Retry",
     "seeOnEtherscan": "See on Etherscan",
+    "selectAll": "Select all",
     "send": "Send",
     "sendBack": "Send back",
     "sendFromAnotherWallet": "Send from another wallet",
@@ -203,15 +205,21 @@
     "tabs": {
       "incoming": {
         "title": "Incoming",
-        "emptyState": "No incoming transactions"
+        "emptyState": {
+          "title": "No incoming transactions"
+        }
       },
       "sent": {
         "title": "Sent",
-        "emptyState": "No sent transactions"
+        "emptyState": {
+          "title": "No sent transactions"
+        }
       },
       "settled": {
         "title": "Settled",
-        "emptyState": "No settled transactions"
+        "emptyState": {
+          "title": "No settled transactions"
+        }
       }
     }
   },
@@ -246,11 +254,53 @@
     }
   },
 
+  "assetSearchContent": {
+    "title": "Tokens",
+    "tabs": {
+      "visible": {
+        "title": "Displayed",
+        "emptyState": {
+          "title": "Token not found",
+          "paragraph": "Check if the name was entered correctly or add custom token"
+        }
+      },
+      "withBalance":{
+        "title": "All non-zero"
+      }
+    }
+  },
+
+  "collectiblesList": {
+    "emptyState": {
+      "noCollectibles": {
+        "title": "No collectibles",
+        "paragraph": "There are no collectibles in this wallet"
+      },
+      "noneFound": {
+        "title": "Collectible not found",
+        "paragraph": "Check if the name was entered correctly"
+      }
+    }
+  },
+
   "toast":{
-    "smartWallet": {
-      "noSmartAccountDuringActivation": {
-        "message": "Smart Wallet not found",
-        "title": "Could not activate Smart Wallet"
+    "noSmartAccountDuringActivation": {
+      "message": "Smart Wallet not found",
+      "title": "Could not activate Smart Wallet"
+    },
+    "forbiddenToRemoveAsset": {
+      "message": "{{asset}} is essential for Pillar wallet",
+      "title": "This asset cannot be switched off"
+    }
+  },
+
+  "alert": {
+    "hideAsset": {
+      "title": "Are you sure?",
+      "message": "This will hide {{asset}} from your wallet",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Hide"
       }
     }
   }

@@ -339,7 +339,7 @@ class PPNView extends React.Component<Props, State> {
         onPress: () => this.setActiveTab(INCOMING),
         data: PPNTransactionsGrouped.incoming,
         emptyState: {
-          title: t('ppnContent.tabs.incoming.emptyState'),
+          title: t('ppnContent.tabs.incoming.emptyState.title'),
         },
       },
       {
@@ -348,7 +348,7 @@ class PPNView extends React.Component<Props, State> {
         onPress: () => this.setActiveTab(SENT),
         data: PPNTransactionsGrouped.sent,
         emptyState: {
-          title: t('ppnContent.tabs.sent.emptyState'),
+          title: t('ppnContent.tabs.sent.emptyState.title'),
         },
       },
       {
@@ -357,7 +357,7 @@ class PPNView extends React.Component<Props, State> {
         onPress: () => this.setActiveTab(SETTLED),
         data: PPNTransactionsGrouped.settled,
         emptyState: {
-          title: t('ppnContent.tabs.settled.emptyState'),
+          title: t('ppnContent.tabs.settled.emptyState.title'),
         },
       },
     ];
