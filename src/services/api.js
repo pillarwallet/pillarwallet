@@ -33,6 +33,7 @@ import {
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 import { GasPriceOracle } from 'gas-price-oracle';
+import https from 'https';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -50,6 +51,7 @@ import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/
 import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
+import type { AltalixTrxParams } from 'models/FiatToCryptoProviders';
 
 // services
 import {
@@ -702,6 +704,24 @@ class SDKWrapper {
       .then(() => ethplorerSdk.getAddressInfo(walletAddress))
       .then(data => get(data, 'tokens', []))
       .catch(() => []);
+  }
+
+  generateAltalixTransactionUrl(data: AltalixTrxParams): Promise<string | null> {
+    const requestOptions = {
+      url: `${SDK_PROVIDER}/partners/altalix/generate-transaction-url`,
+      defaultRequest: {
+        method: 'POST',
+        httpsAgent: new https.Agent({ rejectUnathorized: false }),
+      },
+      data,
+    };
+
+    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+      .then(response => response.data.url)
+      .catch(error => {
+        reportLog('generateAltalixTransactionUrl: SDK request error', error, Sentry.Severity.Error);
+        return null;
+      });
   }
 }
 

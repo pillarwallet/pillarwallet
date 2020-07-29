@@ -27,6 +27,9 @@ import {
   SENDWYRE_RETURN_URL,
 } from 'react-native-dotenv';
 
+import type { AltalixTrxParams } from 'models/FiatToCryptoProviders';
+import type SDKWrapper from 'services/api';
+
 export function rampWidgetUrl(address: string, email?: string) {
   const params = {
     hostApiKey: RAMPNETWORK_API_KEY,
@@ -45,3 +48,6 @@ export function wyreWidgetUrl(address: string) {
   })}`;
 }
 
+export function altalixWidgetUrl(params: AltalixTrxParams, api: SDKWrapper) {
+  return api.generateAltalixTransactionUrl(params);
+}

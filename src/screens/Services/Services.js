@@ -53,7 +53,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
-import { rampWidgetUrl, wyreWidgetUrl } from 'utils/fiatToCrypto';
+import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -69,6 +69,7 @@ import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+import type SDKWrapper from 'services/api';
 
 
 // Config constants, to be overwritten in componentDidMount
@@ -79,6 +80,7 @@ let isPeerToPeerEnabled = true;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
+let isAltalixEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -90,6 +92,7 @@ type Props = {
   user: User,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
+  getApi: () => SDKWrapper,
 };
 
 type State = {
@@ -117,6 +120,7 @@ class ServicesScreen extends React.Component<Props, State> {
     isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
+    isAltalixEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.ALTALIX);
   }
 
   getServices = () => {
@@ -217,6 +221,29 @@ class ServicesScreen extends React.Component<Props, State> {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
           this.tryOpenCryptoPurchaseUrl(wyreWidgetUrl(address));
+        },
+      });
+    }
+
+    if (isAltalixEnabled) {
+      buyCryptoServices.push({
+        key: 'altalix',
+        title: 'Buy with Altalix',
+        body: 'Buy Now',
+        action: async () => {
+          const { user: { walletId }, getApi } = this.props;
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(await altalixWidgetUrl({
+            walletId,
+            address,
+            sellCurrency: 'EUR',
+            buyCurrency: 'ETH',
+
+            // The amount is adjustable in the Altalix app, but the link won't work
+            // if the initial value is 0
+            buyAmount: 0.02,
+          }, getApi()));
         },
       });
     }
@@ -344,6 +371,11 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getMetaData: () => dispatch(getMetaDataAction()),
+
+  // When using redux-thunk, dispatch does return the result of the inner function.
+  // (Although it's meant to be used inside thunks, see:
+  // https://github.com/reduxjs/redux-thunk#composition )
+  getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));
