@@ -19,6 +19,7 @@
 */
 
 import type { TransactionPayload } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 
 type ExchangeOfferAsset = {
   code: string,
@@ -30,8 +31,8 @@ export type Offer = {
   provider: string,
   _id: string,
   description: string,
-  fromAsset: ExchangeOfferAsset,
-  toAsset: ExchangeOfferAsset,
+  fromAsset: Asset,
+  toAsset: Asset,
   askRate: number | string,
   minQuantity: number,
   maxQuantity: number,

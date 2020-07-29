@@ -184,8 +184,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { transactionPayload } = props.navigation.getParam('offerOrder');
-    this.transactionPayload = transactionPayload;
+    this.transactionPayload = props.navigation.getParam('offerOrder');
   }
 
   componentDidMount() {

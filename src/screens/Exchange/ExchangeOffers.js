@@ -98,7 +98,7 @@ type AllowanceResponse = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
-  takeOffer: (string, string, number, string, string, () => void) => void,
+  takeOffer: (Asset, Asset, number, string, string, () => void) => void,
   authorizeWithShapeshift: () => void,
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => Promise<void>) => void,
@@ -298,7 +298,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const { address: toAssetAddress, code: toAssetCode } = toAsset;
 
     this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, async (response) => {
+      setTokenAllowance(fromAssetCode || '', fromAssetAddress, toAssetAddress, provider, trackId, async (response) => {
         if (isEmpty(response)) {
           this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
           return;
@@ -417,13 +417,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       askRate,
       trackId = '',
     } = offer;
-    const { code: fromAssetCode } = fromAsset;
-    const { code: toAssetCode } = toAsset;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
 
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, trackId, order => {
+      takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
         setExecutingTransaction();
@@ -647,8 +645,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback) => dispatch(
     setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback),
+  takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
+    takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
   ),
   fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });

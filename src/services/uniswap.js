@@ -113,7 +113,7 @@ const getTrade = async (
   return trade;
 };
 
-export const getOffer = async (
+export const getUniswapOffer = async (
   allowances: Allowance[],
   fromAsset: Asset,
   toAsset: Asset,
@@ -166,12 +166,12 @@ async function getUniswapOrderData(
   };
 }
 
-const createOrder = async (
+export const createUniswapOrder = async (
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
   clientSendAddress: string,
-): Promise<Response> => {
+): Promise<Object> => {
   if (!fromAsset || !toAsset) {
     reportOrWarn('Invalid assets', null, 'error');
   }
@@ -201,7 +201,7 @@ const createOrder = async (
   } else if (fromAsset.code === 'ETH' && toAsset.code !== 'ETH') {
     txValue = quantityBaseUnits.toFixed();
     const { path, expectedOutputBaseUnits } = await getUniswapOrderData(
-      WETH[chainId], // TODO get WETH as Asset object
+      WETH[chainId],
       toAsset,
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
@@ -218,7 +218,7 @@ const createOrder = async (
   } else if (fromAsset.code !== 'ETH' && toAsset.code === 'ETH') {
     const { path, expectedOutputBaseUnits } = await getUniswapOrderData(
       fromAsset,
-      WETH[chainId], // TODO get WETH as Asset object
+      WETH[chainId],
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
     );
