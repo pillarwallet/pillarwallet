@@ -94,7 +94,7 @@ export const create1inchOrder = async (
 
   const url =
     `${EXCHANGE_URL}/swap?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}` +
-    `&amount=${amount}&disableEstimate=true&slippage=3`;
+    `&amount=${amount}&disableEstimate=true&slippage=3&fromAddress=${clientSendAddress}`;
 
   const response = await getResponseData(url);
   if (!response) return null;

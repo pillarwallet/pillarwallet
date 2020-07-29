@@ -48,6 +48,7 @@ import { getPreferredWalletId } from 'utils/smartWallet';
 // services
 import ExchangeService from 'services/exchange';
 import { getUniswapOffer, createUniswapOrder } from 'services/uniswap';
+import { get1inchOffer, create1inchOrder } from 'services/1inch';
 
 // types
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
@@ -55,7 +56,6 @@ import type { Asset } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { get1inchOffer } from '../services/1inch';
 
 
 const exchangeService = new ExchangeService();
@@ -100,8 +100,8 @@ export const takeOfferAction = (
     let order;
     if (provider === 'UNISWAPV2-SHIM') {
       order = await createUniswapOrder(fromAsset, toAsset, fromAmount, clientAddress);
-    } else if (provider === '') {
-      order = null; // TODO 1inch
+    } else if (provider === 'ONEINCH-SHIM') {
+      order = await create1inchOrder(fromAsset, toAsset, fromAmount, clientAddress);
     }
 
     if (!fromAsset || !toAsset || !order) {
@@ -120,7 +120,7 @@ export const takeOfferAction = (
     const transactionData = {
       fromAsset,
       toAsset,
-      from: getSmartWalletAddress(accounts), // TODO change to SW?
+      from: getSmartWalletAddress(accounts),
       payQuantity: fromAmount,
       amount: fromAmount,
       symbol: fromAsset.symbol,
