@@ -55,7 +55,6 @@ import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 // utils
@@ -190,7 +189,7 @@ export const finishRegistration = async ({
 
   dispatch(fetchBadgesAction(false));
 
-  dispatch(loadFeatureFlagsAction(userInfo));
+  dispatch(loadFeatureFlagsAction());
 
   await dispatch(fetchTransactionsHistoryAction());
 
@@ -263,7 +262,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch({ type: RESET_SMART_WALLET });
     dispatch({ type: RESET_PAYMENT_NETWORK });
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
-    dispatch({ type: SET_FEATURE_FLAGS, payload: {} });
     dispatch({ type: SET_USER_EVENTS, payload: [] });
 
     // STEP 1: navigate to the new wallet screen

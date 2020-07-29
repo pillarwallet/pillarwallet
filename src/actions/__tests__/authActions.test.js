@@ -29,7 +29,6 @@ import {
   UPDATE_PIN_ATTEMPTS,
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED, SET_USERNAME } from 'constants/userConstants';
-import { INITIAL_FEATURE_FLAGS, SET_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
@@ -88,7 +87,7 @@ describe('Auth actions', () => {
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
       accounts: { data: [{ ...mockSmartWalletAccount, isActive: true }] },
-      featureFlags: { data: INITIAL_FEATURE_FLAGS },
+      featureFlags: { data: {} },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
@@ -125,7 +124,6 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_USERNAME, payload: registeredMockUser.username },
-      { type: SET_FEATURE_FLAGS, payload: INITIAL_FEATURE_FLAGS },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },

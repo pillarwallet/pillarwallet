@@ -198,7 +198,8 @@ export const loginAction = (
           // make first api call which can also trigger OAuth fallback methods
           const userInfo = await api.userInfo(user.walletId);
 
-          await dispatch(loadFeatureFlagsAction(userInfo));
+          // Dispatch ation to try and get the latest remote config values...
+          dispatch(loadFeatureFlagsAction());
 
           // update FCM
           dispatch(updateFcmTokenAction(user.walletId));

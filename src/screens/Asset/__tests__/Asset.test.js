@@ -33,7 +33,6 @@ import { initialState as historyState } from 'reducers/historyReducer';
 import { initialState as assetsState } from 'reducers/assetsReducer';
 import { initialState as ratesState } from 'reducers/ratesReducer';
 import { initialState as accountsState } from 'reducers/accountsReducer';
-import { initialState as featureFlagsState } from 'reducers/featureFlagsReducer';
 import { initialState as appSettingsState } from 'reducers/appSettingsReducer';
 import { initialState as userSettingsState } from 'reducers/userSettingsReducer';
 import { initialState as exchangeState } from 'reducers/exchangeReducer';
@@ -52,7 +51,6 @@ const initialStore = mockStore({
   assets: assetsState,
   rates: ratesState,
   accounts: accountsState,
-  featureFlags: featureFlagsState,
   appSettings: appSettingsState,
   userSettings: userSettingsState,
   exchange: exchangeState,
