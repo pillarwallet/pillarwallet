@@ -17,12 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import isEmpty from 'lodash.isempty';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { createSelector } from 'reselect';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { images } from 'utils/images';
 import { getThemeByType } from 'utils/themes';
+import type { RootReducerState } from 'reducers/rootReducer';
 import {
   accountsSelector,
   activeAccountSelector,
@@ -57,7 +58,7 @@ export const availableWalletsSelector = createSelector(
   },
 );
 
-export const innactiveUserWalletForSendSellector = createSelector(
+export const inactiveUserWalletForSendSelector = createSelector(
   accountsSelector, themeSelector, (accounts, themeType) => {
     return getInactiveUserAccounts(accounts).map(account => {
       const accountName = getAccountName(account.type);
@@ -76,4 +77,11 @@ export const innactiveUserWalletForSendSellector = createSelector(
       };
     });
   },
+);
+
+export const hasKeyBasedAssetsTransferInProgressSelector = createSelector(
+  ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer.data,
+  (keyBasedAssetsTransfer) => keyBasedAssetsTransfer.some(
+    (keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction),
+  ),
 );

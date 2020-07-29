@@ -111,6 +111,7 @@ import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/Key
 import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
 import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
 import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
+import KeyBasedAssetTransferStatusScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferStatus';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -245,6 +246,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_CONFIRM,
   KEY_BASED_ASSET_TRANSFER_UNLOCK,
   KEY_BASED_ASSET_TRANSFER_FLOW,
+  KEY_BASED_ASSET_TRANSFER_STATUS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -709,6 +711,7 @@ const AppFlowNavigation = createStackNavigator(
     [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
     [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
     [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
+    [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
   },
   modalTransition,
 );

@@ -81,31 +81,11 @@ const signKeyBasedAssetTransferTransaction = async (
   keyBasedWalletAddress: string,
   smartWalletAddress: string,
   keyBasedAssetTransfer: KeyBasedAssetTransfer,
-  wallet: Wallet,
+  walletProvider: Object,
+  keyBasedAccount: Account,
   dispatch: Dispatch,
   getState: GetState,
 ) => {
-  // only temporary mock, used for type checking and retrieving addresses in calls below
-  const keyBasedAccount: Account = {
-    id: wallet.address,
-    type: ACCOUNT_TYPES.KEY_BASED,
-    isActive: false,
-    walletId: '',
-  };
-
-  const cryptoWallet = new CryptoWallet(wallet.privateKey, keyBasedAccount);
-  const walletProvider = await cryptoWallet.getProvider();
-
-  // sync local nonce
-  const transactionCount = await walletProvider.getTransactionCount(keyBasedWalletAddress);
-  dispatch({
-    type: UPDATE_TX_COUNT,
-    payload: {
-      lastCount: transactionCount,
-      lastNonce: transactionCount - 1,
-    },
-  });
-
   // get only signed transaction
   const {
     calculatedGasLimit: gasLimit,
@@ -299,23 +279,22 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash || '')
           .catch((error) => ({ error }));
         if (!transactionSent?.hash || transactionSent.error) {
-          reportLog('Failed to send key based asset transger signed transaction', {
+          reportLog('Failed to send key based asset transfer signed transaction', {
             signedTransaction: assetToTransferTransaction,
             error: transactionSent.error,
           });
-          return;
+        } else {
+          // update with pending status
+          const updatedTransaction: KeyBasedAssetTransfer = {
+            ...transferTransactionsInQueue[0],
+            status: TX_PENDING_STATUS,
+            transactionHash: transactionSent.hash,
+          };
+          const updatedTransactionSignedHash = updatedTransaction?.signedTransaction?.signedHash;
+          keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
+            .filter(({ signedTransaction }) => signedTransaction?.signedHash !== updatedTransactionSignedHash)
+            .concat(updatedTransaction);
         }
-
-        // update with pending status
-        const updatedTransaction: KeyBasedAssetTransfer = {
-          ...transferTransactionsInQueue[0],
-          status: TX_PENDING_STATUS,
-          transactionHash: transactionSent.hash,
-        };
-        const updatedTransactionSignedHash = updatedTransaction?.signedTransaction?.signedHash;
-        keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
-          .filter(({ signedTransaction }) => signedTransaction?.signedHash === updatedTransactionSignedHash)
-          .concat(updatedTransaction);
       } else if (!isEmpty(keyBasedAssetsToTransferUpdated)) {
         // transfer done, reset
         keyBasedAssetsToTransferUpdated = [];
@@ -345,6 +324,27 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
       return;
     }
 
+    // only temporary mock, used for type checking and retrieving addresses in calls below
+    const keyBasedAccount: Account = {
+      id: keyBasedWalletAddress,
+      type: ACCOUNT_TYPES.KEY_BASED,
+      isActive: false,
+      walletId: '',
+    };
+
+    const cryptoWallet = new CryptoWallet(wallet.privateKey, keyBasedAccount);
+    const walletProvider = await cryptoWallet.getProvider();
+
+    // sync local nonce
+    const transactionCount = await walletProvider.getTransactionCount(keyBasedWalletAddress);
+    dispatch({
+      type: UPDATE_TX_COUNT,
+      payload: {
+        lastCount: transactionCount,
+        lastNonce: transactionCount - 1,
+      },
+    });
+
     /**
      * we need this to be sequential and wait for each to complete because of local nonce increment
      * side note: eslint ignored because of "async for" not allowed, however, we need it for sequential calls
@@ -355,7 +355,8 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
         keyBasedWalletAddress,
         getAccountAddress(firstSmartAccount),
         keyBasedAssetTransfer,
-        wallet,
+        walletProvider,
+        keyBasedAccount,
         dispatch,
         getState,
       );
