@@ -59,7 +59,7 @@ import {
   useGasTokenSelector,
 } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
-import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
+import { inactiveUserWalletForSendSelector } from 'selectors/wallets';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
@@ -697,7 +697,7 @@ const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
-  inactiveUserAccounts: innactiveUserWalletForSendSellector,
+  inactiveUserAccounts: inactiveUserWalletForSendSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
 });

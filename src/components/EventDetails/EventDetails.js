@@ -45,7 +45,7 @@ import Spinner from 'components/Spinner';
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { getRate } from 'utils/assets';
+import { addressesEqual, getRate } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -56,7 +56,6 @@ import {
   groupPPNTransactions,
   isPendingTransaction,
   isSWAddress,
-  isKWAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
@@ -178,6 +177,7 @@ type Props = {
   isSmartAccount: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
+  keyBasedWalletAddress: string,
 };
 
 type State = {
@@ -752,6 +752,7 @@ export class EventDetail extends React.Component<Props, State> {
       referralRewardIssuersAddresses,
       depositedAssets,
       isSmartAccount,
+      keyBasedWalletAddress,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -1017,7 +1018,7 @@ export class EventDetail extends React.Component<Props, State> {
           };
 
           let buttons = [];
-          const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+          const isFromKWToSW = addressesEqual(event.from, keyBasedWalletAddress) && isSWAddress(event.to, accounts);
 
           const inviteToPillarButton = {
             title: 'Invite to Pillar',
@@ -1330,9 +1331,11 @@ export class EventDetail extends React.Component<Props, State> {
           <ButtonHolder>
             <View />
           </ButtonHolder>
-          <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
-            <BaseText tiny secondary>{eventTime}</BaseText>
-          </EventTimeHolder>
+          {event.hash && (
+            <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
+              <BaseText tiny secondary>{eventTime}</BaseText>
+            </EventTimeHolder>
+          )}
         </Row>
         <Spacing h={10} />
         <AvatarWrapper disabled>
@@ -1437,6 +1440,7 @@ const mapStateToProps = ({
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
+  wallet: { data: { address: keyBasedWalletAddress } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1451,6 +1455,7 @@ const mapStateToProps = ({
   updatingCollectibleTransaction,
   depositedAssets,
   poolStats,
+  keyBasedWalletAddress,
 });
 
 const structuredSelector = createStructuredSelector({

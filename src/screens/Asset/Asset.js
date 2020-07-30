@@ -76,7 +76,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
-import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
+import { inactiveUserWalletForSendSelector } from 'selectors/wallets';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -543,7 +543,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
-  inactiveUserAccounts: innactiveUserWalletForSendSellector,
+  inactiveUserAccounts: inactiveUserWalletForSendSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
