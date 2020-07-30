@@ -124,13 +124,7 @@ const signKeyBasedAssetTransferTransaction = async (
     );
   }
 
-  if (!signedTransaction || signedTransaction.error) {
-    reportLog('Failed to create key based asset transfer transaction', {
-      keyBasedAssetTransfer,
-      error: signedTransaction?.error,
-    });
-    return null;
-  }
+  if (!signedTransaction || signedTransaction.error) throw new Error(signedTransaction.error);
 
   // update local transaction count
   const { nonce: lastNonce, transactionCount: lastCount } = signedTransaction;
@@ -359,7 +353,10 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
         keyBasedAccount,
         dispatch,
         getState,
-      );
+      ).catch((error) => {
+        reportLog('Failed to create key based asset transfer signed transaction', { keyBasedAssetTransfer, error });
+        return null;
+      });
       if (signedTransaction) keyBasedAssetsToTransferUpdated.push({ ...keyBasedAssetTransfer, signedTransaction });
     }
 
