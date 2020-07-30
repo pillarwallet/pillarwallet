@@ -25,7 +25,8 @@ import configureMockStore from 'redux-mock-store';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from 'utils/themes';
 import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
-
+import { I18nextProvider } from 'react-i18next';
+import i18n from 'translations/testing';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 import { initialState as historyState } from 'reducers/historyReducer';
@@ -48,7 +49,12 @@ const initialStore = mockStore({
 });
 
 const Component = (store, children) => (
-  renderer.create(<Provider store={store}>{children}</Provider>)
+  renderer.create(
+    <Provider store={store}>
+      <I18nextProvider i18n={i18n}>
+        {children}
+      </I18nextProvider>
+    </Provider>)
 );
 
 const transaction = (attrs = {}) => {

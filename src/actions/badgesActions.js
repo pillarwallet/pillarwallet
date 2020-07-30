@@ -135,7 +135,6 @@ export const fetchBadgeAwardHistoryAction = () => {
         const createdAt = walletCreateEvent && badgeType === 'wallet-created'
           ? Number(walletCreateEvent.createdAt) + 1
           : originalCreatedAt;
-
         return {
           _id,
           type,
@@ -143,6 +142,7 @@ export const fetchBadgeAwardHistoryAction = () => {
           imageUrl,
           badgeId: id,
           createdAt,
+          badgeType,
         };
       });
     dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: formattedBadgeAwardEvents });

@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import InsightWithButton from 'components/InsightWithButton';
@@ -74,8 +75,8 @@ class SWActivationCard extends React.Component<Props, State> {
   render() {
     const {
       title,
-      buttonTitle = 'Activate Smart Wallet',
-      message = 'To start sending assets you need to activate Smart Wallet',
+      buttonTitle = t('smartWalletContent.activationCard.button.activate'),
+      message = t('smartWalletContent.activationCard.description.default'),
       accounts,
       smartWalletState,
       onButtonPress,
@@ -99,7 +100,7 @@ class SWActivationCard extends React.Component<Props, State> {
 
     let showMessage = message;
     if (deploymentStarted) {
-      showMessage = 'Activating your account';
+      showMessage = t('smartWalletContent.activationCard.description.activating');
     }
 
     return (
@@ -108,7 +109,7 @@ class SWActivationCard extends React.Component<Props, State> {
           <InsightWithButton
             title={deploymentErrorMessage.title}
             description={deploymentErrorMessage.message}
-            buttonTitle="Retry"
+            buttonTitle={t('button.retry')}
             onButtonPress={deploySmartWallet}
           />
         ) : (

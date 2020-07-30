@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
+import { BigNumber as BN } from 'ethers';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -64,9 +65,10 @@ export const buildAaveWithdrawTransactionData = (
 ): string => {
   const amountBN = parseTokenBigNumberAmount(amount, decimals);
   const balanceBN = parseTokenBigNumberAmount(balance, decimals);
+  const maxUint256 = BN.from(2).pow(256).sub(1); // 2**256-1 === uint256(-1) in solidity
   const withdrawAmount = balanceBN.sub(amountBN).gt(0)
     ? amountBN
-    : -1; // -1 is all
+    : maxUint256; // uint256(-1) is all
   return encodeContractMethod(AAVE_TOKEN_ABI, 'redeem', [withdrawAmount]);
 };
 

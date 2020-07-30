@@ -17,9 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import CircleButton from 'components/CircleButton';
+
 
 type Props = {
   onPressReceive: Function,
@@ -29,7 +33,7 @@ type Props = {
   isSendDisabled?: boolean,
   isReceiveDisabled?: boolean,
   showButtons?: string[],
-}
+};
 
 const AssetButtonsWrapper = styled.View`
   flex-direction: row;
@@ -48,7 +52,7 @@ const AssetButtons = (props: Props) => {
       {showReceive &&
       <CircleButton
         disabled={props.isReceiveDisabled}
-        label="Add funds"
+        label={t('button.addFunds')}
         fontIcon="qrDetailed"
         onPress={props.onPressReceive}
       />
@@ -56,7 +60,7 @@ const AssetButtons = (props: Props) => {
       {showSend &&
       <CircleButton
         disabled={props.noBalance || props.isSendDisabled}
-        label="Send"
+        label={t('button.send')}
         fontIcon="paperPlane"
         onPress={props.onPressSend}
       />
@@ -64,7 +68,7 @@ const AssetButtons = (props: Props) => {
       {!!props.onPressExchange && showExchange &&
       <CircleButton
         disabled={props.noBalance || props.isSendDisabled}
-        label="Exchange"
+        label={t('button.exchange')}
         fontIcon="exchange"
         onPress={props.onPressExchange}
       />}
