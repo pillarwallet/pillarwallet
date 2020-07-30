@@ -275,7 +275,7 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash)
           .catch((error) => ({ error }));
         if (!transactionSent?.hash || transactionSent.error) {
-          reportLog('Failed to send key based asset transfer signed transaction', {
+          reportLog('Failed to send key based asset migration signed transaction', {
             signedTransaction: assetToTransferTransaction,
             error: transactionSent.error,
           });
@@ -356,7 +356,7 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
         dispatch,
         getState,
       ).catch((error) => {
-        reportLog('Failed to create key based asset transfer signed transaction', { keyBasedAssetTransfer, error });
+        reportLog('Failed to create key based asset migration signed transaction', { keyBasedAssetTransfer, error });
         return null;
       });
       if (signedTransaction) keyBasedAssetsToTransferUpdated.push({ ...keyBasedAssetTransfer, signedTransaction });

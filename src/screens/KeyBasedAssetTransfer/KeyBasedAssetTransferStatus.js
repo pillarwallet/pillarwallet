@@ -118,7 +118,7 @@ const KeyBasedAssetTransferStatus = ({
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Key based assets transfer' }] }}
+      headerProps={{ centerItems: [{ title: 'Key based assets migration' }] }}
       footer={!transferComplete && (
         <Footer>
           <Button
@@ -135,7 +135,7 @@ const KeyBasedAssetTransferStatus = ({
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <Wrapper flex={1} center regularPadding>
             <Animation source={animationSuccess} />
-            <Title center>Key based asset transfer complete</Title>
+            <Title center>Key based assets migration complete</Title>
             <Button
               block
               title={t('auth:button.magic')}

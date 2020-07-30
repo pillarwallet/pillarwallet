@@ -213,7 +213,7 @@ const Menu = ({
     },
     {
       key: 'assetsMigration',
-      title: 'Transfer assets to Smart Wallet',
+      title: 'Migrate assets to Smart Wallet',
       icon: 'send-asset',
       iconColor: colors.accent,
       action: () => navigation.navigate(
