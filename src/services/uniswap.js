@@ -27,15 +27,16 @@ import {
   TradeType,
   WETH,
 } from '@uniswap/sdk';
+import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 
+// utils
 import { reportOrWarn, convertToBaseUnits, getEthereumProvider } from 'utils/common';
 import {
   chainId,
   ADDRESSES,
-  mapOffer,
   getAskRate,
   parseAssets,
   getExpectedOutput,
@@ -46,11 +47,17 @@ import {
   swapExactEthToTokens,
   generateTxObject,
 } from 'utils/uniswap';
+import { parseOffer, isAllowanceSet } from 'utils/exchange';
 
+// models
 import type { Asset } from 'models/Asset';
-import type { Allowance } from 'models/Offer';
+import type { Allowance, Offer } from 'models/Offer';
+
+// constants
+import { PROVIDER_UNISWAP } from 'constants/exchangeConstants';
 
 const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
+const abiCoder = require('web3-eth-abi');
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -118,7 +125,7 @@ export const getUniswapOffer = async (
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
-) => {
+): Promise<Offer> => {
   parseAssets([fromAsset, toAsset]);
   const decimalsBN = new BigNumber(fromAsset.decimals);
   const quantityBN = new BigNumber(quantity);
@@ -127,10 +134,8 @@ export const getUniswapOffer = async (
 
   const trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
   const askRate = getAskRate(trade);
-  const allowanceSet = fromAsset.symbol === 'ETH' ? true : !!allowances.find(
-    ({ fromAssetCode, toAssetCode }) => fromAssetCode === fromAsset.symbol && toAssetCode === toAsset.symbol,
-  );
-  const offer = mapOffer(fromAsset, toAsset, allowanceSet, askRate);
+  const allowanceSet = isAllowanceSet(allowances, fromAsset.symbol, toAsset.symbol, PROVIDER_UNISWAP);
+  const offer: Offer = parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_UNISWAP);
   return offer;
 };
 
@@ -250,5 +255,34 @@ export const createUniswapOrder = async (
     orderId: '-',
     sendToAddress: txObject.to,
     transactionObj: txObject,
+  };
+};
+
+export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
+  const abiFunction = {
+    name: 'approve',
+    outputs: [{ type: 'bool', name: 'out' }],
+    inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
+    constant: false,
+    payable: false,
+    type: 'function',
+    gas: 38769,
+  };
+
+  const encodedContractFunction = abiCoder.encodeFunctionCall(
+    abiFunction,
+    [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
+  );
+
+  const txCount = await ethProvider.getTransactionCount(clientAddress);
+
+  return {
+    nonce: txCount.toString(),
+    to: fromAssetAddress,
+    gasLimit: '0',
+    gasPrice: '0',
+    chainId: chainId.toString(),
+    value: '0',
+    data: encodedContractFunction,
   };
 };

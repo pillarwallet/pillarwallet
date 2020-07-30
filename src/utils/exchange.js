@@ -21,7 +21,8 @@ import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
 import { EXCHANGE_URL } from 'react-native-dotenv';
 import get from 'lodash.get';
-import type { ProvidersMeta } from 'models/Offer';
+import type { ProvidersMeta, Offer, Allowance } from 'models/Offer';
+import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
 import { getThemeName } from './themes';
@@ -54,4 +55,37 @@ export const clearWebViewCookies = () => {
   } else {
     CookieManager.clearAll().then(() => {}).catch(() => null);
   }
+};
+
+export const parseOffer = (
+  fromAsset: Asset,
+  toAsset: Asset,
+  allowanceSet: boolean,
+  askRate: string,
+  provider: string,
+): Offer => {
+  return {
+    fromAsset,
+    toAsset,
+    allowanceSet,
+    askRate,
+    maxQuantity: '0',
+    minQuantity: '0',
+    extra: undefined,
+    _id: provider,
+    description: '',
+    provider,
+  };
+};
+
+export const isAllowanceSet = (
+  allowances: Allowance[],
+  fromAssetSymbol: string,
+  toAssetSymbol: string,
+  exchangeProvider: string,
+): boolean => {
+  return fromAssetSymbol === 'ETH' ? true : !!allowances.find(
+    ({ fromAssetCode, toAssetCode, provider }) =>
+      provider === exchangeProvider && fromAssetCode === fromAssetSymbol && toAssetCode === toAssetSymbol,
+  );
 };

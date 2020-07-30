@@ -90,7 +90,6 @@ export type EnableData = {
 };
 
 type AllowanceResponse = {
-  gasLimit: number,
   payToAddress: string,
   transactionObj: { data: string },
 };
@@ -101,7 +100,7 @@ type Props = {
   takeOffer: (Asset, Asset, number, string, string, () => void) => void,
   authorizeWithShapeshift: () => void,
   setExecutingTransaction: () => void,
-  setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => Promise<void>) => void,
+  setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
   connectedProviders: ExchangeProvider[],
   providersMeta: ProvidersMeta,
@@ -292,13 +291,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       provider,
       fromAsset,
       toAsset,
-      trackId = '',
     } = offer;
     const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
-    const { address: toAssetAddress, code: toAssetCode } = toAsset;
-
+    const { code: toAssetCode } = toAsset;
     this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetCode || '', fromAssetAddress, toAssetAddress, provider, trackId, async (response) => {
+      setTokenAllowance(fromAssetAddress, provider, async (response) => {
         if (isEmpty(response)) {
           this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
           return;
@@ -642,8 +639,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
-  setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback) => dispatch(
-    setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
+  setTokenAllowance: (fromAssetAddress, provider, callback) => dispatch(
+    setTokenAllowanceAction(fromAssetAddress, provider, callback),
   ),
   takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
     takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),

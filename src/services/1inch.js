@@ -22,8 +22,8 @@ import { ethers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 
-import { getEthereumProvider, convertToNominalUnits } from 'utils/common';
-
+// utils
+import { getEthereumProvider, convertToNominalUnits, reportOrWarn } from 'utils/common';
 import {
   EXCHANGE_URL,
   EXCHANGE_ADDRESS,
@@ -31,17 +31,24 @@ import {
   getResponseData,
   parseAssets,
 } from 'utils/1inch';
+import { parseOffer, isAllowanceSet } from 'utils/exchange';
 
-import ERC20_ABI from 'abi/erc20.json';
+// constants
+import { PROVIDER_1INCH } from 'constants/exchangeConstants';
+
+// types
+import type { Allowance, Offer } from 'models/Offer';
+import type { Asset } from 'models/Asset';
 
 const provider = getEthereumProvider(NETWORK_PROVIDER);
+const abiCoder = require('web3-eth-abi');
 
 export const get1inchOffer = async (
+  allowances: Allowance[],
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
-  clientAddress: string,
-): Promise<Object> => {
+): Promise<Offer | null> => {
   parseAssets([fromAsset, toAsset]);
 
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
@@ -52,12 +59,7 @@ export const get1inchOffer = async (
   const response = await getResponseData(url);
   if (!response) return null;
 
-  let allowanceSet = true;
-  if (fromAsset.symbol !== 'ETH') {
-    const assetContract = new ethers.Contract(safeFromAddress, ERC20_ABI, provider);
-    const allowance: BigNumber = await assetContract.allowance(clientAddress, EXCHANGE_ADDRESS);
-    allowanceSet = allowance.gt(0);
-  }
+  const allowanceSet = isAllowanceSet(allowances, fromAsset.symbol, toAsset.symbol, PROVIDER_1INCH);
 
   const fromTokenAmount = convertToNominalUnits(
     new BigNumber(fromAsset.decimals),
@@ -70,18 +72,8 @@ export const get1inchOffer = async (
   );
 
   const askRate = toTokenAmount.dividedBy(fromTokenAmount);
-
-  return {
-    fromAsset,
-    toAsset,
-    allowanceSet,
-    askRate: askRate.toFixed(),
-    _id: 'ONEINCH-SHIM',
-    description: '',
-    minQuantity: '0',
-    maxQuantity: '0',
-    provider: 'ONEINCH-SHIM',
-  };
+  const offer: Offer = parseOffer(fromAsset, toAsset, allowanceSet, askRate.toFixed(), PROVIDER_1INCH);
+  return offer;
 };
 
 export const create1inchOrder = async (
@@ -114,5 +106,39 @@ export const create1inchOrder = async (
     orderId: '-',
     sendToAddress: txObject.to,
     transactionObj: txObject,
+  };
+};
+
+export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
+  if (!clientAddress) {
+    reportOrWarn('Unable to set allowance', null, 'error');
+    return null;
+  }
+
+  const abiFunction = {
+    name: 'approve',
+    outputs: [{ type: 'bool', name: 'out' }],
+    inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
+    constant: false,
+    payable: false,
+    type: 'function',
+    gas: 38769,
+  };
+
+  const encodedContractFunction = abiCoder.encodeFunctionCall(
+    abiFunction,
+    [EXCHANGE_ADDRESS, ethers.constants.MaxUint256.toString()],
+  );
+
+  const txCount = await provider.getTransactionCount(clientAddress);
+
+  return {
+    nonce: txCount.toString(),
+    to: fromAssetAddress,
+    gasLimit: '0',
+    gasPrice: '0',
+    chainId: '1',
+    value: '0',
+    data: encodedContractFunction,
   };
 };

@@ -63,26 +63,6 @@ const getBNFromNumeratorDenominator = (prop: { numerator: any, denominator: any,
   return numeratorBN.dividedBy(denominatorBN).multipliedBy(scalarValue);
 };
 
-export const mapOffer = (
-  fromAsset: Asset,
-  toAsset: Asset,
-  allowanceSet: boolean,
-  askRate: string,
-): Object => {
-  return {
-    fromAsset,
-    toAsset,
-    allowanceSet,
-    askRate,
-    maxQuantity: '0',
-    minQuantity: '0',
-    extra: undefined,
-    _id: 'UNISWAPV2-SHIM',
-    description: '',
-    provider: 'UNISWAPV2-SHIM',
-  };
-};
-
 export const getAskRate = (trade: Trade): string => {
   const excutionPriceBN = getBNFromNumeratorDenominator(trade.executionPrice);
   return excutionPriceBN.toFixed();

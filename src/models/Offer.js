@@ -34,10 +34,11 @@ export type Offer = {
   fromAsset: Asset,
   toAsset: Asset,
   askRate: number | string,
-  minQuantity: number,
-  maxQuantity: number,
+  minQuantity: number | string,
+  maxQuantity: number | string,
   allowanceSet: boolean,
-  trackId: string,
+  trackId?: string,
+  extra?: Object,
 }
 
 export type OfferRequest = {

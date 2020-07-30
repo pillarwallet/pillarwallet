@@ -38,21 +38,23 @@ import {
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
+  PROVIDER_UNISWAP,
+  PROVIDER_1INCH,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { getPreferredWalletId } from 'utils/smartWallet';
 
 // services
 import ExchangeService from 'services/exchange';
-import { getUniswapOffer, createUniswapOrder } from 'services/uniswap';
-import { get1inchOffer, create1inchOrder } from 'services/1inch';
+import { getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx } from 'services/uniswap';
+import { get1inchOffer, create1inchOrder, create1inchAllowanceTx } from 'services/1inch';
 
 // types
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
+import type { Allowance } from 'models/Offer';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -90,7 +92,6 @@ export const takeOfferAction = (
   callback: Function,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    connectExchangeService(getState());
     const {
       accounts: { data: accounts },
     } = getState();
@@ -98,9 +99,9 @@ export const takeOfferAction = (
     const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
 
     let order;
-    if (provider === 'UNISWAPV2-SHIM') {
+    if (provider === PROVIDER_UNISWAP) {
       order = await createUniswapOrder(fromAsset, toAsset, fromAmount, clientAddress);
-    } else if (provider === 'ONEINCH-SHIM') {
+    } else if (provider === PROVIDER_1INCH) {
       order = await create1inchOrder(fromAsset, toAsset, fromAmount, clientAddress);
     }
 
@@ -134,32 +135,21 @@ export const takeOfferAction = (
 };
 
 export const resetOffersAction = () => {
-  return async (dispatch: Dispatch) => {
-    // reset websocket listener
-    exchangeService.resetOnOffers();
+  return (dispatch: Dispatch) => {
     dispatch({ type: RESET_OFFERS });
   };
 };
 
-const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      exchange: { data: { allowances = [] } },
-    } = getState();
-
+const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, allowances: Allowance[]) => {
+  return async (dispatch: Dispatch) => {
     const offer = await getUniswapOffer(allowances, fromAsset, toAsset, fromAmount);
     dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-    } = getState();
-    const address = getSmartWalletAddress(accounts);
-
-    const offer = await get1inchOffer(fromAsset, toAsset, fromAmount, address);
+const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, allowances: Allowance[]) => {
+  return async (dispatch: Dispatch) => {
+    const offer = await get1inchOffer(allowances, fromAsset, toAsset, fromAmount);
     dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
@@ -167,7 +157,7 @@ const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number)
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      exchange: { exchangeSupportedAssets },
+      exchange: { exchangeSupportedAssets, data: { allowances = [] } },
     } = getState();
 
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
@@ -191,8 +181,8 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       return;
     }
 
-    dispatch(search1inchAction(fromAsset, toAsset, fromAmount));
-    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount));
+    dispatch(search1inchAction(fromAsset, toAsset, fromAmount, allowances));
+    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, allowances));
   };
 };
 
@@ -285,60 +275,38 @@ export const setDismissTransactionAction = () => ({
 });
 
 export const setTokenAllowanceAction = (
-  formAssetCode: string,
   fromAssetAddress: string,
-  toAssetAddress: string,
   provider: string,
-  trackId: string,
   callback: Function,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    connectExchangeService(getState());
-
     const {
       accounts: { data: accounts },
-      assets: { supportedAssets },
     } = getState();
 
-    const activeWalletId = getPreferredWalletId(accounts);
+    const clientAddress = getSmartWalletAddress(accounts);
+    let txData;
+    if (provider === PROVIDER_UNISWAP) {
+      txData = await createUniswapAllowanceTx(fromAssetAddress, clientAddress || '');
+    } else if (provider === PROVIDER_1INCH) {
+      txData = await create1inchAllowanceTx(fromAssetAddress, clientAddress || '');
+    }
 
-    const allowanceRequest = {
-      provider,
-      fromAssetAddress,
-      toAssetAddress,
-      walletId: activeWalletId,
-    };
-    const response = await exchangeService.setTokenAllowance(allowanceRequest, trackId);
-
-    if (!response || !response.data || response.error) {
+    if (!txData) {
       Toast.show({
-        title: 'Exchange service failed',
+        title: 'Token allowance failed',
         type: 'warning',
-        message: 'Unable to set token allowance',
+        message: 'We are sorry. Token allowance could not be set. Please try again.',
       });
-      callback({}); // let's return callback to dismiss loading spinner on offer card button
       return;
     }
-    const { data: { to: payToAddress, data, gasLimit } } = response;
-    const asset = supportedAssets.find(a => a.symbol === formAssetCode);
-    const from = getSmartWalletAddress(accounts);
-    const transactionPayload = {
-      from,
-      to: payToAddress,
-      data,
-      symbol: formAssetCode,
-      contractAddress: asset ? asset.address : '',
-      decimals: asset ? asset.decimals : 18,
-      amount: 0,
-    };
+
+    const { to: payToAddress, data } = txData; // todo wrong
     callback({
-      gasLimit,
-      data,
       payToAddress,
       transactionObj: {
         data,
       },
-      transactionPayload,
     });
   };
 };
