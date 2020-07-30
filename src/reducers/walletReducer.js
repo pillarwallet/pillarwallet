@@ -45,6 +45,7 @@ import {
 } from 'constants/walletConstants';
 import { utils } from 'ethers';
 
+
 export type Wallet = {|
   address: string,
   privateKey: string
@@ -58,7 +59,7 @@ export type BackupStatus = {|
 
 export type ImportedWallet = {
   signingKey: utils.SigningKey
-}
+};
 
 export type WalletReducerState = {|
   data: Wallet,

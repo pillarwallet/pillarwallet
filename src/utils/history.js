@@ -139,6 +139,7 @@ export const parseFeeWithGasToken = (
 };
 
 export const findTransactionAcrossAccounts = (history: TransactionsStore, txHash: string): ?Transaction => {
+  if (!txHash) return {};
   txHash = txHash.toLowerCase();
   const accountsHistory: Object[] = Object.values(history);
   return accountsHistory

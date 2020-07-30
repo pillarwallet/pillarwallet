@@ -25,8 +25,14 @@ import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova 
 import { View as mockView } from 'react-native';
 import { utils } from 'ethers';
 import mocktract from 'mocktract';
+
+// constants
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
+// mocks
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
+
 
 process.env.IS_TEST = 'TEST';
 
@@ -219,13 +225,27 @@ jest.setMock('react-native-cached-image', {
   CachedImage: () => null,
 });
 
-const mockSmartWalletAccount = {
+export const mockSmartWalletAccountApiData = {
   id: 123,
-  address: 'publicAddress',
+  address: '0x0',
   ensName: null,
   state: 'Created',
   nextState: null,
   updatedAt: '2019-05-10T07:15:09.000Z',
+};
+
+export const mockSmartWalletAccount = {
+  id: '0x0',
+  isActive: false,
+  walletId: '',
+  type: ACCOUNT_TYPES.SMART_WALLET,
+  extra: mockSmartWalletAccountApiData,
+};
+
+export const mockSmartWalletConnectedAccount = {
+  ...mockSmartWalletAccountApiData,
+  activeDeviceAddress: '0x0',
+  devices: [],
 };
 
 const mockArchanovaSdkInstance = {
@@ -263,9 +283,9 @@ jest.setMock('@smartwallet/sdk', {
   getSdkEnvironment: () => mockArchanovaSdkInstance,
   createSdk: () => ({
     initialize: () => Promise.resolve(),
-    getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccount] }),
-    createAccount: () => Promise.resolve(mockSmartWalletAccount),
-    connectAccount: () => Promise.resolve(),
+    getConnectedAccounts: () => Promise.resolve({ items: [mockSmartWalletAccountApiData] }),
+    createAccount: () => Promise.resolve(mockSmartWalletAccountApiData),
+    connectAccount: () => Promise.resolve(mockSmartWalletAccountApiData),
     event$: {
       subscribe: jest.fn(),
       next: jest.fn(),
@@ -275,6 +295,11 @@ jest.setMock('@smartwallet/sdk', {
       signedGasPrice: { gasPrice: new BN(5000000000) },
     }),
     reset: () => Promise.resolve(),
+    getConnectedAccountDevices: () => Promise.resolve([]),
+    state: {
+      account: mockSmartWalletAccountApiData,
+      accountDevice: { device: { address: '0x0' } },
+    },
   }),
 });
 

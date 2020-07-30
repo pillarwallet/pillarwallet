@@ -564,7 +564,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   return { id: accountId, ...updatedAccountAssets };
 };
 
-const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAssets: Asset[]) => {
+export const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supportedAssets: Asset[]): Object => {
   const addressErc20Tokens = await api.getAddressErc20TokensInfo(accountId); // all address' assets except ETH;
   const accOwnedErc20Assets = {};
   if (addressErc20Tokens.length) {

@@ -20,6 +20,8 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
+
+// constants
 import {
   UPDATE_WALLET_STATE,
   DECRYPT_WALLET,
@@ -28,9 +30,23 @@ import {
 } from 'constants/walletConstants';
 import { UPDATE_USER, PENDING, REGISTERED, SET_USERNAME } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
+import {
+  SET_SMART_WALLET_CONNECTED_ACCOUNT,
+  SET_SMART_WALLET_SDK_INIT,
+  SMART_WALLET_UPGRADE_STATUSES,
+} from 'constants/smartWalletConstants';
+import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
+
+// actions
+import { loginAction } from 'actions/authActions';
+
+// services
 import Storage from 'services/storage';
 import PillarSdk from 'services/api';
-import { loginAction } from 'actions/authActions';
+
+// test utils
+import { mockSmartWalletAccount, mockSmartWalletConnectedAccount } from 'testUtils/jestSetup';
+
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -70,11 +86,11 @@ describe('Auth actions', () => {
         backupStatus: { isBackedUp: false, isImported: false },
       },
       connectionKeyPairs: { data: [], lastConnectionKeyIndex: -1 },
-      accounts: { data: [] },
+      accounts: { data: [{ ...mockSmartWalletAccount, isActive: true }] },
       featureFlags: { data: {} },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
-      smartWallet: {},
+      smartWallet: { upgrade: { status: SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
     });
   });
 
@@ -108,10 +124,13 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
       { type: SET_USERNAME, payload: registeredMockUser.username },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
+      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
+      { type: SET_CONNECTED_DEVICES, payload: [] },
+      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
       { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 
     const pin = '123456';

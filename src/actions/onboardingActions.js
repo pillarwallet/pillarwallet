@@ -44,7 +44,7 @@ import {
   REFERRAL_INCOMING_REWARD,
   RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
-import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
 import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
@@ -55,10 +55,10 @@ import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
 import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_USER_EVENTS, WALLET_IMPORT_EVENT } from 'constants/userEventsConstants';
+import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
 // utils
-import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
+import { generateMnemonicPhrase } from 'utils/wallet';
 import { delay } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 
@@ -71,7 +71,6 @@ import smartWalletService from 'services/smartWallet';
 
 // actions
 import {
-  initSmartWalletSdkAction,
   importSmartWalletAccountsAction,
   managePPNInitFlagAction,
 } from 'actions/smartWalletActions';
@@ -81,14 +80,12 @@ import {
   encryptAndSaveWalletAction,
   generateWalletMnemonicAction,
 } from 'actions/walletActions';
-import { initDefaultAccountAction } from 'actions/accountsActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
-import { addWalletCreationEventAction, getWalletsCreationEventsAction } from 'actions/userEventsActions';
+import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
-import { labelUserAsLegacyAction } from 'actions/userActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -172,50 +169,29 @@ export const finishRegistration = async ({
   dispatch,
   userInfo,
   privateKey,
-  address,
-  isImported,
 }: {
   api: SDKWrapper,
   dispatch: Dispatch,
   userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
   privateKey: string,
-  address: string,
-  isImported: boolean,
 }) => {
   // set API username (local method)
   api.setUsername(userInfo.username);
-
-  // create default key-based account if needed
-  await dispatch(initDefaultAccountAction(address, userInfo.walletId, false));
 
   // get & store initial assets
   const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
   const rates = await getExchangeRates(Object.keys(initialAssets));
   dispatch(setRatesAction(rates));
 
-  dispatch({
-    type: SET_INITIAL_ASSETS,
-    payload: {
-      accountId: address,
-      assets: initialAssets,
-    },
-  });
-
-  const assets = { [address]: initialAssets };
-  dispatch(saveDbAction('assets', { assets }, true));
+  // create smart wallet account only for new wallets
+  await smartWalletService.reset();
+  await dispatch(importSmartWalletAccountsAction(privateKey));
 
   dispatch(fetchBadgesAction(false));
 
   dispatch(loadFeatureFlagsAction());
 
-  // create smart wallet account only for new wallets
-  await smartWalletService.reset();
-  const createNewAccount = !isImported;
-  await dispatch(initSmartWalletSdkAction(privateKey));
-  await dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initialAssets));
-
   await dispatch(fetchTransactionsHistoryAction());
-  dispatch(labelUserAsLegacyAction());
 
   dispatch(managePPNInitFlagAction());
 
@@ -345,14 +321,11 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       api,
       dispatch,
       userInfo,
-      address: normalizeWalletAddress(wallet.address),
       privateKey: wallet.privateKey,
-      isImported,
     });
 
     // STEP 6: add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
-    if (isImported) dispatch(addWalletCreationEventAction(WALLET_IMPORT_EVENT, +new Date() / 1000));
 
     // STEP 7: check if user ir referred to install the app
     const referralToken = get(getState(), 'referrals.referralToken');
@@ -381,7 +354,6 @@ export const registerOnBackendAction = () => {
           privateKey,
           importedWallet,
         },
-        backupStatus: { isImported },
       },
     } = getState();
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
@@ -409,9 +381,7 @@ export const registerOnBackendAction = () => {
       api,
       dispatch,
       userInfo,
-      address: normalizeWalletAddress(walletData.address),
       privateKey: walletPrivateKey,
-      isImported,
     });
 
     dispatch(checkForWalletBackupToastAction());

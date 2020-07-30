@@ -50,7 +50,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { addressesEqual } from 'utils/assets';
-import { generateMnemonicPhrase, normalizeWalletAddress } from 'utils/wallet';
+import { generateMnemonicPhrase } from 'utils/wallet';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 
 // services
@@ -61,6 +61,7 @@ import smartWalletService from 'services/smartWallet';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { EthereumWallet } from 'models/Wallet';
 import type SDKWrapper from 'services/api';
+
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -137,11 +138,8 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     await finishRegistration({
       api,
       dispatch,
-      getState,
       userInfo,
-      address: normalizeWalletAddress(activeDeviceAddress),
       privateKey,
-      isImported: true,
     });
 
     // technically key based wallet is not imported

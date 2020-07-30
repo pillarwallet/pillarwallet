@@ -53,7 +53,7 @@ const parseCollectibleMedia = (data) => {
   };
 };
 
-const collectibleFromResponse = (responseItem: Object): Collectible => {
+export const collectibleFromResponse = (responseItem: Object): Collectible => {
   const {
     token_id: id,
     asset_contract: assetContract,
