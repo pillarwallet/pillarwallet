@@ -368,7 +368,7 @@ export function fetchLastBlockNumber(network?: string): Promise<number> {
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
 }
 
-export function transferSigned(signed: string) {
+export function transferSigned(signed: ?string) {
   const provider = getEthereumProvider(NETWORK_PROVIDER);
   return provider.sendTransaction(signed);
 }

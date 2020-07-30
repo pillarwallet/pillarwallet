@@ -190,10 +190,12 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
     let availableCollectibles = [];
 
     const fetchedCollectibles = await api.fetchCollectibles(keyBasedWalletAddress);
-    if (fetchedCollectibles.error || !fetchedCollectibles.assets) {
+    if (fetchedCollectibles.error) {
       reportLog('Failed to fetch key based wallet collectibles', { requestResult: fetchedCollectibles });
     } else {
-      availableCollectibles = fetchedCollectibles.assets.map(collectibleFromResponse);
+      availableCollectibles = !isEmpty(fetchedCollectibles?.assets)
+        ? fetchedCollectibles.assets.map(collectibleFromResponse)
+        : [];
     }
 
     dispatch({ type: SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER, payload: availableCollectibles });
@@ -270,7 +272,7 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
       if (!isEmpty(transferTransactionsInQueue)) {
         // submit first in queue
         const assetToTransferTransaction = transferTransactionsInQueue[0].signedTransaction;
-        const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash || '')
+        const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash)
           .catch((error) => ({ error }));
         if (!transactionSent?.hash || transactionSent.error) {
           reportLog('Failed to send key based asset transfer signed transaction', {
@@ -293,7 +295,7 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         // transfer done, reset
         keyBasedAssetsToTransferUpdated = [];
         Toast.show({
-          message: 'Key based assets transfer complete!',
+          message: 'Your key based wallet assets have been transferred successfully!',
           type: 'success',
           title: 'Success',
         });

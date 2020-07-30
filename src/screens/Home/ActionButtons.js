@@ -120,6 +120,7 @@ const ActionButtons = ({
 
   const closeAddFundsModal = (callback?: () => void) => {
     setVisibleAddFundsModal(false);
+    // TODO: do we really need this callback here?
     if (callback) {
       const timer = setTimeout(() => {
         callback();
