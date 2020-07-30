@@ -52,7 +52,7 @@ import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalCo
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { delay, reportOrWarn } from 'utils/common';
+import { delay, reportLog, reportOrWarn } from 'utils/common';
 import { getSaltedPin, decryptWallet, constructWalletFromPrivateKey } from 'utils/wallet';
 import { updateOAuthTokensCB, onOAuthTokensFailedCB } from 'utils/oAuth';
 import { clearWebViewCookies } from 'utils/exchange';
@@ -163,11 +163,15 @@ export const loginAction = (
         throw new Error();
       }
 
-      const decryptedPrivateKey = wallet?.privateKey;
-      if (!decryptedPrivateKey) throw new Error();
-
       let { user = {} } = await storage.get('user');
       const userState = user.walletId ? REGISTERED : PENDING;
+
+      const decryptedPrivateKey = wallet?.privateKey;
+      if (!decryptedPrivateKey) {
+        reportLog('Unable to get wallet private key', { user });
+        throw new Error();
+      }
+
 
       if (user.username) {
         dispatch({ type: SET_USERNAME, payload: user.username });
