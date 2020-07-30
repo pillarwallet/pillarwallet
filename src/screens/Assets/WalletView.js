@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform, ScrollView, StyleSheet, RefreshControl, TouchableOpacity } from 'react-native';
@@ -25,6 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 import Tabs from 'components/Tabs';
 import Insight from 'components/Insight';
@@ -37,11 +39,7 @@ import SWActivationCard from 'components/SWActivationCard';
 
 import { spacing } from 'utils/variables';
 
-import {
-  TOKENS,
-  COLLECTIBLES,
-  defaultFiatCurrency,
-} from 'constants/assetsConstants';
+import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SERVICES, ASSET_SEARCH } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
@@ -58,9 +56,7 @@ import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Theme } from 'models/Theme';
 
 // actions
-import {
-  fetchAssetsBalancesAction,
-} from 'actions/assetsActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
@@ -73,6 +69,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 // partials
 import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
+
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -97,13 +94,13 @@ type Props = {
   SWInsightDismissed: boolean,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
-}
+};
 
 type State = {
   query: string,
   activeTab: string,
   hideInsightForSearch: boolean,
-}
+};
 
 const MIN_QUERY_LENGTH = 2;
 
@@ -118,12 +115,6 @@ const ActionsWrapper = styled(Wrapper)`
   border-color: ${themedColors.border};
 `;
 
-
-const initialSWInsights = [
-  'It can be recovered from any web-connected device following proper set up.',
-  'It provides access to the Pillar Payment Network including instant and gas-free transactions.',
-  'It can control multiple keys providing for dapp-specific usage and spending limits.',
-];
 
 class WalletView extends React.Component<Props, State> {
   state = {
@@ -172,8 +163,9 @@ class WalletView extends React.Component<Props, State> {
   getAssetTab = (id: string, name: string, onPress: () => void) => ({ id, name, onPress });
 
   getAssetTabs = () => [
-    this.getAssetTab(TOKENS, 'Tokens', () => this.setActiveTab(TOKENS)),
-    this.getAssetTab(COLLECTIBLES, 'Collectibles', () => this.setActiveTab(COLLECTIBLES)),
+    this.getAssetTab(TOKENS, t('smartWalletContent.tabs.tokens.title'), () => this.setActiveTab(TOKENS)),
+    this.getAssetTab(COLLECTIBLES, t('smartWalletContent.tabs.collectibles.title'),
+      () => this.setActiveTab(COLLECTIBLES)),
   ];
 
   isAllInsightListDone = () => !this.props.insightList.some(({ status, key }) => !status && key !== 'biometric');
@@ -247,18 +239,17 @@ class WalletView extends React.Component<Props, State> {
           {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
           {!deploymentData.error && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
             SWInsightDismissed ?
-              (
-                <SWActivationCard
-                  message="To start sending and exchanging assets you need to activate Smart Wallet"
-                />
-              ) :
-              (
+              <SWActivationCard message={t('smartWalletContent.activationCard.description.default')} />
+              : (
                 <InsightWithButton
-                  title="Welcome to the Pillar Smart Wallet!"
-                  description="The Pillar Smart Wallet replaces the existing Pillar Legacy Wallet and
-                  features the following benefits:"
-                  itemsList={initialSWInsights}
-                  buttonTitle="Wow, that's cool"
+                  title={t('insight.smartWalletIntro.title')}
+                  description={t('insight.smartWalletIntro.description.intro')}
+                  itemsList={[
+                    t('insight.smartWalletIntro.description.recovery'),
+                    t('insight.smartWalletIntro.description.accessToPPN'),
+                    t('insight.smartWalletIntro.description.multipleKeys'),
+                  ]}
+                  buttonTitle={t('insight.smartWalletIntro.button.ok')}
                   onButtonPress={dismissSmartWalletInsight}
                 />
               )
@@ -273,7 +264,9 @@ class WalletView extends React.Component<Props, State> {
           >
             <SearchBlock
               hideSearch={blockAssetsView}
-              searchInputPlaceholder={activeTab === TOKENS ? 'Search asset' : 'Search collectible'}
+              searchInputPlaceholder={
+                activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')
+              }
               onSearchChange={this.handleSearchChange}
               wrapperStyle={{
                 paddingHorizontal: spacing.layoutSides,
@@ -312,10 +305,10 @@ class WalletView extends React.Component<Props, State> {
           <ActionsWrapper>
             {!balance &&
             <ListItemChevron
-              label="Buy tokens with credit card"
+              label={t('button.buyTokensWithCreditCard')}
               onPress={() => navigation.navigate(SERVICES)}
               bordered
-              addon={(<LabelBadge label="NEW" />)}
+              addon={(<LabelBadge label={t('badgeText.new')} />)}
             />}
           </ActionsWrapper>}
         </ListWrapper>}

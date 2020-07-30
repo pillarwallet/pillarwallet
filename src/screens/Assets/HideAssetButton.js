@@ -17,18 +17,22 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
+
 type Props = {
   onPress: Function,
   expanded?: boolean,
   disabled?: boolean,
-}
+};
 
 const HideButtonWrapper = styled.TouchableOpacity`
   padding: 10px;
@@ -55,13 +59,14 @@ const TurnOffIcon = styled(Icon)`
   `}
 `;
 
+
 const HideAssetButton = (props: Props) => {
   const { onPress, expanded, disabled } = props;
   return (
     <HideButtonWrapper onPress={onPress} activeOpacity={0.8}>
       <TurnOffIcon name="turn-off" disabled={disabled} />
       <HideButtonLabel expanded={expanded} disabled={disabled}>
-        Hide
+        {t('button.hide')}
       </HideButtonLabel>
     </HideButtonWrapper>
   );

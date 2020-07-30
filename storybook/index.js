@@ -33,18 +33,13 @@ import './rn-addons';
 i18n
   .use(initReactI18next)
   .init({
-    whitelist: ['en'],
     lng: 'en',
-    fallbackLng: 'en',
   });
 
 configure(loadStories, module);
 addDecorator(withTheme);
 addDecorator(withI18next({
   i18n,
-  languages: {
-    en: 'English',
-  },
 }));
 
 const StorybookUIRoot = () => {

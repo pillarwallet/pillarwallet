@@ -26479,7 +26479,7 @@ Array [
                 ]
               }
             >
-              To start sending assets you need to activate Smart Wallet
+              smartWalletContent.activationCard.description.default
             </Text>
             <View
               accessible={true}
@@ -26601,7 +26601,7 @@ Array [
                   }
                 }
               >
-                Activate Smart Wallet
+                smartWalletContent.activationCard.button.activate
               </Text>
             </View>
           </View>
@@ -26826,7 +26826,7 @@ Array [
                     ]
                   }
                 >
-                  Activate Smart Wallet
+                  smartWalletContent.activationModal.title
                 </Text>
                 <View
                   h={18}
@@ -26867,7 +26867,7 @@ Array [
                     ]
                   }
                 >
-                  To start sending and exchanging assets you need to activate your wallet.
+                  smartWalletContent.activationModal.paragraph
                 </Text>
                 <View
                   h={34}
@@ -26992,7 +26992,7 @@ Array [
                       }
                     }
                   >
-                    Activate
+                    button.activate
                   </Text>
                 </View>
               </View>
