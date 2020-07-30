@@ -162,6 +162,8 @@ const KeyBasedAssetTransferChoose = ({
   }, []);
 
   const availableAssets = Object.keys(availableBalances)
+    // filter those with extremely low balances that are shown as 0 in app anyway
+    .filter((symbol) => !!getBalance(availableBalances, symbol))
     .map((symbol) => getAssetData(supportedAssets, [], symbol))
     .filter((assetData) => !isEmpty(assetData))
     .map(mapAssetToAssetData);
