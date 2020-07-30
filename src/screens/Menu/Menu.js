@@ -26,6 +26,7 @@ import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -143,16 +144,16 @@ class Menu extends React.Component<Props, State> {
     const menuItems = [
       {
         key: 'securitySettings',
-        title: 'Security settings',
+        title: t('settingsContent.itemLabel.securitySettings'),
         emoji: 'rotating_light',
         card: true,
         action: () => navigation.navigate(SECURITY_SETTINGS),
       },
       {
         key: 'recoverySettings',
-        title: 'Recovery settings',
+        title: t('settingsContent.itemLabel.recoverySettings'),
         labelBadge: !isBackedUp && {
-          label: 'Warning',
+          label: t('settingsContent.label.recoveryNotSetup'),
           color: colors.negative,
         },
         emoji: 'mage',
@@ -161,42 +162,44 @@ class Menu extends React.Component<Props, State> {
       },
       {
         key: 'userProfile',
-        title: 'User profile',
+        title: t('settingsContent.itemLabel.userProfile'),
         emoji: 'male-singer',
         card: true,
         action: () => navigation.navigate(ADD_EDIT_USER),
       },
       {
         key: 'appSettings',
-        title: 'App settings',
+        title: t('settingsContent.itemLabel.appSettings'),
         emoji: 'gear',
         card: true,
         action: () => navigation.navigate(APP_SETTINGS),
       },
       {
         key: 'referFriends',
-        title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends',
+        title: isPillarRewardCampaignActive
+          ? t('settingsContent.itemLabel.referFriends')
+          : t('settingsContent.itemLabel.inviteFriends'),
         icon: 'present',
         iconColor: colors.accent,
         action: goToInvitationFlow,
       },
       {
         key: 'community',
-        title: 'Community',
+        title: t('settingsContent.itemLabel.community'),
         icon: 'like',
         iconColor: colors.accent,
         action: () => navigation.navigate(COMMUNITY_SETTINGS),
       },
       {
         key: 'chatWithSupport',
-        title: 'Chat with support',
+        title: t('settingsContent.itemLabel.support'),
         icon: 'help',
         iconColor: colors.helpIcon,
         action: () => Intercom.displayMessenger(),
       },
       {
         key: 'knowledgeBase',
-        title: 'Knowledge base',
+        title: t('settingsContent.itemLabel.faq'),
         icon: 'dictionary',
         iconColor: colors.positive,
         action: () => Intercom.displayHelpCenter(),
@@ -261,21 +264,21 @@ class Menu extends React.Component<Props, State> {
     const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
     if (isBackedUp) {
       Alert.alert(
-        'Logout',
-        'After logging out you will not be able to log in back to this wallet without 12 words backup.',
+        t('alert.logOut.title'),
+        t('alert.logOut.message'),
         [
-          { text: 'Cancel' },
-          { text: 'Confirm', onPress: logoutUser },
+          { text: t('alert.logOut.button.cancel') },
+          { text: t('alert.logOut.button.ok'), onPress: logoutUser },
         ],
       );
     } else {
       Alert.alert(
-        'Logout',
-        'You can logout only after securing your 12 words backup phrase.',
+        t('alert.attemptToLotOutWithoutBackup.title'),
+        t('alert.attemptToLotOutWithoutBackup.message'),
         [
-          { text: 'Cancel' },
+          { text: t('alert.attemptToLotOutWithoutBackup.button.cancel') },
           {
-            text: 'Backup 12 words',
+            text: t('alert.attemptToLotOutWithoutBackup.button.backup'),
             onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
           },
         ],
@@ -303,22 +306,22 @@ class Menu extends React.Component<Props, State> {
             <Footer>
               <LinksSection>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('termsOfService')}>
-                  Terms of Use
+                  {t('settingsContent.button.termOfUse')}
                 </LegalTextLink>
                 <LegalTextLink>  •  </LegalTextLink>
                 <LegalTextLink onPress={() => this.toggleSlideModalOpen('privacyPolicy')}>
-                  Privacy policy
+                  {t('settingsContent.button.privacyPolicy')}
                 </LegalTextLink>
               </LinksSection>
               <LockScreenSection>
                 <LockScreenTextLink onPress={lockScreen}>
-                  Lock wallet
+                  {t('settingsContent.button.lockWallet')}
                 </LockScreenTextLink>
               </LockScreenSection>
               <LogoutSection>
                 <LogoutIcon name="signout" />
                 <LogoutTextLink onPress={this.deleteWallet}>
-                  Sign out from wallet
+                  {t('settingsContent.button.signOut')}
                 </LogoutTextLink>
               </LogoutSection>
             </Footer>

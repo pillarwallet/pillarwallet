@@ -1,6 +1,7 @@
 {
   "aaveDeposit": "Aave deposit",
   "ensName": "ENS name",
+  "ethereum": "Ethereum",
   "keyWallet": "Key wallet",
   "pillarNetwork": "Pillar Network",
   "poolTogether": "Pool Together",
@@ -11,6 +12,7 @@
 
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
+  "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
 
   "title": {
@@ -41,8 +43,10 @@
     "fromPPN": "from Pillar network",
     "fromSmartWallet": "from Smart Wallet",
     "imported": "Imported",
+    "incomingBalance": "Incoming balance",
     "inviteFiends": "Invite friends",
     "keyWalletVisibilityToggle": "Legacy wallet (advanced)",
+    "loadingDefaultAssets": "Loading default assets",
     "needToActivate": "Need to activate",
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
@@ -56,6 +60,9 @@
     "removed": "Removed",
     "removing": "Removing",
     "requested": "Requested",
+    "search": "Search",
+    "searchAsset": "Search asset",
+    "searchCollectible": "Search collectible",
     "sending": "Sending",
     "sent": "Sent",
     "settle": "Settle",
@@ -76,27 +83,40 @@
     "activate": "Activate",
     "activatePPN": "Activate Pillar Network",
     "addFunds": "Add funds",
+    "buyPLR": "Buy PLR",
+    "buyTokensWithCreditCard": "Buy tokens with credit card",
     "buyTokens": "Buy tokens",
     "buyWithCard": "Buy with a card",
     "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
+    "close": "Close",
     "depositMore": "Deposit more",
     "exchange": "Exchange",
+    "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
     "inviteToPillar": "Invite to Pillar",
+    "notEnoughPLR": "Not enough PLR",
     "purchaseMore": "Purchase more",
+    "retry": "Retry",
+    "seeOnEtherscan": "See on Etherscan",
+    "selectAll": "Select all",
     "send": "Send",
     "sendBack": "Send back",
     "sendFromAnotherWallet": "Send from another wallet",
     "sendMore": "Send more",
     "settleMore": "Settle more",
+    "settleTransactions": "Settle transactions",
     "shareAddress": "Share Address",
+    "smartWalletFAQ": "Smart Wallet FAQ",
     "topUp": "Top up",
     "topUpMore": "Top up more",
+    "topUpPLRTank": "Top up PLR Tank",
     "transferToSmartWallet": "Transfer to Smart Wallet",
+    "tryAgain": "Try again",
     "viewBadge": "View badge",
     "viewDeposit": "View deposit",
     "viewOnBlockchain": "View on the blockchain",
     "viewPoolTogetherPool": "View pool",
+    "withdraw": "Withdraw",
     "withdrawMore": "Withdraw more"
   },
 
@@ -104,6 +124,70 @@
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard."
+  },
+
+  "insight": {
+    "keyWalletIntro": {
+      "description": {
+        "backupWallet": "Backup wallet",
+        "setPinCode": "Set PIN code",
+        "enableBiometrics": "Enable biometric login (optional)"
+      }
+    },
+    "pillarNetworkActivate": {
+      "hasNoPPNBalance": {
+        "title": "Activate Pillar Network",
+        "description": {
+          "activationBenefit": "To send any token you need to top up Pillar Tank with PLR first"
+        }
+      },
+      "smartWalletIsNotActivated": {
+        "title": "Unique benefits of Pillar Payment Network for PLR users",
+        "description": {
+          "instantTransactions": "Instant, gas-free and private transactions.",
+          "singleTokenExperience": "A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps."
+        },
+        "button": {
+          "activatePPN": "Activate Pillar Network"
+        }
+      },
+      "deploying": {
+        "description": {
+          "smartWalletActivatingStatusCard": "Activating your Smart Wallet. It will be ready shortly."
+        }
+      }
+    },
+    "smartWalletIntro": {
+      "title": "Welcome to the Pillar Smart Wallet!",
+      "description": {
+        "intro": "The Pillar Smart Wallet replaces the existing Pillar Legacy Wallet and features the following benefits:",
+        "recovery": "It can be recovered from any web-connected device following proper set up.",
+        "accessToPPN": "It provides access to the Pillar Payment Network including instant and gas-free transactions.",
+        "multipleKeys": "It can control multiple keys providing for dapp-specific usage and spending limits."
+      },
+      "button": {
+        "ok": "Wow, that's cool"
+      }
+    },
+    "smartWalletActivate": {
+      "default": {
+        "title": "To send assets, activate Smart Wallet first",
+        "description": "You will have to pay a small fee"
+      },
+      "isBeingDeployed": {
+        "title": "Smart Wallet is being deployed now",
+        "description": {
+          "waitingTime": "You will be able to send assets once it's deployed. Current average waiting time is {{waitingTimeInMinutes}} mins."
+        }
+      },
+      "activationFailed": {
+        "title": "Smart Wallet activation failed",
+        "error": {
+          "needToSetupSmartAccount": "You need to top up your Smart Account first.",
+          "default": "There was an error on our server. Please try to re-activate the account by clicking the button bellow."
+        }
+      }
+    }
   },
 
   "error": {
@@ -114,6 +198,149 @@
   },
 
   "badgeText": {
-    "needToActivate": "Need to activate"
+    "new": "NEW"
+  },
+
+  "ppnContent": {
+    "tabs": {
+      "incoming": {
+        "title": "Incoming",
+        "emptyState": {
+          "title": "No incoming transactions"
+        }
+      },
+      "sent": {
+        "title": "Sent",
+        "emptyState": {
+          "title": "No sent transactions"
+        }
+      },
+      "settled": {
+        "title": "Settled",
+        "emptyState": {
+          "title": "No settled transactions"
+        }
+      }
+    }
+  },
+
+  "smartWalletContent": {
+    "activationCard": {
+      "button": {
+        "activate": "Activate Smart Wallet"
+      },
+      "description": {
+        "activating": "Activating your account",
+        "default": "To start sending assets you need to activate Smart Wallet"
+      }
+    },
+    "activationModal": {
+      "paragraph": "To start sending and exchanging assets you need to activate your wallet.",
+      "title": "Activate Smart Wallet"
+    },
+    "walletActivationView": {
+      "title": "Smart Wallet is being activated",
+      "paragraph": {
+        "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet"
+      }
+    },
+    "tabs": {
+      "tokens": {
+        "title": "Tokens"
+      },
+      "collectibles": {
+        "title": "Collectibles"
+      }
+    }
+  },
+
+  "assetSearchContent": {
+    "title": "Tokens",
+    "tabs": {
+      "visible": {
+        "title": "Displayed",
+        "emptyState": {
+          "title": "Token not found",
+          "paragraph": "Check if the name was entered correctly or add custom token"
+        }
+      },
+      "withBalance":{
+        "title": "All non-zero"
+      }
+    }
+  },
+
+  "collectiblesList": {
+    "emptyState": {
+      "noCollectibles": {
+        "title": "No collectibles",
+        "paragraph": "There are no collectibles in this wallet"
+      },
+      "noneFound": {
+        "title": "Collectible not found",
+        "paragraph": "Check if the name was entered correctly"
+      }
+    }
+  },
+
+  "settingsContent": {
+    "itemLabel": {
+      "appSettings": "App settings",
+      "community": "Community",
+      "faq": "Knowledge base",
+      "inviteFriends": "Invite friends",
+      "securitySettings": "Security settings",
+      "support": "Chat with support",
+      "recoverySettings": "Recovery settings",
+      "referFriends": "Refer friends",
+      "userProfile": "User profile"
+    },
+    "label": {
+      "recoveryNotSetup": "Warning"
+    },
+    "button": {
+      "termOfUse": "Terms of Use",
+      "privacyPolicy": "Privacy policy",
+      "lockWallet": "Lock wallet",
+      "signOut": "Sign out from wallet"
+    }
+  },
+
+  "toast":{
+    "noSmartAccountDuringActivation": {
+      "message": "Smart Wallet not found",
+      "title": "Could not activate Smart Wallet"
+    },
+    "forbiddenToRemoveAsset": {
+      "message": "{{asset}} is essential for Pillar wallet",
+      "title": "This asset cannot be switched off"
+    }
+  },
+
+  "alert": {
+    "hideAsset": {
+      "title": "Are you sure?",
+      "message": "This will hide {{asset}} from your wallet",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Hide"
+      }
+    },
+    "logOut": {
+      "title": "Logout",
+      "message": "After logging out you will not be able to log in back to this wallet without 12 words backup.",
+      "button": {
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      }
+    },
+    "attemptToLotOutWithoutBackup": {
+      "title": "Logout",
+      "message": "You can logout only after securing your 12 words backup phrase.",
+      "button": {
+        "cancel": "Cancel",
+        "backup": "Backup 12 words"
+      }
+    }
   }
 }
