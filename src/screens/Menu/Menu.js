@@ -144,16 +144,16 @@ class Menu extends React.Component<Props, State> {
     const menuItems = [
       {
         key: 'securitySettings',
-        title: t('settingsContent.itemLabel.securitySettings'),
+        title: t('settingsContent.settingsItem.securitySettings.title'),
         emoji: 'rotating_light',
         card: true,
         action: () => navigation.navigate(SECURITY_SETTINGS),
       },
       {
         key: 'recoverySettings',
-        title: t('settingsContent.itemLabel.recoverySettings'),
+        title: t('settingsContent.settingsItem.recoverySettings.title'),
         labelBadge: !isBackedUp && {
-          label: t('settingsContent.label.recoveryNotSetup'),
+          label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
           color: colors.negative,
         },
         emoji: 'mage',
@@ -162,14 +162,14 @@ class Menu extends React.Component<Props, State> {
       },
       {
         key: 'userProfile',
-        title: t('settingsContent.itemLabel.userProfile'),
+        title: t('settingsContent.settingsItem.userProfile.title'),
         emoji: 'male-singer',
         card: true,
         action: () => navigation.navigate(ADD_EDIT_USER),
       },
       {
         key: 'appSettings',
-        title: t('settingsContent.itemLabel.appSettings'),
+        title: t('settingsContent.settingsItem.appSettings.title'),
         emoji: 'gear',
         card: true,
         action: () => navigation.navigate(APP_SETTINGS),
@@ -177,29 +177,29 @@ class Menu extends React.Component<Props, State> {
       {
         key: 'referFriends',
         title: isPillarRewardCampaignActive
-          ? t('settingsContent.itemLabel.referFriends')
-          : t('settingsContent.itemLabel.inviteFriends'),
+          ? t('settingsContent.settingsItem.referFriends.title')
+          : t('settingsContent.settingsItem.inviteFriends.title'),
         icon: 'present',
         iconColor: colors.accent,
         action: goToInvitationFlow,
       },
       {
         key: 'community',
-        title: t('settingsContent.itemLabel.community'),
+        title: t('settingsContent.settingsItem.community.title'),
         icon: 'like',
         iconColor: colors.accent,
         action: () => navigation.navigate(COMMUNITY_SETTINGS),
       },
       {
         key: 'chatWithSupport',
-        title: t('settingsContent.itemLabel.support'),
+        title: t('settingsContent.settingsItem.support.title'),
         icon: 'help',
         iconColor: colors.helpIcon,
         action: () => Intercom.displayMessenger(),
       },
       {
         key: 'knowledgeBase',
-        title: t('settingsContent.itemLabel.faq'),
+        title: t('settingsContent.settingsItem.faq.title'),
         icon: 'dictionary',
         iconColor: colors.positive,
         action: () => Intercom.displayHelpCenter(),

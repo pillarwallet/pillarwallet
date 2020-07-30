@@ -284,19 +284,58 @@
   },
 
   "settingsContent": {
-    "itemLabel": {
-      "appSettings": "App settings",
-      "community": "Community",
-      "faq": "Knowledge base",
-      "inviteFriends": "Invite friends",
-      "securitySettings": "Security settings",
-      "support": "Chat with support",
-      "recoverySettings": "Recovery settings",
-      "referFriends": "Refer friends",
-      "userProfile": "User profile"
-    },
-    "label": {
-      "recoveryNotSetup": "Warning"
+    "settingsItem": {
+      "appSettings": {
+        "title": "App settings"
+      },
+      "biometricLogin": {
+        "title": "Biometric login"
+      },
+      "changePIN":{
+        "title": "Change PIN"
+      },
+      "community": {
+        "title": "Community"
+      },
+      "faq": {
+        "title": "Knowledge base"
+      },
+      "inviteFriends": {
+        "title": "Invite friends"
+      },
+      "securitySettings": {
+        "title": "Security settings",
+        "screenTitle": "Security settings",
+        "label": {
+          "globalSettings": "Global",
+          "smartWalletSettings": "Smart Wallet"
+        }
+      },
+      "spendingLimits": {
+        "title": "Spending limits",
+        "subtitle": "Secure your funds by restricting larger transactions",
+        "label": {
+          "notAvailableYet": "soon"
+        }
+      },
+      "support": {
+        "title": "Chat with support"
+      },
+      "recoverySettings": {
+        "title": "Recovery settings",
+        "label": {
+          "notFinished": "Warning"
+        }
+      },
+      "referFriends": {
+        "title": "Refer friends"
+      },
+      "requirePinOnLogin": {
+        "title": "Require PIN on login"
+      },
+      "userProfile": {
+        "title": "User profile"
+      }
     },
     "button": {
       "termOfUse": "Terms of Use",
