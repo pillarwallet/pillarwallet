@@ -121,7 +121,12 @@ export const fetchBadgeAwardHistoryAction = () => {
         payload,
         createdAt,
       }) => {
-        const { name, imageUrl, id } = payload;
+        const {
+          name,
+          imageUrl,
+          id,
+          badgeType,
+        } = payload;
         return {
           _id,
           type,
@@ -129,6 +134,7 @@ export const fetchBadgeAwardHistoryAction = () => {
           imageUrl,
           badgeId: id,
           createdAt,
+          badgeType,
         };
       });
     dispatch({ type: SET_BADGE_AWARD_EVENTS, payload: formattedBadgeAwardEvents });
