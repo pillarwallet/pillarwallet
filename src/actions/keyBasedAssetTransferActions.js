@@ -169,6 +169,12 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     // fetch key based assets
     const ownedAssets = await getAllOwnedAssets(api, keyBasedWalletAddress, supportedAssets);
+
+    // it's not fetched on mainnet using getAllOwnedAssets
+    if (!ownedAssets[ETH]) {
+      ownedAssets[ETH] = supportedAssets.find(({ symbol }) => symbol === ETH);
+    }
+
     const availableBalances = await api.fetchBalances({
       address: keyBasedWalletAddress,
       assets: getAssetsAsList(ownedAssets),
