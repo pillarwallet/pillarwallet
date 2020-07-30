@@ -18,19 +18,34 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type FiatToCryptoReducerState = {};
+import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
 
-export type FiatToCryptoReducerAction = {
-  type: empty,
+type AltalixInfo = {
+  isAvailable: boolean,
 };
 
-const initialState = {};
+export type FiatToCryptoReducerState = {
+  altalix: null | AltalixInfo,
+};
+
+type AltalixInfoSetAction = {
+  type: typeof SET_ALTALIX_INFO,
+  payload: AltalixInfo,
+};
+
+export type FiatToCryptoReducerAction = AltalixInfoSetAction;
+
+const initialState = {
+  altalix: null,
+};
 
 export default function fiatToCryptoReducer(
   state: FiatToCryptoReducerState = initialState,
   action: FiatToCryptoReducerAction,
 ) {
   switch (action.type) {
+    case SET_ALTALIX_INFO:
+      return { ...state, altalix: action.payload };
     default:
       return state;
   }

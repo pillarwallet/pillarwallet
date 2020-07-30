@@ -27,6 +27,7 @@ import { createStructuredSelector } from 'reselect';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
+import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
 
 // components
 import { ListCard } from 'components/ListItem/ListCard';
@@ -93,6 +94,8 @@ type Props = {
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
   getApi: () => SDKWrapper,
+  isAltalixAvailable: null | boolean,
+  loadAltalixInfo: () => void,
 };
 
 type State = {
@@ -105,7 +108,13 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { getMetaData, providersMeta } = this.props;
+    const {
+      getMetaData,
+      providersMeta,
+      isAltalixAvailable,
+      loadAltalixInfo,
+    } = this.props;
+
     if (!Array.isArray(providersMeta) || !providersMeta?.length) {
       getMetaData();
     }
@@ -121,6 +130,8 @@ class ServicesScreen extends React.Component<Props, State> {
     isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.ALTALIX);
+
+    if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
   getServices = () => {
@@ -197,6 +208,7 @@ class ServicesScreen extends React.Component<Props, State> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
+    const { isAltalixAvailable } = this.props;
 
     if (isRampEnabled) {
       buyCryptoServices.push({
@@ -225,7 +237,7 @@ class ServicesScreen extends React.Component<Props, State> {
       });
     }
 
-    if (isAltalixEnabled) {
+    if (isAltalixEnabled && isAltalixAvailable) {
       buyCryptoServices.push({
         key: 'altalix',
         title: 'Buy with Altalix',
@@ -352,11 +364,13 @@ const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
+  fiatToCrypto: { altalix },
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
   user,
   accounts,
   smartWalletState,
+  isAltalixAvailable: altalix === null ? null : altalix.isAvailable,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -371,6 +385,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getMetaData: () => dispatch(getMetaDataAction()),
+  loadAltalixInfo: () => dispatch(loadAltalixInfoAction()),
 
   // When using redux-thunk, dispatch does return the result of the inner function.
   // (Although it's meant to be used inside thunks, see:

@@ -41,7 +41,7 @@ import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants'
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { reportLog, uniqBy } from 'utils/common';
+import { reportLog, uniqBy, delay } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
 import { normalizeWalletAddress } from 'utils/wallet';
 
@@ -722,6 +722,12 @@ class SDKWrapper {
         reportLog('generateAltalixTransactionUrl: SDK request error', error, Sentry.Severity.Error);
         return null;
       });
+  }
+
+  async fetchAltalixAvailability(): Promise<boolean> {
+    // TODO: replace test value once an endpoint becomes available
+    await delay(1000);
+    return true;
   }
 }
 

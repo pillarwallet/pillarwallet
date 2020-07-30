@@ -17,3 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
+
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import type SDKWrapper from 'services/api';
+
+export const loadAltalixInfoAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { fiatToCrypto: { altalix } } = getState();
+    if (altalix === null) {
+      const isAvailable = await api.fetchAltalixAvailability();
+      dispatch({
+        type: SET_ALTALIX_INFO,
+        payload: { isAvailable },
+      });
+    }
+  };
+};
