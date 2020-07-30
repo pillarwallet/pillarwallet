@@ -60,22 +60,24 @@ export const availableWalletsSelector = createSelector(
 
 export const inactiveUserWalletForSendSelector = createSelector(
   accountsSelector, themeSelector, (accounts, themeType) => {
-    return getInactiveUserAccounts(accounts).map(account => {
-      const accountName = getAccountName(account.type);
-      const theme = getThemeByType(themeType);
-      const { smartWalletIcon } = images(theme);
-      const { keyWalletIcon } = images(theme);
-      const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
+    return getInactiveUserAccounts(accounts)
+      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .map(account => {
+        const accountName = getAccountName(account.type);
+        const theme = getThemeByType(themeType);
+        const { smartWalletIcon } = images(theme);
+        const { keyWalletIcon } = images(theme);
+        const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
 
-      return {
-        ...account,
-        ethAddress: getAccountAddress(account),
-        username: accountName,
-        name: accountName,
-        isUserAccount: true,
-        imageSource: walletIcon,
-      };
-    });
+        return {
+          ...account,
+          ethAddress: getAccountAddress(account),
+          username: accountName,
+          name: accountName,
+          isUserAccount: true,
+          imageSource: walletIcon,
+        };
+      });
   },
 );
 

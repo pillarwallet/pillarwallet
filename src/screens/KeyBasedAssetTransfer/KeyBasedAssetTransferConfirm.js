@@ -123,7 +123,6 @@ const KeyBasedAssetTransferConfirm = ({
           />
           {!!notEnoughFee && <NotEnoughFee negative>Not enough ETH left for transaction fee</NotEnoughFee>}
           <Button
-            block
             style={{ marginTop: spacing.large }}
             disabled={!!notEnoughFee}
             title="Confirm"
