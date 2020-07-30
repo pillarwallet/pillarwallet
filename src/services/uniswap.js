@@ -139,12 +139,12 @@ export const getUniswapOffer = async (
   return offer;
 };
 
-async function getUniswapOrderData(
+const getUniswapOrderData = async (
   fromAsset: Asset,
   toAsset: Asset,
   fromAssetQuantityBaseUnits: string,
   toAssetDecimals: string,
-): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber }> {
+): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber }> => {
   let route = await getRoute(fromAsset, toAsset);
   if (!route && (
     fromAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
@@ -169,7 +169,7 @@ async function getUniswapOrderData(
     path: mappedPath,
     expectedOutputBaseUnits: expectedOutputWithSlippageBaseUnits,
   };
-}
+};
 
 export const createUniswapOrder = async (
   fromAsset: Asset,

@@ -81,21 +81,21 @@ export const getExpectedOutput = (
   return getBNFromNumeratorDenominator(trade.outputAmount);
 };
 
-export function applyAllowedSlippage(output: BigNumber, outputDecimals: BigNumber): BigNumber {
+export const applyAllowedSlippage = (output: BigNumber, outputDecimals: BigNumber): BigNumber => {
   return new BigNumber(output.multipliedBy(ALLOWED_SLIPPAGE).toFixed(outputDecimals.toNumber()));
-}
+};
 
 export const getDeadline = (): number => {
   return Math.ceil(Date.now() / 1000) + DEADLINE_FROM_NOW;
 };
 
-export function swapExactTokensToTokens(
+export const swapExactTokensToTokens = (
   quantityIn: string,
   outputMin: string,
   exchangePath: any,
   toAssetAddress: string,
   deadline: string,
-): string {
+): string => {
   const abiFunction = ROUTER_ABI.filter(m => m.name === 'swapExactTokensForTokensSupportingFeeOnTransferTokens')[0];
   const encodedContractFunction = abiCoder.encodeFunctionCall(
     abiFunction,
@@ -108,15 +108,15 @@ export function swapExactTokensToTokens(
     ],
   );
   return encodedContractFunction;
-}
+};
 
-export function swapExactTokensToEth(
+export const swapExactTokensToEth = (
   quantityIn: string,
   outputMin: string,
   exchangePath: any,
   toAssetAddress: string,
   deadline: string,
-): string {
+): string => {
   const abiFunction = ROUTER_ABI.filter(m => m.name === 'swapExactTokensForETHSupportingFeeOnTransferTokens')[0];
   const encodedContractFunction = abiCoder.encodeFunctionCall(
     abiFunction,
@@ -129,14 +129,14 @@ export function swapExactTokensToEth(
     ],
   );
   return encodedContractFunction;
-}
+};
 
-export function swapExactEthToTokens(
+export const swapExactEthToTokens = (
   outputMin: string,
   exchangePath: any,
   toAssetAddress: string,
   deadline: string,
-): string {
+): string => {
   const abiFunction = ROUTER_ABI.filter(m => m.name === 'swapExactETHForTokensSupportingFeeOnTransferTokens')[0];
   const encodedContractFunction = abiCoder.encodeFunctionCall(
     abiFunction,
@@ -148,7 +148,7 @@ export function swapExactEthToTokens(
     ],
   );
   return encodedContractFunction;
-}
+};
 
 export const generateTxObject = (
   txCount: string,
