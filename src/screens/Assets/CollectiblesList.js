@@ -23,6 +23,7 @@ import * as React from 'react';
 import { FlatList, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -142,13 +143,13 @@ class CollectiblesList extends React.PureComponent<Props, State> {
     const { isReceiveVisible } = this.state;
 
     const emptyStateInfo = {
-      title: 'No collectibles',
-      bodyText: 'There are no collectibles in this wallet',
+      title: t('collectiblesList.emptyState.noCollectibles.title'),
+      bodyText: t('collectiblesList.emptyState.noCollectibles.paragraph'),
     };
 
     if (searchQuery) {
-      emptyStateInfo.title = 'Collectible not found';
-      emptyStateInfo.bodyText = 'Check if the name was entered correctly';
+      emptyStateInfo.title = t('collectiblesList.emptyState.noneFound.title');
+      emptyStateInfo.bodyText = t('collectiblesList.emptyState.noneFound.paragraph');
     }
 
     return (
@@ -169,7 +170,7 @@ class CollectiblesList extends React.PureComponent<Props, State> {
             <EmptyStateWrapper>
               <EmptyStateParagraph {...emptyStateInfo} />
               <Button
-                title="Receive"
+                title={t('button.receive')}
                 block
                 marginTop={40}
                 secondary

@@ -17,11 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { View, Image, Dimensions, Share, Clipboard } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -44,6 +46,7 @@ import type { User } from 'models/User';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+
 
 const ContentWrapper = styled(SafeAreaView)`
   padding: 0 ${spacing.layoutSides}px 60px;
@@ -116,14 +119,14 @@ class ReceiveModal extends React.Component<Props, *> {
   handleAddressShare = () => {
     const { address } = this.props;
 
-    Share.share({ title: 'Public address', message: address });
+    Share.share({ title: t('title.publicAddress'), message: address });
   };
 
   handleCopyToClipboard = (address: string, ensCopy?: boolean) => {
     Clipboard.setString(address);
-    const message = ensCopy ? 'ENS name copied to clipboard.' : 'Address copied to clipboard.';
-    Toast.show({ message, type: 'success', title: 'Success' });
-  }
+    const message = ensCopy ? t('paragraph.ensNameCopiedToClipboard') : t('paragraph.addressCopiedToClipboard');
+    Toast.show({ message, type: 'success', title: t('title.success') });
+  };
 
   render() {
     const {
@@ -138,11 +141,7 @@ class ReceiveModal extends React.Component<Props, *> {
       user,
     } = this.props;
 
-    const {
-      profileImage,
-      lastUpdateTime = 0,
-      username = '',
-    } = user;
+    const { profileImage, lastUpdateTime = 0, username = '' } = user;
     const ensName = getEnsName(accounts);
     const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.SMART_WALLET;
     const buttonWidth = showBuyTokensButton ? getButtonWidth() : 0;
@@ -159,7 +158,7 @@ class ReceiveModal extends React.Component<Props, *> {
         headerLeftItems={!!showErc20Note && [{
           custom: (
             <LabelBadge
-              label="ERC-20 tokens only"
+              label={t('label.erc20TokensOnly')}
               labelStyle={{ fontSize: fontSizes.tiny }}
               primary
               containerStyle={{ marginLeft: 8 }}
@@ -189,16 +188,11 @@ class ReceiveModal extends React.Component<Props, *> {
             >
               {ensName}
             </BaseText>
-            <BaseText regular center secondary>Your wallet ENS name</BaseText>
+            <BaseText regular center secondary>{t('label.yourEnsName')}</BaseText>
           </InfoView>
-            }
+          }
           <QRCodeWrapper>
-            <View
-              style={{
-                  overflow: 'hidden',
-                  padding: 10,
-                }}
-            >
+            <View style={{ overflow: 'hidden', padding: 10 }}>
               {!!address && <QRCodeWithTheme value={address} size={160} />}
             </View>
             <WalletAddress onPress={() => this.handleCopyToClipboard(address)}>
@@ -208,7 +202,7 @@ class ReceiveModal extends React.Component<Props, *> {
           <ButtonsRow>
             {showBuyTokensButton && (
             <Button
-              title="Buy tokens"
+              title={t('button.buyTokens')}
               onPress={handleBuyTokens}
               positive
               width={buttonWidth}
@@ -216,9 +210,9 @@ class ReceiveModal extends React.Component<Props, *> {
               regularText
               textStyle={{ paddingTop: 4 }}
             />
-              )}
+            )}
             <Button
-              title="Share Address"
+              title={t('button.shareAddress')}
               onPress={this.handleAddressShare}
               width={buttonWidth}
               small={needsSmallButtons}
@@ -233,7 +227,7 @@ class ReceiveModal extends React.Component<Props, *> {
             <IconsSpacing />
             <Image source={mastercardIcon} />
           </IconsContainer>
-            )}
+          )}
         </ContentWrapper>
       </SlideModal>
     );

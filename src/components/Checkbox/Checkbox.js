@@ -23,9 +23,9 @@ import { BaseText } from 'components/Typography';
 import styled, { withTheme } from 'styled-components/native';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import { LIGHT_THEME, DARK_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, getThemeType } from 'utils/themes';
 
 
 type Props = {
@@ -44,7 +44,7 @@ type Props = {
 
 const getCheckboxBorderColor = (theme: Theme, active: boolean, positive: boolean, rounded: boolean) => {
   const colors = getThemeColors(theme);
-  if (rounded) {
+  if (rounded || getThemeType(theme) === DARK_THEME) {
     return 'transparent';
   }
   if (active) {
@@ -66,7 +66,15 @@ const CheckboxBox = styled.View`
   }) => getCheckboxBorderColor(theme, active, positive, rounded)};
   justify-content: center;
   align-items: center;
-  ${({ rounded, theme }) => rounded ? `background-color: ${theme.colors.card}` : ''};
+  ${({ rounded, theme }) => {
+    if (rounded) {
+      return `background-color: ${theme.colors.card}`;
+    }
+    if (getThemeType(theme) === DARK_THEME) {
+      return `background-color: ${theme.colors.tertiary}`;
+    }
+    return '';
+  }};
   ${({ rounded, clickable, theme }) => rounded && clickable && theme.current === LIGHT_THEME
     ? `
       shadow-color: #000000;

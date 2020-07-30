@@ -26,6 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
@@ -150,10 +151,6 @@ const INCOMING = 'INCOMING';
 const SENT = 'SENT';
 const SETTLED = 'SETTLED';
 
-const insightItemsList = [
-  'Instant, gas-free and private transactions.',
-  'A single token experience including the ability to send/spend tokens you don’t already own through real-time swaps.',
-];
 
 class PPNView extends React.Component<Props, State> {
   state = {
@@ -195,7 +192,7 @@ class PPNView extends React.Component<Props, State> {
               center
               style={{ marginTop: 20 }}
             >
-              Activating your Smart Wallet. It will be ready shortly
+              {t('insight.pillarNetworkActivate.deploying.description.smartWalletActivatingStatusCard')}
             </BaseText>
           }
         />
@@ -212,24 +209,24 @@ class PPNView extends React.Component<Props, State> {
       if (!availableStake) {
         const insightProps = {};
         if (!hasPLRInSmartWallet) {
-          insightProps.buttonTitle = 'Not enough PLR';
+          insightProps.buttonTitle = t('button.notEnoughPLR');
           insightProps.buttonProps = { disabled: true, secondary: true };
           insightProps.footerChildren = (
             <Button
-              title="Buy PLR"
+              title={t('button.buyPLR')}
               small
               marginTop={12}
               onPress={this.navigateToBuyPillar}
               regularText
             />);
         } else {
-          insightProps.buttonTitle = 'Top up PLR Tank';
+          insightProps.buttonTitle = t('button.topUpPLRTank');
           insightProps.onButtonPress = this.navigateToFundTank;
         }
         return (
           <InsightWithButton
-            title="Activate Pillar Network"
-            description="To send any token you need to top up Pillar Tank with PLR first"
+            title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
+            description={t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit')}
             {...insightProps}
           />
         );
@@ -239,9 +236,11 @@ class PPNView extends React.Component<Props, State> {
     } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
       return (
         <InsightWithButton
-          title="Unique benefits of Pillar Payment Network for PLR users"
-          itemsList={insightItemsList}
-          buttonTitle="Activate Pillar Network"
+          title={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.title')}
+          itemsList={[
+            t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.instantTransactions'),
+            t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.singleTokenExperience')]}
+          buttonTitle={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.button.activatePPN')}
           onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
         />
       );
@@ -291,8 +290,8 @@ class PPNView extends React.Component<Props, State> {
     const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
     const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
       ? {
-        title: 'To top up PLR Tank or Settle transactions, activate Smart Wallet first',
-        message: 'You will have to pay a small fee',
+        title: t('insight.smartWalletActivate.default.title'),
+        message: t('insight.smartWalletActivate.default.description'),
       }
       : smartWalletStatus.sendingBlockedMessage || {};
     const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
@@ -336,29 +335,29 @@ class PPNView extends React.Component<Props, State> {
     const historyTabs = [
       {
         id: INCOMING,
-        name: 'Incoming',
+        name: t('ppnContent.tabs.incoming.title'),
         onPress: () => this.setActiveTab(INCOMING),
         data: PPNTransactionsGrouped.incoming,
         emptyState: {
-          title: 'No incoming transactions',
+          title: t('ppnContent.tabs.incoming.emptyState.title'),
         },
       },
       {
         id: SENT,
-        name: 'Sent',
+        name: t('ppnContent.tabs.sent.title'),
         onPress: () => this.setActiveTab(SENT),
         data: PPNTransactionsGrouped.sent,
         emptyState: {
-          title: 'No sent transactions',
+          title: t('ppnContent.tabs.sent.emptyState.title'),
         },
       },
       {
         id: SETTLED,
-        name: 'Settled',
+        name: t('ppnContent.tabs.settled.title'),
         onPress: () => this.setActiveTab(SETTLED),
         data: PPNTransactionsGrouped.settled,
         emptyState: {
-          title: 'No settled transactions',
+          title: t('ppnContent.tabs.settled.emptyState.title'),
         },
       },
     ];
@@ -388,26 +387,26 @@ class PPNView extends React.Component<Props, State> {
           <TopPartWrapper>
             <TankBalanceWrapper>
               <TankBalance>
-                {`${availableFormattedAmount} PLR`}
+                {t('tokenValue', { value: availableFormattedAmount, token: 'PLR' })}
               </TankBalance>
             </TankBalanceWrapper>
             <AssetButtonsWrapper>
               <CircleButton
-                label="Top up"
+                label={t('button.topUp')}
                 onPress={this.navigateToFundTank}
                 fontIcon="plus"
                 fontIconStyle={{ fontSize: fontSizes.big }}
                 disabled={!!disableTopUpAndSettle}
               />
               <CircleButton
-                label="Withdraw"
+                label={t('button.withdraw')}
                 fontIcon="up-arrow"
                 fontIconStyle={{ fontSize: fontSizes.big }}
                 onPress={() => navigation.navigate(TANK_WITHDRAWAL)}
                 disabled={availableStake <= 0}
               />
               <CircleButton
-                label="Send"
+                label={t('button.send')}
                 fontIcon="paperPlane"
                 onPress={() => navigation.navigate(SEND_SYNTHETIC_AMOUNT)}
                 disabled={availableStake <= 0}
@@ -423,7 +422,7 @@ class PPNView extends React.Component<Props, State> {
               opacity: disableTopUpAndSettle ? 0.5 : 1,
             }}
             chevronStyle={{ color: colors.secondaryText }}
-            label="Incoming balance"
+            label={t('label.incomingBalance')}
             rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
             color={colors.text}
@@ -455,7 +454,7 @@ class PPNView extends React.Component<Props, State> {
             <Button
               style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
               width="auto"
-              title="Settle transactions"
+              title={t('button.settleTransactions')}
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
               disabled={disableTopUpAndSettle}
             />

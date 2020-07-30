@@ -17,12 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { fontStyles } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { themedColors } from 'utils/themes';
+
+
+type Props = {
+  rounded?: boolean,
+  small?: boolean,
+};
 
 const WarningBannerBackground = styled.View`
   background-color: ${themedColors.negative};
@@ -37,18 +46,11 @@ const WarningBannerText = styled(MediumText)`
   ${props => props.small ? fontStyles.regular : fontStyles.medium};
 `;
 
-type Props = {
-  rounded?: boolean,
-  small?: boolean,
-}
-
 const WarningBanner = (props: Props) => {
   if (NETWORK_PROVIDER === 'ropsten') {
     return (
       <WarningBannerBackground small={props.small} rounded={props.rounded}>
-        <WarningBannerText small={props.small}>
-          Do not send real ETH or ERC20 tokens.
-        </WarningBannerText>
+        <WarningBannerText small={props.small}>{t('paragraph.doNotSendRealEthOrTokens')}</WarningBannerText>
       </WarningBannerBackground>
     );
   }
