@@ -303,6 +303,10 @@
       "inviteFriends": {
         "title": "Invite friends"
       },
+      "linkedDevices": {
+        "title": "Linked devices",
+        "subtitle": "Manage Smart Wallet account devices"
+      },
       "securitySettings": {
         "title": "Security settings",
         "screenTitle": "Security settings",
@@ -320,6 +324,13 @@
       },
       "support": {
         "title": "Chat with support"
+      },
+      "recoveryPortal": {
+        "title": "Recovery Portal",
+        "subtitle": {
+          "default": "Smart Wallet account web recovery portal",
+          "smartWalletNotActivated": "Smart Wallet account web recovery portal (requires activated Smart Wallet)"
+        }
       },
       "recoverySettings": {
         "title": "Recovery settings",
