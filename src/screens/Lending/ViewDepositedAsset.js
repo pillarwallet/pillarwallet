@@ -58,6 +58,7 @@ import { smartAccountHistorySelector } from 'selectors/history';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset, Rates } from 'models/Asset';
 import type { Accounts } from 'models/Account';
+import type { BadgeRewardEvent } from 'models/Badge';
 
 type Props = {
   depositedAssets: DepositedAsset[],
@@ -68,6 +69,7 @@ type Props = {
   accounts: Accounts,
   smartAccountHistory: Object[],
   navigation: NavigationScreenProp<*>,
+  badgesEvents: BadgeRewardEvent[],
 };
 
 const ValuesWrapper = styled.View`
@@ -140,6 +142,7 @@ const ViewDepositedAsset = ({
   accounts,
   smartAccountHistory,
   depositedAssets,
+  badgesEvents,
 }: Props) => {
   const depositedAsset: DepositedAsset = navigation.getParam('depositedAsset', {});
   const {
@@ -161,6 +164,11 @@ const ViewDepositedAsset = ({
     accounts,
     TRANSACTION_EVENT,
   );
+
+  const activityFeedData = [...aaveTransactions];
+  const firstDepositBadgeEvent = badgesEvents.find(({ badgeType }) => badgeType === 'first-aave-deposit');
+  if (firstDepositBadgeEvent) activityFeedData.push(firstDepositBadgeEvent);
+
   return (
     <ContainerWithHeader
       navigation={navigation}
@@ -231,12 +239,12 @@ const ViewDepositedAsset = ({
             onPress={() => navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: assetSymbol })}
           />
         </AssetButtonsWrapper>
-        {!isEmpty(aaveTransactions) && (
+        {!isEmpty(activityFeedData) && (
           <ActivityFeed
             feedTitle="History"
             navigation={navigation}
             noBorder
-            feedData={aaveTransactions}
+            feedData={activityFeedData}
             isAssetView
           />
         )}
@@ -250,12 +258,14 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   accounts: { data: accounts },
+  badges: { badgesEvents },
 }: RootReducerState): $Shape<Props> => ({
   depositedAssets,
   isFetchingDepositedAssets,
   rates,
   baseFiatCurrency,
   accounts,
+  badgesEvents,
 });
 
 const structuredSelector = createStructuredSelector({

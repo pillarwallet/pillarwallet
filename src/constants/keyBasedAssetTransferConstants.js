@@ -17,29 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+export const SET_KEY_BASED_ASSETS_TO_TRANSFER = 'SET_KEY_BASED_ASSETS_TO_TRANSFER';
+export const SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER = 'SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER'; // eslint-disable-line
+export const SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER = 'SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER'; // eslint-disable-line
+export const SET_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER = 'SET_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER';
+export const SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER = 'SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER';
+export const SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS = 'SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS';
 
-export type Notification = {
-  title: string,
-  body: string,
-  type: string,
-  messageType?: string,
-  data: ?Object,
-};
-
-export type ApiNotification = {
-  _id: string,
-  meta: Object,
-  payload: {
-    id?: string,
-    to?: string,
-    from?: string,
-    hash?: string,
-    status?: string,
-    msg?: string,
-    name?: string,
-    imageUrl?: string,
-    badgeType?: string,
-  },
-  type: string,
-  createdAt: number,
-};

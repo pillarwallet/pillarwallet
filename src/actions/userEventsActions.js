@@ -18,20 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
 import {
   ADD_USER_EVENT,
   USER_EVENT,
   PPN_INIT_EVENT,
   WALLET_CREATE_EVENT,
-  WALLET_IMPORT_EVENT,
   WALLET_BACKUP_EVENT,
 } from 'constants/userEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
+// actions
+import { saveDbAction } from 'actions/dbActions';
+
+// types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-
-import { saveDbAction } from './dbActions';
 
 export const addWalletCreationEventAction = (type: string, createdAt: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -47,9 +49,6 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
         break;
       case ACCOUNT_TYPES.SMART_WALLET:
         eventTitle = 'Smart Wallet created';
-        break;
-      case WALLET_IMPORT_EVENT:
-        eventTitle = 'Wallet imported';
         break;
       default:
         eventTitle = 'Unknown event';
@@ -110,9 +109,10 @@ export const getWalletsCreationEventsAction = () => {
     const userAccounts = await api.listAccounts(user.walletId);
     if (!userAccounts.length) return;
 
-    const walletCreatedEventsPromises = userAccounts.map(async acc => {
-      return dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000));
-    });
+    const walletCreatedEventsPromises = userAccounts
+      .filter((acc) => acc.type !== ACCOUNT_TYPES.KEY_BASED)
+      .map((acc) => dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000)));
+
     await Promise.all(walletCreatedEventsPromises);
   };
 };

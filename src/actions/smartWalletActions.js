@@ -93,7 +93,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { BalancesStore, Assets } from 'models/Asset';
+import type { BalancesStore } from 'models/Asset';
 import type {
   SmartWalletAccount,
   SmartWalletAccountDevice,
@@ -139,7 +139,7 @@ import {
   printLog,
   reportLog,
 } from 'utils/common';
-import { getPrivateKeyFromPin } from 'utils/wallet';
+import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
 
 // actions
 import { addAccountAction, setActiveAccountAction, switchAccountAction } from './accountsActions';
@@ -150,6 +150,7 @@ import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './h
 import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchDepositedAssetsAction } from './lendingActions';
+import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
 
 
 const storage = Storage.getInstance('db');
@@ -640,6 +641,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const {
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
+        wallet: { data: { address: keyBasedWalletAddress } },
       } = getState();
       let { history: { data: currentHistory } } = getState();
       const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -653,65 +655,71 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
-      if (txStatus === TRANSACTION_COMPLETED && !skipNotifications.includes(txType)) {
-        const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
-        const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
-
-        let notificationMessage;
-        if (txType === transactionTypes.TopUp) {
-          notificationMessage = 'Your Pillar Tank was successfully funded!';
-        } else if (txType === transactionTypes.Withdrawal) {
-          notificationMessage = 'Withdrawal process completed!';
-        } else if (txType === transactionTypes.Settlement) {
-          notificationMessage = 'Settlement process completed!';
-        } else if (txType === transactionTypes.Erc20Transfer) {
-          notificationMessage = 'New transaction received!';
-        } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
-          notificationMessage = 'Your funds have been deposited!';
-          dispatch(fetchDepositedAssetsAction());
-        } else if (aaveTokenAddresses.some((aaveTokenAddress) => addressesEqual(txReceiverAddress, aaveTokenAddress))) {
-          notificationMessage = 'Your funds have been withdrawn!';
-          dispatch(fetchDepositedAssetsAction());
-        } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
-          notificationMessage = 'Transaction was successfully sent!';
+      if (txStatus === TRANSACTION_COMPLETED) {
+        if (addressesEqual(txSenderAddress, keyBasedWalletAddress)) {
+          dispatch(checkKeyBasedAssetTransferTransactionsAction());
         }
 
-        if (notificationMessage) {
-          Toast.show({
-            message: notificationMessage,
-            type: 'success',
-            title: 'Success',
-            autoClose: true,
-          });
-        }
+        if (!skipNotifications.includes(txType)) {
+          const aaveLendingPoolAddress = await aaveService.getLendingPoolAddress();
+          const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
 
-        if (txToListenFound) {
-          const { txUpdated, updatedHistory } = updateHistoryRecord(
-            currentHistory,
-            txHash,
-            (transaction) => ({
-              ...transaction,
-              gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
-              gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-              status: TX_CONFIRMED_STATUS,
-            }));
-
-          if (txUpdated) {
-            dispatch(saveDbAction('history', { history: updatedHistory }, true));
-            dispatch({
-              type: SET_HISTORY,
-              payload: updatedHistory,
-            });
-            dispatch({
-              type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-              payload: txHash,
-            });
-            currentHistory = getState().history.data;
+          let notificationMessage;
+          if (txType === transactionTypes.TopUp) {
+            notificationMessage = 'Your Pillar Tank was successfully funded!';
+          } else if (txType === transactionTypes.Withdrawal) {
+            notificationMessage = 'Withdrawal process completed!';
+          } else if (txType === transactionTypes.Settlement) {
+            notificationMessage = 'Settlement process completed!';
+          } else if (txType === transactionTypes.Erc20Transfer) {
+            notificationMessage = 'New transaction received!';
+          } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
+            notificationMessage = 'Your funds have been deposited!';
+            dispatch(fetchDepositedAssetsAction());
+          } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
+            notificationMessage = 'Your funds have been withdrawn!';
+            dispatch(fetchDepositedAssetsAction());
+          } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
+            notificationMessage = 'Transaction was successfully sent!';
           }
-        } else {
-          dispatch(fetchSmartWalletTransactionsAction());
+
+          if (notificationMessage) {
+            Toast.show({
+              message: notificationMessage,
+              type: 'success',
+              title: 'Success',
+              autoClose: true,
+            });
+          }
+
+          if (txToListenFound) {
+            const { txUpdated, updatedHistory } = updateHistoryRecord(
+              currentHistory,
+              txHash,
+              (transaction) => ({
+                ...transaction,
+                gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
+                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+                status: TX_CONFIRMED_STATUS,
+              }));
+
+            if (txUpdated) {
+              dispatch(saveDbAction('history', { history: updatedHistory }, true));
+              dispatch({
+                type: SET_HISTORY,
+                payload: updatedHistory,
+              });
+              dispatch({
+                type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+                payload: txHash,
+              });
+              currentHistory = getState().history.data;
+            }
+          } else {
+            dispatch(fetchSmartWalletTransactionsAction());
+          }
+          dispatch(fetchAssetsBalancesAction());
         }
-        dispatch(fetchAssetsBalancesAction());
       }
 
       if (txStatus === TRANSACTION_CREATED && txType === transactionTypes.UpdateAccountEnsName) {
@@ -1273,15 +1281,17 @@ export const cleanSmartWalletAccountsAction = () => {
   };
 };
 
-export const importSmartWalletAccountsAction = (privateKey: string, createNewAccount: boolean, initAssets: Assets) => {
+export const importSmartWalletAccountsAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: Object) => {
+    await dispatch(initSmartWalletSdkAction(privateKey));
+
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { user = {} } = await storage.get('user');
     const { session: { data: session } } = getState();
 
     const smartAccounts = await smartWalletService.getAccounts();
-    if (!smartAccounts.length && createNewAccount) {
+    if (isEmpty(smartAccounts)) {
       const newSmartAccount = await smartWalletService.createAccount(user.username);
       if (newSmartAccount) smartAccounts.push(newSmartAccount);
     }
@@ -1306,18 +1316,20 @@ export const importSmartWalletAccountsAction = (privateKey: string, createNewAcc
     });
     await Promise.all(newAccountsPromises);
 
-    if (smartAccounts.length) {
-      const accountId = smartAccounts[0].address;
+    if (!isEmpty(smartAccounts)) {
+      const accountId = normalizeWalletAddress(smartAccounts[0].address);
       await dispatch(connectSmartWalletAccountAction(accountId));
-      await dispatch(setActiveAccountAction(accountId));
       // set default assets for smart wallet
+      const initialAssets = await api.fetchInitialAssets(user.walletId);
       await dispatch({
         type: SET_INITIAL_ASSETS,
         payload: {
           accountId,
-          assets: initAssets,
+          assets: initialAssets,
         },
       });
+      const assets = { [accountId]: initialAssets };
+      dispatch(saveDbAction('assets', { assets }, true));
       dispatch(fetchAssetsBalancesAction());
       dispatch(fetchCollectiblesAction());
     }

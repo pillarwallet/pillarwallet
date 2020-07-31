@@ -17,12 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+import isEmpty from 'lodash.isempty';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { createSelector } from 'reselect';
 import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
 import { images } from 'utils/images';
 import { getThemeByType } from 'utils/themes';
+import type { RootReducerState } from 'reducers/rootReducer';
 import {
   accountsSelector,
   activeAccountSelector,
@@ -57,23 +58,32 @@ export const availableWalletsSelector = createSelector(
   },
 );
 
-export const innactiveUserWalletForSendSellector = createSelector(
+export const inactiveUserWalletForSendSelector = createSelector(
   accountsSelector, themeSelector, (accounts, themeType) => {
-    return getInactiveUserAccounts(accounts).map(account => {
-      const accountName = getAccountName(account.type);
-      const theme = getThemeByType(themeType);
-      const { smartWalletIcon } = images(theme);
-      const { keyWalletIcon } = images(theme);
-      const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
+    return getInactiveUserAccounts(accounts)
+      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .map(account => {
+        const accountName = getAccountName(account.type);
+        const theme = getThemeByType(themeType);
+        const { smartWalletIcon } = images(theme);
+        const { keyWalletIcon } = images(theme);
+        const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
 
-      return {
-        ...account,
-        ethAddress: getAccountAddress(account),
-        username: accountName,
-        name: accountName,
-        isUserAccount: true,
-        imageSource: walletIcon,
-      };
-    });
+        return {
+          ...account,
+          ethAddress: getAccountAddress(account),
+          username: accountName,
+          name: accountName,
+          isUserAccount: true,
+          imageSource: walletIcon,
+        };
+      });
   },
+);
+
+export const hasKeyBasedAssetsTransferInProgressSelector = createSelector(
+  ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer.data,
+  (keyBasedAssetsTransfer) => keyBasedAssetsTransfer.some(
+    (keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction),
+  ),
 );

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Alert, FlatList, Platform, View } from 'react-native';
@@ -28,6 +29,7 @@ import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import styled from 'styled-components/native';
 import Swipeout from 'react-native-swipeout';
+import t from 'translations/translate';
 
 // components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -63,6 +65,7 @@ import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork'
 import { accountAssetsSelector } from 'selectors/assets';
 import HideAssetButton from './HideAssetButton';
 
+
 const IS_IOS = Platform.OS === 'ios';
 
 type Props = {
@@ -79,11 +82,11 @@ type Props = {
   paymentNetworkBalances: Balances,
   hideAsset: Function,
   scrollViewRef?: Object,
-}
+};
 
 type State = {
   forceHideRemoval: boolean,
-}
+};
 
 const ListHeaderWrapper = styled.View`
   flex-direction: row;
@@ -98,6 +101,7 @@ const HeaderTitle = styled(MediumText)`
   ${fontStyles.regular};
   color: ${themedColors.accent};
 `;
+
 
 class AssetsList extends React.Component<Props, State> {
   didBlur: NavigationEventSubscription;
@@ -148,20 +152,24 @@ class AssetsList extends React.Component<Props, State> {
   hideAsset = (asset) => {
     const { hideAsset } = this.props;
     Alert.alert(
-      'Are you sure?',
-      `This will hide ${asset.name} from your wallet`,
+      t('alert.hideAsset.title'),
+      t('alert.hideAsset.message', { asset: asset.name }),
       [
-        { text: 'Cancel', onPress: () => this.setState({ forceHideRemoval: true }), style: 'cancel' },
-        { text: 'Hide', onPress: () => hideAsset(asset) },
+        {
+          text: t('alert.hideAsset.button.cancel'),
+          onPress: () => this.setState({ forceHideRemoval: true }),
+          style: 'cancel',
+        },
+        { text: t('alert.hideAsset.button.ok'), onPress: () => hideAsset(asset) },
       ],
     );
   };
 
   showNotRemovedToast = (asset) => {
     Toast.show({
-      message: `${asset.name} is essential for Pillar Wallet`,
+      message: t('toast.forbiddenToRemoveAsset.message', { asset: asset.name }),
       type: 'info',
-      title: 'This asset cannot be switched off',
+      title: t('toast.forbiddenToRemoveAsset.title'),
     });
     this.setState({ forceHideRemoval: true });
   };

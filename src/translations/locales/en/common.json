@@ -288,6 +288,9 @@
       "appSettings": {
         "title": "App settings"
       },
+      "assetsMigration": {
+        "title": "Migrate assets to Smart Wallet"
+      },
       "biometricLogin": {
         "title": "Biometric login"
       },
@@ -355,7 +358,6 @@
       "signOut": "Sign out from wallet"
     }
   },
-
   "toast":{
     "noSmartAccountDuringActivation": {
       "message": "Smart Wallet not found",

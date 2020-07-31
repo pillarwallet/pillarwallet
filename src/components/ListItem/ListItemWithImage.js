@@ -17,12 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Platform, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
+import t from 'translations/translate';
 
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
@@ -637,7 +639,9 @@ const Addon = (props: AddonProps) => {
       <View style={{ flexDirection: 'row' }}>
         <Wrapper style={{ alignItems: 'flex-end' }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-            {!!tokenBalance.toString() && <BalanceValue>{`${roundedBalance} ${token}`}</BalanceValue>}
+            {!!tokenBalance.toString() &&
+              <BalanceValue>{t('tokenValue', { value: roundedBalance, token })}</BalanceValue>
+            }
             {!!syntheticBalance.toString() &&
             <TankAssetBalance
               amount={syntheticBalance}

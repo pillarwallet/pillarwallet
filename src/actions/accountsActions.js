@@ -17,15 +17,15 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import { sdkConstants } from '@smartwallet/sdk';
-import {
-  ADD_ACCOUNT,
-  UPDATE_ACCOUNTS,
-  ACCOUNT_TYPES,
-  CHANGING_ACCOUNT,
-} from 'constants/accountsConstants';
+
+// constants
+import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { PIN_CODE } from 'constants/navigationConstants';
+import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+
+// actions
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
@@ -37,110 +37,23 @@ import {
   setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
-import { UPDATE_BALANCES, UPDATE_ASSETS } from 'constants/assetsConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
-import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
-import { PIN_CODE } from 'constants/navigationConstants';
-import Storage from 'services/storage';
-import { migrateBalancesToAccountsFormat } from 'services/dataMigration/balances';
-import { migrateTxHistoryToAccountsFormat } from 'services/dataMigration/history';
-import { migrateCollectiblesToAccountsFormat } from 'services/dataMigration/collectibles';
-import { migrateAssetsToAccountsFormat } from 'services/dataMigration/assets';
-import { migrateCollectiblesHistoryToAccountsFormat } from 'services/dataMigration/collectiblesHistory';
+import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
+import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+
+// utils
 import { findFirstSmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
-import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { isSupportedBlockchain } from 'utils/blockchainNetworks';
+
+// services
 import { navigate } from 'services/navigation';
 
+// selectors
+import { activeAccountSelector } from 'selectors';
+
+// types
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-import { activeAccountSelector } from 'selectors';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { setUserEnsIfEmptyAction } from './ensRegistryActions';
-
-const storage = Storage.getInstance('db');
-
-export const initDefaultAccountAction = (walletAddress: string, walletId: string, migrateData: boolean = true) => {
-  return async (dispatch: Dispatch) => {
-    const keyBasedAccount = {
-      id: walletAddress,
-      type: ACCOUNT_TYPES.KEY_BASED,
-      isActive: true,
-      walletId,
-    };
-    dispatch({
-      type: ADD_ACCOUNT,
-      payload: keyBasedAccount,
-    });
-    await dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
-
-    // data migration is optional
-    if (!migrateData) {
-      return Promise.resolve();
-    }
-
-    /*
-     * Data migration
-     */
-
-    const { balances = {} } = await storage.get('balances');
-    const { history = {} } = await storage.get('history');
-    const { collectibles = {} } = await storage.get('collectibles');
-    const { collectiblesHistory = {} } = await storage.get('collectiblesHistory');
-    const { assets = {} } = await storage.get('assets');
-
-    // balances
-    if (!balances[walletAddress]) {
-      const migratedBalances = migrateBalancesToAccountsFormat(balances, [keyBasedAccount]);
-      if (migratedBalances) {
-        dispatch({ type: UPDATE_BALANCES, payload: migratedBalances });
-        await dispatch(saveDbAction('balances', { balances: migratedBalances }, true));
-      }
-    }
-
-    // history
-    if (Array.isArray(history)) {
-      const migratedHistory = migrateTxHistoryToAccountsFormat(history, [keyBasedAccount]);
-      if (migratedHistory) {
-        dispatch({ type: SET_HISTORY, payload: migratedHistory });
-        await dispatch(saveDbAction('history', { history: migratedHistory }, true));
-      }
-    }
-
-    // collectibles
-    if (Array.isArray(collectibles)) {
-      const migratedCollectibles = migrateCollectiblesToAccountsFormat(collectibles, [keyBasedAccount]);
-      if (migratedCollectibles) {
-        dispatch({ type: UPDATE_COLLECTIBLES, payload: migratedCollectibles });
-        await dispatch(saveDbAction('collectibles', { collectibles: migratedCollectibles }, true));
-      }
-    }
-
-    // collectibles history
-    if (Array.isArray(collectiblesHistory)) {
-      const migratedCollectiblesHistory = migrateCollectiblesHistoryToAccountsFormat(
-        collectiblesHistory,
-        [keyBasedAccount],
-      );
-      if (migratedCollectiblesHistory) {
-        dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: migratedCollectiblesHistory });
-        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: migratedCollectiblesHistory }, true));
-      }
-    }
-
-    // assets
-    if (!assets[walletAddress]) {
-      const migratedAssets = migrateAssetsToAccountsFormat(assets, [keyBasedAccount]);
-      if (migratedAssets) {
-        dispatch({ type: UPDATE_ASSETS, payload: migratedAssets });
-        await dispatch(saveDbAction('assets', { assets: migratedAssets }, true));
-      }
-    }
-
-    return Promise.resolve();
-  };
-};
 
 export const addAccountAction = (
   accountAddress: string,
@@ -213,7 +126,6 @@ export const setActiveAccountAction = (accountId: string) => {
       },
     } = getState();
 
-
     const account = accounts.find(acc => acc.id === accountId);
     if (!account) return;
 
@@ -251,9 +163,7 @@ export const switchAccountAction = (accountId: string) => {
 
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (account.type === ACCOUNT_TYPES.KEY_BASED) {
-      dispatch(setActiveAccountAction(accountId));
-    } else if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
+    if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
       if (sdkInitialized) {
         await dispatch(connectSmartWalletAccountAction(accountId));
         dispatch(setUserEnsIfEmptyAction());
@@ -286,7 +196,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     await dispatch(initSmartWalletSdkAction(privateKey));
 
     const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType === ACCOUNT_TYPES.SMART_WALLET; // set to active routine
+    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
     await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
     dispatch(fetchVirtualAccountBalanceAction());
 
@@ -303,7 +213,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   };
 };
 
-export const fallbackToSmartOrKeyAccountAction = () => {
+export const fallbackToSmartAccountAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const activeAccount = activeAccountSelector(getState());
     const { accounts: { data: accounts } } = getState();
