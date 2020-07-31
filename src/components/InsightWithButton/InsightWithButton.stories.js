@@ -27,22 +27,24 @@ const itemsList = [
   'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
 ];
 
-storiesOf('InsightWithButton', module).add('with list', () => (
-  <CenterView>
-    <InsightWithButton
-      title="Some short title"
-      itemsList={itemsList}
-      buttonTitle="Wow, press me!"
-      onButtonPress={() => {}}
-    />
-  </CenterView>
-)).add('without list', () => (
-  <CenterView>
-    <InsightWithButton
-      buttonTitle="Wow, press me!"
-      description={itemsList[0]}
-      buttonProps={{ positive: true }}
-      onButtonPress={() => {}}
-    />
-  </CenterView>
-));
+storiesOf('InsightWithButton', module)
+  .add('with list', () => (
+    <CenterView>
+      <InsightWithButton
+        title="Some short title"
+        itemsList={itemsList}
+        buttonTitle="Wow, press me!"
+        onButtonPress={() => {}}
+      />
+    </CenterView>
+  ))
+  .add('without list', () => (
+    <CenterView>
+      <InsightWithButton
+        buttonTitle="Wow, press me!"
+        description={itemsList[0]}
+        buttonProps={{ positive: true }}
+        onButtonPress={() => {}}
+      />
+    </CenterView>
+  ));

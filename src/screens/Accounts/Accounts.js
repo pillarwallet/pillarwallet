@@ -24,25 +24,23 @@ import isEqual from 'lodash.isequal';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import CheckAuth from 'components/CheckAuth';
 import SettingsItemCarded from 'components/ListItem/SettingsItemCarded';
-import { BaseText } from 'components/Typography';
-import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import { ScrollWrapper } from 'components/Layout';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount, getActiveAccountType, hasLegacyAccountBalance } from 'utils/accounts';
+import { getAccountName, getActiveAccount } from 'utils/accounts';
 import { formatFiat, formatMoney, noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
-import { themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 
 // types
@@ -53,14 +51,9 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BlockchainNetwork } from 'models/BlockchainNetwork';
 import type { EthereumWallet } from 'models/Wallet';
 import type { Theme } from 'models/Theme';
-import type { User } from 'models/User';
 
 // constants
-import {
-  ASSETS,
-  // PILLAR_NETWORK_INTRO,
-  SMART_WALLET_INTRO,
-} from 'constants/navigationConstants';
+import { ASSETS } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -75,7 +68,6 @@ import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
-const NEW_SMART_WALLET = 'NEW_SMART_WALLET';
 
 type commonItemsParams = {|
   id: string,
@@ -93,19 +85,11 @@ type NetworkItem = {|
   ...commonItemsParams,
 |};
 
-type NewItem = {|
-  type: 'NEW_SMART_WALLET',
-  isSmartWallet: boolean,
-  ...commonItemsParams,
-|};
-
-type AccountItem = {|
+type WalletsListItem = {|
   type: 'ACCOUNT',
-  isSmartWallet: boolean,
   ...commonItemsParams,
 |};
 
-type WalletsListItem = AccountItem | NewItem;
 type ListItem = WalletsListItem | NetworkItem;
 
 type ListElement = {| item: ListItem |};
@@ -123,14 +107,12 @@ type Props = {|
   switchAccount: (accountId: string) => void,
   balances: BalancesStore,
   rates: Rates,
-  user: User,
   theme: Theme,
   fetchAllAccountsBalances: () => void,
 |};
 
 type State = {|
   showPinModal: boolean,
-  isLegacyWalletVisible: boolean,
   onPinValidAction: ?(_: string, wallet: EthereumWallet) => Promise<void>,
   switchingToWalletId: ?string,
 |};
@@ -140,30 +122,13 @@ const IconImage = styled(CachedImage)`
   width: 52px;
 `;
 
-const ToggleText = styled(BaseText)`
-  margin-right: -10px;
-  color: ${themedColors.secondaryText};
-`;
-
-
 class AccountsScreen extends React.Component<Props, State> {
-  switchToWallet: ?Account = null;
   forceRender = false;
-
-  constructor(props) {
-    super(props);
-    const isActiveKeyWallet = getActiveAccountType(props.accounts) === ACCOUNT_TYPES.KEY_BASED;
-    const hasLegacyBalance = hasLegacyAccountBalance(props.accounts, props.balances);
-    const { user } = props;
-    const forceShowLegacyWallet =
-        (!user.isLegacyUser && isActiveKeyWallet) || hasLegacyBalance;
-    this.state = {
-      showPinModal: false,
-      isLegacyWalletVisible: forceShowLegacyWallet,
-      onPinValidAction: null,
-      switchingToWalletId: null,
-    };
-  }
+  state = {
+    showPinModal: false,
+    onPinValidAction: null,
+    switchingToWalletId: null,
+  };
 
   componentDidMount() {
     const { fetchAllAccountsBalances } = this.props;
@@ -254,14 +219,13 @@ class AccountsScreen extends React.Component<Props, State> {
   wallets(activeNetwork?: BlockchainNetwork): WalletsListItem[] {
     const {
       accounts,
-      navigation,
       balances,
       rates,
       baseFiatCurrency,
       theme,
     } = this.props;
 
-    const { smartWalletIcon, keyWalletIcon } = images(theme);
+    const { smartWalletIcon } = images(theme);
 
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -269,46 +233,29 @@ class AccountsScreen extends React.Component<Props, State> {
       activeNetwork.id === BLOCKCHAIN_NETWORK_TYPES.ETHEREUM
     );
 
-    const wallets = accounts.map((account: Account): WalletsListItem => {
-      const { id, isActive, type } = account;
-      const accountBalances: Balances = balances[id];
-      const isActiveWallet = !!isActive && isEthereumActive;
-      const isSmartWallet = type === ACCOUNT_TYPES.SMART_WALLET;
-      let walletBalance;
-      if (accountBalances) {
-        const thisAccountBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
-        walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
-      }
-      return {
-        id: `ACCOUNT_${id}`,
-        type: 'ACCOUNT',
-        title: getAccountName(type),
-        balance: walletBalance,
-        isInitialised: true,
-        mainAction: () => this.switchWallet(account),
-        initialiseAction: null,
-        isActive: isActiveWallet,
-        iconSource: isSmartWallet ? smartWalletIcon : keyWalletIcon,
-        isSmartWallet,
-      };
-    });
-
-    if (!userHasSmartWallet(accounts)) {
-      wallets.push({
-        id: NEW_SMART_WALLET,
-        type: NEW_SMART_WALLET,
-        title: getAccountName(ACCOUNT_TYPES.SMART_WALLET),
-        balance: null,
-        isInitialised: false,
-        mainAction: null,
-        initialiseAction: () => { navigation.navigate(SMART_WALLET_INTRO); },
-        isActive: false,
-        iconSource: smartWalletIcon,
-        isSmartWallet: true,
+    return accounts
+      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .map((account: Account): WalletsListItem => {
+        const { id, isActive, type } = account;
+        const accountBalances: Balances = balances[id];
+        const isActiveWallet = !!isActive && isEthereumActive;
+        let walletBalance;
+        if (accountBalances) {
+          const thisAccountBalance = calculateBalanceInFiat(rates, accountBalances, fiatCurrency);
+          walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
+        }
+        return {
+          id: `ACCOUNT_${id}`,
+          type: 'ACCOUNT',
+          title: getAccountName(type),
+          balance: walletBalance,
+          isInitialised: true,
+          mainAction: () => this.switchWallet(account),
+          initialiseAction: null,
+          isActive: isActiveWallet,
+          iconSource: smartWalletIcon,
+        };
       });
-    }
-
-    return wallets;
   }
 
   networks(): NetworkItem[] {
@@ -329,14 +276,16 @@ class AccountsScreen extends React.Component<Props, State> {
     );
 
     if (ppnNetwork) {
-      const { title, isActive } = ppnNetwork;
+      const { isActive } = ppnNetwork;
       const availableStakeFormattedAmount = formatMoney(availableStake);
 
       networks.push({
         id: `NETWORK_${ppnNetwork.id}`,
         type: 'NETWORK',
-        title,
-        balance: userHasSmartWallet(accounts) ? `${availableStakeFormattedAmount} ${PPN_TOKEN}` : 'N/A',
+        title: t('pillarNetwork'),
+        balance: userHasSmartWallet(accounts)
+          ? `${availableStakeFormattedAmount} ${PPN_TOKEN}`
+          : t('label.notApplicable'),
         isInitialised: isTankInitialised,
         mainAction: this.setPPNAsActiveNetwork,
         initialiseAction: this.initialisePPN,
@@ -348,70 +297,19 @@ class AccountsScreen extends React.Component<Props, State> {
     return networks;
   }
 
-  renderKeyWallet = (item, isLegacyWalletVisible) => {
-    const {
-      title,
-      balance,
-      mainAction,
-      isActive,
-      iconSource,
-    } = item;
-
-    return (
-      <CollapsibleListItem
-        open={isLegacyWalletVisible}
-        onPress={() => this.setState({ isLegacyWalletVisible: !isLegacyWalletVisible })}
-        customToggle={(
-          <ToggleText>
-            Legacy wallet (advanced)
-          </ToggleText>
-        )}
-        toggleWrapperStyle={{
-          justifyContent: 'flex-start',
-          paddingHorizontal: spacing.large,
-          paddingTop: spacing.large,
-          paddingBottom: 4,
-        }}
-        collapseWrapperStyle={{ padding: spacing.large, paddingTop: 10 }}
-        wrapperStyle={{ marginTop: -spacing.mediumLarge }}
-        noPadding
-        noRipple
-        collapseContent={
-          <SettingsItemCarded
-            title={title}
-            subtitle={balance}
-            isSwitching={this.state.switchingToWalletId === item.id}
-            onMainPress={() => { this.setState({ switchingToWalletId: item.id }, mainAction || noop); }}
-            isActive={isActive}
-            sidePaddingsForWidth={40}
-            customIcon={<IconImage source={iconSource} />}
-          />
-        }
-      />
-    );
-  };
-
   render() {
-    const { showPinModal, isLegacyWalletVisible, onPinValidAction } = this.state;
-    const { blockchainNetworks, user } = this.props;
-    const { isLegacyUser } = user;
+    const { showPinModal, onPinValidAction } = this.state;
+    const { blockchainNetworks } = this.props;
 
     const activeNetwork = blockchainNetworks.find((net) => net.isActive);
     const walletsToShow = this.wallets(activeNetwork);
     const networksToShow = this.networks();
-
-    const smartAccountCard = walletsToShow
-      .find(({ type, isSmartWallet }) => !!isSmartWallet || type === NEW_SMART_WALLET);
-    const legacyAccountCard = walletsToShow.find(({ isSmartWallet }) => !isSmartWallet);
-
-    const walletsInList = (isLegacyUser || !smartAccountCard) ? walletsToShow : [smartAccountCard];
-
-    const accountsList = [...walletsInList, ...networksToShow];
+    const accountsList = [...walletsToShow, ...networksToShow];
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Accounts' }],
+          centerItems: [{ title: t('title.accounts') }],
           leftItems: [{ close: true, dismiss: true }],
         }}
       >
@@ -425,7 +323,6 @@ class AccountsScreen extends React.Component<Props, State> {
             contentContainerStyle={{ width: '100%', padding: spacing.large }}
             renderItem={this.renderListItem}
           />
-          {!isLegacyUser && legacyAccountCard && this.renderKeyWallet(legacyAccountCard, isLegacyWalletVisible)}
         </ScrollWrapper>
 
         <CheckAuth
@@ -449,7 +346,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   balances: { data: balances },
   rates: { data: rates },
-  user: { data: user },
 }: RootReducerState): $Shape<Props> => ({
   accounts,
   blockchainNetworks,
@@ -457,7 +353,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   balances,
   rates,
-  user,
 });
 
 const structuredSelector = createStructuredSelector({

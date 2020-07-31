@@ -21,16 +21,25 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // constants
-import { ETH } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch } from 'utils/common';
 
 // types
-import type { Asset, Assets, Balance, Balances, Rates } from 'models/Asset';
+import type {
+  Asset,
+  AssetData,
+  Assets,
+  Balance,
+  Balances,
+  Rates,
+} from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
+import type { Collectible } from 'models/Collectible';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -266,3 +275,33 @@ export const getAssetSymbolByAddress = (assets: Asset[], supportedAssets: Asset[
 
   return assetSymbol;
 };
+
+export const mapAssetToAssetData = ({
+  symbol: token,
+  address: contractAddress,
+  name,
+  decimals,
+  iconUrl,
+}: Asset): AssetData => ({
+  token,
+  contractAddress,
+  name,
+  decimals,
+  tokenType: TOKENS,
+  icon: iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '',
+});
+
+export const mapCollectibleToAssetData = ({
+  contractAddress,
+  name,
+  id,
+  icon,
+}: Collectible): AssetData => ({
+  token: '',
+  decimals: 0,
+  contractAddress,
+  name,
+  id: id.toString(),
+  icon: icon || '',
+  tokenType: COLLECTIBLES,
+});

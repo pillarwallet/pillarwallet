@@ -62,4 +62,3 @@ export const RECEIVE = 'receive';
 export const SEND = 'send';
 export const SET_WALLET_RECOVERY_PENDING = 'SET_WALLET_RECOVERY_PENDING';
 export const SET_WALLET_RECOVERY_COMPLETE = 'SET_WALLET_RECOVERY_COMPLETE';
-

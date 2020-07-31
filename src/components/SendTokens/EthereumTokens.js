@@ -44,7 +44,7 @@ import Toast from 'components/Toast';
 // utils
 import { formatAmount, formatFiat, getEthereumProvider } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { getBalance, getRate } from 'utils/assets';
+import { getBalance, getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getContactsEnsName } from 'utils/contacts';
 
@@ -59,7 +59,7 @@ import {
   useGasTokenSelector,
 } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
-import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
+import { inactiveUserWalletForSendSelector } from 'selectors/wallets';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
@@ -140,6 +140,7 @@ type FooterProps = {
   showRelayerMigration: boolean,
   showFee: boolean,
   isLoading: boolean,
+  feeError: boolean,
 };
 
 class SendEthereumTokens extends React.Component<Props, State> {
@@ -173,7 +174,12 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const {
-      session, useGasToken, gasInfo, isSmartAccount, isGasTokenSupported,
+      navigation,
+      session,
+      useGasToken,
+      gasInfo,
+      isSmartAccount,
+      isGasTokenSupported,
     } = this.props;
     const { showRelayerMigrationModal } = this.state;
 
@@ -190,7 +196,11 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     // if gas token was updated after switching to gas token relayer or gasInfo updated
     if (prevProps.useGasToken !== useGasToken || !isEqual(prevProps.gasInfo, gasInfo)) {
-      this.handleAmountChange();
+      if (navigation.getParam('assetData')) {
+        this.setPreselectedValues();
+      } else {
+        this.handleAmountChange();
+      }
     }
   }
 
@@ -347,7 +357,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     const defaultResponse = { fee: new BigNumber(0) };
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
-    if (inputHasError || (!value && !isCollectible) || !assetData || !receiver) return defaultResponse;
+    if (inputHasError || !assetData || !receiver) return defaultResponse;
 
     let data;
     if (isCollectible) {
@@ -498,11 +508,22 @@ class SendEthereumTokens extends React.Component<Props, State> {
     return `${feeInEth} ETH (${formattedFeeInFiat})`;
   };
 
-  renderFeeToggle = (showFee: boolean) => {
+  renderFeeToggle = (showFee: boolean, feeError: boolean) => {
     const { txFeeInfo } = this.state;
     if (showFee && txFeeInfo) {
       const { fee, gasToken } = txFeeInfo;
-      return <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />;
+      const gasTokenSymbol = get(gasToken, 'symbol', ETH);
+      return (
+        <>
+          <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />
+          {!!feeError &&
+            <BaseText center secondary>
+              Sorry, you do not have enough {gasTokenSymbol} in your wallet to make this transaction.
+              Please top up your wallet and try again.
+            </BaseText>
+          }
+        </>
+      );
     }
     return null;
   };
@@ -513,6 +534,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
       showRelayerMigration,
       showFee,
       isLoading,
+      feeError,
     } = props;
 
     if (isLoading) {
@@ -523,19 +545,25 @@ class SendEthereumTokens extends React.Component<Props, State> {
       return (
         <TouchableOpacity onPress={() => this.setState({ showTransactionSpeedModal: true })}>
           <SendTokenDetailsValue>
-            <BaseText secondary>Fee: {this.getTransactionFeeString()}</BaseText>
+            <BaseText center secondary>Fee: {this.getTransactionFeeString()}</BaseText>
           </SendTokenDetailsValue>
+          {!!feeError &&
+            <BaseText center secondary>
+              Sorry, you do not have enough ETH in your wallet to make this transaction.
+              Please top up your wallet and try again.
+            </BaseText>
+          }
         </TouchableOpacity>
       );
     } else if (showRelayerMigration) {
       return (
         <>
-          {this.renderFeeToggle(showFee)}
+          {this.renderFeeToggle(showFee, feeError)}
           <Spacing h={spacing.medium} />
           {this.renderRelayerMigrationButton()}
         </>);
     }
-    return this.renderFeeToggle(showFee);
+    return this.renderFeeToggle(showFee, feeError);
   };
 
   render() {
@@ -584,7 +612,19 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     const hasAllData = isCollectible ? (!!receiver && !!assetData) : (!inputHasError && !!receiver && !!currentValue);
 
-    const showNextButton = !gettingFee && hasAllData;
+    let feeError = false;
+    if (txFeeInfo && assetData) {
+      feeError = !isEnoughBalanceForTransactionFee(balances, {
+        txFeeInWei: txFeeInfo.fee,
+        gasToken: txFeeInfo.gasToken,
+        decimals: assetData.decimals,
+        amount,
+        symbol: token,
+      });
+    }
+
+    const showNextButton = !gettingFee && hasAllData && !feeError;
+
     const isNextButtonDisabled = !session.isOnline;
 
     return (
@@ -615,6 +655,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
             showRelayerMigration,
             showFee,
             isLoading: gettingFee && !inputHasError,
+            feeError,
           }),
         }}
       >
@@ -656,7 +697,7 @@ const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
   isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
-  inactiveUserAccounts: innactiveUserWalletForSendSellector,
+  inactiveUserAccounts: inactiveUserWalletForSendSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
 });

@@ -23,6 +23,14 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 
+// actions
+import { importSmartWalletAccountsAction } from 'actions/smartWalletActions';
+import { switchAccountAction } from 'actions/accountsActions';
+
+// constants
+import { ASSETS } from 'constants/navigationConstants';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper, Container } from 'components/Layout';
 import { MediumText, BoldText } from 'components/Typography';
@@ -30,30 +38,23 @@ import Button from 'components/Button';
 import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 
+// utils
 import { findFirstSmartAccount } from 'utils/accounts';
 import { fontStyles } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 import { getThemeColors, themedColors } from 'utils/themes';
 
-import { ASSETS } from 'constants/navigationConstants';
-import {
-  importSmartWalletAccountsAction,
-  initSmartWalletSdkAction,
-} from 'actions/smartWalletActions';
-import { switchAccountAction } from 'actions/accountsActions';
-
+// types
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
-import type { Assets } from 'models/Asset';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
   accounts: Accounts,
-  initSmartWalletSdk: (privateKey: string) => void,
-  importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) => void,
+  importSmartWalletAccounts: (privateKey: string) => void,
   switchAccount: (accountId: string) => void,
 };
 
@@ -61,7 +62,6 @@ type State = {
   showPinModal: boolean,
   showLoader: boolean,
 };
-
 
 const CustomWrapper = styled.View`
   flex: 1;
@@ -92,7 +92,6 @@ const FeatureIcon = styled(CachedImage)`
 
 const smartWalletIcon = require('assets/images/logo_smart_wallet.png');
 
-
 class SmartWalletIntro extends React.PureComponent<Props, State> {
   state = {
     showPinModal: false,
@@ -101,11 +100,12 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
 
   proceed = async (_, wallet) => {
     const {
-      importSmartWalletAccounts, initSmartWalletSdk, switchAccount, navigation,
+      importSmartWalletAccounts,
+      switchAccount,
+      navigation,
     } = this.props;
     this.setState({ showLoader: true });
-    await initSmartWalletSdk(wallet.privateKey);
-    await importSmartWalletAccounts(wallet.privateKey, true, {});
+    await importSmartWalletAccounts(wallet.privateKey);
     const { accounts } = this.props;
     const smartAccount = findFirstSmartAccount(accounts) || { id: '' };
     await switchAccount(smartAccount.id);
@@ -180,9 +180,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  initSmartWalletSdk: (privateKey: string) => dispatch(initSmartWalletSdkAction(privateKey)),
-  importSmartWalletAccounts: (privateKey: string, createNewAccount: boolean, initAssets: Assets) =>
-    dispatch(importSmartWalletAccountsAction(privateKey, createNewAccount, initAssets)),
+  importSmartWalletAccounts: (privateKey: string) => dispatch(importSmartWalletAccountsAction(privateKey)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 

@@ -21,6 +21,7 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
+import remoteConfig from '@react-native-firebase/remote-config';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
@@ -67,6 +68,14 @@ import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
 
+// Config constants, to be overwritten in componentDidMount
+let isOffersEngineEnabled = true;
+let isAaveEnabled = true;
+let isPoolTogetherEnabled = true;
+let isPeerToPeerEnabled = true;
+let isWyreEnabled = true;
+let isRampEnabled = true;
+
 type Props = {
   theme: Theme,
   providersMeta: ProvidersMeta,
@@ -93,6 +102,16 @@ class ServicesScreen extends React.Component<Props, State> {
     if (!Array.isArray(providersMeta) || !providersMeta?.length) {
       getMetaData();
     }
+
+    /**
+     * Retrieve boolean flags for services from Remote Config.
+     */
+    isOffersEngineEnabled = remoteConfig().getBoolean('feature_services_offers_engine');
+    isAaveEnabled = remoteConfig().getBoolean('feature_services_aave');
+    isPoolTogetherEnabled = remoteConfig().getBoolean('feature_services_pool_together');
+    isPeerToPeerEnabled = remoteConfig().getBoolean('feature_services_peer_to_peer');
+    isWyreEnabled = remoteConfig().getBoolean('feature_services_wyre');
+    isRampEnabled = remoteConfig().getBoolean('feature_services_ramp');
   }
 
   getServices = () => {
@@ -104,7 +123,6 @@ class ServicesScreen extends React.Component<Props, State> {
       isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
-
     const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
       label: `${providersMeta.length} exchanges`,
       color: colors.primary,
@@ -116,43 +134,53 @@ class ServicesScreen extends React.Component<Props, State> {
       aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
 
-    return [
-      {
+    const services = [];
+    if (isOffersEngineEnabled) {
+      services.push({
         key: 'offersEngine',
         title: 'Offers engine',
         body: 'Aggregated offers from many decentralized exchanges and token swap services',
         action: () => navigation.navigate(EXCHANGE),
         labelBadge: offersBadge,
-      },
-      ...this.getBuyCryptoServices(),
-      {
+      });
+    }
+    services.push(...this.getBuyCryptoServices());
+    if (isAaveEnabled) {
+      services.push({
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
         disabled: aaveServiceDisabled,
         label: aaveServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
-      },
-      {
+      });
+    }
+    if (isPoolTogetherEnabled) {
+      services.push({
         key: 'poolTogether',
         title: 'Pool Together savings game',
         body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
         hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
-      },
-      {
+      });
+    }
+    if (isPeerToPeerEnabled) {
+      services.push({
         key: 'peerToPeerTrading',
         title: 'Peer-to-peer trading',
         body: 'Swap tokens directly with others. Safe, secure, anonymous',
         disabled: true,
         label: 'soon',
-      },
-    ];
+      });
+    }
+    return services;
   };
 
   getBuyCryptoServices = () => {
-    return [
-      {
+    const buyCryptoServices = [];
+
+    if (isRampEnabled) {
+      buyCryptoServices.push({
         key: 'ramp',
         title: 'Buy with Ramp.Network (EU)',
         body: 'Buy Now',
@@ -169,8 +197,11 @@ class ServicesScreen extends React.Component<Props, State> {
             return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
           });
         },
-      },
-      {
+      });
+    }
+
+    if (isWyreEnabled) {
+      buyCryptoServices.push({
         key: 'wyre',
         title: 'Buy with Wyre (Non-EU)',
         body: 'Buy Now',
@@ -181,8 +212,10 @@ class ServicesScreen extends React.Component<Props, State> {
             redirectUrl: SENDWYRE_RETURN_URL,
           })}`);
         },
-      },
-    ];
+      });
+    }
+
+    return buyCryptoServices;
   }
 
   handleBuyCryptoAction = (getUrlWithAddress: string => string) => {

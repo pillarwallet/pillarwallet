@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Keyboard, SectionList, FlatList, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
@@ -25,6 +26,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
@@ -43,11 +45,7 @@ import { spacing } from 'utils/variables';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import {
-  FETCHING,
-  ETH,
-  PLR,
-} from 'constants/assetsConstants';
+import { FETCHING, ETH, PLR } from 'constants/assetsConstants';
 
 import {
   searchAssetsAction,
@@ -59,6 +57,7 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   assetsSearchState: ?string,
@@ -98,6 +97,7 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
+
 class AssetSearch extends React.Component<Props, State> {
   displayedAssets: Asset[];
 
@@ -128,16 +128,16 @@ class AssetSearch extends React.Component<Props, State> {
     return [
       {
         id: DISPLAYED,
-        name: 'Displayed',
+        name: t('assetSearchContent.tabs.visible.title'),
         onPress: () => this.setState({ activeTab: DISPLAYED }),
       },
       {
         id: ALL_NON_ZERO,
-        name: 'All non-zero',
+        name: t('assetSearchContent.tabs.withBalance.title'),
         onPress: () => this.setState({ activeTab: ALL_NON_ZERO }),
       },
     ];
-  }
+  };
 
   handleAssetToggle = (asset: Asset, added: Boolean) => {
     if (!added) {
@@ -163,20 +163,20 @@ class AssetSearch extends React.Component<Props, State> {
     }
 
     Alert.alert(
-      'Are you sure?',
-      `This will hide ${asset.name} from your wallet`,
+      t('alert.hideAsset.title'),
+      t('alert.hideAsset.message', { asset: asset.name }),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Hide', onPress: () => hideAsset(asset) },
+        { text: t('alert.hideAsset.button.cancel'), style: 'cancel' },
+        { text: t('alert.hideAsset.button.ok'), onPress: () => hideAsset(asset) },
       ],
     );
   };
 
   showNotHiddenNotification = (asset) => {
     Toast.show({
-      message: `${asset.name} is essential for Pillar wallet`,
+      message: t('toast.forbiddenToRemoveAsset.message', { asset: asset.name }),
       type: 'info',
-      title: 'This asset cannot be switched off',
+      title: t('toast.forbiddenToRemoveAsset.title'),
     });
   };
 
@@ -185,7 +185,7 @@ class AssetSearch extends React.Component<Props, State> {
     const allAssets = this.getAssetsList();
     const assetsToAdd = allAssets.filter(asset => !assets[asset.symbol]);
     addMultipleAssets(assetsToAdd);
-  }
+  };
 
   handleSearchChange = (query: string) => {
     const formattedQuery = !query ? '' : query.trim();
@@ -266,8 +266,8 @@ class AssetSearch extends React.Component<Props, State> {
         ListEmptyComponent={
           <EmptyStateWrapper fullScreen>
             <EmptyStateParagraph
-              title="Token not found"
-              bodyText="Check if the name was entered correctly or add custom token"
+              title={t('assetSearchContent.tabs.visible.emptyState.title')}
+              bodyText={t('assetSearchContent.tabs.visible.emptyState.paragraph')}
             />
           </EmptyStateWrapper>
         }
@@ -301,7 +301,7 @@ class AssetSearch extends React.Component<Props, State> {
         />
       </ListItemWithImage>
     );
-  }
+  };
 
   getAssetsList = () => {
     const { supportedAssets, balances } = this.props;
@@ -311,7 +311,7 @@ class AssetSearch extends React.Component<Props, State> {
       return this.displayedAssets;
     }
     return supportedAssets.filter(({ symbol }) => getBalance(balances, symbol) > 0);
-  }
+  };
 
   render() {
     const { assets, navigation, assetsSearchState } = this.props;
@@ -322,7 +322,7 @@ class AssetSearch extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Tokens' }],
+          centerItems: [{ title: t('assetSearchContent.title') }],
         }}
       >
         <ScrollView
@@ -330,7 +330,7 @@ class AssetSearch extends React.Component<Props, State> {
         >
           <>
             <SearchBlock
-              searchInputPlaceholder="Search asset"
+              searchInputPlaceholder={t('label.searchAsset')}
               onSearchChange={this.handleSearchChange}
               wrapperStyle={{
                 paddingHorizontal: 20,
@@ -350,7 +350,7 @@ class AssetSearch extends React.Component<Props, State> {
             <>
               <ButtonsWrapper>
                 <ButtonText
-                  buttonText="Select all"
+                  buttonText={t('button.selectAll')}
                   onPress={this.selectAllAssets}
                   wrapperStyle={{ alignSelf: 'flex-start' }}
                 />

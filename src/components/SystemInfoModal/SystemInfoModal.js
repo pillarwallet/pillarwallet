@@ -20,7 +20,6 @@
 import * as React from 'react';
 import {
   BUILD_NUMBER,
-  BCX_URL,
   SDK_PROVIDER,
   TX_DETAILS_URL,
   NETWORK_PROVIDER,
@@ -55,10 +54,6 @@ const SystemInfoModal = () => {
       <LabeledRow>
         <Label>BUILD_NUMBER</Label>
         <Value>{BUILD_NUMBER}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>BCX_URL</Label>
-        <Value>{BCX_URL}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>SDK_PROVIDER</Label>

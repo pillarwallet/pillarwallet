@@ -1042,7 +1042,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   ]
                 }
               >
-                Add funds
+                button.addFunds
               </Text>
             </View>
             <View
@@ -1159,7 +1159,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   ]
                 }
               >
-                Send
+                button.send
               </Text>
             </View>
           </View>
@@ -1288,7 +1288,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   }
                 }
               >
-                Transfer to Smart Wallet
+                button.transferToSmartWallet
               </Text>
             </View>
           </View>
@@ -1514,7 +1514,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       ]
                     }
                   >
-                    Add funds to Pillar
+                    title.addFundsToWallet
                   </Text>
                   <View
                     style={
@@ -1664,7 +1664,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   ]
                                 }
                               >
-                                Buy with a card or Apple Pay
+                                button.buyWithCardOrApplePay
                               </Text>
                             </View>
                           </View>
@@ -1850,7 +1850,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   ]
                                 }
                               >
-                                Send from another wallet
+                                button.sendFromAnotherWallet
                               </Text>
                             </View>
                           </View>
@@ -2490,7 +2490,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "marginLeft": 8,
                               }
                             }
-                            label="ERC-20 tokens only"
+                            label="label.erc20TokensOnly"
                             labelStyle={
                               Object {
                                 "fontSize": 10,
@@ -2540,7 +2540,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 ]
                               }
                             >
-                              ERC-20 tokens only
+                              label.erc20TokensOnly
                             </Text>
                           </View>
                         </View>
@@ -2639,7 +2639,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         ]
                       }
                     >
-                      Do not send real ETH or ERC20 tokens.
+                      paragraph.doNotSendRealEthOrTokens
                     </Text>
                   </View>
                   <View
@@ -2821,7 +2821,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           }
                         }
                       >
-                        Share Address
+                        button.shareAddress
                       </Text>
                     </View>
                   </View>

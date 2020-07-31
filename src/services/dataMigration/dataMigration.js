@@ -18,7 +18,7 @@ export async function migrate(collection: string, storageData: Object, dispatch:
       break;
 
     case 'accounts':
-      data = await loadAndMigrateAccounts(storageData, dispatch, getState);
+      data = await loadAndMigrateAccounts(storageData, dispatch);
       break;
 
     case 'assets':

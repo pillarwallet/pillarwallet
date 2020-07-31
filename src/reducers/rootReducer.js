@@ -46,7 +46,6 @@ import exchangeReducer from './exchangeReducer';
 import accountsReducer from './accountsReducer';
 import balancesReducer from './balancesReducer';
 import paymentNetworkReducer from './paymentNetworkReducer';
-import featureFlagsReducer from './featureFlagsReducer';
 import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import userEventsReducer from './userEventsReducer';
@@ -60,6 +59,7 @@ import connectedDevicesReducer from './connectedDevicesReducer';
 import recoveryPortalReducer from './recoveryPortalReducer';
 import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
+import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -85,7 +85,6 @@ import type { ExchangeReducerState, ExchangeReducerAction } from './exchangeRedu
 import type { AccountsReducerState, AccountsAction } from './accountsReducer';
 import type { BalancesReducerState, BalancesAction } from './balancesReducer';
 import type { PaymentNetworkReducerState, PaymentNetworkAction } from './paymentNetworkReducer';
-import type { FeatureFlagsReducerState, FeatureFlagsReducerAction } from './featureFlagsReducer';
 import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './blockchainNetworkReducer';
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
@@ -99,6 +98,10 @@ import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from
 import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
 import type { PoolTogetherReducerState } from './poolTogetherReducer';
+import type {
+  KeyBasedAssetTransferReducerAction,
+  KeyBasedAssetTransferReducerState,
+} from './keyBasedAssetTransferReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -121,7 +124,6 @@ export type RootReducerState = {|
   accounts: AccountsReducerState,
   balances: BalancesReducerState,
   paymentNetwork: PaymentNetworkReducerState,
-  featureFlags: FeatureFlagsReducerState,
   blockchainNetwork: BlockchainNetworkReducerState,
   userSettings: UserSettingsReducerState,
   userEvents: UserEventsReducerState,
@@ -135,6 +137,7 @@ export type RootReducerState = {|
   recoveryPortal: RecoveryPortalReducerState,
   lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
+  keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
 |};
 
 type RootReducerAction =
@@ -146,7 +149,6 @@ type RootReducerAction =
   | BlockchainNetworkReducerState
   | CollectiblesAction
   | ExchangeReducerAction
-  | FeatureFlagsReducerAction
   | HistoryAction
   | PaymentNetworkAction
   | SmartWalletReducerAction
@@ -163,7 +165,8 @@ type RootReducerAction =
   | PhoneContactsReducerAction
   | ConnectedDevicesReducerAction
   | RecoveryPortalReducerAction
-  | LendingReducerAction;
+  | LendingReducerAction
+  | KeyBasedAssetTransferReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -196,7 +199,6 @@ const appReducer = combineReducers({
   accounts: accountsReducer,
   balances: balancesReducer,
   paymentNetwork: paymentNetworkReducer,
-  featureFlags: featureFlagsReducer,
   blockchainNetwork: blockchainNetworkReducer,
   userSettings: userSettingsReducer,
   userEvents: userEventsReducer,
@@ -210,6 +212,7 @@ const appReducer = combineReducers({
   recoveryPortal: recoveryPortalReducer,
   lending: lendingReducer,
   poolTogether: poolTogetherReducer,
+  keyBasedAssetTransfer: keyBasedAssetTransferReducer,
 });
 
 export const initialState = appReducer(undefined, {});

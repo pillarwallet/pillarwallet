@@ -16,7 +16,7 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, View, FlatList, Dimensions } from 'react-native';
+import { RefreshControl, View, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
@@ -33,7 +33,6 @@ import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
 import IconButton from 'components/IconButton';
-import Loader from 'components/Loader';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
 import Requests from 'screens/WalletConnect/Requests';
@@ -86,7 +85,7 @@ import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import { formatAmountDisplay } from 'utils/common';
@@ -150,17 +149,6 @@ type Props = {
   isSmartWalletActive: boolean,
 };
 
-type State = {
-  loaderMessage: string,
-};
-
-
-const {
-  width: SCREEN_WIDTH,
-  height: SCREEN_HEIGHT,
-} = Dimensions.get('window');
-
-
 const RequestsWrapper = styled.View`
   margin-top: ${({ marginOnTop }) => marginOnTop ? 18 : 2}px;
   align-items: flex-end;
@@ -168,18 +156,6 @@ const RequestsWrapper = styled.View`
 
 const EmptyStateWrapper = styled.View`
   margin: 20px 0 30px;
-`;
-
-const LoaderWrapper = styled.View`
-  position: absolute;
-  top: 0;
-  left: 0;
-  align-items: center;
-  justify-content: center;
-  height: ${SCREEN_HEIGHT}px;
-  width: ${SCREEN_WIDTH}px;
-  background-color: ${themedColors.surface};
-  z-index: 99999;
 `;
 
 const DepositedAssetGain = styled(BaseText)`
@@ -194,13 +170,9 @@ const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
 
-class HomeScreen extends React.Component<Props, State> {
+class HomeScreen extends React.Component<Props> {
   _willFocus: NavigationEventSubscription;
   forceRender = false;
-
-  state = {
-    loaderMessage: '',
-  };
 
   componentDidMount() {
     const {
@@ -235,8 +207,8 @@ class HomeScreen extends React.Component<Props, State> {
     this._willFocus.remove();
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+  shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqual(this.props, nextProps);
     const isFocused = this.props.navigation.isFocused();
 
     if (!isFocused) {
@@ -319,10 +291,6 @@ class HomeScreen extends React.Component<Props, State> {
     );
   }
 
-  handleWalletChange = (loaderMessage: string) => {
-    this.setState({ loaderMessage });
-  };
-
   renderPoolTogetherItem = ({ item: poolTogetherStats }: { item: Object }) => {
     const {
       symbol,
@@ -378,7 +346,6 @@ class HomeScreen extends React.Component<Props, State> {
       isSmartWalletActive,
     } = this.props;
 
-    const { loaderMessage } = this.state;
     const tokenTxHistory = history
       .filter(({ tranType }) => tranType !== 'collectible')
       .filter(historyItem => historyItem.asset !== 'BTC');
@@ -477,10 +444,7 @@ class HomeScreen extends React.Component<Props, State> {
               isForAllAccounts
               headerComponent={(
                 <React.Fragment>
-                  <WalletsPart
-                    rewardActive={isPillarRewardCampaignActive}
-                    handleWalletChange={this.handleWalletChange}
-                  />
+                  <WalletsPart rewardActive={isPillarRewardCampaignActive} />
                   {!!walletConnectRequests &&
                   <RequestsWrapper marginOnTop={walletConnectRequests.length === 1}>
                     {walletConnectRequests.length > 1 &&
@@ -581,9 +545,6 @@ class HomeScreen extends React.Component<Props, State> {
             />
           )}
         </ContainerWithHeader>
-        {!!loaderMessage &&
-          <LoaderWrapper><Loader messages={[loaderMessage]} /></LoaderWrapper>
-        }
       </React.Fragment>
     );
   }

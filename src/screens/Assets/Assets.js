@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import { availableStakeSelector, PPNIncomingTransactionsSelector } from 'selectors/paymentNetwork';
 import { withTheme } from 'styled-components/native';
+import t from 'translations/translate';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -91,13 +92,13 @@ type Props = {
   availableStake: number,
   PPNTransactions: Transaction[],
   theme: Theme,
-}
+};
 
 type State = {
   showKeyWalletInsight: boolean,
   showSmartWalletInsight: boolean,
   supportsBiometrics: boolean,
-}
+};
 
 const VIEWS = {
   KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
@@ -170,8 +171,9 @@ class AssetsScreen extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
 
     const { type: walletType } = activeAccount || {};
-    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', title: '' };
-    const { id: activeBNetworkId, title: activeBNetworkTitle } = activeBNetwork;
+    const activeBNetwork = blockchainNetworks.find((network) => network.isActive) || { id: '', translationKey: '' };
+    const { id: activeBNetworkId, translationKey } = activeBNetwork;
+    const activeBNetworkTitle = t(translationKey);
 
     switch (activeBNetworkId) {
       case BLOCKCHAIN_NETWORK_TYPES.ETHEREUM:
@@ -208,7 +210,7 @@ class AssetsScreen extends React.Component<Props, State> {
     const keyWalletInsights = [
       {
         key: 'backup',
-        title: 'Backup wallet',
+        title: t('insight.keyWalletIntro.description.backupWallet'),
         status: isBackedUp,
         onPress: !isBackedUp
           ? () => navigation.navigate(RECOVERY_SETTINGS)
@@ -216,7 +218,7 @@ class AssetsScreen extends React.Component<Props, State> {
       },
       {
         key: 'pinCode',
-        title: 'Set PIN code',
+        title: t('insight.keyWalletIntro.description.setPinCode'),
         status: true,
       },
     ];
@@ -224,7 +226,7 @@ class AssetsScreen extends React.Component<Props, State> {
     if (supportsBiometrics) {
       const biometricsInsight = {
         key: 'biometric',
-        title: 'Enable biometric login (optional)',
+        title: t('insight.keyWalletIntro.description.enableBiometrics'),
         status: useBiometrics,
         onPress: !useBiometrics
           ? () => navigation.navigate(SECURITY_SETTINGS)
@@ -253,12 +255,12 @@ class AssetsScreen extends React.Component<Props, State> {
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
         <Container center inset={{ bottom: 0 }}>
-          <BaseText style={{ marginBottom: 20 }}>Loading default assets</BaseText>
+          <BaseText style={{ marginBottom: 20 }}>{t('label.loadingDefaultAssets')}</BaseText>
           {assetsState !== FETCH_INITIAL_FAILED && (
             <Spinner />
           )}
           {assetsState === FETCH_INITIAL_FAILED && (
-            <Button title="Try again" onPress={() => fetchInitialAssets()} />
+            <Button title={t('button.tryAgain')} onPress={() => fetchInitialAssets()} />
           )}
         </Container>
       );
