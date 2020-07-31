@@ -22,8 +22,8 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 
-import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
-import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
+import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
+import { loadAltalixInfoAction, loadSendwyreRatesAction } from 'actions/fiatToCryptoActions';
 
 function mockStore({ state, pillarSdk }) {
   return configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue])(state);
@@ -49,5 +49,28 @@ describe('Fiat to crypto providers actions', () => {
       expect(actualActions).toEqual(expectedActions);
     });
   });
-});
 
+  describe('Sendwyre', () => {
+    it('loadSendwyreRatesAction should fetch Sendwyre exchange rates', async () => {
+      const rates = { USDETH: { USD: 1, ETH: 1 } };
+
+      const store = mockStore({
+        state: {
+          fiatToCrypto: { sendwyre: null },
+        },
+        pillarSdk: {
+          getSendwyreRates: async () => rates,
+        },
+      });
+
+      const expectedActions = [{
+        type: SET_SENDWYRE_RATES,
+        payload: rates,
+      }];
+
+      await store.dispatch(loadSendwyreRatesAction());
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+  });
+});

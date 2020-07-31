@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
+import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
 import { reportOrWarn } from 'utils/common';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -38,5 +38,16 @@ export const loadAltalixInfoAction = () => {
         payload: { isAvailable },
       });
     }
+  };
+};
+
+export const loadSendwyreRatesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const rates = await api.getSendwyreRates();
+
+    dispatch({
+      type: SET_SENDWYRE_RATES,
+      payload: rates,
+    });
   };
 };

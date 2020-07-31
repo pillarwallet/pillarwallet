@@ -52,7 +52,7 @@ import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/
 import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
-import type { AltalixTrxParams } from 'models/FiatToCryptoProviders';
+import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 
 // services
 import {
@@ -741,6 +741,33 @@ class SDKWrapper {
         reportLog('fetchAltalixAvailability: SDK request error', error.response.data, Sentry.Severity.Error);
         return false;
       });
+  }
+
+  getSendwyreRates(): Promise<SendwyreRates> {
+    // TODO: replace test data with call to backend
+    return Promise.resolve({
+      CADETH: { CAD: 429.77614997721713, ETH: 0.002326792680452396 },
+      USDDAI: { DAI: 0.983812946476267, USD: 1.01645338535309 },
+      GBPUSDC: { USDC: 1.28601213419956, GBP: 0.7775976395607 },
+      USDWETH: { USD: 161.91, WETH: 0.006176270767710456 },
+      AUDDAI: { DAI: 0.7083247937375781, AUD: 1.41178172618151 },
+      EURETH: { EUR: 271.9604992675697, ETH: 0.003677004574903891 },
+      GBPETH: { ETH: 0.004069981318570551, GBP: 245.70137347736463 },
+      CADDAI: { CAD: 1.35700237870216, DAI: 0.7369183840019515 },
+      AUDETH: { ETH: 0.002220918637455352, AUD: 450.2641308579245 },
+      EURUSDC: { EUR: 0.85828363269567, USDC: 1.1651160081653 },
+      AUDUSDC: { USDC: 0.71186811124832, AUD: 1.40475459456444 },
+      USDUSDC: { USDC: 1, USD: 1 },
+      USDETH: { ETH: 0.0031267930806424143, USD: 319.8164938354492 },
+      GBPDAI: { DAI: 1.2796770990557282, GBP: 0.78144713282585 },
+      EURDAI: { DAI: 1.1593765204403454, EUR: 0.86253256157041 },
+    });
+  }
+
+  // TODO: replace test data
+  // eslint-disable-next-line no-unused-vars
+  getSendwyreWidgetURL(params: SendwyreTrxParams): Promise<string | null> {
+    return Promise.resolve('https://google.com');
   }
 }
 

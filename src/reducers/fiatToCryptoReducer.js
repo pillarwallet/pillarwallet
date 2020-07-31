@@ -18,7 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
+import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
+
+import type { SendwyreRates } from 'models/FiatToCryptoProviders';
 
 type AltalixInfo = {
   isAvailable: boolean,
@@ -26,6 +28,9 @@ type AltalixInfo = {
 
 export type FiatToCryptoReducerState = {
   altalix: null | AltalixInfo,
+  sendwyre: null | {
+    exchangeRates: SendwyreRates,
+  },
 };
 
 type AltalixInfoSetAction = {
@@ -33,19 +38,30 @@ type AltalixInfoSetAction = {
   payload: AltalixInfo,
 };
 
-export type FiatToCryptoReducerAction = AltalixInfoSetAction;
+type LoadSendwyreRatesAction = {
+  type: typeof SET_SENDWYRE_RATES,
+  payload: SendwyreRates,
+};
+
+export type FiatToCryptoReducerAction = AltalixInfoSetAction | LoadSendwyreRatesAction;
 
 const initialState = {
   altalix: null,
+  sendwyre: null,
 };
 
 export default function fiatToCryptoReducer(
   state: FiatToCryptoReducerState = initialState,
   action: FiatToCryptoReducerAction,
-) {
+): FiatToCryptoReducerState {
   switch (action.type) {
     case SET_ALTALIX_INFO:
       return { ...state, altalix: action.payload };
+    case SET_SENDWYRE_RATES:
+      return {
+        ...state,
+        sendwyre: { exchangeRates: action.payload },
+      };
     default:
       return state;
   }

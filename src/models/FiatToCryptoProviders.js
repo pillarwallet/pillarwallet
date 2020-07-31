@@ -26,3 +26,18 @@ export type AltalixTrxParams = {
     sellAmount?: number,
     buyAmount?: number,
 };
+
+export type SendwyreRates = {
+  [symbol: string]: {
+    // not defined by the type, but there should be exactly two properties
+    [symbol: string]: number,
+  },
+};
+
+export type SendwyreTrxParams = {
+    walletId: string,
+    address: string,
+    sourceCurrency: string,
+    destCurrency: string,
+    amount: string,
+}
