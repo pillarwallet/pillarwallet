@@ -113,22 +113,22 @@ class RecoverySettings extends React.Component<Props, State> {
     return [
       {
         key: 'view12Words',
-        title: 'View 12 words',
+        title: t('settingsContent.settingsItem.backupPhrase.title'),
         onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE, { wallet }),
         hidden: !isBackedUp || !wallet.mnemonic,
       },
       {
         key: 'viewPrivateKey',
-        title: 'View private key',
+        title: t('settingsContent.settingsItem.backupPhrase.title'),
         onPress: () => navigation.navigate(REVEAL_BACKUP_PHRASE, { showPrivateKey: true, wallet }),
         hidden: !isBackedUp || !!wallet.mnemonic,
       },
       {
         key: 'backupNotFinished',
-        title: 'Backup not finished',
+        title: t('settingsContent.settingsItem.backup.title'),
         labelBadge: {
           color: colors.negative,
-          label: 'Warning',
+          label: t('settingsContent.settingsItem.backup.label.notFinished'),
         },
         onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
         hidden: isBackedUp,
@@ -160,16 +160,16 @@ class RecoverySettings extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Recovery' }] }}
+        headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.recoverySettings.screenTitle') }] }}
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper>
           <SettingsSection
-            sectionTitle="Global"
+            sectionTitle={t('settingsContent.settingsItem.recoverySettings.label.globalSettings')}
             sectionItems={this.getGlobalSection()}
           />
           <SettingsSection
-            sectionTitle="Key wallet"
+            sectionTitle={t('settingsContent.settingsItem.recoverySettings.label.keyWalletSettings')}
             sectionItems={this.getKeyWalletSection()}
           />
         </ScrollWrapper>

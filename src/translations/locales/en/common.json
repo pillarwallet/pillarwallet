@@ -291,6 +291,15 @@
       "assetsMigration": {
         "title": "Migrate assets to Smart Wallet"
       },
+      "backup": {
+        "title": "Backup not finished",
+        "label": {
+          "notFinished": "Warning"
+        }
+      },
+      "backupPhrase": {
+        "title": "View 12 words"
+      },
       "biometricLogin": {
         "title": "Biometric login"
       },
@@ -309,6 +318,9 @@
       "linkedDevices": {
         "title": "Linked devices",
         "subtitle": "Manage Smart Wallet account devices"
+      },
+      "privateKey": {
+        "title": "View private key"
       },
       "securitySettings": {
         "title": "Security settings",
@@ -337,8 +349,11 @@
       },
       "recoverySettings": {
         "title": "Recovery settings",
+        "screenTitle": "Recovery",
         "label": {
-          "notFinished": "Warning"
+          "notFinished": "Warning",
+          "globalSettings": "Global",
+          "keyWalletSettings": "Key wallet"
         }
       },
       "referFriends": {
