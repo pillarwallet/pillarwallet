@@ -41,6 +41,7 @@ import {
   LENDING_CHOOSE_DEPOSIT,
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
+  SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
@@ -69,6 +70,7 @@ import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
 // assets
@@ -222,7 +224,13 @@ class ServicesScreen extends React.Component<Props, State> {
         action: () => {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
-          this.tryOpenCryptoPurchaseUrl(wyreWidgetUrl(address));
+          this.props.navigation.navigate(SENDWYRE_INPUT, {
+            onSubmit: async (values: SendwyreTrxValues) => {
+              const { user: { walletId }, getApi } = this.props;
+              const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
+              await this.tryOpenCryptoPurchaseUrl(url);
+            },
+          });
         },
       });
     }
@@ -272,9 +280,9 @@ class ServicesScreen extends React.Component<Props, State> {
     return getAccountAddress(activeAccount);
   }
 
-  tryOpenCryptoPurchaseUrl = (url: string | null) => {
+  tryOpenCryptoPurchaseUrl = async (url: string | null) => {
     if (url) {
-      openInAppBrowser(url)
+      await openInAppBrowser(url)
         .catch(this.showServiceLaunchError);
     } else {
       this.showServiceLaunchError();

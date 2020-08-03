@@ -34,10 +34,13 @@ export type SendwyreRates = {
   },
 };
 
-export type SendwyreTrxParams = {
-    walletId: string,
-    address: string,
+export type SendwyreTrxValues = {
     sourceCurrency: string,
     destCurrency: string,
     amount: string,
+}
+
+export type SendwyreTrxParams = SendwyreTrxValues & {
+    walletId: string,
+    address: string,
 }
