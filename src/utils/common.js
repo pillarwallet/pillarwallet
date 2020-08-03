@@ -53,6 +53,7 @@ import * as NAVSCREENS from 'constants/navigationConstants';
 // types
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
+import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // local
 import { isProdEnv, isTest } from './environment';
@@ -611,4 +612,26 @@ export const humanizeHexString = (hexString: ?string) => {
   }
 
   return hexString;
+};
+
+export const countDownDHMS = (remainingTimeMs: number) => {
+  const seconds = remainingTimeMs / 1000;
+  const days = Math.floor(seconds / 24 / 60 / 60);
+  const hoursLeft = Math.floor((seconds) - (days * 86400));
+  const hours = Math.floor(hoursLeft / 3600);
+  const minutesLeft = Math.floor((hoursLeft) - (hours * 3600));
+  const minutes = Math.floor(minutesLeft / 60);
+  const remainingSeconds = seconds % 60;
+  return {
+    days,
+    hours,
+    minutes,
+    remainingSeconds,
+  };
+};
+
+export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: string): ?string => {
+  const addressMixedCase = Object.keys(ensRegistry).find(key => isCaseInsensitiveMatch(key, address));
+  if (!addressMixedCase) return null;
+  return ensRegistry[addressMixedCase];
 };

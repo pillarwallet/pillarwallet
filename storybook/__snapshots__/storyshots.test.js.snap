@@ -9506,7 +9506,6 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
             "height": 48,
             "justifyContent": "center",
             "opacity": 1,
-            "overflow": "hidden",
             "position": "relative",
             "width": 48,
           }
@@ -9798,7 +9797,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
             "height": 48,
             "justifyContent": "center",
             "opacity": 1,
-            "overflow": "hidden",
             "position": "relative",
             "width": 48,
           }
@@ -30063,7 +30061,6 @@ exports[`Storyshots Selector selected option 1`] = `
                   "height": 52,
                   "justifyContent": "center",
                   "opacity": 1,
-                  "overflow": "hidden",
                   "position": "relative",
                   "width": 52,
                 }
@@ -33572,7 +33569,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                       "height": 64,
                                       "justifyContent": "center",
                                       "opacity": 1,
-                                      "overflow": "hidden",
                                       "position": "relative",
                                       "width": 64,
                                     }
@@ -35229,7 +35225,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                               "height": 52,
                                               "justifyContent": "center",
                                               "opacity": 1,
-                                              "overflow": "hidden",
                                               "position": "relative",
                                               "width": 52,
                                             }
@@ -35433,7 +35428,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                               "height": 52,
                                               "justifyContent": "center",
                                               "opacity": 1,
-                                              "overflow": "hidden",
                                               "position": "relative",
                                               "width": 52,
                                             }
@@ -36957,7 +36951,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                               "height": 52,
                                               "justifyContent": "center",
                                               "opacity": 1,
-                                              "overflow": "hidden",
                                               "position": "relative",
                                               "width": 52,
                                             }
@@ -37161,7 +37154,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                               "height": 52,
                                               "justifyContent": "center",
                                               "opacity": 1,
-                                              "overflow": "hidden",
                                               "position": "relative",
                                               "width": 52,
                                             }
@@ -38537,7 +38529,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                               "height": 52,
                                               "justifyContent": "center",
                                               "opacity": 1,
-                                              "overflow": "hidden",
                                               "position": "relative",
                                               "width": 52,
                                             }
@@ -38741,7 +38732,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                               "height": 52,
                                               "justifyContent": "center",
                                               "opacity": 1,
-                                              "overflow": "hidden",
                                               "position": "relative",
                                               "width": 52,
                                             }

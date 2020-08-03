@@ -39,6 +39,7 @@ import Requests from 'screens/WalletConnect/Requests';
 import UserNameAndImage from 'components/UserNameAndImage';
 import { BaseText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import SablierStream from 'components/SablierStream';
 
 // constants
 import {
@@ -48,6 +49,7 @@ import {
   MENU,
   WALLETCONNECT,
   POOLTOGETHER_DASHBOARD,
+  SABLIER_STREAMS,
 } from 'constants/navigationConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -71,17 +73,20 @@ import {
   toggleBadgesAction,
   toggleLendingDepositsAction,
   togglePoolTogetherAction,
+  toggleSablierAction,
 } from 'actions/appSettingsActions';
 import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
 import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
+import { fetchUserStreamsAction } from 'actions/sablierActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 import { poolTogetherUserStatsSelector } from 'selectors/poolTogether';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { sablierEventsSelector } from 'selectors/sablier';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -99,6 +104,7 @@ import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 import type { DepositedAsset } from 'models/Asset';
+import type { Stream } from 'models/Sablier';
 
 // partials
 import WalletsPart from './WalletsPart';
@@ -147,6 +153,13 @@ type Props = {
   poolTogetherUserStats: Object[],
   fetchPoolStats: (firstRun?: boolean) => void,
   isSmartWalletActive: boolean,
+  incomingStreams: Stream[],
+  outgoingStreams: Stream[],
+  isFetchingStreams: boolean,
+  toggleSablier: () => void,
+  hideSablier: boolean,
+  fetchUserStreams: () => void,
+  sablierEvents: Object[],
 };
 
 const RequestsWrapper = styled.View`
@@ -184,6 +197,7 @@ class HomeScreen extends React.Component<Props> {
       fetchDepositedAssets,
       isSmartWalletActive,
       fetchPoolStats,
+      fetchUserStreams,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -201,6 +215,7 @@ class HomeScreen extends React.Component<Props> {
     fetchBadgeAwardHistory();
     fetchReferralRewardsIssuerAddresses();
     fetchDepositedAssets();
+    fetchUserStreams();
   }
 
   componentWillUnmount() {
@@ -237,6 +252,7 @@ class HomeScreen extends React.Component<Props> {
       fetchDepositedAssets,
       fetchPoolStats,
       isSmartWalletActive,
+      fetchUserStreams,
     } = this.props;
 
     fetchTransactionsHistoryNotifications();
@@ -250,6 +266,7 @@ class HomeScreen extends React.Component<Props> {
     fetchDepositedAssets();
     if (isSmartWalletActive) {
       fetchPoolStats();
+      fetchUserStreams();
     }
   };
 
@@ -316,6 +333,10 @@ class HomeScreen extends React.Component<Props> {
     );
   }
 
+  renderSablierStream = ({ item: stream }) => {
+    return <SablierStream stream={stream} />;
+  }
+
   render() {
     const {
       intercomNotificationsCount,
@@ -344,6 +365,12 @@ class HomeScreen extends React.Component<Props> {
       poolTogetherUserStats = [],
       isFetchingPoolStats,
       isSmartWalletActive,
+      incomingStreams,
+      outgoingStreams,
+      isFetchingStreams,
+      toggleSablier,
+      hideSablier,
+      sablierEvents,
     } = this.props;
 
     const tokenTxHistory = history
@@ -374,6 +401,7 @@ class HomeScreen extends React.Component<Props> {
       ...mappedCTransactions,
       ...userEvents,
       ...badgesEvents,
+      ...sablierEvents,
     ];
 
     const hasIntercomNotifications = !!intercomNotificationsCount;
@@ -385,6 +413,11 @@ class HomeScreen extends React.Component<Props> {
       : 'Invite friends to Pillar';
 
     const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
+
+    const latestIncomingStream = incomingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
+    const latestOutgoingStream = outgoingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
+    const streams = [latestOutgoingStream, latestIncomingStream].filter(stream => !!stream);
+    const hasStreams = !!streams.length;
 
     return (
       <React.Fragment>
@@ -522,13 +555,31 @@ class HomeScreen extends React.Component<Props> {
                         data={poolTogetherUserStats}
                         keyExtractor={(item) => item.symbol}
                         renderItem={this.renderPoolTogetherItem}
-                        initialNumToRender={2}
                         listKey="pool_together"
                       />
                     }
                     onPress={togglePoolTogether}
                     open={!hidePoolTogether}
                   />
+                  }
+                  {!!hasStreams && !!isSmartWalletActive &&
+                    <CollapsibleSection
+                      label="Sablier money streaming"
+                      showLoadingSpinner={isFetchingStreams}
+                      labelRight={isFetchingStreams ? null : 'View all'}
+                      onPressLabelRight={() => navigation.navigate(SABLIER_STREAMS)}
+                      collapseContent={
+                        <FlatList
+                          data={streams}
+                          keyExtractor={(item) => item.id}
+                          renderItem={this.renderSablierStream}
+                          initialNumToRender={2}
+                          listKey="sablier"
+                        />
+                      }
+                      onPress={toggleSablier}
+                      open={!hideSablier}
+                    />
                   }
                 </React.Fragment>
               )}
@@ -558,7 +609,7 @@ const mapStateToProps = ({
   userEvents: { data: userEvents },
   appSettings: {
     data: {
-      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether,
+      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier,
     },
   },
   walletConnect: { requests: walletConnectRequests },
@@ -566,6 +617,7 @@ const mapStateToProps = ({
   insights: { referFriendsOnHomeScreenDismissed },
   lending: { depositedAssets, isFetchingDepositedAssets },
   poolTogether: { isFetchingPoolStats },
+  sablier: { incomingStreams, outgoingStreams, isFetchingStreams },
 }: RootReducerState): $Shape<Props> => ({
   user,
   intercomNotificationsCount,
@@ -576,6 +628,7 @@ const mapStateToProps = ({
   baseFiatCurrency,
   hideBadges,
   hidePoolTogether,
+  hideSablier,
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
@@ -583,6 +636,9 @@ const mapStateToProps = ({
   depositedAssets,
   isFetchingDepositedAssets,
   isFetchingPoolStats,
+  incomingStreams,
+  outgoingStreams,
+  isFetchingStreams,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -590,6 +646,7 @@ const structuredSelector = createStructuredSelector({
   openSeaTxHistory: combinedCollectiblesHistorySelector,
   poolTogetherUserStats: poolTogetherUserStatsSelector,
   isSmartWalletActive: isActiveAccountSmartWalletSelector,
+  sablierEvents: sablierEventsSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -615,6 +672,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
   toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
   fetchPoolStats: (firstRun?: boolean) => dispatch(fetchAllPoolsPrizes(firstRun)),
+  fetchUserStreams: () => dispatch(fetchUserStreamsAction()),
+  toggleSablier: () => dispatch(toggleSablierAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

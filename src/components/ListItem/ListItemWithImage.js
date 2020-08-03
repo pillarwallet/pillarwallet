@@ -107,6 +107,7 @@ type Props = {
   padding?: string,
   itemImageRoundedSquare?: boolean,
   cornerIcon?: any,
+  cornerIconSize?: number,
 };
 
 type AddonProps = {
@@ -495,6 +496,8 @@ const ItemImage = (props: Props) => {
       noShadow
       fallbackImage={fallbackSource}
       borderWidth={0}
+      cornerIcon={cornerIcon}
+      cornerIconSize={16}
     />
   );
 };

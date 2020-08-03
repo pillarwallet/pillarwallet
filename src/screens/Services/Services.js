@@ -43,7 +43,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
 
 // constants
-import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import {
+  EXCHANGE,
+  LENDING_CHOOSE_DEPOSIT,
+  POOLTOGETHER_DASHBOARD,
+  SABLIER_STREAMS,
+} from 'constants/navigationConstants';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -128,10 +133,10 @@ class ServicesScreen extends React.Component<Props, State> {
       color: colors.primary,
     } : null;
 
-    const aaveServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
-    let aaveServiceLabel;
-    if (aaveServiceDisabled) {
-      aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
+    const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
+    let SWServiceLabel;
+    if (SWServiceDisabled) {
+      SWServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
 
     const services = [];
@@ -150,8 +155,8 @@ class ServicesScreen extends React.Component<Props, State> {
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
-        disabled: aaveServiceDisabled,
-        label: aaveServiceLabel,
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       });
     }
@@ -164,6 +169,14 @@ class ServicesScreen extends React.Component<Props, State> {
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       });
     }
+    services.push({
+      key: 'sablier',
+      title: 'Sablier money streaming',
+      body: 'Stream money to people and organizations in real-time with just one deposit',
+      disabled: SWServiceDisabled,
+      label: SWServiceLabel,
+      action: () => navigation.navigate(SABLIER_STREAMS),
+    });
     if (isPeerToPeerEnabled) {
       services.push({
         key: 'peerToPeerTrading',
