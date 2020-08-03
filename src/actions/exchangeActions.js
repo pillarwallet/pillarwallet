@@ -55,6 +55,9 @@ import { get1inchOffer, create1inchOrder, create1inchAllowanceTx } from 'service
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 
+// assets
+import SUPPORTED_ASSETS from 'assets/exchangeSupportedAssets/assets.json';
+
 // actions
 import { saveDbAction } from './dbActions';
 
@@ -417,6 +420,7 @@ export const markNotificationAsSeenAction = () => {
   };
 };
 
+// TODO handle metadata locally
 export const getMetaDataAction = () => {
   return async (dispatch: Dispatch) => {
     const metaData = await exchangeService.getMetaData();
@@ -434,11 +438,8 @@ export const getExchangeSupportedAssetsAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    const exchangeSupportedAssetsTickers = await exchangeService.getExchangeSupportedAssets();
-
     const exchangeSupportedAssets = supportedAssets
-      .filter(({ symbol }) => exchangeSupportedAssetsTickers.includes(symbol));
-
+      .filter(({ symbol }) => SUPPORTED_ASSETS.map(asset => asset.symbol).includes(symbol));
     dispatch({
       type: SET_EXCHANGE_SUPPORTED_ASSETS,
       payload: exchangeSupportedAssets,
