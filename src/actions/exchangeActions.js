@@ -303,7 +303,7 @@ export const setTokenAllowanceAction = (
       return;
     }
 
-    const { to: payToAddress, data } = txData; // todo wrong
+    const { to: payToAddress, data } = txData;
     callback({
       payToAddress,
       transactionObj: {
