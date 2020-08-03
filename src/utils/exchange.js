@@ -21,7 +21,7 @@ import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
 import { EXCHANGE_URL } from 'react-native-dotenv';
 import get from 'lodash.get';
-import type { ProvidersMeta, Offer, Allowance } from 'models/Offer';
+import type { ProvidersMeta, Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';

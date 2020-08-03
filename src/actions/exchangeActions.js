@@ -142,14 +142,14 @@ export const resetOffersAction = () => {
 const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await getUniswapOffer(fromAsset, toAsset, fromAmount, clientAddress);
-    dispatch({ type: ADD_OFFER, payload: offer });
+    if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
 const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await get1inchOffer(fromAsset, toAsset, fromAmount, clientAddress);
-    dispatch({ type: ADD_OFFER, payload: offer });
+    if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 

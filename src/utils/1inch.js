@@ -67,7 +67,6 @@ export const getResponseData = async (url: string): Object => {
   }
   if (!response || !response.data) {
     reportOrWarn('Unable to fetch offers', null, 'error');
-    return null;
   }
   return response.data;
 };
