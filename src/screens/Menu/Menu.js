@@ -66,6 +66,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
+import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 
 
 type Props = {
@@ -78,6 +79,7 @@ type Props = {
   goToInvitationFlow: () => void,
   isPillarRewardCampaignActive: boolean,
   hasKeyBasedAssetsTransferInProgress: boolean,
+  keyBasedWalletHasPositiveBalance: boolean,
 };
 
 const Footer = styled.View``;
@@ -141,6 +143,7 @@ const Menu = ({
   logoutUser,
   backupStatus,
   lockScreen,
+  keyBasedWalletHasPositiveBalance,
 }: Props) => {
   const [visibleModal, setVisibleModal] = useState(null);
 
@@ -216,6 +219,7 @@ const Menu = ({
       title: 'Migrate assets to Smart Wallet',
       icon: 'send-asset',
       iconColor: colors.accent,
+      hidden: !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance,
       action: () => navigation.navigate(
         hasKeyBasedAssetsTransferInProgress
           ? KEY_BASED_ASSET_TRANSFER_STATUS
@@ -359,6 +363,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   hasKeyBasedAssetsTransferInProgress: hasKeyBasedAssetsTransferInProgressSelector,
+  keyBasedWalletHasPositiveBalance: keyBasedWalletHasPositiveBalanceSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

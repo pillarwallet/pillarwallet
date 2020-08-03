@@ -97,7 +97,10 @@ import {
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
 import { importSmartWalletAccountsAction } from './smartWalletActions';
-import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
+import {
+  checkIfKeyBasedWalletHasPositiveBalanceAction,
+  checkKeyBasedAssetTransferTransactionsAction,
+} from './keyBasedAssetTransferActions';
 
 
 const storage = Storage.getInstance('db');
@@ -281,6 +284,7 @@ export const loginAction = (
 
       dispatch(fetchTransactionsHistoryAction());
       dispatch(fetchReferralRewardAction());
+      dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
 
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
