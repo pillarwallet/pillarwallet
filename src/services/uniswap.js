@@ -33,7 +33,7 @@ import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 
 // utils
-import { reportOrWarn, convertToBaseUnits, getEthereumProvider } from 'utils/common';
+import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
 import {
   chainId,
   ADDRESSES,
@@ -74,7 +74,7 @@ const getBackupRoute = async (
     token2 = await Token.fetchData(chainId, toAssetAddress);
     tokenMiddle = await Token.fetchData(chainId, ADDRESSES.WETH);
   } catch (e) {
-    reportOrWarn('Failed to fetch token data', e, 'error');
+    reportLog('Failed to fetch token data', e, 'warning');
     return null;
   }
 
@@ -84,7 +84,7 @@ const getBackupRoute = async (
     pair1 = await Pair.fetchData(token1, tokenMiddle);
     pair2 = await Pair.fetchData(tokenMiddle, token2);
   } catch (e) {
-    reportOrWarn('Pair unsupported', e, 'error');
+    reportLog('Pair unsupported', e, 'warning');
     return null;
   }
 
@@ -135,13 +135,13 @@ export const getUniswapOffer = async (
   toAsset: Asset,
   quantity: number | string,
   clientAddress: string,
-): Promise<Offer> => {
+): Promise<Offer | null> => {
   parseAssets([fromAsset, toAsset]);
   const decimalsBN = new BigNumber(fromAsset.decimals);
   const quantityBN = new BigNumber(quantity);
   const fromAssetQuantityBaseUnits = convertToBaseUnits(decimalsBN, quantityBN);
   const route = await getRoute(fromAsset, toAsset);
-
+  if (!route) return null;
   const trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
   const askRate = getAskRate(trade);
   const allowanceSet = await getAllowanceSet(clientAddress, fromAsset);
@@ -160,12 +160,12 @@ const getUniswapOrderData = async (
     fromAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
       || toAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
   )) {
-    reportOrWarn('Unable to find a possible route', null, 'error');
+    reportLog('Unable to find a possible route', null, 'error');
   }
   if (!route) {
     route = await getBackupRoute(fromAsset.address, toAsset.address);
     if (!route) {
-      reportOrWarn('Unable to find a possible route', null, 'error');
+      reportLog('Unable to find a possible route', null, 'error');
     }
   }
   const trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits, route);

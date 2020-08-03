@@ -22,7 +22,7 @@ import axios from 'axios';
 
 import type { Asset } from 'models/Asset';
 
-import { convertToBaseUnits, reportOrWarn } from 'utils/common';
+import { convertToBaseUnits, reportLog } from 'utils/common';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const EXCHANGE_URL = 'https://api.1inch.exchange/v1.1';
@@ -63,11 +63,11 @@ export const getResponseData = async (url: string): Object | null => {
   try {
     response = await axios.get(url);
   } catch (e) {
-    reportOrWarn('Unable to fetch offers', e, 'error');
+    reportLog('Unable to fetch offers', e, 'warning');
     return null;
   }
   if (!response || !response.data) {
-    reportOrWarn('Unable to fetch offers', null, 'error');
+    reportLog('Unable to fetch offers', null, 'warning');
     return null;
   }
   return response.data;
