@@ -228,9 +228,17 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     ];
   }
 
+  isCurrencyPairSupported = ([sourceSymbol, destSymbol]: [string, string]) => {
+    const { currencyPairs } = this.props;
+    return currencyPairs &&
+      currencyPairs.some(([source, dest]) => source === sourceSymbol && dest === destSymbol);
+  }
+
   render() {
     const { value, formOptions } = this.state;
-    const isValid = this.formRef.current && this.formRef.current.validate().isValid();
+    const isValid = this.formRef.current &&
+      this.formRef.current.validate().isValid() &&
+      this.isCurrencyPairSupported(this.getCurrencyPair(this.state));
 
     return (
       <ContainerWithHeader
