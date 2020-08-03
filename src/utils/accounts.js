@@ -20,8 +20,12 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import omit from 'lodash.omit';
+import t from 'translations/translate';
+
 import type { Account, Accounts, AccountTypes } from 'models/Account';
 import type { Assets, Balances, BalancesStore } from 'models/Asset';
+import type { TranslatedString } from 'models/Translations';
+
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { addressesEqual, getBalance } from './assets';
 
@@ -106,14 +110,12 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
   return account.type === ACCOUNT_TYPES.KEY_BASED;
 };
 
-export const getAccountName = (accountType: AccountTypes | string): string => {
+export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.SMART_WALLET:
-      return 'Smart Wallet';
-
+      return t('smartWallet');
     case ACCOUNT_TYPES.KEY_BASED:
-      return 'Key wallet';
-
+      return t('keyWallet');
     default:
       return '';
   }

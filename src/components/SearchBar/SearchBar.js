@@ -17,17 +17,68 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Animated, Dimensions, Keyboard, TextInput as RNTextInput } from 'react-native';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import TextInput from 'components/Input';
+import t from 'translations/translate';
 
 import { fontSizes, appFont, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 import type { Theme, ThemeColors } from 'models/Theme';
+import type { Event } from 'react-native';
+
+
+type Value = ?string;
+
+type InputPropsType = {
+  placeholder?: string,
+  backgroundColor?: string,
+  onChange: (Value) => void,
+  onBlur?: (Value) => void,
+  onFocus?: () => void,
+  value: Value,
+  validator?: (val: string) => string,
+};
+
+type CommonComponentsProps = {
+  inputProps: InputPropsType,
+  placeholder?: string,
+  backgroundColor?: string,
+  inputRef?: RNTextInput,
+  inputIconName?: string,
+  iconProps?: Object,
+};
+
+type Props = CommonComponentsProps & {
+  marginTop?: number,
+  marginBottom?: number | string, // if '0'
+  customCloseAction?: Function,
+  forceShowCloseButton?: boolean,
+  theme: Theme,
+  noClose?: boolean,
+};
+
+type State = {
+  animShrink: Animated.Value,
+  isFocused: boolean,
+  errorMessage: string,
+};
+
+type SearchInputProps = CommonComponentsProps & {
+  isFocused: boolean,
+  colors: ThemeColors,
+  value: ?string,
+  onFocus: () => void,
+  onChange: (e: Event) => void,
+  onBlur: () => void,
+  handleSubmit: () => void,
+  borderColor: string,
+};
 
 const { width } = Dimensions.get('window');
 const componentWidth = width - (spacing.large * 2);
@@ -87,56 +138,6 @@ const Error = styled(BaseText)`
   margin-top: ${spacing.medium}px;
 `;
 
-type Value = ?string;
-
-type InputPropsType = {
-  placeholder?: string,
-  backgroundColor?: string,
-  onChange: (Value) => void,
-  onBlur?: (Value) => void,
-  onFocus?: () => void,
-  value: Value,
-  validator?: (val: string) => string,
-};
-
-type CommonComponentsProps = {
-  inputProps: InputPropsType,
-  placeholder?: string,
-  backgroundColor?: string,
-  inputRef?: RNTextInput,
-  inputIconName?: string,
-  iconProps?: Object,
-};
-
-type Props = CommonComponentsProps & {
-  marginTop?: number,
-  marginBottom?: number | string, // if '0'
-  customCloseAction?: Function,
-  forceShowCloseButton?: boolean,
-  theme: Theme,
-  noClose?: boolean,
-};
-
-type State = {
-  animShrink: Object,
-  isFocused: boolean,
-  errorMessage: string,
-};
-
-type EventLike = {
-  nativeEvent: Object,
-};
-
-type SearchInputProps = CommonComponentsProps & {
-  isFocused: boolean,
-  colors: ThemeColors,
-  value: ?string,
-  onFocus: () => void,
-  onChange: (e: EventLike) => void,
-  onBlur: () => void,
-  handleSubmit: () => void,
-  borderColor: string,
-};
 
 const getBorderColor = ({ isFocused, error, colors }) => {
   if (error) return colors.negative;
@@ -215,10 +216,9 @@ class SearchBar extends React.Component<Props, State> {
   static defaultProps = {
     inputType: 'default',
     trim: true,
-    placeholder: 'Search or add new contact',
   };
 
-  handleChange = (e: EventLike) => {
+  handleChange = (e: Event) => {
     const { inputProps: { onChange, validator } } = this.props;
     const { errorMessage } = this.state;
     this.value = e.nativeEvent.text;
@@ -287,7 +287,7 @@ class SearchBar extends React.Component<Props, State> {
   render() {
     const {
       inputProps,
-      placeholder,
+      placeholder = t('label.search'),
       backgroundColor,
       marginTop,
       marginBottom,
@@ -343,7 +343,7 @@ class SearchBar extends React.Component<Props, State> {
           </Animated.View>
           {(isFocused || !!value || forceShowCloseButton) &&
           <CancelButton onPress={customCloseAction || this.handleCancel}>
-            <BaseText style={{ color: colors.link }}>Close</BaseText>
+            <BaseText style={{ color: colors.link }}>{t('button.close')}</BaseText>
           </CancelButton>
           }
         </Row>

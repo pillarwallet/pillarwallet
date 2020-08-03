@@ -107,6 +107,11 @@ import EnterDepositAmountScreen from 'screens/Lending/EnterDepositAmount';
 import EnterWithdrawAmountScreen from 'screens/Lending/EnterWithdrawAmount';
 import DepositTransactionConfirmScreen from 'screens/Lending/DepositTransactionConfirm';
 import WithdrawTransactionConfirmScreen from 'screens/Lending/WithdrawTransactionConfirm';
+import KeyBasedAssetTransferChooseScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferChoose';
+import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferEditAmount';
+import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
+import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
+import KeyBasedAssetTransferStatusScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferStatus';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -236,6 +241,12 @@ import {
   POOLTOGETHER_PURCHASE_CONFIRM,
   POOLTOGETHER_WITHDRAW,
   POOLTOGETHER_WITHDRAW_CONFIRM,
+  KEY_BASED_ASSET_TRANSFER_CHOOSE,
+  KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT,
+  KEY_BASED_ASSET_TRANSFER_CONFIRM,
+  KEY_BASED_ASSET_TRANSFER_UNLOCK,
+  KEY_BASED_ASSET_TRANSFER_FLOW,
+  KEY_BASED_ASSET_TRANSFER_STATUS,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -650,6 +661,16 @@ const lendingWithdrawDepositsFlow = createStackNavigator({
 
 lendingWithdrawDepositsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const keyBasedAssetTransferFlow = createStackNavigator({
+  [KEY_BASED_ASSET_TRANSFER_CHOOSE]: KeyBasedAssetTransferChooseScreen,
+  [KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT]: KeyBasedAssetTransferEditAmountScreen,
+  [KEY_BASED_ASSET_TRANSFER_CONFIRM]: KeyBasedAssetTransferConfirmScreen,
+  [KEY_BASED_ASSET_TRANSFER_UNLOCK]: KeyBasedAssetTransferUnlockScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+keyBasedAssetTransferFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -689,6 +710,8 @@ const AppFlowNavigation = createStackNavigator(
     [LENDING_DEPOSITED_ASSETS_LIST]: DepositedAssetsListScreen,
     [LENDING_ADD_DEPOSIT_FLOW]: lendingAddDepositsFlow,
     [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
+    [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
+    [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
   },
   modalTransition,
 );
@@ -905,10 +928,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
 });
 
-const ConnectedAppFlow = withTranslation()(connect(
-  mapStateToProps,
-  mapDispatchToProps,
-)(AppFlow));
+const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));
 ConnectedAppFlow.router = AppFlowNavigation.router;
 ConnectedAppFlow.defaultNavigationOptions = AppFlowNavigation.defaultNavigationOptions;
 

@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { Platform, NativeModules } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
@@ -30,11 +32,7 @@ import { migrate } from 'services/dataMigration';
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import {
-  UPDATE_ASSETS,
-  UPDATE_BALANCES,
-  UPDATE_SUPPORTED_ASSETS,
-} from 'constants/assetsConstants';
+import { UPDATE_ASSETS, UPDATE_BALANCES, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
 import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
@@ -64,29 +62,26 @@ import {
   MARK_PLR_TANK_INITIALISED,
 } from 'constants/paymentNetworkConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import {
-  INITIAL_FEATURE_FLAGS,
-  SET_FEATURE_FLAGS,
-} from 'constants/featureFlagsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
+import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
-// selectors
-import { activeBlockchainSelector } from 'selectors';
-
-// actions
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { fallbackToSmartOrKeyAccountAction } from './accountsActions';
 
 const storage = Storage.getInstance('db');
+
+const hideSplash = () => {
+  if (Platform.OS === 'ios') {
+    const { SplashManager } = NativeModules;
+    SplashManager.hide();
+  } else {
+    SplashScreen.hide();
+  }
+};
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -177,9 +172,6 @@ export const initAppAndRedirectAction = () => {
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
-      const { featureFlags = INITIAL_FEATURE_FLAGS } = get(storageData, 'featureFlags', {});
-      dispatch({ type: SET_FEATURE_FLAGS, payload: featureFlags });
-
       const { userEvents = [] } = get(storageData, 'userEvents', {});
       dispatch({ type: SET_USER_EVENTS, payload: userEvents });
 
@@ -192,6 +184,9 @@ export const initAppAndRedirectAction = () => {
       const { depositedAssets = [] } = get(storageData, 'lending', []);
       dispatch({ type: SET_LENDING_DEPOSITED_ASSETS, payload: depositedAssets });
 
+      const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
+      dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
+
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
@@ -200,13 +195,6 @@ export const initAppAndRedirectAction = () => {
           lastPinAttempt,
         },
       });
-
-      // in case Bitcoin is set as active as we kill Bitcoin access
-      const activeBlockchain = activeBlockchainSelector(getState());
-      if (!isSupportedBlockchain(activeBlockchain)) {
-        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-        dispatch(fallbackToSmartOrKeyAccountAction());
-      }
 
       const {
         upgradeStatus = null,
@@ -245,7 +233,8 @@ export const initAppAndRedirectAction = () => {
     }
 
     navigate(NavigationActions.navigate(navAction));
-    SplashScreen.hide();
+
+    hideSplash();
   };
 };
 

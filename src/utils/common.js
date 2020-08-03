@@ -65,7 +65,7 @@ const supportedAddressPrefixes = new RegExp(
 
 export const printLog = (...params: any) => {
   if ((isProdEnv && !__DEV__) || isTest) return;
-  console.log(...params);
+  console.log(...params); // eslint-disable-line
 };
 
 export const reportLog = (

@@ -26,10 +26,9 @@ const patternPlaceholderLight = require('assets/images/no_logo.png');
 const patternPlaceholderDark = require('assets/images/no_logo_dark.png');
 const genericTokenLight = require('assets/images/tokens/genericTokenLight.png');
 const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
-const pillarLogoLight = require('assets/images/landing-pillar-logo.png');
-const pillarLogoDark = require('assets/images/landing-pillar-logo-dark-theme.png');
-const pillarLogoSmallLight = require('assets/images/landing-pillar-logo.png');
-const pillarLogoSmallDark = require('assets/images/landing-pillar-logo-dark-theme.png');
+const pillarLogo = require('assets/images/pillar-logo-pixel.png');
+const pillarLogoSmallLight = require('assets/images/logo-small-on-light.png');
+const pillarLogoSmallDark = require('assets/images/logo-small-on-dark.png');
 const actionButtonBackgroundLight = require('assets/images/bg_action_button.png');
 const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
 const actionButtonBackgroundLightDisabled = require('assets/images/bg_action_button_disabled.png');
@@ -45,6 +44,11 @@ const emailIconLight = require('assets/icons/icon_email_light.png');
 const emailIconDark = require('assets/icons/icon_email_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_phone_dark.png');
+
+// patterns
+const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
+const splashPatternTop = require('assets/images/patterns/splash_pattern_top.png');
+const splashPatternBottom = require('assets/images/patterns/splash_pattern_bottom.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -62,8 +66,8 @@ export const images = (theme: Theme) => {
       darkTheme: genericTokenDark,
     }),
     pillarLogo: getImageByTheme(currentTheme, {
-      lightTheme: pillarLogoLight,
-      darkTheme: pillarLogoDark,
+      lightTheme: pillarLogo,
+      darkTheme: pillarLogo,
     }),
     pillarLogoSmall: getImageByTheme(currentTheme, {
       lightTheme: pillarLogoSmallLight,
@@ -100,6 +104,18 @@ export const images = (theme: Theme) => {
     roundedPhoneIcon: getImageByTheme(currentTheme, {
       lightTheme: phoneIconLight,
       darkTheme: phoneIconDark,
+    }),
+    landingPattern: getImageByTheme(currentTheme, {
+      lightTheme: landingPattern,
+      darkTheme: landingPattern,
+    }),
+    splashPatternTop: getImageByTheme(currentTheme, {
+      lightTheme: splashPatternTop,
+      darkTheme: splashPatternTop,
+    }),
+    splashPatternBottom: getImageByTheme(currentTheme, {
+      lightTheme: splashPatternBottom,
+      darkTheme: splashPatternBottom,
     }),
   };
 };

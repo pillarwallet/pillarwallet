@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+// constants
 import {
   SENDING_OTP,
   OTP_SENT,
@@ -28,14 +30,20 @@ import {
   USER_EMAIL_VERIFIED,
 } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { OTP_DIGITS } from 'constants/referralsConstants';
+
+// utils
+import { isCaseInsensitiveMatch } from 'utils/common';
+
+// actions
+import { saveDbAction } from 'actions/dbActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { completeReferralsEventAction } from 'actions/referralsActions';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import { isCaseInsensitiveMatch } from 'utils/common';
-import { saveDbAction } from './dbActions';
+
 
 const sendingOneTimePasswordAction = () => ({
   type: SENDING_OTP,
@@ -245,43 +253,3 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
     dispatch(logEventAction('avatar_updated'));
   };
 };
-
-export const labelUserAsLegacyAction = () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      user: { data: user },
-    } = getState();
-
-    const userWallets = await api.listAccounts(user.walletId);
-    if (!userWallets.length) return;
-
-    const keyWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    const smartWallet = userWallets.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
-
-    let isLegacyUser = true;
-
-    if (keyWallet && smartWallet) {
-      const { createdAt: keyWalletCreationTime } = keyWallet;
-      const { createdAt: smartWalletCreationTime } = smartWallet;
-      const diff = Math.floor((new Date(smartWalletCreationTime) - new Date(keyWalletCreationTime)) / 1000 / 60);
-      // to those users who gets smart wallet created for them, key based and smart wallets are created one by one
-      // in couple of minutes difference
-      if (diff <= 5) {
-        isLegacyUser = false;
-      }
-    }
-
-    const updatedUser = {
-      ...user,
-      isLegacyUser,
-    };
-
-    dispatch({
-      type: UPDATE_USER,
-      payload: { user: updatedUser, state: REGISTERED },
-    });
-
-    dispatch(saveDbAction('user', { user: updatedUser }, true));
-  };
-};
-

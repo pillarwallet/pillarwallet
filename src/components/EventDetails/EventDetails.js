@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { View, Linking } from 'react-native';
 import { connect } from 'react-redux';
@@ -28,7 +29,8 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL, SDK_PROVIDER } from 'react-native-dotenv';
+import { TX_DETAILS_URL } from 'react-native-dotenv';
+import t from 'translations/translate';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
@@ -45,7 +47,7 @@ import Spinner from 'components/Spinner';
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { getRate, getAssetData, getAssetsAsList } from 'utils/assets';
+import { addressesEqual, getRate } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
@@ -56,15 +58,15 @@ import {
   groupPPNTransactions,
   isPendingTransaction,
   isSWAddress,
-  isKWAddress,
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { getActiveAccount, getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
+import { getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
+import { getValueWithSymbol } from 'utils/strings';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
@@ -81,7 +83,6 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { USER_EVENT, PPN_INIT_EVENT, WALLET_CREATE_EVENT, WALLET_BACKUP_EVENT } from 'constants/userEventsConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 import {
@@ -94,7 +95,6 @@ import {
   BADGE,
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
-  SEND_TOKEN_AMOUNT,
   SEND_TOKEN_FROM_HOME_FLOW,
   SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
@@ -124,7 +124,6 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
-import { switchAccountAction } from 'actions/accountsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
@@ -141,7 +140,6 @@ import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
-
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 
@@ -165,7 +163,6 @@ type Props = {
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
-  switchAccount: (accountId: string) => void,
   goToInvitationFlow: () => void,
   isPPNActivated: boolean,
   updateTransactionStatus: (hash: string) => void,
@@ -173,7 +170,6 @@ type Props = {
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
-  setActiveBlockchainNetwork: (id: string) => void,
   history: TransactionsStore,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   isPillarRewardCampaignActive: boolean,
@@ -184,6 +180,7 @@ type Props = {
   isSmartAccount: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
+  keyBasedWalletAddress: string,
 };
 
 type State = {
@@ -431,16 +428,16 @@ export class EventDetail extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const rate = getRate(rates, token, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-    return `Fee ${formattedFee} ${token} (${formattedFiatValue})`;
+    return t('label.feeTokenFiat', { tokenValue: `${formattedFee} ${token}`, fiatValue: formattedFiatValue });
   };
 
   getFeeLabel = (event: Object) => {
-    const {
-      gasUsed, gasPrice, feeWithGasToken,
-    } = event;
+    const { gasUsed, gasPrice, feeWithGasToken } = event;
 
     if (!isEmpty(feeWithGasToken)) {
-      return `Fee ${formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken'))}`;
+      return t('label.feeToken', {
+        tokenValue: formatTransactionFee(feeWithGasToken.feeInWei, get(feeWithGasToken, 'gasToken')),
+      });
     }
 
     if (gasUsed) {
@@ -475,28 +472,6 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(BADGE, { badgeId });
   };
 
-  switchToKW = async () => {
-    const {
-      accounts, switchAccount,
-    } = this.props;
-    const keyBasedAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.KEY_BASED) || {};
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    if (activeAccType !== ACCOUNT_TYPES.KEY_BASED) {
-      await switchAccount(keyBasedAccount.id);
-    }
-  };
-
-  switchToSW = async () => {
-    const {
-      accounts, switchAccount,
-    } = this.props;
-    const swAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-    const { type: activeAccType } = getActiveAccount(accounts) || {};
-    if (activeAccType !== ACCOUNT_TYPES.SMART_WALLET) {
-      await switchAccount(swAccount.id);
-    }
-  };
-
   showReceiveModal = (receiveWalletAddress: string) => {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true, receiveWalletAddress }));
   };
@@ -525,38 +500,9 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.onClose(() => this.setState({ SWActivationModalVisible: true }));
   };
 
-  sendETHFromKWToSW = async () => {
-    const {
-      onClose, navigation, accounts, accountAssets, supportedAssets,
-    } = this.props;
-    const SWAccount = accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET) || {};
-
-    const assetsData = getAssetsAsList(accountAssets);
-    const assetData = getAssetData(assetsData, supportedAssets, ETH);
-    const fullIconUrl = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
-    const fullIconMonoUrl = `${SDK_PROVIDER}/${assetData.iconMonoUrl}?size=2`;
-
-    const params = {
-      assetData: {
-        token: assetData.symbol,
-        contractAddress: assetData.address,
-        decimals: assetData.decimals,
-        icon: fullIconMonoUrl,
-        iconColor: fullIconUrl,
-      },
-      receiver: SWAccount.id,
-      source: 'Home',
-    };
-
-    onClose();
-    await this.switchToKW();
-    navigation.navigate(SEND_TOKEN_AMOUNT, params);
-  };
-
-  topUpPillarNetwork = async () => {
+  topUpPillarNetwork = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(TANK_FUND_FLOW);
   };
 
@@ -566,67 +512,48 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
   };
 
-  onAaveDepositMore = async () => {
+  onAaveDepositMore = () => {
     const { onClose, navigation, event } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
-  onAaveWithdrawMore = async () => {
+  onAaveWithdrawMore = () => {
     const { onClose, navigation, event } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
-  PPNWithdraw = async () => {
+  PPNWithdraw = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(TANK_WITHDRAWAL_FLOW);
   };
 
-  send = async (isFromKW?: boolean) => {
+  send = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    if (!isFromKW) {
-      await this.switchToSW();
-    } else {
-      await this.switchToKW();
-    }
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
-  sendSynthetic = async (relatedAddress: string) => {
+  sendSynthetic = (relatedAddress: string) => {
     const { onClose, navigation, ensRegistry } = this.props;
     onClose();
-    await this.switchToSW();
-
     const contactFromAddress = relatedAddress
       && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
     const contact = contactFromAddress;
     navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
   };
 
-  settle = async () => {
+  settle = () => {
     const { onClose, navigation } = this.props;
     onClose();
-    await this.switchToSW();
     navigation.navigate(SETTLE_BALANCE);
   };
 
   goToPoolTogetherPurcharse = (symbol: string) => {
-    const {
-      onClose,
-      navigation,
-      poolStats = {},
-    } = this.props;
-
-    const {
-      totalPoolTicketsCount,
-      userInfo,
-    } = poolStats[symbol];
+    const { onClose, navigation, poolStats = {} } = this.props;
+    const { totalPoolTicketsCount, userInfo } = poolStats[symbol];
 
     let userTickets = 0;
     if (userInfo) {
@@ -641,19 +568,11 @@ export class EventDetail extends React.Component<Props, State> {
       totalPoolTicketsCount,
       userTickets,
     });
-  }
+  };
 
   goToPoolTogetherWithdraw = (symbol: string) => {
-    const {
-      onClose,
-      navigation,
-      poolStats = {},
-    } = this.props;
-
-    const {
-      totalPoolTicketsCount,
-      userInfo,
-    } = poolStats[symbol];
+    const { onClose, navigation, poolStats = {} } = this.props;
+    const { totalPoolTicketsCount, userInfo } = poolStats[symbol];
 
     let userTickets = 0;
     if (userInfo) {
@@ -668,28 +587,28 @@ export class EventDetail extends React.Component<Props, State> {
       totalPoolTicketsCount,
       userTickets,
     });
-  }
+  };
 
   goToPoolTogetherPool = (symbol: string) => {
     const { onClose, navigation } = this.props;
     onClose();
     navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
-  }
+  };
 
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
-    if (isPillarRewardCampaignActive) return 'Refer friends';
-    return 'Invite friends';
+    if (isPillarRewardCampaignActive) return t('label.referFriends');
+    return t('label.inviteFiends');
   };
 
   renderPoolTogetherTickets = (event: Object) => {
     const { symbol, amount, decimals } = event.extra;
     const formattedAmount = parseFloat(formatUnits(amount, decimals));
-    const directionSymbol = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? '-' : '+';
-    const amountText = `${directionSymbol} ${formattedAmount} ${symbol}`;
-    const ticketsText = `(${formattedAmount} ticket${formattedAmount === 1 ? '' : 's'})`;
+    const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
+    const amountText = getValueWithSymbol(`${formattedAmount} ${symbol}`, isPositive, !formattedAmount);
+    const ticketsText = `(${t('ticketAmount', { count: formattedAmount })})`;
     const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
-    const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? 'Purcharse' : 'Withdraw';
+    const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? t('label.purchase') : t('label.withdraw');
 
     return (
       <PoolTogetherTicketsWrapper>
@@ -698,13 +617,13 @@ export class EventDetail extends React.Component<Props, State> {
         <BaseText secondary medium>{ticketsText}</BaseText>
       </PoolTogetherTicketsWrapper>
     );
-  }
+  };
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
     const keyWalletButtons = [
       {
-        title: 'Top up',
+        title: t('button.topUp'),
         onPress: this.topUpKeyWallet,
         secondary: true,
       },
@@ -722,12 +641,12 @@ export class EventDetail extends React.Component<Props, State> {
         };
       case 'Smart Wallet created':
         const activateButton = {
-          title: 'Activate',
+          title: t('button.activate'),
           onPress: this.activateSW,
         };
 
         const topUpButton = {
-          title: 'Top Up',
+          title: t('button.topUp'),
           onPress: this.topUpSW,
           secondary: true,
         };
@@ -737,7 +656,7 @@ export class EventDetail extends React.Component<Props, State> {
         };
       case 'Wallet imported':
         return {
-          primaryButtonTitle: 'Top up',
+          primaryButtonTitle: t('button.topUp'),
           secondaryButtonTitle: this.getReferButtonTitle(),
           buttons: keyWalletButtons,
         };
@@ -755,15 +674,15 @@ export class EventDetail extends React.Component<Props, State> {
       case PPN_INIT_EVENT:
         if (isPPNActivated) {
           return {
-            actionTitle: 'Activated',
+            actionTitle: t('label.activated'),
             buttons: [
               {
-                title: 'Send',
+                title: t('button.send'),
                 onPress: this.sendSynthetic,
                 secondary: true,
               },
               {
-                title: 'Top up',
+                title: t('button.topUp'),
                 onPress: this.topUpPillarNetwork,
                 squarePrimary: true,
               },
@@ -772,20 +691,20 @@ export class EventDetail extends React.Component<Props, State> {
         }
         if (!isSmartWalletActivated) {
           return {
-            actionTitle: 'Created',
+            actionTitle: t('label.created'),
             buttons: [
               {
-                title: 'Activate',
+                title: t('button.activate'),
                 onPress: this.activateSW,
               },
             ],
           };
         }
         return {
-          actionTitle: 'Created',
+          actionTitle: t('label.created'),
           buttons: [
             {
-              title: 'Top up',
+              title: t('button.topUp'),
               onPress: this.topUpPillarNetwork,
             },
           ],
@@ -795,7 +714,7 @@ export class EventDetail extends React.Component<Props, State> {
         return {
           buttons: [
             {
-              title: 'Top up',
+              title: t('button.topUp'),
               onPress: this.topUpKeyWallet,
               secondary: true,
             },
@@ -820,11 +739,12 @@ export class EventDetail extends React.Component<Props, State> {
       referralRewardIssuersAddresses,
       depositedAssets,
       isSmartAccount,
+      keyBasedWalletAddress,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
     const relevantAddress = this.getRelevantAddress(event);
-    const { fullItemValue, isBetweenAccounts, isReceived } = itemData;
+    const { fullItemValue, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
     let directionSymbol = isReceived ? '+' : '-';
@@ -849,7 +769,7 @@ export class EventDetail extends React.Component<Props, State> {
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
         const activatePillarNetworkButton = {
-          title: 'Activate Pillar Network',
+          title: t('button.activatePPN'),
           onPress: this.topUpPillarNetwork,
           secondary: true,
         };
@@ -867,14 +787,14 @@ export class EventDetail extends React.Component<Props, State> {
         };
 
         eventData = {
-          actionTitle: 'Activated',
+          actionTitle: t('label.activated'),
           actionSubtitle: this.getFeeLabel(event),
           buttons: isPPNActivated ? [referFriendsButton] : [activatePillarNetworkButton, referFriendsButtonSecondary],
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         const topUpMoreButton = {
-          title: 'Top up more',
+          title: t('button.topUpMore'),
           onPress: this.topUpPillarNetwork,
           squarePrimary: true,
         };
@@ -883,7 +803,7 @@ export class EventDetail extends React.Component<Props, State> {
             ? [topUpMoreButton]
             : [
               {
-                title: 'Send',
+                title: t('button.send'),
                 onPress: this.sendSynthetic,
                 secondary: true,
               },
@@ -893,8 +813,8 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
         eventData = {
-          name: 'ENS name',
-          actionTitle: 'Registered',
+          name: t('ensName'),
+          actionTitle: t('label.registered'),
           actionSubtitle: event.extra.ensName,
         };
         break;
@@ -902,7 +822,7 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = {
           buttons: [
             {
-              title: 'Withdraw more',
+              title: t('button.withdrawMore'),
               onPress: this.PPNWithdraw,
               secondary: true,
             },
@@ -914,7 +834,7 @@ export class EventDetail extends React.Component<Props, State> {
           settleEventData: event,
           buttons: [
             {
-              title: 'Settle more',
+              title: t('button.settleMore'),
               onPress: this.settle,
               secondary: true,
             },
@@ -923,17 +843,17 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         eventData = {
-          name: 'Smart Wallet fees with PLR token',
-          actionTitle: isPending ? 'Enabling' : 'Enabled',
+          name: t('label.smartWalletGasRelayerPLR'),
+          actionTitle: isPending ? t('label.enabling') : t('label.enabled'),
         };
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
         eventData = {
-          name: 'New Smart Wallet account device',
-          actionTitle: isPending ? 'Adding' : 'Added',
+          name: t('label.newSmartWalletAccountDevice'),
+          actionTitle: isPending ? t('label.adding') : t('label.added'),
           buttons: [
             {
-              title: 'View on the blockchain',
+              title: t('button.viewOnBlockchain'),
               onPress: this.viewOnTheBlockchain,
               secondary: true,
             },
@@ -942,11 +862,11 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         eventData = {
-          name: 'Smart Wallet account device',
-          actionTitle: isPending ? 'Removing' : 'Removed',
+          name: t('label.smartWalletAccountDevice'),
+          actionTitle: isPending ? t('label.removing') : t('label.removed'),
           buttons: [
             {
-              title: 'View on the blockchain',
+              title: t('button.viewOnBlockchain'),
               onPress: this.viewOnTheBlockchain,
               secondary: true,
             },
@@ -955,19 +875,19 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case AAVE_LENDING_DEPOSIT_TRANSACTION:
         eventData = {
-          name: 'Aave deposit',
+          name: t('aaveDeposit'),
           actionTitle: fullItemValue,
         };
         const aaveDepositButtons = [];
         if (event?.asset) {
           aaveDepositButtons.push({
-            title: 'Deposit more',
+            title: 'button.depositMore',
             onPress: this.onAaveDepositMore,
             secondary: true,
           });
           if (aaveDepositedAsset) {
             aaveDepositButtons.push({
-              title: 'View deposit',
+              title: 'button.viewDeposit',
               onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
               squarePrimary: true,
             });
@@ -977,20 +897,20 @@ export class EventDetail extends React.Component<Props, State> {
         break;
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
         eventData = {
-          name: 'Aave deposit',
+          name: t('aaveDeposit'),
           actionTitle: fullItemValue,
         };
         const aaveWithdrawButtons = [];
         if (event?.asset && aaveDepositedAsset) {
           if (aaveDepositedAsset?.currentBalance > 0) {
             aaveWithdrawButtons.push({
-              title: 'Withdraw more',
+              title: t('button.withdrawMore'),
               onPress: this.onAaveWithdrawMore,
               secondary: true,
             });
           }
           aaveWithdrawButtons.push({
-            title: 'View deposit',
+            title: t('button.viewDeposit'),
             onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
             squarePrimary: true,
           });
@@ -1004,27 +924,27 @@ export class EventDetail extends React.Component<Props, State> {
           const { extra: { symbol } } = event;
           if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
             buttons.push({
-              title: 'Purchase more',
+              title: t('button.purchaseMore'),
               onPress: () => this.goToPoolTogetherPurcharse(symbol),
               secondary: true,
             });
           } else {
             buttons.push({
-              title: 'Withdraw more',
+              title: t('button.withdrawMore'),
               onPress: () => this.goToPoolTogetherWithdraw(symbol),
               secondary: true,
             });
           }
           buttons.push(
             {
-              title: 'View pool',
+              title: t('button.viewPoolTogetherPool'),
               onPress: () => this.goToPoolTogetherPool(symbol),
               squarePrimary: true,
             },
           );
         }
         eventData = {
-          name: 'Pool Together',
+          name: t('poolTogether'),
           customActionTitle: this.renderPoolTogetherTickets(event),
           buttons,
         };
@@ -1035,6 +955,7 @@ export class EventDetail extends React.Component<Props, State> {
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
+        const actionSubtitle = isReceived ? t('label.toPPN') : t('label.fromPPN');
 
         if (isPPNTransaction) {
           eventData = {
@@ -1045,7 +966,7 @@ export class EventDetail extends React.Component<Props, State> {
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
             ),
-            actionSubtitle: !isTrxBetweenSWAccount ? `${isReceived ? 'to' : 'from'} Pillar Network` : '',
+            actionSubtitle: !isTrxBetweenSWAccount ? actionSubtitle : '',
           };
 
           if (isReceived) {
@@ -1054,7 +975,7 @@ export class EventDetail extends React.Component<Props, State> {
             } else {
               eventData.buttons = [
                 {
-                  title: 'Send back',
+                  title: t('button.sendBack'),
                   onPress: () => this.sendSynthetic(relevantAddress),
                   squarePrimary: true,
                 },
@@ -1063,7 +984,7 @@ export class EventDetail extends React.Component<Props, State> {
           } else {
             eventData.buttons = [
               {
-                title: 'Send more',
+                title: t('button.sendMore'),
                 onPress: () => this.sendSynthetic(relevantAddress),
                 secondary: true,
               },
@@ -1071,12 +992,12 @@ export class EventDetail extends React.Component<Props, State> {
           }
         } else if (isPoolTogetherAddress(event.to)) {
           const buttons = [{
-            title: 'View pool',
+            title: t('button.viewPoolTogetherPool'),
             onPress: () => this.goToPoolTogetherPool(DAI),
             squarePrimary: true,
           }];
           eventData = {
-            name: 'Pool Together',
+            name: t('poolTogether'),
             buttons,
           };
         } else {
@@ -1085,58 +1006,42 @@ export class EventDetail extends React.Component<Props, State> {
           };
 
           let buttons = [];
-          const isFromKWToSW = isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
+          const isFromKWToSW = addressesEqual(event.from, keyBasedWalletAddress) && isSWAddress(event.to, accounts);
 
           const inviteToPillarButton = {
-            title: 'Invite to Pillar',
+            title: t('button.inviteToPillar'),
             onPress: this.referFriends,
             squarePrimary: true,
           };
 
           const sendBackToAddress = {
-            title: 'Send back',
+            title: t('button.sendBack'),
             onPress: () => this.sendTokensToAddress(relevantAddress),
             secondary: true,
           };
 
           const sendMoreToAddress = {
-            title: 'Send more',
+            title: t('button.sendMore'),
             onPress: () => this.sendTokensToAddress(relevantAddress),
             secondary: true,
           };
 
-          const sendFromKW = {
-            title: 'Send',
-            onPress: () => this.send(true),
-            secondary: true,
-          };
-
           const sendFromSW = {
-            title: 'Send',
+            title: t('button.send'),
             onPress: () => this.send(),
             secondary: true,
-          };
-
-          const topUpMore = {
-            title: 'Top up more',
-            onPress: this.sendETHFromKWToSW,
-            squarePrimary: true,
           };
 
           if (isReferralRewardTransaction) {
             buttons = [];
           } else if (isReceived) {
             if (isFromKWToSW) {
-              buttons = [sendFromSW, topUpMore];
-            } else if (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) {
-              buttons = [sendFromKW];
+              buttons = [sendFromSW];
             } else if (isPending) {
               buttons = [inviteToPillarButton];
             } else {
               buttons = [sendBackToAddress, inviteToPillarButton];
             }
-          } else if (isBetweenAccounts) {
-            buttons = isFromKWToSW ? [topUpMore] : [];
           } else if (isPending) {
             buttons = [inviteToPillarButton];
           } else {
@@ -1153,7 +1058,9 @@ export class EventDetail extends React.Component<Props, State> {
     }
     if (isFailed || isTimedOut) {
       eventData.isFailed = true;
-      eventData.errorMessage = isFailed ? 'Transaction failed' : 'Transaction timed out';
+      eventData.errorMessage = isFailed
+        ? t('error.transactionFailed.default')
+        : t('error.transactionFailed.timeOut');
       eventData.actionIcon = 'failed';
     }
 
@@ -1173,12 +1080,12 @@ export class EventDetail extends React.Component<Props, State> {
     if (isReceived) {
       eventData = {
         ...eventData,
-        actionTitle: isPending ? 'Receiving' : 'Received',
+        actionTitle: isPending ? t('label.receiving') : t('label.received'),
       };
     } else {
       eventData = {
         ...eventData,
-        actionTitle: isPending ? 'Sending' : 'Sent',
+        actionTitle: isPending ? t('label.sending') : t('label.sent'),
       };
 
       if (!isPending) {
@@ -1195,22 +1102,19 @@ export class EventDetail extends React.Component<Props, State> {
 
   getBadgeRewardEventData = (event: Object): EventData => {
     const { name, imageUrl } = event;
-
-    const viewBadgeButton = {
-      title: 'View badge',
-      onPress: this.viewBadge,
-      secondary: true,
-    };
-
     const isPending = isPendingTransaction(event);
 
     return {
       name,
       imageUrl,
-      actionTitle: isPending ? 'Receiving' : 'Received',
-      actionSubtitle: 'Badge',
+      actionTitle: isPending ? t('label.receiving') : t('label.received'),
+      actionSubtitle: t('label.badge'),
       actionIcon: isPending ? 'pending' : null,
-      buttons: [viewBadgeButton],
+      buttons: [{
+        title: t('button.viewBadge'),
+        onPress: this.viewBadge,
+        secondary: true,
+      }],
     };
   };
 
@@ -1359,10 +1263,12 @@ export class EventDetail extends React.Component<Props, State> {
         <>
           <Divider />
           <Row>
-            <BaseText regular positive>To Smart Wallet</BaseText>
+            <BaseText regular positive>{t('label.toSmartWallet')}</BaseText>
             <View>
               {groupedTransactions.map(({ value, symbol }) => (
-                <BaseText positive large key={symbol}>+ {formatUnits(value.toString(), 18)} {symbol}</BaseText>
+                <BaseText positive large key={symbol}>
+                  {t('positiveValue', { value: `${formatUnits(value.toString(), 18)} ${symbol}` })}
+                </BaseText>
               ))}
             </View>
           </Row>
@@ -1414,9 +1320,11 @@ export class EventDetail extends React.Component<Props, State> {
           <ButtonHolder>
             <View />
           </ButtonHolder>
-          <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
-            <BaseText tiny secondary>{eventTime}</BaseText>
-          </EventTimeHolder>
+          {event.hash && (
+            <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
+              <BaseText tiny secondary>{eventTime}</BaseText>
+            </EventTimeHolder>
+          )}
         </Row>
         <Spacing h={10} />
         <AvatarWrapper disabled>
@@ -1521,6 +1429,7 @@ const mapStateToProps = ({
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
+  wallet: { data: { address: keyBasedWalletAddress } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1535,6 +1444,7 @@ const mapStateToProps = ({
   updatingCollectibleTransaction,
   depositedAssets,
   poolStats,
+  keyBasedWalletAddress,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -1556,7 +1466,6 @@ const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),

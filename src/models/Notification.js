@@ -38,6 +38,7 @@ export type ApiNotification = {
     msg?: string,
     name?: string,
     imageUrl?: string,
+    badgeType?: string,
   },
   type: string,
   createdAt: number,

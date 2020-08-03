@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, Platform } from 'react-native';
@@ -26,6 +27,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // components
 import AssetButtons from 'components/AssetButtons';
@@ -41,7 +43,6 @@ import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchAssetTransactionsAction } from 'actions/historyActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
@@ -58,7 +59,7 @@ import {
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
-import { checkIfSmartWalletAccount, getAccountName } from 'utils/accounts';
+import { getAccountName } from 'utils/accounts';
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
@@ -77,7 +78,7 @@ import { accountHistorySelector } from 'selectors/history';
 import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
-import { innactiveUserWalletForSendSellector } from 'selectors/wallets';
+import { inactiveUserWalletForSendSelector } from 'selectors/wallets';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
@@ -103,7 +104,6 @@ const activeModalResetState = {
 
 type Props = {
   fetchAssetsBalances: () => void,
-  fetchAssetTransactions: (asset: string, indexFrom?: number) => void,
   assets: Assets,
   balances: Balances,
   rates: Object,
@@ -217,7 +217,6 @@ class AssetScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      fetchAssetTransactions,
       navigation,
       logScreenView,
       getExchangeSupportedAssets,
@@ -225,7 +224,6 @@ class AssetScreen extends React.Component<Props, State> {
       fetchReferralRewardsIssuerAddresses,
     } = this.props;
     const { assetData: { token }, resetHideRemoval } = navigation.state.params;
-    fetchAssetTransactions(token);
     fetchReferralRewardsIssuerAddresses();
     if (resetHideRemoval) resetHideRemoval();
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
@@ -266,21 +264,6 @@ class AssetScreen extends React.Component<Props, State> {
     });
   };
 
-  handleScrollWrapperEndDrag = e => {
-    const { fetchAssetTransactions, history, activeAccount } = this.props;
-    if (!activeAccount || checkIfSmartWalletAccount(activeAccount)) return;
-
-    const { assetData: { token } } = this.props.navigation.state.params;
-    const layoutHeight = e.nativeEvent.layoutMeasurement.height;
-    const contentHeight = e.nativeEvent.contentSize.height;
-    const offsetY = e.nativeEvent.contentOffset.y;
-    const indexFrom = history.filter(({ asset }) => asset === token).length;
-
-    if (layoutHeight + offsetY + 200 >= contentHeight) {
-      fetchAssetTransactions(token, indexFrom);
-    }
-  };
-
   handleBuyTokens = () => {
     // wait for the modal to be completely hidden and then navigate to exchange
     // navigating while the modal is hiding leads to keyboard flickering etc.
@@ -293,7 +276,7 @@ class AssetScreen extends React.Component<Props, State> {
       this.isNavigatingToServices = false;
       this.props.navigation.navigate(SERVICES);
     }
-  }
+  };
 
   getModalActionOptions = () => {
     const {
@@ -312,32 +295,32 @@ class AssetScreen extends React.Component<Props, State> {
     return [
       {
         key: 'buy',
-        label: `Buy with a card${Platform.OS === 'ios' ? ' or Apple Pay' : ''}`,
+        label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
         iconName: 'wallet',
         onPress: () => this.goToExchangeFlow(fiatCurrency, token),
       },
       {
         key: 'receive',
-        label: 'Send from another wallet',
+        label: t('button.sendFromAnotherWallet'),
         iconName: 'qrDetailed',
         onPress: () => this.openReceiveTokenModal({ ...assetData, balance }),
       },
       {
         key: 'exchange',
-        label: 'Exchange',
+        label: t('button.exchange'),
         iconName: 'flip',
         onPress: () => this.goToExchangeFlow(token),
         hide: !isSupportedByExchange,
       },
       {
         key: 'invite',
-        label: 'Invite and earn free tokens',
+        label: t('button.inviteAndGetTokens'),
         iconName: 'present',
         hide: !rewardActive,
         onPress: goToInvitationFlow,
       },
     ];
-  }
+  };
 
   closeActionOptionsModal = (callback: () => void) => {
     this.setState({ visibleActionOptionsModal: false }, () => {
@@ -356,7 +339,6 @@ class AssetScreen extends React.Component<Props, State> {
       balances,
       paymentNetworkBalances,
       fetchAssetsBalances,
-      fetchAssetTransactions,
       baseFiatCurrency,
       navigation,
       smartWalletState,
@@ -441,13 +423,11 @@ class AssetScreen extends React.Component<Props, State> {
         inset={{ bottom: 0 }}
       >
         <ScrollWrapper
-          onScrollEndDrag={this.handleScrollWrapperEndDrag}
           refreshControl={
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
                 fetchAssetsBalances();
-                fetchAssetTransactions(token);
                 fetchReferralRewardsIssuerAddresses();
               }}
             />
@@ -493,7 +473,7 @@ class AssetScreen extends React.Component<Props, State> {
             {!isActiveAccountSmartWallet &&
               <TransferButtonWrapper>
                 <Button
-                  title="Transfer to Smart Wallet"
+                  title={t('button.transferToSmartWallet')}
                   onPress={() => this.goToSendTokenFlow(assetData, smartWalletAccount)}
                   disabled={!isSendActive || isWalletEmpty}
                   secondary
@@ -505,7 +485,7 @@ class AssetScreen extends React.Component<Props, State> {
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
-            feedTitle="Transactions"
+            feedTitle={t('title.transactions')}
             navigation={navigation}
             noBorder
             feedData={relatedTransactions}
@@ -516,13 +496,11 @@ class AssetScreen extends React.Component<Props, State> {
           onModalClose={this.closeActionOptionsModal}
           isVisible={!!visibleActionOptionsModal}
           items={modalActionOptions}
-          title="Add funds to Pillar"
+          title={t('title.addFundsToWallet')}
         />
         <ReceiveModal
           isVisible={this.state.activeModal.type === RECEIVE}
-          onModalHide={() => {
-            this.setState({ activeModal: activeModalResetState });
-          }}
+          onModalHide={() => this.setState({ activeModal: activeModalResetState })}
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
@@ -532,7 +510,7 @@ class AssetScreen extends React.Component<Props, State> {
         <SlideModal
           title={assetData.name}
           isVisible={showDescriptionModal}
-          onModalHide={() => { this.setState({ showDescriptionModal: false }); }}
+          onModalHide={() => this.setState({ showDescriptionModal: false })}
         >
           <Description small light>{assetData.description}</Description>
         </SlideModal>
@@ -565,7 +543,7 @@ const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
   isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
-  inactiveUserAccounts: innactiveUserWalletForSendSellector,
+  inactiveUserAccounts: inactiveUserWalletForSendSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -576,9 +554,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchAssetsBalances: () => {
     dispatch(fetchAssetsBalancesAction());
-  },
-  fetchAssetTransactions: (asset, indexFrom) => {
-    dispatch(fetchAssetTransactionsAction(asset, indexFrom));
   },
   logScreenView: (contentName: string, contentType: string, contentId: string) => {
     dispatch(logScreenViewAction(contentName, contentType, contentId));

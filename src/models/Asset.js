@@ -90,3 +90,13 @@ export type DepositedAsset = Asset & {
   initialBalance: number,
   aaveTokenAddress: string,
 };
+
+export type KeyBasedAssetTransfer = {|
+  transactionHash?: string,
+  assetData: AssetData,
+  amount?: number,
+  calculatedGasLimit?: number,
+  gasPrice?: number,
+  signedTransaction?: Object,
+  status?: string,
+|};
