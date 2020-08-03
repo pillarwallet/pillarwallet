@@ -57,16 +57,18 @@ export const get1inchCommonUrlParams = (
   return { amount, safeToAddress, safeFromAddress };
 };
 
-export const getResponseData = async (url: string): Object => {
+export const getResponseData = async (url: string): Object | null => {
   // TODO this is ugly
   let response;
   try {
     response = await axios.get(url);
   } catch (e) {
     reportOrWarn('Unable to fetch offers', e, 'error');
+    return null;
   }
   if (!response || !response.data) {
     reportOrWarn('Unable to fetch offers', null, 'error');
+    return null;
   }
   return response.data;
 };
