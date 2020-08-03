@@ -31,23 +31,36 @@ import {
   getResponseData,
   parseAssets,
 } from 'utils/1inch';
-import { parseOffer, isAllowanceSet } from 'utils/exchange';
+import { parseOffer } from 'utils/exchange';
 
 // constants
 import { PROVIDER_1INCH } from 'constants/exchangeConstants';
 
+// assets
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
 // types
-import type { Allowance, Offer } from 'models/Offer';
+import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 
 const provider = getEthereumProvider(NETWORK_PROVIDER);
 const abiCoder = require('web3-eth-abi');
 
+const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, fromAsset: Asset) => {
+  let allowanceSet = false;
+  if (fromAsset.code !== 'ETH') {
+    const assetContract = new ethers.Contract(safeFromAddress, ERC20_CONTRACT_ABI, provider);
+    const allowance: BigNumber = await assetContract.allowance(clientAddress, EXCHANGE_ADDRESS);
+    allowanceSet = allowance.gt(0);
+  }
+  return allowanceSet;
+};
+
 export const get1inchOffer = async (
-  allowances: Allowance[],
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
+  clientAddress: string,
 ): Promise<Offer | null> => {
   parseAssets([fromAsset, toAsset]);
 
@@ -59,7 +72,7 @@ export const get1inchOffer = async (
   const response = await getResponseData(url);
   if (!response) return null;
 
-  const allowanceSet = isAllowanceSet(allowances, fromAsset.symbol, toAsset.symbol, PROVIDER_1INCH);
+  const allowanceSet = await getAllowanceSet(clientAddress, safeFromAddress, fromAsset);
 
   const fromTokenAmount = convertToNominalUnits(
     new BigNumber(fromAsset.decimals),

@@ -54,7 +54,6 @@ import { get1inchOffer, create1inchOrder, create1inchAllowanceTx } from 'service
 // types
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type { Allowance } from 'models/Offer';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -140,16 +139,16 @@ export const resetOffersAction = () => {
   };
 };
 
-const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, allowances: Allowance[]) => {
+const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
-    const offer = await getUniswapOffer(allowances, fromAsset, toAsset, fromAmount);
+    const offer = await getUniswapOffer(fromAsset, toAsset, fromAmount, clientAddress);
     dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, allowances: Allowance[]) => {
+const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
-    const offer = await get1inchOffer(allowances, fromAsset, toAsset, fromAmount);
+    const offer = await get1inchOffer(fromAsset, toAsset, fromAmount, clientAddress);
     dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
@@ -157,7 +156,8 @@ const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number,
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      exchange: { exchangeSupportedAssets, data: { allowances = [] } },
+      exchange: { exchangeSupportedAssets },
+      accounts: { data: accounts },
     } = getState();
 
     // let's put values to reducer in order to see the previous offers and search values after app gets locked
@@ -181,8 +181,10 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
       return;
     }
 
-    dispatch(search1inchAction(fromAsset, toAsset, fromAmount, allowances));
-    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, allowances));
+    const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
+
+    dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));
+    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, clientAddress));
   };
 };
 

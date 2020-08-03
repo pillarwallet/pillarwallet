@@ -77,15 +77,3 @@ export const parseOffer = (
     provider,
   };
 };
-
-export const isAllowanceSet = (
-  allowances: Allowance[],
-  fromAssetSymbol: string,
-  toAssetSymbol: string,
-  exchangeProvider: string,
-): boolean => {
-  return fromAssetSymbol === 'ETH' ? true : !!allowances.find(
-    ({ fromAssetCode, toAssetCode, provider }) =>
-      provider === exchangeProvider && fromAssetCode === fromAssetSymbol && toAssetCode === toAssetSymbol,
-  );
-};

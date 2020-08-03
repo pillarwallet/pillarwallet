@@ -47,14 +47,17 @@ import {
   swapExactEthToTokens,
   generateTxObject,
 } from 'utils/uniswap';
-import { parseOffer, isAllowanceSet } from 'utils/exchange';
+import { parseOffer } from 'utils/exchange';
 
 // models
 import type { Asset } from 'models/Asset';
-import type { Allowance, Offer } from 'models/Offer';
+import type { Offer } from 'models/Offer';
 
 // constants
 import { PROVIDER_UNISWAP } from 'constants/exchangeConstants';
+
+// assets
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
 const abiCoder = require('web3-eth-abi');
@@ -120,11 +123,18 @@ const getTrade = async (
   return trade;
 };
 
+const getAllowanceSet = async (clientAddress: string, fromAsset: Asset) => {
+  if (fromAsset.code === 'ETH') return true;
+  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
+  const allowance: BigNumber = await assetContract.allowance(clientAddress, ADDRESSES.router);
+  return allowance.gt(0);
+};
+
 export const getUniswapOffer = async (
-  allowances: Allowance[],
   fromAsset: Asset,
   toAsset: Asset,
   quantity: number | string,
+  clientAddress: string,
 ): Promise<Offer> => {
   parseAssets([fromAsset, toAsset]);
   const decimalsBN = new BigNumber(fromAsset.decimals);
@@ -134,7 +144,7 @@ export const getUniswapOffer = async (
 
   const trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
   const askRate = getAskRate(trade);
-  const allowanceSet = isAllowanceSet(allowances, fromAsset.symbol, toAsset.symbol, PROVIDER_UNISWAP);
+  const allowanceSet = await getAllowanceSet(clientAddress, fromAsset);
   const offer: Offer = parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_UNISWAP);
   return offer;
 };
