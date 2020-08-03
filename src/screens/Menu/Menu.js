@@ -53,6 +53,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_STATUS,
 } from 'constants/navigationConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
@@ -60,13 +61,16 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
+import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { User } from 'models/User';
-import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
 
 
 type Props = {
@@ -153,6 +157,11 @@ const Menu = ({
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
   const colors = getThemeColors(theme);
 
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  const isKeyBasedAssetsMigrationHidden = !isKeyBasedAssetsMigrationEnabled || (
+    !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
+  );
+
   const menuItems = [
     {
       key: 'securitySettings',
@@ -219,7 +228,7 @@ const Menu = ({
       title: 'Migrate assets to Smart Wallet',
       icon: 'send-asset',
       iconColor: colors.accent,
-      hidden: !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance,
+      hidden: isKeyBasedAssetsMigrationHidden,
       action: () => navigation.navigate(
         hasKeyBasedAssetsTransferInProgress
           ? KEY_BASED_ASSET_TRANSFER_STATUS

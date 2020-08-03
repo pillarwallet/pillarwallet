@@ -48,6 +48,7 @@ import { ASSETS, KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationCon
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
@@ -57,6 +58,9 @@ import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
 import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -198,7 +202,8 @@ const AccountsScreen = ({
       };
     });
 
-  if (keyBasedWalletHasPositiveBalance) {
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {
     walletsToShow.push({
       type: ITEM_TYPE.BUTTON,
       title: 'Migrate assets to Smart Wallet',
