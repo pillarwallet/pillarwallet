@@ -398,10 +398,14 @@ export const fetchAllAccountsBalancesAction = () => {
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
 
-    const promises = accounts.map(async account => {
-      await dispatch(fetchAccountAssetsBalancesAction(account));
-    });
-    await Promise.all(promises).catch(_ => _);
+    const promises = accounts
+      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .map((account) => dispatch(fetchAccountAssetsBalancesAction(account)));
+
+    await Promise
+      .all(promises)
+      .catch((error) => reportLog('fetchAllAccountsBalancesAction failed', { error }));
+
     dispatch(fetchAllAccountsAssetsRatesAction());
 
     if (checkIfSmartWalletAccount(activeAccount)) {
@@ -613,15 +617,20 @@ export const checkForMissedAssetsAction = () => {
     const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
 
     const accountUpdatedAssets = accounts
+      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
       .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     // check tx history if some assets are not enabled
-    const ownedAssetsByAccount = await Promise.all(accounts.map(async (acc) => {
-      const accountId = getAccountId(acc);
-      const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
-      return { id: accountId, ...ownedAssets };
-    }));
+    const ownedAssetsByAccount = await Promise.all(
+      accounts
+        .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+        .map(async (acc) => {
+          const accountId = getAccountId(acc);
+          const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);
+          return { id: accountId, ...ownedAssets };
+        }),
+    );
 
     const allAccountAssets = ownedAssetsByAccount
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
