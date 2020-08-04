@@ -24,6 +24,7 @@ import {
   SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
   SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
   SET_KEY_BASED_ASSETS_TO_TRANSFER,
+  SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE,
 } from 'constants/keyBasedAssetTransferConstants';
 import type { Balances, KeyBasedAssetTransfer } from 'models/Asset';
 import type { Collectibles } from 'models/Collectible';
@@ -36,6 +37,7 @@ export type KeyBasedAssetTransferReducerState = {|
   isFetchingAvailableBalances: boolean,
   isFetchingAvailableCollectibles: boolean,
   isCalculatingGas: boolean,
+  hasPositiveBalance: boolean,
 |};
 
 export type KeyBasedAssetTransferReducerAction = {|
@@ -50,6 +52,7 @@ const initialState = {
   isFetchingAvailableBalances: false,
   isFetchingAvailableCollectibles: false,
   isCalculatingGas: false,
+  hasPositiveBalance: false,
 };
 
 const keyBasedAssetTransferReducer = (
@@ -88,6 +91,11 @@ const keyBasedAssetTransferReducer = (
       return {
         ...state,
         isCalculatingGas: action.payload,
+      };
+    case SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE:
+      return {
+        ...state,
+        hasPositiveBalance: action.payload,
       };
     default:
       return state;

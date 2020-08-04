@@ -72,14 +72,6 @@ jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
 
 jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
-
-jest.setMock('@react-native-firebase/remote-config', () => ({
-  remoteConfig: () => Promise.resolve(),
-  setDefaults: () => Promise.resolve(),
-  fetchAndActivate: () => Promise.resolve(),
-  getAll: () => Promise.resolve({}),
-}));
-
 jest.mock('@react-native-firebase/app', () => ({
   firebase: {
     iid: () => {},
@@ -89,6 +81,12 @@ jest.mock('@react-native-firebase/app', () => ({
     crashlytics: () => ({
       setUserId: () => {
       },
+    }),
+    remoteConfig: () => ({
+      remoteConfig: () => Promise.resolve(),
+      setDefaults: () => Promise.resolve(),
+      fetch: () => Promise.resolve(),
+      getAll: () => Promise.resolve({}),
     }),
     messaging: () => ({
       registerForRemoteNotifications: () => Promise.resolve(),
