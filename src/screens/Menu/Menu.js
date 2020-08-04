@@ -53,6 +53,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_STATUS,
 } from 'constants/navigationConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
@@ -60,6 +61,10 @@ import { goToInvitationFlowAction } from 'actions/referralsActions';
 
 // selectors
 import { hasKeyBasedAssetsTransferInProgressSelector } from 'selectors/wallets';
+import { keyBasedWalletHasPositiveBalanceSelector } from 'selectors/balances';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -78,6 +83,7 @@ type Props = {
   goToInvitationFlow: () => void,
   isPillarRewardCampaignActive: boolean,
   hasKeyBasedAssetsTransferInProgress: boolean,
+  keyBasedWalletHasPositiveBalance: boolean,
 };
 
 const Footer = styled.View``;
@@ -141,6 +147,7 @@ const Menu = ({
   logoutUser,
   backupStatus,
   lockScreen,
+  keyBasedWalletHasPositiveBalance,
 }: Props) => {
   const [visibleModal, setVisibleModal] = useState(null);
 
@@ -149,6 +156,11 @@ const Menu = ({
   const { pillarLogoSmall: logo } = images(theme);
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
   const colors = getThemeColors(theme);
+
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  const isKeyBasedAssetsMigrationHidden = !isKeyBasedAssetsMigrationEnabled || (
+    !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
+  );
 
   const menuItems = [
     {
@@ -216,6 +228,7 @@ const Menu = ({
       title: 'Migrate assets to Smart Wallet',
       icon: 'send-asset',
       iconColor: colors.accent,
+      hidden: isKeyBasedAssetsMigrationHidden,
       action: () => navigation.navigate(
         hasKeyBasedAssetsTransferInProgress
           ? KEY_BASED_ASSET_TRANSFER_STATUS
@@ -359,6 +372,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   hasKeyBasedAssetsTransferInProgress: hasKeyBasedAssetsTransferInProgressSelector,
+  keyBasedWalletHasPositiveBalance: keyBasedWalletHasPositiveBalanceSelector,
 });
 
 const combinedMapStateToProps = (state) => ({

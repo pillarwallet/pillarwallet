@@ -90,6 +90,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppState } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
+import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -333,7 +334,10 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // STEP 8: check if wallet backup warning toast needed
     dispatch(checkForWalletBackupToastAction());
 
-    // STEP 9: all done, navigate to the home screen or incoming reward screen
+    // STEP 9: if wallet is imported let's check its balance for key based assets migration
+    if (backupStatus.isImported) dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+
+    // STEP 10: all done, navigate to the home screen or incoming reward screen
     navigateToAppFlow(!!referralToken);
   };
 };

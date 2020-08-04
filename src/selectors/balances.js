@@ -17,10 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import { createSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
+
+// constants
 import { PLR } from 'constants/assetsConstants';
+
+// types
+import type { RootReducerState } from 'reducers/rootReducer';
+
+// selectors
 import { balancesSelector, activeAccountIdSelector } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
@@ -57,4 +63,9 @@ export const allBalancesSelector = createSelector(
       return memo;
     }, {});
   },
+);
+
+export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
+  ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
+  (hasPositiveBalance) => !!hasPositiveBalance,
 );
