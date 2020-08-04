@@ -94,7 +94,7 @@ const SablierCancellationModal = ({
         <Spacing h={32} />
         <BaseText medium>
           If you cancel the stream, the money sent to the recipient
-          will remain with him, and the rest will be returned to you.
+          will remain with them, and the rest will be returned to you.
         </BaseText>
         <Spacing h={32} />
         <FeeLabelToggle

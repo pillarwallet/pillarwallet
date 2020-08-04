@@ -247,7 +247,7 @@ const getTxFeeAndTransactionPayload = async (_transactionPayload, useGasToken): 
   };
 };
 
-export const getApproveFeeAndTransaction = async (assetData: Asset, useGasToken: boolean): Promise<Object> => {
+export const getApproveFeeAndTransaction = (assetData: Asset, useGasToken: boolean): Promise<Object> => {
   const { symbol, decimals, address: tokenAddress } = assetData;
   const rawValue = 1000000000;
   const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
@@ -272,7 +272,7 @@ export const getApproveFeeAndTransaction = async (assetData: Asset, useGasToken:
   return getTxFeeAndTransactionPayload(transactionPayload, useGasToken);
 };
 
-export const getCancellationFeeAndTransaction = async (stream: Stream, useGasToken: boolean): Promise<Object> => {
+export const getCancellationFeeAndTransaction = (stream: Stream, useGasToken: boolean): Promise<Object> => {
   const transactionData = encodeContractMethod(SABLIER_ABI, 'cancelStream', [
     stream.id,
   ]);
@@ -293,7 +293,7 @@ export const getCancellationFeeAndTransaction = async (stream: Stream, useGasTok
   return getTxFeeAndTransactionPayload(transactionPayload, useGasToken);
 };
 
-export const getCreateStreamFeeAndTransaction = async (
+export const getCreateStreamFeeAndTransaction = (
   sender: string,
   receiver: string,
   amount: EthersBigNumber,

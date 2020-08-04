@@ -106,12 +106,12 @@ const Withdraw = (props: Props) => {
   useEffect(() => {
     // the exact max amount to withdraw must be fetched from the blockchain
     // as we can only estimate due to the fact that the contract uses block.timestamp
+    // eslint-disable-next-line
     fetchStreamBalance(streamId, recipient)
       .then((streamBalance) => {
         setMaxWithdraw(streamBalance);
         setIsFetchingMaxWithdraw(false);
-      })
-      .catch(() => {});
+      });
   }, []);
 
   const goToReviewScreen = () => {

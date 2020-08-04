@@ -137,18 +137,13 @@ class NewStream extends React.Component<Props, State> {
   updateAllowance = async (assetSymbol: string) => {
     const { assets, supportedAssets } = this.props;
     const assetData = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
-    if (!assetData) {
-      return;
-    }
     this.setState({ isCheckingAllowance: true });
     const { activeAccountAddress } = this.props;
-    const allowance = await checkSablierAllowance(assetData.address, activeAccountAddress);
+    const allowance = await checkSablierAllowance(assetData?.address, activeAccountAddress);
     this.setState({ allowance, isCheckingAllowance: false });
   }
 
-  getMinimalDate = () => {
-    return addMinutes(new Date(), 5);
-  }
+  getMinimalDate = () => addMinutes(new Date(), 5);
 
   getFormValue = (value) => {
     const { input = '0' } = value || {};

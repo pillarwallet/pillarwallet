@@ -84,6 +84,7 @@ let isPoolTogetherEnabled = true;
 let isPeerToPeerEnabled = true;
 let isWyreEnabled = true;
 let isRampEnabled = true;
+let isSablierEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -121,6 +122,7 @@ class ServicesScreen extends React.Component<Props, State> {
     isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.PEER_TO_PEER);
     isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
+    isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
   }
 
   getServices = () => {
@@ -173,14 +175,16 @@ class ServicesScreen extends React.Component<Props, State> {
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       });
     }
-    services.push({
-      key: 'sablier',
-      title: 'Sablier money streaming',
-      body: 'Stream money to people and organizations in real-time with just one deposit',
-      disabled: SWServiceDisabled,
-      label: SWServiceLabel,
-      action: () => navigation.navigate(SABLIER_STREAMS),
-    });
+    if (isSablierEnabled) {
+      services.push({
+        key: 'sablier',
+        title: 'Sablier money streaming',
+        body: 'Stream money to people and organizations in real-time with just one deposit',
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(SABLIER_STREAMS),
+      });
+    }
     if (isPeerToPeerEnabled) {
       services.push({
         key: 'peerToPeerTrading',

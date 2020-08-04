@@ -17,12 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import * as Sentry from '@sentry/react-native';
 import {
   fetchUserStreams,
   getSablierWithdrawTransaction,
 } from 'services/sablier';
 import smartWalletService from 'services/smartWallet';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { reportLog } from 'utils/common';
 import {
   SET_STREAMS,
   SET_FETCHING_STREAMS,
@@ -81,7 +83,12 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
 
     const estimate = await smartWalletService
       .estimateAccountTransaction({ recipient, value, data })
-      .catch(() => null);
+      .catch((e) => {
+        reportLog('Error getting sablier withdraw transaction estimate', {
+          message: e.message,
+        }, Sentry.Severity.Error);
+        return null;
+      });
 
     dispatch({ type: SET_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE, payload: estimate });
   };
@@ -124,7 +131,7 @@ export const checkSablierApprovalTransactionAction = () => {
           if (allowanceTransaction.status === TX_CONFIRMED_STATUS) {
             dispatch(setDismissSablierApproveAction(symbol));
             Toast.show({
-              message: `Sablier ${symbol} allowance was enabled`,
+              message: `Sablier ${symbol} allowance has been enabled`,
               type: 'success',
               title: 'Success',
               autoClose: true,
@@ -132,9 +139,9 @@ export const checkSablierApprovalTransactionAction = () => {
           } else if (allowanceTransaction.status === TX_FAILED_STATUS) {
             dispatch(setDismissSablierApproveAction(symbol));
             Toast.show({
-              message: `Sablier ${symbol} allowance transaction failed`,
+              message: `Sorry, Sablier ${symbol} allowance transaction has failed. Please try again`,
               type: 'warning',
-              title: 'Transaction failed',
+              title: 'Sablier transaction failed',
               autoClose: true,
             });
           }
