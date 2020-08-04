@@ -22,9 +22,11 @@ import '@react-native-firebase/crashlytics';
 import '@react-native-firebase/iid';
 import '@react-native-firebase/analytics';
 import '@react-native-firebase/messaging';
+import '@react-native-firebase/remote-config';
 
 
 export const firebaseAnalytics = firebase.analytics();
 export const firebaseIid = firebase.iid();
 export const firebaseCrashlytics = firebase.crashlytics();
 export const firebaseMessaging = firebase.messaging();
+export const firebaseRemoteConfig = firebase.remoteConfig();

@@ -18,12 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import remoteConfig from '@react-native-firebase/remote-config';
+import { firebaseRemoteConfig } from 'services/firebase';
 import { reportOrWarn } from 'utils/common';
 import { log } from 'utils/logger';
 
 export const loadFeatureFlagsAction = () => {
-  return async () => {
+  return () => {
     /**
      * Instruct Remote Config to fetch the latest config
      * values available online. When the app is next launched,
@@ -31,7 +31,7 @@ export const loadFeatureFlagsAction = () => {
      *
      * @url https://rnfirebase.io/reference/remote-config#fetch
      */
-    remoteConfig()
+    firebaseRemoteConfig
       .fetch(__DEV__ ? 0 : null) // Are we in dev mode? Don't cache.
       .then(() => {
         log.info('Firebase Config: Fetched the latest remote config values, if any.');
