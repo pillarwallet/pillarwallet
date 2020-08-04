@@ -31,6 +31,7 @@ import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
+import axios from 'axios';
 
 // utils
 import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
@@ -54,7 +55,7 @@ import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
 
 // constants
-import { PROVIDER_UNISWAP } from 'constants/exchangeConstants';
+import { PROVIDER_UNISWAP, UNISWAP_GRAPH_ID } from 'constants/exchangeConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -295,4 +296,34 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
     value: '0',
     data: encodedContractFunction,
   };
+};
+
+export const fetchUniswapSupportedTokens = async (): Promise<string[]> => {
+  const url = `https://api.thegraph.com/subgraphs/id/${UNISWAP_GRAPH_ID}`;
+  let finished = false;
+  let i = 0;
+  let results = [];
+  while (!finished) {
+    /* eslint-disable no-await-in-loop */
+    const response = await axios.post(url, {
+      timeout: 5000,
+      query: `
+      {
+        tokens(first: 1000, skip: ${i * 1000}) {
+          symbol
+        }
+      }
+      `,
+    });
+    const assets = response?.data?.data?.tokens;
+    if (assets) {
+      results = results.concat(assets.map(a => a.symbol));
+    }
+    if (assets.length !== 1000) {
+      finished = true;
+    } else {
+      i++;
+    }
+  }
+  return results;
 };

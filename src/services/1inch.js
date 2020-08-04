@@ -21,6 +21,7 @@
 import { ethers } from 'ethers';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
+import axios from 'axios';
 
 // utils
 import { getEthereumProvider, convertToNominalUnits, reportOrWarn } from 'utils/common';
@@ -154,4 +155,17 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     value: '0',
     data: encodedContractFunction,
   };
+};
+
+export const fetch1inchSupportedTokens = async (): Promise<string[]> => {
+  const response = await axios.get('https://api.1inch.exchange/v1.1/tokens');
+  const fetchedAssetsSymbols = [];
+  if (response.status === 200 && response.data) {
+    Object.keys(response.data).forEach(key => {
+      if (response.data[key]) {
+        fetchedAssetsSymbols.push(response.data[key].symbol);
+      }
+    });
+  }
+  return fetchedAssetsSymbols;
 };

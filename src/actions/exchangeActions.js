@@ -19,6 +19,7 @@
 */
 import { Linking } from 'react-native';
 import { toChecksumAddress } from '@netgum/utils';
+import uniq from 'lodash.uniq';
 
 // components
 import Toast from 'components/Toast';
@@ -48,8 +49,10 @@ import { getSmartWalletAddress } from 'utils/accounts';
 
 // services
 import ExchangeService from 'services/exchange';
-import { getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx } from 'services/uniswap';
-import { get1inchOffer, create1inchOrder, create1inchAllowanceTx } from 'services/1inch';
+import {
+  getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
+} from 'services/uniswap';
+import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 
 // types
 import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
@@ -438,8 +441,18 @@ export const getExchangeSupportedAssetsAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    const exchangeSupportedAssets = supportedAssets
-      .filter(({ symbol }) => SUPPORTED_ASSETS.map(asset => asset.symbol).includes(symbol));
+    const oneInchAssetsSymbols: string[] = await fetch1inchSupportedTokens();
+    const uniswapAssetsSymbols: string[] = [];
+
+    let fetchedAssetsSymbols: string[] = uniq(oneInchAssetsSymbols.concat(uniswapAssetsSymbols));
+
+    // fallback in case assets fail to fetch
+    if (!fetchedAssetsSymbols.length) {
+      fetchedAssetsSymbols = SUPPORTED_ASSETS.map(a => a.symbol);
+    }
+
+    const exchangeSupportedAssets = supportedAssets.filter(({ symbol }) => fetchedAssetsSymbols.includes(symbol));
+
     dispatch({
       type: SET_EXCHANGE_SUPPORTED_ASSETS,
       payload: exchangeSupportedAssets,
