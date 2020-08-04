@@ -53,13 +53,15 @@ describe('Fiat to crypto providers actions', () => {
   describe('Sendwyre', () => {
     it('loadSendwyreRatesAction should fetch Sendwyre exchange rates', async () => {
       const rates = { USDETH: { USD: 1, ETH: 1 } };
+      const walletId = 'wallet-id';
 
       const store = mockStore({
         state: {
+          user: { data: { walletId } },
           fiatToCrypto: { sendwyre: null },
         },
         pillarSdk: {
-          getSendwyreRates: async () => rates,
+          getSendwyreRates: async id => id && rates,
         },
       });
 

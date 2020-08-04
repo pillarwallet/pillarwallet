@@ -43,7 +43,8 @@ export const loadAltalixInfoAction = () => {
 
 export const loadSendwyreRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const rates = await api.getSendwyreRates();
+    const { user: { data: { walletId } } } = getState();
+    const rates = await api.getSendwyreRates(walletId);
 
     dispatch({
       type: SET_SENDWYRE_RATES,
