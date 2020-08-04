@@ -36,7 +36,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount,  isNotKeyBasedType } from 'utils/accounts';
+import { getAccountName, getActiveAccount, isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney, noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
