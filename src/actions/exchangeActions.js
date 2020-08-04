@@ -441,10 +441,12 @@ export const getExchangeSupportedAssetsAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    const oneInchAssetsSymbols: string[] = await fetch1inchSupportedTokens();
-    const uniswapAssetsSymbols: string[] = [];
+    const oneInchAssetsSymbols = fetch1inchSupportedTokens();
+    const uniswapAssetsSymbols = fetchUniswapSupportedTokens();
 
-    let fetchedAssetsSymbols: string[] = uniq(oneInchAssetsSymbols.concat(uniswapAssetsSymbols));
+    const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
+
+    let fetchedAssetsSymbols: string[] = uniq(assetsSymbols[0].concat(assetsSymbols[1]));
 
     // fallback in case assets fail to fetch
     if (!fetchedAssetsSymbols.length) {
