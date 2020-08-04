@@ -36,6 +36,7 @@ import Toast from 'components/Toast';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
+import { isSablierTransactionTag } from 'utils/sablier';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -43,7 +44,12 @@ import { setDismissApproveAction, setExecutingApproveAction } from 'actions/pool
 import { setExecutingSablierApproveAction, setDismissSablierApproveAction } from 'actions/sablierActions';
 
 // constants
-import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import {
+  SEND_TOKEN_CONFIRM,
+  SEND_COLLECTIBLE_CONFIRM,
+  POOLTOGETHER_DASHBOARD,
+  SABLIER_STREAMS,
+} from 'constants/navigationConstants';
 import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -170,6 +176,11 @@ class SendTokenTransaction extends React.Component<Props> {
           autoClose: true,
         });
       }
+      return;
+    }
+
+    if (isSablierTransactionTag(txTag)) {
+      navigation.navigate(SABLIER_STREAMS);
       return;
     }
 
