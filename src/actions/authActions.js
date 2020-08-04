@@ -107,10 +107,20 @@ const storage = Storage.getInstance('db');
 
 export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const fcmToken = await firebaseMessaging.getToken().catch(() => null);
+    const fcmToken = await firebaseMessaging.getToken().catch(e => {
+      // We was unable to fetch the FCM token.
+      reportLog(`Unable to fetch Firebase FCM token: ${e.message}`, e);
+
+      return null;
+    });
     if (!fcmToken) return;
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-    Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+    Intercom.sendTokenToIntercom(fcmToken).catch(e => {
+      // Unable to send the FCM token to Intercom
+      reportLog(`Unable to send FCM token to Intercom: ${e.message}`, e);
+
+      return null;
+    });
     await api.updateFCMToken(walletId, fcmToken);
   };
 };
@@ -311,10 +321,12 @@ export const loginAction = (
           .then(url => {
             if (url) dispatch(executeDeepLinkAction(url, true));
           })
-          .catch(() => {});
+          .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e));
       }
       navigate(navigateToAppAction);
     } catch (e) {
+      reportLog(`An error occured whilst trying to complete auth actions: ${e.errorMessage}`, e);
+
       dispatch(updatePinAttemptsAction(true));
       dispatch({
         type: UPDATE_WALLET_STATE,
@@ -414,7 +426,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 
 export const resetAppState = async () => {
   Intercom.logout();
-  await firebaseIid.delete().catch(() => {});
+  await firebaseIid.delete().catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
   await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();
