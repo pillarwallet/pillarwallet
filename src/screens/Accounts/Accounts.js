@@ -36,7 +36,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, getActiveAccount } from 'utils/accounts';
+import { getAccountName, getActiveAccount,  isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney, noop } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -234,7 +234,7 @@ class AccountsScreen extends React.Component<Props, State> {
     );
 
     return accounts
-      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .filter(isNotKeyBasedType)
       .map((account: Account): WalletsListItem => {
         const { id, isActive, type } = account;
         const accountBalances: Balances = balances[id];

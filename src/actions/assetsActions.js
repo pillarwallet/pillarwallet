@@ -74,6 +74,7 @@ import {
   getAccountAddress,
   getAccountId,
   checkIfSmartWalletAccount,
+  isNotKeyBasedType,
 } from 'utils/accounts';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
@@ -399,7 +400,7 @@ export const fetchAllAccountsBalancesAction = () => {
     if (!activeAccount) return;
 
     const promises = accounts
-      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .filter(isNotKeyBasedType)
       .map((account) => dispatch(fetchAccountAssetsBalancesAction(account)));
 
     await Promise
@@ -617,14 +618,14 @@ export const checkForMissedAssetsAction = () => {
     const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
 
     const accountUpdatedAssets = accounts
-      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .filter(isNotKeyBasedType)
       .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     // check tx history if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(
       accounts
-        .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+        .filter(isNotKeyBasedType)
         .map(async (acc) => {
           const accountId = getAccountId(acc);
           const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);

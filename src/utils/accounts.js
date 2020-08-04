@@ -180,3 +180,5 @@ export const getInitials = (fullName: string = '') => {
     .join('')
     .toUpperCase();
 };
+
+export const isNotKeyBasedType = ({ type }) => type !== ACCOUNT_TYPES.KEY_BASED;
