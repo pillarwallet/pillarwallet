@@ -35,7 +35,7 @@ import Button from 'components/Button';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName } from 'utils/accounts';
+import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -47,7 +47,6 @@ import { responsiveSize } from 'utils/ui';
 import { ASSETS, KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
@@ -181,7 +180,7 @@ const AccountsScreen = ({
 
 
   const walletsToShow = accounts
-    .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED) // filter key based due deprecation
+    .filter(isNotKeyBasedType) // filter key based due deprecation
     .map((account: Account): ListItem => {
       const { id, isActive, type } = account;
       const accountBalances: Balances = balances[id];
