@@ -426,7 +426,8 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 
 export const resetAppState = async () => {
   Intercom.logout();
-  await firebaseIid.delete().catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+  await firebaseIid.delete().
+    catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
   await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();
