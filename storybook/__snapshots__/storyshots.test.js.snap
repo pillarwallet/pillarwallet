@@ -7212,7 +7212,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
             undefined,
           ]
         }
-        type="ACTION"
+        type="DEFAULT"
       >
         <View
           style={
@@ -7232,7 +7232,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={
@@ -7274,44 +7274,11 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                   ],
                 ]
               }
-              type="ACTION"
+              type="DEFAULT"
             >
               label.settle
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            label.toSmartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -7330,7 +7297,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
               },
             ]
           }
-          type="ACTION"
+          type="DEFAULT"
         >
           <View
             style={

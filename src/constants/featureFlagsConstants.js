@@ -19,19 +19,23 @@
 */
 
 // Services screen features
-export const OFFERS_ENGINE = 'feature_services_offers_engine';
-export const AAVE = 'feature_services_aave';
-export const POOL_TOGETHER = 'feature_services_pool_together';
-export const RAMP = 'feature_services_ramp';
-export const WYRE = 'feature_services_wyre';
-export const PEER_TO_PEER = 'feature_services_peer_to_peer';
+export const FEATURE_FLAGS = {
+  OFFERS_ENGINE: 'feature_services_offers_engine',
+  AAVE: 'feature_services_aave',
+  POOL_TOGETHER: 'feature_services_pool_together',
+  RAMP: 'feature_services_ramp',
+  WYRE: 'feature_services_wyre',
+  PEER_TO_PEER: 'feature_services_peer_to_peer',
+  KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
+};
 
 // These are used as a fallback in case firebase fails to fetch actual values
 export const INITIAL_FEATURE_FLAGS = {
-  [OFFERS_ENGINE]: true,
-  [RAMP]: true,
-  [WYRE]: true,
-  [AAVE]: true,
-  [POOL_TOGETHER]: true,
-  [PEER_TO_PEER]: true,
+  [FEATURE_FLAGS.OFFERS_ENGINE]: true,
+  [FEATURE_FLAGS.RAMP]: true,
+  [FEATURE_FLAGS.WYRE]: true,
+  [FEATURE_FLAGS.AAVE]: true,
+  [FEATURE_FLAGS.POOL_TOGETHER]: true,
+  [FEATURE_FLAGS.PEER_TO_PEER]: true,
+  [FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION]: true,
 };
