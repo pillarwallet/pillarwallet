@@ -34,10 +34,11 @@ describe('Fiat to crypto providers actions', () => {
     it('loadAltalixInfoAction should set availability', async () => {
       const store = mockStore({
         state: {
+          user: { data: { walletId: 'wallet-id' } },
           fiatToCrypto: { altalix: null },
         },
         pillarSdk: {
-          fetchAltalixAvailability: async () => true,
+          fetchAltalixAvailability: async id => id && true,
         },
       });
 

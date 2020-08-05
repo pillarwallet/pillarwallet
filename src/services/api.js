@@ -37,11 +37,12 @@ import https from 'https';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { ALTALIX_AVAILABLE_COUNTRIES } from 'constants/fiatToCryptoConstants';
 
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { reportLog, uniqBy, delay } from 'utils/common';
+import { reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
 import { normalizeWalletAddress } from 'utils/wallet';
 
@@ -719,15 +720,27 @@ class SDKWrapper {
     return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
       .then(response => response.data.url)
       .catch(error => {
-        reportLog('generateAltalixTransactionUrl: SDK request error', error, Sentry.Severity.Error);
+        reportLog('generateAltalixTransactionUrl: SDK request error', error.response.data, Sentry.Severity.Error);
         return null;
       });
   }
 
-  async fetchAltalixAvailability(): Promise<boolean> {
-    // TODO: replace test value once an endpoint becomes available
-    await delay(1000);
-    return true;
+  fetchAltalixAvailability(walletId: string): Promise<boolean> {
+    const requestOptions = {
+      url: `${SDK_PROVIDER}/user/location`,
+      defaultRequest: {
+        method: 'GET',
+        httpsAgent: new https.Agent({ rejectUnathorized: false }),
+      },
+      params: { walletId },
+    };
+
+    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+      .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
+      .catch(error => {
+        reportLog('fetchAltalixAvailability: SDK request error', error.response.data, Sentry.Severity.Error);
+        return false;
+      });
   }
 }
 

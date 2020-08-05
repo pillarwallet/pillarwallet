@@ -25,9 +25,9 @@ import type SDKWrapper from 'services/api';
 
 export const loadAltalixInfoAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { fiatToCrypto: { altalix } } = getState();
+    const { fiatToCrypto: { altalix }, user: { data: { walletId } } } = getState();
     if (altalix === null) {
-      const isAvailable = await api.fetchAltalixAvailability();
+      const isAvailable = await api.fetchAltalixAvailability(walletId);
       dispatch({
         type: SET_ALTALIX_INFO,
         payload: { isAvailable },
