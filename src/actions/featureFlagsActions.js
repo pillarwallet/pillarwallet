@@ -32,7 +32,7 @@ export const loadFeatureFlagsAction = () => {
      * @url https://rnfirebase.io/reference/remote-config#fetch
      */
     firebaseRemoteConfig
-      .fetch(__DEV__ ? 0 : null) // Are we in dev mode? Don't cache.
+      .fetch(__DEV__ ? 0 : 3600) // Are we in dev mode? Don't cache, otherwise 1 hour.
       .then(() => {
         log.info('Firebase Config: Fetched the latest remote config values, if any.');
       })
