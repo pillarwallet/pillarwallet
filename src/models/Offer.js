@@ -91,12 +91,20 @@ export type ExchangeProvider = {
   extra?: any,
 }
 
+type ProviderThemedImages = {
+  light: string,
+  dark: string,
+}
+
 type ProviderMeta = {
   _id: string,
   shim: string,
   name: string,
-  url: string,
-  description: string,
+  img: {
+    vertical: ProviderThemedImages,
+    horizontal: ProviderThemedImages,
+    monochrome: ProviderThemedImages,
+  },
 }
 
 export type ProvidersMeta = ProviderMeta[];

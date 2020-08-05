@@ -52,7 +52,7 @@ import { calculateGasEstimate } from 'services/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Allowance, Offer, ProvidersMeta } from 'models/Offer';
+import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
@@ -100,7 +100,6 @@ type Props = {
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
-  providersMeta: ProvidersMeta,
   theme: Theme,
   showEmptyMessage: boolean,
   isExchangeActive: boolean,
@@ -253,7 +252,6 @@ class ExchangeOffers extends React.Component<Props, State> {
   onSetTokenAllowancePress = (offer: Offer) => {
     const {
       exchangeSupportedAssets,
-      providersMeta,
       baseFiatCurrency,
       gasInfo,
       setTokenAllowance,
@@ -287,7 +285,7 @@ class ExchangeOffers extends React.Component<Props, State> {
 
         const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
         const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
-        const providerName = getCryptoProviderName(providersMeta, provider);
+        const providerName = getCryptoProviderName(provider);
 
         let gasToken;
         let txFeeInWei;
@@ -418,7 +416,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = this.state;
     const {
       exchangeAllowances,
-      providersMeta,
       theme,
       value: { fromInput },
       setFromAmount,
@@ -450,7 +447,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const available = getAvailable(minQuantity, maxQuantity, askRate);
     const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
-    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider, theme, 'horizontal');
+    const providerLogo = getOfferProviderLogo(offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
     const amountToSell = parseFloat(selectedSellAmount);
@@ -506,7 +503,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = this.props;
     const { isEnableAssetModalVisible, enableData } = this.state;
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
-
     return (
       <React.Fragment>
         <FlatList
@@ -567,7 +563,6 @@ const mapStateToProps = ({
       offers,
       allowances: exchangeAllowances,
     },
-    providersMeta,
     exchangeSupportedAssets,
   },
   history: { gasInfo },
@@ -577,7 +572,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   offers,
   exchangeAllowances,
-  providersMeta,
   exchangeSupportedAssets,
   gasInfo,
   rates,

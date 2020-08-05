@@ -19,27 +19,29 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
-import { EXCHANGE_URL } from 'react-native-dotenv';
 import get from 'lodash.get';
-import type { ProvidersMeta, Offer } from 'models/Offer';
+import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
+import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { getThemeName } from './themes';
+import { staticImages } from './images';
 
-export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: string, theme: Theme, type: string) => {
+export const getOfferProviderLogo = (provider: string, theme: Theme, type: string) => {
   if (!provider) return '';
-  const providerInfo = providersMeta.find(({ shim }) => shim === provider);
+  const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider);
   const themeName = getThemeName(theme);
   if (providerInfo) {
-    const providerIconPath = get(providerInfo, `img.${type}.${themeName}`, '');
-    return { uri: `${EXCHANGE_URL}/v2.0${providerIconPath}` };
+    const providerIconName = get(providerInfo, `img.${type}.${themeName}`, '');
+    const image = staticImages[providerIconName] || '';
+    return image;
   }
   return '';
 };
 
-export const getCryptoProviderName = (providersMeta: ProvidersMeta, provider: string) => {
-  const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+export const getCryptoProviderName = (provider: string) => {
+  const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider) || {};
   const { name } = providerInfo;
   return name;
 };

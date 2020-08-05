@@ -76,7 +76,7 @@ import smartWalletService from 'services/smartWallet';
 // types
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
-import type { OfferOrder, ProvidersMeta } from 'models/Offer';
+import type { OfferOrder } from 'models/Offer';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
@@ -104,7 +104,6 @@ type Props = {
   balances: Balances,
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
-  providersMeta: ProvidersMeta,
   accounts: Accounts,
   theme: Theme,
   activeAccountAddress: string,
@@ -379,7 +378,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       session,
       balances,
-      providersMeta,
       baseFiatCurrency,
       rates,
       accounts,
@@ -425,7 +423,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     Current balance: ${getBalance(balances, feeSymbol)} ${feeSymbol}`;
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
-    const providerLogo = getOfferProviderLogo(providersMeta, provider, theme, 'vertical');
+    const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
     const confirmButtonTitleDefault = setTokenAllowance ? 'Enable Asset' : 'Confirm';
     const confirmButtonTitle = gettingFee ? 'Getting the fee..' : confirmButtonTitleDefault;
 
@@ -538,7 +536,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
-  exchange: { data: { executingTransaction: executingExchangeTransaction }, providersMeta, exchangeSupportedAssets },
+  exchange: { data: { executingTransaction: executingExchangeTransaction }, exchangeSupportedAssets },
   accounts: { data: accounts },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
@@ -547,7 +545,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   gasInfo,
   executingExchangeTransaction,
-  providersMeta,
   exchangeSupportedAssets,
   accounts,
   supportedAssets,

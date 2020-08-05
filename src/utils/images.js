@@ -45,6 +45,20 @@ const emailIconDark = require('assets/icons/icon_email_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_phone_dark.png');
 
+// exchange providers
+const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
+const uniswapLightHorizontal = require('assets/images/exchangeProviders/uniswapLightHorizontal.png');
+const uniswapLightMonochrome = require('assets/images/exchangeProviders/uniswapLightMonochrome.png');
+const oneinchLightVertical = require('assets/images/exchangeProviders/oneinchLightVertical.png');
+const oneinchLightHorizontal = require('assets/images/exchangeProviders/oneinchLightHorizontal.png');
+const oneinchLightMonochrome = require('assets/images/exchangeProviders/oneinchLightMonochrome.png');
+const uniswapDarkVertical = require('assets/images/exchangeProviders/uniswapDarkVertical.png');
+const uniswapDarkHorizontal = require('assets/images/exchangeProviders/uniswapDarkHorizontal.png');
+const uniswapDarkMonochrome = require('assets/images/exchangeProviders/uniswapDarkMonochrome.png');
+const oneinchDarkVertical = require('assets/images/exchangeProviders/oneinchDarkVertical.png');
+const oneinchDarkHorizontal = require('assets/images/exchangeProviders/oneinchDarkHorizontal.png');
+const oneinchDarkMonochrome = require('assets/images/exchangeProviders/oneinchDarkMonochrome.png');
+
 // patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
 const splashPatternTop = require('assets/images/patterns/splash_pattern_top.png');
@@ -54,7 +68,7 @@ function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
 }
 
-export const images = (theme: Theme) => {
+export const images = (theme?: Theme) => {
   const currentTheme = getThemeType(theme);
   return {
     towellie: getImageByTheme(currentTheme, {
@@ -118,6 +132,21 @@ export const images = (theme: Theme) => {
       darkTheme: splashPatternBottom,
     }),
   };
+};
+
+export const staticImages = {
+  uniswapLightVertical,
+  uniswapLightHorizontal,
+  uniswapLightMonochrome,
+  oneinchLightVertical,
+  oneinchLightHorizontal,
+  oneinchLightMonochrome,
+  uniswapDarkVertical,
+  uniswapDarkHorizontal,
+  uniswapDarkMonochrome,
+  oneinchDarkVertical,
+  oneinchDarkHorizontal,
+  oneinchDarkMonochrome,
 };
 
 export const isSvgImage = (uri: ?string) => {
