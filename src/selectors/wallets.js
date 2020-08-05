@@ -20,7 +20,7 @@
 import isEmpty from 'lodash.isempty';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { createSelector } from 'reselect';
-import { getAccountAddress, getAccountName, getInactiveUserAccounts } from 'utils/accounts';
+import { getAccountAddress, getAccountName, getInactiveUserAccounts, isNotKeyBasedType } from 'utils/accounts';
 import { images } from 'utils/images';
 import { getThemeByType } from 'utils/themes';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -61,7 +61,7 @@ export const availableWalletsSelector = createSelector(
 export const inactiveUserWalletForSendSelector = createSelector(
   accountsSelector, themeSelector, (accounts, themeType) => {
     return getInactiveUserAccounts(accounts)
-      .filter(({ type }) => type !== ACCOUNT_TYPES.KEY_BASED)
+      .filter(isNotKeyBasedType)
       .map(account => {
         const accountName = getAccountName(account.type);
         const theme = getThemeByType(themeType);
