@@ -58,7 +58,7 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 
 // types
 import type { Theme } from 'models/Theme';
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
