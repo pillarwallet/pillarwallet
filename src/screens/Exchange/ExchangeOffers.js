@@ -30,7 +30,6 @@ import { createStructuredSelector } from 'reselect';
 
 // actions
 import {
-  authorizeWithShapeshiftAction,
   setDismissTransactionAction,
   setExecutingTransactionAction,
   setTokenAllowanceAction,
@@ -43,7 +42,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import OfferCard from 'components/OfferCard/OfferCard';
 
 // constants
-import { EXCHANGE, PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 import { EXCHANGE_CONFIRM, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
@@ -53,7 +52,7 @@ import { calculateGasEstimate } from 'services/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Allowance, ExchangeProvider, Offer, ProvidersMeta } from 'models/Offer';
+import type { Allowance, Offer, ProvidersMeta } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
@@ -98,11 +97,9 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
   takeOffer: (Asset, Asset, number, string, string, () => void) => void,
-  authorizeWithShapeshift: () => void,
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
-  connectedProviders: ExchangeProvider[],
   providersMeta: ProvidersMeta,
   theme: Theme,
   showEmptyMessage: boolean,
@@ -124,7 +121,6 @@ type Props = {
 };
 
 type State = {
-  shapeshiftAuthPressed: boolean,
   pressedOfferId: string, // offer id will be passed to prevent double clicking
   pressedTokenAllowanceId: string,
   isEnableAssetModalVisible: boolean,
@@ -177,13 +173,9 @@ function getCardAdditionalButtonData(additionalData) {
     offer,
     minOrMaxNeeded,
     isBelowMin,
-    isShapeShift,
-    shapeshiftAccessToken,
     storedAllowance,
     allowanceSet,
-    shapeshiftAuthPressed,
     pressedTokenAllowanceId,
-    authoriseWithShapeShift,
     setFromAmount,
     onSetTokenAllowancePress,
   } = additionalData;
@@ -204,12 +196,6 @@ function getCardAdditionalButtonData(additionalData) {
       title: `${isBelowMin ? 'Min' : 'Max'} ${minOrMaxAmount} ${fromAssetCode}`,
       onPress: () => setFromAmount(isBelowMin ? minQuantity : maxQuantity),
     };
-  } else if (isShapeShift && !shapeshiftAccessToken) {
-    return {
-      title: 'Connect',
-      onPress: authoriseWithShapeShift,
-      disabled: shapeshiftAuthPressed,
-    };
   } else if (!allowanceSet) {
     return {
       title: storedAllowance ? 'Pending' : 'Allow this exchange',
@@ -224,7 +210,6 @@ function getCardAdditionalButtonData(additionalData) {
 class ExchangeOffers extends React.Component<Props, State> {
   state = {
     pressedOfferId: '',
-    shapeshiftAuthPressed: false,
     pressedTokenAllowanceId: '',
     isEnableAssetModalVisible: false,
     enableData: null,
@@ -243,14 +228,6 @@ class ExchangeOffers extends React.Component<Props, State> {
       fetchGasInfo();
     }
   }
-
-  onShapeshiftAuthPress = () => {
-    const { authorizeWithShapeshift } = this.props;
-    this.setState({ shapeshiftAuthPressed: true }, async () => {
-      await authorizeWithShapeshift();
-      this.setState({ shapeshiftAuthPressed: false });
-    });
-  };
 
   getSmartWalletTxFee = async (transaction): Promise<TransactionFeeInfo> => {
     const { useGasToken } = this.props;
@@ -437,12 +414,10 @@ class ExchangeOffers extends React.Component<Props, State> {
   renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
     const {
       pressedOfferId,
-      shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
     const {
       exchangeAllowances,
-      connectedProviders,
       providersMeta,
       theme,
       value: { fromInput },
@@ -475,15 +450,8 @@ class ExchangeOffers extends React.Component<Props, State> {
     const available = getAvailable(minQuantity, maxQuantity, askRate);
     const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
-    const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
     const providerLogo = getOfferProviderLogo(providersMeta, offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
-
-    let shapeshiftAccessToken;
-    if (isShapeShift) {
-      ({ extra: shapeshiftAccessToken } = connectedProviders
-        .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
-    }
 
     const amountToSell = parseFloat(selectedSellAmount);
     const minQuantityNumeric = parseFloat(minQuantity);
@@ -494,20 +462,15 @@ class ExchangeOffers extends React.Component<Props, State> {
     const minOrMaxNeeded = isBelowMin || isAboveMax;
     const isTakeButtonDisabled = !!minOrMaxNeeded
       || isTakeOfferPressed
-      || !allowanceSet
-      || (isShapeShift && !shapeshiftAccessToken);
+      || !allowanceSet;
 
     const additionalData = {
       offer,
       minOrMaxNeeded,
       isBelowMin,
-      isShapeShift,
-      shapeshiftAccessToken,
       allowanceSet,
       storedAllowance,
-      shapeshiftAuthPressed,
       pressedTokenAllowanceId,
-      authoriseWithShapeShift: this.onShapeshiftAuthPress,
       setFromAmount,
       onSetTokenAllowancePress: this.onSetTokenAllowancePress,
     };
@@ -603,7 +566,6 @@ const mapStateToProps = ({
     data: {
       offers,
       allowances: exchangeAllowances,
-      connectedProviders,
     },
     providersMeta,
     exchangeSupportedAssets,
@@ -615,7 +577,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   offers,
   exchangeAllowances,
-  connectedProviders,
   providersMeta,
   exchangeSupportedAssets,
   gasInfo,
@@ -636,7 +597,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
   setTokenAllowance: (fromAssetAddress, provider, callback) => dispatch(

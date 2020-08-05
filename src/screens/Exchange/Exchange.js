@@ -87,12 +87,10 @@ type Props = {
   user: Object,
   assets: Assets,
   searchOffers: (string, string, number) => void,
-  authorizeWithShapeshift: Function,
   balances: Balances,
   resetOffers: () => void,
   exchangeSearchRequest: ExchangeSearchRequest,
   exchangeAllowances: Allowance[],
-  connectedProviders: ExchangeProvider[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: () => void,
   oAuthAccessToken: ?string,
@@ -157,7 +155,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.listeners = [];
 
     this.state = {
-      shapeshiftAuthPressed: false,
       isSubmitted: false,
       showEmptyMessage: false,
       value: {
@@ -579,7 +576,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       balances,
       navigation,
       exchangeAllowances,
-      connectedProviders,
       hasUnreadExchangeNotification,
       markNotificationAsSeen,
       accounts,
@@ -597,7 +593,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const formStructure = generateFormStructure(balances);
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
-    if ((!isEmpty(exchangeAllowances) || !isEmpty(connectedProviders))
+    if ((!isEmpty(exchangeAllowances))
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
       rightItems.push({
         iconSource: settingsIcon,
@@ -682,7 +678,6 @@ const mapStateToProps = ({
     data: {
       searchRequest: exchangeSearchRequest,
       allowances: exchangeAllowances,
-      connectedProviders,
       hasNotification: hasUnreadExchangeNotification,
     },
     exchangeSupportedAssets,
@@ -696,7 +691,6 @@ const mapStateToProps = ({
   rates,
   exchangeSearchRequest,
   exchangeAllowances,
-  connectedProviders,
   hasUnreadExchangeNotification,
   oAuthAccessToken,
   accounts,

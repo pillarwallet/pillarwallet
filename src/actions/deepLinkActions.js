@@ -21,9 +21,6 @@ import { Alert } from 'react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 
-// actions
-import { requestShapeshiftAccessTokenAction } from 'actions/exchangeActions';
-
 import { requestSessionAction } from 'actions/walletConnectActions';
 import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
 
@@ -67,13 +64,6 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
           });
         } else {
           Alert.alert('Invalid link', 'Referral code is missing');
-        }
-        break;
-      case 'shapeshift':
-        const shapeshiftTokenHash = get(query, 'auth');
-        const authStatus = get(query, 'status');
-        if (authStatus && shapeshiftTokenHash) {
-          dispatch(requestShapeshiftAccessTokenAction(shapeshiftTokenHash));
         }
         break;
       case 'wc':

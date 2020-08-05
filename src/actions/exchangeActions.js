@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Linking } from 'react-native';
+
 import { toChecksumAddress } from '@netgum/utils';
 import uniq from 'lodash.uniq';
 
@@ -33,9 +33,6 @@ import {
   SET_DISMISS_TRANSACTION,
   ADD_EXCHANGE_ALLOWANCE,
   UPDATE_EXCHANGE_ALLOWANCE,
-  ADD_CONNECTED_EXCHANGE_PROVIDER,
-  REMOVE_CONNECTED_EXCHANGE_PROVIDER,
-  PROVIDER_SHAPESHIFT,
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
@@ -55,38 +52,17 @@ import {
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 
 // types
-import type { Dispatch, GetState, RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 
 // assets
-import SUPPORTED_ASSETS from 'assets/exchangeSupportedAssets/assets.json';
+import SUPPORTED_ASSETS from 'assets/exchange/assets.json';
 
 // actions
 import { saveDbAction } from './dbActions';
 
 
 const exchangeService = new ExchangeService();
-
-const connectExchangeService = (state: RootReducerState) => {
-  const {
-    oAuthTokens: { data: oAuthTokens },
-    exchange: { data: { connectedProviders } },
-  } = state;
-
-  const { extra: shapeshiftAccessToken } = connectedProviders
-    .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {};
-  // proceed with new instance only if one is not running and access token changed
-  if (exchangeService.connected()) {
-    const {
-      accessToken: existingAccessToken,
-      shapeshiftAccessToken: existingShapeshiftToken,
-    } = exchangeService.tokens || {};
-    if (existingAccessToken === oAuthTokens.accessToken
-      && existingShapeshiftToken === shapeshiftAccessToken) return;
-  }
-  // $FlowFixMe oAuthTokens can be null
-  exchangeService.connect(oAuthTokens.accessToken, shapeshiftAccessToken);
-};
 
 export const takeOfferAction = (
   fromAsset: Asset,
@@ -191,86 +167,6 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));
     dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, clientAddress));
-  };
-};
-
-export const authorizeWithShapeshiftAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    connectExchangeService(getState());
-    const shapeshiftAuthUrl = exchangeService.getShapeshiftAuthUrl();
-    return Linking.canOpenURL(shapeshiftAuthUrl)
-      .then((supported) => {
-        if (supported) Linking.openURL(shapeshiftAuthUrl);
-      })
-      .catch(() => {
-        Toast.show({
-          title: 'Shapeshift authorize failed',
-          type: 'warning',
-          message: 'Cannot get authorize url',
-        });
-      });
-  };
-};
-
-export const addConnectedExchangeProviderAction = (providerId: string, extra?: any) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { exchange: { data: { connectedProviders } } } = getState();
-    const provider = {
-      id: providerId,
-      dateConnected: +new Date(),
-      extra,
-    };
-    const updatedProviders = [
-      ...connectedProviders,
-      provider,
-    ];
-    dispatch({
-      type: ADD_CONNECTED_EXCHANGE_PROVIDER,
-      payload: provider,
-    });
-    Toast.show({
-      title: 'Success',
-      type: 'success',
-      message: 'You have connected ShapeShift',
-    });
-    dispatch(saveDbAction('exchangeProviders', {
-      connectedProviders: updatedProviders,
-    }, true));
-  };
-};
-
-export const disconnectExchangeProviderAction = (id: string) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { exchange: { data: { connectedProviders } } } = getState();
-    const updatedProviders = connectedProviders.filter(({ id: providerId }) => providerId !== id);
-    dispatch({
-      type: REMOVE_CONNECTED_EXCHANGE_PROVIDER,
-      payload: id,
-    });
-    Toast.show({
-      title: 'Success',
-      type: 'success',
-      message: 'You have disconnected ShapeShift',
-    });
-    dispatch(saveDbAction('exchangeProviders', {
-      connectedProviders: updatedProviders,
-    }, true));
-  };
-};
-
-export const requestShapeshiftAccessTokenAction = (tokenHash: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    connectExchangeService(getState());
-    const { token: shapeshiftAccessToken, error } = await exchangeService.getShapeshiftAccessToken(tokenHash) || {};
-    if (error || !shapeshiftAccessToken) {
-      Toast.show({
-        title: 'Shapeshift authorize failed',
-        type: 'warning',
-        message: 'Cannot get Shapeshift access token',
-      });
-      return;
-    }
-    dispatch(addConnectedExchangeProviderAction(PROVIDER_SHAPESHIFT, shapeshiftAccessToken));
   };
 };
 

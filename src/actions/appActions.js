@@ -163,9 +163,6 @@ export const initAppAndRedirectAction = () => {
       const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const { connectedProviders = [] } = get(storageData, 'exchangeProviders', {});
-      dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
-
       const { exchangeProvidersInfo = [] } = get(storageData, 'exchangeProvidersInfo', {});
       dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
 

@@ -34,17 +34,15 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
-import type { Offer, ExchangeSearchRequest, Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Offer, ExchangeSearchRequest, Allowance, ProvidersMeta } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 
 export type ExchangeReducerState = {
   data: {
     offers: Offer[],
-    shapeshiftAccessToken?: string,
     searchRequest?: ExchangeSearchRequest,
     executingTransaction: boolean,
     allowances: Allowance[],
-    connectedProviders: ExchangeProvider[],
     hasNotification: boolean,
   },
   providersMeta: ProvidersMeta,
@@ -62,7 +60,6 @@ export const initialState = {
     offers: [],
     executingTransaction: false,
     allowances: [],
-    connectedProviders: [],
     hasNotification: false,
   },
   providersMeta: [],
@@ -153,36 +150,6 @@ export default function exchangeReducer(
             action.payload,
           ],
           hasNotification: true,
-        },
-      };
-    case SET_CONNECTED_EXCHANGE_PROVIDERS:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          connectedProviders: action.payload,
-        },
-      };
-    case ADD_CONNECTED_EXCHANGE_PROVIDER:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          connectedProviders: [
-            ...state.data.connectedProviders,
-            action.payload,
-          ],
-          hasNotification: true,
-        },
-      };
-    case REMOVE_CONNECTED_EXCHANGE_PROVIDER:
-      return {
-        ...state,
-        data: {
-          ...state.data,
-          connectedProviders: [
-            ...state.data.connectedProviders.filter(({ id }) => id !== action.payload),
-          ],
         },
       };
     case MARK_NOTIFICATION_SEEN:

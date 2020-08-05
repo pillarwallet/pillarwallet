@@ -21,10 +21,9 @@
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { FlatList, RefreshControl } from 'react-native';
-import { EXCHANGE_URL, SDK_PROVIDER } from 'react-native-dotenv';
+import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { format as formatDate } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -42,15 +41,13 @@ import { EXCHANGE } from 'constants/navigationConstants';
 
 // actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import { disconnectExchangeProviderAction } from 'actions/exchangeActions';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 // models, types
 import type { Assets } from 'models/Asset';
-import type { Allowance, ExchangeProvider, ProvidersMeta } from 'models/Offer';
+import type { Allowance, ProvidersMeta } from 'models/Offer';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
@@ -62,8 +59,6 @@ type Props = {
   assets: Assets,
   exchangeAllowances: Allowance[],
   fetchTransactionsHistory: Function,
-  disconnectExchangeProvider: Function,
-  connectedProviders: ExchangeProvider[],
   providersMeta: ProvidersMeta
 };
 
@@ -95,16 +90,6 @@ const ProviderStatus = styled(BaseText)`
   color: ${({ isPending, theme }) => isPending ? theme.colors.secondaryText : theme.colors.positive};
 `;
 
-const DisconnectButton = styled.TouchableOpacity`
-  padding: 10px;
-  margin-right: -10px;
-`;
-
-const DisconnectButtonLabel = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.negative};
-`;
-
 
 class ExchangeInfo extends React.Component<Props, State> {
   state = {
@@ -112,11 +97,10 @@ class ExchangeInfo extends React.Component<Props, State> {
   };
 
   componentDidUpdate(prevProps: Props) {
-    const { navigation, exchangeAllowances, connectedProviders } = this.props;
+    const { navigation, exchangeAllowances } = this.props;
     // Navigating from empty settings screen automatically
-    if ((prevProps.exchangeAllowances !== exchangeAllowances || prevProps.connectedProviders !== connectedProviders)
-      && isEmpty(exchangeAllowances)
-      && isEmpty(connectedProviders)) {
+    if ((prevProps.exchangeAllowances !== exchangeAllowances)
+      && isEmpty(exchangeAllowances)) {
       navigation.navigate(EXCHANGE);
     }
   }
@@ -181,37 +165,11 @@ class ExchangeInfo extends React.Component<Props, State> {
     );
   };
 
-  renderExchangeProvider = ({ item: provider }: Object) => {
-    const { disconnectExchangeProvider, providersMeta } = this.props;
-    const { dateConnected, id: exchangeProviderId } = provider;
-    const dateToShow = formatDate(new Date(dateConnected), 'MM.DD.YY');
-    const providerInfo = providersMeta.find(({ shim }) => shim === exchangeProviderId) || {};
-
-    const { logo_large: providerLogoPath, name: providerName } = providerInfo;
-    const providerLogoUri = providerLogoPath ? `${EXCHANGE_URL}/v2.0${providerLogoPath}` : '';
-
-    return (
-      <ListItemWithImage
-        label={providerName}
-        itemImageUrl={providerLogoUri}
-        fallbackToGenericToken
-        imageDiameter={48}
-        subtext={`Connected ${dateToShow}`}
-        customAddon={(
-          <DisconnectButton onPress={() => disconnectExchangeProvider(exchangeProviderId)}>
-            <DisconnectButtonLabel>Disconnect</DisconnectButtonLabel>
-          </DisconnectButton>
-        )}
-      />
-    );
-  };
-
   render() {
     const {
       assets,
       exchangeAllowances,
       fetchTransactionsHistory,
-      connectedProviders,
     } = this.props;
     const assetsArray = Object.keys(assets)
       .map(id => assets[id])
@@ -227,18 +185,6 @@ class ExchangeInfo extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper>
-          {!isEmpty(connectedProviders) &&
-          <React.Fragment>
-            <SectionTitle>Connected exchanges:</SectionTitle>
-            <FlatList
-              data={connectedProviders}
-              keyExtractor={(item) => item.id}
-              renderItem={this.renderExchangeProvider}
-              initialNumToRender={8}
-              onEndReachedThreshold={0.5}
-              style={{ width: '100%' }}
-            />
-          </React.Fragment>}
           {!isEmpty(assetsArray) &&
             <React.Fragment>
               <SectionTitle>Enabled exchange assets:</SectionTitle>
@@ -266,10 +212,9 @@ class ExchangeInfo extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  exchange: { data: { allowances: exchangeAllowances, connectedProviders }, providersMeta },
+  exchange: { data: { allowances: exchangeAllowances }, providersMeta },
 }: RootReducerState): $Shape<Props> => ({
   exchangeAllowances,
-  connectedProviders,
   providersMeta,
 });
 
@@ -284,9 +229,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
-  disconnectExchangeProvider: (id: string) => dispatch(
-    disconnectExchangeProviderAction(id),
-  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeInfo);

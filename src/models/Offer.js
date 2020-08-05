@@ -97,12 +97,6 @@ type ProviderMeta = {
   name: string,
   url: string,
   description: string,
-  icon_small: string,
-  icon_medium: string,
-  icon_large: string,
-  logo_small: string,
-  logo_medium: string,
-  logo_large: string,
 }
 
 export type ProvidersMeta = ProviderMeta[];
