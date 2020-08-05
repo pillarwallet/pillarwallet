@@ -47,11 +47,14 @@ import { fontStyles, spacing } from 'utils/variables';
 
 // models, types
 import type { Assets } from 'models/Asset';
-import type { Allowance, ProvidersMeta } from 'models/Offer';
+import type { Allowance } from 'models/Offer';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
+
+// assets
+import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 
 
 type Props = {
@@ -59,7 +62,6 @@ type Props = {
   assets: Assets,
   exchangeAllowances: Allowance[],
   fetchTransactionsHistory: Function,
-  providersMeta: ProvidersMeta
 };
 
 type State = {
@@ -115,8 +117,7 @@ class ExchangeInfo extends React.Component<Props, State> {
   };
 
   renderProvider = ({ item: { provider, enabled: providerEnabled } }: Object) => {
-    const { providersMeta } = this.props;
-    const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+    const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider) || {};
     const { name } = providerInfo;
     const providerName = name || 'Unknown';
     return (
@@ -212,10 +213,9 @@ class ExchangeInfo extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  exchange: { data: { allowances: exchangeAllowances }, providersMeta },
+  exchange: { data: { allowances: exchangeAllowances } },
 }: RootReducerState): $Shape<Props> => ({
   exchangeAllowances,
-  providersMeta,
 });
 
 const structuredSelector = createStructuredSelector({

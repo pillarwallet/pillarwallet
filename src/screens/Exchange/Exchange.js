@@ -41,7 +41,6 @@ import {
   searchOffersAction,
   resetOffersAction,
   markNotificationAsSeenAction,
-  getMetaDataAction,
   getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
@@ -64,7 +63,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
-import type { ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
+import type { ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -96,7 +95,6 @@ type Props = {
   oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
-  getMetaData: () => void,
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
   getExchangeSupportedAssets: () => void,
@@ -212,11 +210,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       exchangeSearchRequest = {},
       navigation,
-      getMetaData,
       getExchangeSupportedAssets,
     } = this.props;
     this._isMounted = true;
-    getMetaData();
     getExchangeSupportedAssets();
 
     const defaultFrom = ETH;
@@ -717,7 +713,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   resetOffers: () => dispatch(resetOffersAction()),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
-  getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });

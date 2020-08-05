@@ -34,7 +34,6 @@ import {
   ADD_EXCHANGE_ALLOWANCE,
   UPDATE_EXCHANGE_ALLOWANCE,
   MARK_NOTIFICATION_SEEN,
-  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
@@ -45,7 +44,6 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { getSmartWalletAddress } from 'utils/accounts';
 
 // services
-import ExchangeService from 'services/exchange';
 import {
   getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
 } from 'services/uniswap';
@@ -61,8 +59,6 @@ import SUPPORTED_ASSETS from 'assets/exchange/assets.json';
 // actions
 import { saveDbAction } from './dbActions';
 
-
-const exchangeService = new ExchangeService();
 
 export const takeOfferAction = (
   fromAsset: Asset,
@@ -316,18 +312,6 @@ export const markNotificationAsSeenAction = () => {
     dispatch({
       type: MARK_NOTIFICATION_SEEN,
     });
-  };
-};
-
-// TODO handle metadata locally
-export const getMetaDataAction = () => {
-  return async (dispatch: Dispatch) => {
-    const metaData = await exchangeService.getMetaData();
-    dispatch({
-      type: SET_EXCHANGE_PROVIDERS_METADATA,
-      payload: metaData,
-    });
-    dispatch(saveDbAction('exchangeProvidersInfo', { exchangeProvidersInfo: metaData }, true));
   };
 };
 

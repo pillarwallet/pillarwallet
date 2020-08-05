@@ -28,7 +28,7 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
 
-export const getOfferProviderLogo = (provider: string, theme: Theme, type: string) => {
+export const getOfferProviderLogo = (provider?: string, theme: Theme, type: string) => {
   if (!provider) return '';
   const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider);
   const themeName = getThemeName(theme);

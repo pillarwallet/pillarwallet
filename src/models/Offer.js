@@ -84,27 +84,3 @@ export type Allowance = {
   transactionHash: string,
   enabled?: boolean,
 }
-
-export type ExchangeProvider = {
-  id: string,
-  dateConnected: Date,
-  extra?: any,
-}
-
-type ProviderThemedImages = {
-  light: string,
-  dark: string,
-}
-
-type ProviderMeta = {
-  _id: string,
-  shim: string,
-  name: string,
-  img: {
-    vertical: ProviderThemedImages,
-    horizontal: ProviderThemedImages,
-    monochrome: ProviderThemedImages,
-  },
-}
-
-export type ProvidersMeta = ProviderMeta[];

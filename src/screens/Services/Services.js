@@ -34,9 +34,6 @@ import {
   SENDWYRE_RETURN_URL,
 } from 'react-native-dotenv';
 
-// actions
-import { getMetaDataAction } from 'actions/exchangeActions';
-
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -61,12 +58,14 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 
 // types
 import type { Theme } from 'models/Theme';
-import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+
+// assets
+import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -78,7 +77,6 @@ let isRampEnabled = true;
 
 type Props = {
   theme: Theme,
-  providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
@@ -98,11 +96,6 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { getMetaData, providersMeta } = this.props;
-    if (!Array.isArray(providersMeta) || !providersMeta?.length) {
-      getMetaData();
-    }
-
     /**
      * Retrieve boolean flags for services from Remote Config.
      */
@@ -118,13 +111,12 @@ class ServicesScreen extends React.Component<Props, State> {
     const {
       navigation,
       theme,
-      providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
-    const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
-      label: `${providersMeta.length} exchanges`,
+    const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
+      label: `${PROVIDERS_META.length} exchanges`,
       color: colors.primary,
     } : null;
 
@@ -306,12 +298,10 @@ class ServicesScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  exchange: { providersMeta },
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
 }: RootReducerState): $Shape<Props> => ({
-  providersMeta,
   user,
   accounts,
   smartWalletState,
@@ -327,8 +317,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  getMetaData: () => dispatch(getMetaDataAction()),
-});
-
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default withTheme(connect(combinedMapStateToProps)(ServicesScreen));
