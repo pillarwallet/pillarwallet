@@ -31,6 +31,9 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // actions
 import { saveDbAction } from 'actions/dbActions';
 
+// utils
+import { isNotKeyBasedType } from 'utils/accounts';
+
 // types
 import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -110,7 +113,7 @@ export const getWalletsCreationEventsAction = () => {
     if (!userAccounts.length) return;
 
     const walletCreatedEventsPromises = userAccounts
-      .filter((acc) => acc.type !== ACCOUNT_TYPES.KEY_BASED)
+      .filter(isNotKeyBasedType)
       .map((acc) => dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000)));
 
     await Promise.all(walletCreatedEventsPromises);

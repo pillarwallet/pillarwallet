@@ -21,7 +21,6 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
-import remoteConfig from '@react-native-firebase/remote-config';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
@@ -44,6 +43,7 @@ import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAcco
 
 // constants
 import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -59,6 +59,9 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // types
 import type { Theme } from 'models/Theme';
 import type { ProvidersMeta } from 'models/Offer';
@@ -67,6 +70,7 @@ import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -106,12 +110,12 @@ class ServicesScreen extends React.Component<Props, State> {
     /**
      * Retrieve boolean flags for services from Remote Config.
      */
-    isOffersEngineEnabled = remoteConfig().getBoolean('feature_services_offers_engine');
-    isAaveEnabled = remoteConfig().getBoolean('feature_services_aave');
-    isPoolTogetherEnabled = remoteConfig().getBoolean('feature_services_pool_together');
-    isPeerToPeerEnabled = remoteConfig().getBoolean('feature_services_peer_to_peer');
-    isWyreEnabled = remoteConfig().getBoolean('feature_services_wyre');
-    isRampEnabled = remoteConfig().getBoolean('feature_services_ramp');
+    isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.OFFERS_ENGINE);
+    isAaveEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.AAVE);
+    isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.POOL_TOGETHER);
+    isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.PEER_TO_PEER);
+    isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
+    isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
   }
 
   getServices = () => {
