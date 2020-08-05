@@ -48,7 +48,7 @@ const provider = getEthereumProvider(NETWORK_PROVIDER);
 const abiCoder = require('web3-eth-abi');
 
 const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, fromAsset: Asset) => {
-  let allowanceSet = false;
+  let allowanceSet = true;
   if (fromAsset.code !== 'ETH') {
     const assetContract = new ethers.Contract(safeFromAddress, ERC20_CONTRACT_ABI, provider);
     const allowance: BigNumber = await assetContract.allowance(clientAddress, EXCHANGE_ADDRESS);

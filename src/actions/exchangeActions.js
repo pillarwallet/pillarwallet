@@ -53,9 +53,6 @@ import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupp
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 
-// assets
-import SUPPORTED_ASSETS from 'assets/exchange/assets.json';
-
 // actions
 import { saveDbAction } from './dbActions';
 
@@ -326,14 +323,13 @@ export const getExchangeSupportedAssetsAction = () => {
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
-    let fetchedAssetsSymbols: string[] = uniq(assetsSymbols[0].concat(assetsSymbols[1]));
+    const fetchSuccess = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
 
-    // fallback in case assets fail to fetch
-    if (!fetchedAssetsSymbols.length) {
-      fetchedAssetsSymbols = SUPPORTED_ASSETS.map(a => a.symbol);
-    }
+    const fetchedAssetsSymbols: string[] = fetchSuccess ? uniq(assetsSymbols[0].concat(assetsSymbols[1])) : [];
 
-    const exchangeSupportedAssets = supportedAssets.filter(({ symbol }) => fetchedAssetsSymbols.includes(symbol));
+    const exchangeSupportedAssets = fetchSuccess
+      ? supportedAssets.filter(({ symbol }) => fetchedAssetsSymbols.includes(symbol))
+      : [];
 
     dispatch({
       type: SET_EXCHANGE_SUPPORTED_ASSETS,
