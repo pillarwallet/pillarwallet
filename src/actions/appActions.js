@@ -42,9 +42,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
   SET_EXCHANGE_ALLOWANCES,
-  SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
