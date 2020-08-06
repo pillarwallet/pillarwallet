@@ -68,6 +68,7 @@ import { buildTxFeeInfo, userHasSmartWallet } from 'utils/smartWallet';
 import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
 import { getAccountName } from 'utils/accounts';
+import { isProdEnv } from 'utils/environment';
 
 // services
 import { calculateGasEstimate } from 'services/assets';
@@ -248,8 +249,8 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
     const isConvertedTx = isWethConvertedTx(fromAssetSymbol, contractAddress);
 
-    // for WETH converted txs, we need to provide ETH data or else estimation is always 0$
-    const contractAddressForEstimation = isConvertedTx
+    // for WETH converted txs on homestead, we need to provide ETH data or else estimation is always 0$
+    const contractAddressForEstimation = isProdEnv && isConvertedTx
       ? '0x0000000000000000000000000000000000000000'
       : contractAddress;
 
