@@ -20,12 +20,14 @@
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
 import { EXCHANGE_URL } from 'react-native-dotenv';
+import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
 import type { ProvidersMeta, Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
 import { getThemeName } from './themes';
+import { chainId } from './uniswap';
 
 export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: string, theme: Theme, type: string) => {
   if (!provider) return '';
@@ -76,4 +78,8 @@ export const parseOffer = (
     description: '',
     provider,
   };
+};
+
+export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
+  return fromAssetSymbol === 'ETH' && contractAddress === WETH[chainId].address;
 };

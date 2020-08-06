@@ -65,7 +65,7 @@ import {
   getBalance,
 } from 'utils/assets';
 import { buildTxFeeInfo, userHasSmartWallet } from 'utils/smartWallet';
-import { getOfferProviderLogo } from 'utils/exchange';
+import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
 import { getAccountName } from 'utils/accounts';
 
@@ -242,12 +242,20 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       to: recipient,
       contractAddress,
       data,
+      symbol: fromAssetSymbol,
     } = this.transactionPayload;
     const value = Number(amount || 0);
 
+    const isConvertedTx = isWethConvertedTx(fromAssetSymbol, contractAddress);
+
+    // for WETH converted txs, we need to provide ETH data or else estimation is always 0$
+    const contractAddressForEstimation = isConvertedTx
+      ? '0x0000000000000000000000000000000000000000'
+      : contractAddress;
+
     const { symbol, decimals } =
-      getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddress);
-    const assetData = { contractAddress, token: symbol, decimals };
+      getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddressForEstimation);
+    const assetData = { contractAddress: contractAddressForEstimation, token: symbol, decimals };
 
     let transaction = { recipient, value };
     if (data) transaction = { ...transaction, data };
