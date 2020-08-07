@@ -19,8 +19,8 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
-import { EXCHANGE_URL } from 'react-native-dotenv';
 import get from 'lodash.get';
+import { getEnv } from 'configs/envConfig';
 import type { ProvidersMeta } from 'models/Offer';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
@@ -32,7 +32,7 @@ export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: st
   const themeName = getThemeName(theme);
   if (providerInfo) {
     const providerIconPath = get(providerInfo, `img.${type}.${themeName}`, '');
-    return { uri: `${EXCHANGE_URL}/v2.0${providerIconPath}` };
+    return { uri: `${getEnv('EXCHANGE_URL')}/v2.0${providerIconPath}` };
   }
   return '';
 };

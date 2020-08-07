@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
@@ -452,7 +452,7 @@ export const approveSessionAction = (peerId: string) => {
       const smartAccAddress = getAccountAddress(account);
       await connector.approveSession({
         accounts: [smartAccAddress],
-        chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
+        chainId: getEnv('NETWORK_PROVIDER') === 'ropsten' ? 3 : 1,
       });
     } catch (e) {
       dispatch(walletConnectError(SESSION_APPROVAL_ERROR, e.toString()));

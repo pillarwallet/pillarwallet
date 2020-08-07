@@ -14361,6 +14361,11 @@ react-native-randombytes@^3.0.0:
     buffer "^4.9.1"
     sjcl "^1.0.3"
 
+react-native-restart@^0.0.17:
+  version "0.0.17"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-restart/-/react-native-restart-0.0.17.tgz#c1f38e019d1a2114248d496698e7951e9435ba91"
+  integrity sha1-wfOOAZ0aIRQkjUlmmOeVHpQ1upE=
+
 react-native-safe-area-context@^0.4.1:
   version "0.4.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/react-native-safe-area-context/-/react-native-safe-area-context-0.4.1.tgz#2a6d5cf046d94f1f9dbe4249cb44517135764aed"

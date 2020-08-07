@@ -24,8 +24,8 @@ import t from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import isEmpty from 'lodash.isempty';
+import { getEnv } from 'configs/envConfig';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -187,7 +187,7 @@ class FundTank extends React.Component<Props, State> {
     } = this.props;
 
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=2` : '';
+    const icon = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance

@@ -25,13 +25,8 @@ import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import querystring from 'querystring';
-import {
-  RAMPNETWORK_WIDGET_URL,
-  RAMPNETWORK_API_KEY,
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
-} from 'react-native-dotenv';
+import { RAMPNETWORK_API_KEY } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
@@ -198,7 +193,7 @@ class ServicesScreen extends React.Component<Props, State> {
               ...(email === null ? {} : { userEmailAddress: email }),
             };
 
-            return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
+            return `${getEnv('RAMPNETWORK_WIDGET_URL')}?${querystring.stringify(params)}`;
           });
         },
       });
@@ -210,10 +205,10 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Wyre (Non-EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(address => `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
-            accountId: SENDWYRE_ACCOUNT_ID,
+          this.handleBuyCryptoAction(address => `${getEnv('SENDWYRE_WIDGET_URL')}?${querystring.stringify({
+            accountId: getEnv('SENDWYRE_ACCOUNT_ID'),
             dest: `ethereum:${address}`,
-            redirectUrl: SENDWYRE_RETURN_URL,
+            redirectUrl: getEnv('SENDWYRE_RETURN_URL'),
           })}`);
         },
       });

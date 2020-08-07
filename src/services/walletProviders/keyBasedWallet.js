@@ -1,7 +1,7 @@
 // @flow
 
 import { ethers } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 import { ETH } from 'constants/assetsConstants';
 import type { Account } from 'models/Account';
@@ -24,7 +24,7 @@ export default class KeyBasedWalletProvider {
   wallet: Object;
 
   constructor(privateKey: string) {
-    const provider = getEthereumProvider(NETWORK_PROVIDER);
+    const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
     this.wallet = new ethers.Wallet(privateKey, provider);
   }
 

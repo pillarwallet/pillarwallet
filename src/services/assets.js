@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
-import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from 'react-native-dotenv';
 import cryptocompare from 'cryptocompare';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
@@ -108,7 +108,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   } = options;
   let { data, to } = options;
 
-  const wallet = walletInstance.connect(getEthereumProvider(NETWORK_PROVIDER));
+  const wallet = walletInstance.connect(getEthereumProvider(getEnv('NETWORK_PROVIDER')));
   const contractAmount = parseTokenBigNumberAmount(amount, defaultDecimals);
 
   if (!data) {
@@ -219,7 +219,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
     signOnly = false,
   } = options;
 
-  const wallet = walletInstance.connect(getEthereumProvider(COLLECTIBLES_NETWORK));
+  const wallet = walletInstance.connect(getEthereumProvider(getEnv('COLLECTIBLES_NETWORK')));
   const data = await buildERC721TransactionData(options, wallet.provider);
 
   if (data) {
@@ -237,7 +237,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
   }
 
   reportLog('Could not transfer collectible', {
-    networkProvider: COLLECTIBLES_NETWORK,
+    networkProvider: getEnv('COLLECTIBLES_NETWORK'),
     contractAddress,
     tokenId,
   });
@@ -264,7 +264,7 @@ export async function transferETH(options: ETHTransferOptions) {
     nonce,
     data,
   };
-  const wallet = walletInstance.connect(getEthereumProvider(NETWORK_PROVIDER));
+  const wallet = walletInstance.connect(getEthereumProvider(getEnv('NETWORK_PROVIDER')));
   if (!signOnly) return wallet.sendTransaction(trx);
   const signedHash = await wallet.signTransaction(trx);
   return { signedHash, value };
@@ -273,7 +273,7 @@ export async function transferETH(options: ETHTransferOptions) {
 // Fetch methods are temporary until the BCX API provided
 
 export function fetchETHBalance(walletAddress: Address): Promise<string> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
   return provider.getBalance(walletAddress).then(utils.formatEther);
 }
 
@@ -287,7 +287,7 @@ export function fetchERC20Balance(
   contractAddress: Address,
   decimals: number = 18,
 ): Promise<string> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
   const contract = new Contract(contractAddress, ERC20_CONTRACT_ABI, provider);
   return contract.balanceOf(walletAddress).then((wei) => utils.formatUnits(wei, decimals));
 }
@@ -312,11 +312,11 @@ export async function fetchAddressBalancesFromProxyContract(
   assets: Asset[],
   accountAddress: string,
 ): Promise<FetchBalancesResponse> {
-  if (!['homestead', 'ropsten'].includes(NETWORK_PROVIDER)) return [];
+  if (!['homestead', 'ropsten'].includes(getEnv('NETWORK_PROVIDER'))) return [];
 
   const tokens = assets.map(({ address }) => address);
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
-  const contract = new Contract(BALANCE_CHECK_CONTRACT, BALANCE_CHECKER_CONTRACT_ABI, provider);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
+  const contract = new Contract(getEnv('BALANCE_CHECK_CONTRACT'), BALANCE_CHECKER_CONTRACT_ABI, provider);
 
   const balances = await contract.balances([accountAddress], tokens)
     .then(values =>
@@ -353,28 +353,28 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
 
 // from the getTransaction() method you'll get the the basic tx info without the status
 export function fetchTransactionInfo(hash: string, network?: string): Promise<?Object> {
-  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
+  const provider = getEthereumProvider(network || getEnv('NETWORK_PROVIDER'));
   return provider.getTransaction(hash).catch(() => null);
 }
 
 // receipt available for mined transactions only, here you can get the status of the tx
 export function fetchTransactionReceipt(hash: string, network?: string): Promise<?Object> {
-  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
+  const provider = getEthereumProvider(network || getEnv('NETWORK_PROVIDER'));
   return provider.getTransactionReceipt(hash).catch(() => null);
 }
 
 export function fetchLastBlockNumber(network?: string): Promise<number> {
-  const provider = getEthereumProvider(network || NETWORK_PROVIDER);
+  const provider = getEthereumProvider(network || getEnv('NETWORK_PROVIDER'));
   return provider.getBlockNumber().then(parseInt).catch(() => 0);
 }
 
 export function transferSigned(signed: ?string) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
   return provider.sendTransaction(signed);
 }
 
 export function waitForTransaction(hash: string) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
   return provider.waitForTransaction(hash);
 }
 
@@ -390,7 +390,7 @@ export async function calculateGasEstimate(transaction: Object) {
     tokenId,
   } = transaction;
   let { to, data } = transaction;
-  const provider = getEthereumProvider(tokenId ? COLLECTIBLES_NETWORK : NETWORK_PROVIDER);
+  const provider = getEthereumProvider(tokenId ? getEnv('COLLECTIBLES_NETWORK') : getEnv('NETWORK_PROVIDER'));
   const value = symbol === ETH
     ? utils.parseEther(amount.toString())
     : '';
@@ -428,7 +428,7 @@ export const getContract = (
   address: string,
   abi: string,
   // for wallet calls set wallet provider, for general purpose use default
-  provider: Object = getEthereumProvider(NETWORK_PROVIDER),
+  provider: Object = getEthereumProvider(getEnv('NETWORK_PROVIDER')),
 ) => {
   try {
     return new Contract(address, abi, provider);

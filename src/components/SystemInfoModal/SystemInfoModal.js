@@ -17,21 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import {
-  BUILD_NUMBER,
-  SDK_PROVIDER,
-  TX_DETAILS_URL,
-  NETWORK_PROVIDER,
-  NOTIFICATIONS_URL,
-  COLLECTIBLES_NETWORK,
-  OPEN_SEA_API,
-} from 'react-native-dotenv';
+import React, { useState } from 'react';
+import { BUILD_NUMBER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { environmentVars, switchEnvironments } from 'configs/envConfig';
 
 const LabeledRow = styled.View`
   margin: 6px 0;
@@ -47,8 +40,25 @@ const Value = styled(MediumText)`
   ${fontStyles.big};
 `;
 
-
 const SystemInfoModal = () => {
+  const [clickCount, setClickCount] = useState(0);
+
+  const handleClick = () => {
+    const newCount = clickCount + 1;
+    setClickCount(newCount);
+    if (newCount === 9) { // on the 9th click switch network and reset.
+      switchEnvironments();
+    }
+  };
+
+  const {
+    SDK_PROVIDER,
+    TX_DETAILS_URL,
+    NETWORK_PROVIDER,
+    NOTIFICATIONS_URL,
+    COLLECTIBLES_NETWORK,
+    OPEN_SEA_API,
+  } = environmentVars();
   return (
     <Wrapper regularPadding>
       <LabeledRow>
@@ -65,7 +75,7 @@ const SystemInfoModal = () => {
       </LabeledRow>
       <LabeledRow>
         <Label>NETWORK_PROVIDER</Label>
-        <Value>{NETWORK_PROVIDER}</Value>
+        <Value onPress={() => { handleClick(); }}>{NETWORK_PROVIDER}</Value>
       </LabeledRow>
       <LabeledRow>
         <Label>COLLECTIBLES_NETWORK</Label>

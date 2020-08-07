@@ -22,14 +22,10 @@ import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import { Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
 import {
-  SDK_PROVIDER,
-  NETWORK_PROVIDER,
-  NOTIFICATIONS_URL,
-  INVESTMENTS_URL,
-  OPEN_SEA_API,
   OPEN_SEA_API_KEY,
   ETHPLORER_API_KEY,
 } from 'react-native-dotenv';
+import { environmentVars, getEnv } from 'configs/envConfig';
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 import { GasPriceOracle } from 'gas-price-oracle';
@@ -113,6 +109,11 @@ class SDKWrapper {
     onOAuthTokensFailed?: ?Function,
   ) {
     this.gasOracle = new GasPriceOracle();
+    const {
+      SDK_PROVIDER,
+      NOTIFICATIONS_URL,
+      INVESTMENTS_URL,
+    } = environmentVars();
     this.pillarWalletSdk = new PillarSdk({
       apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
       notificationsUrl: NOTIFICATIONS_URL,
@@ -440,7 +441,7 @@ class SDKWrapper {
 
   fetchCollectibles(walletAddress: string) {
     if (!walletAddress) return Promise.resolve({ assets: [] });
-    const url = `${OPEN_SEA_API}/assets/?owner=${walletAddress}` +
+    const url = `${getEnv('OPEN_SEA_API')}/assets/?owner=${walletAddress}` +
       '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
     return new Promise((resolve, reject) => {
       getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
@@ -450,7 +451,8 @@ class SDKWrapper {
   }
 
   fetchCollectiblesTransactionHistory(walletAddress: string) {
-    const url = `${OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+    const url =
+      `${getEnv('OPEN_SEA_API')}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
     return Promise.resolve()
       .then(() => axios.get(url, {
         ...defaultAxiosRequestConfig,
@@ -673,7 +675,7 @@ class SDKWrapper {
   }
 
   importedEthTransactionHistory(walletAddress: string) {
-    if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+    if (getEnv('NETWORK_PROVIDER') !== 'homestead') return Promise.resolve([]);
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
       .then(data => Array.isArray(data) ? data : [])
@@ -682,7 +684,7 @@ class SDKWrapper {
   }
 
   importedErc20TransactionHistory(walletAddress: string) {
-    if (NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
+    if (getEnv('NETWORK_PROVIDER') !== 'homestead') return Promise.resolve([]);
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressHistory(walletAddress, { limit: 40 }))
       .then(data => get(data, 'operations', []))
@@ -691,8 +693,8 @@ class SDKWrapper {
   }
 
   getAddressErc20TokensInfo(walletAddress: string) {
-    if (NETWORK_PROVIDER !== 'homestead') {
-      const url = `https://blockchainparser.appspot.com/${NETWORK_PROVIDER}/${walletAddress}/`;
+    if (getEnv('NETWORK_PROVIDER') !== 'homestead') {
+      const url = `https://blockchainparser.appspot.com/${getEnv('NETWORK_PROVIDER')}/${walletAddress}/`;
       return Promise.resolve()
         .then(() => axios.get(url, defaultAxiosRequestConfig))
         .then(({ data }: AxiosResponse) => data)

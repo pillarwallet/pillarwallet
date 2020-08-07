@@ -20,18 +20,10 @@
 import { Contract, utils } from 'ethers';
 import axios from 'axios';
 import isEmpty from 'lodash.isempty';
-import {
-  NETWORK_PROVIDER,
-  POOL_DAI_CONTRACT_ADDRESS,
-  POOL_USDC_CONTRACT_ADDRESS,
-  DAI_ADDRESS,
-  USDC_ADDRESS,
-  POOLTOGETHER_GRAPH_ID,
-  THE_GRAPH_API_URL,
-} from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
 import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
+import { getEnv } from 'configs/envConfig';
 
 import { DAI } from 'constants/assetsConstants';
 import {
@@ -52,18 +44,22 @@ import USDC_ABI from 'abi/USDC.json';
 import smartWalletService from './smartWallet';
 import { encodeContractMethod } from './assets';
 
-const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
 const DAI_DECIMALS = 18;
 const USDC_DECIMALS = 6;
 
+const getPoolNetwork = () => {
+  return getEnv('NETWORK_PROVIDER') === 'ropsten' ? 'kovan' : getEnv('NETWORK_PROVIDER');
+};
+
 const getPoolTogetherTokenContract = (symbol: string) => {
-  const poolContractAddress = symbol === DAI ? POOL_DAI_CONTRACT_ADDRESS : POOL_USDC_CONTRACT_ADDRESS;
+  const poolContractAddress =
+    symbol === DAI ? getEnv('POOL_DAI_CONTRACT_ADDRESS') : getEnv('POOL_USDC_CONTRACT_ADDRESS');
   const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
   const unitType = symbol === DAI ? DAI_DECIMALS : USDC_DECIMALS;
-  const provider = getEthereumProvider(POOL_TOGETHER_NETWORK);
+  const provider = getEthereumProvider(getPoolNetwork());
   const poolContract = new Contract(poolContractAddress, poolAbi, provider);
 
-  const tokenContractAddress = symbol === DAI ? DAI_ADDRESS : USDC_ADDRESS;
+  const tokenContractAddress = symbol === DAI ? getEnv('DAI_ADDRESS') : getEnv('USDC_ADDRESS');
   const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
   const tokenContract = new Contract(tokenContractAddress, tokenABI, provider);
 
@@ -81,14 +77,14 @@ const getPoolTogetherTokenContract = (symbol: string) => {
 };
 
 const getGraphUrl = (graphId: string): string => {
-  return `${THE_GRAPH_API_URL}/${graphId}`;
+  return `${getEnv('THE_GRAPH_API_URL')}/${graphId}`;
 };
 
 const fetchPoolTogetherGraph = async (
   contractAddress: string,
   accountAddress: string,
   openDrawId: string): Promise<Object> => {
-  const url = getGraphUrl(POOLTOGETHER_GRAPH_ID);
+  const url = getGraphUrl(getEnv('POOLTOGETHER_GRAPH_ID'));
   return axios
     .post(url, {
       timeout: 5000,
@@ -126,7 +122,7 @@ const fetchPoolTogetherGraph = async (
 };
 
 const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress: string): Promise<Object> => {
-  const url = getGraphUrl(POOLTOGETHER_GRAPH_ID);
+  const url = getGraphUrl(getEnv('POOLTOGETHER_GRAPH_ID'));
   const poolAddress = contractAddress.toLowerCase();
   const sender = accountAddress.toLowerCase();
   return axios
@@ -297,7 +293,7 @@ export const getSmartWalletTxFee = async (transaction: Object, useGasToken: bool
     value: transaction.amount,
   };
 
-  const estimated = await smartWalletService
+  const estimated = await smartWalletService()
     .estimateAccountTransaction(estimateTransaction)
     .then(result => buildTxFeeInfo(result, useGasToken))
     .catch((e) => {

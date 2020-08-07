@@ -23,8 +23,8 @@ import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import debounce from 'lodash.debounce';
+import { getEnv } from 'configs/envConfig';
 import { formatAmount, formatFiat } from 'utils/common';
 import t from 'tcomb-form-native';
 import { createStructuredSelector } from 'reselect';
@@ -433,7 +433,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       .map(({ symbol, iconUrl, ...rest }) => {
         const assetBalance = formatAmount(getBalance(balances, symbol));
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-        const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const imageUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
 
         return ({
           key: symbol,
@@ -465,7 +465,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         const rawAssetBalance = getBalance(balances, symbol);
         const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-        const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const imageUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
 
         return {
           key: symbol,

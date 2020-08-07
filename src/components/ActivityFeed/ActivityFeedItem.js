@@ -24,7 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // utils
@@ -263,7 +263,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { event, supportedAssets } = this.props;
     if (!event?.extra?.symbol) return null;
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
-    return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : null;
+    return iconUrl ? { uri: `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` } : null;
   };
 
   getWalletCreatedEventData = (event: Object) => {
@@ -609,7 +609,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             const referralAwardAssetData = supportedAssets.find(({ symbol }) => symbol === event.asset);
             if (referralAwardAssetData) {
               const { iconUrl } = referralAwardAssetData;
-              referralAwardTokenImage = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+              referralAwardTokenImage = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
               additionalInfo.iconName = null;
               additionalInfo.avatarUrl = referralAwardTokenImage;
             }

@@ -129,7 +129,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     const { navigation } = this.props;
     const { ethAddress } = value;
 
-    const userInfo = !!ethAddress && await smartWalletService.searchAccount(ethAddress).catch(null);
+    const userInfo = !!ethAddress && await smartWalletService().searchAccount(ethAddress).catch(null);
 
     if (userInfo) {
       this.setReceiver(value, onSuccess);

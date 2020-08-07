@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import 'utils/setup';
+import { setupEnv } from 'configs/envConfig';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking } from 'react-native';
@@ -143,6 +144,8 @@ class App extends React.Component<Props, *> {
       startReferralsListener,
     } = this.props;
 
+    const env = await setupEnv();
+    log.info('Environment: ', env);
     /**
      * First, we need to set the defaults for Remote Config.
      * This makes the default values immedidately available

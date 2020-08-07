@@ -29,9 +29,9 @@ import {
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -136,7 +136,7 @@ class SmartWallet {
   sdkInitialized: boolean = false;
 
   constructor() {
-    const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
+    const environmentNetwork = this.getEnvironmentNetwork(getEnv('NETWORK_PROVIDER'));
     const sdkOptions = getSdkEnvironment(environmentNetwork);
     try {
       this.sdk = createSdk(sdkOptions);
@@ -570,5 +570,11 @@ class SmartWallet {
   }
 }
 
-const smartWalletInstance = new SmartWallet();
-export default smartWalletInstance;
+let smartWalletInstance;
+const getSmartWalletInstance = () => {
+  if (!smartWalletInstance) {
+    smartWalletInstance = new SmartWallet();
+  }
+  return smartWalletInstance;
+};
+export default getSmartWalletInstance;

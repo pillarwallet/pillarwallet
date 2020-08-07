@@ -20,8 +20,8 @@
 
 import * as React from 'react';
 import { ScrollView, Linking } from 'react-native';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
 import styled from 'styled-components/native';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import { fontStyles } from 'utils/variables';
@@ -59,7 +59,7 @@ class WalletActivation extends React.PureComponent<Props> {
   handleEtherscan = () => {
     const { deploymentHash } = this.props;
     if (deploymentHash) {
-      Linking.openURL(`${TX_DETAILS_URL}${deploymentHash}`);
+      Linking.openURL(`${getEnv('TX_DETAILS_URL')}${deploymentHash}`);
     }
   };
 

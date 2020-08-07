@@ -28,7 +28,7 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import { createStructuredSelector } from 'reselect';
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // components
 import Button from 'components/Button';
@@ -361,7 +361,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     let data;
     if (isCollectible) {
-      const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+      const provider = getEthereumProvider(getEnv('COLLECTIBLES_NETWORK'));
       const {
         name,
         id,
@@ -381,7 +381,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     }
 
     const transaction = { recipient: receiver, value, data };
-    const estimated = await smartWalletService
+    const estimated = await smartWalletService()
       .estimateAccountTransaction(transaction, assetData)
       .then(res => buildTxFeeInfo(res, useGasToken))
       .catch(() => null);

@@ -1,5 +1,5 @@
 // @flow
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { BUILD_TYPE } from 'react-native-dotenv';
 
-export const isProdEnv = NETWORK_PROVIDER === 'homestead';
+export const isProdEnv = BUILD_TYPE !== 'development';
 export const isTest = !!process.env.IS_TEST;

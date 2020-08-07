@@ -284,7 +284,7 @@ export const loginAction = (
         dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
         api.init();
         navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(
+        await smartWalletService().init(
           decryptedPrivateKey,
           (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
         );
@@ -429,7 +429,7 @@ export const resetAppState = async () => {
   await firebaseIid.delete()
     .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
   await storage.removeAll();
-  await smartWalletService.reset();
+  await smartWalletService().reset();
   clearWebViewCookies();
 };
 

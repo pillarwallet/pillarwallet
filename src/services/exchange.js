@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { EXCHANGE_URL } from 'react-native-dotenv';
 import SocketIO from 'socket.io-client';
 import axios, { AxiosError, AxiosResponse } from 'axios';
+import { getEnv } from 'configs/envConfig';
 
 // utils, services
 import { extractJwtPayload, getRandomString } from 'utils/common';
@@ -34,8 +34,8 @@ const executeCallback = (data?: any, callback?: Function) => {
 };
 
 const buildApiUrl = (path: string, version?: string) => {
-  if (version) return `${EXCHANGE_URL}/v${version}/${path}`;
-  return `${EXCHANGE_URL}/${path}`;
+  if (version) return `${getEnv('EXCHANGE_URL')}/v${version}/${path}`;
+  return `${getEnv('EXCHANGE_URL')}/${path}`;
 };
 
 const buildAPIConfig = (accessToken: string) => ({
@@ -68,7 +68,7 @@ export default class ExchangeService {
           token: shapeshiftAccessToken,
         };
       }
-      const wsUrl = EXCHANGE_URL
+      const wsUrl = getEnv('EXCHANGE_URL')
         .replace(/(https:\/\/)/gi, 'wss://')
         .replace(/(http:\/\/)/gi, 'ws://');
       this.io = new SocketIO(`${wsUrl}:443`, {

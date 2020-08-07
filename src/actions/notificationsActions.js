@@ -131,9 +131,9 @@ export const fetchAllNotificationsAction = () => {
 
 export const subscribeToSocketEventsAction = () => {
   return async (dispatch: Dispatch) => {
-    if (get(SOCKET, 'socket.readyState') !== 1) return;
+    if (get(SOCKET(), 'socket.readyState') !== 1) return;
 
-    SOCKET.onMessage((response) => {
+    SOCKET().onMessage((response) => {
       let data;
       try {
         data = JSON.parse(response.data.msg);
@@ -232,7 +232,7 @@ export const stopListeningNotificationsAction = () => {
 
 export const startListeningOnOpenNotificationAction = () => {
   return async (dispatch: Dispatch) => {
-    await SOCKET.init();
+    await SOCKET().init();
     /*
     * TODO: Android initial notification and onOpened event are not working
     * seems like native lifecycle onIntent event is not fired

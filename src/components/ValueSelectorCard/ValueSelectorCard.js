@@ -25,7 +25,7 @@ import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
@@ -128,7 +128,7 @@ const formatOptions = (options: Object[], balances: Balances, rates: Rates, base
     const { iconUrl, symbol, address } = option;
     const assetBalance = getBalance(balances, symbol);
     const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-    const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const imageUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
     return {
       imageUrl,
       formattedBalanceInFiat,

@@ -4,7 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { sdkConstants } from '@smartwallet/sdk';
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -39,9 +39,9 @@ export default class SmartWalletProvider {
   sdkInitPromise: Promise<any>;
 
   constructor(privateKey: string, account: Account) {
-    this.sdkInitPromise = smartWalletService
+    this.sdkInitPromise = smartWalletService()
       .init(privateKey)
-      .then(() => smartWalletService.connectAccount(account.id))
+      .then(() => smartWalletService().connectAccount(account.id))
       .then((connectedAccount) => {
         if (!isEmpty(connectedAccount)) this.sdkInitialized = true;
       })
@@ -75,7 +75,7 @@ export default class SmartWalletProvider {
       data: sequential.data || '',
     }));
 
-    return smartWalletService
+    return smartWalletService()
       .transferAsset({
         recipient: to,
         value,
@@ -125,7 +125,7 @@ export default class SmartWalletProvider {
       }
 
       const sendValue = utils.parseUnits(amount.toString(), decimals);
-      return smartWalletService
+      return smartWalletService()
         .createAccountPayment(recipient, contractAddress, sendValue, paymentType, reference)
         .then(({ hash }) => ({
           from,
@@ -151,7 +151,7 @@ export default class SmartWalletProvider {
 
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
-    return smartWalletService
+    return smartWalletService()
       .transferAsset({
         // $FlowFixMe
         recipient,
@@ -190,10 +190,10 @@ export default class SmartWalletProvider {
     const from = getAccountAddress(account);
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
-    const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+    const provider = getEthereumProvider(getEnv('COLLECTIBLES_NETWORK'));
     const data = await buildERC721TransactionData({ ...transaction, from }, provider);
 
-    return smartWalletService
+    return smartWalletService()
       .transferAsset({
         // $FlowFixMe
         recipient: contractAddress,

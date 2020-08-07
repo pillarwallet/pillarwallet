@@ -137,7 +137,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
   updateDeviceDeploymentFee = () => {
     let txFeeInfo = { fee: new BigNumber(0) };
     this.setState({ gettingFee: true }, async () => {
-      const estimated = await smartWalletService
+      const estimated = await smartWalletService()
         .estimateAccountDeviceDeployment(this.deviceAddress)
         .then(data => buildTxFeeInfo(data, this.props.useGasToken))
         .catch(() => null);

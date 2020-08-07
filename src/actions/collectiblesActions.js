@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import {
   UPDATE_COLLECTIBLES,
@@ -254,7 +254,7 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     if (!isOnline) return;
 
     dispatch(collectibleTransactionUpdate(hash));
-    const trxInfo = await getTrxInfo(api, hash, COLLECTIBLES_NETWORK);
+    const trxInfo = await getTrxInfo(api, hash, getEnv('COLLECTIBLES_NETWORK'));
     if (!trxInfo) {
       dispatch(collectibleTransactionUpdate(''));
       return;

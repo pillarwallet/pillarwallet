@@ -5,10 +5,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { COLLECTIBLES_NETWORK, NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import isEqual from 'lodash.isequal';
+import { getEnv } from 'configs/envConfig';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -82,7 +82,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
     this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
-    this.isRopstenNetwork = NETWORK_PROVIDER === 'ropsten';
+    this.isRopstenNetwork = getEnv('NETWORK_PROVIDER') === 'ropsten';
 
     this.state = {
       rinkebyETH: '',
@@ -184,7 +184,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   getSmartWalletTxFee = async (transaction: CollectibleTransactionPayload): Promise<TransactionFeeInfo> => {
     const { useGasToken } = this.props;
     const defaultResponse = { fee: new BigNumber(0) };
-    const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+    const provider = getEthereumProvider(getEnv('COLLECTIBLES_NETWORK'));
     const data = await buildERC721TransactionData(transaction, provider);
 
     const estimateTransaction = {
@@ -193,7 +193,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       value: 0,
     };
 
-    const estimated = await smartWalletService
+    const estimated = smartWalletService()
       .estimateAccountTransaction(estimateTransaction)
       .then(result => buildTxFeeInfo(result, useGasToken))
       .catch(() => null);

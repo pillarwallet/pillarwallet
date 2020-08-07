@@ -60,7 +60,7 @@ export const fetchAssetsToDepositAction = () => {
 
     const { assets: { supportedAssets } } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
-    const assets = await aaveService.getAssetsToDeposit(getAssetsAsList(currentAccountAssets), supportedAssets);
+    const assets = await aaveService().getAssetsToDeposit(getAssetsAsList(currentAccountAssets), supportedAssets);
     dispatch({ type: SET_LENDING_ASSETS_TO_DEPOSIT, payload: assets });
   };
 };
@@ -88,7 +88,7 @@ export const fetchDepositedAssetsAction = () => {
     if (isFetchingDepositedAssets) return;
     dispatch({ type: SET_FETCHING_LENDING_DEPOSITED_ASSETS });
 
-    const depositedAssets = await aaveService.getAccountDepositedAssets(
+    const depositedAssets = await aaveService().getAccountDepositedAssets(
       getAccountAddress(smartWalletAccount),
       getAssetsAsList(currentAccountAssets),
       supportedAssets,
@@ -114,7 +114,7 @@ export const fetchDepositedAssetAction = (symbol: string) => {
     const asset = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
     const accountAddress = getAccountAddress(smartWalletAccount);
 
-    const updatedDepositedAsset = await aaveService.fetchAccountDepositedAsset(accountAddress, asset);
+    const updatedDepositedAsset = await aaveService().fetchAccountDepositedAsset(accountAddress, asset);
     if (!updatedDepositedAsset) return;
 
     const updatedDepositedAssets = depositedAssets.reduce((
@@ -161,7 +161,7 @@ export const calculateLendingDepositTransactionEstimateAction = (
       sequentialTransactions: estimateTransactions.slice(1), // exclude first, take rest if exist
     };
 
-    const estimate = await smartWalletService
+    const estimate = await smartWalletService()
       .estimateAccountTransaction(estimateTransaction)
       .catch(() => null);
 
@@ -187,7 +187,7 @@ export const calculateLendingWithdrawTransactionEstimateAction = (
       depositedAsset,
     );
 
-    const estimate = await smartWalletService
+    const estimate = await smartWalletService()
       .estimateAccountTransaction({ recipient, value, data })
       .catch(() => null);
 

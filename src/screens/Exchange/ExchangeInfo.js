@@ -21,8 +21,8 @@
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { FlatList, RefreshControl } from 'react-native';
-import { EXCHANGE_URL, SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
+import { getEnv } from 'configs/envConfig';
 import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { createStructuredSelector } from 'reselect';
@@ -151,7 +151,7 @@ class ExchangeInfo extends React.Component<Props, State> {
   renderToken = ({ item: token }: Object) => {
     const { exchangeAllowances } = this.props;
     const { openCollapseKey } = this.state;
-    const fullIconUrl = `${SDK_PROVIDER}/${token.iconUrl}?size=3`;
+    const fullIconUrl = `${getEnv('SDK_PROVIDER')}/${token.iconUrl}?size=3`;
     const tokenAllowances = exchangeAllowances.filter(({ fromAssetCode }) => fromAssetCode === token.symbol);
 
     return (
@@ -188,7 +188,7 @@ class ExchangeInfo extends React.Component<Props, State> {
     const providerInfo = providersMeta.find(({ shim }) => shim === exchangeProviderId) || {};
 
     const { logo_large: providerLogoPath, name: providerName } = providerInfo;
-    const providerLogoUri = providerLogoPath ? `${EXCHANGE_URL}/v2.0${providerLogoPath}` : '';
+    const providerLogoUri = providerLogoPath ? `${getEnv('EXCHANGE_URL')}/v2.0${providerLogoPath}` : '';
 
     return (
       <ListItemWithImage

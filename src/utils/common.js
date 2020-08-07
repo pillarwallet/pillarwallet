@@ -35,9 +35,10 @@ import {
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
-import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
+import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
@@ -405,12 +406,12 @@ export const getEthereumProvider = (network: string) => {
 };
 
 export const resolveEnsName = (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
   return provider.resolveName(ensName);
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
   let ensName;
   try {
     ensName = await provider.lookupAddress(address);

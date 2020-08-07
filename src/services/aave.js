@@ -19,8 +19,8 @@
 */
 import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, AAVE_THE_GRAPH_ID } from 'react-native-dotenv';
 import axios from 'axios';
+import { getEnv } from 'configs/envConfig';
 
 // utils
 import { getAssetDataByAddress } from 'utils/assets';
@@ -49,7 +49,7 @@ class AaveService {
 
   constructor() {
     this.lendingPoolAddressesProvider = getContract(
-      AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS,
+      getEnv('AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS'),
       AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
     );
   }
@@ -205,7 +205,7 @@ class AaveService {
   }
 
   async fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<Object> {
-    const url = `https://api.thegraph.com/subgraphs/id/${AAVE_THE_GRAPH_ID}`;
+    const url = `https://api.thegraph.com/subgraphs/id/${getEnv('AAVE_THE_GRAPH_ID')}`;
     return axios
       .post(url, {
         timeout: 5000,
@@ -244,6 +244,12 @@ class AaveService {
   }
 }
 
-const aaveInstance = new AaveService();
+let aaveInstance;
+const getAaveInsatnce = () => {
+  if (!aaveInstance) {
+    aaveInstance = new AaveService();
+  }
+  return aaveInstance;
+};
 
-export default aaveInstance;
+export default getAaveInsatnce;

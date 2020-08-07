@@ -32,7 +32,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // mocks
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
-
+import envConfigMock from './envConfigMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -329,4 +329,6 @@ jest.setMock('react-native-notifications');
 jest.setMock('@react-native-community/netinfo');
 
 jest.setMock('react-native-appearance', {});
+
+jest.setMock('configs/envConfig', envConfigMock);
 

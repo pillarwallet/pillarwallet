@@ -262,7 +262,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       value: transaction.amount,
     };
 
-    const estimated = await smartWalletService
+    const estimated = await smartWalletService()
       .estimateAccountTransaction(estimateTransaction)
       .then(result => buildTxFeeInfo(result, useGasToken))
       .catch(() => null);
