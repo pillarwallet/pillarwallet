@@ -190,14 +190,10 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   FROM = {
-    SMART_WALLET: t('label.fromSmartWallet'),
-    KEY_WALLET: t('label.fromKeyWallet'),
     PPN_NETWORK: t('label.fromPPN'),
   };
 
   TO = {
-    SMART_WALLET: t('label.toSmartWallet'),
-    KEY_WALLET: t('label.toKeyWallet'),
     PPN_NETWORK: t('label.toPPN'),
   };
 
@@ -379,7 +375,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         if (isAssetView) {
           data = {
             label: this.NAMES.PPN_NETWORK,
-            subtext: this.FROM.SMART_WALLET,
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
@@ -388,7 +383,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         } else if (isPPNView) {
           data = {
             label: t('label.topUp'),
-            subtext: this.FROM.SMART_WALLET,
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
@@ -429,7 +423,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         if (isPPNView) {
           data.label = t('label.withdraw');
-          data.subtext = this.TO.SMART_WALLET;
           data.iconName = 'sent';
           data.iconColor = 'negative';
         } else {
@@ -444,7 +437,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         data = {
           label: t('label.settle'),
           itemImageSource: PPNIcon,
-          subtext: this.TO.SMART_WALLET,
           customAddonAlignLeft: true,
           rightColumnInnerStyle: { flexDirection: 'row', alignItems: 'center' },
           customAddon: (
@@ -542,7 +534,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           if (isTrxBetweenSWAccount) {
             data = {
               label: isAssetView ? this.NAMES.PPN_NETWORK : this.NAMES.SMART_WALLET,
-              subtext: isAssetView ? this.TO.SMART_WALLET : this.FROM.PPN_NETWORK,
+              subtext: isAssetView ? '' : this.FROM.PPN_NETWORK,
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
               fullItemValue: t('positiveValue', { value: `${formattedFullValue} ${event.asset}` }),
@@ -604,26 +596,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
 
           if (isTrxBetweenAccounts && isForAllAccounts) {
-            const receivingAccountType = isReceived
-              ? (findAccountByAddress(event.from, accounts) || {}).type
-              : (findAccountByAddress(event.to, accounts) || {}).type;
             subtext = '';
-
-            if (receivingAccountType === ACCOUNT_TYPES.SMART_WALLET) {
-              if (isReceived) subtext = this.FROM.SMART_WALLET;
-              subtext = this.TO.SMART_WALLET;
-            } else if (receivingAccountType === ACCOUNT_TYPES.KEY_BASED) {
-              if (isReceived) subtext = this.FROM.KEY_WALLET;
-              subtext = this.TO.KEY_WALLET;
-            }
-          } else if (isReceived && isKWAddress(event.to, accounts)) {
-            subtext = this.TO.KEY_WALLET;
-          } else if (isReceived && isSWAddress(event.to, accounts)) {
-            subtext = this.TO.SMART_WALLET;
-          } else if (!isReceived && isSWAddress(event.from, accounts)) {
-            subtext = this.FROM.SMART_WALLET;
-          } else if (!isReceived && isKWAddress(event.from, accounts)) {
-            subtext = this.FROM.SMART_WALLET;
           }
 
           if (!isTrxBetweenAccounts) {
