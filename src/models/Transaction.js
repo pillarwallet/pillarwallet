@@ -59,12 +59,20 @@ export type AaveExtra = {
   amount: string,
 };
 
+export type TxSablierExtra = {
+  assetAddress: string,
+  amount: string,
+  contactAddress: string,
+  streamId: string,
+};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
   | EnsTransactionExtra
   | AaveExtra
-  | TxPoolTogetherExtra;
+  | TxPoolTogetherExtra
+  | TxSablierExtra;
 
 export type GasToken = {
   address: string,

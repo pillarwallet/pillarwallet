@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import {
   ChainId,
   Trade,
@@ -27,14 +26,15 @@ import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 
 import ROUTER_ABI from 'abi/uniswapRouter.json';
+import { isProdEnv } from 'utils/environment';
 
 import type { Asset } from 'models/Asset';
 
 // tslint:disable-next-line: no-var-requires
 const abiCoder = require('web3-eth-abi');
 
-const isMainnet = NETWORK_PROVIDER === 'homestead';
-export const chainId = isMainnet ? ChainId.MAINNET : ChainId.RINKEBY;
+const isMainnet = isProdEnv;
+export const chainId = isMainnet ? ChainId.MAINNET : ChainId.ROPSTEN;
 const ALLOWED_SLIPPAGE = 0.97;
 const DEADLINE_FROM_NOW = 60 * 15; // seconds
 export const ADDRESSES = isMainnet ?

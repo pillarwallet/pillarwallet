@@ -65,6 +65,7 @@ import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
+import { SET_STREAMS } from 'constants/sablierConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -178,6 +179,9 @@ export const initAppAndRedirectAction = () => {
 
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
+
+      const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {});
+      dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

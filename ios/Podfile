@@ -47,5 +47,6 @@ target 'pillarwallet' do
 
   use_native_modules!
   pod 'RNLocalize', :path => '../node_modules/react-native-localize'
+  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
 
 end

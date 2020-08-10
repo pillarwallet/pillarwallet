@@ -47,7 +47,6 @@ const ImageTouchable = styled.TouchableOpacity`
   ${props => (props.additionalContainerStyle)};
   position: relative;
   border: ${({ borderWidth, borderColor, theme }) => `${borderWidth}px solid ${borderColor || theme.colors.card}`};
-  overflow: hidden;
   justify-content: center;
   align-items: center;
 `;
@@ -63,6 +62,14 @@ const InnerBackground = styled.View`
 const InnerUsername = styled(MediumText)`
   font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
   color: ${themedColors.control};
+`;
+
+const CornerIcon = styled(CachedImage)`
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
+  position: absolute;
+  top: 0;
+  right: 0;
 `;
 
 export type ExternalProfileImageProps = {
@@ -81,6 +88,8 @@ export type ExternalProfileImageProps = {
   noShadow?: boolean,
   showProfileImage?: boolean,
   fallbackImage?: string,
+  cornerIcon?: Object,
+  cornerIconSize?: number,
 }
 
 type Props = ExternalProfileImageProps & {
@@ -150,6 +159,8 @@ const ProfileImage = (props: Props) => {
     showProfileImage = true,
     theme,
     fallbackImage,
+    cornerIcon,
+    cornerIconSize = 22,
   } = props;
 
   const themeType = getThemeType(theme);
@@ -195,6 +206,7 @@ const ProfileImage = (props: Props) => {
             source={{ uri }}
           />
           }
+          {cornerIcon && <CornerIcon source={cornerIcon} size={cornerIconSize} />}
         </ImageTouchable>
       }
     </Wrapper>

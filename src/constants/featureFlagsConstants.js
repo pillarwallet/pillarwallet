@@ -27,6 +27,7 @@ export const FEATURE_FLAGS = {
   WYRE: 'feature_services_wyre',
   PEER_TO_PEER: 'feature_services_peer_to_peer',
   KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
+  SABLIER: 'feature_services_sablier',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values

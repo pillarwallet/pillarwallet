@@ -39,7 +39,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
 
 // constants
-import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import {
+  EXCHANGE,
+  LENDING_CHOOSE_DEPOSIT,
+  POOLTOGETHER_DASHBOARD,
+  SABLIER_STREAMS,
+} from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
@@ -77,6 +82,7 @@ let isPoolTogetherEnabled = true;
 let isPeerToPeerEnabled = true;
 let isWyreEnabled = true;
 let isRampEnabled = true;
+let isSablierEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -108,6 +114,7 @@ class ServicesScreen extends React.Component<Props, State> {
     isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.PEER_TO_PEER);
     isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
+    isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
   }
 
   getServices = () => {
@@ -123,10 +130,10 @@ class ServicesScreen extends React.Component<Props, State> {
       color: colors.primary,
     } : null;
 
-    const aaveServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
-    let aaveServiceLabel;
-    if (aaveServiceDisabled) {
-      aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
+    const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
+    let SWServiceLabel;
+    if (SWServiceDisabled) {
+      SWServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
 
     const services = [];
@@ -145,8 +152,8 @@ class ServicesScreen extends React.Component<Props, State> {
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
-        disabled: aaveServiceDisabled,
-        label: aaveServiceLabel,
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       });
     }
@@ -157,6 +164,16 @@ class ServicesScreen extends React.Component<Props, State> {
         body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
         hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
+      });
+    }
+    if (isSablierEnabled) {
+      services.push({
+        key: 'sablier',
+        title: 'Sablier money streaming',
+        body: 'Stream money to people and organizations in real-time with just one deposit',
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(SABLIER_STREAMS),
       });
     }
     if (isPeerToPeerEnabled) {
