@@ -24,22 +24,16 @@ import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
-import querystring from 'querystring';
-import {
-  RAMPNETWORK_WIDGET_URL,
-  RAMPNETWORK_API_KEY,
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
-} from 'react-native-dotenv';
 
 // actions
 import { getMetaDataAction } from 'actions/exchangeActions';
+import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
 
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
+import Toast from 'components/Toast';
 
 // constants
 import {
@@ -60,6 +54,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -75,6 +70,7 @@ import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+import type SDKWrapper from 'services/api';
 
 
 // Config constants, to be overwritten in componentDidMount
@@ -85,6 +81,7 @@ let isPeerToPeerEnabled = true;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
+let isAltalixEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -96,6 +93,9 @@ type Props = {
   user: User,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
+  getApi: () => SDKWrapper,
+  isAltalixAvailable: null | boolean,
+  loadAltalixInfo: () => void,
 };
 
 type State = {
@@ -108,7 +108,13 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { getMetaData, providersMeta } = this.props;
+    const {
+      getMetaData,
+      providersMeta,
+      isAltalixAvailable,
+      loadAltalixInfo,
+    } = this.props;
+
     if (!Array.isArray(providersMeta) || !providersMeta?.length) {
       getMetaData();
     }
@@ -123,6 +129,9 @@ class ServicesScreen extends React.Component<Props, State> {
     isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
+    isAltalixEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.ALTALIX);
+
+    if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
   getServices = () => {
@@ -199,6 +208,7 @@ class ServicesScreen extends React.Component<Props, State> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
+    const { isAltalixAvailable } = this.props;
 
     if (isRampEnabled) {
       buyCryptoServices.push({
@@ -206,17 +216,10 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Ramp.Network (EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(userAddress => {
-            const { user: { email = null } } = this.props;
-
-            const params = {
-              hostApiKey: RAMPNETWORK_API_KEY,
-              userAddress,
-              ...(email === null ? {} : { userEmailAddress: email }),
-            };
-
-            return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
-          });
+          const { user: { email } } = this.props;
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email));
         },
       });
     }
@@ -227,11 +230,32 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Wyre (Non-EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(address => `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
-            accountId: SENDWYRE_ACCOUNT_ID,
-            dest: `ethereum:${address}`,
-            redirectUrl: SENDWYRE_RETURN_URL,
-          })}`);
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(wyreWidgetUrl(address));
+        },
+      });
+    }
+
+    if (isAltalixEnabled && isAltalixAvailable) {
+      buyCryptoServices.push({
+        key: 'altalix',
+        title: 'Buy with Altalix',
+        body: 'Buy Now',
+        action: async () => {
+          const { user: { walletId }, getApi } = this.props;
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(await altalixWidgetUrl({
+            walletId,
+            address,
+            sellCurrency: 'EUR',
+            buyCurrency: 'ETH',
+
+            // The amount is adjustable in the Altalix app, but the link won't work
+            // if the initial value is 0
+            buyAmount: 0.02,
+          }, getApi()));
         },
       });
     }
@@ -239,7 +263,7 @@ class ServicesScreen extends React.Component<Props, State> {
     return buyCryptoServices;
   }
 
-  handleBuyCryptoAction = (getUrlWithAddress: string => string) => {
+  getCryptoPurchaseAddress = (): string | null => {
     const { accounts, smartWalletState } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
@@ -247,17 +271,31 @@ class ServicesScreen extends React.Component<Props, State> {
 
     if (!smartWalletStatus.hasAccount) {
       this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.NO_SW_ACCOUNT });
-      return;
+      return null;
     }
 
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE });
-      return;
+      return null;
     }
 
-    const address: string = getAccountAddress(activeAccount);
-    const url = getUrlWithAddress(address);
-    openInAppBrowser(url);
+    return getAccountAddress(activeAccount);
+  }
+
+  tryOpenCryptoPurchaseUrl = (url: string | null) => {
+    if (url) {
+      openInAppBrowser(url)
+        .catch(this.showServiceLaunchError);
+    } else {
+      this.showServiceLaunchError();
+    }
+  };
+
+  showServiceLaunchError = () => {
+    Toast.show({
+      type: 'warning',
+      message: 'Sorry, we had a problem trying to open this service. Please try again later.',
+    });
   }
 
   onBuyCryptoModalClose = () => {
@@ -331,11 +369,13 @@ const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
+  fiatToCrypto: { altalix },
 }: RootReducerState): $Shape<Props> => ({
   providersMeta,
   user,
   accounts,
   smartWalletState,
+  isAltalixAvailable: altalix === null ? null : altalix.isAvailable,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -350,6 +390,12 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getMetaData: () => dispatch(getMetaDataAction()),
+  loadAltalixInfo: () => dispatch(loadAltalixInfoAction()),
+
+  // When using redux-thunk, dispatch does return the result of the inner function.
+  // (Although it's meant to be used inside thunks, see:
+  // https://github.com/reduxjs/redux-thunk#composition )
+  getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));
