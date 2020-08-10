@@ -53,6 +53,7 @@ type Props = {
   wrapperStyle?: Object,
   wrapperPadding?: number | string,
   theme: Theme,
+  titleStyle?: Object,
 };
 
 
@@ -76,7 +77,6 @@ const ContentWrapper = styled.View`
 
 const ListItem = styled.TouchableOpacity`
   flex-direction: row;
-  align-items: center;
   padding: 2px 0;
 `;
 
@@ -89,6 +89,7 @@ const CardTitle = styled(MediumText)`
 const InsightText = styled(BaseText)`
   color: ${props => props.color};
   ${fontStyles.regular};
+  flex: 1;
 `;
 
 const Close = styled(IconButton)`
@@ -100,7 +101,7 @@ const Close = styled(IconButton)`
 `;
 
 const StatusIconWrapper = styled.View`
-  height: 20px;
+  height: 22px;
   width: 20px;
   justify-content: center;
   align-items: center;
@@ -191,6 +192,7 @@ const Insight = (props: Props) => {
     wrapperStyle,
     wrapperPadding,
     theme,
+    titleStyle,
   } = props;
 
   const colors = getThemeColors(theme);
@@ -212,7 +214,7 @@ const Insight = (props: Props) => {
         />}
         <CardRow>
           <ContentWrapper>
-            {!!title && <CardTitle>{title}</CardTitle>}
+            {!!title && <CardTitle style={titleStyle}>{title}</CardTitle>}
             {!!insightChecklist && <FlatList
               data={insightChecklist}
               extraData={props}

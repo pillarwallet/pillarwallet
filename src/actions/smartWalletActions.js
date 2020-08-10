@@ -23,6 +23,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import { SABLIER_CONTRACT_ADDRESS } from 'react-native-dotenv';
 
 // components
 import Toast from 'components/Toast';
@@ -76,6 +77,7 @@ import {
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
+import { SABLIER_WITHDRAW, SABLIER_CANCEL_STREAM } from 'constants/sablierConstants';
 
 // configs
 import { PPN_TOKEN } from 'configs/assetsConfig';
@@ -146,11 +148,16 @@ import { addAccountAction, setActiveAccountAction, switchAccountAction } from '.
 import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { fetchSmartWalletTransactionsAction, insertTransactionAction } from './historyActions';
+import {
+  fetchSmartWalletTransactionsAction,
+  insertTransactionAction,
+  afterHistoryUpdatedAction,
+} from './historyActions';
 import { completeConnectedDeviceRemoveAction, setConnectedDevicesAction } from './connectedDevicesActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
+import { fetchUserStreamsAction } from './sablierActions';
 
 
 const storage = Storage.getInstance('db');
@@ -679,6 +686,15 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
             notificationMessage = 'Your funds have been withdrawn!';
             dispatch(fetchDepositedAssetsAction());
+          } else if (addressesEqual(SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
+            const txFromHistory = currentHistory[activeAccountAddress].find(tx => tx.hash === txHash);
+            if (txFromHistory?.tag === SABLIER_WITHDRAW) {
+              const symbol = get(txFromHistory, 'extra.symbol', '');
+              notificationMessage = `You have withdrawn your ${symbol}`;
+            } else if (txFromHistory?.tag === SABLIER_CANCEL_STREAM) {
+              notificationMessage = 'Stream has been canceled';
+            }
+            dispatch(fetchUserStreamsAction());
           } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
             notificationMessage = 'Transaction was successfully sent!';
           }
@@ -709,6 +725,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
                 type: SET_HISTORY,
                 payload: updatedHistory,
               });
+              dispatch(afterHistoryUpdatedAction());
               dispatch({
                 type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
                 payload: txHash,
@@ -737,6 +754,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             type: SET_HISTORY,
             payload: updatedHistory,
           });
+          dispatch(afterHistoryUpdatedAction());
           currentHistory = getState().history.data;
         }
       }

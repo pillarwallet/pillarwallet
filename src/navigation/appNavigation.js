@@ -112,6 +112,13 @@ import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer
 import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
 import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
 import KeyBasedAssetTransferStatusScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferStatus';
+import SablierStreamsScreen from 'screens/Sablier/SablierStreams';
+import SablierNewStreamScreen from 'screens/Sablier/NewStream';
+import SablierNewStreamReviewScreen from 'screens/Sablier/NewStreamReview';
+import SablierIncomingStreamScreen from 'screens/Sablier/IncomingStream';
+import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
+import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
+import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -247,6 +254,14 @@ import {
   KEY_BASED_ASSET_TRANSFER_UNLOCK,
   KEY_BASED_ASSET_TRANSFER_FLOW,
   KEY_BASED_ASSET_TRANSFER_STATUS,
+  SABLIER_FLOW,
+  SABLIER_STREAMS,
+  SABLIER_NEW_STREAM,
+  SABLIER_NEW_STREAM_REVIEW,
+  SABLIER_INCOMING_STREAM,
+  SABLIER_OUTGOING_STREAM,
+  SABLIER_WITHDRAW,
+  SABLIER_WITHDRAW_REVIEW,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -333,6 +348,11 @@ const servicesFlow = createStackNavigator({
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+  [SABLIER_STREAMS]: SablierStreamsScreen,
+  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
+  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
+  [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
+  [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -671,6 +691,20 @@ const keyBasedAssetTransferFlow = createStackNavigator({
 
 keyBasedAssetTransferFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const sablierFlow = createStackNavigator({
+  [SABLIER_STREAMS]: SablierStreamsScreen,
+  [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
+  [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
+  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
+  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
+  [SABLIER_WITHDRAW]: SablierWithdrawScreen,
+  [SABLIER_WITHDRAW_REVIEW]: SablierWithdrawReviewScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+sablierFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -712,6 +746,7 @@ const AppFlowNavigation = createStackNavigator(
     [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
     [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
     [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
+    [SABLIER_FLOW]: sablierFlow,
   },
   modalTransition,
 );

@@ -352,6 +352,8 @@ PODS:
     - React
   - react-native-cookies (3.2.0):
     - React
+  - react-native-date-picker (3.0.2):
+    - React
   - react-native-intercom (13.2.0):
     - Intercom (~> 5.5.1)
     - React
@@ -521,6 +523,7 @@ DEPENDENCIES:
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-contacts (from `../node_modules/react-native-contacts`)
   - react-native-cookies (from `../node_modules/react-native-cookies/ios`)
+  - react-native-date-picker (from `../node_modules/react-native-date-picker`)
   - react-native-intercom (from `../node_modules/react-native-intercom`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-notifications (from `../node_modules/react-native-notifications`)
@@ -655,6 +658,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-contacts"
   react-native-cookies:
     :path: "../node_modules/react-native-cookies/ios"
+  react-native-date-picker:
+    :path: "../node_modules/react-native-date-picker"
   react-native-intercom:
     :path: "../node_modules/react-native-intercom"
   react-native-netinfo:
@@ -798,6 +803,7 @@ SPEC CHECKSUMS:
   react-native-camera: 8ab02aac456a7db830980cef5f3772644fe96e1f
   react-native-contacts: a30bebe23ddeda7c34bf97cfa5f952201efc5329
   react-native-cookies: 854d59c4135c70b92a02ca4930e68e4e2eb58150
+  react-native-date-picker: aec68ba9b276beddd2cf941bd7cebf459ac9d301
   react-native-intercom: 25ceddd224fdf63be29d4e25e95a893e5befe18f
   react-native-netinfo: cb74e17062b2af5a16a4b137f32495f241df1a8e
   react-native-notifications: 3d1c66c8a3eb1857577f283f9f6e9aa505f16346
@@ -849,6 +855,6 @@ SPEC CHECKSUMS:
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
 
-PODFILE CHECKSUM: 7815d3ff68b0a771eabc580f13327a92f35a9199
+PODFILE CHECKSUM: 071c931f48d051777cfa96bc5fb06c5daf344800
 
 COCOAPODS: 1.9.3

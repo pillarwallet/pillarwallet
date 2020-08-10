@@ -254,3 +254,15 @@ export const toggleOmitPinOnLoginAction = () => {
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { omitPinOnLogin: !omitPinOnLogin } });
   };
 };
+
+export const toggleSablierAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideSablier } },
+    } = getState();
+    const newSablierState = !hideSablier;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideSablier: newSablierState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideSablier: newSablierState } });
+  };
+};
