@@ -274,105 +274,107 @@ class ExchangeOffers extends React.Component<Props, State> {
   };
 
   onSetTokenAllowancePress = (offer: Offer) => {
+    const { setTokenAllowance } = this.props;
+    const { _id, provider, fromAsset } = offer;
+    const { address: fromAssetAddress } = fromAsset;
+    this.setState({ pressedTokenAllowanceId: _id }, () => {
+      setTokenAllowance(
+        fromAssetAddress,
+        provider,
+        response => this.setTokenAllowanceCallback(response, offer),
+      );
+    });
+  };
+
+  setTokenAllowanceCallback = async (response: Object, offer: Offer) => {
     const {
       exchangeSupportedAssets,
       providersMeta,
       baseFiatCurrency,
       gasInfo,
-      setTokenAllowance,
       setExecutingTransaction,
       rates,
       balances,
       isSmartAccount,
     } = this.props;
 
-    const {
-      _id,
-      provider,
-      fromAsset,
-      toAsset,
-    } = offer;
+    const { provider, fromAsset, toAsset } = offer;
     const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
     const { code: toAssetCode } = toAsset;
-    this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetAddress, provider, async (response) => {
-        if (isEmpty(response)) {
-          this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
-          return;
-        }
-        setExecutingTransaction();
-        const {
-          payToAddress,
-          transactionObj: {
-            data,
-          } = {},
-        } = response;
 
-        const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
-        const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
-        const providerName = getCryptoProviderName(providersMeta, provider);
+    if (isEmpty(response)) {
+      this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
+      return;
+    }
+    setExecutingTransaction();
+    const {
+      payToAddress,
+      transactionObj: { data } = {},
+    } = response;
 
-        let gasToken;
-        let txFeeInWei;
-        let transactionPayload = {
-          amount: 0,
-          to: payToAddress,
-          symbol: fromAssetCode,
-          contractAddress: fromAssetAddress || '',
-          decimals: parseInt(decimals, 10) || 18,
-          data,
-          extra: {
-            allowance: {
-              provider,
-              fromAssetCode,
-              toAssetCode,
-            },
-          },
-        };
+    const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
+    const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
+    const providerName = getCryptoProviderName(providersMeta, provider);
 
-        if (isSmartAccount) {
-          ({ fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload));
-          if (gasToken) {
-            transactionPayload = { ...transactionPayload, gasToken };
-          }
-        } else {
-          const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
-          const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-          const gasLimit = await calculateGasEstimate(transactionPayload);
-          txFeeInWei = gasPriceWei.mul(gasLimit);
+    let gasToken;
+    let txFeeInWei;
+    let transactionPayload = {
+      amount: 0,
+      to: payToAddress,
+      symbol: fromAssetCode,
+      contractAddress: fromAssetAddress || '',
+      decimals: parseInt(decimals, 10) || 18,
+      data,
+      extra: {
+        allowance: {
+          provider,
+          fromAssetCode,
+          toAssetCode,
+        },
+      },
+    };
 
-          transactionPayload = {
-            ...transactionPayload,
-            gasPrice: gasPriceWei,
-            gasLimit,
-            txSpeed: SPEED_TYPES.NORMAL,
-          };
-        }
+    if (isSmartAccount) {
+      ({ fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload));
+      if (gasToken) {
+        transactionPayload = { ...transactionPayload, gasToken };
+      }
+    } else {
+      const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
+      const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
+      const gasLimit = await calculateGasEstimate(transactionPayload);
+      txFeeInWei = gasPriceWei.mul(gasLimit);
 
-        transactionPayload = { ...transactionPayload, txFeeInWei };
+      transactionPayload = {
+        ...transactionPayload,
+        gasPrice: gasPriceWei,
+        gasLimit,
+        txSpeed: SPEED_TYPES.NORMAL,
+      };
+    }
 
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const feeSymbol = get(gasToken, 'symbol', ETH);
-        const feeDecimals = get(gasToken, 'decimals', 'ether');
-        const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-        const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-        const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-        const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+    transactionPayload = { ...transactionPayload, txFeeInWei };
 
-        this.setState({
-          pressedTokenAllowanceId: '',
-          isEnableAssetModalVisible: true,
-          enableData: {
-            providerName,
-            assetSymbol,
-            assetIcon,
-            feeDisplayValue,
-            feeInFiat,
-            isDisabled,
-          },
-          enablePayload: { ...transactionPayload },
-        });
-      });
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
+    const feeDecimals = get(gasToken, 'decimals', 'ether');
+    const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+    const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+    const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+
+    this.setState({
+      pressedTokenAllowanceId: '',
+      isEnableAssetModalVisible: true,
+      enableData: {
+        providerName,
+        assetSymbol,
+        assetIcon,
+        feeDisplayValue,
+        feeInFiat,
+        isDisabled,
+      },
+      enablePayload: { ...transactionPayload },
     });
   };
 
