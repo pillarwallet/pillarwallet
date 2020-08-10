@@ -19,6 +19,7 @@
 */
 
 import Toast from 'components/Toast';
+import t from 'translations/translate';
 import { resolveEnsName } from './common';
 import { isEnsName } from './validators';
 
@@ -39,10 +40,8 @@ export const getContactsEnsName = async (address: ?string) => {
     const resolvedAddress = await resolveEnsName(address);
     if (!resolvedAddress) {
       Toast.show({
-        title: 'Sorry, we could not find that ENS name!',
-        message: 'Could you please check and try again?',
-        type: 'warning',
-        autoClose: false,
+        message: t('toast.ensNameNotFound'),
+        emoji: 'woman_shrugging',
       });
       return Promise.resolve({ receiverEnsName, receiver });
     }

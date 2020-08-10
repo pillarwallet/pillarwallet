@@ -30,19 +30,15 @@ import t from 'translations/translate';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { MediumText, BaseText } from 'components/Typography';
-import Toast from 'components/Toast';
 import { Spacing } from 'components/Layout';
 
 // constants
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ASSETS } from 'constants/navigationConstants';
 
 // actions
-import { switchAccountAction } from 'actions/accountsActions';
 import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
-import { getActiveAccount } from 'utils/accounts';
 import { images } from 'utils/images';
 
 // types
@@ -69,27 +65,10 @@ const ModalContainer = styled.View`
 class SWActivationModal extends React.Component<Props> {
   activateSW = async () => {
     const {
-      accounts,
-      switchAccount,
       deploySmartWallet,
       navigation,
       onClose,
     } = this.props;
-    const activeAccount = getActiveAccount(accounts) || { type: '' };
-
-    if (activeAccount.type !== ACCOUNT_TYPES.SMART_WALLET) {
-      const smartAccount = (accounts.find((acc) => acc.type === ACCOUNT_TYPES.SMART_WALLET));
-      if (!smartAccount) {
-        Toast.show({
-          message: t('toast.noSmartAccountDuringActivation.message'),
-          type: 'warning',
-          title: t('toast.noSmartAccountDuringActivation.title'),
-          autoClose: false,
-        });
-        return;
-      }
-      await switchAccount(smartAccount.id);
-    }
 
     deploySmartWallet();
     navigation.navigate(ASSETS);
@@ -130,15 +109,8 @@ class SWActivationModal extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  accounts: { data: accounts },
-}) => ({
-  accounts,
-});
-
 const mapDispatchToProps = (dispatch: Function) => ({
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
-  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(SWActivationModal));
+export default withTheme(connect(null, mapDispatchToProps)(SWActivationModal));
