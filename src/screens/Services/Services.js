@@ -284,14 +284,19 @@ class ServicesScreen extends React.Component<Props, State> {
 
   tryOpenCryptoPurchaseUrl = (url: string | null) => {
     if (url) {
-      openInAppBrowser(url);
+      openInAppBrowser(url)
+        .catch(this.showServiceLaunchError);
     } else {
-      Toast.show({
-        type: 'warning',
-        message: 'Unable to prepare transaction. Please try again later.',
-      });
+      this.showServiceLaunchError();
     }
   };
+
+  showServiceLaunchError = () => {
+    Toast.show({
+      type: 'warning',
+      message: 'Sorry, we had a problem trying to open this service. Please try again later.',
+    });
+  }
 
   onBuyCryptoModalClose = () => {
     this.setState({ buyCryptoModalMessage: null });

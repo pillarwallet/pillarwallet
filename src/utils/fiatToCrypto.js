@@ -48,6 +48,5 @@ export function wyreWidgetUrl(address: string) {
   })}`;
 }
 
-export function altalixWidgetUrl(params: AltalixTrxParams, api: SDKWrapper) {
-  return api.generateAltalixTransactionUrl(params);
-}
+export const altalixWidgetUrl = (params: AltalixTrxParams, api: SDKWrapper) =>
+  api.generateAltalixTransactionUrl(params);
