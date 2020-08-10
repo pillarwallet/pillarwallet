@@ -149,12 +149,12 @@ aliases:
     run:
       name: Install node dependencies
       command: |
-        yarn install --prefer-offline --cache-folder /home/circleci/.cache/yarn &> /dev/null
+        yarn install --prefer-offline --cache-folder /home/circleci/.cache/yarn
   - &yarn_install_ios
     run:
       name: Install node dependencies
       command: |
-        yarn install --prefer-offline &> /dev/null
+        yarn install --prefer-offline
   - &yarn_restore_cache
     restore_cache:
       name: Restore Yarn Package Cache

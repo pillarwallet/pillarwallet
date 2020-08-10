@@ -32,9 +32,7 @@ import './rn-addons';
 
 i18n
   .use(initReactI18next)
-  .init({
-    lng: 'en',
-  });
+  .init();
 
 configure(loadStories, module);
 addDecorator(withTheme);

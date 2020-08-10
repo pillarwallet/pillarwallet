@@ -61,16 +61,16 @@ PODS:
     - GoogleDataTransportCCTSupport (~> 3.1)
     - nanopb (~> 1.30905.0)
     - PromisesObjC (~> 1.2)
-  - FirebaseInstallations (1.4.0):
+  - FirebaseInstallations (1.5.0):
     - FirebaseCore (~> 6.8)
-    - GoogleUtilities/Environment (~> 6.6)
-    - GoogleUtilities/UserDefaults (~> 6.6)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/UserDefaults (~> 6.7)
     - PromisesObjC (~> 1.2)
-  - FirebaseInstanceID (4.4.0):
+  - FirebaseInstanceID (4.5.1):
     - FirebaseCore (~> 6.8)
     - FirebaseInstallations (~> 1.0)
-    - GoogleUtilities/Environment (~> 6.5)
-    - GoogleUtilities/UserDefaults (~> 6.5)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GoogleUtilities/UserDefaults (~> 6.7)
   - FirebaseMessaging (4.5.0):
     - FirebaseCore (~> 6.8)
     - FirebaseInstanceID (~> 4.3)
@@ -121,25 +121,25 @@ PODS:
     - GoogleToolboxForMac/Defines (= 2.2.2)
   - "GoogleToolboxForMac/NSData+zlib (2.2.2)":
     - GoogleToolboxForMac/Defines (= 2.2.2)
-  - GoogleUtilities/AppDelegateSwizzler (6.6.0):
+  - GoogleUtilities/AppDelegateSwizzler (6.7.1):
     - GoogleUtilities/Environment
     - GoogleUtilities/Logger
     - GoogleUtilities/Network
-  - GoogleUtilities/Environment (6.6.0):
+  - GoogleUtilities/Environment (6.7.1):
     - PromisesObjC (~> 1.2)
-  - GoogleUtilities/ISASwizzler (6.6.0)
-  - GoogleUtilities/Logger (6.6.0):
+  - GoogleUtilities/ISASwizzler (6.7.1)
+  - GoogleUtilities/Logger (6.7.1):
     - GoogleUtilities/Environment
-  - GoogleUtilities/MethodSwizzler (6.6.0):
+  - GoogleUtilities/MethodSwizzler (6.7.1):
     - GoogleUtilities/Logger
-  - GoogleUtilities/Network (6.6.0):
+  - GoogleUtilities/Network (6.7.1):
     - GoogleUtilities/Logger
     - "GoogleUtilities/NSData+zlib"
     - GoogleUtilities/Reachability
-  - "GoogleUtilities/NSData+zlib (6.6.0)"
-  - GoogleUtilities/Reachability (6.6.0):
+  - "GoogleUtilities/NSData+zlib (6.7.1)"
+  - GoogleUtilities/Reachability (6.7.1):
     - GoogleUtilities/Logger
-  - GoogleUtilities/UserDefaults (6.6.0):
+  - GoogleUtilities/UserDefaults (6.7.1):
     - GoogleUtilities/Logger
   - GTMSessionFetcher/Core (1.4.0)
   - Intercom (5.5.2)
@@ -470,9 +470,9 @@ PODS:
     - React
   - RNScrypt (1.1.2):
     - React
-  - RNSentry (1.4.4):
+  - RNSentry (1.7.1):
     - React
-    - Sentry (~> 5.1.4)
+    - Sentry (~> 5.2.0)
   - RNShare (1.2.1):
     - React
   - RNSVG (9.13.6):
@@ -480,15 +480,15 @@ PODS:
   - RNVectorIcons (6.6.0):
     - React
   - RSKImageCropper (2.2.3)
-  - SDWebImage (5.8.3):
-    - SDWebImage/Core (= 5.8.3)
-  - SDWebImage/Core (5.8.3)
+  - SDWebImage (5.8.4):
+    - SDWebImage/Core (= 5.8.4)
+  - SDWebImage/Core (5.8.4)
   - SDWebImageWebPCoder (0.4.1):
     - libwebp (~> 1.0)
     - SDWebImage/Core (~> 5.5)
-  - Sentry (5.1.9):
-    - Sentry/Core (= 5.1.9)
-  - Sentry/Core (5.1.9)
+  - Sentry (5.2.0):
+    - Sentry/Core (= 5.2.0)
+  - Sentry/Core (5.2.0)
   - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
     - React
@@ -764,8 +764,8 @@ SPEC CHECKSUMS:
   FirebaseCore: 8cd4f8ea22075e0ee582849b1cf79d8816506085
   FirebaseCoreDiagnostics: 4505e4d4009b1d93f605088ee7d7764d5f0d1c84
   FirebaseCrashlytics: 7d0fa02ea8842cc4b2ab07b0735edafde1ad77d6
-  FirebaseInstallations: 293f567159b6d66d1c990f13bb868066096c94ec
-  FirebaseInstanceID: 3b119bfe90e904851218159c9a4ecb847cc51d18
+  FirebaseInstallations: 3c520c951305cbf9ca54eb891ff9e6d1fd384881
+  FirebaseInstanceID: c4ad474b87787afd27d09541800620993b457d6f
   FirebaseMessaging: ad9e1a80ea64905e01a0ce1b3eb76a2944544151
   FirebasePerformance: 5652d2004001e886da6dca04f478c695f87c4702
   FirebaseRemoteConfig: 63ae9d14848e645c7f070daa6af89265be48f803
@@ -775,7 +775,7 @@ SPEC CHECKSUMS:
   GoogleDataTransport: 9a8a16f79feffc7f42096743de2a7c4815e84020
   GoogleDataTransportCCTSupport: 489c1265d2c85b68187a83a911913d190012158d
   GoogleToolboxForMac: 800648f8b3127618c1b59c7f97684427630c5ea3
-  GoogleUtilities: 39530bc0ad980530298e9c4af8549e991fd033b1
+  GoogleUtilities: e121a3867449ce16b0e35ddf1797ea7a389ffdf2
   GTMSessionFetcher: 6f5c8abbab8a9bce4bb3f057e317728ec6182b10
   Intercom: 1151a15e5e7931d8e401671a4357239d44325159
   libwebp: 946cb3063cea9236285f7e9a8505d806d30e07f3
@@ -843,14 +843,14 @@ SPEC CHECKSUMS:
   RNPermissions: ad71dd4f767ec254f2cd57592fbee02afee75467
   RNScreens: f28b48b8345f2f5f39ed6195518291515032a788
   RNScrypt: dd5e6b7daa3b84e2f21e2342efda2f183856ea90
-  RNSentry: b456e5a6c48517dad1756d5bccffbdc0d2766dcb
+  RNSentry: 2bae4ffee2e66376ef42cb845a494c3bde17bc56
   RNShare: 48cf88cadf9ca2143cdaa557c1ec7f8808040ffc
   RNSVG: 8ba35cbeb385a52fd960fd28db9d7d18b4c2974f
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RSKImageCropper: a446db0e8444a036b34f3c43db01b2373baa4b2a
-  SDWebImage: 112503ec94a5a2a41869503844a15e8d8f1ead5c
+  SDWebImage: cf6922231e95550934da2ada0f20f2becf2ceba9
   SDWebImageWebPCoder: 36f8f47bd9879a8aea6044765c1351120fd8e3a8
-  Sentry: 81f7f2bd3cb041137ea7efcde3aa5ad0d5a67632
+  Sentry: 6e04bc3e11bf771ca79140a112de64dcfbc7d8cb
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   Yoga: f2a7cd4280bfe2cca5a7aed98ba0eb3d1310f18b
