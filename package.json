@@ -105,6 +105,7 @@
     "react-native-contacts": "5.0.7",
     "react-native-cookies": "https://github.com/joeferraro/react-native-cookies.git",
     "react-native-crypto": "^2.1.0",
+    "react-native-date-picker": "^3.0.2",
     "react-native-device-info": "^5.5.1",
     "react-native-dotenv": "^0.2.0",
     "react-native-emoji": "^1.6.0",

@@ -166,7 +166,7 @@ class ShadowedCard extends React.Component<Props, State> {
           }}
           shadowRadius={(borderRadius || 6) - 2}
         />}
-        <TouchableWithoutFeedback onPress={onPress}>
+        <TouchableWithoutFeedback onPress={onPress} disabled={disabled}>
           <ContentWrapper
             style={upperContentWrapperStyle}
             isAnimated={isAnimated}
