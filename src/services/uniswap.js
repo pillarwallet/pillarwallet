@@ -117,14 +117,14 @@ const getTrade = async (
   fromAssetAddress: string,
   fromQuantityInBaseUnits: string,
   route: Route,
-): Promise<any> => {
+): Promise<Trade> => {
   const fromToken = await Token.fetchData(chainId, toChecksumAddress(fromAssetAddress));
   const fromTokenAmount = new TokenAmount(fromToken, fromQuantityInBaseUnits);
   const trade = new Trade(route, fromTokenAmount, TradeType.EXACT_INPUT);
   return trade;
 };
 
-const getAllowanceSet = async (clientAddress: string, fromAsset: Asset) => {
+const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise<boolean> => {
   if (fromAsset.code === 'ETH') return true;
   const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
   const allowance: BigNumber = await assetContract.allowance(clientAddress, ADDRESSES.router);
@@ -141,9 +141,9 @@ export const getUniswapOffer = async (
   const decimalsBN = new BigNumber(fromAsset.decimals);
   const quantityBN = new BigNumber(quantity);
   const fromAssetQuantityBaseUnits = convertToBaseUnits(decimalsBN, quantityBN);
-  const route = await getRoute(fromAsset, toAsset);
+  const route: ?Route = await getRoute(fromAsset, toAsset);
   if (!route) return null;
-  const trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
+  const trade: Trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
   const askRate = getAskRate(trade);
   const allowanceSet = await getAllowanceSet(clientAddress, fromAsset);
   const offer: Offer = parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_UNISWAP);
