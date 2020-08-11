@@ -66,6 +66,7 @@ import {
 } from 'utils/smartWallet';
 import { mapTransactionsHistoryWithAave } from 'utils/aave';
 import { mapTransactionsPoolTogether } from 'utils/poolTogether';
+import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -87,11 +88,13 @@ import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
+import { checkSablierApprovalTransactionAction } from './sablierActions';
 
-const afterHistoryUpdatedAction = () => {
+export const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
     dispatch(checkPoolTogetherApprovalTransactionAction());
+    dispatch(checkSablierApprovalTransactionAction());
   };
 };
 
@@ -143,7 +146,8 @@ export const fetchSmartWalletTransactionsAction = () => {
       relayerExtensionDevice?.address,
     );
     const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
-    const history = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    const history = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
 
     if (!history.length) return;
 

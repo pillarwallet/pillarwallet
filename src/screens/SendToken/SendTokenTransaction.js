@@ -36,16 +36,24 @@ import Toast from 'components/Toast';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
+import { isSablierTransactionTag } from 'utils/sablier';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { setDismissApproveAction, setExecutingApproveAction } from 'actions/poolTogetherActions';
+import { setExecutingSablierApproveAction, setDismissSablierApproveAction } from 'actions/sablierActions';
 
 // constants
-import { SEND_TOKEN_CONFIRM, SEND_COLLECTIBLE_CONFIRM, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import {
+  SEND_TOKEN_CONFIRM,
+  SEND_COLLECTIBLE_CONFIRM,
+  POOLTOGETHER_DASHBOARD,
+  SABLIER_STREAMS,
+} from 'constants/navigationConstants';
 import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
+import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -54,7 +62,10 @@ type Props = {
   setDismissPoolTogetherApprove: Function,
   setExecutingPoolTogetherApprove: Function,
   poolApproveExecuting: { [string]: boolean | string },
-}
+  setDismissSablierApprove: Function,
+  sablierApproveExecuting: { [string]: string | boolean },
+  setExecutingSablierApprove: Function,
+};
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
 const animationFailure = require('assets/animations/transactionFailureAnimation.json');
@@ -71,11 +82,13 @@ const getTransactionErrorMessage = (error: string): string => {
   return TRANSACTION_ERRORS[error] || transactionFailureText;
 };
 
-const getTransactionSuccessMessage = (transactionType: ?string) => {
+const getTransactionSuccessMessage = (transactionType: ?string, extra?: Object) => {
   if (transactionType === EXCHANGE) {
     return 'It may take some time for this transaction to complete';
   } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
     return 'Watch the pool and let luck be with you';
+  } else if (transactionType === SABLIER_CREATE_STREAM) {
+    return `Now you can watch how the funds go to ${extra?.contactAddress || ''}`;
   }
   return 'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
 };
@@ -91,6 +104,8 @@ const getTransactionSuccessTitle = (props) => {
     return 'Collectible is on its way';
   } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
     return 'You\'re in the pool!';
+  } else if (transactionType === SABLIER_CREATE_STREAM) {
+    return 'Your stream has begun';
   }
   return 'Tokens are on their way';
 };
@@ -121,6 +136,9 @@ class SendTokenTransaction extends React.Component<Props> {
       setDismissPoolTogetherApprove,
       setExecutingPoolTogetherApprove,
       poolApproveExecuting,
+      sablierApproveExecuting,
+      setExecutingSablierApprove,
+      setDismissSablierApprove,
     } = this.props;
     if (executingExchangeTransaction) {
       setDismissExchangeTransaction();
@@ -137,6 +155,15 @@ class SendTokenTransaction extends React.Component<Props> {
       }
     }
 
+    const sablierAsset = transactionPayload?.extra?.sablierApproval?.symbol;
+    if (sablierAsset && !sablierApproveExecuting[sablierAsset]) {
+      if (isSuccess && txHash) {
+        setExecutingSablierApprove(sablierAsset, txHash);
+      } else {
+        setDismissSablierApprove(sablierAsset);
+      }
+    }
+
     const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
       const { extra: { symbol = DAI } = {} } = transactionPayload;
@@ -149,6 +176,11 @@ class SendTokenTransaction extends React.Component<Props> {
           autoClose: true,
         });
       }
+      return;
+    }
+
+    if (isSablierTransactionTag(txTag)) {
+      navigation.navigate(SABLIER_STREAMS);
       return;
     }
 
@@ -211,13 +243,14 @@ class SendTokenTransaction extends React.Component<Props> {
         extra: {
           allowance = {},
         } = {},
+        extra,
       },
       transactionType,
     } = navigation.state.params;
 
     const animationSource = isSuccess ? animationSuccess : animationFailure;
     const transactionStatusText = isSuccess
-      ? getTransactionSuccessMessage(transactionType)
+      ? getTransactionSuccessMessage(transactionType, extra)
       : getTransactionErrorMessage(error);
     const isAllowanceTransaction = Object.keys(allowance).length;
     const transactionStatusTitle = isSuccess
@@ -248,9 +281,11 @@ class SendTokenTransaction extends React.Component<Props> {
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
   poolTogether: { poolApproveExecuting },
+  sablier: { sablierApproveExecuting },
 }: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
   poolApproveExecuting,
+  sablierApproveExecuting,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -258,6 +293,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissPoolTogetherApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
   setExecutingPoolTogetherApprove:
     (symbol: string, txHash: string) => dispatch(setExecutingApproveAction(symbol, txHash)),
+  setExecutingSablierApprove:
+    (symbol: string, txHash: string) => dispatch(setExecutingSablierApproveAction(symbol, txHash)),
+  setDismissSablierApprove: (symbol: string) => dispatch(setDismissSablierApproveAction(symbol)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);

@@ -29,7 +29,7 @@ import t from 'translations/translate';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
-import { addressesEqual } from 'utils/assets';
+import { addressesEqual, getAssetDataByAddress } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import {
   elipsizeAddress,
@@ -51,7 +51,10 @@ import {
   formatAmount,
   formatUnits,
   getDecimalPlaces,
+  findEnsNameCaseInsensitive,
 } from 'utils/common';
+
+// components
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import TankAssetBalance from 'components/TankAssetBalance';
 import { BaseText } from 'components/Typography';
@@ -83,6 +86,13 @@ import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
 } from 'constants/poolTogetherConstants';
+import {
+  SABLIER_CREATE_STREAM,
+  SABLIER_WITHDRAW,
+  SABLIER_CANCEL_STREAM,
+  SABLIER_STREAM_ENDED,
+  SABLIER_EVENT,
+} from 'constants/sablierConstants';
 import { DAI } from 'constants/assetsConstants';
 
 // selectors
@@ -150,11 +160,13 @@ export type EventData = {
   isFailed?: boolean,
   itemImageRoundedSquare?: boolean,
   cornerIcon?: any,
+  profileImage?: boolean,
 };
 
 const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
+const sablierLogo = require('assets/icons/sablier.png');
 
 const ListWrapper = styled.View`
   align-items: flex-end;
@@ -265,6 +277,46 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
     return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : null;
   };
+
+  getSablierEventData = (event: Object) => {
+    const { ensRegistry } = this.props;
+    const { contactAddress } = event;
+    const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+
+    let data = {
+      label: usernameOrAddress,
+      cornerIcon: sablierLogo,
+      profileImage: true,
+    };
+
+    switch (event.tag) {
+      case SABLIER_CREATE_STREAM:
+        data = {
+          ...data,
+          subtext: 'Incoming stream',
+          actionLabel: 'Started',
+        };
+        break;
+      case SABLIER_CANCEL_STREAM:
+        data = {
+          ...data,
+          subtext: 'Incoming stream',
+          actionLabel: 'Canceled',
+        };
+        break;
+      case SABLIER_STREAM_ENDED: {
+        data = {
+          ...data,
+          subtext: event.incoming ? 'Incoming stream' : 'Outgoing stream',
+          actionLabel: 'Ended',
+        };
+        break;
+      }
+      default:
+        data = null;
+    }
+    return data;
+  }
 
   getWalletCreatedEventData = (event: Object) => {
     const { isSmartWalletActivated, theme } = this.props;
@@ -520,6 +572,50 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         break;
       }
+      case SABLIER_CREATE_STREAM:
+      case SABLIER_WITHDRAW:
+      case SABLIER_CANCEL_STREAM: {
+        const { amount, contactAddress, assetAddress } = event.extra;
+        const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+        const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
+        const { decimals, symbol } = assetData;
+
+        const formattedAmount = formatAmount(formatUnits(amount, decimals), getDecimalPlaces(symbol));
+
+        data = {
+          label: usernameOrAddress,
+          cornerIcon: sablierLogo,
+          profileImage: true,
+        };
+
+        if (event.tag === SABLIER_CREATE_STREAM) {
+          data = {
+            ...data,
+            subtext: 'Outgoing stream',
+            itemValue: `- ${formattedAmount} ${symbol}`,
+            fullItemValue: `- ${formattedAmount} ${symbol}`,
+            valueColor: 'text',
+          };
+        } else if (event.tag === SABLIER_WITHDRAW) {
+          data = {
+            ...data,
+            subtext: 'Withdraw',
+            itemValue: `+ ${formattedAmount} ${symbol}`,
+            fullItemValue: `+ ${formattedAmount} ${symbol}`,
+            valueColor: 'positive',
+          };
+        } else if (event.tag === SABLIER_CANCEL_STREAM) {
+          data = {
+            ...data,
+            subtext: 'Outgoing stream',
+            itemValue: `- ${formattedAmount} ${symbol}`,
+            itemStatusIcon: TX_FAILED_STATUS,
+            statusIconColor: this.getColor('negative'),
+            isFailed: true,
+          };
+        }
+        break;
+      }
       default:
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
@@ -627,7 +723,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         }
     }
-    data.itemStatusIcon = isPending ? TX_PENDING_STATUS : '';
+    data.itemStatusIcon = data.itemStatusIcon || (isPending ? TX_PENDING_STATUS : '');
     if (isFailed) {
       data.itemStatusIcon = TX_FAILED_STATUS;
       data.statusIconColor = this.getColor('negative');
@@ -699,6 +795,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         return this.getCollectibleTransactionEventData(event);
       case BADGE_REWARD_EVENT:
         return this.getBadgeRewardEventData(event);
+      case SABLIER_EVENT:
+        return this.getSablierEventData(event);
       default:
         return null;
     }

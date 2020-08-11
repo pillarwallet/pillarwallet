@@ -22,20 +22,23 @@ import { Platform, Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native/index';
 import LinearGradient from 'react-native-linear-gradient';
 import { fontStyles, fontTrackings } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
-import ProgressCircle from './ProgressCircle';
 
 type Props = {
   isPending?: boolean,
   fullStatusValue: number,
   currentStatusValue: number,
-  circle: boolean,
-  children?: React.Node,
   theme: Theme,
   showLabel?: boolean,
   activeTab?: string,
+  colorStart?: string,
+  colorEnd?: string,
+  height?: number,
+  barPadding?: number,
+  emptyBarBackgroundColor?: string,
+  emptyBarBorder?: boolean,
 };
 
 
@@ -47,17 +50,21 @@ type State = {
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
-  background-color: ${themedColors.surface};
-  padding: 3px;
+  background-color: ${({ backgroundColor }) => backgroundColor};
+  padding: ${({ padding }) => padding}px;
   align-items: center;
   justify-content: flex-start;
   border-radius: 10;
   width: 100%;
+  ${({ border }) => border && `
+    borderColor: #ebf0ff;
+    borderWidth: 1px;
+  `}
 `;
 
 const StyledLinearGradient = styled(LinearGradient)`
   padding: 1px;
-  height: 14px;
+  height: ${({ height }) => height}px;
   border-radius: 10;
   overflow: hidden;
 `;
@@ -82,20 +89,9 @@ const ProgressLabel = styled(MediumText)`
 `;
 
 const BACKGROUND_FOR_LABEL = 8;
-const getAdjustedProgressInPercent = (percents) => {
-  switch (percents) {
-    case 0: return 0.5;
-    case 25: return 25.5;
-    case 50: return 50.5;
-    default: return percents;
-  }
-};
-
-const AnimatedProgressCircle = Animated.createAnimatedComponent(ProgressCircle);
 
 class Progress extends React.Component<Props, State> {
   static defaultProps = {
-    circle: false,
     showLabel: false,
   };
 
@@ -103,8 +99,8 @@ class Progress extends React.Component<Props, State> {
     super(props);
     this.state = {
       label: '0',
-      progress: this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL,
-      progressAnimated: new Animated.Value(this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL),
+      progress: !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL,
+      progressAnimated: new Animated.Value(!this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL),
     };
   }
 
@@ -134,8 +130,8 @@ class Progress extends React.Component<Props, State> {
         // eslint-disable-next-line react/no-did-update-set-state
         this.setState({
           label: '0',
-          progress: this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL,
-          progressAnimated: new Animated.Value(this.props.circle || !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL),
+          progress: !this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL,
+          progressAnimated: new Animated.Value(!this.props.showLabel ? 0.5 : BACKGROUND_FOR_LABEL),
         }, () => {
           this.handleStatusValue(fullStatusValue, currentStatusValue);
         });
@@ -152,8 +148,7 @@ class Progress extends React.Component<Props, State> {
       const adjustedBarProgress = adjustedCurrentStatus < BACKGROUND_FOR_LABEL
         ? BACKGROUND_FOR_LABEL
         : adjustedCurrentStatus;
-      const adjustedCircleProgress = getAdjustedProgressInPercent(adjustedCurrentStatus);
-      const thisProgress = this.props.circle ? adjustedCircleProgress : adjustedBarProgress;
+      const thisProgress = adjustedBarProgress;
       this.setState({
         label: adjustedCurrentStatus.toString(),
         progress: thisProgress,
@@ -181,31 +176,31 @@ class Progress extends React.Component<Props, State> {
     } = this.state;
 
     const {
-      circle,
-      children,
       theme,
       showLabel = false,
     } = this.props;
 
     const colors = getThemeColors(theme);
 
-    if (circle) {
-      return (
-        <AnimatedProgressCircle
-          label={label}
-          progress={progressAnimated}
-        >
-          {children}
-        </AnimatedProgressCircle>
-      );
-    }
+    const {
+      colorStart = colors.progressBarStart,
+      colorEnd = colors.progressBarEnd,
+      barPadding = 3,
+      height = 14,
+      emptyBarBackgroundColor = colors.surface,
+      emptyBarBorder,
+    } = this.props;
 
     return (
-      <ProgressBarWrapper>
+      <ProgressBarWrapper
+        padding={barPadding}
+        backgroundColor={emptyBarBackgroundColor}
+        border={emptyBarBorder}
+      >
         <AnimatedStyledLinearGradient
           start={{ x: 0, y: 0 }}
           end={{ x: 1, y: 0 }}
-          colors={[colors.progressBarStart, colors.progressBarEnd]}
+          colors={[colorStart, colorEnd]}
           full={progress === 100}
           style={{
             width: progressAnimated.interpolate({
@@ -213,6 +208,7 @@ class Progress extends React.Component<Props, State> {
               outputRange: ['0%', '100%'],
             }),
           }}
+          height={height}
         >
           {!!showLabel &&
             <ProgressLabel>{label}%</ProgressLabel>

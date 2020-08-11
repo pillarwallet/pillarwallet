@@ -35,10 +35,14 @@ import type { InAppBrowserOptions } from 'react-native-inappbrowser-reborn';
 
 export const openInAppBrowser = async (url: string, options?: InAppBrowserOptions) => {
   if (await InAppBrowser.isAvailable()) {
-    await InAppBrowser
+    return InAppBrowser
       .open(url, options)
-      .catch(error => reportOrWarn('InAppBrowser.error', error, 'warning'));
-  } else {
-    reportOrWarn('InAppBrowser.isAvailable() returned false', null, 'warning');
+      .catch(error => {
+        reportOrWarn('InAppBrowser.error', error, 'error');
+        throw error;
+      });
   }
+
+  reportOrWarn('InAppBrowser.isAvailable() returned false', null, 'warning');
+  throw new Error('InAppBrowser.isAvailable() returned false');
 };

@@ -61,6 +61,7 @@ export type Props = {
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
   onCustomOptionSet?: (option: Option) => void,
+  disabled?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -119,7 +120,7 @@ const Selector = ({
     return null;
   };
 
-  const renderOption = (option: ?Option) => {
+  const renderOption = (option: ?Option, disabled: boolean) => {
     if (!option) return null;
     const {
       name,
@@ -140,7 +141,8 @@ const Selector = ({
     return (
       <ListItemWithImage
         label={name}
-        onPress={() => setIsOptionsVisible(true)}
+        disabled={disabled}
+        onPress={() => !disabled && setIsOptionsVisible(true)}
         avatarUrl={imageUrl}
         navigateToProfile={() => onItemPress(true)}
         imageUpdateTimeStamp={lastUpdateTime}
@@ -159,8 +161,8 @@ const Selector = ({
     <>
       <Wrapper style={wrapperStyle}>
         <MediumText regular accent>{label}: </MediumText>
-        <SelectedOption onPress={() => setIsOptionsVisible(true)} disabled={disabled}>
-          {hasValue && renderOption(selectedOption)}
+        <SelectedOption disabled={disabled} onPress={() => setIsOptionsVisible(true)} disabled={disabled}>
+          {hasValue && renderOption(selectedOption, disabled)}
           {!hasValue && (
             <MediumText style={{ paddingHorizontal: spacing.layoutSides }} big>
               {placeholderText}

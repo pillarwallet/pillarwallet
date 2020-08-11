@@ -18,8 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getWinChance, countDownDHMS } from 'utils/poolTogether';
-import { formatAmount } from 'utils/common';
+import { getWinChance } from 'utils/poolTogether';
+import { formatAmount, countDownDHMS } from 'utils/common';
 import { createSelector } from 'reselect';
 import { poolTogetherStatsSelector } from './selectors';
 
