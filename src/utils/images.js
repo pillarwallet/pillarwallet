@@ -68,7 +68,7 @@ function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
 }
 
-export const images = (theme?: Theme) => {
+export const images = (theme: Theme) => {
   const currentTheme = getThemeType(theme);
   return {
     towellie: getImageByTheme(currentTheme, {
