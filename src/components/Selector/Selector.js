@@ -18,22 +18,27 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
+// components
 import { MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import SelectorOptions from 'components/SelectorOptions';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 
+// selectors
+import { activeAccountAddressSelector } from 'selectors';
+
+// utils
 import { spacing } from 'utils/variables';
 
+// types
 import type { HorizontalOption, Option } from 'models/Selector';
-import { activeAccountAddressSelector } from 'selectors';
 
 
 export type Props = {
@@ -52,13 +57,11 @@ export type Props = {
   disableSelfSelect?: boolean,
   activeAccountAddress?: string,
   allowEnteringCustomAddress?: boolean,
+  children?: any,
+  customOptionButtonLabel?: string,
+  customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
+  onCustomOptionSet?: (option: Option) => void,
 };
-
-type State = {
-  areOptionsVisible: boolean,
-  isScanning: boolean,
-};
-
 
 const Wrapper = styled.View`
   width: 100%;
@@ -72,35 +75,52 @@ const SelectedOption = styled.TouchableOpacity`
   flex: 1;
 `;
 
-class Selector extends React.Component<Props, State> {
-  switchBetweenModals: boolean;
+const Selector = ({
+  onOptionSelect,
+  disableSelfSelect,
+  activeAccountAddress,
+  onOptionImagePress,
+  label = 'Select',
+  placeholder = 'Choose option',
+  optionsTitle,
+  options,
+  searchPlaceholder = 'Search',
+  selectedOption,
+  horizontalOptionsData,
+  wrapperStyle,
+  noOptionImageFallback,
+  hasQRScanner,
+  allowEnteringCustomAddress,
+  children,
+  customOptionButtonLabel,
+  customOptionButtonOnPress,
+  onCustomOptionSet,
+}: Props) => {
+  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
 
-  state = {
-    areOptionsVisible: false,
-    isScanning: false,
+  const handleScannerReadResult = (address: string) => {
+    const option = {
+      value: address,
+      ethAddress: address,
+      name: address,
+    };
+    if (onOptionSelect) onOptionSelect(option);
+    setIsScannerVisible(false);
   };
 
-  closeOptions = () => {
-    this.switchBetweenModals = false;
-    this.setState({ areOptionsVisible: false });
+  const handleScannerOpen = () => {
+    Keyboard.dismiss();
+    setIsScannerVisible(true);
   };
 
-  openOptions = () => {
-    this.setState({ areOptionsVisible: true });
+  const handleSearchValidation = (searchQuery: string): ?string => {
+    if (disableSelfSelect && searchQuery === activeAccountAddress) return 'Can not send to yourself';
+    return null;
   };
 
-  handleOptionsHidden = () => {
-    if (this.switchBetweenModals) this.setState({ isScanning: true });
-  };
-
-  onOptionSelect = (option: Option, onSuccess: () => void) => {
-    const { onOptionSelect } = this.props;
-    if (onOptionSelect) onOptionSelect(option, onSuccess);
-  };
-
-  renderOption = (option: ?Option, onPress?: () => void) => {
+  const renderOption = (option: ?Option) => {
     if (!option) return null;
-    const { onOptionImagePress } = this.props;
     const {
       name,
       imageUrl,
@@ -108,12 +128,21 @@ class Selector extends React.Component<Props, State> {
       imageSource,
     } = option;
 
+    const onItemPress = (itemImagePress: boolean = false) => {
+      if (itemImagePress && onOptionImagePress) {
+        onOptionImagePress(option);
+        return;
+      }
+      if (onOptionSelect) onOptionSelect(option);
+      setIsOptionsVisible(false);
+    };
+
     return (
       <ListItemWithImage
         label={name}
-        onPress={onPress}
+        onPress={() => setIsOptionsVisible(true)}
         avatarUrl={imageUrl}
-        navigateToProfile={onOptionImagePress ? () => onOptionImagePress(option) : onPress}
+        navigateToProfile={() => onItemPress(true)}
         imageUpdateTimeStamp={lastUpdateTime}
         itemImageSource={imageSource}
         padding="0 14px"
@@ -121,101 +150,54 @@ class Selector extends React.Component<Props, State> {
     );
   };
 
-  handleQRRead = (address: string) => {
-    const { onOptionSelect } = this.props;
-    const option = {
-      value: address,
-      ethAddress: address,
-      name: address,
-    };
-    if (onOptionSelect) onOptionSelect(option);
-    this.closeOptions();
-  };
+  const hasValue = !isEmpty(selectedOption);
+  const hasOptions = !!options?.length;
+  const disabled = !hasOptions && !allowEnteringCustomAddress;
+  const placeholderText = !disabled ? `${placeholder}...` : 'no options to select';
 
-  handleScannerOpen = () => {
-    this.switchBetweenModals = true;
-    Keyboard.dismiss();
-    this.setState({ areOptionsVisible: false });
-  };
-
-  handleQRScannerHidden = () => {
-    if (this.switchBetweenModals) this.openOptions();
-    this.switchBetweenModals = false;
-  };
-
-  handleQRScannerCancel = () => {
-    this.setState({ isScanning: false });
-  };
-
-  handleSearchValidation = (val) => {
-    const { disableSelfSelect, activeAccountAddress } = this.props;
-    if (disableSelfSelect) {
-      if (val === activeAccountAddress) {
-        return 'Can not send to yourself';
-      }
-    }
-    return null;
-  };
-
-  render() {
-    const {
-      label = 'Select',
-      placeholder = 'Choose option',
-      optionsTitle,
-      options,
-      searchPlaceholder = 'Search',
-      selectedOption,
-      horizontalOptionsData,
-      wrapperStyle,
-      noOptionImageFallback,
-      hasQRScanner,
-      allowEnteringCustomAddress,
-    } = this.props;
-    const { areOptionsVisible, isScanning } = this.state;
-    const hasValue = !isEmpty(selectedOption);
-    const hasOptions = !!options?.length;
-    const disabled = !hasOptions && !allowEnteringCustomAddress;
-    const placeholderText = !disabled ? `${placeholder}...` : 'no options to select';
-
-    return (
-      <>
-        <Wrapper style={wrapperStyle}>
-          <MediumText regular accent>{label}: </MediumText>
-          <SelectedOption onPress={this.openOptions} disabled={disabled}>
-            {hasValue
-              ? this.renderOption(selectedOption, this.openOptions)
-              : <MediumText big style={{ paddingHorizontal: spacing.layoutSides }}>{placeholderText}</MediumText>}
-          </SelectedOption>
-        </Wrapper>
-        <SelectorOptions
-          isVisible={areOptionsVisible}
-          onHide={this.closeOptions}
-          onHidden={this.handleOptionsHidden}
-          title={optionsTitle || placeholder}
-          options={options}
-          searchPlaceholder={searchPlaceholder}
-          optionKeyExtractor={({ name, value }) => name || value}
-          horizontalOptionsData={horizontalOptionsData}
-          onOptionSelect={this.onOptionSelect}
-          noImageFallback={noOptionImageFallback}
-          iconProps={hasQRScanner && {
-            icon: 'qrcode',
-            style: { fontSize: 20, marginTop: 2 },
-            onPress: this.handleScannerOpen,
-          }}
-          validator={this.handleSearchValidation}
-          allowEnteringCustomAddress={allowEnteringCustomAddress}
-        />
-        <AddressScanner
-          isActive={isScanning}
-          onCancel={this.handleQRScannerCancel}
-          onRead={this.handleQRRead}
-          onModalHidden={this.handleQRScannerHidden}
-        />
-      </>
-    );
-  }
-}
+  return (
+    <>
+      <Wrapper style={wrapperStyle}>
+        <MediumText regular accent>{label}: </MediumText>
+        <SelectedOption onPress={() => setIsOptionsVisible(true)} disabled={disabled}>
+          {hasValue && renderOption(selectedOption)}
+          {!hasValue && (
+            <MediumText style={{ paddingHorizontal: spacing.layoutSides }} big>
+              {placeholderText}
+            </MediumText>
+          )}
+        </SelectedOption>
+      </Wrapper>
+      <SelectorOptions
+        isVisible={isOptionsVisible}
+        onHide={() => setIsOptionsVisible(false)}
+        title={optionsTitle || placeholder}
+        options={options}
+        searchPlaceholder={searchPlaceholder}
+        optionKeyExtractor={({ name, value }) => name || value}
+        horizontalOptionsData={horizontalOptionsData}
+        onOptionSelect={onOptionSelect}
+        noImageFallback={noOptionImageFallback}
+        iconProps={hasQRScanner && {
+          icon: 'qrcode',
+          style: { fontSize: 20, marginTop: 2 },
+          onPress: handleScannerOpen,
+        }}
+        validator={handleSearchValidation}
+        allowEnteringCustomAddress={allowEnteringCustomAddress}
+        onCustomOptionSet={onCustomOptionSet}
+        customOptionButtonLabel={customOptionButtonLabel}
+        customOptionButtonOnPress={customOptionButtonOnPress}
+      />
+      <AddressScanner
+        isActive={isScannerVisible}
+        onCancel={() => setIsScannerVisible(false)}
+        onRead={handleScannerReadResult}
+      />
+      {children}
+    </>
+  );
+};
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,

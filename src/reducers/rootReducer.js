@@ -60,6 +60,7 @@ import recoveryPortalReducer from './recoveryPortalReducer';
 import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
+import contactsReducer from './contactsReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -102,6 +103,7 @@ import type {
   KeyBasedAssetTransferReducerAction,
   KeyBasedAssetTransferReducerState,
 } from './keyBasedAssetTransferReducer';
+import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -138,6 +140,7 @@ export type RootReducerState = {|
   lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
+  contacts: ContactsReducerState,
 |};
 
 type RootReducerAction =
@@ -166,7 +169,8 @@ type RootReducerAction =
   | ConnectedDevicesReducerAction
   | RecoveryPortalReducerAction
   | LendingReducerAction
-  | KeyBasedAssetTransferReducerAction;
+  | KeyBasedAssetTransferReducerAction
+  | ContactsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -213,6 +217,7 @@ const appReducer = combineReducers({
   lending: lendingReducer,
   poolTogether: poolTogetherReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
+  contacts: contactsReducer,
 });
 
 export const initialState = appReducer(undefined, {});

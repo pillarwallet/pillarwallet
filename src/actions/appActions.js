@@ -67,6 +67,7 @@ import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
+import { SET_CONTACTS } from 'constants/contactsConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -186,6 +187,9 @@ export const initAppAndRedirectAction = () => {
 
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
+
+      const { contacts = [] } = get(storageData, 'contacts', []);
+      dispatch({ type: SET_CONTACTS, payload: contacts });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

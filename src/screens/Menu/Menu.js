@@ -52,6 +52,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_STATUS,
+  CONTACTS_FLOW,
 } from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
@@ -194,6 +195,13 @@ const Menu = ({
       emoji: 'gear',
       card: true,
       action: () => navigation.navigate(APP_SETTINGS),
+    },
+    {
+      key: 'addressBook',
+      title: 'Address book',
+      emoji: 'book',
+      card: true,
+      action: () => navigation.navigate(CONTACTS_FLOW),
     },
     {
       key: 'referFriends',

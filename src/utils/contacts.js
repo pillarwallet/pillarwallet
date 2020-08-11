@@ -17,26 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
+// components
 import Toast from 'components/Toast';
-import { resolveEnsName } from './common';
+
+// types
+import type { Contact } from 'models/Contact';
+
+// utils
+import { reportLog, resolveEnsName } from './common';
 import { isEnsName } from './validators';
 
-export const getInitials = (fullName: string = '') => {
-  return fullName
-    .split(' ')
-    .map(name => name.substring(0, 1))
-    .join('')
-    .toUpperCase();
-};
 
-export const getContactsEnsName = async (address: ?string) => {
+export const getReceiverWithEnsName = async (ethAddress: ?string) => {
   let receiverEnsName = '';
   let receiver = '';
-  if (!address) return Promise.resolve({ receiverEnsName, receiver });
+  if (!ethAddress) return { receiverEnsName, receiver };
 
-  if (isEnsName(address)) {
-    const resolvedAddress = await resolveEnsName(address);
+  if (isEnsName(ethAddress)) {
+    const resolvedAddress = await resolveEnsName(ethAddress).catch((error) => {
+      reportLog('getReceiverWithEnsName failed', { error });
+      return null;
+    });
     if (!resolvedAddress) {
       Toast.show({
         title: 'Sorry, we could not find that ENS name!',
@@ -44,13 +45,24 @@ export const getContactsEnsName = async (address: ?string) => {
         type: 'warning',
         autoClose: false,
       });
-      return Promise.resolve({ receiverEnsName, receiver });
+      return { receiverEnsName, receiver };
     }
-    receiverEnsName = address;
+    receiverEnsName = ethAddress;
     receiver = resolvedAddress;
   } else {
-    receiver = address;
+    receiver = ethAddress;
   }
 
   return { receiverEnsName, receiver };
+};
+
+export const getContactWithEnsName = async (contact: Contact, ensName: string): Promise<Contact> => {
+  const { receiverEnsName, receiver } = await getReceiverWithEnsName(ensName);
+
+  return {
+    ...contact,
+    name: contact?.name || receiverEnsName,
+    ensName: receiverEnsName,
+    ethAddress: receiver || contact?.ethAddress,
+  };
 };
