@@ -11,7 +11,7 @@
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
 #import <Firebase.h>
-#import "SplashManager.h"
+#import "RNSplashScreen.h"
 #import "RCTLinkingManager.h"
 #import "Intercom/intercom.h"
 #import "RNNotifications.h"
@@ -48,7 +48,7 @@
   
   [self.window makeKeyAndVisible];
   
-  [SplashManager show:@"Splash" inRootView:rootView];
+  [RNSplashScreen show];
   return YES;
 }
 

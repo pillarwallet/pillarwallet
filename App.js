@@ -76,6 +76,7 @@ import RootNavigation from 'navigation/rootNavigation';
 import Storybook from 'screens/Storybook';
 import configureStore from './src/configureStore';
 
+console.disableYellowBox = true;
 const { store, persistor } = configureStore();
 
 export const LoadingSpinner = styled(Spinner)`

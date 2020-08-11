@@ -246,8 +246,6 @@ dependencies {
     implementation 'io.intercom.android:intercom-sdk-base:5.+' // react-native-intercom to override for Intercom PN handler implementation
     implementation 'io.intercom.android:intercom-sdk-fcm:5.+' // react-native-intercom
 
-    implementation 'pl.droidsonroids.gif:android-gif-drawable:1.2.18' // for gif in splash screen
-
     // branch.io
     implementation 'com.google.android.gms:play-services-ads:16.+' // GAID matching
     implementation 'com.android.support:customtabs:28.0.0' // optional, Chrome Tab matching (enables 100% guaranteed matching based on cookies), androidx.browser:browser works just the same
