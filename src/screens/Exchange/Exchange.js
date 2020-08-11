@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard, View } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -35,6 +35,8 @@ import isEmpty from 'lodash.isempty';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
+import TextInput from 'components/TextInput';
+import SelectorOptions from 'components/SelectorOptions';
 
 // actions
 import {
@@ -48,7 +50,7 @@ import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, POPULAR_SWAPS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, POPULAR_SWAPS } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
@@ -56,7 +58,8 @@ import { spacing } from 'utils/variables';
 import { getAssetData, getAssetsAsList, getBalance, getRate, sortAssets } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
-import { SelectorInputTemplate, selectorStructure, inputFormatter, inputParser } from 'utils/formHelpers';
+import { SelectorInputTemplate, inputFormatter, inputParser } from 'utils/formHelpers';
+import { generateHorizontalOptions, ExchangeOptions } from 'utils/exchange';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -126,24 +129,11 @@ const FormWrapper = styled.View`
   background-color: ${themedColors.surface};
 `;
 
-const { Form } = t.form;
+const InputWrapper = styled.View`
+  width: 100%;
+`;
 
 const settingsIcon = require('assets/icons/icon_key.png');
-
-const generateFormStructure = (balances: Balances) => {
-  const ToOption = t.refinement(t.Object, ({ selector }) => {
-    return !isEmpty(selector);
-  });
-
-  ToOption.getValidationErrorMessage = () => {
-    return false; // should still validate (to not trigger search if empty), yet error should not be visible to user
-  };
-
-  return t.struct({
-    fromInput: selectorStructure(balances, true),
-    toInput: ToOption,
-  });
-};
 
 class ExchangeScreen extends React.Component<Props, State> {
   exchangeForm: t.form;
@@ -151,12 +141,30 @@ class ExchangeScreen extends React.Component<Props, State> {
   listeners: NavigationEventSubscription[];
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
+  options: ExchangeOptions;
 
   constructor(props: Props) {
     super(props);
     this.listeners = [];
+    this.options = {
+      fromOptions: [{}],
+      toOptions: [{}],
+      horizontalOptions: [{}],
+    };
 
     this.state = {
+      fromAmount: 0,
+      toAmount: 0,
+      fromAsset: '',
+      toAsset: '',
+      fromAmountInFiat: false,
+      toAmountInFiat: false,
+      includeTxFee: true,
+      errorMessage: '',
+      optionsCreated: false,
+      showSellOptions: false,
+      showBuyOptions: false,
+
       shapeshiftAuthPressed: false,
       isSubmitted: false,
       showEmptyMessage: false,
@@ -210,6 +218,63 @@ class ExchangeScreen extends React.Component<Props, State> {
     };
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
+
+  getSellMaxAmount = () => {
+    //
+    const { balances } = this.props;
+    const { fromAsset } = this.state;
+    return formatAmount(getBalance(balances, fromAsset.symbol || fromAsset.code));
+  }
+
+  handleBuySellSwap = () => {
+    // TODO
+    const { fromAsset, toAsset } = this.state;
+    this.setState({
+      toAsset: fromAsset,
+      fromAsset: toAsset,
+      fromAmount: 0, // TODO - make 0 or not?
+      toAmount: 0,
+    });
+  }
+
+  getFromInput = () => {
+    const { errorMessage, optionsCreated } = this.state;
+    if (!optionsCreated) return false;
+    const customLabelStyle = {
+      flex: 1,
+      width: 10,
+      height: 30,
+      backgroundColor: 'pink',
+    };
+    const inputProps = {
+      // onChange: // TODO
+      onBlur: this.blurFromInput,
+      maxLength: 42,
+      placeholder: 'piotr',
+      onSelectorOpen: this.blurFromInput,
+      selectorValue: {
+        selector: {},
+        input: '0',
+      },
+      customLabel: <View style={customLabelStyle} />, // TODO
+      rightLabel: 'right label bonjour', // TODO!
+      onPressRightLabel: () => {}, // TODO!
+    };
+
+    return (
+      <InputWrapper>
+        <TextInput
+          style={{ width: '100%' }}
+          hasError={!!errorMessage}
+          errorMessage={errorMessage}
+          inputProps={inputProps}
+          numeric
+          getInputRef={i => { this.fromInputRef = i; }}
+        />
+      </InputWrapper>
+    );
+  }
+
 
   componentDidMount() {
     const {
@@ -325,22 +390,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     const assetsOptionsBuying = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
     const assetsOptionsFrom = this.generateAssetsOptions(assets);
 
-    const popularOptions = POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
-      const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
-      if (popularAsset) return [...popularAssetsList, popularAsset];
-      return popularAssetsList;
-    }, []);
-
-
-    const thisStateFormOptionsCopy = { ...this.state.formOptions };
-    thisStateFormOptionsCopy.fields.fromInput.config.options = assetsOptionsFrom;
-    thisStateFormOptionsCopy.fields.fromInput.config.horizontalOptions = this.generateHorizontalOptions(popularOptions);
-    thisStateFormOptionsCopy.fields.toInput.config.options = assetsOptionsBuying;
-    thisStateFormOptionsCopy.fields.toInput.config.horizontalOptions = this.generateHorizontalOptions(popularOptions);
-
-    this.setState({
-      formOptions: thisStateFormOptionsCopy,
-    });
+    this.options = {
+      fromOptions: assetsOptionsFrom,
+      toOptions: assetsOptionsBuying,
+      horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
+    };
+    this.setState({ optionsCreated: true });
   };
 
   generateHorizontalOptions = (popularOptions: Option[]) => [{
@@ -576,7 +631,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   render() {
     const {
-      balances,
       navigation,
       exchangeAllowances,
       connectedProviders,
@@ -590,12 +644,14 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const {
       value,
-      formOptions,
       isSubmitted,
       showEmptyMessage,
+      showSellOptions,
+      showBuyOptions,
     } = this.state;
 
-    const formStructure = generateFormStructure(balances);
+    const { fromOptions, toOptions, horizontalOptions } = this.options;
+
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
     if ((!isEmpty(exchangeAllowances) || !isEmpty(connectedProviders))
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
@@ -622,55 +678,53 @@ class ExchangeScreen extends React.Component<Props, State> {
     const swaps = this.generatePopularSwaps();
 
     return (
-      <ContainerWithHeader
-        headerProps={{
+      <>
+        <ContainerWithHeader
+          headerProps={{
           rightItems,
           centerItems: [{ title: 'Exchange' }],
         }}
-        inset={{ bottom: 'never' }}
-        // footer={!blockView && !reorderedOffers.length && !isSubmitted && (
-        //   <PromoWrapper>
-        //     <PromoText>
-        //       Aggregated from many decentralized exchanges and token swap services
-        //     </PromoText>
-        //   </PromoWrapper>
-        // )}
-      >
-        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
-        {(blockView || !!deploymentData.error) && <SWActivationCard />}
-        {!blockView &&
-        <ScrollView
-          onScroll={() => Keyboard.dismiss()}
-          keyboardShouldPersistTaps="handled"
-          disableOnAndroid
+          inset={{ bottom: 'never' }}
         >
-          {!isSubmitted && <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />}
-          <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
-            <Form
-              ref={node => { this.exchangeForm = node; }}
-              type={formStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.handleFormChange}
-            />
-          </FormWrapper>
-          {!!disableNonFiatExchange &&
+          <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
+          {(blockView || !!deploymentData.error) && <SWActivationCard />}
+          {!blockView &&
+          <ScrollView
+            onScroll={() => Keyboard.dismiss()}
+            keyboardShouldPersistTaps="handled"
+            disableOnAndroid
+          >
+            {!isSubmitted && <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />}
+            <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
+              {this.getFromInput()}
+            </FormWrapper>
+            {!!disableNonFiatExchange &&
             <SWActivationCard
               message="To start exchanging assets you need to activate your Smart Wallet"
               buttonTitle="Activate Smart Wallet"
             />
           }
-          {!!isSubmitted &&
-          <ExchangeOffers
-            value={value}
-            disableNonFiatExchange={disableNonFiatExchange}
-            isExchangeActive={isSubmitted}
-            showEmptyMessage={showEmptyMessage}
-            setFromAmount={this.setFromAmount}
-            navigation={navigation}
-          />}
-        </ScrollView>}
-      </ContainerWithHeader>
+            {!!isSubmitted &&
+            <ExchangeOffers
+              value={value}
+              disableNonFiatExchange={disableNonFiatExchange}
+              isExchangeActive={isSubmitted}
+              showEmptyMessage={showEmptyMessage}
+              setFromAmount={this.setFromAmount}
+              navigation={navigation}
+            />}
+          </ScrollView>}
+        </ContainerWithHeader>
+        <SelectorOptions
+          isVisible={showBuyOptions || showSellOptions}
+          onHide={() => {}} // TODO
+          title={showSellOptions ? 'Sell' : 'Buy'}
+          options={showSellOptions ? fromOptions : toOptions}
+          searchPlaceholder="Search"
+          onOptionSelect={() => {}} // TODO
+          horizontalOptionsData={horizontalOptions}
+        />
+      </>
     );
   }
 }

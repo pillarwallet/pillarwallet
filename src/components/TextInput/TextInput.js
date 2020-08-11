@@ -494,6 +494,7 @@ class TextInput extends React.Component<Props, State> {
               isFocused={isFocused}
               height={inputHeight}
             >
+              { /* this is the small square at left of input. move it to the header */ }
               {!!Object.keys(selectorOptions).length &&
               <Selector
                 fullWidth={fullWidthSelector}
@@ -567,6 +568,7 @@ class TextInput extends React.Component<Props, State> {
         <InputFooter>
           <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
         </InputFooter>}
+        {/* have this in Exchange screen directly */}
         <SelectorOptions
           isVisible={showOptionsSelector}
           onHide={this.closeSelector}

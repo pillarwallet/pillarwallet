@@ -24,7 +24,15 @@ import get from 'lodash.get';
 import type { ProvidersMeta } from 'models/Offer';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
+import { POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
+import type { Option } from 'models/Selector';
 import { getThemeName } from './themes';
+
+export type ExchangeOptions = {
+  fromOptions: Option[],
+  toOptions: Option[],
+  horizontalOptions: Option[],
+}
 
 export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: string, theme: Theme, type: string) => {
   if (!provider) return '';
@@ -54,4 +62,20 @@ export const clearWebViewCookies = () => {
   } else {
     CookieManager.clearAll().then(() => {}).catch(() => null);
   }
+};
+
+const generatePopularOptions = (assetsOptionsBuying: { symbol: string }[]): Option[] => {
+  return POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
+    const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
+    if (popularAsset) return [...popularAssetsList, popularAsset];
+    return popularAssetsList;
+  }, []);
+};
+
+export const generateHorizontalOptions = (assetsOptionsBuying: Option[]): Option[] => {
+  const popularOptions = generatePopularOptions(assetsOptionsBuying);
+  return [{
+    title: 'Popular',
+    data: popularOptions,
+  }];
 };
