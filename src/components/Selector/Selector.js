@@ -61,7 +61,6 @@ export type Props = {
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
   onCustomOptionSet?: (option: Option) => void,
-  disabled?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -161,7 +160,7 @@ const Selector = ({
     <>
       <Wrapper style={wrapperStyle}>
         <MediumText regular accent>{label}: </MediumText>
-        <SelectedOption disabled={disabled} onPress={() => setIsOptionsVisible(true)} disabled={disabled}>
+        <SelectedOption disabled={disabled} onPress={() => setIsOptionsVisible(true)}>
           {hasValue && renderOption(selectedOption, disabled)}
           {!hasValue && (
             <MediumText style={{ paddingHorizontal: spacing.layoutSides }} big>
