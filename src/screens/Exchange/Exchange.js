@@ -589,7 +589,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const formStructure = generateFormStructure(balances);
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
-    if ((!isEmpty(exchangeAllowances))
+    if (!isEmpty(exchangeAllowances)
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
       rightItems.push({
         iconSource: settingsIcon,
