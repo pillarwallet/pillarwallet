@@ -348,7 +348,8 @@
     "sablierAllowanceFailed": "Can't enable {{assetName}} ({{assetSymbol}}). Please try again.",
     "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) withdrawn.",
     "sablierCancelStream": "Stream cancelled.",
-    "smartWalletDeviceAdded": "New linked device added"
+    "smartWalletDeviceAdded": "New linked device added",
+    "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later."
   },
 
   "alert": {
