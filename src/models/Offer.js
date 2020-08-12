@@ -84,25 +84,3 @@ export type Allowance = {
   transactionHash: string,
   enabled?: boolean,
 }
-
-export type ExchangeProvider = {
-  id: string,
-  dateConnected: Date,
-  extra?: any,
-}
-
-type ProviderMeta = {
-  _id: string,
-  shim: string,
-  name: string,
-  url: string,
-  description: string,
-  icon_small: string,
-  icon_medium: string,
-  icon_large: string,
-  logo_small: string,
-  logo_medium: string,
-  logo_large: string,
-}
-
-export type ProvidersMeta = ProviderMeta[];

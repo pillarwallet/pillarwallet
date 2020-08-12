@@ -41,9 +41,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
   SET_EXCHANGE_ALLOWANCES,
-  SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -153,12 +151,6 @@ export const initAppAndRedirectAction = () => {
 
       const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
-
-      const { connectedProviders = [] } = get(storageData, 'exchangeProviders', {});
-      dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
-
-      const { exchangeProvidersInfo = [] } = get(storageData, 'exchangeProvidersInfo', {});
-      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
 
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
