@@ -22,8 +22,19 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 
-import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
-import { loadAltalixInfoAction, loadSendwyreRatesAction } from 'actions/fiatToCryptoActions';
+import {
+  SET_ALTALIX_INFO,
+  SET_SENDWYRE_RATES,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+  SENDWYRE_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
+import {
+  loadAltalixInfoAction,
+  loadSendwyreRatesAction,
+  loadSendwyreCountrySupportAction,
+} from 'actions/fiatToCryptoActions';
 
 function mockStore({ state, pillarSdk }) {
   return configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue])(state);
@@ -71,6 +82,55 @@ describe('Fiat to crypto providers actions', () => {
       }];
 
       await store.dispatch(loadSendwyreRatesAction());
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+
+    it('loadSendwyreCountrySupportAction should set Sendwyre availability', async () => {
+      const walletId = 'wallet-id';
+
+      const store = mockStore({
+        state: {
+          user: { data: { walletId } },
+          fiatToCrypto: { sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN },
+        },
+        pillarSdk: {
+          getSendwyreCountrySupport: async id => id && true,
+        },
+      });
+
+      const expectedActions = [{
+        type: LOAD_SENDWYRE_COUNTRY_SUPPORT,
+      }, {
+        type: SET_SENDWYRE_COUNTRY_SUPPORT,
+        payload: true,
+      }];
+
+      await store.dispatch(loadSendwyreCountrySupportAction());
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+
+    it('loadSendwyreCountrySupportAction should clear Sendwyre availability on error', async () => {
+      const walletId = 'wallet-id';
+
+      const store = mockStore({
+        state: {
+          user: { data: { walletId } },
+          fiatToCrypto: { sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN },
+        },
+        pillarSdk: {
+          getSendwyreCountrySupport: async () => null,
+        },
+      });
+
+      const expectedActions = [{
+        type: LOAD_SENDWYRE_COUNTRY_SUPPORT,
+      }, {
+        type: RESET_SENDWYRE_COUNTRY_SUPPORT,
+      }];
+
+      await store.dispatch(loadSendwyreCountrySupportAction());
       const actualActions = store.getActions();
       expect(actualActions).toEqual(expectedActions);
     });

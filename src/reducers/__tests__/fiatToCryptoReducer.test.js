@@ -18,7 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
+import {
+  SET_ALTALIX_INFO,
+  SET_SENDWYRE_RATES,
+  SENDWYRE_SUPPORT,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
 import reducer from 'reducers/fiatToCryptoReducer';
 
 describe('Fiat to crypto providers reducer', () => {
@@ -44,6 +51,52 @@ describe('Fiat to crypto providers reducer', () => {
 
     const expectedState = {
       sendwyreExchangeRates: rates,
+    };
+
+    expect(reducer(undefined, action)).toMatchObject(expectedState);
+  });
+
+  it('should handle LOAD_SENDWYRE_COUNTRY_SUPPORT', () => {
+    const action = { type: LOAD_SENDWYRE_COUNTRY_SUPPORT };
+
+    const expectedState = {
+      sendwyreCountrySupport: SENDWYRE_SUPPORT.LOADING,
+    };
+
+    expect(reducer(undefined, action)).toMatchObject(expectedState);
+  });
+
+  it('should handle SET_SENDWYRE_COUNTRY_SUPPORT within supported countries', () => {
+    const action = {
+      type: SET_SENDWYRE_COUNTRY_SUPPORT,
+      payload: true,
+    };
+
+    const expectedState = {
+      sendwyreCountrySupport: SENDWYRE_SUPPORT.SUPPORTED,
+    };
+
+    expect(reducer(undefined, action)).toMatchObject(expectedState);
+  });
+
+  it('should handle SET_SENDWYRE_COUNTRY_SUPPORT outside of supported countries', () => {
+    const action = {
+      type: SET_SENDWYRE_COUNTRY_SUPPORT,
+      payload: false,
+    };
+
+    const expectedState = {
+      sendwyreCountrySupport: SENDWYRE_SUPPORT.UNSUPPORTED,
+    };
+
+    expect(reducer(undefined, action)).toMatchObject(expectedState);
+  });
+
+  it('should handle RESET_SENDWYRE_COUNTRY_SUPPORT', () => {
+    const action = { type: RESET_SENDWYRE_COUNTRY_SUPPORT };
+
+    const expectedState = {
+      sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN,
     };
 
     expect(reducer(undefined, action)).toMatchObject(expectedState);

@@ -764,6 +764,33 @@ class SDKWrapper {
       });
   }
 
+  getSendwyreCountrySupport(walletId: string): Promise<boolean | null> {
+    // NOTE: this request should always return an error from the server.
+    // Because testing whether the user location is within a country supported
+    // by Wyre occurs before data validation, we send an empty (and thus invalid)
+    // request and base the answer on the type of error returned with the response.
+    //
+    // 400 Bad Request => country is supported
+    // 403 Forbidden   => country is not supported
+
+    return this.makeDirectSdkRequest({
+      path: '/partners/wyre/generate-order-reservation',
+      method: 'POST',
+      data: { walletId },
+    })
+      .then(() => true)
+      .catch(error => {
+        const { response: { status, data } } = error;
+
+        if (status === 400) return true;
+        if (status === 403 && data.message === 'Location not supported') return false;
+
+        // Any other type of error is unexpected and will be reported as usual.
+        reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);
+        return null;
+      });
+  }
+
   getSendwyreWidgetURL({ address, ...params }: SendwyreTrxParams): Promise<string | null> {
     return this.makeDirectSdkRequest({
       path: '/partners/wyre/generate-order-reservation',

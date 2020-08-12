@@ -18,13 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
+import {
+  SET_ALTALIX_INFO,
+  SET_SENDWYRE_RATES,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+  SENDWYRE_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
 
 import type { SendwyreRates } from 'models/FiatToCryptoProviders';
 
 export type FiatToCryptoReducerState = {|
   isAltalixAvailable: null | boolean,
   sendwyreExchangeRates: null | SendwyreRates,
+  sendwyreCountrySupport: $Values<typeof SENDWYRE_SUPPORT>,
 |};
 
 type AltalixInfoSetAction = {
@@ -37,11 +45,30 @@ type SetSendwyreRatesAction = {
   payload: SendwyreRates,
 };
 
-export type FiatToCryptoReducerAction = AltalixInfoSetAction | SetSendwyreRatesAction;
+type LoadSendwyreCountrySupportAction = {
+  type: typeof LOAD_SENDWYRE_COUNTRY_SUPPORT,
+};
+
+type SetSendwyreCountrySupportAction = {
+  type: typeof SET_SENDWYRE_COUNTRY_SUPPORT,
+  payload: boolean,
+}
+
+type ResetSendwyreCountrySupportAction = {
+  type: typeof RESET_SENDWYRE_COUNTRY_SUPPORT,
+};
+
+export type FiatToCryptoReducerAction =
+  | AltalixInfoSetAction
+  | SetSendwyreRatesAction
+  | LoadSendwyreCountrySupportAction
+  | SetSendwyreCountrySupportAction
+  | ResetSendwyreCountrySupportAction;
 
 const initialState = {
   isAltalixAvailable: null,
   sendwyreExchangeRates: null,
+  sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN,
 };
 
 export default function fiatToCryptoReducer(
@@ -58,6 +85,21 @@ export default function fiatToCryptoReducer(
       return {
         ...state,
         sendwyreExchangeRates: action.payload,
+      };
+    case LOAD_SENDWYRE_COUNTRY_SUPPORT:
+      return {
+        ...state,
+        sendwyreCountrySupport: SENDWYRE_SUPPORT.LOADING,
+      };
+    case SET_SENDWYRE_COUNTRY_SUPPORT:
+      return {
+        ...state,
+        sendwyreCountrySupport: action.payload ? SENDWYRE_SUPPORT.SUPPORTED : SENDWYRE_SUPPORT.UNSUPPORTED,
+      };
+    case RESET_SENDWYRE_COUNTRY_SUPPORT:
+      return {
+        ...state,
+        sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN,
       };
     default:
       return state;

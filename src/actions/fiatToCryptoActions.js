@@ -18,7 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoConstants';
+import {
+  SET_ALTALIX_INFO,
+  SET_SENDWYRE_RATES,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
 import { reportOrWarn } from 'utils/common';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -54,5 +60,23 @@ export const loadSendwyreRatesAction = () => {
       type: SET_SENDWYRE_RATES,
       payload: rates,
     });
+  };
+};
+
+export const loadSendwyreCountrySupportAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({ type: LOAD_SENDWYRE_COUNTRY_SUPPORT });
+
+    const { user: { data: { walletId } } } = getState();
+    const isCountrySupported = await api.getSendwyreCountrySupport(walletId);
+
+    if (isCountrySupported === null) {
+      dispatch({ type: RESET_SENDWYRE_COUNTRY_SUPPORT });
+    } else {
+      dispatch({
+        type: SET_SENDWYRE_COUNTRY_SUPPORT,
+        payload: isCountrySupported,
+      });
+    }
   };
 };
