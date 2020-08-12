@@ -22,6 +22,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { format as formatDate } from 'date-fns';
 import { NavigationActions } from 'react-navigation';
+import t from 'translations/translate';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -145,9 +146,8 @@ export const completeReferralsEventAction = () => {
     });
 
     Toast.show({
-      message: 'You are going to receive your rewards soon!',
-      type: 'info',
-      title: 'Rewards on their way',
+      message: t('toast.rewardsOnTheirWay'),
+      emoji: 'tada',
       autoClose: false,
     });
   };

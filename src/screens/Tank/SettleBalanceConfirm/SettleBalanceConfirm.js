@@ -24,6 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BigNumber } from 'bignumber.js';
+import t from 'translations/translate';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -123,9 +124,8 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
     if (!isEnoughForFee) {
       Toast.show({
-        message: `Not enough ${feeSymbol} to cover the withdrawal transaction fee`,
-        type: 'warning',
-        title: 'Balance Issue',
+        message: t('toast.notEnoughForTransactionFee', { feeSymbol }),
+        emoji: 'hushed',
         autoClose: true,
       });
       return;

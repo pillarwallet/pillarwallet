@@ -20,6 +20,8 @@
 import { Linking } from 'react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import * as Sentry from '@sentry/react-native';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -46,9 +48,11 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { getActiveAccountAddress } from 'utils/accounts';
 import { getPreferredWalletId } from 'utils/smartWallet';
 import { reportLog } from 'utils/common';
+import { getAssetsAsList, getAssetData } from 'utils/assets';
 
 // selectors
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // services
 import ExchangeService from 'services/exchange';
@@ -109,11 +113,7 @@ export const takeOfferAction = (
     const activeWalletId = getPreferredWalletId(accounts);
 
     if (!fromAsset || !toAsset) {
-      Toast.show({
-        title: 'Exchange service failed',
-        type: 'warning',
-        message: 'Could not find asset',
-      });
+      reportLog('Cannot find exchange asset', { fromAssetCode, toAssetCode }, Sentry.Severity.Error);
       callback({});
       return;
     }
@@ -207,11 +207,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
 
     if (!fromAsset || !toAsset) {
-      Toast.show({
-        title: 'Exchange Service',
-        type: 'warning',
-        message: 'Sorry, we could not find the asset. Could you please check and try again?',
-      });
+      reportLog('Cannot find exchange asset', { fromAssetCode, toAssetCode }, Sentry.Severity.Error);
       return;
     }
 
@@ -476,7 +472,11 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
           allowances: exchangeAllowances,
         },
       },
+      assets: {
+        supportedAssets,
+      },
     } = getState();
+    const currentAccountAssets = accountAssetsSelector(getState());
     const accountIds = Object.keys(transactionsHistory);
     const allHistory = accountIds.reduce(
       (existing = [], accountId) => {
@@ -493,10 +493,16 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
           ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
         );
         if (enabledAllowance) {
+          const fromAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, fromAssetCode);
+          const toAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, toAssetCode);
           Toast.show({
-            message: `${fromAssetCode} to ${toAssetCode} exchange was enabled`,
-            type: 'success',
-            title: 'Success',
+            message: t('toast.exchangeEnabled', {
+              fromAssetName: fromAssetData.name,
+              fromAssetSymbol: fromAssetData.symbol,
+              toAssetName: toAssetData.name,
+              toAssetSymbol: toAssetData.symbol,
+            }),
+            emoji: 'handshake',
             autoClose: true,
           });
           dispatch(enableExchangeAllowanceByHashAction(transactionHash));
