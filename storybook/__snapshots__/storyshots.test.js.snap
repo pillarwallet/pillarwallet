@@ -34427,33 +34427,41 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                         }
                       }
                     >
-                      <Text
+                      <View
                         style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "textAlignVertical": "center",
-                            },
+                          Object {
+                            "flexDirection": "row",
+                          }
+                        }
+                      >
+                        <Text
+                          style={
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "textAlignVertical": "center",
                                 },
-                                undefined,
+                                Array [
+                                  Object {
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                  },
+                                  undefined,
+                                ],
                               ],
-                            ],
-                          ]
-                        }
-                      >
-                        select
-                      </Text>
+                            ]
+                          }
+                        >
+                          select
+                        </Text>
+                      </View>
                       <View
                         name="selector"
                         style={
@@ -36206,7 +36214,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             "decimals": 18,
                             "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
                             "email": "info@pillarproject.io",
-                            "icon": "https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
+                            "icon": "https://api-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
                             "iconMonoUrl": "asset/images/tokens/icons/plr.png",
                             "iconUrl": "asset/images/tokens/icons/plrColor.png",
                             "icos": Array [],
@@ -37731,33 +37739,41 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                         }
                       }
                     >
-                      <Text
+                      <View
                         style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "textAlignVertical": "center",
-                            },
+                          Object {
+                            "flexDirection": "row",
+                          }
+                        }
+                      >
+                        <Text
+                          style={
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "textAlignVertical": "center",
                                 },
-                                undefined,
+                                Array [
+                                  Object {
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                  },
+                                  undefined,
+                                ],
                               ],
-                            ],
-                          ]
-                        }
-                      >
-                        select
-                      </Text>
+                            ]
+                          }
+                        >
+                          select
+                        </Text>
+                      </View>
                       <View
                         name="selector"
                         style={
