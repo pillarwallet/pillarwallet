@@ -185,7 +185,7 @@ export const setTokenAllowanceAction = (
 
     if (!txData) {
       Toast.show({
-        message: t('toasts.exchangeAllowanceFailed'),
+        message: t('toast.exchangeAllowanceFailed'),
         emoji: 'hushed',
         supportLink: true,
       });
