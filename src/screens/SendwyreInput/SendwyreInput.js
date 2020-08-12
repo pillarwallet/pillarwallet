@@ -34,11 +34,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 
 // actions
-import { loadSendwyreRatesAction } from 'actions/fiatToCryptoActions';
+import { loadSendwyreRatesAction, loadSendwyreCountrySupportAction } from 'actions/fiatToCryptoActions';
 import { loadSupportedAssetsAction } from 'actions/assetsActions';
 
 // constants
 import { ETH, USD } from 'constants/assetsConstants';
+import { SENDWYRE_SUPPORT } from 'constants/fiatToCryptoConstants';
 
 // utils, services
 import { spacing } from 'utils/variables';
@@ -62,6 +63,8 @@ type Props = {
   loadAssets: () => void,
   currencyPairs: [string, string][],
   loadCurrencyPairs: () => void,
+  countrySupport: $Values<typeof SENDWYRE_SUPPORT>,
+  loadCountrySupport: () => void,
   theme: Theme,
 };
 
@@ -73,6 +76,7 @@ export type FormValue = {
 type State = {
   value: FormValue,
   formOptions: Object,
+  isHandlingSubmit: boolean,
 };
 
 type Ref<T> = {
@@ -102,7 +106,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     const defaultDest = ETH;
 
     this.state = {
-      value: this.constructFormValue(defaultSource, defaultDest, 0),
+      value: this.constructFormValue(defaultSource, defaultDest),
       formOptions: {
         fields: {
           source: {
@@ -128,12 +132,14 @@ class SendwyreInputScreen extends React.Component<Props, State> {
           },
         },
       },
+      isHandlingSubmit: false,
     };
   }
 
   componentDidMount() {
     this.props.loadAssets();
     this.props.loadCurrencyPairs();
+    this.props.loadCountrySupport();
     this.provideOptions();
   }
 
@@ -172,10 +178,10 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     });
   };
 
-  constructFormValue = (source: string, dest: string, sourceAmount: number): FormValue => ({
+  constructFormValue = (source: string, dest: string, sourceAmount?: number): FormValue => ({
     source: {
       selector: this.generateAssetOption(source),
-      input: sourceAmount.toString(),
+      input: (sourceAmount ?? '').toString(),
     },
     dest: {
       selector: this.generateAssetOption(dest),
@@ -207,6 +213,8 @@ class SendwyreInputScreen extends React.Component<Props, State> {
   }
 
   onSubmit = async () => {
+    this.setState({ isHandlingSubmit: true });
+
     const onSubmitCallback: (values: SendwyreTrxValues) => void =
       this.props.navigation.getParam('onSubmit', () => {});
 
@@ -218,7 +226,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
       amount: get(this.state, 'value.source.input'),
     });
 
-    this.props.navigation.goBack();
+    this.setState({ isHandlingSubmit: false });
   }
 
   getCurrencyPair = (state: State): [string, string] => {
@@ -235,10 +243,18 @@ class SendwyreInputScreen extends React.Component<Props, State> {
   }
 
   render() {
-    const { value, formOptions } = this.state;
+    const { value, formOptions, isHandlingSubmit } = this.state;
+    const { countrySupport } = this.props;
+
     const isValid = this.formRef.current &&
       this.formRef.current.validate().isValid() &&
       this.isCurrencyPairSupported(this.getCurrencyPair(this.state));
+
+    const isLoading = countrySupport === SENDWYRE_SUPPORT.LOADING || isHandlingSubmit;
+    const isButtonDisabled = !isValid || countrySupport !== SENDWYRE_SUPPORT.SUPPORTED;
+    const buttonTitle = countrySupport === SENDWYRE_SUPPORT.UNSUPPORTED
+      ? 'Not available in Your country'
+      : 'Next';
 
     return (
       <ContainerWithHeader
@@ -263,8 +279,9 @@ class SendwyreInputScreen extends React.Component<Props, State> {
             <Button
               regularText
               block
-              disabled={!isValid}
-              title="Next"
+              isLoading={isLoading}
+              disabled={isButtonDisabled}
+              title={buttonTitle}
               onPress={this.onSubmit}
             />
           </ButtonWrapper>
@@ -273,6 +290,12 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     );
   }
 }
+
+const directMapStateToProps = ({
+  fiatToCrypto: { sendwyreCountrySupport },
+}: RootReducerState) => ({
+  countrySupport: sendwyreCountrySupport,
+});
 
 const assetMapSelector = createSelector(
   supportedAssetsSelector,
@@ -288,14 +311,20 @@ const currencyPairsSelector = createSelector(
   exchangeRates => getSendwyreCurrencyPairs(exchangeRates ?? {}),
 );
 
-const mapStateToProps = createStructuredSelector({
+const structuredSelector = createStructuredSelector({
   assets: assetMapSelector,
   currencyPairs: currencyPairsSelector,
+});
+
+const mapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...directMapStateToProps(state),
+  ...structuredSelector(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   loadAssets: () => dispatch(loadSupportedAssetsAction()),
   loadCurrencyPairs: () => dispatch(loadSendwyreRatesAction()),
+  loadCountrySupport: () => dispatch(loadSendwyreCountrySupportAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(SendwyreInputScreen));
