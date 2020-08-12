@@ -29,13 +29,17 @@ import Title from 'components/Title';
 import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
+import Spinner from 'components/Spinner';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { themedColors } from 'utils/themes';
-import { isValidAddress } from 'utils/validators';
+import { isEnsName, isValidAddress } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
+
+import { lookupAddress } from 'utils/common';
+import { getReceiverWithEnsName } from 'utils/contacts';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -73,6 +77,12 @@ const ErrorMessage = styled(BaseText)`
   ${fontStyles.small};
 `;
 
+export const LoadingSpinner = styled(Spinner)`
+  margin-top: ${spacing.large}px;
+  align-items: center;
+  justify-content: center;
+`;
+
 const renderContactInput = (
   value: string,
   onChangeText: (value: string) => void,
@@ -107,6 +117,7 @@ const ContactDetailsModal = ({
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [dirtyInputs, setDirtyInputs] = useState(false);
+  const [resolvingEns, setResolvingEns] = useState(false);
   const { walletIcon, personIcon } = images(theme);
 
   // reset input value on default change
@@ -123,6 +134,33 @@ const ContactDetailsModal = ({
     }
   }, [nameValue, addressValue]);
 
+  const resolveEnsName = async () => {
+    if (resolvingEns
+      || !isEmpty(nameValue)
+      || !isValidAddress(addressValue)
+      || isEnsName(addressValue)) return;
+
+    setResolvingEns(true);
+    const ensName = await lookupAddress(addressValue);
+    if (ensName) setNameValue(ensName);
+    setResolvingEns(false);
+  };
+
+  useEffect(() => { resolveEnsName(); }, [addressValue]);
+
+  const resolveEnsAddress = async () => {
+    if (resolvingEns
+      || !isEmpty(addressValue)
+      || !isEnsName(nameValue)) return;
+
+    setResolvingEns(true);
+    const { receiver } = await getReceiverWithEnsName(nameValue, false);
+    if (receiver) setAddressValue(receiver);
+    setResolvingEns(false);
+  };
+
+  useEffect(() => { resolveEnsAddress(); }, [nameValue]);
+
   let errorMessage;
   if (isEmpty(addressValue)) {
     errorMessage = 'Address cannot be empty';
@@ -134,6 +172,11 @@ const ContactDetailsModal = ({
   } else if (isEmpty(nameValue)) {
     errorMessage = 'Name cannot be empty';
   }
+
+  const buttonTitle = resolvingEns ? 'Resolving ENS name..' : 'Save';
+  const onButtonPress = () => !errorMessage
+    && !resolvingEns
+    && onSavePress({ ...contact, name: nameValue, ethAddress: addressValue });
 
   return (
     <ModalBox
@@ -153,12 +196,13 @@ const ContactDetailsModal = ({
         )}
         {renderContactInput(addressValue, setAddressValue, 'Address', walletIcon, theme)}
         {renderContactInput(nameValue, setNameValue, 'Name', personIcon, theme)}
-        {dirtyInputs && !!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {dirtyInputs && !resolvingEns && !!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {resolvingEns && <LoadingSpinner width={25} height={25} />}
         <Button
           marginTop={spacing.large}
-          disabled={!dirtyInputs || !!errorMessage}
-          onPress={() => !errorMessage && onSavePress({ ...contact, name: nameValue, ethAddress: addressValue })}
-          title="Save"
+          disabled={!dirtyInputs || !!errorMessage || resolvingEns}
+          onPress={onButtonPress}
+          title={buttonTitle}
         />
       </View>
     </ModalBox>
