@@ -93,9 +93,8 @@ export const swapExactTokensToTokens = (
   deadline: string,
 ): string => {
   const functionName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens';
-  const abiFunction = ROUTER_ABI.filter(m => m.name === functionName);
   const encodedContractFunction = encodeContractMethod(
-    [abiFunction],
+    ROUTER_ABI,
     functionName,
     [
       quantityIn,
@@ -116,9 +115,8 @@ export const swapExactTokensToEth = (
   deadline: string,
 ): string => {
   const functionName = 'swapExactTokensForETHSupportingFeeOnTransferTokens';
-  const abiFunction = ROUTER_ABI.filter(m => m.name === functionName);
   const encodedContractFunction = encodeContractMethod(
-    [abiFunction],
+    ROUTER_ABI,
     functionName,
     [
       quantityIn,
@@ -138,9 +136,8 @@ export const swapExactEthToTokens = (
   deadline: string,
 ): string => {
   const functionName = 'swapExactETHForTokensSupportingFeeOnTransferTokens';
-  const abiFunction = ROUTER_ABI.filter(m => m.name === functionName);
   const encodedContractFunction = encodeContractMethod(
-    [abiFunction],
+    ROUTER_ABI,
     functionName,
     [
       outputMin,
