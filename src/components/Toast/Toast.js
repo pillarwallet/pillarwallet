@@ -34,7 +34,7 @@ import { themedColors } from 'utils/themes';
 type ToastOptions = {
   autoClose?: boolean,
   onPress?: () => void,
-  emoji?: string,
+  emoji: string,
   message: string,
   supportLink?: boolean,
   link?: string,
@@ -79,8 +79,9 @@ const ToastWrapper = styled.View`
 
 const CloseIconWrapper = styled.TouchableOpacity`
   position: absolute;
-  top: 17px;
-  right: 18px;
+  top: 7px;
+  right: 8px;
+  padding: 10px;
 `;
 
 const CloseIcon = styled(Icon)`

@@ -27482,9 +27482,13 @@ Array [
                   style={
                     Object {
                       "opacity": 1,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                      "paddingRight": 10,
+                      "paddingTop": 10,
                       "position": "absolute",
-                      "right": 18,
-                      "top": 17,
+                      "right": 8,
+                      "top": 7,
                     }
                   }
                 >
@@ -28799,9 +28803,13 @@ exports[`Storyshots Selector default 1`] = `
                   style={
                     Object {
                       "opacity": 1,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                      "paddingRight": 10,
+                      "paddingTop": 10,
                       "position": "absolute",
-                      "right": 18,
-                      "top": 17,
+                      "right": 8,
+                      "top": 7,
                     }
                   }
                 >
@@ -29789,9 +29797,13 @@ exports[`Storyshots Selector no options 1`] = `
                   style={
                     Object {
                       "opacity": 1,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                      "paddingRight": 10,
+                      "paddingTop": 10,
                       "position": "absolute",
-                      "right": 18,
-                      "top": 17,
+                      "right": 8,
+                      "top": 7,
                     }
                   }
                 >
@@ -31275,9 +31287,13 @@ exports[`Storyshots Selector selected option 1`] = `
                   style={
                     Object {
                       "opacity": 1,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                      "paddingRight": 10,
+                      "paddingTop": 10,
                       "position": "absolute",
-                      "right": 18,
-                      "top": 17,
+                      "right": 8,
+                      "top": 7,
                     }
                   }
                 >
@@ -32592,9 +32608,13 @@ exports[`Storyshots Selector with custom wording 1`] = `
                   style={
                     Object {
                       "opacity": 1,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                      "paddingRight": 10,
+                      "paddingTop": 10,
                       "position": "absolute",
-                      "right": 18,
-                      "top": 17,
+                      "right": 8,
+                      "top": 7,
                     }
                   }
                 >
@@ -34188,9 +34208,13 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                   style={
                     Object {
                       "opacity": 1,
+                      "paddingBottom": 10,
+                      "paddingLeft": 10,
+                      "paddingRight": 10,
+                      "paddingTop": 10,
                       "position": "absolute",
-                      "right": 18,
-                      "top": 17,
+                      "right": 8,
+                      "top": 7,
                     }
                   }
                 >
@@ -34493,33 +34517,41 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                         }
                       }
                     >
-                      <Text
+                      <View
                         style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "textAlignVertical": "center",
-                            },
+                          Object {
+                            "flexDirection": "row",
+                          }
+                        }
+                      >
+                        <Text
+                          style={
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "textAlignVertical": "center",
                                 },
-                                undefined,
+                                Array [
+                                  Object {
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                  },
+                                  undefined,
+                                ],
                               ],
-                            ],
-                          ]
-                        }
-                      >
-                        select
-                      </Text>
+                            ]
+                          }
+                        >
+                          select
+                        </Text>
+                      </View>
                       <View
                         name="selector"
                         style={
@@ -35771,9 +35803,13 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                               style={
                                 Object {
                                   "opacity": 1,
+                                  "paddingBottom": 10,
+                                  "paddingLeft": 10,
+                                  "paddingRight": 10,
+                                  "paddingTop": 10,
                                   "position": "absolute",
-                                  "right": 18,
-                                  "top": 17,
+                                  "right": 8,
+                                  "top": 7,
                                 }
                               }
                             >
@@ -37508,9 +37544,13 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                               style={
                                 Object {
                                   "opacity": 1,
+                                  "paddingBottom": 10,
+                                  "paddingLeft": 10,
+                                  "paddingRight": 10,
+                                  "paddingTop": 10,
                                   "position": "absolute",
-                                  "right": 18,
-                                  "top": 17,
+                                  "right": 8,
+                                  "top": 7,
                                 }
                               }
                             >
@@ -37819,33 +37859,41 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                         }
                       }
                     >
-                      <Text
+                      <View
                         style={
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontFamily": "EuclidCircularB-Regular",
-                              "textAlignVertical": "center",
-                            },
+                          Object {
+                            "flexDirection": "row",
+                          }
+                        }
+                      >
+                        <Text
+                          style={
                             Array [
                               Object {
                                 "color": "#0A1427",
-                                "fontFamily": "EuclidCircularB-Medium",
+                                "fontFamily": "EuclidCircularB-Regular",
                                 "textAlignVertical": "center",
                               },
                               Array [
                                 Object {
-                                  "fontSize": 18,
-                                  "lineHeight": 28,
+                                  "color": "#0A1427",
+                                  "fontFamily": "EuclidCircularB-Medium",
+                                  "textAlignVertical": "center",
                                 },
-                                undefined,
+                                Array [
+                                  Object {
+                                    "fontSize": 18,
+                                    "lineHeight": 28,
+                                  },
+                                  undefined,
+                                ],
                               ],
-                            ],
-                          ]
-                        }
-                      >
-                        select
-                      </Text>
+                            ]
+                          }
+                        >
+                          select
+                        </Text>
+                      </View>
                       <View
                         name="selector"
                         style={
@@ -39097,9 +39145,13 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                               style={
                                 Object {
                                   "opacity": 1,
+                                  "paddingBottom": 10,
+                                  "paddingLeft": 10,
+                                  "paddingRight": 10,
+                                  "paddingTop": 10,
                                   "position": "absolute",
-                                  "right": 18,
-                                  "top": 17,
+                                  "right": 8,
+                                  "top": 7,
                                 }
                               }
                             >

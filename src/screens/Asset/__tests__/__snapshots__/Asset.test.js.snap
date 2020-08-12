@@ -1945,9 +1945,13 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       style={
                         Object {
                           "opacity": 1,
+                          "paddingBottom": 10,
+                          "paddingLeft": 10,
+                          "paddingRight": 10,
+                          "paddingTop": 10,
                           "position": "absolute",
-                          "right": 18,
-                          "top": 17,
+                          "right": 8,
+                          "top": 7,
                         }
                       }
                     >
@@ -2892,9 +2896,13 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       style={
                         Object {
                           "opacity": 1,
+                          "paddingBottom": 10,
+                          "paddingLeft": 10,
+                          "paddingRight": 10,
+                          "paddingTop": 10,
                           "position": "absolute",
-                          "right": 18,
-                          "top": 17,
+                          "right": 8,
+                          "top": 7,
                         }
                       }
                     >
@@ -3542,9 +3550,13 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       style={
                         Object {
                           "opacity": 1,
+                          "paddingBottom": 10,
+                          "paddingLeft": 10,
+                          "paddingRight": 10,
+                          "paddingTop": 10,
                           "position": "absolute",
-                          "right": 18,
-                          "top": 17,
+                          "right": 8,
+                          "top": 7,
                         }
                       }
                     >
