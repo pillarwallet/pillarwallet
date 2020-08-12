@@ -140,6 +140,7 @@ const ContactsList = ({
         }}
         onModalHide={hideContactDetailsModal}
         contacts={contacts}
+        showQRScanner
       />
       {!!contactToDelete && (
         <SlideModal

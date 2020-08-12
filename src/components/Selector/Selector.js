@@ -36,6 +36,7 @@ import { activeAccountAddressSelector } from 'selectors';
 
 // utils
 import { spacing } from 'utils/variables';
+import { isValidAddress } from 'utils/validators';
 
 // types
 import type { HorizontalOption, Option } from 'models/Selector';
@@ -100,12 +101,15 @@ const Selector = ({
   const [isScannerVisible, setIsScannerVisible] = useState(false);
 
   const handleScannerReadResult = (address: string) => {
-    const option = {
-      value: address,
-      ethAddress: address,
-      name: address,
-    };
-    if (onOptionSelect) onOptionSelect(option);
+    if (isValidAddress(address)) {
+      const option = {
+        value: address,
+        ethAddress: address,
+        name: address,
+      };
+      if (onOptionSelect) onOptionSelect(option);
+      setIsOptionsVisible(false);
+    }
     setIsScannerVisible(false);
   };
 

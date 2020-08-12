@@ -30,7 +30,7 @@ import { reportLog, resolveEnsName } from './common';
 import { isEnsName } from './validators';
 
 
-export const getReceiverWithEnsName = async (ethAddress: ?string) => {
+export const getReceiverWithEnsName = async (ethAddress: ?string, showNotification: boolean = true) => {
   let receiverEnsName = '';
   let receiver = '';
   if (!ethAddress) return { receiverEnsName, receiver };
@@ -40,7 +40,7 @@ export const getReceiverWithEnsName = async (ethAddress: ?string) => {
       reportLog('getReceiverWithEnsName failed', { error });
       return null;
     });
-    if (!resolvedAddress) {
+    if (!resolvedAddress && showNotification) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman_shrugging',

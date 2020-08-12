@@ -30,11 +30,13 @@ import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
+import AddressScanner from 'components/QRCodeScanner/AddressScanner';
+import Icon from 'components/Icon';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
-import { themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 import { isEnsName, isValidAddress } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
@@ -56,6 +58,7 @@ type Props = {
   isDefaultNameEns?: boolean,
   title?: string,
   contacts: Contact[],
+  showQRScanner?: boolean,
 };
 
 const InputWrapper = styled.View`
@@ -81,6 +84,25 @@ export const LoadingSpinner = styled(Spinner)`
   margin-top: ${spacing.large}px;
   align-items: center;
   justify-content: center;
+`;
+
+export const TitleWrapper = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+`;
+
+export const QRCodeButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 0;
+  right: 0;
+`;
+
+
+export const QRCodeIcon = styled(Icon)`
+  color: ${({ color }) => color};
+  font-size: 20px;
 `;
 
 const renderContactInput = (
@@ -113,11 +135,13 @@ const ContactDetailsModal = ({
   isDefaultNameEns,
   title,
   contacts,
+  showQRScanner,
 }: Props) => {
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [dirtyInputs, setDirtyInputs] = useState(false);
   const [resolvingEns, setResolvingEns] = useState(false);
+  const [isScannerVisible, setIsScannerVisible] = useState(false);
   const { walletIcon, personIcon } = images(theme);
 
   // reset input value on default change
@@ -173,10 +197,22 @@ const ContactDetailsModal = ({
     errorMessage = 'Name cannot be empty';
   }
 
+  const colors = getThemeColors(theme);
+
   const buttonTitle = resolvingEns ? 'Resolving ENS name..' : 'Save';
   const onButtonPress = () => !errorMessage
     && !resolvingEns
     && onSavePress({ ...contact, name: nameValue, ethAddress: addressValue });
+
+  const handleScannerReadResult = (address: string) => {
+    setIsScannerVisible(false);
+    if (isEnsName(address)) {
+      setAddressValue('');
+      setNameValue(address);
+    } else {
+      setAddressValue(address);
+    }
+  };
 
   return (
     <ModalBox
@@ -186,14 +222,21 @@ const ContactDetailsModal = ({
       noBoxMinHeight
     >
       <View style={{ padding: spacing.rhythm }}>
-        {!!title && (
-          <Title
-            align="center"
-            title={title}
-            style={{ marginBottom: spacing.small }}
-            noMargin
-          />
-        )}
+        <TitleWrapper>
+          {!!title && (
+            <Title
+              align="center"
+              title={title}
+              style={{ marginBottom: spacing.small }}
+              noMargin
+            />
+          )}
+          {showQRScanner && (
+            <QRCodeButton onPress={() => setIsScannerVisible(true)}>
+              <QRCodeIcon name="qrcode" color={colors.link} />
+            </QRCodeButton>
+          )}
+        </TitleWrapper>
         {renderContactInput(addressValue, setAddressValue, 'Address', walletIcon, theme)}
         {renderContactInput(nameValue, setNameValue, 'Name', personIcon, theme)}
         {dirtyInputs && !resolvingEns && !!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
@@ -204,6 +247,13 @@ const ContactDetailsModal = ({
           onPress={onButtonPress}
           title={buttonTitle}
         />
+        {showQRScanner && (
+          <AddressScanner
+            isActive={isScannerVisible}
+            onCancel={() => setIsScannerVisible(false)}
+            onRead={handleScannerReadResult}
+          />
+        )}
       </View>
     </ModalBox>
   );
