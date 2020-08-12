@@ -50,6 +50,9 @@ import {
 } from 'utils/uniswap';
 import { parseOffer } from 'utils/exchange';
 
+// services
+import { encodeContractMethod } from 'services/assets';
+
 // models
 import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
@@ -62,7 +65,6 @@ import { ETH } from 'constants/assetsConstants';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
-const abiCoder = require('web3-eth-abi');
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -282,7 +284,7 @@ export const createUniswapOrder = async (
 };
 
 export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  const abiFunction = {
+  const abiFunction = [{
     name: 'approve',
     outputs: [{ type: 'bool', name: 'out' }],
     inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
@@ -290,10 +292,11 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
     payable: false,
     type: 'function',
     gas: 38769,
-  };
+  }];
 
-  const encodedContractFunction = abiCoder.encodeFunctionCall(
+  const encodedContractFunction = encodeContractMethod(
     abiFunction,
+    'approve',
     [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
   );
 

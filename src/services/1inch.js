@@ -34,6 +34,9 @@ import {
 } from 'utils/1inch';
 import { parseOffer } from 'utils/exchange';
 
+// services
+import { encodeContractMethod } from 'services/assets';
+
 // constants
 import { PROVIDER_1INCH } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
@@ -46,7 +49,6 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 
 const provider = getEthereumProvider(NETWORK_PROVIDER);
-const abiCoder = require('web3-eth-abi');
 
 const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, fromAsset: Asset) => {
   let allowanceSet = true;
@@ -130,7 +132,7 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     return null;
   }
 
-  const abiFunction = {
+  const abiFunction = [{
     name: 'approve',
     outputs: [{ type: 'bool', name: 'out' }],
     inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
@@ -138,10 +140,11 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     payable: false,
     type: 'function',
     gas: 38769,
-  };
+  }];
 
-  const encodedContractFunction = abiCoder.encodeFunctionCall(
+  const encodedContractFunction = encodeContractMethod(
     abiFunction,
+    'approve',
     [EXCHANGE_ADDRESS, ethers.constants.MaxUint256.toString()],
   );
 
