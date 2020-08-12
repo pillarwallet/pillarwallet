@@ -23,6 +23,7 @@ import { Buffer } from 'buffer';
 import ImagePicker from 'react-native-image-crop-picker';
 import jsQR from 'jsqr';
 import Jimp from 'jimp/es';
+import t from 'translations/translate';
 import Header from 'components/Header';
 import Toast from 'components/Toast';
 import styled from 'styled-components/native';
@@ -90,8 +91,9 @@ export default class CameraView extends React.Component<Props, State> {
   handleError = (e?: string) => {
     if (e !== 'Error: User cancelled image selection') {
       Toast.show({
-        message: 'Cannot scan QR code',
-        type: 'warning',
+        message: t('toast.cantReadQRCode'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
         autoClose: true,
       });
     }

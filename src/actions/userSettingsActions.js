@@ -20,6 +20,7 @@
 import get from 'lodash.get';
 import { SET_HIDDEN_ASSETS } from 'constants/userSettingsConstants';
 import Toast from 'components/Toast';
+import t from 'translations/translate';
 
 import type { Asset } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -44,9 +45,8 @@ export const hideAssetAction = (asset: Asset) => {
     };
 
     Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been hidden`,
-      type: 'info',
+      message: t('toast.assetHasBeenHidden', { assetName: asset.name, assetSymbol: asset.symbol }),
+      emoji: 'ok_hand',
       autoClose: true,
     });
 

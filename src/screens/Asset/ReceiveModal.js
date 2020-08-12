@@ -124,8 +124,8 @@ class ReceiveModal extends React.Component<Props, *> {
 
   handleCopyToClipboard = (address: string, ensCopy?: boolean) => {
     Clipboard.setString(address);
-    const message = ensCopy ? t('paragraph.ensNameCopiedToClipboard') : t('paragraph.addressCopiedToClipboard');
-    Toast.show({ message, type: 'success', title: t('title.success') });
+    const message = ensCopy ? t('toast.ensNameCopiedToClipboard') : t('toast.addressCopiedToClipboard');
+    Toast.show({ message, emoji: 'ok_hand' });
   };
 
   render() {
