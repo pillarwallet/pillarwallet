@@ -185,9 +185,9 @@ export const setTokenAllowanceAction = (
 
     if (!txData) {
       Toast.show({
-        title: 'Token allowance failed',
-        type: 'warning',
-        message: 'We are sorry. Token allowance could not be set. Please try again.',
+        message: t('toast.exchangeAllowanceFailed'),
+        emoji: 'hushed',
+        supportLink: true,
       });
       return;
     }

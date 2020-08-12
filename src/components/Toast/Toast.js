@@ -34,7 +34,7 @@ import { themedColors } from 'utils/themes';
 type ToastOptions = {
   autoClose?: boolean,
   onPress?: () => void,
-  emoji?: string,
+  emoji: string,
   message: string,
   supportLink?: boolean,
   link?: string,
