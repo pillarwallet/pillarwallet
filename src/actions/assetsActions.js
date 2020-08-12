@@ -88,6 +88,7 @@ import { addExchangeAllowanceAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
+import { balancesSelector } from 'selectors';
 
 type TransactionStatus = {
   isSuccess: boolean,
@@ -376,6 +377,24 @@ export const fetchAssetsBalancesAction = () => {
   };
 };
 
+export const resetAccountBalancesAction = (accountId: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const allBalances = balancesSelector(getState());
+    if (isEmpty(allBalances[accountId])) return; // already empty
+    const updatedBalances = Object.keys(allBalances).reduce((updated, balancesAccountId) => {
+      if (accountId !== balancesAccountId) {
+        updated[balancesAccountId] = allBalances[balancesAccountId];
+      }
+      return updated;
+    }, {});
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch({
+      type: UPDATE_BALANCES,
+      payload: updatedBalances,
+    });
+  };
+};
+
 export const fetchAllAccountsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -390,6 +409,12 @@ export const fetchAllAccountsBalancesAction = () => {
     await Promise
       .all(promises)
       .catch((error) => reportLog('fetchAllAccountsBalancesAction failed', { error }));
+
+    // migration for key based balances to remove existing
+    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    if (keyBasedAccount) {
+      dispatch(resetAccountBalancesAction(getAccountId(keyBasedAccount)));
+    }
 
     dispatch(fetchAllAccountsAssetsRatesAction());
 
