@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as Sentry from '@sentry/react-native';
+import t from 'translations/translate';
 import {
   fetchUserStreams,
   getSablierWithdrawTransaction,
@@ -25,6 +26,7 @@ import {
 import smartWalletService from 'services/smartWallet';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportLog } from 'utils/common';
+import { getAssetsAsList, getAssetData } from 'utils/assets';
 import {
   SET_STREAMS,
   SET_FETCHING_STREAMS,
@@ -36,6 +38,7 @@ import {
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { saveDbAction } from 'actions/dbActions';
 import Toast from 'components/Toast';
+import { accountAssetsSelector } from 'selectors/assets';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Streams, Stream } from 'models/Sablier';
 import type { Asset } from 'models/Asset';
@@ -113,7 +116,12 @@ export const checkSablierApprovalTransactionAction = () => {
       sablier: {
         sablierApproveExecuting,
       },
+      assets: {
+        supportedAssets,
+      },
     } = getState();
+
+    const currentAccountAssets = accountAssetsSelector(getState());
 
     Object.keys(sablierApproveExecuting).forEach((symbol: string) => {
       const txHash = sablierApproveExecuting[symbol];
@@ -127,21 +135,21 @@ export const checkSablierApprovalTransactionAction = () => {
           [],
         );
         const allowanceTransaction = allHistory.find(({ hash = null }) => hash === txHash);
+
+        const assetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
         if (allowanceTransaction) {
           if (allowanceTransaction.status === TX_CONFIRMED_STATUS) {
             dispatch(setDismissSablierApproveAction(symbol));
             Toast.show({
-              message: `Sablier ${symbol} allowance has been enabled`,
-              type: 'success',
-              title: 'Success',
+              message: t('toast.sablierAllowanceEnabled', { assetName: assetData.name, assetSymbol: symbol }),
+              emoji: 'ok_hand',
               autoClose: true,
             });
           } else if (allowanceTransaction.status === TX_FAILED_STATUS) {
             dispatch(setDismissSablierApproveAction(symbol));
             Toast.show({
-              message: `Sorry, Sablier ${symbol} allowance transaction has failed. Please try again`,
-              type: 'warning',
-              title: 'Sablier transaction failed',
+              message: t('toast.sablierAllowanceFailed', { assetName: assetData.name, assetSymbol: symbol }),
+              emoji: 'hushed',
               autoClose: true,
             });
           }

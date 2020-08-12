@@ -27,6 +27,7 @@ import {
 } from 'constants/poolTogetherConstants';
 import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { DAI, USDC } from 'constants/assetsConstants';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -153,17 +154,16 @@ export const checkPoolTogetherApprovalTransactionAction = () => {
           if (allowanceTransaction.status === TX_CONFIRMED_STATUS) {
             dispatch(fetchPoolAllowanceStatusAction(symbol));
             Toast.show({
-              message: `PoolTogether ${symbol} Pool automation was enabled`,
-              type: 'success',
-              title: 'Success',
+              message: t('toast.poolTogetherAutomationEnabled', { tokenSymbol: symbol }),
+              emoji: 'ok_hand',
               autoClose: true,
             });
           } else if (allowanceTransaction.status === TX_FAILED_STATUS) {
             dispatch(setDismissApproveAction(symbol));
             Toast.show({
-              message: `PoolTogether ${symbol} Pool automation transaction failed`,
-              type: 'warning',
-              title: 'Transaction failed',
+              message: t('toast.poolTogetherAutomationFailed', { tokenSymbol: symbol }),
+              emoji: 'hushed',
+              supportLink: true,
               autoClose: true,
             });
           }

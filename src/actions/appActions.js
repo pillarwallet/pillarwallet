@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Platform, NativeModules } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
@@ -75,15 +74,6 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 
 const storage = Storage.getInstance('db');
-
-const hideSplash = () => {
-  if (Platform.OS === 'ios') {
-    const { SplashManager } = NativeModules;
-    SplashManager.hide();
-  } else {
-    SplashScreen.hide();
-  }
-};
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -242,7 +232,7 @@ export const initAppAndRedirectAction = () => {
 
     navigate(NavigationActions.navigate(navAction));
 
-    hideSplash();
+    SplashScreen.hide();
   };
 };
 

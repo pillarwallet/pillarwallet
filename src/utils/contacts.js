@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
+
 // components
 import Toast from 'components/Toast';
 
@@ -40,10 +42,8 @@ export const getReceiverWithEnsName = async (ethAddress: ?string) => {
     });
     if (!resolvedAddress) {
       Toast.show({
-        title: 'Sorry, we could not find that ENS name!',
-        message: 'Could you please check and try again?',
-        type: 'warning',
-        autoClose: false,
+        message: t('toast.ensNameNotFound'),
+        emoji: 'woman_shrugging',
       });
       return { receiverEnsName, receiver };
     }

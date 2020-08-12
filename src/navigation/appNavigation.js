@@ -846,10 +846,7 @@ class AppFlow extends React.Component<Props, State> {
       const lastNotification = notifications[notifications.length - 1];
 
       Toast.show({
-        message: lastNotification.message,
-        type: lastNotification.messageType,
-        title: lastNotification.title,
-        autoClose: lastNotification.autoClose,
+        ...lastNotification,
       });
     }
   }
