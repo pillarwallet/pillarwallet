@@ -104,6 +104,13 @@ type ValidatedUserResponse = $Shape<{
   error: boolean,
 }>;
 
+type DirectSdkRequestOptions = {|
+  path: string,
+  method?: string,
+  data?: Object,
+  params?: Object,
+|};
+
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
 class SDKWrapper {
@@ -707,17 +714,25 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  generateAltalixTransactionUrl(data: AltalixTrxParams): Promise<string | null> {
+  makeDirectSdkRequest({ path, method = 'GET', ...rest }: DirectSdkRequestOptions): Promise<AxiosResponse> {
     const requestOptions = {
-      url: `${SDK_PROVIDER}/partners/altalix/generate-transaction-url`,
+      url: SDK_PROVIDER + path,
       defaultRequest: {
-        method: 'POST',
+        method,
         httpsAgent: new https.Agent({ rejectUnathorized: false }),
       },
-      data,
+      ...rest,
     };
 
-    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+    return this.pillarWalletSdk.configuration.executeRequest(requestOptions);
+  }
+
+  generateAltalixTransactionUrl(data: AltalixTrxParams): Promise<string | null> {
+    return this.makeDirectSdkRequest({
+      path: '/partners/altalix/generate-transaction-url',
+      method: 'POST',
+      data,
+    })
       .then(response => response.data.url)
       .catch(error => {
         reportLog('generateAltalixTransactionUrl: SDK request error', error.response.data, Sentry.Severity.Error);
@@ -726,16 +741,10 @@ class SDKWrapper {
   }
 
   fetchAltalixAvailability(walletId: string): Promise<boolean> {
-    const requestOptions = {
-      url: `${SDK_PROVIDER}/user/location`,
-      defaultRequest: {
-        method: 'GET',
-        httpsAgent: new https.Agent({ rejectUnathorized: false }),
-      },
+    return this.makeDirectSdkRequest({
+      path: '/user/location',
       params: { walletId },
-    };
-
-    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+    })
       .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
       .catch(error => {
         reportLog('fetchAltalixAvailability: SDK request error', error.response.data, Sentry.Severity.Error);
@@ -744,41 +753,30 @@ class SDKWrapper {
   }
 
   getSendwyreRates(walletId: string): Promise<SendwyreRates> {
-    const requestOptions = {
-      url: `${SDK_PROVIDER}/partners/wyre/exchange-rates`,
-      defaultRequest: {
-        method: 'GET',
-        httpsAgent: new https.Agent({ rejectUnathorized: false }),
-      },
+    return this.makeDirectSdkRequest({
+      path: '/partners/wyre/exchange-rates',
       params: { walletId },
-    };
-
-    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+    })
       .then(response => response.data.exchangeRates)
       .catch(error => {
-        reportLog('getSendwyreRates: SDK request error', error, Sentry.Severity.Error);
+        reportLog('getSendwyreRates: SDK request error', error.response.data, Sentry.Severity.Error);
         return {};
       });
   }
 
   getSendwyreWidgetURL({ address, ...params }: SendwyreTrxParams): Promise<string | null> {
-    const requestOptions = {
-      url: `${SDK_PROVIDER}/partners/wyre/generate-order-reservation`,
-      defaultRequest: {
-        method: 'POST',
-        httpsAgent: new https.Agent({ rejectUnathorized: false }),
-      },
+    return this.makeDirectSdkRequest({
+      path: '/partners/wyre/generate-order-reservation',
+      method: 'POST',
       data: {
         ...params,
         dest: `ethereum:${address}`,
         lockFields: [],
       },
-    };
-
-    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+    })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog('getSendwyreWidgetURL: SDK request error', error, Sentry.Severity.Error);
+        reportLog('getSendwyreWidgetURL: SDK request error', error.response.data, Sentry.Severity.Error);
         return null;
       });
   }
