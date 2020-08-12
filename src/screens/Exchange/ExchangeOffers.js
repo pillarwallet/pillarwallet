@@ -36,7 +36,6 @@ import {
   setTokenAllowanceAction,
   takeOfferAction,
 } from 'actions/exchangeActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -45,11 +44,10 @@ import OfferCard from 'components/OfferCard/OfferCard';
 // constants
 import { EXCHANGE, PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
 import { EXCHANGE_CONFIRM, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, SPEED_TYPES } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // services
 import smartWalletService from 'services/smartWallet';
-import { calculateGasEstimate } from 'services/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -58,13 +56,12 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, Balances, Rates } from 'models/Asset';
-import type { GasInfo } from 'models/GasInfo';
 import type { SessionData } from 'models/Session';
 
 //  selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
-import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
 import { getOfferProviderLogo, getCryptoProviderName } from 'utils/exchange';
@@ -112,14 +109,11 @@ type Props = {
   value: FormValue,
   exchangeSupportedAssets: Asset[],
   baseFiatCurrency: ?string,
-  gasInfo: GasInfo,
   rates: Rates,
   setDismissTransaction: () => void,
   balances: Balances,
   session: SessionData,
-  fetchGasInfo: () => void,
   activeAccountAddress: string,
-  isSmartAccount: boolean,
   useGasToken: boolean,
 };
 
@@ -231,19 +225,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     enablePayload: null,
   };
 
-  componentDidMount() {
-    if (!this.props.isSmartAccount) {
-      this.props.fetchGasInfo();
-    }
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { session, fetchGasInfo, isSmartAccount } = this.props;
-    if (prevProps.session.isOnline !== session.isOnline && session.isOnline && !isSmartAccount) {
-      fetchGasInfo();
-    }
-  }
-
   onShapeshiftAuthPress = () => {
     const { authorizeWithShapeshift } = this.props;
     this.setState({ shapeshiftAuthPressed: true }, async () => {
@@ -291,11 +272,9 @@ class ExchangeOffers extends React.Component<Props, State> {
       exchangeSupportedAssets,
       providersMeta,
       baseFiatCurrency,
-      gasInfo,
       setExecutingTransaction,
       rates,
       balances,
-      isSmartAccount,
     } = this.props;
 
     const { provider, fromAsset, toAsset } = offer;
@@ -316,8 +295,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
     const providerName = getCryptoProviderName(providersMeta, provider);
 
-    let gasToken;
-    let txFeeInWei;
     let transactionPayload = {
       amount: 0,
       to: payToAddress,
@@ -334,23 +311,10 @@ class ExchangeOffers extends React.Component<Props, State> {
       },
     };
 
-    if (isSmartAccount) {
-      ({ fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload));
-      if (gasToken) {
-        transactionPayload = { ...transactionPayload, gasToken };
-      }
-    } else {
-      const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
-      const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-      const gasLimit = await calculateGasEstimate(transactionPayload);
-      txFeeInWei = gasPriceWei.mul(gasLimit);
+    const { fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload);
 
-      transactionPayload = {
-        ...transactionPayload,
-        gasPrice: gasPriceWei,
-        gasLimit,
-        txSpeed: SPEED_TYPES.NORMAL,
-      };
+    if (gasToken) {
+      transactionPayload = { ...transactionPayload, gasToken };
     }
 
     transactionPayload = { ...transactionPayload, txFeeInWei };
@@ -610,7 +574,6 @@ const mapStateToProps = ({
     providersMeta,
     exchangeSupportedAssets,
   },
-  history: { gasInfo },
   rates: { data: rates },
   session: { data: session },
 }: RootReducerState): $Shape<Props> => ({
@@ -620,7 +583,6 @@ const mapStateToProps = ({
   connectedProviders,
   providersMeta,
   exchangeSupportedAssets,
-  gasInfo,
   rates,
   session,
 });
@@ -628,7 +590,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
 });
 
@@ -647,7 +608,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
     takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
   ),
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeOffers));
