@@ -24,6 +24,7 @@ import { RefreshControl } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
+import t from 'translations/translate';
 
 // actions
 import { fetchAvailableTxToSettleAction } from 'actions/smartWalletActions';
@@ -221,9 +222,8 @@ class SettleBalance extends React.Component<Props, State> {
       updatedTxToSettle = txToSettle.filter(({ hash }) => hash !== tx.hash);
     } else if (txToSettle.length === MAX_TX_TO_SETTLE) {
       Toast.show({
-        message: `You can settle only ${MAX_TX_TO_SETTLE} transactions at once`,
-        type: 'info',
-        title: 'Warning',
+        message: t('toast.tooManyTransactionsToSettle', { maxTxToSettle: MAX_TX_TO_SETTLE }),
+        emoji: 'hushed',
       });
       return;
     } else {

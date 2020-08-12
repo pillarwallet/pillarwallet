@@ -20,6 +20,8 @@
 
 import { toChecksumAddress } from '@netgum/utils';
 import uniq from 'lodash.uniq';
+import * as Sentry from '@sentry/react-native';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -42,6 +44,11 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
+import { reportLog } from 'utils/common';
+import { getAssetsAsList, getAssetData } from 'utils/assets';
+
+// selectors
+import { accountAssetsSelector } from 'selectors/assets';
 
 // services
 import {
@@ -80,11 +87,7 @@ export const takeOfferAction = (
     }
 
     if (!fromAsset || !toAsset || !order) {
-      Toast.show({
-        title: 'Exchange service failed',
-        type: 'warning',
-        message: 'Could not find asset',
-      });
+      reportLog('Cannot find exchange asset', null, Sentry.Severity.Error);
       callback({});
       return;
     }
@@ -102,17 +105,12 @@ export const takeOfferAction = (
       contractAddress: fromAssetAddress || '',
       decimals: parseInt(fromAssetDecimals, 10) || 18,
       ...order.transactionObj,
-
     };
     callback(transactionData);
   };
 };
 
-export const resetOffersAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch({ type: RESET_OFFERS });
-  };
-};
+export const resetOffersAction = () => ({ type: RESET_OFFERS });
 
 const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
@@ -148,11 +146,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
     const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
     if (!fromAsset || !toAsset) {
-      Toast.show({
-        title: 'Exchange Service',
-        type: 'warning',
-        message: 'Sorry, we could not find the asset. Could you please check and try again?',
-      });
+      reportLog('Cannot find exchange asset', { fromAssetCode, toAssetCode }, Sentry.Severity.Error);
       return;
     }
 
@@ -275,7 +269,11 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
           allowances: exchangeAllowances,
         },
       },
+      assets: {
+        supportedAssets,
+      },
     } = getState();
+    const currentAccountAssets = accountAssetsSelector(getState());
     const accountIds = Object.keys(transactionsHistory);
     const allHistory = accountIds.reduce(
       (existing = [], accountId) => {
@@ -292,10 +290,16 @@ export const checkEnableExchangeAllowanceTransactionsAction = () => {
           ({ hash, status }) => hash === transactionHash && status === TX_CONFIRMED_STATUS,
         );
         if (enabledAllowance) {
+          const fromAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, fromAssetCode);
+          const toAssetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, toAssetCode);
           Toast.show({
-            message: `${fromAssetCode} to ${toAssetCode} exchange was enabled`,
-            type: 'success',
-            title: 'Success',
+            message: t('toast.exchangeEnabled', {
+              fromAssetName: fromAssetData.name,
+              fromAssetSymbol: fromAssetData.symbol,
+              toAssetName: toAssetData.name,
+              toAssetSymbol: toAssetData.symbol,
+            }),
+            emoji: 'handshake',
             autoClose: true,
           });
           dispatch(enableExchangeAllowanceByHashAction(transactionHash));

@@ -24,6 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -187,28 +188,27 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
       if (isSameContactData(contact, userEmail, userPhone)) {
         Toast.show({
-          message: 'You can not send invitation to yourself',
-          type: 'warning',
-          title: 'Can not add this contact',
+          message: t('toast.cantInviteYourself'),
+          emoji: 'point_up',
         });
         return;
       }
 
       if (!!phone && !isValidPhone(phone)) {
         Toast.show({
-          message: 'Phone number should have country code',
-          type: 'warning',
-          title: 'Invalid phone number',
+          message: t('toast.invalidPhoneNumber'),
+          emoji: 'point_up',
         });
         return;
       }
 
       if (!availableInvites) {
         Toast.show({
-          message: `You can only invite ${getRemainingDailyInvitations(sentInvitationsCount)} people today ` +
-          `(${ALLOWED_DAILY_INVITES} people per day).`,
-          type: 'warning',
-          title: 'Daily invitations limit reached',
+          message: t('dailyInvitationsLimitReached', {
+            remainingDailyInvitations: getRemainingDailyInvitations(sentInvitationsCount),
+            allowedDailyUpdates: ALLOWED_DAILY_INVITES,
+          }),
+          emoji: 'point_up',
         });
         return;
       }

@@ -61,8 +61,6 @@ const oneinchDarkMonochrome = require('assets/images/exchangeProviders/oneinchDa
 
 // patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
-const splashPatternTop = require('assets/images/patterns/splash_pattern_top.png');
-const splashPatternBottom = require('assets/images/patterns/splash_pattern_bottom.png');
 
 function getImageByTheme(currentTheme, values) {
   return values[currentTheme];
@@ -122,14 +120,6 @@ export const images = (theme: Theme) => {
     landingPattern: getImageByTheme(currentTheme, {
       lightTheme: landingPattern,
       darkTheme: landingPattern,
-    }),
-    splashPatternTop: getImageByTheme(currentTheme, {
-      lightTheme: splashPatternTop,
-      darkTheme: splashPatternTop,
-    }),
-    splashPatternBottom: getImageByTheme(currentTheme, {
-      lightTheme: splashPatternBottom,
-      darkTheme: splashPatternBottom,
     }),
   };
 };

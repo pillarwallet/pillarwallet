@@ -21,7 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
+import { utils, constants as ethersConstants } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import BigNumber from 'bignumber.js';
 import isEqual from 'lodash.isequal';
@@ -250,7 +250,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
     // for WETH converted txs on homestead, we need to provide ETH data or else estimation is always 0$
     const contractAddressForEstimation = isProdEnv && isConvertedTx
-      ? '0x0000000000000000000000000000000000000000'
+      ? ethersConstants.AddressZero
       : contractAddress;
 
     const { symbol, decimals } =

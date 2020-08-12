@@ -20,9 +20,10 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import { Platform } from 'react-native';
+import { Platform, Linking } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, request as requestPermission, RESULTS } from 'react-native-permissions';
+import t from 'translations/translate';
 
 // actions
 import { changeUseBiometricsAction, toggleOmitPinOnLoginAction } from 'actions/appSettingsActions';
@@ -61,11 +62,13 @@ type Props = {
   omitPinOnLogin?: boolean,
 };
 
-const showFaceIDFailedMessage = (message) => {
+const showFaceIDFailedMessage = () => {
   Toast.show({
-    message,
-    type: 'warning',
-    title: 'Warning',
+    message: t('toast.failedToGetFaceIDPermission'),
+    emoji: 'pensive',
+    supportLink: true,
+    link: t('label.faceIDSettings'),
+    onLinkPress: () => Linking.openURL('app-settings:'),
     autoClose: true,
   });
 };
@@ -102,9 +105,9 @@ class SecuritySettings extends React.Component<Props, State> {
             changeUseBiometrics(enabled, data);
             return;
           }
-          showFaceIDFailedMessage('FaceID permission is denied.');
+          showFaceIDFailedMessage();
         })
-        .catch(() => showFaceIDFailedMessage('Failed to get FaceID permission!'));
+        .catch(() => showFaceIDFailedMessage());
       return;
     }
 

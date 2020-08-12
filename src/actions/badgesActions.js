@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -50,14 +51,14 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
       badges: { data: badges },
     } = getState();
 
-    let newBadgeReceived = false;
+    let newBadgeName = null;
     const userBadges = await api.fetchBadges(walletId);
 
     if (!isEmpty(userBadges)) {
       const updatedBadges = userBadges.map(badge => {
         const badgeId = badge.id;
         const oldBadgeInfo = badges.find(({ id }) => id === badgeId);
-        if (!oldBadgeInfo) newBadgeReceived = true;
+        if (!oldBadgeInfo) newBadgeName = badge.name;
         const badgeInfo = badge || oldBadgeInfo || {};
         return {
           ...badgeInfo,
@@ -69,11 +70,10 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
       dispatch({ type: UPDATE_BADGES, payload: updatedBadges });
     }
 
-    if (newBadgeReceived && notifyOnNewBadge) {
+    if (newBadgeName && notifyOnNewBadge) {
       Toast.show({
-        message: 'New badge received!',
-        type: 'success',
-        title: 'Success',
+        message: t('toast.badgeReceived', { badgeName: newBadgeName }),
+        emoji: 'ok_hand',
         autoClose: true,
       });
     }

@@ -19,6 +19,7 @@
 */
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -48,8 +49,9 @@ export const initSyntheticsServiceAction = () => {
     const { oAuthTokens: { data: { accessToken } } } = getState();
     if (!accessToken) {
       Toast.show({
-        message: 'Cannot initialize synthetics service',
-        type: 'warning',
+        message: t('toast.syntheticTransactionFailed'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: false,
       });
       return;
@@ -67,8 +69,9 @@ export const commitSyntheticsTransaction = (transactionId: string, paymentHash: 
         const message = 'Failed to complete synthetic asset transaction';
         reportLog(message, { transactionId, paymentHash });
         Toast.show({
-          message,
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
       });

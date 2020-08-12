@@ -24,6 +24,7 @@ import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // actions
 import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
@@ -282,8 +283,9 @@ class ServicesScreen extends React.Component<Props, State> {
 
   showServiceLaunchError = () => {
     Toast.show({
-      type: 'warning',
-      message: 'Sorry, we had a problem trying to open this service. Please try again later.',
+      message: t('toast.cryptoPurchaseLaunchFailed'),
+      emoji: 'hushed',
+      supportLink: true,
     });
   }
 

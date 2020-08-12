@@ -50,18 +50,21 @@ import {
 } from 'utils/uniswap';
 import { parseOffer } from 'utils/exchange';
 
+// services
+import { encodeContractMethod } from 'services/assets';
+
 // models
 import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
 
 // constants
 import { PROVIDER_UNISWAP, UNISWAP_GRAPH_ID } from 'constants/exchangeConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
-const abiCoder = require('web3-eth-abi');
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -125,7 +128,7 @@ const getTrade = async (
 };
 
 const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise<boolean> => {
-  if (fromAsset.code === 'ETH') return true;
+  if (fromAsset.code === ETH) return true;
   const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
   const allowance: BigNumber = await assetContract.allowance(clientAddress, ADDRESSES.router);
   return allowance.gt(0);
@@ -155,7 +158,7 @@ const getUniswapOrderData = async (
   toAsset: Asset,
   fromAssetQuantityBaseUnits: string,
   toAssetDecimals: string,
-): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber }> => {
+): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber } | null> => {
   let route = await getRoute(fromAsset, toAsset);
   if (!route && (
     fromAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
@@ -167,9 +170,11 @@ const getUniswapOrderData = async (
     route = await getBackupRoute(fromAsset.address, toAsset.address);
     if (!route) {
       reportLog('Unable to find a possible route', null, 'error');
+      return null;
     }
   }
   const trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits, route);
+  if (!trade) return null;
   const expectedOutput: BigNumber = getExpectedOutput(trade);
   const toAssetDecimalsBN = new BigNumber(toAssetDecimals);
   const expectedOutputWithSlippage = applyAllowedSlippage(expectedOutput, toAssetDecimalsBN);
@@ -187,9 +192,10 @@ export const createUniswapOrder = async (
   toAsset: Asset,
   quantity: number | string,
   clientSendAddress: string,
-): Promise<Object> => {
+): Promise<Object | null> => {
   if (!fromAsset || !toAsset) {
     reportOrWarn('Invalid assets', null, 'error');
+    return null;
   }
 
   const decimalsBN = new BigNumber(fromAsset.decimals);
@@ -198,13 +204,16 @@ export const createUniswapOrder = async (
 
   let txData = '';
   let txValue = '0';
-  if (fromAsset.code !== 'ETH' && toAsset.code !== 'ETH') {
-    const { path, expectedOutputBaseUnits } = await getUniswapOrderData(
+  if (fromAsset.code !== ETH && toAsset.code !== ETH) {
+    const orderData = await getUniswapOrderData(
       fromAsset,
       toAsset,
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
     );
+    if (!orderData) return null;
+    const { path, expectedOutputBaseUnits } = orderData;
+
     const deadline = getDeadline();
 
     txData = swapExactTokensToTokens(
@@ -214,14 +223,16 @@ export const createUniswapOrder = async (
       clientSendAddress,
       deadline.toString(),
     );
-  } else if (fromAsset.code === 'ETH' && toAsset.code !== 'ETH') {
+  } else if (fromAsset.code === ETH && toAsset.code !== ETH) {
     txValue = quantityBaseUnits.toFixed();
-    const { path, expectedOutputBaseUnits } = await getUniswapOrderData(
+    const orderData = await getUniswapOrderData(
       WETH[chainId],
       toAsset,
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
     );
+    if (!orderData) return null;
+    const { path, expectedOutputBaseUnits } = orderData;
 
     const deadline = getDeadline();
 
@@ -231,13 +242,15 @@ export const createUniswapOrder = async (
       clientSendAddress,
       deadline.toString(),
     );
-  } else if (fromAsset.code !== 'ETH' && toAsset.code === 'ETH') {
-    const { path, expectedOutputBaseUnits } = await getUniswapOrderData(
+  } else if (fromAsset.code !== ETH && toAsset.code === ETH) {
+    const orderData = await getUniswapOrderData(
       fromAsset,
       WETH[chainId],
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
     );
+    if (!orderData) return null;
+    const { path, expectedOutputBaseUnits } = orderData;
 
     const deadline = getDeadline();
 
@@ -252,6 +265,7 @@ export const createUniswapOrder = async (
 
   if (!txData) {
     reportOrWarn('Unable to create order', null, 'error');
+    return null;
   }
 
   const txCount = await ethProvider.getTransactionCount(clientSendAddress);
@@ -270,7 +284,7 @@ export const createUniswapOrder = async (
 };
 
 export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  const abiFunction = {
+  const abiFunction = [{
     name: 'approve',
     outputs: [{ type: 'bool', name: 'out' }],
     inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
@@ -278,10 +292,11 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
     payable: false,
     type: 'function',
     gas: 38769,
-  };
+  }];
 
-  const encodedContractFunction = abiCoder.encodeFunctionCall(
+  const encodedContractFunction = encodeContractMethod(
     abiFunction,
+    'approve',
     [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
   );
 
