@@ -19,7 +19,9 @@
 */
 import * as React from 'react';
 import { Linking } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography/Typography';
 import { ScrollWrapper } from 'components/Layout';
@@ -27,6 +29,7 @@ import TextInput from 'components/TextInput';
 import Toast from 'components/Toast';
 import { spacing } from 'utils/variables';
 import { isValidEmail } from 'utils/validators';
+import { reportLog } from 'utils/common';
 import { subscribeToNewsletter } from 'services/newsletter';
 import {
   TWITTER_SOCIAL_ADDRESS,
@@ -101,24 +104,25 @@ class CommunitySettings extends React.Component<{}, State> {
       .then(({ data }) => {
         if (data.result === 'success') {
           Toast.show({
-            title: 'Subscribed!',
-            type: 'success',
-            message: 'Subscribed to the newsletter successfully.',
+            message: t('toast.subscribedToNewsletter'),
+            emoji: 'ok_hand',
           });
         } else {
           Toast.show({
-            title: 'Subscription failed',
-            type: 'warning',
-            message: data.msg || 'Failed to subscribe to the newsletter',
+            message: t('toast.subscriptionToNewsletterFailed'),
+            emoji: 'hushed',
+            supportLink: true,
           });
+          reportLog('Subscription to newsletter failed', { error: data.msg }, Sentry.Severity.Error);
         }
       })
       .catch(e => {
         Toast.show({
-          title: 'Subscription failed',
-          type: 'warning',
-          message: e.toString() || 'Failed to subscribe to the newsletter',
+          message: t('toast.subscriptionToNewsletterFailed'),
+          emoji: 'hushed',
+          supportLink: true,
         });
+        reportLog('Subscription to newsletter failed', { error: e }, Sentry.Severity.Error);
       });
   }
 

@@ -29,6 +29,7 @@ import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import { createStructuredSelector } from 'reselect';
 import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import t from 'translations/translate';
 
 // components
 import Button from 'components/Button';
@@ -389,7 +390,9 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     if (!estimated) {
       Toast.show({
-        message: 'Could not estimate transaction fee',
+        message: t('toast.transactionFeeEstimationFailed'),
+        emoji: 'woman_shrugging',
+        supportLink: true,
         type: 'warning',
       });
       return defaultResponse;

@@ -22,6 +22,7 @@ import { NavigationActions } from 'react-navigation';
 import shuffle from 'shuffle-array';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -317,14 +318,9 @@ export const checkForWalletBackupToastAction = () => {
       && Object.values(keyBasedAccountBalances).some((asset) => !!Number(get(asset, 'balance', 0)));
     if (!anyAssetHasPositiveBalance) return;
 
-    const message =
-      'Go to wallet settings on the assets screen and complete the wallet backup. ' +
-      'Pillar cannot help you retrieve your wallet if it is lost.';
-
     Toast.show({
-      message,
-      type: 'warning',
-      title: 'Please ensure you backup your wallet now',
+      message: t('toast.ensureBackup'),
+      emoji: 'point_up',
       autoClose: false,
       onPress: () => {
         const action = NavigationActions.navigate({

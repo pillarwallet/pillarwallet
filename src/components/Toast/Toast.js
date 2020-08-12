@@ -19,22 +19,26 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { View, Animated, StatusBar, TouchableOpacity } from 'react-native';
+import { Animated, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
-import IconButton from 'components/IconButton';
+import Emoji from 'react-native-emoji';
+import Intercom from 'react-native-intercom';
+import t from 'translations/translate';
 import Icon from 'components/Icon';
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { MediumText, BaseText } from 'components/Typography';
+import ShadowedCard from 'components/ShadowedCard';
+import { Spacing } from 'components/Layout';
+import { MediumText, TextLink } from 'components/Typography';
 import { themedColors } from 'utils/themes';
-import type { ThemeColors } from 'models/Theme';
 
 type ToastOptions = {
   autoClose?: boolean,
   onPress?: () => void,
-  type: string,
+  emoji?: string,
   message: string,
-  title?: ?string,
+  supportLink?: boolean,
+  link?: string,
+  onLinkPress?: () => void,
 };
 
 type State = {
@@ -44,21 +48,10 @@ type State = {
 };
 
 const toastInitialOptions: ToastOptions = {
-  autoClose: true,
-  type: 'info',
+  autoClose: false,
   message: '',
-};
-
-const typeColors = (colors: ThemeColors) => ({
-  warning: colors.negative,
-  info: colors.primary,
-  success: colors.positive,
-});
-
-const typeIcons = {
-  warning: 'warning-circle',
-  info: 'info-circle',
-  success: 'tick-circle',
+  emoji: 'ok_hand',
+  supportLink: false,
 };
 
 const ToastHolder = styled(SafeAreaView)`
@@ -66,65 +59,37 @@ const ToastHolder = styled(SafeAreaView)`
 `;
 
 const ContentWrapper = styled.View`
-  width: 100%;
-  min-height: 58px;
   flex-direction: row;
-  justify-content: center;
+  padding: 14px 55px 14px 20px;
   align-items: flex-start;
-  padding-top: 8px;
-  padding-bottom: ${spacing.rhythm / 2}px;
-  margin-top: ${props => props.androidStatusbarHeight || 0}px;
 `;
 
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
-  background-color: ${themedColors.card};
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
-  shadow-color: #333;
-  shadow-offset: 0 2px;
-  shadow-opacity: 0.25;
-  shadow-radius: 10;
-  elevation: 9;
   z-index: 1000;
   justify-content: center;
   align-items: center;
+  margin-top: ${props => props.androidStatusbarHeight || 0}px;
+  padding: 40px 20px;
+`;
+
+const CloseIconWrapper = styled.TouchableOpacity`
+  position: absolute;
+  top: 17px;
+  right: 18px;
+`;
+
+const CloseIcon = styled(Icon)`
+  color: ${themedColors.border};
+  font-size: 16px;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
 
-const TextHolder = styled.View`
-  flex: 9;
-  align-self: stretch;
-  justify-content: center;
-`;
-
-const IconHolder = styled.View`
-  display: flex;
-  flex: 2;
-  align-self: stretch;
-  align-items: center;
-  justify-content: center;
-  padding-top: 2px;
-`;
-
-const ToastTitle = styled(MediumText)`
-  ${fontStyles.regular};
-  color: ${themedColors.text};
-  margin-bottom: 2px;
-`;
-
-const ToastBody = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
-`;
-
-const ToastIcon = styled(Icon)`
-  color: ${({ iconType, theme }) => typeColors(theme.colors)[iconType]};
-  font-size: ${fontSizes.large}px;
-`;
 
 class Toast extends React.Component<{}, State> {
   timeout: TimeoutID;
@@ -202,37 +167,16 @@ class Toast extends React.Component<{}, State> {
     onPress();
   };
 
-  renderText() {
-    const { toastOptions: { title, message } } = this.state;
-
-    return (
-      <View>
-        {!!title && <ToastTitle>{title}</ToastTitle>}
-        <ToastBody>{message}</ToastBody>
-      </View>
-    );
-  }
-
-  renderTextWrapper() {
-    const { toastOptions: { onPress } } = this.state;
-
-    if (onPress) {
-      return (
-        <TextHolder>
-          <TouchableOpacity onPress={this.handlePress}>
-            {this.renderText()}
-          </TouchableOpacity>
-        </TextHolder>
-      );
-    }
-
-    return (
-      <TextHolder>{this.renderText()}</TextHolder>
-    );
+  goToSupport = () => {
+    Intercom.displayMessenger();
   }
 
   render() {
-    const { toastOptions } = this.state;
+    const {
+      toastOptions: {
+        message, emoji, supportLink, link, onLinkPress,
+      },
+    } = this.state;
     const animation = this.state.animSlide.interpolate({
       inputRange: [0, 1],
       outputRange: [-260, 0],
@@ -243,37 +187,23 @@ class Toast extends React.Component<{}, State> {
           transform: [{ translateY: animation }],
         }}
         opacity={+!!this.state.toastOptions.message}
+        androidStatusbarHeight={StatusBar.currentHeight}
       >
         <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
-          <ContentWrapper androidStatusbarHeight={StatusBar.currentHeight}>
-            <IconHolder>
-              <ToastIcon
-                name={typeIcons[toastOptions.type]}
-                iconType={toastOptions.type}
-              />
-            </IconHolder>
-            {this.renderTextWrapper()}
-            <IconButton
-              onPress={this.handleClose}
-              icon="close"
-              secondary
-              style={{
-                flex: 2,
-                justifyContent: 'center',
-                alignItems: 'center',
-                alignSelf: 'stretch',
-                display: 'flex',
-              }}
-              iconStyle={{
-                borderWidth: 0,
-                width: 32,
-                textAlign: 'center',
-                alignSelf: 'center',
-                justifyContent: 'center',
-                alignItems: 'center',
-              }}
-            />
-          </ContentWrapper>
+          <ShadowedCard>
+            <ContentWrapper>
+              {emoji && <Emoji name={emoji} style={{ fontSize: 16 }} />}
+              <Spacing w={18} />
+              <MediumText regular style={{ flex: 1 }}>
+                {message}
+                {link && <TextLink onPress={onLinkPress} regular> {link}</TextLink>}
+                {supportLink && <TextLink onPress={this.goToSupport} regular> {t('label.contactSupport')}</TextLink>}
+              </MediumText>
+            </ContentWrapper>
+            <CloseIconWrapper onPress={this.handleClose}>
+              <CloseIcon name="rounded-close" />
+            </CloseIconWrapper>
+          </ShadowedCard>
         </ToastHolder>
       </AnimatedToastWrapper>
     );

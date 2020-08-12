@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { TouchableOpacity } from 'react-native';
+import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // components
@@ -37,6 +38,7 @@ import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
 import { isSablierTransactionTag } from 'utils/sablier';
+import { formatUnits } from 'utils/common';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -166,13 +168,13 @@ class SendTokenTransaction extends React.Component<Props> {
 
     const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
-      const { extra: { symbol = DAI } = {} } = transactionPayload;
+      const { extra: { symbol = DAI, amount, decimals = 18 } = {} } = transactionPayload;
       navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
+      const ticketsCount = parseFloat(formatUnits(amount, decimals));
       if (txTag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
         Toast.show({
-          message: 'You\'ve purchased new tickets',
-          type: 'success',
-          title: 'Success',
+          message: t('toast.purchasedPoolTogetherTickets', { count: ticketsCount }),
+          emoji: 'ok_hand',
           autoClose: true,
         });
       }
@@ -187,10 +189,11 @@ class SendTokenTransaction extends React.Component<Props> {
     navigation.dismiss();
 
     if (transactionPayload.usePPN && isSuccess) {
+      const { amount, symbol } = transactionPayload;
+      const paymentInfo = `${amount} ${symbol}`;
       Toast.show({
-        message: 'Transaction was successfully sent!',
-        type: 'success',
-        title: 'Success',
+        message: t('toast.transactionStarted', { paymentInfo }),
+        emoji: 'ok_hand',
         autoClose: true,
       });
     }

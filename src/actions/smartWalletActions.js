@@ -24,6 +24,8 @@ import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { SABLIER_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import t from 'translations/translate';
+import * as Sentry from '@sentry/react-native';
 
 // components
 import Toast from 'components/Toast';
@@ -39,7 +41,6 @@ import {
   SET_SMART_WALLET_DEPLOYMENT_DATA,
   SMART_WALLET_DEPLOYMENT_ERRORS,
   SET_SMART_WALLET_LAST_SYNCED_PAYMENT_ID,
-  RESET_SMART_WALLET,
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
   PAYMENT_COMPLETED,
@@ -50,7 +51,7 @@ import {
   SMART_WALLET_ACCOUNT_DEVICE_ADDED,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { ETH, SET_INITIAL_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
+import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import {
   TX_CONFIRMED_STATUS,
   SET_HISTORY,
@@ -95,7 +96,6 @@ import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { BalancesStore } from 'models/Asset';
 import type {
   SmartWalletAccount,
   SmartWalletAccountDevice,
@@ -104,7 +104,7 @@ import type {
 } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { SyntheticTransactionExtra, TransactionsStore } from 'models/Transaction';
+import type { SyntheticTransactionExtra } from 'models/Transaction';
 import type { ConnectedDevice } from 'models/ConnectedDevice';
 import type SDKWrapper from 'services/api';
 
@@ -144,7 +144,7 @@ import {
 import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
 
 // actions
-import { addAccountAction, setActiveAccountAction, switchAccountAction } from './accountsActions';
+import { addAccountAction, setActiveAccountAction } from './accountsActions';
 import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -169,8 +169,9 @@ const isValidSyntheticExchangePayment = (type: string, extra: any) => {
 
 const notifySmartWalletNotInitialized = () => {
   Toast.show({
-    message: 'Smart Account is not initialized',
-    type: 'warning',
+    message: t('toast.somethingWentWrong'),
+    emoji: 'hushed',
+    supportLink: true,
     autoClose: false,
   });
 };
@@ -233,7 +234,7 @@ export const setSmartWalletUpgradeStatusAction = (upgradeStatus: string) => {
       dispatch({ type: RESET_SMART_WALLET_DEPLOYMENT });
 
       const accountAssets = accountAssetsSelector(getState());
-      if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction(false));
+      if (isEmpty(accountAssets)) dispatch(fetchInitialAssetsAction());
     }
     dispatch({
       type: SET_SMART_WALLET_UPGRADE_STATUS,
@@ -288,9 +289,9 @@ export const connectSmartWalletAccountAction = (
       connectedAccount = await smartWalletService.connectAccount(accountId);
       if (isEmpty(connectedAccount)) {
         Toast.show({
-          message: 'Failed to connect to Smart Wallet account',
-          type: 'warning',
-          title: 'Unable to connect',
+          message: t('toast.failedToLogIn'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
         return;
@@ -554,9 +555,9 @@ export const removeSmartWalletAccountDeviceAction = (deviceAddress: string) => {
     const deviceRemoved = await smartWalletService.removeAccountDevice(deviceAddress);
     if (!deviceRemoved) {
       Toast.show({
-        message: 'Device remove failed',
-        type: 'warning',
-        title: 'Unable to remove device',
+        message: t('toast.somethingWentWrong'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: false,
       });
       return;
@@ -618,9 +619,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         } else {
           // otherwise it's actual smart wallet device deployment
           Toast.show({
-            message: 'New Smart Wallet device has been added', // do not confuse users about device "deployment"
-            type: 'success',
-            title: 'Success',
+            message: t('toast.smartWalletDeviceAdded'),
+            emoji: 'tada',
             autoClose: true,
           });
         }
@@ -649,6 +649,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
         wallet: { data: { address: keyBasedWalletAddress } },
+        assets: { supportedAssets },
       } = getState();
       let { history: { data: currentHistory } } = getState();
       const activeAccountAddress = getActiveAccountAddress(accounts);
@@ -662,6 +663,15 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
+      const txFromHistory = currentHistory[activeAccountAddress].find(tx => tx.hash === txHash);
+      const getPaymentFromHistory = () => {
+        const symbol = get(txFromHistory, 'extra.symbol', '');
+        const amount = get(txFromHistory, 'extra.amount');
+        const decimals = get(txFromHistory, 'extra.decimals');
+        const formattedAmount = formatUnits(amount, decimals);
+        return `${formattedAmount} ${symbol}`;
+      };
+
       if (txStatus === TRANSACTION_COMPLETED) {
         if (addressesEqual(txSenderAddress, keyBasedWalletAddress)) {
           dispatch(checkKeyBasedAssetTransferTransactionsAction());
@@ -672,39 +682,60 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
 
           let notificationMessage;
-          if (txType === transactionTypes.TopUp) {
-            notificationMessage = 'Your Pillar Tank was successfully funded!';
-          } else if (txType === transactionTypes.Withdrawal) {
-            notificationMessage = 'Withdrawal process completed!';
+          let toastEmoji = 'ok_hand';
+
+          if ([transactionTypes.TopUp, transactionTypes.Withdrawal].includes(txType)) {
+            const tokenValue = get(event, 'payload.tokenValue');
+            const tokenAddress = get(event, 'payload.tokenAddress');
+            const assetData = getAssetDataByAddress([], supportedAssets, tokenAddress);
+            const amount = formatUnits(tokenValue, assetData.decimals);
+            const paymentInfo = `${amount} ${assetData.symbol}`;
+            if (txType === transactionTypes.TopUp) {
+              notificationMessage = t('toast.PPNTopUpSuccess', { paymentInfo });
+            } else {
+              notificationMessage = t('toast.PPNWithdrawSuccess', { paymentInfo });
+            }
           } else if (txType === transactionTypes.Settlement) {
-            notificationMessage = 'Settlement process completed!';
+            notificationMessage = t('toast.PPNSettleSuccess');
           } else if (txType === transactionTypes.Erc20Transfer) {
-            notificationMessage = 'New transaction received!';
+            const isReceived = addressesEqual(txReceiverAddress, activeAccountAddress);
+            const tokenValue = get(event, 'payload.tokenValue');
+            const tokenAddress = get(event, 'payload.tokenAddress');
+            const assetData = getAssetDataByAddress([], supportedAssets, tokenAddress);
+            const amount = formatUnits(tokenValue, assetData.decimals);
+            const paymentInfo = `${amount} ${assetData.symbol}`;
+
+            if (isReceived) {
+              notificationMessage = t('toast.transactionReceived', { paymentInfo });
+            } else {
+              notificationMessage = t('toast.transactionSent', { paymentInfo });
+            }
           } else if (addressesEqual(txReceiverAddress, aaveLendingPoolAddress)) {
-            notificationMessage = 'Your funds have been deposited!';
+            notificationMessage = t('toast.lendingDepositSuccess', { paymentInfo: getPaymentFromHistory() });
             dispatch(fetchDepositedAssetsAction());
           } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
-            notificationMessage = 'Your funds have been withdrawn!';
+            notificationMessage = t('toast.lendingWithdrawSuccess', { paymentInfo: getPaymentFromHistory() });
             dispatch(fetchDepositedAssetsAction());
           } else if (addressesEqual(SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
-            const txFromHistory = currentHistory[activeAccountAddress].find(tx => tx.hash === txHash);
             if (txFromHistory?.tag === SABLIER_WITHDRAW) {
               const symbol = get(txFromHistory, 'extra.symbol', '');
-              notificationMessage = `You have withdrawn your ${symbol}`;
+              const currentAccountAssets = accountAssetsSelector(getState());
+              const assetData = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
+              notificationMessage = t('toast.sablierWithdraw', { assetName: assetData.name, assetSymbol: symbol });
             } else if (txFromHistory?.tag === SABLIER_CANCEL_STREAM) {
-              notificationMessage = 'Stream has been canceled';
+              notificationMessage = t('toast.sablierCancelStream');
+              toastEmoji = 'x';
             }
             dispatch(fetchUserStreamsAction());
           } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {
-            notificationMessage = 'Transaction was successfully sent!';
+            notificationMessage = t('toast.transactionSent', { paymentInfo: getPaymentFromHistory() });
           }
 
           if (notificationMessage) {
             Toast.show({
               message: notificationMessage,
-              type: 'success',
-              title: 'Success',
-              autoClose: true,
+              emoji: toastEmoji,
+              autoClose: false,
             });
           }
 
@@ -800,9 +831,8 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         const paymentInfo = `${formatMoney(txAmountFormatted.toString(), 4)} ${txToken}`;
         if (txStatus === PAYMENT_COMPLETED) {
           Toast.show({
-            message: `You received ${paymentInfo}`,
-            type: 'success',
-            title: 'Success',
+            message: t('toast.transactionReceived', { paymentInfo }),
+            emoji: 'ok_hand',
             autoClose: true,
           });
         }
@@ -875,10 +905,11 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
       .catch((e) => {
         Toast.show({
-          message: e.toString(),
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
           autoClose: false,
         });
+        reportLog('Failed to estimate top up account virtual balance', { error: e }, Sentry.Severity.Error);
         return {};
       });
     if (isEmpty(response)) return;
@@ -910,10 +941,11 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
       .estimateTopUpAccountVirtualBalance(value, tokenAddress)
       .catch((e) => {
         Toast.show({
-          message: e.toString(),
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
           autoClose: false,
         });
+        reportLog('Failed to estimate top up account virtual balance', { error: e }, Sentry.Severity.Error);
         return {};
       });
 
@@ -922,10 +954,11 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
     const txHash = await smartWalletService.topUpAccountVirtualBalance(estimated, payForGasWithToken)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'Failed to top up the account',
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
           autoClose: false,
         });
+        reportLog('Failed to top up account virtual balance', { error: e }, Sentry.Severity.Error);
         return null;
       });
 
@@ -954,11 +987,11 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
 
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
+      const paymentInfo = `${formatMoney(amount.toString(), 4)} ${PPN_TOKEN}`;
 
       Toast.show({
-        message: 'Your Pillar Tank will be funded soon',
-        type: 'success',
-        title: 'Success',
+        message: t('toast.PPNTopUp', { paymentInfo }),
+        emoji: 'ok_hand',
         autoClose: true,
       });
     }
@@ -980,10 +1013,11 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
       .estimateWithdrawFromVirtualAccount(value, tokenAddress)
       .catch((e) => {
         Toast.show({
-          message: e.toString(),
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
           autoClose: false,
         });
+        reportLog('Failed to estimate withdraw from virtual account', { error: e }, Sentry.Severity.Error);
         return {};
       });
     if (isEmpty(response)) return;
@@ -1015,10 +1049,11 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
       .estimateWithdrawFromVirtualAccount(value, tokenAddress)
       .catch((e) => {
         Toast.show({
-          message: e.toString(),
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
           autoClose: false,
         });
+        reportLog('Failed to estimate withdraw from virtual account', { error: e }, Sentry.Severity.Error);
         return {};
       });
 
@@ -1027,10 +1062,11 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
     const txHash = await smartWalletService.withdrawFromVirtualAccount(estimated, payForGasWithToken)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'Failed to withdraw from the account',
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
           autoClose: false,
         });
+        reportLog('Failed to withdraw from virtual account', { error: e }, Sentry.Severity.Error);
         return null;
       });
 
@@ -1060,10 +1096,11 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
       const { history: { data: currentHistory } } = getState();
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
+      const paymentInfo = `${formatMoney(amount.toString(), 4)} ${PPN_TOKEN}`;
+
       Toast.show({
-        message: 'Your withdrawal will be processed soon',
-        type: 'success',
-        title: 'Success',
+        message: t('toast.PPNWithdraw', { paymentInfo }),
+        emoji: 'hourglass',
         autoClose: true,
       });
     }
@@ -1140,10 +1177,12 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
       .estimatePaymentSettlement(hashes)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
+        reportLog('Failed to estimate payment settlement', { error: e, hashes }, Sentry.Severity.Error);
         return {};
       });
     if (isEmpty(response)) return;
@@ -1169,10 +1208,12 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
       .estimatePaymentSettlement(hashes)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'You need to deposit ETH to cover the withdrawal',
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
+        reportLog('Failed to estimate payment settlement', { error: e, hashes }, Sentry.Severity.Error);
         return {};
       });
 
@@ -1181,10 +1222,12 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
     const txHash = await smartWalletService.withdrawAccountPayment(estimated, payForGasWithToken)
       .catch((e) => {
         Toast.show({
-          message: e.toString() || 'Failed to settle the transactions',
-          type: 'warning',
+          message: t('toast.backendProblem'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
+        reportLog('Failed to settle transactions', { error: e, hashes }, Sentry.Severity.Error);
         return null;
       });
 
@@ -1231,71 +1274,11 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
       dispatch(saveDbAction('history', { history: currentHistory }, true));
 
       Toast.show({
-        message: 'Settlement was successful. Please wait for the transaction to be mined',
-        type: 'success',
-        title: 'Success',
+        message: t('toast.PPNSettle'),
+        emoji: 'hourglass',
         autoClose: true,
       });
     }
-  };
-};
-
-export const cleanSmartWalletAccountsAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      balances: { data: balances },
-      history: { data: history },
-    } = getState();
-
-    const activeAccount = accounts.find(({ isActive }) => isActive);
-    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    const smartAccounts = accounts.filter(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
-
-    if (!smartAccounts.length) {
-      Toast.show({
-        message: 'Smart Accounts not found',
-        type: 'warning',
-        autoClose: false,
-      });
-      return;
-    }
-
-    if (keyBasedAccount) {
-      dispatch({
-        type: UPDATE_ACCOUNTS,
-        payload: [keyBasedAccount],
-      });
-      dispatch(saveDbAction('accounts', { accounts: [keyBasedAccount] }, true));
-
-      const updatedBalances: BalancesStore = { [keyBasedAccount.id]: balances[keyBasedAccount.id] };
-      dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
-      dispatch({
-        type: UPDATE_BALANCES,
-        payload: updatedBalances,
-      });
-
-      const updatedHistory: TransactionsStore = { [keyBasedAccount.id]: history[keyBasedAccount.id] };
-      dispatch(saveDbAction('history', { history: updatedHistory }, true));
-      dispatch({
-        type: SET_HISTORY,
-        payload: updatedHistory,
-      });
-
-      dispatch({
-        type: RESET_SMART_WALLET,
-      });
-
-      if (activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET) {
-        dispatch(switchAccountAction(keyBasedAccount.id));
-      }
-    }
-
-    Toast.show({
-      message: 'Smart Accounts cleaned',
-      type: 'success',
-      autoClose: false,
-    });
   };
 };
 
@@ -1373,9 +1356,9 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
       accountDevice = await smartWalletService.addAccountDevice(deviceAddress);
       if (!accountDevice) {
         Toast.show({
-          message: 'Failed to add device to Smart Wallet account',
-          type: 'warning',
-          title: 'Cannot add device',
+          message: t('toast.failedToAddDevice'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
         return;
@@ -1387,9 +1370,9 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
     if (!accountDeviceDeploymentHash) {
       // no transaction hash, unknown error occurred
       Toast.show({
-        message: 'Failed to deploy Smart Wallet account device ',
-        type: 'warning',
-        title: 'Unable to deploy device',
+        message: t('toast.failedToAddDevice'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: false,
       });
       return;
@@ -1423,9 +1406,9 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
     if (!accountDeviceUnDeploymentHash) {
       // no transaction hash, unknown error occurred
       Toast.show({
-        message: 'Failed to remove device to Smart Wallet account',
-        type: 'warning',
-        title: 'Unable to add device',
+        message: t('toast.failedToRemoveDevice'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: false,
       });
       return;
@@ -1502,8 +1485,9 @@ export const switchToGasTokenRelayerAction = () => {
     const hash = await smartWalletService.switchToGasTokenRelayer();
     if (!hash) {
       Toast.show({
-        message: 'Unable to update your account. Please try again later',
-        type: 'warning',
+        message: t('toast.switchRelayerTokenFailed'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: false,
       });
       return;

@@ -20,6 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 import CircleButton from 'components/CircleButton';
 import Toast from 'components/Toast';
 import QRCodeScanner from 'components/QRCodeScanner';
@@ -58,9 +59,8 @@ class QRCodeScanButton extends React.Component<Props, State> {
     const { isOnline } = this.props;
     if (!isOnline) {
       Toast.show({
-        message: 'Cannot use Connect while offline',
-        type: 'warning',
-        title: 'Warning',
+        message: t('toast.userIsOffline'),
+        emoji: 'satellite_antenna',
       });
       return;
     }

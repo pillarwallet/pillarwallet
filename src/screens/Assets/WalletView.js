@@ -345,7 +345,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
-  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction(true)),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
   dismissSmartWalletInsight: () => dispatch(dismissSmartWalletInsightAction()),
 });
 

@@ -20,6 +20,7 @@
 import get from 'lodash.get';
 import { Alert } from 'react-native';
 import { NavigationActions } from 'react-navigation';
+import t from 'translations/translate';
 
 // constants
 import {
@@ -100,9 +101,9 @@ export const addConnectedDeviceAction = (
       if (!newSmartWalletAccountDevice) {
         dispatch({ type: RESET_ADDING_CONNECTED_DEVICE_ADDRESS });
         Toast.show({
-          message: 'Failed to find device in Smart Wallet account',
-          type: 'warning',
-          title: 'Unable to connect device',
+          message: t('toast.unableToAddDevice'),
+          emoji: 'hushed',
+          supportLink: true,
           autoClose: false,
         });
         return;
@@ -129,9 +130,8 @@ export const completeConnectedDeviceRemoveAction = () => {
     dispatch({ type: RESET_REMOVING_CONNECTED_DEVICE_ADDRESS });
     dispatch(saveDbAction('connectedDevices', { removingConnectedDeviceAddress: null }));
     Toast.show({
-      message: 'Connected device has been removed',
-      type: 'success',
-      title: 'Success',
+      message: t('toast.linkedDeviceRemoved'),
+      emoji: 'ok_hand',
       autoClose: true,
     });
   };
@@ -165,9 +165,9 @@ export const confirmConnectedDeviceRemoveAction = (device: ConnectedDevice) => {
         const smartWalletAccountDevice = getConnectedSmartWalletDevice(getState, deviceAddress);
         if (!smartWalletAccountDevice) {
           Toast.show({
-            message: 'Matching Smart Wallet device not found',
-            type: 'warning',
-            title: 'Unable to remove device',
+            message: t('toast.linkedDeviceNotFound'),
+            emoji: 'woman_shrugging',
+            supportLink: true,
             autoClose: false,
           });
           return;

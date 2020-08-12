@@ -19,6 +19,7 @@
 */
 import { Wallet } from 'ethers';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -302,9 +303,8 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         // transfer done, reset
         keyBasedAssetsToTransferUpdated = [];
         Toast.show({
-          message: 'Your key based wallet assets have been transferred successfully!',
-          type: 'success',
-          title: 'Success',
+          message: t('toast.keyWalletAssetsTransfered'),
+          emoji: 'ok_hand',
         });
       }
     }
