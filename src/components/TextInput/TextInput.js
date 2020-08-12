@@ -355,8 +355,19 @@ class TextInput extends React.Component<Props, State> {
       value: selectedValue,
     } = selector;
 
+    const shouldDisplaySpinner = this.getSelectorOptionsCount(selectorOptions) < 1;
+
     if (!selectedValue) {
-      return <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>;
+      return (
+        <View style={{ flexDirection: 'row' }}>
+          <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>
+          {shouldDisplaySpinner && <Spinner width={30} height={30} style={{ paddingLeft: 15 }} />}
+        </View>
+      );
+    }
+
+    if (shouldDisplaySpinner) {
+      return <Spinner width={30} height={30} />;
     }
 
     const optionImageSource = resolveAssetSource(selectedOptionIcon);
@@ -410,6 +421,27 @@ class TextInput extends React.Component<Props, State> {
       </View>
     );
   };
+
+  getSelectorOptionsCount = (selectorOptions?: SelectorOptionsType): number => {
+    if (!selectorOptions) return 0;
+    const {
+      options = [],
+      optionTabs,
+      horizontalOptions,
+    } = selectorOptions;
+
+    const horizontalOptionsLength = !horizontalOptions ? 0 : horizontalOptions.reduce((sum, item) => {
+      if (item.data?.length) sum += item.data?.length;
+      return sum;
+    }, 0);
+    const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
+      if (tab.options?.length) sum += tab.options?.length;
+      return sum;
+    }, 0);
+
+    const selectorOptionsCount = options.length + horizontalOptionsLength + optionsInTabsLength;
+    return selectorOptionsCount;
+  }
 
   render() {
     const { isFocused, showOptionsSelector } = this.state;
@@ -466,16 +498,8 @@ class TextInput extends React.Component<Props, State> {
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
     const showRightAddon = !!iconProps || loading || rightPlaceholder;
-    const horizontalOptionsLength = !horizontalOptions ? 0 : horizontalOptions.reduce((sum, item) => {
-      if (item.data?.length) sum += item.data?.length;
-      return sum;
-    }, 0);
-    const optionsInTabsLength = !optionTabs ? 0 : optionTabs.reduce((sum, tab) => {
-      if (tab.options?.length) sum += tab.options?.length;
-      return sum;
-    }, 0);
 
-    const selectorOptionsCount = options.length + horizontalOptionsLength + optionsInTabsLength;
+    const selectorOptionsCount = this.getSelectorOptionsCount(selectorOptions);
 
     const imageSource = resolveAssetSource(innerImageURI);
 

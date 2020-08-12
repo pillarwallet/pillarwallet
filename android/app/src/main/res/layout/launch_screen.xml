@@ -10,10 +10,10 @@
     android:background="@color/main"
     android:gravity="center">
 
-    <pl.droidsonroids.gif.GifImageView
+    <ImageView
         android:layout_width="192dp"
         android:layout_height="192dp"
-        android:src="@drawable/animated_logo"
+        android:src="@drawable/logo"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -37,11 +37,11 @@
         android:layout_height="0dp"
         android:adjustViewBounds="false"
         android:cropToPadding="false"
-        android:maxHeight="270dp"
+
         android:scaleType="fitStart"
-        android:src="@drawable/splash_pattern_top"
+        android:src="@drawable/onboarding_pattern_top"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHeight_max="wrap"
+        app:layout_constraintHeight_max="162dp"
         app:layout_constraintHeight_percent="0.35"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

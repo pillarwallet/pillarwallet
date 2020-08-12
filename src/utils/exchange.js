@@ -19,14 +19,18 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
-import { EXCHANGE_URL } from 'react-native-dotenv';
+import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
-import type { ProvidersMeta } from 'models/Offer';
+import type { Offer } from 'models/Offer';
+import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
-import { POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
+import { POPULAR_EXCHANGE_TOKENS, ETH } from 'constants/assetsConstants';
 import type { Option } from 'models/Selector';
+import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { getThemeName } from './themes';
+import { staticImages } from './images';
+import { chainId } from './uniswap';
 
 export type ExchangeOptions = {
   fromOptions: Option[],
@@ -34,19 +38,22 @@ export type ExchangeOptions = {
   horizontalOptions: Option[],
 }
 
-export const getOfferProviderLogo = (providersMeta: ProvidersMeta, provider?: string, theme: Theme, type: string) => {
+export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
+
+export const getOfferProviderLogo = (provider?: string, theme: Theme, type: string) => {
   if (!provider) return '';
-  const providerInfo = providersMeta.find(({ shim }) => shim === provider);
+  const providerInfo = getProviderInfo(provider);
   const themeName = getThemeName(theme);
   if (providerInfo) {
-    const providerIconPath = get(providerInfo, `img.${type}.${themeName}`, '');
-    return { uri: `${EXCHANGE_URL}/v2.0${providerIconPath}` };
+    const providerIconName = get(providerInfo, `img.${type}.${themeName}`, '');
+    const image = staticImages[providerIconName] || '';
+    return image;
   }
   return '';
 };
 
-export const getCryptoProviderName = (providersMeta: ProvidersMeta, provider: string) => {
-  const providerInfo = providersMeta.find(({ shim }) => shim === provider) || {};
+export const getCryptoProviderName = (provider: string) => {
+  const providerInfo = getProviderInfo(provider);
   const { name } = providerInfo;
   return name;
 };
@@ -78,4 +85,29 @@ export const generateHorizontalOptions = (assetsOptionsBuying: Option[]): Option
     title: 'Popular',
     data: popularOptions,
   }];
+};
+
+export const parseOffer = (
+  fromAsset: Asset,
+  toAsset: Asset,
+  allowanceSet: boolean,
+  askRate: string,
+  provider: string,
+): Offer => {
+  return {
+    fromAsset,
+    toAsset,
+    allowanceSet,
+    askRate,
+    maxQuantity: '0',
+    minQuantity: '0',
+    extra: undefined,
+    _id: provider,
+    description: '',
+    provider,
+  };
+};
+
+export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
+  return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
 };

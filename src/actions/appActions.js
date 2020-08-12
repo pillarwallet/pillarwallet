@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Platform, NativeModules } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
@@ -42,9 +41,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
   SET_EXCHANGE_ALLOWANCES,
-  SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -74,15 +71,6 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 
 const storage = Storage.getInstance('db');
-
-const hideSplash = () => {
-  if (Platform.OS === 'ios') {
-    const { SplashManager } = NativeModules;
-    SplashManager.hide();
-  } else {
-    SplashScreen.hide();
-  }
-};
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -164,12 +152,6 @@ export const initAppAndRedirectAction = () => {
       const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const { connectedProviders = [] } = get(storageData, 'exchangeProviders', {});
-      dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
-
-      const { exchangeProvidersInfo = [] } = get(storageData, 'exchangeProvidersInfo', {});
-      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
-
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
@@ -238,7 +220,7 @@ export const initAppAndRedirectAction = () => {
 
     navigate(NavigationActions.navigate(navAction));
 
-    hideSplash();
+    SplashScreen.hide();
   };
 };
 

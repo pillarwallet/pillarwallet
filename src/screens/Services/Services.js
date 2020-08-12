@@ -24,9 +24,9 @@ import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // actions
-import { getMetaDataAction } from 'actions/exchangeActions';
 import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
 
 // components
@@ -64,7 +64,6 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Theme } from 'models/Theme';
-import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
@@ -72,6 +71,8 @@ import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
 import type SDKWrapper from 'services/api';
 
+// assets
+import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -85,7 +86,6 @@ let isAltalixEnabled = true;
 
 type Props = {
   theme: Theme,
-  providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
@@ -108,16 +108,7 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const {
-      getMetaData,
-      providersMeta,
-      isAltalixAvailable,
-      loadAltalixInfo,
-    } = this.props;
-
-    if (!Array.isArray(providersMeta) || !providersMeta?.length) {
-      getMetaData();
-    }
+    const { isAltalixAvailable, loadAltalixInfo } = this.props;
 
     /**
      * Retrieve boolean flags for services from Remote Config.
@@ -138,13 +129,12 @@ class ServicesScreen extends React.Component<Props, State> {
     const {
       navigation,
       theme,
-      providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
-    const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
-      label: `${providersMeta.length} exchanges`,
+    const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
+      label: `${PROVIDERS_META.length} exchanges`,
       color: colors.primary,
     } : null;
 
@@ -293,8 +283,9 @@ class ServicesScreen extends React.Component<Props, State> {
 
   showServiceLaunchError = () => {
     Toast.show({
-      type: 'warning',
-      message: 'Sorry, we had a problem trying to open this service. Please try again later.',
+      message: t('toast.cryptoPurchaseLaunchFailed'),
+      emoji: 'hushed',
+      supportLink: true,
     });
   }
 
@@ -365,13 +356,11 @@ class ServicesScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  exchange: { providersMeta },
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
   fiatToCrypto: { altalix },
 }: RootReducerState): $Shape<Props> => ({
-  providersMeta,
   user,
   accounts,
   smartWalletState,
@@ -389,7 +378,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  getMetaData: () => dispatch(getMetaDataAction()),
   loadAltalixInfo: () => dispatch(loadAltalixInfoAction()),
 
   // When using redux-thunk, dispatch does return the result of the inner function.

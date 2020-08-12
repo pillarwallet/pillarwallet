@@ -24,6 +24,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
+import t from 'translations/translate';
 
 // components
 import { Label } from 'components/Typography';
@@ -152,10 +153,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     let stateToUpdate = {};
     if (!receiver) {
       Toast.show({
-        title: 'Sorry, we could not find that ENS name!',
-        message: 'Could you please check and try again?',
-        type: 'warning',
-        autoClose: false,
+        message: t('toast.ensNameNotFound'),
+        emoji: 'woman_shrugging',
       });
       stateToUpdate = { selectedContact: null, receiver: '', receiverEnsName: '' };
     } else {

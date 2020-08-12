@@ -8,11 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		04981A9824C8648D00748082 /* LogoAnimationView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04981A9724C8648D00748082 /* LogoAnimationView.swift */; };
-		04981A9A24C865E000748082 /* SplashViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04981A9924C865E000748082 /* SplashViewController.swift */; };
-		04981A9C24C8684A00748082 /* Splash.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04981A9B24C8684A00748082 /* Splash.storyboard */; };
-		04981AAB24C9734700748082 /* SplashManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 04981AAA24C9734700748082 /* SplashManager.m */; };
 		04981AAD24C97CEC00748082 /* Launch.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 04981AAC24C97CEC00748082 /* Launch.storyboard */; };
-		04981AAF24CABBD900748082 /* animated_logo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 04981AAE24CABBD800748082 /* animated_logo.gif */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
@@ -33,12 +29,7 @@
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
 		04981A9724C8648D00748082 /* LogoAnimationView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LogoAnimationView.swift; sourceTree = "<group>"; };
-		04981A9924C865E000748082 /* SplashViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SplashViewController.swift; sourceTree = "<group>"; };
-		04981A9B24C8684A00748082 /* Splash.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Splash.storyboard; sourceTree = "<group>"; };
-		04981AA724C972C500748082 /* SplashManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplashManager.h; sourceTree = "<group>"; };
-		04981AAA24C9734700748082 /* SplashManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplashManager.m; sourceTree = "<group>"; };
 		04981AAC24C97CEC00748082 /* Launch.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Launch.storyboard; sourceTree = "<group>"; };
-		04981AAE24CABBD800748082 /* animated_logo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; name = animated_logo.gif; path = pillarwallet/animated_logo.gif; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* pillarwallet.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = pillarwallet.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = pillarwallet/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = pillarwallet/AppDelegate.m; sourceTree = "<group>"; };
@@ -82,8 +73,6 @@
 		13B07FAE1A68108700A75B9A /* pillarwallet */ = {
 			isa = PBXGroup;
 			children = (
-				04981AAE24CABBD800748082 /* animated_logo.gif */,
-				04981A9924C865E000748082 /* SplashViewController.swift */,
 				693DE4BC2405A31E00587060 /* pillarwallet.entitlements */,
 				696ACE6B240493BC009B0BEC /* GoogleService-Info.plist */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
@@ -95,9 +84,6 @@
 				13B07FB71A68108700A75B9A /* main.m */,
 				69D2EB03240865F60039EA75 /* SwiftBridge.swift */,
 				69D2EB02240865F50039EA75 /* pillarwallet-Bridging-Header.h */,
-				04981A9B24C8684A00748082 /* Splash.storyboard */,
-				04981AA724C972C500748082 /* SplashManager.h */,
-				04981AAA24C9734700748082 /* SplashManager.m */,
 				04981AAC24C97CEC00748082 /* Launch.storyboard */,
 			);
 			name = pillarwallet;
@@ -263,8 +249,6 @@
 				41242384B1EC46529CDCCE3B /* Roboto.ttf in Resources */,
 				C10A0D8D4AAF42EE8E9129CB /* rubicon-icon-font.ttf in Resources */,
 				696ACE96240493BC009B0BEC /* GoogleService-Info.plist in Resources */,
-				04981A9C24C8684A00748082 /* Splash.storyboard in Resources */,
-				04981AAF24CABBD900748082 /* animated_logo.gif in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,9 +408,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				04981A9A24C865E000748082 /* SplashViewController.swift in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
-				04981AAB24C9734700748082 /* SplashManager.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				04981A9824C8648D00748082 /* LogoAnimationView.swift in Sources */,
 				69D2EB04240865F60039EA75 /* SwiftBridge.swift in Sources */,
