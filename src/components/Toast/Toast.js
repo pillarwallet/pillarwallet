@@ -79,8 +79,9 @@ const ToastWrapper = styled.View`
 
 const CloseIconWrapper = styled.TouchableOpacity`
   position: absolute;
-  top: 17px;
-  right: 18px;
+  top: 7px;
+  right: 8px;
+  padding: 10px;
 `;
 
 const CloseIcon = styled(Icon)`
