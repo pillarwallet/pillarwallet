@@ -36,6 +36,7 @@ import { parseOffer } from 'utils/exchange';
 
 // constants
 import { PROVIDER_1INCH } from 'constants/exchangeConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -49,7 +50,7 @@ const abiCoder = require('web3-eth-abi');
 
 const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, fromAsset: Asset) => {
   let allowanceSet = true;
-  if (fromAsset.code !== 'ETH') {
+  if (fromAsset.code !== ETH) {
     const assetContract = new ethers.Contract(safeFromAddress, ERC20_CONTRACT_ABI, provider);
     const allowance: BigNumber = await assetContract.allowance(clientAddress, EXCHANGE_ADDRESS);
     allowanceSet = allowance.gt(0);

@@ -130,17 +130,12 @@ export const takeOfferAction = (
       contractAddress: fromAssetAddress || '',
       decimals: parseInt(fromAssetDecimals, 10) || 18,
       ...order.transactionObj,
-
     };
     callback(transactionData);
   };
 };
 
-export const resetOffersAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch({ type: RESET_OFFERS });
-  };
-};
+export const resetOffersAction = () => ({ type: RESET_OFFERS });
 
 const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
