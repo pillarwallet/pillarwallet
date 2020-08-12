@@ -378,7 +378,7 @@ export const fetchAssetsBalancesAction = () => {
 };
 
 export const resetAccountBalancesAction = (accountId: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const allBalances = balancesSelector(getState());
     if (isEmpty(allBalances[accountId])) return; // already empty
     const updatedBalances = Object.keys(allBalances).reduce((updated, balancesAccountId) => {
