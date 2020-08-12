@@ -30,41 +30,37 @@ import { createStructuredSelector } from 'reselect';
 
 // actions
 import {
-  authorizeWithShapeshiftAction,
   setDismissTransactionAction,
   setExecutingTransactionAction,
   setTokenAllowanceAction,
   takeOfferAction,
 } from 'actions/exchangeActions';
-import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import OfferCard from 'components/OfferCard/OfferCard';
 
 // constants
-import { EXCHANGE, PROVIDER_SHAPESHIFT } from 'constants/exchangeConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 import { EXCHANGE_CONFIRM, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, SPEED_TYPES } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // services
 import smartWalletService from 'services/smartWallet';
-import { calculateGasEstimate } from 'services/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Allowance, ExchangeProvider, Offer, ProvidersMeta } from 'models/Offer';
+import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, Balances, Rates } from 'models/Asset';
-import type { GasInfo } from 'models/GasInfo';
 import type { SessionData } from 'models/Session';
 
 //  selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
-import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
 import { getOfferProviderLogo, getCryptoProviderName } from 'utils/exchange';
@@ -90,7 +86,6 @@ export type EnableData = {
 };
 
 type AllowanceResponse = {
-  gasLimit: number,
   payToAddress: string,
   transactionObj: { data: string },
 };
@@ -98,13 +93,10 @@ type AllowanceResponse = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
-  takeOffer: (string, string, number, string, string, () => void) => void,
-  authorizeWithShapeshift: () => void,
+  takeOffer: (Asset, Asset, number, string, string, () => void) => void,
   setExecutingTransaction: () => void,
-  setTokenAllowance: (string, string, string, string, string, (AllowanceResponse) => Promise<void>) => void,
+  setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
-  connectedProviders: ExchangeProvider[],
-  providersMeta: ProvidersMeta,
   theme: Theme,
   showEmptyMessage: boolean,
   isExchangeActive: boolean,
@@ -113,19 +105,15 @@ type Props = {
   value: FormValue,
   exchangeSupportedAssets: Asset[],
   baseFiatCurrency: ?string,
-  gasInfo: GasInfo,
   rates: Rates,
   setDismissTransaction: () => void,
   balances: Balances,
   session: SessionData,
-  fetchGasInfo: () => void,
   activeAccountAddress: string,
-  isSmartAccount: boolean,
   useGasToken: boolean,
 };
 
 type State = {
-  shapeshiftAuthPressed: boolean,
   pressedOfferId: string, // offer id will be passed to prevent double clicking
   pressedTokenAllowanceId: string,
   isEnableAssetModalVisible: boolean,
@@ -178,13 +166,9 @@ function getCardAdditionalButtonData(additionalData) {
     offer,
     minOrMaxNeeded,
     isBelowMin,
-    isShapeShift,
-    shapeshiftAccessToken,
     storedAllowance,
     allowanceSet,
-    shapeshiftAuthPressed,
     pressedTokenAllowanceId,
-    authoriseWithShapeShift,
     setFromAmount,
     onSetTokenAllowancePress,
   } = additionalData;
@@ -205,12 +189,6 @@ function getCardAdditionalButtonData(additionalData) {
       title: `${isBelowMin ? 'Min' : 'Max'} ${minOrMaxAmount} ${fromAssetCode}`,
       onPress: () => setFromAmount(isBelowMin ? minQuantity : maxQuantity),
     };
-  } else if (isShapeShift && !shapeshiftAccessToken) {
-    return {
-      title: 'Connect',
-      onPress: authoriseWithShapeShift,
-      disabled: shapeshiftAuthPressed,
-    };
   } else if (!allowanceSet) {
     return {
       title: storedAllowance ? 'Pending' : 'Allow this exchange',
@@ -225,32 +203,10 @@ function getCardAdditionalButtonData(additionalData) {
 class ExchangeOffers extends React.Component<Props, State> {
   state = {
     pressedOfferId: '',
-    shapeshiftAuthPressed: false,
     pressedTokenAllowanceId: '',
     isEnableAssetModalVisible: false,
     enableData: null,
     enablePayload: null,
-  };
-
-  componentDidMount() {
-    if (!this.props.isSmartAccount) {
-      this.props.fetchGasInfo();
-    }
-  }
-
-  componentDidUpdate(prevProps: Props) {
-    const { session, fetchGasInfo, isSmartAccount } = this.props;
-    if (prevProps.session.isOnline !== session.isOnline && session.isOnline && !isSmartAccount) {
-      fetchGasInfo();
-    }
-  }
-
-  onShapeshiftAuthPress = () => {
-    const { authorizeWithShapeshift } = this.props;
-    this.setState({ shapeshiftAuthPressed: true }, async () => {
-      await authorizeWithShapeshift();
-      this.setState({ shapeshiftAuthPressed: false });
-    });
   };
 
   getSmartWalletTxFee = async (transaction): Promise<TransactionFeeInfo> => {
@@ -275,107 +231,89 @@ class ExchangeOffers extends React.Component<Props, State> {
   };
 
   onSetTokenAllowancePress = (offer: Offer) => {
+    const { setTokenAllowance } = this.props;
+    const { _id, provider, fromAsset } = offer;
+    const { address: fromAssetAddress } = fromAsset;
+    this.setState({ pressedTokenAllowanceId: _id }, () => {
+      setTokenAllowance(
+        fromAssetAddress,
+        provider,
+        response => this.setTokenAllowanceCallback(response, offer),
+      );
+    });
+  };
+
+  setTokenAllowanceCallback = async (response: Object, offer: Offer) => {
     const {
       exchangeSupportedAssets,
-      providersMeta,
       baseFiatCurrency,
-      gasInfo,
-      setTokenAllowance,
       setExecutingTransaction,
       rates,
       balances,
-      isSmartAccount,
     } = this.props;
 
-    const {
-      _id,
-      provider,
-      fromAsset,
-      toAsset,
-      trackId = '',
-    } = offer;
+    const { provider, fromAsset, toAsset } = offer;
     const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
-    const { address: toAssetAddress, code: toAssetCode } = toAsset;
+    const { code: toAssetCode } = toAsset;
 
-    this.setState({ pressedTokenAllowanceId: _id }, () => {
-      setTokenAllowance(fromAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, async (response) => {
-        if (isEmpty(response)) {
-          this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
-          return;
-        }
-        setExecutingTransaction();
-        const {
-          payToAddress,
-          transactionObj: {
-            data,
-          } = {},
-        } = response;
+    if (isEmpty(response)) {
+      this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
+      return;
+    }
+    setExecutingTransaction();
+    const {
+      payToAddress,
+      transactionObj: { data } = {},
+    } = response;
 
-        const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
-        const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
-        const providerName = getCryptoProviderName(providersMeta, provider);
+    const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
+    const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
+    const providerName = getCryptoProviderName(provider);
 
-        let gasToken;
-        let txFeeInWei;
-        let transactionPayload = {
-          amount: 0,
-          to: payToAddress,
-          symbol: fromAssetCode,
-          contractAddress: fromAssetAddress || '',
-          decimals: parseInt(decimals, 10) || 18,
-          data,
-          extra: {
-            allowance: {
-              provider,
-              fromAssetCode,
-              toAssetCode,
-            },
-          },
-        };
+    let transactionPayload = {
+      amount: 0,
+      to: payToAddress,
+      symbol: fromAssetCode,
+      contractAddress: fromAssetAddress || '',
+      decimals: parseInt(decimals, 10) || 18,
+      data,
+      extra: {
+        allowance: {
+          provider,
+          fromAssetCode,
+          toAssetCode,
+        },
+      },
+    };
 
-        if (isSmartAccount) {
-          ({ fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload));
-          if (gasToken) {
-            transactionPayload = { ...transactionPayload, gasToken };
-          }
-        } else {
-          const gasPrice = gasInfo.gasPrice[SPEED_TYPES.NORMAL] || 0;
-          const gasPriceWei = utils.parseUnits(gasPrice.toString(), 'gwei');
-          const gasLimit = await calculateGasEstimate(transactionPayload);
-          txFeeInWei = gasPriceWei.mul(gasLimit);
+    const { fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload);
 
-          transactionPayload = {
-            ...transactionPayload,
-            gasPrice: gasPriceWei,
-            gasLimit,
-            txSpeed: SPEED_TYPES.NORMAL,
-          };
-        }
+    if (gasToken) {
+      transactionPayload = { ...transactionPayload, gasToken };
+    }
 
-        transactionPayload = { ...transactionPayload, txFeeInWei };
+    transactionPayload = { ...transactionPayload, txFeeInWei };
 
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const feeSymbol = get(gasToken, 'symbol', ETH);
-        const feeDecimals = get(gasToken, 'decimals', 'ether');
-        const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-        const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-        const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-        const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
+    const feeDecimals = get(gasToken, 'decimals', 'ether');
+    const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+    const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+    const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
 
-        this.setState({
-          pressedTokenAllowanceId: '',
-          isEnableAssetModalVisible: true,
-          enableData: {
-            providerName,
-            assetSymbol,
-            assetIcon,
-            feeDisplayValue,
-            feeInFiat,
-            isDisabled,
-          },
-          enablePayload: { ...transactionPayload },
-        });
-      });
+    this.setState({
+      pressedTokenAllowanceId: '',
+      isEnableAssetModalVisible: true,
+      enableData: {
+        providerName,
+        assetSymbol,
+        assetIcon,
+        feeDisplayValue,
+        feeInFiat,
+        isDisabled,
+      },
+      enablePayload: { ...transactionPayload },
     });
   };
 
@@ -417,13 +355,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       askRate,
       trackId = '',
     } = offer;
-    const { code: fromAssetCode } = fromAsset;
-    const { code: toAssetCode } = toAsset;
     const amountToSell = parseFloat(selectedSellAmount);
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
 
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAssetCode, toAssetCode, amountToSell, provider, trackId, order => {
+      takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, order => {
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
         setExecutingTransaction();
@@ -442,13 +378,10 @@ class ExchangeOffers extends React.Component<Props, State> {
   renderOffers = ({ item: offer }, disableNonFiatExchange: boolean) => {
     const {
       pressedOfferId,
-      shapeshiftAuthPressed,
       pressedTokenAllowanceId,
     } = this.state;
     const {
       exchangeAllowances,
-      connectedProviders,
-      providersMeta,
       theme,
       value: { fromInput },
       setFromAmount,
@@ -480,15 +413,8 @@ class ExchangeOffers extends React.Component<Props, State> {
     const available = getAvailable(minQuantity, maxQuantity, askRate);
     const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
-    const isShapeShift = offerProvider === PROVIDER_SHAPESHIFT;
-    const providerLogo = getOfferProviderLogo(providersMeta, offerProvider, theme, 'horizontal');
+    const providerLogo = getOfferProviderLogo(offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
-
-    let shapeshiftAccessToken;
-    if (isShapeShift) {
-      ({ extra: shapeshiftAccessToken } = connectedProviders
-        .find(({ id: providerId }) => providerId === PROVIDER_SHAPESHIFT) || {});
-    }
 
     const amountToSell = parseFloat(selectedSellAmount);
     const minQuantityNumeric = parseFloat(minQuantity);
@@ -499,20 +425,15 @@ class ExchangeOffers extends React.Component<Props, State> {
     const minOrMaxNeeded = isBelowMin || isAboveMax;
     const isTakeButtonDisabled = !!minOrMaxNeeded
       || isTakeOfferPressed
-      || !allowanceSet
-      || (isShapeShift && !shapeshiftAccessToken);
+      || !allowanceSet;
 
     const additionalData = {
       offer,
       minOrMaxNeeded,
       isBelowMin,
-      isShapeShift,
-      shapeshiftAccessToken,
       allowanceSet,
       storedAllowance,
-      shapeshiftAuthPressed,
       pressedTokenAllowanceId,
-      authoriseWithShapeShift: this.onShapeshiftAuthPress,
       setFromAmount,
       onSetTokenAllowancePress: this.onSetTokenAllowancePress,
     };
@@ -548,7 +469,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = this.props;
     const { isEnableAssetModalVisible, enableData } = this.state;
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
-
     return (
       <React.Fragment>
         <FlatList
@@ -608,22 +528,16 @@ const mapStateToProps = ({
     data: {
       offers,
       allowances: exchangeAllowances,
-      connectedProviders,
     },
-    providersMeta,
     exchangeSupportedAssets,
   },
-  history: { gasInfo },
   rates: { data: rates },
   session: { data: session },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
   exchangeAllowances,
-  connectedProviders,
-  providersMeta,
   exchangeSupportedAssets,
-  gasInfo,
   rates,
   session,
 });
@@ -631,7 +545,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   activeAccountAddress: activeAccountAddressSelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
   useGasToken: useGasTokenSelector,
 });
 
@@ -641,16 +554,14 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  authorizeWithShapeshift: () => dispatch(authorizeWithShapeshiftAction()),
   setExecutingTransaction: () => dispatch(setExecutingTransactionAction()),
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
-  setTokenAllowance: (formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback) => dispatch(
-    setTokenAllowanceAction(formAssetCode, fromAssetAddress, toAssetAddress, provider, trackId, callback),
+  setTokenAllowance: (fromAssetAddress, provider, callback) => dispatch(
+    setTokenAllowanceAction(fromAssetAddress, provider, callback),
   ),
-  takeOffer: (fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback) => dispatch(
-    takeOfferAction(fromAssetCode, toAssetCode, fromAmount, provider, trackId, callback),
+  takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
+    takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
   ),
-  fetchGasInfo: () => dispatch(fetchGasInfoAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeOffers));

@@ -19,6 +19,7 @@
 */
 
 import type { TransactionPayload } from 'models/Transaction';
+import type { Asset } from 'models/Asset';
 
 type ExchangeOfferAsset = {
   code: string,
@@ -30,13 +31,14 @@ export type Offer = {
   provider: string,
   _id: string,
   description: string,
-  fromAsset: ExchangeOfferAsset,
-  toAsset: ExchangeOfferAsset,
+  fromAsset: Asset,
+  toAsset: Asset,
   askRate: number | string,
-  minQuantity: number,
-  maxQuantity: number,
+  minQuantity: number | string,
+  maxQuantity: number | string,
   allowanceSet: boolean,
-  trackId: string,
+  trackId?: string,
+  extra?: Object,
 }
 
 export type OfferRequest = {
@@ -82,25 +84,3 @@ export type Allowance = {
   transactionHash: string,
   enabled?: boolean,
 }
-
-export type ExchangeProvider = {
-  id: string,
-  dateConnected: Date,
-  extra?: any,
-}
-
-type ProviderMeta = {
-  _id: string,
-  shim: string,
-  name: string,
-  url: string,
-  description: string,
-  icon_small: string,
-  icon_medium: string,
-  icon_large: string,
-  logo_small: string,
-  logo_medium: string,
-  logo_large: string,
-}
-
-export type ProvidersMeta = ProviderMeta[];
