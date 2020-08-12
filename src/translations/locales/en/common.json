@@ -349,7 +349,8 @@
     "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) withdrawn.",
     "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",
-    "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later."
+    "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
+    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again."
   },
 
   "alert": {
