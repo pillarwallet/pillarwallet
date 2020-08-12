@@ -281,11 +281,11 @@ const assetMapSelector = createSelector(
 );
 
 const sendwyreExchangeRatesSelector =
-  ({ fiatToCrypto: { sendwyre } }: RootReducerState) => sendwyre;
+  ({ fiatToCrypto: { sendwyreExchangeRates } }: RootReducerState) => sendwyreExchangeRates;
 
 const currencyPairsSelector = createSelector(
   sendwyreExchangeRatesSelector,
-  sendwyre => getSendwyreCurrencyPairs(sendwyre ? sendwyre.exchangeRates : {}),
+  exchangeRates => getSendwyreCurrencyPairs(exchangeRates ?? {}),
 );
 
 const mapStateToProps = createStructuredSelector({

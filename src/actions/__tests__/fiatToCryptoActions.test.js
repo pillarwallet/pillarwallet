@@ -35,7 +35,7 @@ describe('Fiat to crypto providers actions', () => {
       const store = mockStore({
         state: {
           user: { data: { walletId: 'wallet-id' } },
-          fiatToCrypto: { altalix: null },
+          fiatToCrypto: { isAltalixAvailable: null },
         },
         pillarSdk: {
           fetchAltalixAvailability: async id => id && true,
@@ -58,7 +58,7 @@ describe('Fiat to crypto providers actions', () => {
       const store = mockStore({
         state: {
           user: { data: { walletId } },
-          fiatToCrypto: { sendwyre: null },
+          fiatToCrypto: { sendwyreExchangeRates: null },
         },
         pillarSdk: {
           getSendwyreRates: async id => id && rates,

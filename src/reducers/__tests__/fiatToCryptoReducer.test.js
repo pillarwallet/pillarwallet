@@ -29,7 +29,7 @@ describe('Fiat to crypto providers reducer', () => {
     };
 
     const expectedState = {
-      altalix: { isAvailable: true },
+      isAltalixAvailable: true,
     };
 
     expect(reducer(undefined, action)).toMatchObject(expectedState);
@@ -43,7 +43,7 @@ describe('Fiat to crypto providers reducer', () => {
     };
 
     const expectedState = {
-      sendwyre: { exchangeRates: rates },
+      sendwyreExchangeRates: rates,
     };
 
     expect(reducer(undefined, action)).toMatchObject(expectedState);

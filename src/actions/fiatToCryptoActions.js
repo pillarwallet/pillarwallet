@@ -26,8 +26,12 @@ import type SDKWrapper from 'services/api';
 
 export const loadAltalixInfoAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { fiatToCrypto: { altalix }, user: { data: { walletId } } } = getState();
-    if (altalix === null) {
+    const {
+      fiatToCrypto: { isAltalixAvailable },
+      user: { data: { walletId } },
+    } = getState();
+
+    if (isAltalixAvailable === null) {
       const isAvailable = await api.fetchAltalixAvailability(walletId)
         .catch(error => {
           reportOrWarn('loadAltalixInfoAction: Error while requesting Altalix availability', error, 'error');

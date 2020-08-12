@@ -367,12 +367,12 @@ const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-  fiatToCrypto: { altalix },
+  fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
   user,
   accounts,
   smartWalletState,
-  isAltalixAvailable: altalix === null ? null : altalix.isAvailable,
+  isAltalixAvailable,
 });
 
 const structuredSelector = createStructuredSelector({

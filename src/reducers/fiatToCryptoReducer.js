@@ -22,32 +22,26 @@ import { SET_ALTALIX_INFO, SET_SENDWYRE_RATES } from 'constants/fiatToCryptoCons
 
 import type { SendwyreRates } from 'models/FiatToCryptoProviders';
 
-type AltalixInfo = {
-  isAvailable: boolean,
-};
-
-export type FiatToCryptoReducerState = {
-  altalix: null | AltalixInfo,
-  sendwyre: null | {
-    exchangeRates: SendwyreRates,
-  },
-};
+export type FiatToCryptoReducerState = {|
+  isAltalixAvailable: null | boolean,
+  sendwyreExchangeRates: null | SendwyreRates,
+|};
 
 type AltalixInfoSetAction = {
   type: typeof SET_ALTALIX_INFO,
-  payload: AltalixInfo,
+  payload: { isAvailable: boolean },
 };
 
-type LoadSendwyreRatesAction = {
+type SetSendwyreRatesAction = {
   type: typeof SET_SENDWYRE_RATES,
   payload: SendwyreRates,
 };
 
-export type FiatToCryptoReducerAction = AltalixInfoSetAction | LoadSendwyreRatesAction;
+export type FiatToCryptoReducerAction = AltalixInfoSetAction | SetSendwyreRatesAction;
 
 const initialState = {
-  altalix: null,
-  sendwyre: null,
+  isAltalixAvailable: null,
+  sendwyreExchangeRates: null,
 };
 
 export default function fiatToCryptoReducer(
@@ -56,11 +50,14 @@ export default function fiatToCryptoReducer(
 ): FiatToCryptoReducerState {
   switch (action.type) {
     case SET_ALTALIX_INFO:
-      return { ...state, altalix: action.payload };
+      return {
+        ...state,
+        isAltalixAvailable: action.payload.isAvailable,
+      };
     case SET_SENDWYRE_RATES:
       return {
         ...state,
-        sendwyre: { exchangeRates: action.payload },
+        sendwyreExchangeRates: action.payload,
       };
     default:
       return state;
