@@ -1,23 +1,23 @@
 {
   "images" : [
     {
+      "filename" : "onboarding_pattern_top.png",
       "idiom" : "universal",
-      "filename" : "splash_pattern_top.png",
       "scale" : "1x"
     },
     {
+      "filename" : "onboarding_pattern_top-1.png",
       "idiom" : "universal",
-      "filename" : "splash_pattern_top-1.png",
       "scale" : "2x"
     },
     {
+      "filename" : "onboarding_pattern_top-2.png",
       "idiom" : "universal",
-      "filename" : "splash_pattern_top-2.png",
       "scale" : "3x"
     }
   ],
   "info" : {
-    "version" : 1,
-    "author" : "xcode"
+    "author" : "xcode",
+    "version" : 1
   }
 }

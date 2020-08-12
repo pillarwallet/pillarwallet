@@ -52,6 +52,7 @@ export type Props = {
   disableSelfSelect?: boolean,
   activeAccountAddress?: string,
   allowEnteringCustomAddress?: boolean,
+  disabled?: boolean,
 };
 
 type State = {
@@ -98,7 +99,7 @@ class Selector extends React.Component<Props, State> {
     if (onOptionSelect) onOptionSelect(option, onSuccess);
   };
 
-  renderOption = (option: ?Option, onPress?: () => void) => {
+  renderOption = (option: ?Option, onPress?: ?(() => void)) => {
     if (!option) return null;
     const { onOptionImagePress } = this.props;
     const {
@@ -183,7 +184,7 @@ class Selector extends React.Component<Props, State> {
           <MediumText regular accent>{label}: </MediumText>
           <SelectedOption onPress={this.openOptions} disabled={disabled}>
             {hasValue
-              ? this.renderOption(selectedOption, this.openOptions)
+              ? this.renderOption(selectedOption, disabled ? null : this.openOptions)
               : <MediumText big style={{ paddingHorizontal: spacing.layoutSides }}>{placeholderText}</MediumText>}
           </SelectedOption>
         </Wrapper>

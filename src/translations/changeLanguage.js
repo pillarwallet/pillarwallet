@@ -19,6 +19,7 @@
 */
 
 import i18n from 'i18next';
+import t from 'translations/translate';
 import Toast from 'components/Toast';
 
 
@@ -26,16 +27,15 @@ const changeLanguage = (code: string) => {
   i18n.changeLanguage(code)
     .then(() => {
       Toast.show({
-        message: 'Language has been changed',
-        type: 'info',
-        title: '',
+        message: t('toast.languageChanged'),
+        emoji: 'ok_hand',
       });
     })
     .catch(() => {
       Toast.show({
-        message: 'Sorry, there was an issue changing language. Please try again later.',
-        type: 'warning',
-        title: '',
+        message: t('toast.languageChangeFailed'),
+        emoji: 'hushed',
+        supportLink: true,
       });
     });
 };

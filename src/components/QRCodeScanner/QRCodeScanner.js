@@ -22,6 +22,7 @@ import { Vibration, Dimensions, Platform } from 'react-native';
 import throttle from 'lodash.throttle';
 import Modal from 'react-native-modal';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
+import t from 'translations/translate';
 import { noop, reportLog } from 'utils/common';
 import CameraView from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
@@ -166,8 +167,9 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     if (!validator(code)) {
       this.props.onCancel();
       Toast.show({
-        message: 'Wrong QR code',
-        type: 'warning',
+        message: t('toast.incorrectQRCode'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: true,
       });
       return;

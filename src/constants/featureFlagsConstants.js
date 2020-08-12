@@ -27,6 +27,8 @@ export const FEATURE_FLAGS = {
   WYRE: 'feature_services_wyre',
   PEER_TO_PEER: 'feature_services_peer_to_peer',
   KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
+  SABLIER: 'feature_services_sablier',
+  ALTALIX: 'feature_services_altalix',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -38,4 +40,5 @@ export const INITIAL_FEATURE_FLAGS = {
   [FEATURE_FLAGS.POOL_TOGETHER]: true,
   [FEATURE_FLAGS.PEER_TO_PEER]: true,
   [FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION]: true,
+  [FEATURE_FLAGS.ALTALIX]: true,
 };

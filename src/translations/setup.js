@@ -22,7 +22,7 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import languageDetector from './deviceLanguageDetector';
 import translationLoader from './translationLoader';
-import { DEFAULT_NAMESPACE, NAMESPACES, POST_PROCESSORS, SUPPORTED_LANGUAGES } from './config';
+import { DEFAULT_NAMESPACE, NAMESPACES, POST_PROCESSORS, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
 import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
 
 
@@ -38,6 +38,7 @@ i18n
     ns: NAMESPACES,
     defaultNS: DEFAULT_NAMESPACE,
     postProcess: POST_PROCESSORS,
+    fallbackLng: DEFAULT_LANGUAGE,
     supportedLngs: __DEV__ ? [...SUPPORTED_LANGUAGES, 'fr'] : SUPPORTED_LANGUAGES,
 
     debug: !!__DEV__,

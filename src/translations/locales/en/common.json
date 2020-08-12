@@ -25,6 +25,7 @@
 
   "label": {
     "activate": "Activate",
+    "activateSmartWallet": "Activate Smart Wallet",
     "activated": "Activated",
     "added": "Added",
     "adding": "Adding",
@@ -32,11 +33,13 @@
     "badge": "Badge",
     "collectibleFromUser": "Collectible from {{username}}",
     "collectibleToUser": "Collectible to {{username}}",
+    "contactSupport": "Contact support",
     "created": "Created",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
     "erc20TokensOnly": "ERC-20 tokens only",
+    "faceIDSettings": "Face ID Settings",
     "feeToken": "Fee {{tokenValue}}",
     "feeTokenFiat": "Fee {{tokenValue}} ({{fiatValue}})",
     "fromKeyWallet": "from Key wallet",
@@ -122,9 +125,7 @@
   },
 
   "paragraph": {
-    "addressCopiedToClipboard": "Address copied to clipboard.",
-    "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
-    "ensNameCopiedToClipboard": "ENS name copied to clipboard."
+    "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens."
   },
 
   "insight": {
@@ -285,14 +286,71 @@
   },
 
   "toast":{
-    "noSmartAccountDuringActivation": {
-      "message": "Smart Wallet not found",
-      "title": "Could not activate Smart Wallet"
-    },
-    "forbiddenToRemoveAsset": {
-      "message": "{{asset}} is essential for Pillar wallet",
-      "title": "This asset cannot be switched off"
-    }
+    "userIsOffline": "It seems you're offline. Please check your internet connection.",
+    "biometricLoginEnabled": "Biometric login enabled.",
+    "biometricLoginDisabled": "Biometric login disabled.",
+    "assetAdded": "{{assetName}} ({{assetSymbol}}) added.",
+    "badgeReceived": "{{badgeName}} received.",
+    "unableToAddDevice": "Couldn't add device, please try again.",
+    "linkedDeviceRemoved": "Linked device removed.",
+    "linkedDeviceNotFound": " Linked device not found.",
+    "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) to {{toAssetName}} ({{toAssetSymbol}}) exchange enabled.",
+    "keyWalletAssetsTransfered": "Assets transferred. Enjoy using your Smart Wallet!",
+    "poolTogetherAutomationEnabled": "{{tokenSymbol}} enabled. Happy pooling!",
+    "poolTogetherAutomationFailed": "Can't enable {{tokenSymbol}}. Please try again",
+    "walletRecovered": "Your wallet is now recovered. Enjoy using Pillar!",
+    "rewardsOnTheirWay": "Referral reward is on its way. You will receive it soon.",
+    "somethingWentWrong": "Something went wrong, we are already investigating it. Don't worry, your funds are safe. Please try again or contact support.",
+    "failedToLogIn": "There was a problem logging you in, please try again.",
+    "PPNTopUpSuccess": "{{paymentInfo}} added to Pillar Tank.",
+    "PPNWithdrawSuccess": "{{paymentInfo}} withdrawn from Pillar Tank.",
+    "PPNSettleSuccess": "Assets settled to your wallet.",
+    "lendingDepositSuccess": "{{paymentInfo}} deposited.",
+    "lendingWithdrawSuccess": " {{paymentInfo}} withdrawn.",
+    "transactionSent": "{{paymentInfo}} sent.",
+    "transactionReceived": "{{paymentInfo}} received.",
+    "backendProblem": "There was a problem on our server. Don't worry, your funds are safe. Please try again or contact support.",
+    "PPNTopUp": "{{paymentInfo}} sent to Pillar Tank.",
+    "PPNWithdraw": "Withdraw of {{paymentInfo}} started. You will receive tokens soon.",
+    "PPNSettle": "Settlement started. You will receive tokens soon.",
+    "failedToAddDevice": "Can't add device. Please try again.",
+    "failedToRemoveDevice": "Can't remove device. Please try again.",
+    "switchRelayerTokenFailed": "Can't switch fee token. Please try again.",
+    "syntheticTransactionFailed": "Can't make this transaction. Please try again.",
+    "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) removed.",
+    "ensureBackup": "Please ensure you backup your wallet now.",
+    "walletConnectUnsupportedApp": "This app is not supported. You may request support for this app.",
+    "walletConnectConnectionsExpired": "Connections expired. Please connect again.",
+    "walletConnectSessionTimedOut": "Request timeout. Give it another try.",
+    "walletConnectSmartWalletNotActive": "Can't use Wallet Connect without Smart Wallet activated",
+    "cantReadQRCode": "Can't read this QR code. Try once again or use another image.",
+    "incorrectQRCode": "QR code is incorrect.",
+    "transactionFeeEstimationFailed": "Can't estimate transaction fee. Please try again.",
+    "walkthroughFailed": "Something went wrong. Please try again.",
+    "addressCopiedToClipboard": "Address copied to clipboard.",
+    "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
+    "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) can't be removed. It's essential for Pillar.",
+    "failedToGetFaceIDPermission": "Face ID restricted for Pillar. You can change it in your phone settings.",
+    "subscribedToNewsletter": "Subscribed to newsletter.",
+    "subscriptionToNewsletterFailed": "Can't subscribe to newsletter. Please try again.",
+    "cantInviteYourself": "You can't invite yourself.",
+    "invalidPhoneNumber": "Phone number should have country code.",
+    "dailyInvitationsLimitReached": "You have {{remainingDailyInvitations}} remaining invitations today. Max {{allowedDailyUpdates}} per day",
+    "ensNameNotFound": "ENS name not found. Try different name.",
+    "purchasedPoolTogetherTickets": "{{count}} ticket purchased. Good luck!",
+    "purchasedPoolTogetherTickets_plural": "{{count}} tickets purchased. Good luck!",
+    "transactionStarted": "{{paymentInfo}} sent.",
+    "tooManyTransactionsToSettle": "You can settle only {{maxTxToSettle}} transactions at once. You can settle more in another batch.",
+    "notEnoughForTransactionFee": "Not enough {{feeSymbol}} to pay for transaction fee.",
+    "languageChanged": "Language changed.",
+    "languageChangeFailed": "Can't change language. Please try again.",
+    "sablierAllowanceEnabled": "{{assetName}} ({{assetSymbol}}) enabled.",
+    "sablierAllowanceFailed": "Can't enable {{assetName}} ({{assetSymbol}}). Please try again.",
+    "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) withdrawn.",
+    "sablierCancelStream": "Stream cancelled.",
+    "smartWalletDeviceAdded": "New linked device added",
+    "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
+    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again."
   },
 
   "alert": {
