@@ -355,7 +355,7 @@ class TextInput extends React.Component<Props, State> {
       value: selectedValue,
     } = selector;
 
-    const shouldDisplaySpinner = this.getSelectorOptionsCount(selectorOptions) <= 1;
+    const shouldDisplaySpinner = this.getSelectorOptionsCount(selectorOptions) < 1;
 
     if (!selectedValue) {
       return (

@@ -30,9 +30,11 @@ import { getThemeName } from './themes';
 import { staticImages } from './images';
 import { chainId } from './uniswap';
 
+export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
+
 export const getOfferProviderLogo = (provider?: string, theme: Theme, type: string) => {
   if (!provider) return '';
-  const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider);
+  const providerInfo = getProviderInfo(provider);
   const themeName = getThemeName(theme);
   if (providerInfo) {
     const providerIconName = get(providerInfo, `img.${type}.${themeName}`, '');
@@ -43,7 +45,7 @@ export const getOfferProviderLogo = (provider?: string, theme: Theme, type: stri
 };
 
 export const getCryptoProviderName = (provider: string) => {
-  const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider) || {};
+  const providerInfo = getProviderInfo(provider);
   const { name } = providerInfo;
   return name;
 };

@@ -44,6 +44,7 @@ import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
+import { getProviderInfo } from 'utils/exchange';
 
 // models, types
 import type { Assets } from 'models/Asset';
@@ -52,10 +53,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-
-// assets
-import PROVIDERS_META from 'assets/exchange/providersMeta.json';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -117,7 +114,7 @@ class ExchangeInfo extends React.Component<Props, State> {
   };
 
   renderProvider = ({ item: { provider, enabled: providerEnabled } }: Object) => {
-    const providerInfo = PROVIDERS_META.find(({ shim }) => shim === provider) || {};
+    const providerInfo = getProviderInfo(provider);
     const { name } = providerInfo;
     const providerName = name || 'Unknown';
     return (
