@@ -27,11 +27,9 @@ import { BigNumber } from 'bignumber.js';
 
 import ROUTER_ABI from 'abi/uniswapRouter.json';
 import { isProdEnv } from 'utils/environment';
+import { encodeContractMethod } from 'services/assets';
 
 import type { Asset } from 'models/Asset';
-
-// tslint:disable-next-line: no-var-requires
-const abiCoder = require('web3-eth-abi');
 
 const isMainnet = isProdEnv;
 export const chainId = isMainnet ? ChainId.MAINNET : ChainId.ROPSTEN;
@@ -94,9 +92,11 @@ export const swapExactTokensToTokens = (
   toAssetAddress: string,
   deadline: string,
 ): string => {
-  const abiFunction = ROUTER_ABI.filter(m => m.name === 'swapExactTokensForTokensSupportingFeeOnTransferTokens')[0];
-  const encodedContractFunction = abiCoder.encodeFunctionCall(
-    abiFunction,
+  const functionName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens';
+  const abiFunction = ROUTER_ABI.filter(m => m.name === functionName);
+  const encodedContractFunction = encodeContractMethod(
+    [abiFunction],
+    functionName,
     [
       quantityIn,
       outputMin,
@@ -115,9 +115,11 @@ export const swapExactTokensToEth = (
   toAssetAddress: string,
   deadline: string,
 ): string => {
-  const abiFunction = ROUTER_ABI.filter(m => m.name === 'swapExactTokensForETHSupportingFeeOnTransferTokens')[0];
-  const encodedContractFunction = abiCoder.encodeFunctionCall(
-    abiFunction,
+  const functionName = 'swapExactTokensForETHSupportingFeeOnTransferTokens';
+  const abiFunction = ROUTER_ABI.filter(m => m.name === functionName);
+  const encodedContractFunction = encodeContractMethod(
+    [abiFunction],
+    functionName,
     [
       quantityIn,
       outputMin,
@@ -135,9 +137,11 @@ export const swapExactEthToTokens = (
   toAssetAddress: string,
   deadline: string,
 ): string => {
-  const abiFunction = ROUTER_ABI.filter(m => m.name === 'swapExactETHForTokensSupportingFeeOnTransferTokens')[0];
-  const encodedContractFunction = abiCoder.encodeFunctionCall(
-    abiFunction,
+  const functionName = 'swapExactETHForTokensSupportingFeeOnTransferTokens';
+  const abiFunction = ROUTER_ABI.filter(m => m.name === functionName);
+  const encodedContractFunction = encodeContractMethod(
+    [abiFunction],
+    functionName,
     [
       outputMin,
       exchangePath,
