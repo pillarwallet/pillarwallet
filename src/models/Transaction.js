@@ -112,11 +112,11 @@ export type TransactionsStore = {
 };
 
 export type TokenTransactionPayload = {
-  gasLimit: number,
+  gasLimit?: number,
   amount: number | string,
   to: string,
   receiverEnsName?: string,
-  gasPrice: number,
+  gasPrice?: number,
   txFeeInWei: number,
   txSpeed?: string,
   symbol: string,

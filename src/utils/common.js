@@ -614,6 +614,14 @@ export const humanizeHexString = (hexString: ?string) => {
   return hexString;
 };
 
+export const convertToBaseUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  return quantity.multipliedBy(new BigNumber(10).pow(decimals));
+};
+
+export const convertToNominalUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  return quantity.dividedBy(new BigNumber(10).pow(decimals));
+};
+
 export const countDownDHMS = (remainingTimeMs: number) => {
   const seconds = remainingTimeMs / 1000;
   const days = Math.floor(seconds / 24 / 60 / 60);

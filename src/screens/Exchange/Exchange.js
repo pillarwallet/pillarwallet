@@ -41,7 +41,6 @@ import {
   searchOffersAction,
   resetOffersAction,
   markNotificationAsSeenAction,
-  getMetaDataAction,
   getExchangeSupportedAssetsAction,
 } from 'actions/exchangeActions';
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
@@ -64,7 +63,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
-import type { ExchangeSearchRequest, Allowance, ExchangeProvider } from 'models/Offer';
+import type { ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
@@ -87,18 +86,15 @@ type Props = {
   user: Object,
   assets: Assets,
   searchOffers: (string, string, number) => void,
-  authorizeWithShapeshift: Function,
   balances: Balances,
   resetOffers: () => void,
   exchangeSearchRequest: ExchangeSearchRequest,
   exchangeAllowances: Allowance[],
-  connectedProviders: ExchangeProvider[],
   hasUnreadExchangeNotification: boolean,
   markNotificationAsSeen: () => void,
   oAuthAccessToken: ?string,
   accounts: Accounts,
   smartWalletState: Object,
-  getMetaData: () => void,
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
   getExchangeSupportedAssets: () => void,
@@ -157,7 +153,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.listeners = [];
 
     this.state = {
-      shapeshiftAuthPressed: false,
       isSubmitted: false,
       showEmptyMessage: false,
       value: {
@@ -215,11 +210,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       exchangeSearchRequest = {},
       navigation,
-      getMetaData,
       getExchangeSupportedAssets,
     } = this.props;
     this._isMounted = true;
-    getMetaData();
     getExchangeSupportedAssets();
 
     const defaultFrom = ETH;
@@ -579,7 +572,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       balances,
       navigation,
       exchangeAllowances,
-      connectedProviders,
       hasUnreadExchangeNotification,
       markNotificationAsSeen,
       accounts,
@@ -597,7 +589,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const formStructure = generateFormStructure(balances);
     const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
-    if ((!isEmpty(exchangeAllowances) || !isEmpty(connectedProviders))
+    if (!isEmpty(exchangeAllowances)
       && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
       rightItems.push({
         iconSource: settingsIcon,
@@ -682,7 +674,6 @@ const mapStateToProps = ({
     data: {
       searchRequest: exchangeSearchRequest,
       allowances: exchangeAllowances,
-      connectedProviders,
       hasNotification: hasUnreadExchangeNotification,
     },
     exchangeSupportedAssets,
@@ -696,7 +687,6 @@ const mapStateToProps = ({
   rates,
   exchangeSearchRequest,
   exchangeAllowances,
-  connectedProviders,
   hasUnreadExchangeNotification,
   oAuthAccessToken,
   accounts,
@@ -723,7 +713,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   resetOffers: () => dispatch(resetOffersAction()),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
-  getMetaData: () => dispatch(getMetaDataAction()),
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
