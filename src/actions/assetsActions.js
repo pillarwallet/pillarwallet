@@ -78,6 +78,7 @@ import {
   isNotKeyBasedType,
 } from 'utils/accounts';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+import { balancesSelector } from 'selectors';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
@@ -88,7 +89,6 @@ import { addExchangeAllowanceAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
-import { balancesSelector } from 'selectors';
 
 type TransactionStatus = {
   isSuccess: boolean,
