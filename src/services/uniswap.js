@@ -331,7 +331,7 @@ export const fetchUniswapSupportedTokens = async (): Promise<string[]> => {
     if (assets) {
       results = results.concat(assets.map(a => a.symbol));
     }
-    if (assets.length !== 1000) {
+    if (!assets || assets.length !== 1000) {
       finished = true;
     } else {
       i++;
