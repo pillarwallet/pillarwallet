@@ -18,13 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { restoreTransactionHistoryAction } from 'actions/historyActions';
 import { SET_HISTORY, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { ETH, PLR } from 'constants/assetsConstants';
 import type { Assets } from 'models/Asset';
 import { buildHistoryTransaction } from 'utils/history';
 import { getAssetsAsList } from 'utils/assets';
 import { parseEthValue } from 'services/EthplorerSdk';
+import { checkForMissedAssetsAction } from 'actions/assetsActions';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
@@ -210,7 +210,7 @@ describe('History Actions', () => {
       beforeEach(async () => {
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
-        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
+        await checkForMissedAssetsAction()(dispatchMock, getState, api);
       });
 
       it('should call the api.fetchSupportedAssets function', () => {
@@ -249,7 +249,7 @@ describe('History Actions', () => {
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
-        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
+        await checkForMissedAssetsAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {
@@ -282,7 +282,7 @@ describe('History Actions', () => {
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([]));
-        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
+        await checkForMissedAssetsAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {
@@ -335,7 +335,7 @@ describe('History Actions', () => {
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
-        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
+        await checkForMissedAssetsAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {
@@ -368,7 +368,7 @@ describe('History Actions', () => {
 
         api.importedEthTransactionHistory.mockImplementation(() => Promise.resolve([mockImportedEthTransaction]));
         api.importedErc20TransactionHistory.mockImplementation(() => Promise.resolve([mockImportedPlrTransaction]));
-        await restoreTransactionHistoryAction()(dispatchMock, getState, api);
+        await checkForMissedAssetsAction()(dispatchMock, getState, api);
       });
 
       it('should call the dispatch function', () => {

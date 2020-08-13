@@ -56,10 +56,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI } from 'constants/assetsConstants';
 
 // actions
-import {
-  fetchTransactionsHistoryAction,
-  fetchTransactionsHistoryNotificationsAction,
-} from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
@@ -75,7 +72,7 @@ import {
   togglePoolTogetherAction,
   toggleSablierAction,
 } from 'actions/appSettingsActions';
-import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
+import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
 import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
@@ -114,7 +111,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   user: User,
   fetchTransactionsHistory: Function,
-  fetchTransactionsHistoryNotifications: Function,
+  checkForMissedAssets: Function,
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
   intercomNotificationsCount: number,
@@ -241,7 +238,7 @@ class HomeScreen extends React.Component<Props> {
 
   refreshScreenData = () => {
     const {
-      fetchTransactionsHistoryNotifications,
+      checkForMissedAssets,
       fetchAllCollectiblesData,
       fetchTransactionsHistory,
       fetchBadges,
@@ -255,7 +252,7 @@ class HomeScreen extends React.Component<Props> {
       fetchUserStreams,
     } = this.props;
 
-    fetchTransactionsHistoryNotifications();
+    checkForMissedAssets();
     fetchAllCollectiblesData();
     fetchBadges();
     fetchBadgeAwardHistory();
@@ -655,10 +652,10 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction(true)),
-  fetchTransactionsHistoryNotifications: () => dispatch(fetchTransactionsHistoryNotificationsAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
-  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction(true)),
+  fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchBadgeAwardHistory: () => dispatch(fetchBadgeAwardHistoryAction()),

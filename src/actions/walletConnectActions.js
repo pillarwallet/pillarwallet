@@ -62,11 +62,11 @@ import { isNavigationAllowed } from 'utils/navigation';
 import {
   getAccountAddress,
   findFirstSmartAccount,
-  findKeyBasedAccount,
   getActiveAccount,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
+import { reportLog } from 'utils/common';
 
 // actions
 import {
@@ -97,6 +97,7 @@ import type {
   WalletConnectCallApproved,
   WalletConnectTogglePromoCard,
 } from 'reducers/walletConnectReducer';
+
 
 const walletConnectError = (code: string, message: string): WalletConnectError => ({
   type: WALLETCONNECT_ERROR,
@@ -567,14 +568,15 @@ export const initWalletConnectSessions = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       walletConnectSessions: { isImported, sessions },
-      accounts: { data: accounts },
+      wallet: { data: { address: keyBasedWalletAddress } },
     } = getState();
 
-    const keyWallet = findKeyBasedAccount(accounts);
-    if (!keyWallet) return;
-    const keyWalletAddress = getAccountAddress(keyWallet);
+    if (!keyBasedWalletAddress) {
+      reportLog('initWalletConnectSessions failed: ', { keyBasedWalletAddress });
+      return;
+    }
 
-    if (shouldClearWCSessions(sessions, keyWalletAddress)) {
+    if (shouldClearWCSessions(sessions, keyBasedWalletAddress)) {
       dispatch(killAllWalletConnectSessions());
     }
 

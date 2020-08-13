@@ -22,11 +22,11 @@ export async function migrate(collection: string, storageData: Object, dispatch:
       break;
 
     case 'assets':
-      data = await loadAndMigrateAssets(storageData, dispatch);
+      data = loadAndMigrateAssets(storageData);
       break;
 
     case 'balances':
-      data = await loadAndMigrateBalances(storageData, dispatch);
+      data = loadAndMigrateBalances(storageData);
       break;
 
     case 'history':
@@ -34,11 +34,11 @@ export async function migrate(collection: string, storageData: Object, dispatch:
       return storageData;
 
     case 'collectibles':
-      data = await loadAndMigrateCollectibles(storageData, dispatch);
+      data = loadAndMigrateCollectibles(storageData);
       break;
 
     case 'collectiblesHistory':
-      data = await loadAndMigrateCollectiblesHistory(storageData, dispatch);
+      data = loadAndMigrateCollectiblesHistory(storageData);
       break;
 
     default: break;
