@@ -191,7 +191,7 @@ class Toast extends React.Component<{}, State> {
         androidStatusbarHeight={StatusBar.currentHeight}
       >
         <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
-          <ShadowedCard>
+          <ShadowedCard forceShadow shadowColor="#000" shadowOpacity={0.06} borderRadius={20}>
             <ContentWrapper>
               {emoji && <Emoji name={emoji} style={{ fontSize: 16 }} />}
               <Spacing w={18} />
