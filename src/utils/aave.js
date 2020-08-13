@@ -193,10 +193,9 @@ export const mapTransactionsHistoryWithAave = async (
   if (!aaveLendingPoolContractAddress) return [];
 
   const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
-  const {
-    deposits = [],
-    withdraws = [],
-  } = await aaveService.fetchAccountDepositAndWithdrawTransactions(accountAddress);
+  const fetchedAaveTransactions = await aaveService.fetchAccountDepositAndWithdrawTransactions(accountAddress);
+  const deposits = fetchedAaveTransactions?.deposits || [];
+  const withdraws = fetchedAaveTransactions?.withdraws || [];
 
   return transactionHistory.reduce((
     transactions,
