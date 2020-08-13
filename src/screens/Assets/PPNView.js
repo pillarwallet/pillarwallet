@@ -30,7 +30,7 @@ import t from 'translations/translate';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -101,7 +101,7 @@ type Props = {
   smartWalletState: Object,
   PPNTransactions: Transaction[],
   history: Object[],
-  fetchTransactionsHistory: () => void,
+  fetchSmartWalletTransactions: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
@@ -266,7 +266,7 @@ class PPNView extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       history,
-      fetchTransactionsHistory,
+      fetchSmartWalletTransactions,
       theme,
       onScroll,
       activeAccountAddress,
@@ -375,7 +375,7 @@ class PPNView extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchTransactionsHistory();
+                fetchSmartWalletTransactions();
                 fetchVirtualAccountBalance();
               }}
             />
@@ -499,7 +499,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));
