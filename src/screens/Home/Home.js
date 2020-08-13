@@ -56,7 +56,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI } from 'constants/assetsConstants';
 
 // actions
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
@@ -110,7 +110,7 @@ import WalletsPart from './WalletsPart';
 type Props = {
   navigation: NavigationScreenProp<*>,
   user: User,
-  fetchTransactionsHistory: Function,
+  fetchSmartWalletTransactions: Function,
   checkForMissedAssets: Function,
   setUnreadNotificationsStatus: Function,
   homeNotifications: Object[],
@@ -189,7 +189,7 @@ class HomeScreen extends React.Component<Props> {
       logScreenView,
       fetchBadges,
       fetchBadgeAwardHistory,
-      fetchTransactionsHistory,
+      fetchSmartWalletTransactions,
       fetchReferralRewardsIssuerAddresses,
       fetchDepositedAssets,
       isSmartWalletActive,
@@ -207,7 +207,7 @@ class HomeScreen extends React.Component<Props> {
     if (isSmartWalletActive) {
       fetchPoolStats(true);
     }
-    fetchTransactionsHistory();
+    fetchSmartWalletTransactions();
     fetchBadges();
     fetchBadgeAwardHistory();
     fetchReferralRewardsIssuerAddresses();
@@ -240,7 +240,7 @@ class HomeScreen extends React.Component<Props> {
     const {
       checkForMissedAssets,
       fetchAllCollectiblesData,
-      fetchTransactionsHistory,
+      fetchSmartWalletTransactions,
       fetchBadges,
       fetchBadgeAwardHistory,
       fetchAllAccountsBalances,
@@ -256,7 +256,7 @@ class HomeScreen extends React.Component<Props> {
     fetchAllCollectiblesData();
     fetchBadges();
     fetchBadgeAwardHistory();
-    fetchTransactionsHistory();
+    fetchSmartWalletTransactions();
     fetchAllAccountsBalances();
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
@@ -652,7 +652,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

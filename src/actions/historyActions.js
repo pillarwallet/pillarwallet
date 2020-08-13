@@ -29,6 +29,7 @@ import {
   UPDATING_TRANSACTION,
 } from 'constants/historyConstants';
 import { SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID } from 'constants/smartWalletConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import {
@@ -60,6 +61,7 @@ import smartWalletService from 'services/smartWallet';
 // selectors
 import { smartAccountAssetsSelector } from 'selectors/assets';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
+import { historySelector } from 'selectors';
 
 // models, types
 import type { Transaction } from 'models/Transaction';
@@ -109,6 +111,18 @@ export const fetchSmartWalletTransactionsAction = () => {
       accounts: { data: accounts },
       smartWallet: { lastSyncedTransactionId, connectedAccount },
     } = getState();
+
+    // key based history migration: clean existing
+    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    if (keyBasedAccount) {
+      const keyBasedAccountId = getAccountId(keyBasedAccount);
+      const currentHistory = historySelector(getState());
+      if (!isEmpty(currentHistory[keyBasedAccountId])) {
+        const updatedHistory = updateAccountHistory(currentHistory, keyBasedAccountId, []);
+        await dispatch(saveDbAction('history', { history: updatedHistory }, true));
+        dispatch({ type: SET_HISTORY, payload: updatedHistory });
+      }
+    }
 
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount || !connectedAccount) {
@@ -265,16 +279,6 @@ export const updateTransactionStatusAction = (hash: string) => {
     dispatch(saveDbAction('history', { history: updatedHistory }, true));
     dispatch(afterHistoryUpdatedAction());
     dispatch(fetchAssetsBalancesAction());
-  };
-};
-
-/*
- * Unified method to fetch tx history all wallets
- * For smart wallets data will be fetched through the Archanova SDK
- */
-export const fetchTransactionsHistoryAction = () => {
-  return async (dispatch: Dispatch) => {
-    await dispatch(fetchSmartWalletTransactionsAction());
   };
 };
 
