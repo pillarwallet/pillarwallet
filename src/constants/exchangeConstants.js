@@ -39,4 +39,5 @@ export const SLOW = 'min';
 export const NORMAL = 'avg';
 export const FAST = 'max';
 
-export const UNISWAP_GRAPH_ID = 'QmXKwSEMirgWVn41nRzkT3hpUBw29cp619Gx58XW6mPhZP';
+// mainnet only
+export const UNISWAP_SUBGRAPH_NAME = 'uniswap/uniswap-v2';

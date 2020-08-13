@@ -58,11 +58,12 @@ import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
 
 // constants
-import { PROVIDER_UNISWAP, UNISWAP_GRAPH_ID } from 'constants/exchangeConstants';
+import { PROVIDER_UNISWAP, UNISWAP_SUBGRAPH_NAME } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import { callSubgraph } from 'services/theGraph';
 
 const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
 
@@ -314,23 +315,20 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
 };
 
 export const fetchUniswapSupportedTokens = async (): Promise<string[]> => {
-  const url = `https://api.thegraph.com/subgraphs/id/${UNISWAP_GRAPH_ID}`;
   let finished = false;
   let i = 0;
   let results = [];
   while (!finished) {
     /* eslint-disable no-await-in-loop */
-    const response = await axios.post(url, {
-      timeout: 5000,
-      query: `
+    const query = `
       {
         tokens(first: 1000, skip: ${i * 1000}) {
           symbol
         }
       }
-      `,
-    });
-    const assets = response?.data?.data?.tokens;
+    `;
+    const response = await callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
+    const assets = response?.data?.tokens;
     if (assets) {
       results = results.concat(assets.map(a => a.symbol));
     }

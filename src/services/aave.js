@@ -19,8 +19,7 @@
 */
 import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, AAVE_THE_GRAPH_ID } from 'react-native-dotenv';
-import axios from 'axios';
+import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, AAVE_SUBGRAPH_NAME } from 'react-native-dotenv';
 
 // utils
 import { getAssetDataByAddress } from 'utils/assets';
@@ -28,6 +27,7 @@ import { formatAmount, reportLog } from 'utils/common';
 
 // services
 import { getContract } from 'services/assets';
+import { callSubgraph } from 'services/theGraph';
 
 // abis
 import AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI from 'abi/aaveLendingPoolAddressesProvider.json';
@@ -204,38 +204,32 @@ class AaveService {
     return Promise.resolve(depositedAssets.filter(({ initialBalance }) => !!initialBalance));
   }
 
-  async fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<Object> {
-    const url = `https://api.thegraph.com/subgraphs/id/${AAVE_THE_GRAPH_ID}`;
-    return axios
-      .post(url, {
-        timeout: 5000,
-        query: `
-        {
-          deposits (orderBy: timestamp, orderDirection: desc, where: { 
-            user: "${accountAddress.toLowerCase()}"
-          }) {
-            id
-            amount
-            reserve {
-              symbol
-              decimals
-            }
-          }
-          withdraws: redeemUnderlyings (orderBy: timestamp, orderDirection: desc, where:{
-            user: "${accountAddress.toLowerCase()}"
-          }) {
-            id
-            amount
-            reserve {
-              symbol
-              decimals
-            }
+  fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<Object> {
+    const query = `
+      {
+        deposits (orderBy: timestamp, orderDirection: desc, where: {
+          user: "${accountAddress.toLowerCase()}"
+        }) {
+          id
+          amount
+          reserve {
+            symbol
+            decimals
           }
         }
-      `,
-      })
-      .then(({ data: response }) => response.data)
-      .catch((e) => this.handleError(e, {}));
+        withdraws: redeemUnderlyings (orderBy: timestamp, orderDirection: desc, where: {
+          user: "${accountAddress.toLowerCase()}"
+        }) {
+          id
+          amount
+          reserve {
+            symbol
+            decimals
+          }
+        }
+      }
+    `;
+    return callSubgraph(AAVE_SUBGRAPH_NAME, query);
   }
 
   handleError(error: any, result: any): any {
