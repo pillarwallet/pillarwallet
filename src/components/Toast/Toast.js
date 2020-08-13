@@ -85,7 +85,7 @@ const CloseIconWrapper = styled.TouchableOpacity`
 `;
 
 const CloseIcon = styled(Icon)`
-  color: ${themedColors.border};
+  color: ${themedColors.toastCloseIcon};
   font-size: 16px;
 `;
 
