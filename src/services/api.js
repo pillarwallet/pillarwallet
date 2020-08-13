@@ -798,7 +798,7 @@ class SDKWrapper {
       data: {
         ...params,
         dest: `ethereum:${address}`,
-        lockFields: [],
+        lockFields: ['destCurrency'],
       },
     })
       .then(response => response.data.url)
