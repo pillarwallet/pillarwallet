@@ -31,7 +31,6 @@ import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
-import axios from 'axios';
 
 // utils
 import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
@@ -52,6 +51,7 @@ import { parseOffer } from 'utils/exchange';
 
 // services
 import { encodeContractMethod } from 'services/assets';
+import { callSubgraph } from 'services/theGraph';
 
 // models
 import type { Asset } from 'models/Asset';
@@ -63,7 +63,6 @@ import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
-import { callSubgraph } from 'services/theGraph';
 
 const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
 
