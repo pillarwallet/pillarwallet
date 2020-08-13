@@ -60,7 +60,10 @@ type Props = {
   isAnimated?: boolean,
   spacingAfterAnimation?: number,
   borderRadius?: number,
-  noShadow?: boolean
+  noShadow?: boolean,
+  forceShadow?: boolean,
+  shadowColor?: string,
+  shadowOpacity?: number
 };
 
 type State = {
@@ -149,8 +152,6 @@ class ShadowedCard extends React.Component<Props, State> {
     const animatedContentOpacity = !cardHeight ? 0 : 1;
     const contentOpacity = isAnimated ? animatedContentOpacity : 1;
     const isDarkTheme = currentTheme === DARK_THEME;
-    const shouldRenderShadow = !noShadow && !!(cardHeight && cardWidth) && readyToRenderShadow &&
-     (forceShadow || !isDarkTheme);
 
     return (
       <AnimatedCardOutter
@@ -158,7 +159,7 @@ class ShadowedCard extends React.Component<Props, State> {
         ref={ref => { this.cardOutterRef = ref; }}
         disabled={disabled}
       >
-        {shouldRenderShadow &&
+        {!noShadow && !!(cardHeight && cardWidth) && readyToRenderShadow && (forceShadow || !isDarkTheme) &&
           <Shadow
             heightAndroid={cardHeight}
             heightIOS={cardHeight}
