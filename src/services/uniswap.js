@@ -327,7 +327,7 @@ export const fetchUniswapSupportedTokens = async (): Promise<string[]> => {
       }
     `;
     const response = await callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
-    const assets = response?.data?.tokens;
+    const assets = response?.tokens;
     if (assets) {
       results = results.concat(assets.map(a => a.symbol));
     }
