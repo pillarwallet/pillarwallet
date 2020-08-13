@@ -19,14 +19,11 @@
 */
 
 import { utils, Contract, BigNumber as EthersBigNumber } from 'ethers';
-import axios from 'axios';
-import { SABLIER_CONTRACT_ADDRESS, SABLIER_GRAPH_ID, THE_GRAPH_API_URL, NETWORK_PROVIDER } from 'react-native-dotenv';
+import { SABLIER_CONTRACT_ADDRESS, SABLIER_SUBGRAPH_NAME, NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
 
-
-import { encodeContractMethod, getContract } from 'services/assets';
-import smartWalletService from 'services/smartWallet';
+// constants
 import { ETH } from 'constants/assetsConstants';
 import {
   SABLIER_CREATE_STREAM,
@@ -34,14 +31,24 @@ import {
   SABLIER_CANCEL_STREAM,
   SABLIER_ALLOWANCE,
 } from 'constants/sablierConstants';
+
+// services
+import { encodeContractMethod, getContract } from 'services/assets';
+import smartWalletService from 'services/smartWallet';
+import { callSubgraph } from 'services/theGraph';
+
+// utils
 import { reportLog, getEthereumProvider } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
+// abi
 import SABLIER_ABI from 'abi/sablier.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
+// types
 import type { Asset } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
+
 
 export const buildCreateStreamTransaction = (
   receiver: string,
@@ -98,99 +105,85 @@ export const getSablierWithdrawTransaction = (
 };
 
 export const fetchUserStreams = async (accountAddress: string) => {
-  const url = `${THE_GRAPH_API_URL}/${SABLIER_GRAPH_ID}`;
-  return axios
-    .post(url, {
-      timeout: 5000,
-      query: `
-        {
-          outgoingStreams: streams(where: {
-            sender: "${accountAddress}",
-          }) {
+  const query = `
+    {
+      outgoingStreams: streams(where: {
+        sender: "${accountAddress}",
+      }) {
+        id
+        cancellation {
+          id
+          recipientBalance
+          senderBalance
+          timestamp
+          txhash
+        }
+        deposit
+        ratePerSecond
+        recipient
+        sender
+        startTime
+        stopTime
+        timestamp
+        token {
+          id
+          decimals
+          name
+          symbol
+        }
+        withdrawals {
+          id
+          amount
+        }
+        txs {
+          id
+          event
+          timestamp
+          stream {
             id
-            cancellation {
-              id
-              recipientBalance
-              senderBalance
-              timestamp
-              txhash
-            }
-            deposit
-            ratePerSecond
-            recipient
-            sender
-            startTime
-            stopTime
-            timestamp
-            token {
-              id
-              decimals
-              name
-              symbol
-            }
-            withdrawals {
-              id
-              amount
-            }
-            txs {
-              id
-              event
-              timestamp
-              stream {
-                id
-              }
-            }
-          }
-          incomingStreams: streams(where: {
-            recipient: "${accountAddress}",
-          }) {
-            id
-            cancellation {
-              id
-              recipientBalance
-              senderBalance
-              timestamp
-              txhash
-            }
-            deposit
-            ratePerSecond
-            recipient
-            sender
-            startTime
-            stopTime
-            timestamp
-            token {
-              id
-              decimals
-              name
-              symbol
-            }
-            withdrawals {
-              id
-              amount
-            }
-            txs {
-              id
-              event
-              timestamp
-              stream {
-                id
-              }
-            }
           }
         }
-      `,
-    })
-    .then(({ data: response }) => {
-      return response.data;
-    })
-    .catch((e) => {
-      reportLog('Error getting Sablier streams', {
-        accountAddress,
-        message: e.message,
-      }, Sentry.Severity.Error);
-      return null;
-    });
+      }
+      incomingStreams: streams(where: {
+        recipient: "${accountAddress}",
+      }) {
+        id
+        cancellation {
+          id
+          recipientBalance
+          senderBalance
+          timestamp
+          txhash
+        }
+        deposit
+        ratePerSecond
+        recipient
+        sender
+        startTime
+        stopTime
+        timestamp
+        token {
+          id
+          decimals
+          name
+          symbol
+        }
+        withdrawals {
+          id
+          amount
+        }
+        txs {
+          id
+          event
+          timestamp
+          stream {
+            id
+          }
+        }
+      }
+    }
+  `;
+  return callSubgraph(SABLIER_SUBGRAPH_NAME, query);
 };
 
 export const checkSablierAllowance = async (tokenAddress: string, sender: string): Promise<EthersBigNumber> => {
