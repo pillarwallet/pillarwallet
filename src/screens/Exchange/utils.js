@@ -21,18 +21,42 @@
 import { BigNumber } from 'bignumber.js';
 import type { Rates } from 'models/Asset';
 import { getRate } from 'utils/assets';
-import { formatFiat, formatMoney } from 'utils/common';
+import { formatFiat, formatMoney, formatAmount } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import type { Option } from 'models/Selector';
 
+export const getBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): number => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceInFiat = assetBalance ?
+    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
+  return assetBalanceInFiat;
+};
+
+export const getAssetBalanceFromFiat = (
+  baseFiatCurrency: ?string,
+  fiatBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): number => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceFromFiat = fiatBalance ?
+    parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : null;
+  return assetBalanceFromFiat;
+};
 
 export const getFormattedBalanceInFiat = (
   baseFiatCurrency: ?string,
   assetBalance: ?string | ?number,
   rates: Rates,
-  symbol: string) => {
+  symbol: string): string => {
+  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+  if (!assetBalanceInFiat) return '';
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
   return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : null;
 };
 
@@ -63,3 +87,6 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
 export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
+
+export const getFormattedSellMax = (asset: Option): string =>
+  `${formatAmount(asset.assetBalance, 2)} ${asset.symbol} (${asset.formattedBalanceInFiat.replace(' ', '')})`;

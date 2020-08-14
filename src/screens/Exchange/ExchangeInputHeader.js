@@ -19,12 +19,20 @@
 */
 
 import * as React from 'react';
+import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
-
-import type { Asset } from 'models/Asset';
+import type { Option } from 'models/Selector';
+import { resolveAssetSource } from 'utils/textInput';
+import { images } from 'utils/images';
+import type { Theme } from 'models/Theme';
+import Icon from 'components/Icon';
+import { themedColors } from 'utils/themes';
+import { BaseText, MediumText } from 'components/Typography';
+import { fontStyles } from 'utils/variables';
 
 type Props = {
-  asset: Asset,
+  theme: Theme,
+  asset: Option,
   labelText: string,
   onLabelPress: () => void,
   onAssetPress: () => void,
@@ -32,27 +40,75 @@ type Props = {
 
 const Wrapper = styled.View`
   width: 100%;
-  flex-direction: 'row';
-  align-items: 'center';
-  justify-content: 'space-between';
-  margin-bottom: 16px;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 15px;
   height: 24px;
 `;
 
-const LeftWrapper = styled.View`
-  flex-direction: 'row';
-  align-items: 'center';
+const SideWrapper = styled.TouchableOpacity`
+  flex-direction: row;
+  align-items: center;
 `;
 
-export default class ExchangeInputHeader extends React.PureComponent<Props> {
+const Image = styled(CachedImage)`
+  height: 24px;
+  width: 24px;
+  resize-mode: contain;
+  ${({ source, theme }) => !source && `tint-color: ${theme.colors.text};`}
+`;
+
+const SelectorChevron = styled(Icon)`
+  font-size: 16px;
+  color: ${themedColors.secondaryText};
+`;
+
+const ChevronWrapper = styled.View`
+  width: 25px;
+  align-items: center;
+  margin-right: 4px;
+`;
+
+const AssetName = styled(MediumText)`
+  ${fontStyles.medium};
+  ${({ theme }) => `color: ${theme.colors.text};`}
+`;
+
+const LabelText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${themedColors.primary}
+`;
+
+class ExchangeInputHeader extends React.PureComponent<Props> {
   render() {
+    const {
+      asset, labelText, onLabelPress, onAssetPress, theme,
+    } = this.props;
+    const { id, name, imageUrl } = asset;
+    const optionImageSource = resolveAssetSource(imageUrl);
+    const { genericToken } = images(theme);
     return (
       <Wrapper>
-        <LeftWrapper>
-          <Wrapper />
-        </LeftWrapper>
-
+        <SideWrapper onPress={onAssetPress} >
+          <Image
+            key={id}
+            source={optionImageSource}
+            fallbackSource={genericToken}
+            resizeMode="contain"
+            style={{ height: 24, width: 24 }}
+          />
+          <ChevronWrapper>
+            <SelectorChevron name="selector" />
+          </ChevronWrapper>
+          <AssetName>{name}</AssetName>
+        </SideWrapper>
+        <SideWrapper onPress={onLabelPress} >
+          <LabelText>{labelText}</LabelText>
+        </SideWrapper>
       </Wrapper>
     );
   }
 }
+
+export default withTheme(ExchangeInputHeader);
