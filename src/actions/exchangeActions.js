@@ -323,7 +323,7 @@ export const getExchangeSupportedAssetsAction = () => {
     } = getState();
 
     const oneInchAssetsSymbols = fetch1inchSupportedTokens();
-    const uniswapAssetsSymbols = fetchUniswapSupportedTokens();
+    const uniswapAssetsSymbols = fetchUniswapSupportedTokens(supportedAssets.map(({ symbol }) => symbol));
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
