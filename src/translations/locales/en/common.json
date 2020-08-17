@@ -325,6 +325,13 @@
 
   "settingsContent": {
     "settingsItem": {
+      "analytics": {
+        "title": "Usage analytics",
+        "paragraph": {
+          "agreeSharingInfo": "I'm happy to share anonymous application usage statistics",
+          "legal": "By sharing application usage statistics you are helping Pillar build a better wallet. \nUsage statistics do not include any personal information from you or your contacts."
+        }
+      },
       "appSettings": {
         "title": "App settings"
       },
@@ -349,6 +356,13 @@
       "community": {
         "title": "Community"
       },
+      "darkMode": {
+        "title": "Dark mode"
+      },
+      "fiatCurrency": {
+        "title": "Local fiat currency",
+        "screenTitle": "Choose your base currency"
+      },
       "faq": {
         "title": "Knowledge base"
       },
@@ -358,6 +372,9 @@
       "linkedDevices": {
         "title": "Linked devices",
         "subtitle": "Manage Smart Wallet account devices"
+      },
+      "payFeeWithPillar": {
+        "title": "Pay fees with PLR"
       },
       "privateKey": {
         "title": "View private key"
@@ -369,6 +386,9 @@
           "globalSettings": "Global",
           "smartWalletSettings": "Smart Wallet"
         }
+      },
+      "systemInfo": {
+        "title": "System info"
       },
       "spendingLimits": {
         "title": "Spending limits",
@@ -452,6 +472,35 @@
     "banner": {
       "inviteBanner": {
         "title": "Pillar is social"
+      }
+    }
+  },
+
+  "relayerMigrationContent": {
+    "modal": {
+      "switch": {
+        "title": "Pay fees with PLR",
+        "paragraph": "Bye-bye ETH! After switch you will be able to pay transaction fees with PLR token. Never insufficient gas again.",
+        "button": {
+          "switch": "Switch"
+        },
+        "label": {
+          "freeSwitching": "Switching is free",
+          "switchPending": "Switch transaction is pending",
+          "waitingForConfirmation": "Waiting for confirmation..."
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "Enter verification code (email)",
+          "phone": "Enter verification code (SMS)"
+        },
+        "error": "That didn't work, please try again"
+      },
+      "verificationSuccess": {
+        "title": {
+          "emailVerified": ""
+        }
       }
     }
   },
