@@ -57,7 +57,7 @@ import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { SelectorInputTemplate, inputFormatter, inputParser } from 'utils/formHelpers';
 import { generateHorizontalOptions, ExchangeOptions } from 'utils/exchange';
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, isValidNumber } from 'utils/common';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -221,23 +221,26 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
+  setErrorMessage = (errorMessage: string) => this.setState({ errorMessage });
+
   handleFromInputChange = (input: string) => {
-    const { fromAsset, displayFiatFromAmount } = this.state;
+    const {
+      fromAsset, displayFiatFromAmount,
+    } = this.state;
     const { baseFiatCurrency, rates } = this.props;
     const val = input || '0';
-
-    if (+val || ['.', ','].includes(val)) { // TODO wtf
-      this.setState(displayFiatFromAmount
-        ? {
-          fromAmountInFiat: formatAmount(val, 2),
-          fromAmount: formatAmount(getAssetBalanceFromFiat(baseFiatCurrency, val, rates, fromAsset.symbol)),
-        }
-        : {
-          fromAmount: formatAmount(val, 2),
-          fromAmountInFiat: formatAmount(getBalanceInFiat(baseFiatCurrency, val, rates, fromAsset.symbol), 2),
-        },
-      );
-    }
+    const isValid = isValidNumber(val) || ['.', ','].includes(val[val.length - 1]);
+    this.setState(displayFiatFromAmount
+      ? {
+        fromAmountInFiat: val,
+        fromAmount: getAssetBalanceFromFiat(baseFiatCurrency, val, rates, fromAsset.symbol),
+      }
+      : {
+        fromAmount: val,
+        fromAmountInFiat: getBalanceInFiat(baseFiatCurrency, val, rates, fromAsset.symbol),
+      },
+    );
+    this.setErrorMessage(isValid ? '' : 'Incorrect number entered');
   }
 
   getFromInput = () => {
@@ -255,7 +258,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         errorMessage={errorMessage}
         asset={fromAsset}
         onAssetPress={() => this.setState({ showSellOptions: true })}
-        labelText={assetBalance && getFormattedSellMax(fromAsset)} // todo
+        labelText={assetBalance && getFormattedSellMax(fromAsset)}
         onLabelPress={assetBalance && this.handleSellMax}
         leftSideText={displayFiatFromAmount
           ? `${formatAmount(fromAmount, 2)} ${fromAsset.symbol}`
