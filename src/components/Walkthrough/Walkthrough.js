@@ -5,6 +5,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
 import { NavigationActions } from 'react-navigation';
+import t from 'translations/translate';
 import { getNavigationPathAndParamsState, navigate } from 'services/navigation';
 import Button from 'components/Button';
 import { Paragraph, BoldText } from 'components/Typography';
@@ -197,9 +198,9 @@ class Walkthrough extends React.Component<Props, State> {
       this.endWalkthrough();
       clearTimeout(this.waitingForNextStepTimeout);
       Toast.show({
-        title: 'Walkthrough error',
-        message: 'Could not proceed with next walkthrough step',
-        type: 'warning',
+        message: t('toast.walkthroughFailed'),
+        emoji: 'hushed',
+        supportLink: true,
         autoClose: false,
       });
     }, 2000);

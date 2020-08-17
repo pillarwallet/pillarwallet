@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { Platform } from 'react-native';
+import { Platform, Linking } from 'react-native';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
@@ -94,9 +94,11 @@ const getBiometryImage = (biometryType: string) => {
 
 const showFaceIDFailed = () => {
   Toast.show({
-    message: 'Failed to get FaceID permission!',
-    type: 'warning',
-    title: 'Warning',
+    message: t('toast.failedToGetFaceIDPermission'),
+    emoji: 'pensive',
+    supportLink: true,
+    link: t('label.faceIDSettings'),
+    onLinkPress: () => Linking.openURL('app-settings:'),
     autoClose: true,
   });
 };

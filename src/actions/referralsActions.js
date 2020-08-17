@@ -109,10 +109,9 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
     dispatch({
       type: ADD_NOTIFICATION,
       payload: {
-        message: errorMessage || t('toast.referralInviteCantBeSent.message'),
-        title: isAllInvitesNotSent
-          ? t('toast.referralInviteCantBeSent.title.allInvites')
-          : t('toast.referralInviteCantBeSent.title.notAllInvites'),
+        message: errorMessage || isAllInvitesNotSent
+          ? t('toast.referralInviteCantBeSent.allInvites')
+          : t('toast.referralInviteCantBeSent.notAllInvites'),
         messageType: 'warning',
         autoClose: false,
       },
@@ -144,9 +143,8 @@ export const completeReferralsEventAction = () => {
     });
 
     Toast.show({
-      message: t('toast.referralRewardIncoming.message'),
-      type: 'info',
-      title: t('toast.referralRewardIncoming.title'),
+      message: t('toast.rewardsOnTheirWay'),
+      emoji: 'tada',
       autoClose: false,
     });
   };
@@ -259,8 +257,8 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: t('toast.cantVerifyCode.message'),
-          title: t('toast.cantVerifyCode.title'),
+          message: t('toast.cantVerifyCode'),
+          emoji: 'hushed',
           messageType: 'warning',
         },
       });

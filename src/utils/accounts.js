@@ -23,11 +23,12 @@ import omit from 'lodash.omit';
 import t from 'translations/translate';
 
 import type { Account, Accounts, AccountTypes } from 'models/Account';
-import type { Assets, Balances, BalancesStore } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import type { TranslatedString } from 'models/Translations';
 
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { addressesEqual, getBalance } from './assets';
+import { addressesEqual } from './assets';
+
 
 export const getActiveAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ isActive }) => isActive);
@@ -80,15 +81,6 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
-export const hasLegacyAccountBalance = (accounts: Accounts, balances: BalancesStore): boolean => {
-  const account = findKeyBasedAccount(accounts);
-  if (!account || isEmpty(balances[account.id])) {
-    return false;
-  }
-  const accountBalances: Balances = balances[account.id];
-  return Object.keys(accountBalances).some(token => getBalance(accountBalances, token) > 0);
-};
-
 export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
 };
@@ -135,10 +127,6 @@ export const findAccountById = (accountId: string, accounts: Accounts): ?Account
   return accounts.find(({ id }) => id === accountId);
 };
 
-export const getAccountWalletId = (account: Account): string => {
-  return get(account, 'walletId', '');
-};
-
 export const normalizeForEns = (value: string): string => {
   return value
     .toLowerCase()
@@ -155,12 +143,6 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
 export const getEnsName = (accounts: Accounts): string => {
   const SWAccount = findFirstSmartAccount(accounts);
   return get(SWAccount, 'extra.ensName', '');
-};
-
-export const getKeyWalletAddress = (accounts: Accounts): ?string => {
-  const kwAccount = findKeyBasedAccount(accounts);
-  if (!kwAccount) return null;
-  return getAccountAddress(kwAccount);
 };
 
 export const getSmartWalletAddress = (accounts: Accounts): ?string => {
@@ -180,3 +162,5 @@ export const getInitials = (fullName: string = '') => {
     .join('')
     .toUpperCase();
 };
+
+export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;

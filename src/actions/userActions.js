@@ -59,7 +59,7 @@ const verificationSucceededAction = (message: string) => ({
   type: ADD_NOTIFICATION,
   payload: {
     message,
-    title: t('toast.verificationSuccess.title'),
+    emoji: 'ok_hand',
     messageType: 'success',
     autoClose: false,
   },
@@ -82,9 +82,9 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: message || t('toast.cantUpdateUser.message'),
-          title: t('toast.cantUpdateUser.title'),
+          message: message || t('toast.cantUpdateUser'),
           messageType: 'warning',
+          emoji: 'hushed',
         },
       });
 
@@ -127,7 +127,8 @@ export const createOneTimePasswordAction = (
         type: ADD_NOTIFICATION,
         payload: {
           message: t('toast.cantVerifyInfo.message'),
-          title: t([`toast.cantVerifyInfo.title.${fieldName}`, 'toast.cantVerifyInfo.title.default']),
+          title: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.title.default']),
+          emoji: 'hushed',
           messageType: 'warning',
         },
       });
@@ -167,12 +168,12 @@ export const verifyEmailAction = (walletId: string, code: string) => {
       },
     } = getState();
 
-    let message = t('toast.verificationSuccess.message.email');
+    let message = t('toast.verificationSuccess.email');
 
     if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
       && referralToken && !isRewardClaimed && isCaseInsensitiveMatch(email, referredEmail)) {
       dispatch(completeReferralsEventAction());
-      message = t('toast.verificationSuccess.message.referralReward');
+      message = t('toast.verificationSuccess.referralReward');
     }
 
     dispatch(verificationSucceededAction(message));
@@ -217,12 +218,12 @@ export const verifyPhoneAction = (
       },
     } = getState();
 
-    let message = t('toast.verificationSuccess.message.phone');
+    let message = t('toast.verificationSuccess.phone');
 
     if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
       && referralToken && !isRewardClaimed && referredPhone === phone) {
       dispatch(completeReferralsEventAction());
-      message = t('toast.verificationSuccess.message.referralReward');
+      message = t('toast.verificationSuccess.referralReward');
     }
 
     dispatch(verificationSucceededAction(message));

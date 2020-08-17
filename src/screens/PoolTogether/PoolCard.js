@@ -32,8 +32,8 @@ import { Spacing } from 'components/Layout';
 import type { Theme } from 'models/Theme';
 
 import { getThemeColors, themedColors } from 'utils/themes';
-import { countDownDHMS, getWinChance } from 'utils/poolTogether';
-import { formatAmount } from 'utils/common';
+import { getWinChance } from 'utils/poolTogether';
+import { countDownDHMS, formatAmount } from 'utils/common';
 
 const CardRow = styled.View`
   flex-direction: row;

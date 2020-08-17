@@ -32,3 +32,7 @@
   **[] $VALUES;
   public *;
 }
+
+# react-native-date-picker
+-keep public class net.time4j.android.ApplicationStarter
+-keep public class net.time4j.PrettyTime

@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { Platform, NativeModules } from 'react-native';
 import { NavigationActions } from 'react-navigation';
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
@@ -42,9 +41,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_OFFLINE_QUEUE, START_OFFLINE_QUEUE } from 'constants/offlineQueueConstants';
 import {
   SET_EXCHANGE_ALLOWANCES,
-  SET_CONNECTED_EXCHANGE_PROVIDERS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
-  SET_EXCHANGE_PROVIDERS_METADATA,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
@@ -67,21 +64,13 @@ import { SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevicesConstants';
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
+import { SET_STREAMS } from 'constants/sablierConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 
 
 const storage = Storage.getInstance('db');
-
-const hideSplash = () => {
-  if (Platform.OS === 'ios') {
-    const { SplashManager } = NativeModules;
-    SplashManager.hide();
-  } else {
-    SplashScreen.hide();
-  }
-};
 
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
@@ -163,12 +152,6 @@ export const initAppAndRedirectAction = () => {
       const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
-      const { connectedProviders = [] } = get(storageData, 'exchangeProviders', {});
-      dispatch({ type: SET_CONNECTED_EXCHANGE_PROVIDERS, payload: connectedProviders });
-
-      const { exchangeProvidersInfo = [] } = get(storageData, 'exchangeProvidersInfo', {});
-      dispatch({ type: SET_EXCHANGE_PROVIDERS_METADATA, payload: exchangeProvidersInfo });
-
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
@@ -186,6 +169,9 @@ export const initAppAndRedirectAction = () => {
 
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
+
+      const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {});
+      dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
@@ -234,7 +220,7 @@ export const initAppAndRedirectAction = () => {
 
     navigate(NavigationActions.navigate(navAction));
 
-    hideSplash();
+    SplashScreen.hide();
   };
 };
 

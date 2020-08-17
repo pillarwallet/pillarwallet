@@ -19,6 +19,7 @@
 */
 import { Wallet } from 'ethers';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // components
 import Toast from 'components/Toast';
@@ -32,6 +33,7 @@ import {
   SET_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER,
   SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
   SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS,
+  SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE,
 } from 'constants/keyBasedAssetTransferConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -44,7 +46,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
-import { addressesEqual, getAssetsAsList, transformBalancesToObject } from 'utils/assets';
+import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
 import { getGasPriceWei, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 
@@ -301,9 +303,8 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         // transfer done, reset
         keyBasedAssetsToTransferUpdated = [];
         Toast.show({
-          message: 'Your key based wallet assets have been transferred successfully!',
-          type: 'success',
-          title: 'Success',
+          message: t('toast.keyWalletAssetsTransfered'),
+          emoji: 'ok_hand',
         });
       }
     }
@@ -370,5 +371,21 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
 
     dispatch(setAndStoreKeyBasedAssetsToTransferAction(keyBasedAssetsToTransferUpdated));
     dispatch(checkKeyBasedAssetTransferTransactionsAction());
+  };
+};
+
+export const checkIfKeyBasedWalletHasPositiveBalanceAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    await dispatch(fetchAvailableCollectiblesToTransferAction());
+    await dispatch(fetchAvailableBalancesToTransferAction());
+
+    const { keyBasedAssetTransfer: { availableBalances, availableCollectibles } } = getState();
+    const assetHasPositiveBalance = (symbol) => !!getBalance(availableBalances, symbol);
+
+    const hasPositiveBalance = !isEmpty(availableCollectibles) || (
+      !isEmpty(availableBalances) && Object.keys(availableBalances).some(assetHasPositiveBalance)
+    );
+
+    dispatch({ type: SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE, payload: hasPositiveBalance });
   };
 };
