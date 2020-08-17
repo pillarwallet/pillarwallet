@@ -2,10 +2,15 @@
   "aaveDeposit": "Aave deposit",
   "ensName": "ENS name",
   "ethereum": "Ethereum",
+  "facebook": "Facebook",
   "keyWallet": "Key wallet",
+  "medium": "Medium",
   "pillarNetwork": "Pillar Network",
   "poolTogether": "Pool Together",
   "smartWallet": "Smart Wallet",
+  "telegram": "Telegram",
+  "twitter": "Twitter",
+  "youtube": "Youtube",
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
@@ -113,6 +118,7 @@
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share Address",
     "smartWalletFAQ": "Smart Wallet FAQ",
+    "subscribe": "Subscribe",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -227,6 +233,9 @@
         "added": "Verify your phone number and you will be able to invite your friends in Pillar community.",
         "confirmed": "After changing phone number you will have re-verify it."
       }
+    },
+    "subscription": {
+      "placeholder": "Your e-mail"
     }
   },
 
@@ -234,6 +243,9 @@
     "transactionFailed": {
       "timeOut": "Transaction timed out",
       "default": "Transaction failed"
+    },
+    "invalid": {
+      "email": "Please enter a valid email"
     }
   },
 
@@ -354,7 +366,11 @@
         "title": "Change PIN"
       },
       "community": {
-        "title": "Community"
+        "title": "Community",
+        "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
+        "label":{
+          "follow": "Follow us"
+        }
       },
       "darkMode": {
         "title": "Dark mode"
