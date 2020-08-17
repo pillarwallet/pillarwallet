@@ -17,11 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import branch, { BranchEvent } from 'react-native-branch';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { format as formatDate } from 'date-fns';
 import { NavigationActions } from 'react-navigation';
+import t from 'translations/translate';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -74,11 +76,6 @@ export type ClaimTokenAction = {
   code: string,
 };
 
-export type ReferralInvitation = {|
-  email?: string,
-  phone?: string,
-|};
-
 let branchIoSubscription;
 
 const referralsTokenReceivedAction = (
@@ -112,8 +109,10 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
     dispatch({
       type: ADD_NOTIFICATION,
       payload: {
-        message: errorMessage || 'Please try again later',
-        title: `${isAllInvitesNotSent ? 'Invites' : 'Some invites'} have not been sent`,
+        message: errorMessage || t('toast.referralInviteCantBeSent.message'),
+        title: isAllInvitesNotSent
+          ? t('toast.referralInviteCantBeSent.title.allInvites')
+          : t('toast.referralInviteCantBeSent.title.notAllInvites'),
         messageType: 'warning',
         autoClose: false,
       },
@@ -145,9 +144,9 @@ export const completeReferralsEventAction = () => {
     });
 
     Toast.show({
-      message: 'You are going to receive your rewards soon!',
+      message: t('toast.referralRewardIncoming.message'),
       type: 'info',
-      title: 'Rewards on their way',
+      title: t('toast.referralRewardIncoming.title'),
       autoClose: false,
     });
   };
@@ -260,8 +259,8 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: 'Please try again later',
-          title: 'We can\'t verify your code at this time',
+          message: t('toast.cantVerifyCode.message'),
+          title: t('toast.cantVerifyCode.title'),
           messageType: 'warning',
         },
       });

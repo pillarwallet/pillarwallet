@@ -17,10 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { ScrollView } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import ModalBox from 'components/ModalBox/ModalBox';
@@ -50,7 +53,12 @@ const CautionModal = (props: Props) => {
   const {
     isVisible, onButtonPress, onModalHide, focusedField,
   } = props;
-  const field = focusedField === 'phone' ? 'phone number' : 'email';
+  const body = focusedField === 'phone'
+    ? t('profileContent.modal.updatingData.paragraph.phoneChanged')
+    : t('profileContent.modal.updatingData.paragraph.emailChanged');
+  const buttonText = focusedField === 'phone'
+    ? t('profileContent.modal.updatingData.button.changePhone')
+    : t('profileContent.modal.updatingData.button.changeEmail');
   return (
     <ModalBox
       isVisible={isVisible}
@@ -59,16 +67,15 @@ const CautionModal = (props: Props) => {
     >
       <ScrollView>
         <ModalWrapper>
-          <MediumText center large>Proceed with caution</MediumText>
+          <MediumText center large>{t('profileContent.modal.updatingData.title')}</MediumText>
           <Spacing h={38} />
           <CautionImage source={cautionImage} />
           <Spacing h={12} />
           <BaseText center regular>
-            After changing {field} you will have to re-verify it in order to
-            retain the ability to invite friends and get rewarded.
+            {body}
           </BaseText>
           <Spacing h={32} />
-          <Button secondary small title={`Change my ${field}`} onPress={onButtonPress} />
+          <Button secondary small title={buttonText} onPress={onButtonPress} />
         </ModalWrapper>
       </ScrollView>
     </ModalBox>
