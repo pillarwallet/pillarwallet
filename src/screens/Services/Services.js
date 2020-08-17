@@ -27,7 +27,7 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
-import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
+import { loadAltalixAvailability } from 'actions/fiatToCryptoActions';
 
 // components
 import { ListCard } from 'components/ListItem/ListCard';
@@ -386,7 +386,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loadAltalixInfo: () => dispatch(loadAltalixInfoAction()),
+  loadAltalixInfo: () => dispatch(loadAltalixAvailability()),
 
   // When using redux-thunk, dispatch does return the result of the inner function.
   // (Although it's meant to be used inside thunks, see:

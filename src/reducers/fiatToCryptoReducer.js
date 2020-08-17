@@ -19,7 +19,7 @@
 */
 
 import {
-  SET_ALTALIX_INFO,
+  SET_ALTALIX_AVAILABILITY,
   SET_SENDWYRE_RATES,
   LOAD_SENDWYRE_COUNTRY_SUPPORT,
   SET_SENDWYRE_COUNTRY_SUPPORT,
@@ -35,9 +35,9 @@ export type FiatToCryptoReducerState = {|
   sendwyreCountrySupport: $Values<typeof SENDWYRE_SUPPORT>,
 |};
 
-type AltalixInfoSetAction = {
-  type: typeof SET_ALTALIX_INFO,
-  payload: { isAvailable: boolean },
+type SetAltalixAvailabilityAction = {
+  type: typeof SET_ALTALIX_AVAILABILITY,
+  payload: boolean,
 };
 
 type SetSendwyreRatesAction = {
@@ -59,7 +59,7 @@ type ResetSendwyreCountrySupportAction = {
 };
 
 export type FiatToCryptoReducerAction =
-  | AltalixInfoSetAction
+  | SetAltalixAvailabilityAction
   | SetSendwyreRatesAction
   | LoadSendwyreCountrySupportAction
   | SetSendwyreCountrySupportAction
@@ -76,10 +76,10 @@ export default function fiatToCryptoReducer(
   action: FiatToCryptoReducerAction,
 ): FiatToCryptoReducerState {
   switch (action.type) {
-    case SET_ALTALIX_INFO:
+    case SET_ALTALIX_AVAILABILITY:
       return {
         ...state,
-        isAltalixAvailable: action.payload.isAvailable,
+        isAltalixAvailable: action.payload,
       };
     case SET_SENDWYRE_RATES:
       return {

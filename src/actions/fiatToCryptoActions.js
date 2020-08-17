@@ -19,7 +19,7 @@
 */
 
 import {
-  SET_ALTALIX_INFO,
+  SET_ALTALIX_AVAILABILITY,
   SET_SENDWYRE_RATES,
   LOAD_SENDWYRE_COUNTRY_SUPPORT,
   SET_SENDWYRE_COUNTRY_SUPPORT,
@@ -30,7 +30,7 @@ import { reportOrWarn } from 'utils/common';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
-export const loadAltalixInfoAction = () => {
+export const loadAltalixAvailability = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       fiatToCrypto: { isAltalixAvailable },
@@ -44,8 +44,8 @@ export const loadAltalixInfoAction = () => {
           return false;
         });
       dispatch({
-        type: SET_ALTALIX_INFO,
-        payload: { isAvailable },
+        type: SET_ALTALIX_AVAILABILITY,
+        payload: isAvailable,
       });
     }
   };

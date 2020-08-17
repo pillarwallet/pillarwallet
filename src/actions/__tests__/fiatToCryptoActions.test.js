@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 
 import {
-  SET_ALTALIX_INFO,
+  SET_ALTALIX_AVAILABILITY,
   SET_SENDWYRE_RATES,
   LOAD_SENDWYRE_COUNTRY_SUPPORT,
   SET_SENDWYRE_COUNTRY_SUPPORT,
@@ -31,7 +31,7 @@ import {
   SENDWYRE_SUPPORT,
 } from 'constants/fiatToCryptoConstants';
 import {
-  loadAltalixInfoAction,
+  loadAltalixAvailability,
   loadSendwyreRatesAction,
   loadSendwyreCountrySupportAction,
 } from 'actions/fiatToCryptoActions';
@@ -42,7 +42,7 @@ function mockStore({ state, pillarSdk }) {
 
 describe('Fiat to crypto providers actions', () => {
   describe('Altalix', () => {
-    it('loadAltalixInfoAction should set availability', async () => {
+    it('loadAltalixAvailability should set availability', async () => {
       const store = mockStore({
         state: {
           user: { data: { walletId: 'wallet-id' } },
@@ -53,9 +53,9 @@ describe('Fiat to crypto providers actions', () => {
         },
       });
 
-      const expectedActions = [{ type: SET_ALTALIX_INFO, payload: { isAvailable: true } }];
+      const expectedActions = [{ type: SET_ALTALIX_AVAILABILITY, payload: true }];
 
-      await store.dispatch(loadAltalixInfoAction());
+      await store.dispatch(loadAltalixAvailability());
       const actualActions = store.getActions();
       expect(actualActions).toEqual(expectedActions);
     });

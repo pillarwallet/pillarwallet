@@ -19,7 +19,7 @@
 */
 
 import {
-  SET_ALTALIX_INFO,
+  SET_ALTALIX_AVAILABILITY,
   SET_SENDWYRE_RATES,
   SENDWYRE_SUPPORT,
   LOAD_SENDWYRE_COUNTRY_SUPPORT,
@@ -29,10 +29,10 @@ import {
 import reducer from 'reducers/fiatToCryptoReducer';
 
 describe('Fiat to crypto providers reducer', () => {
-  it('should handle SET_ALTALIX_INFO', () => {
+  it('should handle SET_ALTALIX_AVAILABILITY', () => {
     const action = {
-      type: SET_ALTALIX_INFO,
-      payload: { isAvailable: true },
+      type: SET_ALTALIX_AVAILABILITY,
+      payload: true,
     };
 
     const expectedState = {
