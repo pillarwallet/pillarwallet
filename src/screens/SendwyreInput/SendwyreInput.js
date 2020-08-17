@@ -23,64 +23,59 @@ import { ScrollView, Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import { SDK_PROVIDER } from 'react-native-dotenv';
-import t from 'tcomb-form-native';
-import { createSelector, createStructuredSelector } from 'reselect';
+import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import uniq from 'lodash.uniq';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
+import TextInput from 'components/TextInput';
 
 // actions
 import { loadSendwyreRatesAction, loadSendwyreCountrySupportAction } from 'actions/fiatToCryptoActions';
 import { loadSupportedAssetsAction } from 'actions/assetsActions';
 
 // constants
-import { ETH, USD } from 'constants/assetsConstants';
 import { SENDWYRE_SUPPORT } from 'constants/fiatToCryptoConstants';
 
-// utils, services
+// utils
 import { spacing } from 'utils/variables';
-import { SelectorInputTemplate, inputFormatter, inputParser } from 'utils/formHelpers';
-import { getSendwyreCurrencyPairs, wyreInputFormStructure } from 'utils/fiatToCrypto';
+import { isValidNumber } from 'utils/common';
 
 // selectors
-import { supportedAssetsSelector } from 'selectors/selectors';
+import {
+  currencyPairsSelector,
+  sourceOptionsSelector,
+  destOptionsSelector,
+  defaultSourceSelector,
+  defaultDestSelector,
+} from 'selectors/fiatToCrypto';
 
 // models, types
-import type { Assets, Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { FormSelector } from 'models/TextInput';
 import type { Option } from 'models/Selector';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  assets: Assets,
   loadAssets: () => void,
   currencyPairs: [string, string][],
   loadCurrencyPairs: () => void,
+  sourceOptions: Option[],
+  destOptions: Option[],
+  defaultSource: null | Option,
+  defaultDest: null | Option,
   countrySupport: $Values<typeof SENDWYRE_SUPPORT>,
   loadCountrySupport: () => void,
   theme: Theme,
 };
 
-export type FormValue = {
-  source: FormSelector,
-  dest: FormSelector,
-};
-
 type State = {
-  value: FormValue,
-  formOptions: Object,
+  sourceCurrency: null | Option,
+  sourceAmount: string,
+  destCurrency: null | Option,
   isHandlingSubmit: boolean,
-};
-
-type Ref<T> = {
-  current: null | T,
 };
 
 const FormWrapper = styled.View`
@@ -92,46 +87,14 @@ const ButtonWrapper = styled.View`
   padding: ${spacing.layoutSides}px;
 `;
 
-const { Form } = t.form;
-
 class SendwyreInputScreen extends React.Component<Props, State> {
-  formRef: Ref<t.form>;
-
   constructor(props: Props) {
     super(props);
 
-    this.formRef = React.createRef();
-
-    const defaultSource = USD;
-    const defaultDest = ETH;
-
     this.state = {
-      value: this.constructFormValue(defaultSource, defaultDest),
-      formOptions: {
-        fields: {
-          source: {
-            keyboardType: 'decimal-pad',
-            template: SelectorInputTemplate,
-            config: {
-              label: 'Sell',
-              options: [],
-              hasInput: true,
-              placeholderSelector: 'select',
-              placeholderInput: '0',
-            },
-            transformer: { parse: inputParser, format: inputFormatter },
-          },
-
-          dest: {
-            template: SelectorInputTemplate,
-            config: {
-              label: 'Buy',
-              options: [],
-              placeholderSelector: 'Select asset',
-            },
-          },
-        },
-      },
+      sourceCurrency: props.defaultSource,
+      sourceAmount: '',
+      destCurrency: props.defaultDest,
       isHandlingSubmit: false,
     };
   }
@@ -140,76 +103,21 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     this.props.loadAssets();
     this.props.loadCurrencyPairs();
     this.props.loadCountrySupport();
-    this.provideOptions();
   }
 
   componentDidUpdate(prevProps: Props, prevState: State) {
-    const { assets, currencyPairs } = this.props;
-
-    const [prevSourceAssetSymbol, prevDestAssetSymbol] = this.getCurrencyPair(prevState);
-    const [sourceAssetSymbol, destAssetSymbol] = this.getCurrencyPair(this.state);
-
-    if (
-      assets !== prevProps.assets ||
-      currencyPairs !== prevProps.currencyPairs ||
-      sourceAssetSymbol !== prevSourceAssetSymbol ||
-      destAssetSymbol !== prevDestAssetSymbol
-    ) {
-      this.provideOptions();
-    }
+    this.tryFillDefaultCurrencies(prevState);
   }
 
-  provideOptions = () => {
-    const { currencyPairs } = this.props;
-
-    const sourceSymbols = uniq(currencyPairs.map(([source]) => source));
-    const destSymbols = uniq(currencyPairs.map(([, dest]) => dest));
-
-    const assetsOptionsSource = this.generateAssetsOptions(sourceSymbols);
-    const assetsOptionsDest = this.generateAssetsOptions(destSymbols);
-
+  onSourceChange = (value: { selector: Option, input: string }) => {
     this.setState({
-      formOptions: t.update(this.state.formOptions, {
-        fields: {
-          source: { config: { options: { $set: assetsOptionsSource } } },
-          dest: { config: { options: { $set: assetsOptionsDest } } },
-        },
-      }),
+      sourceCurrency: value.selector,
+      sourceAmount: value.input,
     });
-  };
-
-  constructFormValue = (source: string, dest: string, sourceAmount?: number): FormValue => ({
-    source: {
-      selector: this.generateAssetOption(source),
-      input: (sourceAmount ?? '').toString(),
-    },
-    dest: {
-      selector: this.generateAssetOption(dest),
-      input: '',
-    },
-  });
-
-  generateAssetsOptions = (symbols: string[]): Option[] => symbols.map(this.generateAssetOption);
-
-  generateAssetOption = (symbol: string): Option => {
-    const { assets } = this.props;
-    const { name = symbol, iconUrl } = assets[symbol] ?? {
-      iconUrl: `asset/images/fiat/ic_52_${symbol}.png`,
-    };
-
-    const iconPrefix = iconUrl ? `${SDK_PROVIDER}/${iconUrl}` : null;
-
-    return {
-      symbol,
-      value: symbol,
-      name,
-      imageUrl: iconPrefix ? `${iconPrefix}?size=3` : undefined,
-      iconUrl,
-    };
   }
 
-  onFormChange = (value: FormValue) => {
-    this.setState({ value });
+  onDestChange = (value: { selector: Option }) => {
+    this.setState({ destCurrency: value.selector });
   }
 
   onSubmit = async () => {
@@ -223,16 +131,26 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     await onSubmitCallback({
       sourceCurrency,
       destCurrency,
-      amount: get(this.state, 'value.source.input'),
+      amount: this.state.sourceAmount,
     });
 
     this.setState({ isHandlingSubmit: false });
   }
 
+  tryFillDefaultCurrencies = (prevState: State) => {
+    if (prevState.sourceCurrency === null && this.props.defaultSource !== null) {
+      this.setState({ sourceCurrency: this.props.defaultSource });
+    }
+
+    if (prevState.destCurrency === null && this.props.defaultDest !== null) {
+      this.setState({ destCurrency: this.props.defaultDest });
+    }
+  }
+
   getCurrencyPair = (state: State): [string, string] => {
     return [
-      get(state, 'value.source.selector.symbol'),
-      get(state, 'value.dest.selector.symbol'),
+      get(state, 'sourceCurrency.symbol'),
+      get(state, 'destCurrency.symbol'),
     ];
   }
 
@@ -242,16 +160,75 @@ class SendwyreInputScreen extends React.Component<Props, State> {
       currencyPairs.some(([source, dest]) => source === sourceSymbol && dest === destSymbol);
   }
 
+  validateForm() {
+    const { sourceCurrency, sourceAmount, destCurrency } = this.state;
+    return sourceCurrency !== null &&
+      destCurrency !== null &&
+      isValidNumber(sourceAmount) &&
+      parseFloat(sourceAmount) > 0 &&
+      this.isCurrencyPairSupported(this.getCurrencyPair(this.state));
+  }
+
+  getSelectorValues = () => {
+    const { sourceCurrency, sourceAmount, destCurrency } = this.state;
+
+    return {
+      source: {
+        selector: sourceCurrency ?? {},
+        input: sourceAmount,
+      },
+      dest: {
+        selector: destCurrency ?? {},
+      },
+    };
+  }
+
+  renderForm() {
+    const { sourceOptions, destOptions } = this.props;
+    const { source, dest } = this.getSelectorValues();
+
+    return (
+      <FormWrapper>
+        <TextInput
+          inputProps={{
+            onChange: this.onSourceChange,
+            selectorValue: source,
+            label: 'Sell',
+            maxLength: 42,
+            placeholder: '0',
+            keyboardType: 'numeric',
+          }}
+          numeric
+          selectorOptions={{
+            options: sourceOptions,
+            fullWidth: false,
+            selectorModalTitle: 'Sell',
+          }}
+        />
+
+        <TextInput
+          inputProps={{
+            onChange: this.onDestChange,
+            selectorValue: dest,
+            label: 'Buy',
+          }}
+          selectorOptions={{
+            options: destOptions,
+            fullWidth: true,
+            selectorModalTitle: 'Buy',
+          }}
+        />
+      </FormWrapper>
+    );
+  }
+
   render() {
-    const { value, formOptions, isHandlingSubmit } = this.state;
+    const { isHandlingSubmit } = this.state;
     const { countrySupport } = this.props;
 
-    const isValid = this.formRef.current &&
-      this.formRef.current.validate().isValid() &&
-      this.isCurrencyPairSupported(this.getCurrencyPair(this.state));
 
     const isLoading = countrySupport === SENDWYRE_SUPPORT.LOADING || isHandlingSubmit;
-    const isButtonDisabled = !isValid || countrySupport !== SENDWYRE_SUPPORT.SUPPORTED;
+    const isButtonDisabled = !this.validateForm() || countrySupport !== SENDWYRE_SUPPORT.SUPPORTED;
     const buttonTitle = countrySupport === SENDWYRE_SUPPORT.UNSUPPORTED
       ? 'Not available in Your country'
       : 'Next';
@@ -266,15 +243,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
           keyboardShouldPersistTaps="handled"
           disableOnAndroid
         >
-          <FormWrapper>
-            <Form
-              ref={this.formRef}
-              type={wyreInputFormStructure}
-              options={formOptions}
-              value={value}
-              onChange={this.onFormChange}
-            />
-          </FormWrapper>
+          {this.renderForm()}
           <ButtonWrapper>
             <Button
               regularText
@@ -297,23 +266,12 @@ const directMapStateToProps = ({
   countrySupport: sendwyreCountrySupport,
 });
 
-const assetMapSelector = createSelector(
-  supportedAssetsSelector,
-  (supportedAssets: Asset[]) =>
-    Object.fromEntries(supportedAssets.map(asset => [asset.symbol, asset])),
-);
-
-const sendwyreExchangeRatesSelector =
-  ({ fiatToCrypto: { sendwyreExchangeRates } }: RootReducerState) => sendwyreExchangeRates;
-
-const currencyPairsSelector = createSelector(
-  sendwyreExchangeRatesSelector,
-  exchangeRates => getSendwyreCurrencyPairs(exchangeRates ?? {}),
-);
-
 const structuredSelector = createStructuredSelector({
-  assets: assetMapSelector,
   currencyPairs: currencyPairsSelector,
+  sourceOptions: sourceOptionsSelector,
+  destOptions: destOptionsSelector,
+  defaultSource: defaultSourceSelector,
+  defaultDest: defaultDestSelector,
 });
 
 const mapStateToProps = (state: RootReducerState): $Shape<Props> => ({

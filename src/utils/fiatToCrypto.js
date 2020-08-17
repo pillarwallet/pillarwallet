@@ -23,10 +23,6 @@ import {
   RAMPNETWORK_WIDGET_URL,
   RAMPNETWORK_API_KEY,
 } from 'react-native-dotenv';
-import isEmpty from 'lodash.isempty';
-import t from 'tcomb-form-native';
-
-import { isValidNumber } from 'utils/common';
 
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
@@ -55,19 +51,6 @@ function rateToCurrencyPair([joint, split]: [string, Rate]): CurrencyPair {
 export const getSendwyreCurrencyPairs = (rates: SendwyreRates): CurrencyPair[] =>
   ((Object.entries(rates): any): [string, Rate][])
     .map(rateToCurrencyPair);
-
-
-const wyreCurrencyField = t.refinement(t.Object, ({ selector }) =>
-  !isEmpty(selector));
-
-const wyreCurrencyWithAmountField = t.refinement(wyreCurrencyField, ({ input }) =>
-  isValidNumber(input) &&
-  parseFloat(input) > 0);
-
-export const wyreInputFormStructure = t.struct({
-  source: wyreCurrencyWithAmountField,
-  dest: wyreCurrencyField,
-});
 
 export const altalixWidgetUrl = (params: AltalixTrxParams, api: SDKWrapper) =>
   api.generateAltalixTransactionUrl(params);
