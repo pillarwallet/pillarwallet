@@ -18,24 +18,64 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
+import {
+  SET_ALTALIX_AVAILABILITY,
+  SET_SENDWYRE_RATES,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
 import { reportOrWarn } from 'utils/common';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
-export const loadAltalixInfoAction = () => {
+export const loadAltalixAvailability = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { fiatToCrypto: { altalix }, user: { data: { walletId } } } = getState();
-    if (altalix === null) {
+    const {
+      fiatToCrypto: { isAltalixAvailable },
+      user: { data: { walletId } },
+    } = getState();
+
+    if (isAltalixAvailable === null) {
       const isAvailable = await api.fetchAltalixAvailability(walletId)
         .catch(error => {
           reportOrWarn('loadAltalixInfoAction: Error while requesting Altalix availability', error, 'error');
           return false;
         });
       dispatch({
-        type: SET_ALTALIX_INFO,
-        payload: { isAvailable },
+        type: SET_ALTALIX_AVAILABILITY,
+        payload: isAvailable,
+      });
+    }
+  };
+};
+
+export const loadSendwyreRatesAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { user: { data: { walletId } } } = getState();
+    const rates = await api.getSendwyreRates(walletId);
+
+    dispatch({
+      type: SET_SENDWYRE_RATES,
+      payload: rates,
+    });
+  };
+};
+
+export const loadSendwyreCountrySupportAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({ type: LOAD_SENDWYRE_COUNTRY_SUPPORT });
+
+    const { user: { data: { walletId } } } = getState();
+    const isCountrySupported = await api.getSendwyreCountrySupport(walletId);
+
+    if (isCountrySupported === null) {
+      dispatch({ type: RESET_SENDWYRE_COUNTRY_SUPPORT });
+    } else {
+      dispatch({
+        type: SET_SENDWYRE_COUNTRY_SUPPORT,
+        payload: isCountrySupported,
       });
     }
   };

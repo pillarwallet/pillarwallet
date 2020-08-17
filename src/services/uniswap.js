@@ -313,15 +313,20 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
   };
 };
 
-export const fetchUniswapSupportedTokens = async (): Promise<string[]> => {
+export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
   let finished = false;
   let i = 0;
   let results = [];
+  const parsedAssetCodes = supportedAssetCodes.map(a => `"${a}"`);
   while (!finished) {
     /* eslint-disable no-await-in-loop */
     const query = `
       {
-        tokens(first: 1000, skip: ${i * 1000}) {
+        tokens(first: 1000, skip: ${i * 1000},
+          where: { 
+            symbol_in: [${parsedAssetCodes.toString()}]
+          }
+        ) {
           symbol
         }
       }
