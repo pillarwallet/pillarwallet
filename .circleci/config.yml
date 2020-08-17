@@ -15,7 +15,7 @@ executors:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
-      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError -XX:+UseContainerSupport"'
+      GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
 
     shell: /bin/bash --login -o pipefail
 
@@ -27,7 +27,7 @@ executors:
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       TERM: dumb
-      _JAVA_OPTIONS: "-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap"
+      _JAVA_OPTIONS: "-Xmx4096m -XX:+UnlockExperimentalVMOptions -XX:+UseCGroupMemoryLimitForHeap -XX:+UseContainerSupport"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx4096m -Dfile.encoding=UTF-8"'
       LC_ALL: en_US.UTF-8
       LANG: en_US.UTF-8
