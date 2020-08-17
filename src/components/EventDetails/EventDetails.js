@@ -64,7 +64,7 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
+import { getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -492,13 +492,6 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true, receiveWalletAddress }));
   };
 
-  topUpKeyWallet = () => {
-    const { accounts } = this.props;
-    const keyWalletAddress = getKeyWalletAddress(accounts);
-    if (!keyWalletAddress) return;
-    this.showReceiveModal(keyWalletAddress);
-  };
-
   topUpSW = () => {
     const { accounts } = this.props;
     const smartWalletAddress = getSmartWalletAddress(accounts);
@@ -658,23 +651,16 @@ export class EventDetail extends React.Component<Props, State> {
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
-    const keyWalletButtons = [
-      {
-        title: t('button.topUp'),
-        onPress: this.topUpKeyWallet,
-        secondary: true,
-      },
-      {
-        title: this.getReferButtonTitle(),
-        onPress: this.referFriends,
-        squarePrimary: true,
-      },
-    ];
-
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
-          buttons: keyWalletButtons,
+          buttons: [
+            {
+              title: this.getReferButtonTitle(),
+              onPress: this.referFriends,
+              squarePrimary: true,
+            },
+          ],
         };
       case 'Smart Wallet created':
         const activateButton = {
@@ -693,9 +679,14 @@ export class EventDetail extends React.Component<Props, State> {
         };
       case 'Wallet imported':
         return {
-          primaryButtonTitle: t('button.topUp'),
-          secondaryButtonTitle: this.getReferButtonTitle(),
-          buttons: keyWalletButtons,
+          primaryButtonTitle: this.getReferButtonTitle(),
+          buttons: [
+            {
+              title: this.getReferButtonTitle(),
+              onPress: this.referFriends,
+              squarePrimary: true,
+            },
+          ],
         };
       default:
         return null;
@@ -750,11 +741,6 @@ export class EventDetail extends React.Component<Props, State> {
       case WALLET_BACKUP_EVENT:
         return {
           buttons: [
-            {
-              title: t('button.topUp'),
-              onPress: this.topUpKeyWallet,
-              secondary: true,
-            },
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,

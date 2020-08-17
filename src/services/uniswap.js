@@ -31,7 +31,6 @@ import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
-import axios from 'axios';
 
 // utils
 import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
@@ -52,13 +51,14 @@ import { parseOffer } from 'utils/exchange';
 
 // services
 import { encodeContractMethod } from 'services/assets';
+import { callSubgraph } from 'services/theGraph';
 
 // models
 import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
 
 // constants
-import { PROVIDER_UNISWAP, UNISWAP_GRAPH_ID } from 'constants/exchangeConstants';
+import { PROVIDER_UNISWAP, UNISWAP_SUBGRAPH_NAME } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 
 // assets
@@ -313,28 +313,30 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
   };
 };
 
-export const fetchUniswapSupportedTokens = async (): Promise<string[]> => {
-  const url = `https://api.thegraph.com/subgraphs/id/${UNISWAP_GRAPH_ID}`;
+export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
   let finished = false;
   let i = 0;
   let results = [];
+  const parsedAssetCodes = supportedAssetCodes.map(a => `"${a}"`);
   while (!finished) {
     /* eslint-disable no-await-in-loop */
-    const response = await axios.post(url, {
-      timeout: 5000,
-      query: `
+    const query = `
       {
-        tokens(first: 1000, skip: ${i * 1000}) {
+        tokens(first: 1000, skip: ${i * 1000},
+          where: { 
+            symbol_in: [${parsedAssetCodes.toString()}]
+          }
+        ) {
           symbol
         }
       }
-      `,
-    });
-    const assets = response?.data?.data?.tokens;
+    `;
+    const response = await callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
+    const assets = response?.tokens;
     if (assets) {
       results = results.concat(assets.map(a => a.symbol));
     }
-    if (assets.length !== 1000) {
+    if (!assets || assets.length !== 1000) {
       finished = true;
     } else {
       i++;
