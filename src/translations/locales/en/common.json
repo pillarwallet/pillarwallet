@@ -20,7 +20,10 @@
     "addFundsToWallet": "Add funds to Pillar",
     "publicAddress": "Public address",
     "success": "Success",
-    "transactions": "Transactions"
+    "transactions": "Transactions",
+    "addNewContact": "Add new contact",
+    "editContact": "Edit contact",
+    "addressBook": "Address book"
   },
 
   "label": {
@@ -79,7 +82,10 @@
     "toSmartWallet": "to Smart Wallet",
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
-    "yourEnsName": "Your wallet ENS name"
+    "yourEnsName": "Your wallet ENS name",
+    "name": "Name",
+    "address": "Address",
+    "resolvingEnsName": "Resolving ENS name",
   },
 
   "button": {
@@ -121,7 +127,10 @@
     "viewOnBlockchain": "View on the blockchain",
     "viewPoolTogetherPool": "View pool",
     "withdraw": "Withdraw",
-    "withdrawMore": "Withdraw more"
+    "withdrawMore": "Withdraw more",
+    "delete": "Delete",
+    "addNew": "Add new",
+    "save": "Save"
   },
 
   "paragraph": {
@@ -196,7 +205,11 @@
     "transactionFailed": {
       "timeOut": "Transaction timed out",
       "default": "Transaction failed"
-    }
+    },
+    "emptyAddress": "Address cannot be empty",
+    "invalidAddress": "Invalid address",
+    "contactWithAddressExist": "Contact with this address already exist",
+    "emptyName": "Name cannot be empty"
   },
 
   "badgeText": {
@@ -266,7 +279,7 @@
           "paragraph": "Check if the name was entered correctly or add custom token"
         }
       },
-      "withBalance":{
+      "withBalance": {
         "title": "All non-zero"
       }
     }
@@ -285,7 +298,7 @@
     }
   },
 
-  "toast":{
+  "toast": {
     "userIsOffline": "It seems you're offline. Please check your internet connection.",
     "biometricLoginEnabled": "Biometric login enabled.",
     "biometricLoginDisabled": "Biometric login disabled.",
@@ -350,10 +363,21 @@
     "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",
     "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
-    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again."
+    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
+    "contactUpdated": "Contact updated",
+    "contactDeleted": "Contact deleted",
+    "contactAdded": "New contact added"
   },
 
   "alert": {
+    "deleteContact": {
+      "title": "Delete {{contactName}}",
+      "message": "Are you sure you would like to delete this contact?",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Yes, delete"
+      }
+    },
     "hideAsset": {
       "title": "Are you sure?",
       "message": "This will hide {{asset}} from your wallet",

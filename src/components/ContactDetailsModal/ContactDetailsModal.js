@@ -22,6 +22,7 @@ import { View } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // components
 import ModalBox from 'components/ModalBox';
@@ -187,19 +188,19 @@ const ContactDetailsModal = ({
 
   let errorMessage;
   if (isEmpty(addressValue)) {
-    errorMessage = 'Address cannot be empty';
+    errorMessage = t('error.emptyAddress');
   } if (!isValidAddress(addressValue)) {
-    errorMessage = 'Invalid address';
+    errorMessage = t('error.invalidAddress');
   } else if (!addressesEqual(contact?.ethAddress, addressValue)
     && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
-    errorMessage = 'Contact with this address already exist';
+    errorMessage = t('error.contactWithAddressExist');
   } else if (isEmpty(nameValue)) {
-    errorMessage = 'Name cannot be empty';
+    errorMessage = t('error.emptyName');
   }
 
   const colors = getThemeColors(theme);
 
-  const buttonTitle = resolvingEns ? 'Resolving ENS name..' : 'Save';
+  const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
   const onButtonPress = () => !errorMessage
     && !resolvingEns
     && onSavePress({ ...contact, name: nameValue, ethAddress: addressValue });
@@ -237,8 +238,8 @@ const ContactDetailsModal = ({
             </QRCodeButton>
           )}
         </TitleWrapper>
-        {renderContactInput(addressValue, setAddressValue, 'Address', walletIcon, theme)}
-        {renderContactInput(nameValue, setNameValue, 'Name', personIcon, theme)}
+        {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
+        {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
         {dirtyInputs && !resolvingEns && !!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         {resolvingEns && <LoadingSpinner width={25} height={25} />}
         <Button

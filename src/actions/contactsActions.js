@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
+
 // constants
 import { SET_CONTACTS } from 'constants/contactsConstants';
 
@@ -56,9 +58,8 @@ export const updateContactAction = (prevEthAddress: string, contact: Contact) =>
     }
 
     Toast.show({
-      type: 'success',
-      title: 'Success',
-      message: 'Contact updated',
+      message: t('toast.contactUpdated'),
+      emoji: 'ok_hand',
     });
 
     dispatch(setContactsAction(updatedContacts));
@@ -75,9 +76,8 @@ export const addContactAction = (contact: Contact) => {
       .concat(contact);
 
     Toast.show({
-      type: 'success',
-      title: 'Success',
-      message: 'New contact added',
+      message: t('toast.contactAdded'),
+      emoji: 'handshake',
     });
 
     dispatch(setContactsAction(updatedContacts));
@@ -90,9 +90,8 @@ export const deleteContactAction = (contact: Contact) => {
     const updatedContacts = contacts.filter(({ ethAddress }) => !addressesEqual(ethAddress, contact.ethAddress));
 
     Toast.show({
-      type: 'success',
-      title: 'Success',
-      message: 'Contact deleted',
+      message: t('toast.contactDeleted'),
+      emoji: 'cry',
     });
 
     dispatch(setContactsAction(updatedContacts));

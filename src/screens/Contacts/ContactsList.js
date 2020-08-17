@@ -24,6 +24,7 @@ import isEmpty from 'lodash.isempty';
 import Swipeout from 'react-native-swipeout';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
+import t from 'translations/translate';
 
 // actions
 import { addContactAction, deleteContactAction, updateContactAction } from 'actions/contactsActions';
@@ -88,7 +89,7 @@ const ContactsList = ({
             <SwipeoutButton
               onPress={() => setContactToDelete(item)}
               iconName="remove"
-              label="Delete"
+              label={t('button.delete')}
               color={colors.negative}
               disabled
             />
@@ -113,8 +114,8 @@ const ContactsList = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: 'Address book' }],
-        rightItems: [{ noMargin: true, link: 'Add new', onPress: () => setSelectedContact({}) }],
+        centerItems: [{ title: t('title.addressBook') }],
+        rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => setSelectedContact({}) }],
       }}
     >
       <FlatList
@@ -126,7 +127,7 @@ const ContactsList = ({
         ListEmptyComponent={<EmptyStateParagraph title="No contacts added" />}
       />
       <ContactDetailsModal
-        title={isEmpty(selectedContact) ? 'Add new contact' : 'Edit contact'}
+        title={isEmpty(selectedContact) ? t('title.addNewContact') : t('title.editContact')}
         dirtyInputs={!isEmpty(selectedContact)}
         isVisible={!!selectedContact}
         contact={selectedContact}
@@ -151,7 +152,9 @@ const ContactsList = ({
         >
           <ContentWrapper>
             <Spacing h={spacing.large * 2} />
-            <MediumText medium negative>Delete {contactToDelete?.name}</MediumText>
+            <MediumText medium negative>
+              {t('alert.deleteContact.title', { contactName: contactToDelete?.name })}
+            </MediumText>
             <Spacing h={spacing.large} />
             <ProfileImage
               userName={contactToDelete?.name}
@@ -165,11 +168,11 @@ const ContactsList = ({
               medium
               center
             >
-              Are you sure you would like to delete this contact?
+              {t('alert.deleteContact.message')}
             </BaseText>
             <Spacing h={spacing.large} />
             <Button
-              title="Yes, delete"
+              title={t('alert.deleteContact.button.ok')}
               onPress={() => {
                 hideContactToDeleteModal();
                 deleteContact(contactToDelete);
@@ -179,7 +182,13 @@ const ContactsList = ({
               regularText
             />
             <Spacing h={4} />
-            <Button onPress={hideContactToDeleteModal} title="Cancel" light squarePrimary regularText />
+            <Button
+              onPress={hideContactToDeleteModal}
+              title={t('alert.deleteContact.button.cancel')}
+              light
+              squarePrimary
+              regularText
+            />
           </ContentWrapper>
         </SlideModal>
       )}

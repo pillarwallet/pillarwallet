@@ -26,6 +26,7 @@ import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
@@ -198,7 +199,7 @@ const Menu = ({
     },
     {
       key: 'addressBook',
-      title: 'Address book',
+      title: t('title.addressBook'),
       emoji: 'book',
       card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
