@@ -32,6 +32,7 @@ import type SDKWrapper from 'services/api';
 
 export function rampWidgetUrl(address: string, email?: string) {
   const params = {
+    swapAsset: 'PLR', // This turns on the ability to purchase PLR
     hostApiKey: RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),

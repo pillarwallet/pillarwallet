@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import querystring from 'querystring';
+
 import { rampWidgetUrl } from '../fiatToCrypto';
 
 describe('The fiatToCrypto.js utility module', () => {
@@ -24,10 +26,21 @@ describe('The fiatToCrypto.js utility module', () => {
     const rampStagingUrl = 'https://ri-widget-staging-ropsten.firebaseapp.com/';
 
     it('successfully returns a RAMP url', () => {
-      const generatedUrl = rampWidgetUrl('0x123', 'support@pillarproject.io');
+      const fakeEthAddress = '0x123';
+      const fakeUserEmail = 'support@pillarproject.io';
 
-      expect(generatedUrl)
-        .toContain(`${rampStagingUrl}?hostApiKey=&userAddress=0x123&userEmailAddress=support%40pillarproject.io`);
+      const generatedUrl = rampWidgetUrl(fakeEthAddress, fakeUserEmail);
+
+      const expectedParams = {
+        swapAsset: 'PLR',
+        hostApiKey: null,
+        userAddress: fakeEthAddress,
+        userEmailAddress: fakeUserEmail,
+      };
+
+      const expectedUrl = `${rampStagingUrl}?${querystring.stringify(expectedParams)}`;
+
+      expect(generatedUrl).toBe(expectedUrl);
     });
 
     it('throws when calling with no parameters given', () => {
