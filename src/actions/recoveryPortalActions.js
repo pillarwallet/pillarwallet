@@ -22,6 +22,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethers } from 'ethers';
 import { sdkConstants, sdkModules } from '@smartwallet/sdk';
+import t from 'translations/translate';
 
 // actions
 import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
@@ -150,9 +151,8 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
     dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     Toast.show({
-      message: 'Wallet successfully recovered!',
-      type: 'success',
-      title: 'Success',
+      message: t('toast.walletRecovered'),
+      emoji: 'tada',
     });
 
     navigateToAppFlow(false);

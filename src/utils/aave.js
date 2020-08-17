@@ -41,7 +41,7 @@ import AAVE_TOKEN_ABI from 'abi/aaveToken.json';
 import aaveConfig from 'configs/aaveConfig';
 
 // types
-import type { Transaction } from 'models/Transaction';
+import type { Transaction, AaveExtra } from 'models/Transaction';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
 
@@ -162,7 +162,7 @@ const buildAaveTransaction = (
   transaction: Transaction,
   aaveTransactions: Object[],
 ) => {
-  let extra;
+  let extra: AaveExtra;
   const aaveTransaction = aaveTransactions.find(({
     id,
   }) => isCaseInsensitiveMatch(id.split(':')[0], transaction.hash));
@@ -193,10 +193,9 @@ export const mapTransactionsHistoryWithAave = async (
   if (!aaveLendingPoolContractAddress) return [];
 
   const aaveTokenAddresses = await aaveService().getAaveTokenAddresses();
-  const {
-    deposits = [],
-    withdraws = [],
-  } = await aaveService().fetchAccountDepositAndWithdrawTransactions(accountAddress);
+  const fetchedAaveTransactions = await aaveService().fetchAccountDepositAndWithdrawTransactions(accountAddress);
+  const deposits = fetchedAaveTransactions?.deposits || [];
+  const withdraws = fetchedAaveTransactions?.withdraws || [];
 
   return transactionHistory.reduce((
     transactions,

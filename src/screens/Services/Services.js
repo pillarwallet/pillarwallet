@@ -24,20 +24,26 @@ import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
-import querystring from 'querystring';
+import t from 'translations/translate';
 import { RAMPNETWORK_API_KEY } from 'react-native-dotenv';
 import { getEnv } from 'configs/envConfig';
 
 // actions
-import { getMetaDataAction } from 'actions/exchangeActions';
+import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
 
 // components
 import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
+import Toast from 'components/Toast';
 
 // constants
-import { EXCHANGE, LENDING_CHOOSE_DEPOSIT, POOLTOGETHER_DASHBOARD } from 'constants/navigationConstants';
+import {
+  EXCHANGE,
+  LENDING_CHOOSE_DEPOSIT,
+  POOLTOGETHER_DASHBOARD,
+  SABLIER_STREAMS,
+} from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
@@ -50,6 +56,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // selectors
 import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
@@ -59,13 +66,15 @@ import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Theme } from 'models/Theme';
-import type { ProvidersMeta } from 'models/Offer';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+import type SDKWrapper from 'services/api';
 
+// assets
+import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -74,10 +83,11 @@ let isPoolTogetherEnabled = true;
 let isPeerToPeerEnabled = true;
 let isWyreEnabled = true;
 let isRampEnabled = true;
+let isSablierEnabled = true;
+let isAltalixEnabled = true;
 
 type Props = {
   theme: Theme,
-  providersMeta: ProvidersMeta,
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
@@ -85,6 +95,9 @@ type Props = {
   user: User,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
+  getApi: () => SDKWrapper,
+  isAltalixAvailable: null | boolean,
+  loadAltalixInfo: () => void,
 };
 
 type State = {
@@ -97,10 +110,7 @@ class ServicesScreen extends React.Component<Props, State> {
   };
 
   componentDidMount() {
-    const { getMetaData, providersMeta } = this.props;
-    if (!Array.isArray(providersMeta) || !providersMeta?.length) {
-      getMetaData();
-    }
+    const { isAltalixAvailable, loadAltalixInfo } = this.props;
 
     /**
      * Retrieve boolean flags for services from Remote Config.
@@ -111,26 +121,29 @@ class ServicesScreen extends React.Component<Props, State> {
     isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.PEER_TO_PEER);
     isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
+    isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
+    isAltalixEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.ALTALIX);
+
+    if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
   getServices = () => {
     const {
       navigation,
       theme,
-      providersMeta,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
-    const offersBadge = Array.isArray(providersMeta) && !!providersMeta.length ? {
-      label: `${providersMeta.length} exchanges`,
+    const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
+      label: `${PROVIDERS_META.length} exchanges`,
       color: colors.primary,
     } : null;
 
-    const aaveServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
-    let aaveServiceLabel;
-    if (aaveServiceDisabled) {
-      aaveServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
+    const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
+    let SWServiceLabel;
+    if (SWServiceDisabled) {
+      SWServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
     }
 
     const services = [];
@@ -149,8 +162,8 @@ class ServicesScreen extends React.Component<Props, State> {
         key: 'depositPool',
         title: 'AAVE Deposit',
         body: 'Deposit crypto and earn interest in real-time',
-        disabled: aaveServiceDisabled,
-        label: aaveServiceLabel,
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       });
     }
@@ -161,6 +174,16 @@ class ServicesScreen extends React.Component<Props, State> {
         body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
         hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
+      });
+    }
+    if (isSablierEnabled) {
+      services.push({
+        key: 'sablier',
+        title: 'Sablier money streaming',
+        body: 'Stream money to people and organizations in real-time with just one deposit',
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(SABLIER_STREAMS),
       });
     }
     if (isPeerToPeerEnabled) {
@@ -177,6 +200,7 @@ class ServicesScreen extends React.Component<Props, State> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
+    const { isAltalixAvailable } = this.props;
 
     if (isRampEnabled) {
       buyCryptoServices.push({
@@ -184,17 +208,10 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Ramp.Network (EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(userAddress => {
-            const { user: { email = null } } = this.props;
-
-            const params = {
-              hostApiKey: RAMPNETWORK_API_KEY,
-              userAddress,
-              ...(email === null ? {} : { userEmailAddress: email }),
-            };
-
-            return `${getEnv('RAMPNETWORK_WIDGET_URL')}?${querystring.stringify(params)}`;
-          });
+          const { user: { email } } = this.props;
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email));
         },
       });
     }
@@ -205,11 +222,32 @@ class ServicesScreen extends React.Component<Props, State> {
         title: 'Buy with Wyre (Non-EU)',
         body: 'Buy Now',
         action: () => {
-          this.handleBuyCryptoAction(address => `${getEnv('SENDWYRE_WIDGET_URL')}?${querystring.stringify({
-            accountId: getEnv('SENDWYRE_ACCOUNT_ID'),
-            dest: `ethereum:${address}`,
-            redirectUrl: getEnv('SENDWYRE_RETURN_URL'),
-          })}`);
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(wyreWidgetUrl(address));
+        },
+      });
+    }
+
+    if (isAltalixEnabled && isAltalixAvailable) {
+      buyCryptoServices.push({
+        key: 'altalix',
+        title: 'Buy with Altalix',
+        body: 'Buy Now',
+        action: async () => {
+          const { user: { walletId }, getApi } = this.props;
+          const address = this.getCryptoPurchaseAddress();
+          if (address === null) return;
+          this.tryOpenCryptoPurchaseUrl(await altalixWidgetUrl({
+            walletId,
+            address,
+            sellCurrency: 'EUR',
+            buyCurrency: 'ETH',
+
+            // The amount is adjustable in the Altalix app, but the link won't work
+            // if the initial value is 0
+            buyAmount: 0.02,
+          }, getApi()));
         },
       });
     }
@@ -217,7 +255,7 @@ class ServicesScreen extends React.Component<Props, State> {
     return buyCryptoServices;
   }
 
-  handleBuyCryptoAction = (getUrlWithAddress: string => string) => {
+  getCryptoPurchaseAddress = (): string | null => {
     const { accounts, smartWalletState } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
@@ -225,17 +263,32 @@ class ServicesScreen extends React.Component<Props, State> {
 
     if (!smartWalletStatus.hasAccount) {
       this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.NO_SW_ACCOUNT });
-      return;
+      return null;
     }
 
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
       this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE });
-      return;
+      return null;
     }
 
-    const address: string = getAccountAddress(activeAccount);
-    const url = getUrlWithAddress(address);
-    openInAppBrowser(url);
+    return getAccountAddress(activeAccount);
+  }
+
+  tryOpenCryptoPurchaseUrl = (url: string | null) => {
+    if (url) {
+      openInAppBrowser(url)
+        .catch(this.showServiceLaunchError);
+    } else {
+      this.showServiceLaunchError();
+    }
+  };
+
+  showServiceLaunchError = () => {
+    Toast.show({
+      message: t('toast.cryptoPurchaseLaunchFailed'),
+      emoji: 'hushed',
+      supportLink: true,
+    });
   }
 
   onBuyCryptoModalClose = () => {
@@ -305,15 +358,15 @@ class ServicesScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  exchange: { providersMeta },
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
+  fiatToCrypto: { altalix },
 }: RootReducerState): $Shape<Props> => ({
-  providersMeta,
   user,
   accounts,
   smartWalletState,
+  isAltalixAvailable: altalix === null ? null : altalix.isAvailable,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -327,7 +380,12 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  getMetaData: () => dispatch(getMetaDataAction()),
+  loadAltalixInfo: () => dispatch(loadAltalixInfoAction()),
+
+  // When using redux-thunk, dispatch does return the result of the inner function.
+  // (Although it's meant to be used inside thunks, see:
+  // https://github.com/reduxjs/redux-thunk#composition )
+  getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));

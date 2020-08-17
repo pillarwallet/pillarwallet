@@ -20,6 +20,7 @@
 import branchIo from 'react-native-branch';
 import set from 'lodash.set';
 import { Appearance } from 'react-native-appearance';
+import t from 'translations/translate';
 
 // constants
 import {
@@ -118,7 +119,7 @@ export const setBrowsingWebViewAction = (isBrowsingWebView: boolean) => ({
 export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, noToast?: boolean) => {
   return async (dispatch: Dispatch) => {
     await setKeychainDataObject(data, value);
-    const message = `Biometric login ${value ? 'enabled' : 'disabled'}`;
+    const message = value ? t('toast.biometricLoginEnabled') : t('toast.biometricLoginDisabled');
     dispatch(saveDbAction('app_settings', { appSettings: { useBiometrics: value } }));
     dispatch({
       type: UPDATE_APP_SETTINGS,
@@ -130,8 +131,7 @@ export const changeUseBiometricsAction = (value: boolean, data: KeyChainData, no
       delay(200)
         .then(() => Toast.show({
           message,
-          type: 'success',
-          title: 'Success',
+          emoji: 'ok_hand',
         }))
         .catch(() => null);
     }
@@ -252,5 +252,17 @@ export const toggleOmitPinOnLoginAction = () => {
     const { appSettings: { data: { omitPinOnLogin } } } = getState();
     dispatch(saveDbAction('app_settings', { appSettings: { omitPinOnLogin: !omitPinOnLogin } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { omitPinOnLogin: !omitPinOnLogin } });
+  };
+};
+
+export const toggleSablierAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideSablier } },
+    } = getState();
+    const newSablierState = !hideSablier;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideSablier: newSablierState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideSablier: newSablierState } });
   };
 };

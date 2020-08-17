@@ -43,16 +43,19 @@ import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
 import Spinner from 'components/Spinner';
+import ProfileImage from 'components/ProfileImage';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { addressesEqual, getRate } from 'utils/assets';
+import { addressesEqual, getRate, getAssetDataByAddress } from 'utils/assets';
 import {
   formatFiat,
   formatAmount,
   formatUnits,
   formatTransactionFee,
+  findEnsNameCaseInsensitive,
+  getDecimalPlaces,
 } from 'utils/common';
 import {
   groupPPNTransactions,
@@ -61,7 +64,7 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { getKeyWalletAddress, getSmartWalletAddress } from 'utils/accounts';
+import { getSmartWalletAddress } from 'utils/accounts';
 import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -105,9 +108,16 @@ import {
   POOLTOGETHER_DASHBOARD,
   POOLTOGETHER_PURCHASE,
   POOLTOGETHER_WITHDRAW,
+  SABLIER_INCOMING_STREAM,
+  SABLIER_OUTGOING_STREAM,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
+import {
+  SABLIER_CREATE_STREAM,
+  SABLIER_WITHDRAW,
+  SABLIER_CANCEL_STREAM,
+} from 'constants/sablierConstants';
 
 // selectors
 import {
@@ -140,6 +150,8 @@ import type { CollectibleTrx } from 'models/Collectible';
 import type { TransactionsGroup } from 'utils/feedData';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EventData as PassedEventData } from 'components/ActivityFeed/ActivityFeedItem';
+import type { Stream } from 'models/Sablier';
+
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 
@@ -181,6 +193,8 @@ type Props = {
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
   keyBasedWalletAddress: string,
+  incomingStreams: Stream[],
+  outgoingStreams: Stream[],
 };
 
 type State = {
@@ -210,6 +224,7 @@ type EventData = {
   collectibleUrl?: ?string,
   isFailed?: boolean;
   errorMessage?: string,
+  sublabel?: string,
 };
 
 const Wrapper = styled(SafeAreaView)`
@@ -476,13 +491,6 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.onClose(() => this.setState({ isReceiveModalVisible: true, receiveWalletAddress }));
   };
 
-  topUpKeyWallet = () => {
-    const { accounts } = this.props;
-    const keyWalletAddress = getKeyWalletAddress(accounts);
-    if (!keyWalletAddress) return;
-    this.showReceiveModal(keyWalletAddress);
-  };
-
   topUpSW = () => {
     const { accounts } = this.props;
     const smartWalletAddress = getSmartWalletAddress(accounts);
@@ -595,6 +603,27 @@ export class EventDetail extends React.Component<Props, State> {
     navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
   };
 
+  goToIncomingStream = (streamId: string) => {
+    const { onClose, navigation, incomingStreams } = this.props;
+    onClose();
+    const stream = incomingStreams.find(({ id }) => id === streamId);
+    navigation.navigate(SABLIER_INCOMING_STREAM, { stream });
+  }
+
+  goToOutgoingStream = (streamId: string) => {
+    const { onClose, navigation, outgoingStreams } = this.props;
+    onClose();
+    const stream = outgoingStreams.find(({ id }) => id === streamId);
+    navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
+  }
+
+  goToStreamWithdraw = (streamId: string) => {
+    const { onClose, navigation, incomingStreams } = this.props;
+    onClose();
+    const stream = incomingStreams.find(({ id }) => id === streamId);
+    navigation.navigate(SABLIER_WITHDRAW, { stream });
+  }
+
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return t('label.referFriends');
@@ -621,23 +650,16 @@ export class EventDetail extends React.Component<Props, State> {
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
     const { isSmartWalletActivated } = this.props;
-    const keyWalletButtons = [
-      {
-        title: t('button.topUp'),
-        onPress: this.topUpKeyWallet,
-        secondary: true,
-      },
-      {
-        title: this.getReferButtonTitle(),
-        onPress: this.referFriends,
-        squarePrimary: true,
-      },
-    ];
-
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
-          buttons: keyWalletButtons,
+          buttons: [
+            {
+              title: this.getReferButtonTitle(),
+              onPress: this.referFriends,
+              squarePrimary: true,
+            },
+          ],
         };
       case 'Smart Wallet created':
         const activateButton = {
@@ -656,9 +678,14 @@ export class EventDetail extends React.Component<Props, State> {
         };
       case 'Wallet imported':
         return {
-          primaryButtonTitle: t('button.topUp'),
-          secondaryButtonTitle: this.getReferButtonTitle(),
-          buttons: keyWalletButtons,
+          primaryButtonTitle: this.getReferButtonTitle(),
+          buttons: [
+            {
+              title: this.getReferButtonTitle(),
+              onPress: this.referFriends,
+              squarePrimary: true,
+            },
+          ],
         };
       default:
         return null;
@@ -714,11 +741,6 @@ export class EventDetail extends React.Component<Props, State> {
         return {
           buttons: [
             {
-              title: t('button.topUp'),
-              onPress: this.topUpKeyWallet,
-              secondary: true,
-            },
-            {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
               squarePrimary: true,
@@ -740,6 +762,7 @@ export class EventDetail extends React.Component<Props, State> {
       depositedAssets,
       isSmartAccount,
       keyBasedWalletAddress,
+      ensRegistry,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -950,6 +973,56 @@ export class EventDetail extends React.Component<Props, State> {
         };
         break;
       }
+      case SABLIER_CREATE_STREAM: {
+        const { contactAddress, streamId } = event.extra;
+        const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+        eventData = {
+          name: usernameOrAddress,
+          sublabel: 'Outgoing stream',
+          actionSubtitle: 'Started',
+          fee: this.getFeeLabel(event),
+          buttons: [
+            {
+              title: 'View stream',
+              secondary: true,
+              onPress: () => this.goToOutgoingStream(streamId),
+            },
+          ],
+        };
+        break;
+      }
+      case SABLIER_WITHDRAW: {
+        const { incomingStreams, supportedAssets } = this.props;
+        const { contactAddress, assetAddress, streamId } = event.extra;
+        const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+        const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
+        const { symbol, decimals } = assetData;
+
+        const stream = incomingStreams.find(({ id }) => id === streamId);
+        const formattedStreamAmount = formatAmount(formatUnits(stream?.deposit, decimals), getDecimalPlaces(symbol));
+
+        eventData = {
+          name: usernameOrAddress,
+          sublabel: 'Withdraw',
+          fee: this.getFeeLabel(event),
+          actionSubtitle: `of ${formattedStreamAmount} ${symbol} stream`,
+          buttons: [
+            {
+              title: 'Withdraw more',
+              secondary: true,
+              onPress: () => this.goToStreamWithdraw(streamId),
+            },
+            {
+              title: 'View stream',
+              squarePrimary: true,
+              onPress: () => this.goToIncomingStream(streamId),
+            },
+          ],
+        };
+        break;
+      }
+      case SABLIER_CANCEL_STREAM:
+        return null;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
@@ -1158,6 +1231,8 @@ export class EventDetail extends React.Component<Props, State> {
       collectibleUrl,
       itemImageRoundedSquare,
       cornerIcon,
+      label,
+      profileImage,
     } = itemData;
     const borderRadius = itemImageRoundedSquare && 13;
 
@@ -1204,6 +1279,21 @@ export class EventDetail extends React.Component<Props, State> {
         </IconCircle>
       );
     }
+
+    if (profileImage) {
+      return (
+        <ProfileImage
+          userName={label}
+          diameter={64}
+          textStyle={{ fontSize: fontSizes.big }}
+          noShadow
+          borderWidth={0}
+          cornerIcon={cornerIcon}
+          cornerIconSize={22}
+        />
+      );
+    }
+
     return null;
   };
 
@@ -1296,6 +1386,7 @@ export class EventDetail extends React.Component<Props, State> {
       actionTitle, actionSubtitle, actionIcon, customActionTitle,
       buttons = [], settleEventData, fee,
       errorMessage,
+      sublabel,
     } = eventData;
 
     const {
@@ -1329,6 +1420,7 @@ export class EventDetail extends React.Component<Props, State> {
         <Spacing h={10} />
         <AvatarWrapper disabled>
           <BaseText medium>{label}</BaseText>
+          {sublabel && <BaseText regular secondary>{sublabel}</BaseText>}
           <Spacing h={20} />
           {this.renderImage(itemData)}
         </AvatarWrapper>
@@ -1430,6 +1522,7 @@ const mapStateToProps = ({
   lending: { depositedAssets },
   poolTogether: { poolStats },
   wallet: { data: { address: keyBasedWalletAddress } },
+  sablier: { incomingStreams, outgoingStreams },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
@@ -1445,6 +1538,8 @@ const mapStateToProps = ({
   depositedAssets,
   poolStats,
   keyBasedWalletAddress,
+  incomingStreams,
+  outgoingStreams,
 });
 
 const structuredSelector = createStructuredSelector({

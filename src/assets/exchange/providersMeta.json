@@ -1,0 +1,40 @@
+[
+    {
+        "_id":"5e8c36a7c2b9ff6935a99a15",
+        "shim":"ONEINCH-SHIM",
+        "name":"1 Inch",
+        "img":{
+            "vertical":{
+               "light":"oneinchLightVertical",
+               "dark":"oneinchDarkVertical"
+            },
+            "horizontal":{
+               "light":"oneinchLightHorizontal",
+               "dark":"oneinchDarkHorizontal"
+            },
+            "monochrome":{
+               "light":"oneinchLightMonochrome",
+               "dark":"oneinchDarkMonochrome"
+            }
+        }
+    },
+    {
+        "_id":"5ef0b001c2b9ff6935da4583",
+        "shim":"UNISWAPV2-SHIM",
+        "name":"Uniswap",
+        "img":{
+            "vertical":{
+               "light":"uniswapLightVertical",
+               "dark":"uniswapDarkVertical"
+            },
+            "horizontal":{
+               "light":"uniswapLightHorizontal",
+               "dark":"uniswapDarkHorizontal"
+            },
+            "monochrome":{
+               "light":"uniswapLightMonochrome",
+               "dark":"uniswapDarkMonochrome"
+            }
+        }
+    }
+]

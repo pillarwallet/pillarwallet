@@ -233,15 +233,10 @@ export const fetchAllAccountsCollectiblesHistoryAction = () => {
 };
 
 
-export const fetchAllCollectiblesDataAction = (forAllAccounts?: boolean) => {
+export const fetchAllCollectiblesDataAction = () => {
   return async (dispatch: Dispatch) => {
-    if (forAllAccounts) {
-      await dispatch(fetchAllAccountsCollectiblesAction());
-      await dispatch(fetchAllAccountsCollectiblesHistoryAction());
-    } else {
-      await dispatch(fetchCollectiblesAction());
-      await dispatch(fetchCollectiblesHistoryAction());
-    }
+    await dispatch(fetchCollectiblesAction());
+    await dispatch(fetchCollectiblesHistoryAction());
   };
 };
 

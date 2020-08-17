@@ -32,6 +32,7 @@ import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK, SHOW_LA
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
+import t from 'translations/translate';
 
 import 'translations/setup';
 
@@ -219,9 +220,8 @@ class App extends React.Component<Props, *> {
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
       Toast.show({
-        message: 'No active internet connection found!',
-        type: 'warning',
-        title: 'Connection Issue',
+        message: t('toast.userIsOffline'),
+        emoji: 'satellite_antenna',
         autoClose: false,
       });
     } else {

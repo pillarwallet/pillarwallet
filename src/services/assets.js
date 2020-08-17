@@ -48,8 +48,8 @@ type ERC20TransferOptions = {
   decimals: number,
   nonce?: number,
   signOnly?: ?boolean,
-  gasLimit: number,
-  gasPrice: number,
+  gasLimit?: number,
+  gasPrice?: number,
   data?: string,
 };
 
@@ -66,8 +66,8 @@ type ERC721TransferOptions = {
 };
 
 type ETHTransferOptions = {
-  gasLimit: number,
-  gasPrice: number,
+  gasLimit?: number,
+  gasPrice?: number,
   amount: number | string,
   to: Address,
   wallet: Object,
@@ -83,7 +83,7 @@ type FetchBalancesResponse = Array<{
 
 
 export const encodeContractMethod = (
-  contractAbi: string,
+  contractAbi: string | Object[],
   method: string,
   params: any,
 ) => {

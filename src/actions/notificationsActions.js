@@ -26,11 +26,8 @@ import get from 'lodash.get';
 import { Notifications } from 'react-native-notifications';
 
 // actions
-import {
-  fetchSmartWalletTransactionsAction,
-  fetchTransactionsHistoryNotificationsAction,
-} from 'actions/historyActions';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 
@@ -123,7 +120,7 @@ export const setUnreadNotificationsStatusAction = (status: boolean) => {
 
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
-    dispatch(fetchTransactionsHistoryNotificationsAction());
+    dispatch(checkForMissedAssetsAction());
     dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchAllCollectiblesDataAction());
   };
@@ -146,7 +143,7 @@ export const subscribeToSocketEventsAction = () => {
         dispatch(fetchAllCollectiblesDataAction());
       }
       if (data.type === BCX) {
-        dispatch(fetchTransactionsHistoryNotificationsAction());
+        dispatch(checkForMissedAssetsAction());
         dispatch(fetchSmartWalletTransactionsAction());
         dispatch(fetchAssetsBalancesAction());
       }
@@ -198,7 +195,7 @@ export const subscribeToPushNotificationsAction = () => {
       const notification = processNotification(messageData, wallet.address.toUpperCase());
       if (!notification) return;
       if (notification.type === BCX) {
-        dispatch(fetchTransactionsHistoryNotificationsAction());
+        dispatch(checkForMissedAssetsAction());
         dispatch(fetchSmartWalletTransactionsAction());
         dispatch(fetchAssetsBalancesAction());
       }
@@ -267,7 +264,7 @@ export const startListeningOnOpenNotificationAction = () => {
       });
       if (notificationRoute && currentFlow !== AUTH_FLOW) {
         if (type === BCX) {
-          dispatch(fetchTransactionsHistoryNotificationsAction());
+          dispatch(checkForMissedAssetsAction());
           dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchAssetsBalancesAction());
         }

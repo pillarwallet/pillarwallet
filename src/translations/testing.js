@@ -25,11 +25,8 @@ import { DEFAULT_NAMESPACE, NAMESPACES } from './config';
 i18n
   .use(initReactI18next)
   .init({
-    lng: 'en',
-    fallbackLng: 'en',
     ns: DEFAULT_NAMESPACE,
     defaultNS: NAMESPACES,
-    debug: true,
   });
 
 export default i18n;

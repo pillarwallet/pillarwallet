@@ -167,9 +167,8 @@ class AssetsList extends React.Component<Props, State> {
 
   showNotRemovedToast = (asset) => {
     Toast.show({
-      message: t('toast.forbiddenToRemoveAsset.message', { asset: asset.name }),
-      type: 'info',
-      title: t('toast.forbiddenToRemoveAsset.title'),
+      message: t('toast.forbiddenToRemoveAsset', { assetName: asset.name, assetSymbol: asset.symbol }),
+      emoji: 'point_up',
     });
     this.setState({ forceHideRemoval: true });
   };

@@ -32,7 +32,6 @@ import ButtonText from 'components/ButtonText';
 
 import { fontSizes, spacing } from 'utils/variables';
 import { images } from 'utils/images';
-import { getDeviceWidth } from 'utils/common';
 
 import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
 import { navigateToNewWalletPageAction } from 'actions/walletActions';
@@ -51,21 +50,19 @@ type State = {
   translateY: Animated.Value,
 };
 
-
-const screenWidth = getDeviceWidth();
 const LOGO_HEIGHT = 56;
 const INITIAL_TOP_MARGIN = LOGO_HEIGHT / 2;
 
 const Background = styled.View`
-  background-color: #00ff24;
+  background-color: #1a1a1a;
   width: 100%;
   height: 100%;
   position: relative;
 `;
 
 const Pattern = styled(CachedImage)`
-  width: 100%;
-  height: ${({ height }) => height}px;
+  width: 216px;
+  height: 162px;
 `;
 
 const PillarLogo = styled(CachedImage)`
@@ -99,9 +96,6 @@ const ButtonsWrapper = styled.View`
 `;
 
 const AnimatedLogoWrapper = Animated.createAnimatedComponent(LogoWrapper);
-
-
-const IMAGE_RATIO = 270 / 375;
 
 class Welcome extends React.Component<Props, State> {
   state = {
@@ -143,7 +137,7 @@ class Welcome extends React.Component<Props, State> {
         <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
           <PillarLogo source={pillarLogo} />
         </AnimatedLogoWrapper>
-        <Pattern source={landingPattern} resizeMode="cover" height={2 + (screenWidth * IMAGE_RATIO)} />
+        <Pattern source={landingPattern} />
         <ContainerWithHeader
           backgroundColor="transparent"
           statusbarColor={{
@@ -158,14 +152,15 @@ class Welcome extends React.Component<Props, State> {
                 marginBottom={spacing.mediumLarge}
                 onPress={this.loginAction}
                 title={t('auth:button.createAccount')}
-                style={{ backgroundColor: '#000000' }}
+                style={{ backgroundColor: '#00ff24' }}
+                textStyle={{ color: '#000000' }}
                 block
               />
               <ButtonText
                 buttonText={t('auth:button.recoverWallet')}
                 onPress={this.navigateToWalletImportPage}
                 fontSize={fontSizes.big}
-                textStyle={{ color: '#0a1427' }}
+                textStyle={{ color: '#fcfdff' }}
               />
             </ButtonsWrapper>
           </Wrapper>

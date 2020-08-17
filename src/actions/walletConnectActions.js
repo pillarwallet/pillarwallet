@@ -19,6 +19,7 @@
 */
 import { NavigationActions } from 'react-navigation';
 import get from 'lodash.get';
+import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -50,6 +51,7 @@ import {
 import {
   WALLETCONNECT_SESSION_REQUEST_SCREEN,
   WALLETCONNECT_CALL_REQUEST_SCREEN,
+  ASSETS,
 } from 'constants/navigationConstants';
 
 // services, utils
@@ -60,11 +62,11 @@ import { isNavigationAllowed } from 'utils/navigation';
 import {
   getAccountAddress,
   findFirstSmartAccount,
-  findKeyBasedAccount,
   getActiveAccount,
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
+import { reportLog } from 'utils/common';
 
 // actions
 import {
@@ -75,6 +77,7 @@ import {
   walletConnectSessionsRemovedAction,
 } from 'actions/walletConnectSessionsActions';
 import { logEventAction } from 'actions/analyticsActions';
+import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // components
 import Toast from 'components/Toast';
@@ -94,6 +97,7 @@ import type {
   WalletConnectCallApproved,
   WalletConnectTogglePromoCard,
 } from 'reducers/walletConnectReducer';
+
 
 const walletConnectError = (code: string, message: string): WalletConnectError => ({
   type: WALLETCONNECT_ERROR,
@@ -226,9 +230,9 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
 
       if (!shouldAllowSession(peerMeta.url)) {
         Toast.show({
-          type: 'warning',
-          title: 'Cannot connect',
-          message: 'We are sorry. We don\'t support this application.',
+          message: t('toast.walletConnectUnsupportedApp'),
+          emoji: 'eyes',
+          supportLink: true,
           autoClose: false,
         });
         return;
@@ -285,9 +289,9 @@ const killAllWalletConnectSessions = () => {
       dispatch(killWalletConnectSession(s.peerId));
     });
     Toast.show({
-      type: 'warning',
-      title: 'Connections removed',
-      message: 'WalletConnect now connects to Smart Wallet. Please re-initialize your connections.',
+      message: t('toast.walletConnectConnectionsExpired'),
+      emoji: 'eyes',
+      supportLink: true,
       autoClose: false,
     });
   };
@@ -371,9 +375,9 @@ const sessionRequestTimedOut = () => {
     dispatch(logEventAction('walletconnect_timed_oud'));
 
     Toast.show({
-      type: 'warning',
-      title: 'Session error',
-      message: 'Cannot start Wallet Connect session. Please try again.',
+      message: t('toast.walletConnectSessionTimedOut'),
+      emoji: 'snail',
+      supportLink: true,
       autoClose: false,
     });
 
@@ -442,9 +446,13 @@ export const approveSessionAction = (peerId: string) => {
       }
       if (!account) {
         Toast.show({
-          type: 'warning',
-          title: 'Cannot connect',
-          message: 'Please activate Smart Wallet in order to use Wallet Connect.',
+          message: t('toast.walletConnectSmartWalletNotActive'),
+          emoji: 'point_up',
+          link: t('label.activateSmartWallet'),
+          onLinkPress: () => {
+            dispatch(deploySmartWalletAction());
+            navigate(NavigationActions.navigate({ routeName: ASSETS }));
+          },
           autoClose: false,
         });
         return;
@@ -560,14 +568,15 @@ export const initWalletConnectSessions = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       walletConnectSessions: { isImported, sessions },
-      accounts: { data: accounts },
+      wallet: { data: { address: keyBasedWalletAddress } },
     } = getState();
 
-    const keyWallet = findKeyBasedAccount(accounts);
-    if (!keyWallet) return;
-    const keyWalletAddress = getAccountAddress(keyWallet);
+    if (!keyBasedWalletAddress) {
+      reportLog('initWalletConnectSessions failed: ', { keyBasedWalletAddress });
+      return;
+    }
 
-    if (shouldClearWCSessions(sessions, keyWalletAddress)) {
+    if (shouldClearWCSessions(sessions, keyBasedWalletAddress)) {
       dispatch(killAllWalletConnectSessions());
     }
 
@@ -593,16 +602,6 @@ export const initWalletConnectSessions = () => {
     });
 
     const connectors: Connector[] = initialConnectors.filter(c => !!c);
-
-    if (connectors.length !== initialConnectors.length) {
-      Toast.show({
-        type: 'warning',
-        title: 'Session error',
-        message: 'Some WalletConnect sessions could not be started. Please try again.',
-        autoClose: false,
-      });
-    }
-
     if (connectors.length) {
       dispatch(walletConnectInitSessions(connectors));
       dispatch(walletConnectSessionsLoadedAction(connectors.map(c => c.session)));

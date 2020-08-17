@@ -21,7 +21,7 @@ import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
-import { utils } from 'ethers';
+import { utils, constants as ethersConstants } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import BigNumber from 'bignumber.js';
 import isEqual from 'lodash.isequal';
@@ -65,9 +65,10 @@ import {
   getBalance,
 } from 'utils/assets';
 import { buildTxFeeInfo, userHasSmartWallet } from 'utils/smartWallet';
-import { getOfferProviderLogo } from 'utils/exchange';
+import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
 import { getAccountName } from 'utils/accounts';
+import { isProdEnv } from 'utils/environment';
 
 // services
 import { calculateGasEstimate } from 'services/assets';
@@ -76,7 +77,7 @@ import smartWalletService from 'services/smartWallet';
 // types
 import type { GasInfo } from 'models/GasInfo';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
-import type { OfferOrder, ProvidersMeta } from 'models/Offer';
+import type { OfferOrder } from 'models/Offer';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
@@ -104,7 +105,6 @@ type Props = {
   balances: Balances,
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
-  providersMeta: ProvidersMeta,
   accounts: Accounts,
   theme: Theme,
   activeAccountAddress: string,
@@ -184,8 +184,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    const { transactionPayload } = props.navigation.getParam('offerOrder');
-    this.transactionPayload = transactionPayload;
+    this.transactionPayload = props.navigation.getParam('offerOrder');
   }
 
   componentDidMount() {
@@ -243,12 +242,20 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       to: recipient,
       contractAddress,
       data,
+      symbol: fromAssetSymbol,
     } = this.transactionPayload;
     const value = Number(amount || 0);
 
+    const isConvertedTx = isWethConvertedTx(fromAssetSymbol, contractAddress);
+
+    // for WETH converted txs on homestead, we need to provide ETH data or else estimation is always 0$
+    const contractAddressForEstimation = isProdEnv && isConvertedTx
+      ? ethersConstants.AddressZero
+      : contractAddress;
+
     const { symbol, decimals } =
-      getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddress);
-    const assetData = { contractAddress, token: symbol, decimals };
+      getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddressForEstimation);
+    const assetData = { contractAddress: contractAddressForEstimation, token: symbol, decimals };
 
     let transaction = { recipient, value };
     if (data) transaction = { ...transaction, data };
@@ -380,7 +387,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       navigation,
       session,
       balances,
-      providersMeta,
       baseFiatCurrency,
       rates,
       accounts,
@@ -426,7 +432,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     Current balance: ${getBalance(balances, feeSymbol)} ${feeSymbol}`;
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
-    const providerLogo = getOfferProviderLogo(providersMeta, provider, theme, 'vertical');
+    const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
     const confirmButtonTitleDefault = setTokenAllowance ? 'Enable Asset' : 'Confirm';
     const confirmButtonTitle = gettingFee ? 'Getting the fee..' : confirmButtonTitleDefault;
 
@@ -539,7 +545,7 @@ const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
-  exchange: { data: { executingTransaction: executingExchangeTransaction }, providersMeta, exchangeSupportedAssets },
+  exchange: { data: { executingTransaction: executingExchangeTransaction }, exchangeSupportedAssets },
   accounts: { data: accounts },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
@@ -548,7 +554,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   gasInfo,
   executingExchangeTransaction,
-  providersMeta,
   exchangeSupportedAssets,
   accounts,
   supportedAssets,

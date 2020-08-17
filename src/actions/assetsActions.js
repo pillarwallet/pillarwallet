@@ -20,6 +20,7 @@
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
+import t from 'translations/translate';
 
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
@@ -54,7 +55,7 @@ import type {
   TransactionPayload,
   SyntheticTransaction,
 } from 'models/Transaction';
-import type { Asset, AssetsByAccount, Balance, Balances } from 'models/Asset';
+import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
@@ -76,8 +77,8 @@ import {
   checkIfSmartWalletAccount,
   isNotKeyBasedType,
 } from 'utils/accounts';
-import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+import { balancesSelector } from 'selectors';
 import { logEventAction } from 'actions/analyticsActions';
 import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
@@ -321,17 +322,6 @@ export const sendAssetAction = (
   };
 };
 
-function notifyAboutIncreasedBalance(newBalances: Balance[], oldBalances: Balances) {
-  const increasedBalances = newBalances
-    .filter(({ balance, symbol }) => {
-      const oldTokenBalance = get(oldBalances, [symbol, 'balance'], 0);
-      return oldTokenBalance && parseFloat(balance) > parseFloat(oldTokenBalance);
-    });
-  if (increasedBalances.length) {
-    Toast.show({ message: 'Your assets balance increased', type: 'success', title: 'Success' });
-  }
-}
-
 export const updateAccountBalancesAction = (accountId: string, balances: Balances) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const allBalances = getState().balances.data;
@@ -348,13 +338,12 @@ export const updateAccountBalancesAction = (accountId: string, balances: Balance
   };
 };
 
-export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIncreased?: boolean) => {
+export const fetchAccountAssetsBalancesAction = (account: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
     const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
-    const isSmartWalletAccount = checkIfSmartWalletAccount(account);
 
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -368,27 +357,41 @@ export const fetchAccountAssetsBalancesAction = (account: Account, showToastIfIn
 
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
-      if (showToastIfIncreased && !isSmartWalletAccount) {
-        const currentBalances = accountBalancesSelector(getState());
-        notifyAboutIncreasedBalance(newBalances, currentBalances);
-      }
     }
   };
 };
 
-export const fetchAssetsBalancesAction = (showToastIfIncreased?: boolean) => {
+export const fetchAssetsBalancesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
 
     const activeAccount = getActiveAccount(accounts);
     if (!activeAccount) return;
 
-    await dispatch(fetchAccountAssetsBalancesAction(activeAccount, showToastIfIncreased));
+    await dispatch(fetchAccountAssetsBalancesAction(activeAccount));
     dispatch(fetchAccountAssetsRatesAction());
 
     if (checkIfSmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
+  };
+};
+
+export const resetAccountBalancesAction = (accountId: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const allBalances = balancesSelector(getState());
+    if (isEmpty(allBalances[accountId])) return; // already empty
+    const updatedBalances = Object.keys(allBalances).reduce((updated, balancesAccountId) => {
+      if (accountId !== balancesAccountId) {
+        updated[balancesAccountId] = allBalances[balancesAccountId];
+      }
+      return updated;
+    }, {});
+    dispatch(saveDbAction('balances', { balances: updatedBalances }, true));
+    dispatch({
+      type: UPDATE_BALANCES,
+      payload: updatedBalances,
+    });
   };
 };
 
@@ -407,6 +410,12 @@ export const fetchAllAccountsBalancesAction = () => {
       .all(promises)
       .catch((error) => reportLog('fetchAllAccountsBalancesAction failed', { error }));
 
+    // migration for key based balances to remove existing
+    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
+    if (keyBasedAccount) {
+      dispatch(resetAccountBalancesAction(getAccountId(keyBasedAccount)));
+    }
+
     dispatch(fetchAllAccountsAssetsRatesAction());
 
     if (checkIfSmartWalletAccount(activeAccount)) {
@@ -415,7 +424,7 @@ export const fetchAllAccountsBalancesAction = () => {
   };
 };
 
-export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) => {
+export const fetchInitialAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch({
       type: UPDATE_ASSETS_STATE,
@@ -444,7 +453,7 @@ export const fetchInitialAssetsAction = (showToastIfIncreased?: boolean = true) 
         assets: initialAssets,
       },
     });
-    dispatch(fetchAssetsBalancesAction(showToastIfIncreased));
+    dispatch(fetchAssetsBalancesAction());
   };
 };
 
@@ -504,9 +513,8 @@ export const addAssetAction = (asset: Asset) => {
     dispatch({ type: UPDATE_ASSETS, payload: updatedAssets });
 
     Toast.show({
-      title: null,
-      message: `${asset.name} (${asset.symbol}) has been added`,
-      type: 'info',
+      message: t('toast.assetAdded', { assetName: asset.name, assetSymbol: asset.symbol }),
+      emoji: 'ok_hand',
       autoClose: true,
     });
 
