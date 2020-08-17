@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Contract, utils } from 'ethers';
-import axios from 'axios';
 import isEmpty from 'lodash.isempty';
 import {
   NETWORK_PROVIDER,
@@ -26,31 +25,34 @@ import {
   POOL_USDC_CONTRACT_ADDRESS,
   DAI_ADDRESS,
   USDC_ADDRESS,
-  POOLTOGETHER_GRAPH_ID,
-  THE_GRAPH_API_URL,
+  POOLTOGETHER_SUBGRAPH_NAME,
 } from 'react-native-dotenv';
 import { utils as ptUtils } from 'pooltogetherjs';
 import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
 
+// constants
 import { DAI } from 'constants/assetsConstants';
-import {
-  POOLTOGETHER_WITHDRAW_TRANSACTION,
-  POOLTOGETHER_DEPOSIT_TRANSACTION,
-} from 'constants/poolTogetherConstants';
+import { POOLTOGETHER_WITHDRAW_TRANSACTION, POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
-import type { PoolInfo } from 'models/PoolTogether';
-
+// utils
 import { getEthereumProvider, formatMoney, reportLog } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
+// abi
 import POOL_DAI_ABI from 'abi/poolDAI.json';
 import POOL_USDC_ABI from 'abi/poolUSDC.json';
 import DAI_ABI from 'abi/DAI.json';
 import USDC_ABI from 'abi/USDC.json';
 
+// types
+import type { PoolInfo } from 'models/PoolTogether';
+
+// services
 import smartWalletService from './smartWallet';
 import { encodeContractMethod } from './assets';
+import { callSubgraph } from './theGraph';
+
 
 const POOL_TOGETHER_NETWORK = NETWORK_PROVIDER === 'ropsten' ? 'kovan' : NETWORK_PROVIDER;
 const DAI_DECIMALS = 18;
@@ -67,7 +69,6 @@ const getPoolTogetherTokenContract = (symbol: string) => {
   const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
   const tokenContract = new Contract(tokenContractAddress, tokenABI, provider);
 
-
   return {
     poolContract,
     poolContractAddress,
@@ -80,83 +81,55 @@ const getPoolTogetherTokenContract = (symbol: string) => {
   };
 };
 
-const getGraphUrl = (graphId: string): string => {
-  return `${THE_GRAPH_API_URL}/${graphId}`;
-};
-
 const fetchPoolTogetherGraph = async (
   contractAddress: string,
   accountAddress: string,
   openDrawId: string): Promise<Object> => {
-  const url = getGraphUrl(POOLTOGETHER_GRAPH_ID);
-  return axios
-    .post(url, {
-      timeout: 5000,
-      query: `
-      {
-          poolContract(id: "${contractAddress.toLowerCase()}") {
-            openDrawId,
-            openBalance,
-            committedBalance,
-            sponsorshipAndFeeBalance,
-            playersCount,
-          },
-          players(where: { address:"${accountAddress}"}) {
-            consolidatedBalance,
-            latestBalance,
-            winnings,
-          },
-          draws(where: {drawId: "${openDrawId}", poolContract: "${contractAddress.toLowerCase()}"}){
-            feeFraction,
-            drawId,
-            openedAt,
-            balance,
-          },
-      }`,
-    })
-    .then(({ data: response }) => response.data)
-    .catch((e) => {
-      reportLog('Error getting PoolTogether Info', {
-        accountAddress,
-        contractAddress,
-        message: e.message,
-      }, Sentry.Severity.Error);
-      return null;
-    });
+  const query = `
+    {
+        poolContract(id: "${contractAddress.toLowerCase()}") {
+          openDrawId,
+          openBalance,
+          committedBalance,
+          sponsorshipAndFeeBalance,
+          playersCount,
+        },
+        players(where: { address:"${accountAddress}"}) {
+          consolidatedBalance,
+          latestBalance,
+          winnings,
+        },
+        draws(where: {drawId: "${openDrawId}", poolContract: "${contractAddress.toLowerCase()}"}){
+          feeFraction,
+          drawId,
+          openedAt,
+          balance,
+        },
+    }
+  `;
+  return callSubgraph(POOLTOGETHER_SUBGRAPH_NAME, query);
 };
 
 const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress: string): Promise<Object> => {
-  const url = getGraphUrl(POOLTOGETHER_GRAPH_ID);
   const poolAddress = contractAddress.toLowerCase();
   const sender = accountAddress.toLowerCase();
-  return axios
-    .post(url, {
-      timeout: 5000,
-      query: `
-      {
-        deposits(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
-          hash
-          contractAddress
-          sender
-          amount
-        },
-        withdrawals(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
-          hash
-          contractAddress
-          sender
-          amount
-        },
-      }`,
-    })
-    .then(({ data: response }) => response.data)
-    .catch((e) => {
-      reportLog('Error getting PoolTogether transaction history', {
-        accountAddress,
-        contractAddress,
-        message: e.message,
-      }, Sentry.Severity.Error);
-      return null;
-    });
+  const query = `
+    {
+      deposits(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
+        hash
+        contractAddress
+        sender
+        amount
+      },
+      withdrawals(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
+        hash
+        contractAddress
+        sender
+        amount
+      },
+    }
+  `;
+  return callSubgraph(POOLTOGETHER_SUBGRAPH_NAME, query);
 };
 
 export async function getPoolTogetherInfo(symbol: string, address: string): Promise<?PoolInfo> {

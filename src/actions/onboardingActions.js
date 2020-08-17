@@ -80,7 +80,7 @@ import {
   encryptAndSaveWalletAction,
   generateWalletMnemonicAction,
 } from 'actions/walletActions';
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { setAppThemeAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
@@ -192,7 +192,7 @@ export const finishRegistration = async ({
 
   dispatch(loadFeatureFlagsAction());
 
-  await dispatch(fetchTransactionsHistoryAction());
+  await dispatch(fetchSmartWalletTransactionsAction());
 
   dispatch(managePPNInitFlagAction());
 
