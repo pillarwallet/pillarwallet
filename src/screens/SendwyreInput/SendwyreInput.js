@@ -24,7 +24,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import get from 'lodash.get';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -126,35 +125,36 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     const onSubmitCallback: (values: SendwyreTrxValues) => void =
       this.props.navigation.getParam('onSubmit', () => {});
 
-    const [sourceCurrency, destCurrency] = this.getCurrencyPair(this.state);
+    const [sourceCurrency, destCurrency] = this.getCurrencyPair();
 
-    await onSubmitCallback({
-      sourceCurrency,
-      destCurrency,
-      amount: this.state.sourceAmount,
-    });
+    if (sourceCurrency && destCurrency && this.validateForm()) {
+      await onSubmitCallback({
+        sourceCurrency,
+        destCurrency,
+        amount: this.state.sourceAmount,
+      });
+    }
 
     this.setState({ isHandlingSubmit: false });
   }
 
   tryFillDefaultCurrencies = (prevState: State) => {
-    if (prevState.sourceCurrency === null && this.props.defaultSource !== null) {
-      this.setState({ sourceCurrency: this.props.defaultSource });
+    const { defaultSource, defaultDest } = this.props;
+    if (prevState.sourceCurrency === null && defaultSource !== null) {
+      this.setState({ sourceCurrency: defaultSource });
     }
 
-    if (prevState.destCurrency === null && this.props.defaultDest !== null) {
-      this.setState({ destCurrency: this.props.defaultDest });
+    if (prevState.destCurrency === null && defaultDest !== null) {
+      this.setState({ destCurrency: defaultDest });
     }
   }
 
-  getCurrencyPair = (state: State): [string, string] => {
-    return [
-      get(state, 'sourceCurrency.symbol'),
-      get(state, 'destCurrency.symbol'),
-    ];
+  getCurrencyPair = (): [?string, ?string] => {
+    const { sourceCurrency, destCurrency } = this.state;
+    return [sourceCurrency?.symbol, destCurrency?.symbol];
   }
 
-  isCurrencyPairSupported = ([sourceSymbol, destSymbol]: [string, string]) => {
+  isCurrencyPairSupported = ([sourceSymbol, destSymbol]: [?string, ?string]) => {
     const { currencyPairs } = this.props;
     return currencyPairs &&
       currencyPairs.some(([source, dest]) => source === sourceSymbol && dest === destSymbol);
@@ -166,7 +166,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
       destCurrency !== null &&
       isValidNumber(sourceAmount) &&
       parseFloat(sourceAmount) > 0 &&
-      this.isCurrencyPairSupported(this.getCurrencyPair(this.state));
+      this.isCurrencyPairSupported(this.getCurrencyPair());
   }
 
   getSelectorValues = () => {
