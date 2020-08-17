@@ -34,7 +34,7 @@ export function rampWidgetUrl(address: string, email?: string) {
   const params = {
     hostApiKey: RAMPNETWORK_API_KEY,
     userAddress: address,
-    ...(email ? {} : { userEmailAddress: email }),
+    ...(email ? { userEmailAddress: email } : {}),
   };
 
   return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
