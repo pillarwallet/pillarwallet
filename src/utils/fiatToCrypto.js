@@ -22,12 +22,9 @@ import querystring from 'querystring';
 import {
   RAMPNETWORK_WIDGET_URL,
   RAMPNETWORK_API_KEY,
-  SENDWYRE_WIDGET_URL,
-  SENDWYRE_ACCOUNT_ID,
-  SENDWYRE_RETURN_URL,
 } from 'react-native-dotenv';
 
-import type { AltalixTrxParams } from 'models/FiatToCryptoProviders';
+import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
 export function rampWidgetUrl(address: string, email?: string) {
@@ -40,13 +37,20 @@ export function rampWidgetUrl(address: string, email?: string) {
   return `${RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 
-export function wyreWidgetUrl(address: string) {
-  return `${SENDWYRE_WIDGET_URL}?${querystring.stringify({
-    accountId: SENDWYRE_ACCOUNT_ID,
-    dest: `ethereum:${address}`,
-    redirectUrl: SENDWYRE_RETURN_URL,
-  })}`;
+export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) =>
+  api.getSendwyreWidgetURL(params);
+
+type Rate = $Values<SendwyreRates>;
+type CurrencyPair = [string, string];
+
+function rateToCurrencyPair([joint, split]: [string, Rate]): CurrencyPair {
+  const [a, b] = ((Object.keys(split): any): [string, string]);
+  return a + b === joint ? [a, b] : [b, a];
 }
+
+export const getSendwyreCurrencyPairs = (rates: SendwyreRates): CurrencyPair[] =>
+  ((Object.entries(rates): any): [string, Rate][])
+    .map(rateToCurrencyPair);
 
 export const altalixWidgetUrl = (params: AltalixTrxParams, api: SDKWrapper) =>
   api.generateAltalixTransactionUrl(params);
