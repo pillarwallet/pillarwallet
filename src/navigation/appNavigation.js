@@ -134,8 +134,7 @@ import {
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
-import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
@@ -771,7 +770,7 @@ type Props = {
   stopListeningIntercomNotifications: Function,
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
-  fetchTransactionsHistoryNotifications: Function,
+  checkForMissedAssets: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
   intercomNotificationsCount: number,
@@ -804,7 +803,7 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      fetchTransactionsHistoryNotifications,
+      checkForMissedAssets,
       fetchAllAccountsBalances,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -823,7 +822,7 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
-    fetchTransactionsHistoryNotifications();
+    checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
@@ -961,9 +960,7 @@ const mapDispatchToProps = dispatch => ({
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
-  fetchTransactionsHistoryNotifications: () => {
-    dispatch(fetchTransactionsHistoryNotificationsAction());
-  },
+  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),

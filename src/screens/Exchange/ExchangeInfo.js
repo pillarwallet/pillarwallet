@@ -40,7 +40,7 @@ import Separator from 'components/Separator';
 import { EXCHANGE } from 'constants/navigationConstants';
 
 // actions
-import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -58,7 +58,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   assets: Assets,
   exchangeAllowances: Allowance[],
-  fetchTransactionsHistory: Function,
+  fetchSmartWalletTransactions: Function,
 };
 
 type State = {
@@ -167,7 +167,7 @@ class ExchangeInfo extends React.Component<Props, State> {
     const {
       assets,
       exchangeAllowances,
-      fetchTransactionsHistory,
+      fetchSmartWalletTransactions,
     } = this.props;
     const assetsArray = Object.keys(assets)
       .map(id => assets[id])
@@ -197,7 +197,7 @@ class ExchangeInfo extends React.Component<Props, State> {
                 refreshControl={
                   <RefreshControl
                     refreshing={false}
-                    onRefresh={() => fetchTransactionsHistory()}
+                    onRefresh={() => fetchSmartWalletTransactions()}
                   />
                 }
               />
@@ -225,7 +225,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeInfo);

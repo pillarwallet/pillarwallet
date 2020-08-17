@@ -161,8 +161,13 @@ export const mapTransactionsHistoryWithSablier = async (
   accountAddress: string,
   transactionHistory: Transaction[],
 ): Promise<Transaction[]> => {
-  const { outgoingStreams, incomingStreams } = await fetchUserStreams(accountAddress);
+  const response = await fetchUserStreams(accountAddress);
 
+  if (!response) {
+    return transactionHistory;
+  }
+
+  const { outgoingStreams, incomingStreams } = response;
   const outgoingStreamsTransactions = outgoingStreams.flatMap(stream => stream.txs);
   const incomingStreamsTransactions = incomingStreams.flatMap(stream => stream.txs);
   const streamsTransactions = outgoingStreamsTransactions.concat(incomingStreamsTransactions);
