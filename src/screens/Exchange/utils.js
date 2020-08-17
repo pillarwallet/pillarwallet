@@ -19,7 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
-import type { Rates } from 'models/Asset';
+import type { Rates, Asset } from 'models/Asset';
 import { getRate } from 'utils/assets';
 import { formatFiat, formatMoney, formatAmount } from 'utils/common';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -90,3 +90,12 @@ export const calculateAmountToBuy = (askRate: number | string, amountToSell: num
 
 export const getFormattedSellMax = (asset: Option): string =>
   `${formatAmount(asset.assetBalance, 2)} ${asset.symbol} (${asset.formattedBalanceInFiat.replace(' ', '')})`;
+
+export const validateInput = (
+  fromAmount: string,
+  fromAsset: ?Asset,
+  toAsset: ?Asset,
+  errorMessage: string,
+): boolean => {
+  return !errorMessage && +fromAmount && fromAmount[fromAmount.length - 1] !== '.' && fromAsset && toAsset;
+};
