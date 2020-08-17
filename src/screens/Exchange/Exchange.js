@@ -228,8 +228,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset, displayFiatFromAmount,
     } = this.state;
     const { baseFiatCurrency, rates } = this.props;
-    const val = input || '0';
-    const isValid = isValidNumber(val) || ['.', ','].includes(val[val.length - 1]);
+    const val = input.replace(/,/g, '.');
+    const isValid = isValidNumber(val);
     this.setState(displayFiatFromAmount
       ? {
         fromAmountInFiat: val,
@@ -249,7 +249,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       errorMessage, fromAsset, fromAmount, fromAmountInFiat, displayFiatFromAmount,
     } = this.state;
     const { assetBalance, symbol } = fromAsset;
-    const value = fromAmount ? formatAmount(displayFiatFromAmount ? fromAmountInFiat : fromAmount, 2) : null;
+    const value = displayFiatFromAmount ? fromAmountInFiat : fromAmount;
+
     return (
       <ExchangeTextInput
         onChange={this.handleFromInputChange}
