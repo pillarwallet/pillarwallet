@@ -112,6 +112,7 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
         message: errorMessage || isAllInvitesNotSent
           ? t('toast.referralInviteCantBeSent.allInvites')
           : t('toast.referralInviteCantBeSent.notAllInvites'),
+        emoji: 'hushed',
         messageType: 'warning',
         autoClose: false,
       },

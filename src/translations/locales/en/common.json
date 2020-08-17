@@ -557,7 +557,7 @@
         "confirm": "Confirm"
       }
     },
-    "attemptToLotOutWithoutBackup": {
+    "attemptToLogOutWithoutBackup": {
       "title": "Logout",
       "message": "You can logout only after securing your 12 words backup phrase.",
       "button": {

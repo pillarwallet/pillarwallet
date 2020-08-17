@@ -299,12 +299,12 @@ const Menu = ({
       );
     } else {
       Alert.alert(
-        t('alert.attemptToLotOutWithoutBackup.title'),
-        t('alert.attemptToLotOutWithoutBackup.message'),
+        t('alert.attemptToLogOutWithoutBackup.title'),
+        t('alert.attemptToLogOutWithoutBackup.message'),
         [
-          { text: t('alert.attemptToLotOutWithoutBackup.button.cancel') },
+          { text: t('alert.attemptToLogOutWithoutBackup.button.cancel') },
           {
-            text: t('alert.attemptToLotOutWithoutBackup.button.backup'),
+            text: t('alert.attemptToLogOutWithoutBackup.button.backup'),
             onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
           },
         ],
