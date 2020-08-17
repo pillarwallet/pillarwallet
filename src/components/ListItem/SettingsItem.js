@@ -74,7 +74,6 @@ const ListItemInnerWrapper = styled.View`
   justify-content: space-between;
   align-items: center;
   flex-wrap: wrap;
-
 `;
 
 const Badge = styled(NBBadge)`
