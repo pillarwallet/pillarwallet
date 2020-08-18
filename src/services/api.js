@@ -52,7 +52,7 @@ import type { UserBadgesResponse, SelfAwardBadgeResponse, Badges } from 'models/
 import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
-import type { AltalixTrxParams } from 'models/FiatToCryptoProviders';
+import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 
 // services
 import {
@@ -103,6 +103,13 @@ type ValidatedUserResponse = $Shape<{
   profileLargeImage: string,
   error: boolean,
 }>;
+
+type DirectSdkRequestOptions = {|
+  path: string,
+  method?: string,
+  data?: Object,
+  params?: Object,
+|};
 
 const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
 
@@ -707,17 +714,25 @@ class SDKWrapper {
       .catch(() => []);
   }
 
-  generateAltalixTransactionUrl(data: AltalixTrxParams): Promise<string | null> {
+  makeDirectSdkRequest({ path, method = 'GET', ...rest }: DirectSdkRequestOptions): Promise<AxiosResponse> {
     const requestOptions = {
-      url: `${SDK_PROVIDER}/partners/altalix/generate-transaction-url`,
+      url: SDK_PROVIDER + path,
       defaultRequest: {
-        method: 'POST',
+        method,
         httpsAgent: new https.Agent({ rejectUnathorized: false }),
       },
-      data,
+      ...rest,
     };
 
-    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+    return this.pillarWalletSdk.configuration.executeRequest(requestOptions);
+  }
+
+  generateAltalixTransactionUrl(data: AltalixTrxParams): Promise<string | null> {
+    return this.makeDirectSdkRequest({
+      path: '/partners/altalix/generate-transaction-url',
+      method: 'POST',
+      data,
+    })
       .then(response => response.data.url)
       .catch(error => {
         reportLog('generateAltalixTransactionUrl: SDK request error', error.response.data, Sentry.Severity.Error);
@@ -726,20 +741,70 @@ class SDKWrapper {
   }
 
   fetchAltalixAvailability(walletId: string): Promise<boolean> {
-    const requestOptions = {
-      url: `${SDK_PROVIDER}/user/location`,
-      defaultRequest: {
-        method: 'GET',
-        httpsAgent: new https.Agent({ rejectUnathorized: false }),
-      },
+    return this.makeDirectSdkRequest({
+      path: '/user/location',
       params: { walletId },
-    };
-
-    return this.pillarWalletSdk.configuration.executeRequest(requestOptions)
+    })
       .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
       .catch(error => {
         reportLog('fetchAltalixAvailability: SDK request error', error.response.data, Sentry.Severity.Error);
         return false;
+      });
+  }
+
+  getSendwyreRates(walletId: string): Promise<SendwyreRates> {
+    return this.makeDirectSdkRequest({
+      path: '/partners/wyre/exchange-rates',
+      params: { walletId },
+    })
+      .then(response => response.data.exchangeRates)
+      .catch(error => {
+        reportLog('getSendwyreRates: SDK request error', error.response.data, Sentry.Severity.Error);
+        return {};
+      });
+  }
+
+  getSendwyreCountrySupport(walletId: string): Promise<boolean | null> {
+    // NOTE: this request should always return an error from the server.
+    // Because testing whether the user location is within a country supported
+    // by Wyre occurs before data validation, we send an empty (and thus invalid)
+    // request and base the answer on the type of error returned with the response.
+    //
+    // 400 Bad Request => country is supported
+    // 403 Forbidden   => country is not supported
+
+    return this.makeDirectSdkRequest({
+      path: '/partners/wyre/generate-order-reservation',
+      method: 'POST',
+      data: { walletId },
+    })
+      .then(() => true)
+      .catch(error => {
+        const { response: { status, data } } = error;
+
+        if (status === 400) return true;
+        if (status === 403 && data.message === 'Location not supported') return false;
+
+        // Any other type of error is unexpected and will be reported as usual.
+        reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);
+        return null;
+      });
+  }
+
+  getSendwyreWidgetURL({ address, ...params }: SendwyreTrxParams): Promise<string | null> {
+    return this.makeDirectSdkRequest({
+      path: '/partners/wyre/generate-order-reservation',
+      method: 'POST',
+      data: {
+        ...params,
+        dest: `ethereum:${address}`,
+        lockFields: ['destCurrency'],
+      },
+    })
+      .then(response => response.data.url)
+      .catch(error => {
+        reportLog('getSendwyreWidgetURL: SDK request error', error.response.data, Sentry.Severity.Error);
+        return null;
       });
   }
 }
