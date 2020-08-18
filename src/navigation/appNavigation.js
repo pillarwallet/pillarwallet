@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { createStackNavigator } from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
@@ -26,6 +27,7 @@ import { connect } from 'react-redux';
 import { Animated, Easing, View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
 import { withTranslation } from 'react-i18next';
+import t from 'translations/translate';
 
 // screens
 import AssetsScreen from 'screens/Assets';
@@ -471,7 +473,7 @@ const tabNavigation = createBottomTabNavigator(
             || !!screenProps.intercomNotificationsCount),
           theme: screenProps.theme,
         }),
-        tabBarLabel: tabBarLabel({ text: 'Home', theme: screenProps.theme }),
+        tabBarLabel: tabBarLabel({ text: t('navigationTabs.home'), theme: screenProps.theme }),
       }),
     },
     [ASSETS]: {
@@ -482,7 +484,7 @@ const tabNavigation = createBottomTabNavigator(
           hasIndicator: false,
           theme: screenProps.theme,
         }),
-        tabBarLabel: tabBarLabel({ text: 'Assets', theme: screenProps.theme }),
+        tabBarLabel: tabBarLabel({ text: t('navigationTabs.assets'), theme: screenProps.theme }),
       }),
     },
     [CONNECT_TAB]: {
@@ -493,7 +495,7 @@ const tabNavigation = createBottomTabNavigator(
           hasIndicator: false,
           theme: screenProps.theme,
         }),
-        tabBarLabel: tabBarLabel({ text: 'Connect', theme: screenProps.theme }),
+        tabBarLabel: tabBarLabel({ text: t('navigationTabs.connect'), theme: screenProps.theme }),
       }),
     },
     [SERVICES_TAB]: {
@@ -504,7 +506,7 @@ const tabNavigation = createBottomTabNavigator(
           hasIndicator: false,
           theme: screenProps.theme,
         }),
-        tabBarLabel: tabBarLabel({ text: 'Services', theme: screenProps.theme }),
+        tabBarLabel: tabBarLabel({ text: t('navigationTabs.services'), theme: screenProps.theme }),
       }),
     },
   }, {

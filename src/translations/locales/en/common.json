@@ -23,6 +23,13 @@
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": " {{hours}}h {{minutes}}m",
 
+  "navigationTabs": {
+    "home": "Home",
+    "assets": "Assets",
+    "connect": "Connect",
+    "services": "Services"
+  },
+
   "title": {
     "accounts": "Accounts",
     "addFundsToWallet": "Add funds to Pillar",
@@ -82,12 +89,14 @@
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
+    "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
     "topUp": "Top up",
     "toSmartWallet": "to Smart Wallet",
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
+    "yesterday": "Yesterday",
     "yourEnsName": "Your wallet ENS name"
   },
 
