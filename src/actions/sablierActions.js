@@ -61,7 +61,7 @@ export const fetchUserStreamsAction = () => {
 
     dispatch({ type: SET_FETCHING_STREAMS });
     const streams = await fetchUserStreams(getAccountAddress(smartWalletAccount));
-    dispatch(setUserStreamsAction(streams));
+    if (streams) dispatch(setUserStreamsAction(streams));
   };
 };
 
