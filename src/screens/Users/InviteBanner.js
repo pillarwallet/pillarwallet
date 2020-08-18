@@ -94,7 +94,7 @@ const InviteBanner = (props: Props) => {
             Refer friends and earn rewards, free PLR and more.
           </BodyText>}
           <Button
-            title={t('button.inviteFiends')}
+            title={t('button.inviteFriends')}
             block
             onPress={onInvitePress}
             marginTop={isReferralActive ? 0 : 14}
