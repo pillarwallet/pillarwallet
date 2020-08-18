@@ -40,6 +40,7 @@
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
+    "emailOrPhone": "Email or phone",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
@@ -339,6 +340,18 @@
     }
   },
 
+  "phoneBookContactsList": {
+    "emptyState": {
+      "couldNotGetContacts": {
+        "title": "Could not fetch contacts"
+      },
+      "noneFound": {
+        "title": "Nobody found",
+        "paragraph": "Make sure you entered phone or email address correctly"
+      }
+    }
+  },
+
   "settingsContent": {
     "settingsItem": {
       "analytics": {
@@ -507,7 +520,7 @@
     },
     "referralRewardText": "{{rewardsList}} and a badge",
     "title": {
-      "inviteMain": "InviteFriends",
+      "inviteMain": "Invite Friends",
       "referMain": "Refer friends"
     },
     "instruction": {
@@ -525,7 +538,9 @@
       }
     },
     "paragraph": {
-      "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after\n                confirming their phone number/email address. You will receive your reward after your contact has been\n                rewarded."
+      "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after\n                confirming their phone number/email address. You will receive your reward after your contact has been\n                rewarded.",
+      "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number",
+      "invitationViaEmailRules": "To invite via email, you need to verify your email address"
     },
     "label": {
       "invitesCount": "Your invites ({{amountText}} available today)",
