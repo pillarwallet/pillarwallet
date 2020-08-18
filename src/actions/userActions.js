@@ -19,6 +19,7 @@
 */
 
 import t from 'translations/translate';
+import omit from 'lodash.omit';
 
 // constants
 import {
@@ -30,6 +31,7 @@ import {
   REGISTERED,
   USER_PHONE_VERIFIED,
   USER_EMAIL_VERIFIED,
+  SET_USER,
 } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { OTP_DIGITS } from 'constants/referralsConstants';
@@ -251,5 +253,26 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
     });
 
     dispatch(logEventAction('avatar_updated'));
+  };
+};
+
+export const deleteUserAvatarAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const { user: { data: user } } = getState();
+    const success = await api.deleteUserAvatar(user.walletId);
+
+    if (success) {
+      const updatedUser = {
+        ...omit(user, 'profileImage'),
+        lastUpdateTime: +new Date(),
+      };
+
+      dispatch(saveDbAction('user', { user: updatedUser }, true));
+
+      dispatch({
+        type: SET_USER,
+        payload: { user: updatedUser, state: REGISTERED },
+      });
+    }
   };
 };

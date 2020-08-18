@@ -55,7 +55,7 @@ import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
 
 // actions
-import { updateUserAction } from 'actions/userActions';
+import { updateUserAction, deleteUserAvatarAction } from 'actions/userActions';
 import { dismissPrivacyInsightAction, dismissVerificationNoteAction } from 'actions/insightsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
 
@@ -83,6 +83,7 @@ type Props = {
   dismissVerificationNote: () => void,
   goToInvitationFlow: () => void,
   isPillarRewardCampaignActive: boolean,
+  deleteUserAvatar: () => void,
 };
 
 type State = {
@@ -530,6 +531,10 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     });
   };
 
+  deleteAvatar = () => {
+    this.props.deleteUserAvatar();
+  }
+
   renderInsight = () => {
     const {
       verificationNoteDismissed,
@@ -697,6 +702,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   dismissPrivacyInsight: () => dispatch(dismissPrivacyInsightAction()),
   dismissVerificationNote: () => dispatch(dismissVerificationNoteAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  deleteUserAvatar: () => dispatch(deleteUserAvatarAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(AddOrEditUser));
