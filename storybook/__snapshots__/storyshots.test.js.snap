@@ -34222,6 +34222,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                           },
                         }
                       }
+                      smallPadding={false}
                       style={
                         Array [
                           Object {
@@ -35963,6 +35964,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           },
                         }
                       }
+                      smallPadding={false}
                       style={
                         Array [
                           Object {
@@ -37564,6 +37566,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                           },
                         }
                       }
+                      smallPadding={false}
                       style={
                         Array [
                           Object {
