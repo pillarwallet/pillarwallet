@@ -22,6 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -78,10 +79,15 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
     } = this.props;
 
     const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
-    const modalTitle = isPillarRewardCampaignActive ? 'Invite and get rewarded' : 'Invite to Pillar';
+    const modalTitle = isPillarRewardCampaignActive
+      ? t('referralsContent.modal.missingPhone.title.activeRewardCampaign')
+      : t('referralsContent.modal.missingPhone.title.inactiveRewardCampaign');
     const rewardParagraph = isPillarRewardCampaignActive && rewardText
-      ? `You will receive ${rewardText} for each friend installed the app with your referral link.`
+      ? t('referralsContent.modal.missingPhone.paragraph.reward', { reward: rewardText })
       : '';
+    const enablingParagraph = isPillarRewardCampaignActive
+      ? t('referralsContent.modal.missingPhone.paragraph.enablingReferrals')
+      : t('referralsContent.modal.missingPhone.paragraph.enablingInvitations');
 
     return (
       <ContainerWithHeader
@@ -96,11 +102,7 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
           <Title>{modalTitle}</Title>
           <LoadingParagraph
             isLoading={isFetchingRewards}
-            text={
-              `${rewardParagraph}` +
-              `\n To enable ${isPillarRewardCampaignActive ? 'referral' : 'invitation'} system we need to make sure ` +
-              'you\'re a genuine user. We care for our users\' privacy and never share your data.'
-            }
+            text={`${rewardParagraph}\n${enablingParagraph}`}
             paragraphProps={{
               center: true,
               style: {
@@ -110,7 +112,7 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
             }}
           />
           <Button
-            title="Verify email or phone"
+            title={t('referralsContent.modal.missingPhone.button.toUserData')}
             block
             regularText
             onPress={() => navigation.navigate(ADD_EDIT_USER)}

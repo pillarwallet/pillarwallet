@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import t from 'translations/translate';
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
 import type { SentInvitationsCount, ReferralContact, ReferralReward } from 'reducers/referralsReducer';
 
@@ -89,5 +90,5 @@ export const getCampaignRewardText = (campaignRewards: ReferralReward[] = []) =>
     if (rewardText) return [...reducedRewards, rewardText];
     return reducedRewards;
   }, []);
-  return rewards.length ? `${rewards.join(', ')} and a badge` : '';
+  return rewards.length ? t('referralsContent.referralRewardText', { rewardsList: rewards.join(', ') }) : '';
 };
