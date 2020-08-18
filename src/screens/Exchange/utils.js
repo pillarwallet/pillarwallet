@@ -32,10 +32,14 @@ import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 
+import type { NavigationScreenProp } from 'react-navigation';
 import type { Option } from 'models/Selector';
 import type { Rates, Asset, Assets, Balances } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Accounts } from 'models/Account';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Allowance, Offer } from 'models/Offer';
+import type { ExchangeOptions } from 'utils/exchange';
 
 export const getBalanceInFiat = (
   baseFiatCurrency: ?string,
@@ -45,7 +49,7 @@ export const getBalanceInFiat = (
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : null;
+    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
   return assetBalanceInFiat;
 };
 
@@ -57,7 +61,7 @@ export const getAssetBalanceFromFiat = (
 ): number => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceFromFiat = fiatBalance ?
-    parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : null;
+    parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : 0;
   return assetBalanceFromFiat;
 };
 
@@ -69,7 +73,7 @@ export const getFormattedBalanceInFiat = (
   const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
   if (!assetBalanceInFiat) return '';
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : null;
+  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
 export const getAvailable = (_min: string, _max: string, rate: string) => {
@@ -106,17 +110,19 @@ export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?number
   return calculateAmountToBuy(bestRate, fromAmount);
 };
 
-export const getFormattedSellMax = (asset: Option): string =>
-  `${formatAmount(asset.assetBalance, 2)} ${asset.symbol} (${asset.formattedBalanceInFiat.replace(' ', '')})`;
+export const getFormattedSellMax = (asset: Option): string => {
+  const { assetBalance, symbol, formattedBalanceInFiat } = asset;
+  if (!(assetBalance && symbol && formattedBalanceInFiat)) return '';
+  return `${formatAmount(assetBalance, 2)} ${symbol} (${formattedBalanceInFiat.replace(' ', '')})`;
+};
 
 export const validateInput = (
   fromAmount: string,
-  fromAsset: ?Asset,
-  toAsset: ?Asset,
+  fromAsset: ?Option,
+  toAsset: ?Option,
   errorMessage: string,
-): boolean => {
-  return !errorMessage && +fromAmount && fromAmount[fromAmount.length - 1] !== '.' && fromAsset && toAsset;
-};
+): boolean =>
+  !errorMessage && !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
 
 const generateAssetsOptions = (
   assets: Assets,
@@ -124,7 +130,7 @@ const generateAssetsOptions = (
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-) => {
+): Option[] => {
   return sortAssets(assets)
     .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
       && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
@@ -160,12 +166,12 @@ const generateSupportedAssetsOptions = (
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-) => {
+): Option[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
   return [...exchangeSupportedAssets] // prevent mutation of param
     .map(({ symbol, iconUrl, ...rest }) => {
       const rawAssetBalance = getBalance(balances, symbol);
-      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
+      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
       const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
       const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
@@ -242,13 +248,13 @@ export const getHeaderRightItems = (
   return rightItems;
 };
 
-const isEnoughAssetBalance = (assetBalance: string, amount: string | number) => Number(assetBalance) >= Number(amount);
+const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number) => Number(assetBalance) >= Number(amount);
 
 export const getErrorMessage = (
   amount: string,
-  asset: Asset,
+  asset: Option,
 ): string => {
-  const { assetBalance, symbol } = asset;
+  const { assetBalance = '', symbol = '' } = asset;
   const isValid = isValidNumber(amount);
   if (!isValid) {
     return 'Incorrect number entered';
@@ -259,8 +265,8 @@ export const getErrorMessage = (
 };
 
 export const shouldTriggerSearch = (
-  fromAsset: Asset,
-  toAsset: Asset,
+  fromAsset: Option,
+  toAsset: Option,
   fromAmount: number,
 ) => fromAsset !== toAsset && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 

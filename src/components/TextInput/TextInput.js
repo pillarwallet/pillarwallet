@@ -83,6 +83,7 @@ type Props = {
   customInputHeight?: number,
   onLeftSideTextPress?: () => void,
   onRightAddonPress?: () => void,
+  leftSideSymbol?: string,
 };
 
 type State = {

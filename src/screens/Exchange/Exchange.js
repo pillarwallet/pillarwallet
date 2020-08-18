@@ -113,10 +113,10 @@ type Props = {
 type State = {
   isSubmitted: boolean,
   showEmptyMessage: boolean,
-  fromAmount: ?string,
-  fromAmountInFiat: ?string,
-  fromAsset: Asset,
-  toAsset: Asset,
+  fromAmount: string,
+  fromAmountInFiat: string,
+  fromAsset: Option,
+  toAsset: Option,
   includeTxFee: boolean,
   errorMessage: string,
   showSellOptions: boolean,
@@ -145,8 +145,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { fromAsset, toAsset } = this.getInitialAssets();
 
     this.state = {
-      fromAmount: undefined,
-      fromAmountInFiat: undefined,
+      fromAmount: '',
+      fromAmountInFiat: '',
       fromAsset,
       toAsset,
       includeTxFee: false,
@@ -216,7 +216,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
   }
 
-  getInitialAssets = (): { fromAsset: Asset, toAsset: Asset } => {
+  getInitialAssets = (): Object => {
     const { navigation, exchangeSearchRequest } = this.props;
     const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest?.fromAssetCode || ETH;
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
@@ -231,7 +231,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({
       toAsset: fromAsset,
       fromAsset: toAsset,
-      fromAmount: null,
+      fromAmount: '',
     }, this.resetSearch);
   };
 
@@ -240,16 +240,16 @@ class ExchangeScreen extends React.Component<Props, State> {
   handleFromInputChange = (input: string) => {
     const { fromAsset, displayFiatFromAmount } = this.state;
     const { baseFiatCurrency, rates } = this.props;
-    const { symbol } = fromAsset;
+    const { symbol = '' } = fromAsset;
     const val = input.replace(/,/g, '.');
     this.setState(displayFiatFromAmount
       ? {
         fromAmountInFiat: val,
-        fromAmount: getAssetBalanceFromFiat(baseFiatCurrency, val, rates, symbol),
+        fromAmount: String(getAssetBalanceFromFiat(baseFiatCurrency, val, rates, symbol)),
       }
       : {
         fromAmount: val,
-        fromAmountInFiat: getBalanceInFiat(baseFiatCurrency, val, rates, symbol),
+        fromAmountInFiat: String(getBalanceInFiat(baseFiatCurrency, val, rates, symbol)),
       },
     );
     this.setErrorMessage(getErrorMessage(val, fromAsset));
@@ -260,7 +260,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       errorMessage, fromAsset, fromAmount, fromAmountInFiat, displayFiatFromAmount,
     } = this.state;
-    const { assetBalance, symbol } = fromAsset;
+    const { assetBalance, symbol = '' } = fromAsset;
     const value = displayFiatFromAmount ? fromAmountInFiat : fromAmount;
 
     return (
@@ -273,9 +273,9 @@ class ExchangeScreen extends React.Component<Props, State> {
         asset={fromAsset}
         onAssetPress={() => this.setState({ showSellOptions: true })}
         labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        onLabelPress={assetBalance && this.handleSellMax}
+        onLabelPress={this.handleSellMax}
         leftSideText={displayFiatFromAmount
-          ? `${formatAmount(fromAmount || '0', 2)} ${fromAsset.symbol}`
+          ? `${formatAmount(fromAmount || '0', 2)} ${fromAsset.symbol || ''}`
           : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="-"
@@ -296,8 +296,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     let toAmountInFiat;
     if (offers?.length && fromAmount) {
       toAmount = getBestAmountToBuy(offers, fromAmount);
-      toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol), 2);
-      value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount, 6);
+      toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2);
+      value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount || '', 6);
     }
 
     return (
@@ -308,12 +308,12 @@ class ExchangeScreen extends React.Component<Props, State> {
         asset={toAsset}
         onAssetPress={() => this.setState({ showBuyOptions: true })}
         leftSideText={displayFiatToAmount
-          ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol}`
+          ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol || ''}`
           : formatFiat(toAmountInFiat || '0', baseFiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="+"
         onLeftSideTextPress={() => this.setState({ displayFiatToAmount: !displayFiatToAmount })}
-        rightPlaceholder={displayFiatToAmount ? baseFiatCurrency || defaultFiatCurrency : toAsset.symbol}
+        rightPlaceholder={displayFiatToAmount ? baseFiatCurrency || defaultFiatCurrency : toAsset.symbol || ''}
       />
     );
   }
@@ -332,9 +332,10 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   handleSellMax = () => {
     const { fromAsset } = this.state;
+    const fiatAmount = fromAsset.formattedBalanceInFiat || '';
     this.setState({
       fromAmount: fromAsset.assetBalance,
-      fromAmountInFiat: fromAsset.formattedBalanceInFiat.substr(2), // TODO change
+      fromAmountInFiat: fiatAmount.substr(2),
     });
   };
 
@@ -456,7 +457,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               disableNonFiatExchange={disableNonFiatExchange}
               isExchangeActive={isSubmitted}
               showEmptyMessage={showEmptyMessage}
-              setFromAmount={this.setFromAmount}
+              setFromAmount={val => this.setState({ fromAmount: val })}
               navigation={navigation}
             />}
           </ScrollView>}

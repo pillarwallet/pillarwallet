@@ -63,6 +63,10 @@ const AnimatedToggle = Animated.createAnimatedComponent(Toggle);
 
 
 class Switcher extends React.Component<Props, State> {
+  onPosition;
+  offPosition;
+  toggleDiameter;
+
   constructor(props) {
     super(props);
     this.toggleDiameter = props.small ? TOGGLE_DIAMETER_SMALL : TOGGLE_DIAMETER;

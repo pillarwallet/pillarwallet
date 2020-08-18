@@ -72,7 +72,6 @@ import { buildTxFeeInfo } from 'utils/smartWallet';
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { calculateAmountToBuy, getAvailable } from './utils';
-import type { FormValue } from './Exchange';
 import AssetEnableModal from './AssetEnableModal';
 
 

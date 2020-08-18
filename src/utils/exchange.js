@@ -71,7 +71,7 @@ export const clearWebViewCookies = () => {
   }
 };
 
-const generatePopularOptions = (assetsOptionsBuying: { symbol: string }[]): Option[] => {
+const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => {
   return POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
     const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
     if (popularAsset) return [...popularAssetsList, popularAsset];
@@ -79,7 +79,7 @@ const generatePopularOptions = (assetsOptionsBuying: { symbol: string }[]): Opti
   }, []);
 };
 
-export const generateHorizontalOptions = (assetsOptionsBuying: Option[]): Option[] => {
+export const generateHorizontalOptions = (assetsOptionsBuying: Option[]): Object => {
   const popularOptions = generatePopularOptions(assetsOptionsBuying);
   return [{
     title: 'Popular',
