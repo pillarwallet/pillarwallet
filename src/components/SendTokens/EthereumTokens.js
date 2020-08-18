@@ -43,7 +43,7 @@ import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 
 // utils
-import { formatAmount, formatFiat, getEthereumProvider } from 'utils/common';
+import { formatAmount, formatFiat, getEthereumProvider, isValidNumber } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getBalance, getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -604,8 +604,9 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     const enteredMoreThanBalance = currentValue > balance;
     const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!receiver;
+    const isValidAmount = !!amount && isValidNumber(currentValue);
 
-    const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && !!amount && !!parseFloat(amount);
+    const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
     const showFeeForCollectible = hasAllFeeData;
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
     const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
@@ -616,7 +617,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
     const hasAllData = isCollectible ? (!!receiver && !!assetData) : (!inputHasError && !!receiver && !!currentValue);
 
     let feeError = false;
-    if (txFeeInfo && assetData) {
+    if (txFeeInfo && assetData && isValidAmount) {
       feeError = !isEnoughBalanceForTransactionFee(balances, {
         txFeeInWei: txFeeInfo.fee,
         gasToken: txFeeInfo.gasToken,
