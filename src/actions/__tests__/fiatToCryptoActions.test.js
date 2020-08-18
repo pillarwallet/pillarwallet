@@ -22,8 +22,19 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 
-import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
-import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
+import {
+  SET_ALTALIX_AVAILABILITY,
+  SET_SENDWYRE_RATES,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+  SENDWYRE_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
+import {
+  loadAltalixAvailability,
+  loadSendwyreRatesAction,
+  loadSendwyreCountrySupportAction,
+} from 'actions/fiatToCryptoActions';
 
 function mockStore({ state, pillarSdk }) {
   return configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue])(state);
@@ -31,23 +42,97 @@ function mockStore({ state, pillarSdk }) {
 
 describe('Fiat to crypto providers actions', () => {
   describe('Altalix', () => {
-    it('loadAltalixInfoAction should set availability', async () => {
+    it('loadAltalixAvailability should set availability', async () => {
       const store = mockStore({
         state: {
           user: { data: { walletId: 'wallet-id' } },
-          fiatToCrypto: { altalix: null },
+          fiatToCrypto: { isAltalixAvailable: null },
         },
         pillarSdk: {
           fetchAltalixAvailability: async id => id && true,
         },
       });
 
-      const expectedActions = [{ type: SET_ALTALIX_INFO, payload: { isAvailable: true } }];
+      const expectedActions = [{ type: SET_ALTALIX_AVAILABILITY, payload: true }];
 
-      await store.dispatch(loadAltalixInfoAction());
+      await store.dispatch(loadAltalixAvailability());
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+  });
+
+  describe('Sendwyre', () => {
+    it('loadSendwyreRatesAction should fetch Sendwyre exchange rates', async () => {
+      const rates = { USDETH: { USD: 1, ETH: 1 } };
+      const walletId = 'wallet-id';
+
+      const store = mockStore({
+        state: {
+          user: { data: { walletId } },
+          fiatToCrypto: { sendwyreExchangeRates: null },
+        },
+        pillarSdk: {
+          getSendwyreRates: async id => id && rates,
+        },
+      });
+
+      const expectedActions = [{
+        type: SET_SENDWYRE_RATES,
+        payload: rates,
+      }];
+
+      await store.dispatch(loadSendwyreRatesAction());
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+
+    it('loadSendwyreCountrySupportAction should set Sendwyre availability', async () => {
+      const walletId = 'wallet-id';
+
+      const store = mockStore({
+        state: {
+          user: { data: { walletId } },
+          fiatToCrypto: { sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN },
+        },
+        pillarSdk: {
+          getSendwyreCountrySupport: async id => id && true,
+        },
+      });
+
+      const expectedActions = [{
+        type: LOAD_SENDWYRE_COUNTRY_SUPPORT,
+      }, {
+        type: SET_SENDWYRE_COUNTRY_SUPPORT,
+        payload: true,
+      }];
+
+      await store.dispatch(loadSendwyreCountrySupportAction());
+      const actualActions = store.getActions();
+      expect(actualActions).toEqual(expectedActions);
+    });
+
+    it('loadSendwyreCountrySupportAction should clear Sendwyre availability on error', async () => {
+      const walletId = 'wallet-id';
+
+      const store = mockStore({
+        state: {
+          user: { data: { walletId } },
+          fiatToCrypto: { sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN },
+        },
+        pillarSdk: {
+          getSendwyreCountrySupport: async () => null,
+        },
+      });
+
+      const expectedActions = [{
+        type: LOAD_SENDWYRE_COUNTRY_SUPPORT,
+      }, {
+        type: RESET_SENDWYRE_COUNTRY_SUPPORT,
+      }];
+
+      await store.dispatch(loadSendwyreCountrySupportAction());
       const actualActions = store.getActions();
       expect(actualActions).toEqual(expectedActions);
     });
   });
 });
-
