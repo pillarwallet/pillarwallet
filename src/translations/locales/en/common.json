@@ -558,6 +558,15 @@
     }
   },
 
+  "addressBookContent": {
+    "title": {
+      "allowAccess": "Access to address book"
+    },
+    "paragraph": {
+      "allowAccess": "Please grant access to your address book in order to be able to choose your phone or email contacts."
+    }
+  },
+
   "toast":{
     "cantUpdateUser": "Changes have not been saved. Please try again later",
     "cantVerifyCode": "We can't verify your code at this time. Please try again later",
