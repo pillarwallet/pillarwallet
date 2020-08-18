@@ -33,7 +33,7 @@
   "title": {
     "accounts": "Accounts",
     "addFundsToWallet": "Add funds to Pillar",
-    "mainFeed": "History",
+    "mainActivityFeed": "History",
     "publicAddress": "Public address",
     "success": "Success",
     "totalBalance": "Total balances",

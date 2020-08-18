@@ -470,7 +470,7 @@ class HomeScreen extends React.Component<Props> {
           {onScroll => (
             <ActivityFeed
               card
-              cardHeaderTitle={t('title.mainFeed')}
+              cardHeaderTitle={t('title.mainActivityFeed')}
               navigation={navigation}
               feedData={feedData}
               initialNumToRender={8}
