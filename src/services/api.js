@@ -711,7 +711,7 @@ class SDKWrapper {
 
   generateAltalixTransactionUrl(data: AltalixTrxParams): Promise<string | null> {
     const requestOptions = {
-      url: `${SDK_PROVIDER}/partners/altalix/generate-transaction-url`,
+      url: `${getEnv('SDK_PROVIDER')}/partners/altalix/generate-transaction-url`,
       defaultRequest: {
         method: 'POST',
         httpsAgent: new https.Agent({ rejectUnathorized: false }),
@@ -729,7 +729,7 @@ class SDKWrapper {
 
   fetchAltalixAvailability(walletId: string): Promise<boolean> {
     const requestOptions = {
-      url: `${SDK_PROVIDER}/user/location`,
+      url: `${getEnv('SDK_PROVIDER')}/user/location`,
       defaultRequest: {
         method: 'GET',
         httpsAgent: new https.Agent({ rejectUnathorized: false }),

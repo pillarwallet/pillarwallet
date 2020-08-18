@@ -25,8 +25,6 @@ import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
-import { RAMPNETWORK_API_KEY } from 'react-native-dotenv';
-import { getEnv } from 'configs/envConfig';
 
 // actions
 import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';

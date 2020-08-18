@@ -78,10 +78,6 @@ const getPoolTogetherTokenContract = (symbol: string) => {
   };
 };
 
-const getGraphUrl = (graphId: string): string => {
-  return `${getEnv('THE_GRAPH_API_URL')}/${graphId}`;
-};
-
 const fetchPoolTogetherGraph = async (
   contractAddress: string,
   accountAddress: string,

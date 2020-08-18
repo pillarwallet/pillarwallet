@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import 'utils/setup';
-import { setupEnv } from 'configs/envConfig';
+import { setupEnv, switchEnvironments } from 'configs/envConfig';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking } from 'react-native';
@@ -119,6 +119,9 @@ class App extends React.Component<Props, *> {
       Sentry.setDist(dist);
       Sentry.setTags({ environment: BUILD_TYPE });
     }
+    this.state = {
+      env: null,
+    };
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -147,6 +150,7 @@ class App extends React.Component<Props, *> {
 
     const env = await setupEnv();
     log.info('Environment: ', env);
+    this.setState({ env });
     /**
      * First, we need to set the defaults for Remote Config.
      * This makes the default values immedidately available
@@ -275,6 +279,12 @@ class App extends React.Component<Props, *> {
                 onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+              {this.state.env === 'staging' &&
+                <Button
+                  title={`Environment: ${this.state.env}`}
+                  onPress={() => switchEnvironments()}
+                />
+              }
             </Root>
           </React.Fragment>
         </ThemeProvider>

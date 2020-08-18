@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { Alert } from 'react-native';
 import { BUILD_TYPE } from 'react-native-dotenv';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
@@ -44,14 +45,15 @@ const envVars = {
     RECOVERY_PORTAL_URL: 'https://recovery.pillarproject.io',
     NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
     AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS: '0x24a42fD28C976A61Df5D00D0599C34c4f90748c8',
-    AAVE_THE_GRAPH_ID: 'QmYnqdXEv9aBDHpoNiiPFJza2jsDqkSfTW9YBLLgkjouHq',
+    AAVE_SUBGRAPH_NAME: 'aave/protocol-multy-raw',
     BALANCE_CHECK_CONTRACT: '0xb1F8e55c7f64D203C1400B9D8555d050F94aDF39',
     POOL_DAI_CONTRACT_ADDRESS: '0x29fe7D60DdF151E5b52e5FAB4f1325da6b2bD958',
     POOL_USDC_CONTRACT_ADDRESS: '0x0034Ea9808E620A0EF79261c51AF20614B742B24',
     DAI_ADDRESS: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
     USDC_ADDRESS: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    POOLTOGETHER_GRAPH_ID: 'QmSmtdcYD9Zuk7W9zuk73rRCNema26vMdF7muyfGwLzqfT',
-    THE_GRAPH_API_URL: 'https://api.thegraph.com/subgraphs/id',
+    POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions',
+    SABLIER_CONTRACT_ADDRESS: '0xA4fc358455Febe425536fd1878bE67FfDBDEC59a',
+    SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier',
   },
   staging: {
     TX_DETAILS_URL: 'https://ropsten.etherscan.io/tx/',
@@ -72,14 +74,15 @@ const envVars = {
     RECOVERY_PORTAL_URL: 'https://recovery-qa.pillarproject.io',
     NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
     AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS: '0x1c8756FD2B28e9426CDBDcC7E3c4d64fa9A54728',
-    AAVE_THE_GRAPH_ID: 'QmeA5Hhgh13vShbqQS4yYNgYvq6NkwrAFy3tZkpfSXtkM9',
+    AAVE_SUBGRAPH_NAME: 'aave/protocol-multy-ropsten-raw',
     BALANCE_CHECK_CONTRACT: '0x6077113dB6d2Fb7A2E8b96D7ee470B136315C0E7',
     POOL_DAI_CONTRACT_ADDRESS: '0xC3a62C8Af55c59642071bC171Ebd05Eb2479B663',
     POOL_USDC_CONTRACT_ADDRESS: '0xa0B2A98d0B769886ec06562ee9bB3572Fa4f3aAb',
     DAI_ADDRESS: '0x4F96Fe3b7A6Cf9725f59d353F723c1bDb64CA6Aa',
     USDC_ADDRESS: '0x75B0622Cec14130172EaE9Cf166B92E5C112FaFF',
-    POOLTOGETHER_GRAPH_ID: 'QmSmtdcYD9Zuk7W9zuk73rRCNema26vMdF7muyfGwLzqfT',
-    THE_GRAPH_API_URL: 'https://api.thegraph.com/subgraphs/id',
+    POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions',
+    SABLIER_CONTRACT_ADDRESS: '0xc04Ad234E01327b24a831e3718DBFcbE245904CC',
+    SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier-ropsten',
   },
   mixed: {
 
@@ -101,12 +104,30 @@ export const setupEnv = () => {
 };
 
 export const switchEnvironments = async () => {
-  const newEnv = storedEnv === 'production' ? 'staging' : 'production';
-  await storage.removeAll();
-  await storage.save('environment', newEnv, true).then(async () => {
-    storedEnv = newEnv;
-    RNRestart.Restart();
-  });
+  Alert.alert(
+    'Warning: Environment Switch !',
+    'Switching environments will DELETE THE WALLET STORAGE,' +
+    '\nmake sure to have the BACKUP available BEFORE clicking OK!!!',
+    [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {
+        text: 'OK',
+        onPress: async () => {
+          const newEnv = storedEnv === 'production' ? 'staging' : 'production';
+          await storage.removeAll();
+          await storage.save('environment', newEnv, true).then(async () => {
+            storedEnv = newEnv;
+            RNRestart.Restart();
+          });
+        },
+      },
+    ],
+    { cancelable: true },
+  );
 };
 
 export const environmentVars = () => {

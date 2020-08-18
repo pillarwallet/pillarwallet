@@ -25,6 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
+import { switchEnvironments } from 'configs/envConfig';
 
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
@@ -48,6 +49,7 @@ type Props = {
 
 type State = {
   translateY: Animated.Value,
+  clickCount: number,
 };
 
 const LOGO_HEIGHT = 56;
@@ -79,7 +81,7 @@ const LogoWrapper = styled.View`
   margin-top: -${INITIAL_TOP_MARGIN}px;
 `;
 
-const Spacer = styled.View`
+const Spacer = styled.TouchableOpacity`
   flex: 2.5;
   width: 100%;
   align-items: center;
@@ -100,6 +102,15 @@ const AnimatedLogoWrapper = Animated.createAnimatedComponent(LogoWrapper);
 class Welcome extends React.Component<Props, State> {
   state = {
     translateY: new Animated.Value(0),
+    clickCount: 0,
+  };
+
+  handleClick = () => {
+    const newCount = this.state.clickCount + 1;
+    this.setState({ clickCount: newCount });
+    if (newCount === 16) { // on the 16th click switch network and reset.
+      switchEnvironments();
+    }
   };
 
   loginAction = () => {
@@ -145,7 +156,7 @@ class Welcome extends React.Component<Props, State> {
           }}
         >
           <Wrapper fullScreen>
-            <Spacer />
+            <Spacer onPress={this.handleClick} />
             <ButtonsWrapper>
               <Button
                 roundedCorners
