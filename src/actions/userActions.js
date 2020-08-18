@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import t from 'translations/translate';
+
 // constants
 import {
   SENDING_OTP,
@@ -57,7 +59,7 @@ const verificationSucceededAction = (message: string) => ({
   type: ADD_NOTIFICATION,
   payload: {
     message,
-    title: 'Validation successful',
+    emoji: 'ok_hand',
     messageType: 'success',
     autoClose: false,
   },
@@ -80,9 +82,9 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: message || 'Please try again later',
-          title: 'Changes have not been saved',
+          message: message || t('toast.cantUpdateUser'),
           messageType: 'warning',
+          emoji: 'hushed',
         },
       });
 
@@ -124,8 +126,8 @@ export const createOneTimePasswordAction = (
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: 'Please try again later',
-          title: `We can't verify your ${fieldName} at this time`,
+          message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.title.default']),
+          emoji: 'hushed',
           messageType: 'warning',
         },
       });
@@ -165,13 +167,12 @@ export const verifyEmailAction = (walletId: string, code: string) => {
       },
     } = getState();
 
-    let message = 'Email verification was successful';
+    let message = t('toast.verificationSuccess.email');
 
     if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
       && referralToken && !isRewardClaimed && isCaseInsensitiveMatch(email, referredEmail)) {
       dispatch(completeReferralsEventAction());
-      message = 'Thank you for verifying your information, ' +
-                'we are currently processing your reward.';
+      message = t('toast.verificationSuccess.referralReward');
     }
 
     dispatch(verificationSucceededAction(message));
@@ -216,13 +217,12 @@ export const verifyPhoneAction = (
       },
     } = getState();
 
-    let message = 'Phone verification was successful';
+    let message = t('toast.verificationSuccess.phone');
 
     if ((isPillarRewardCampaignActive || is1WorldCampaignActive)
       && referralToken && !isRewardClaimed && referredPhone === phone) {
       dispatch(completeReferralsEventAction());
-      message = 'Thank you for verifying your information, ' +
-                'we are currently processing your reward.';
+      message = t('toast.verificationSuccess.referralReward');
     }
 
     dispatch(verificationSucceededAction(message));

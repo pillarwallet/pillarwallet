@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
+import t from 'translations/translate';
 
 import { Paragraph } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -55,14 +56,14 @@ class AccessToAddressBook extends React.PureComponent<Props> {
   render() {
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Access to address book' }] }}
+        headerProps={{ centerItems: [{ title: t('addressBookContent.title.allowAccess') }] }}
       >
         <Wrapper flex={1} regularPadding>
           <Paragraph style={{ marginTop: spacing.layoutSides }}>
-            Please grant access to your address book in order to be able to choose your phone or email contacts.
+            {t('addressBookContent.paragraph.allowAccess')}
           </Paragraph>
           <ButtonWrapper>
-            <Button title="Confirm" onPress={this.navigateToContactsScreen} block />
+            <Button title={t('button.confirm')} onPress={this.navigateToContactsScreen} block />
           </ButtonWrapper>
         </Wrapper>
       </ContainerWithHeader>

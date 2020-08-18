@@ -17,9 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import { Alert } from 'react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 import { requestSessionAction } from 'actions/walletConnectActions';
 import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
@@ -63,7 +65,7 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
             lastActiveScreenParams: { code: referralCode },
           });
         } else {
-          Alert.alert('Invalid link', 'Referral code is missing');
+          Alert.alert(t('alert.invalidReferralDeepLink.title'), t('alert.invalidReferralDeepLink.message'));
         }
         break;
       case 'wc':
