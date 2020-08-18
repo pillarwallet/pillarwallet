@@ -626,8 +626,8 @@ export class EventDetail extends React.Component<Props, State> {
 
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
-    if (isPillarRewardCampaignActive) return t('label.referFriends');
-    return t('label.inviteFriends');
+    if (isPillarRewardCampaignActive) return t('button.referFriends');
+    return t('button.inviteFriends');
   };
 
   renderPoolTogetherTickets = (event: Object) => {
