@@ -276,7 +276,7 @@ jest.setMock('@smartwallet/sdk', {
   },
   SdkEnvironmentNames: {
     Rinkeby: 'Rinkeby',
-    Ropsten: 'Ropsten',
+    Kovan: 'Kovan',
   },
   getSdkEnvironment: () => mockArchanovaSdkInstance,
   createSdk: () => ({

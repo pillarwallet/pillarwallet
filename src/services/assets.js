@@ -312,7 +312,7 @@ export async function fetchAddressBalancesFromProxyContract(
   assets: Asset[],
   accountAddress: string,
 ): Promise<FetchBalancesResponse> {
-  if (!['homestead', 'ropsten'].includes(getEnv('NETWORK_PROVIDER'))) return [];
+  if (!['homestead', 'kovan'].includes(getEnv('NETWORK_PROVIDER'))) return [];
 
   const tokens = assets.map(({ address }) => address);
   const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));

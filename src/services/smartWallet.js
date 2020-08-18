@@ -148,9 +148,9 @@ class SmartWallet {
   getEnvironmentNetwork(networkName: string) {
     switch (networkName) {
       case 'rinkeby': return SdkEnvironmentNames.Rinkeby;
-      case 'ropsten': return SdkEnvironmentNames.Ropsten;
+      case 'kovan': return SdkEnvironmentNames.Kovan;
       case 'homestead': return SdkEnvironmentNames.Main;
-      default: return SdkEnvironmentNames.Ropsten;
+      default: return SdkEnvironmentNames.Kovan;
     }
   }
 

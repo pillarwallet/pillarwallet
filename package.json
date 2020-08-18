@@ -39,7 +39,7 @@
     "@react-native-firebase/perf": "^7.2.2",
     "@react-native-firebase/remote-config": "^8.0.0",
     "@sentry/react-native": "1.7.1",
-    "@smartwallet/sdk": "2.1.0",
+    "@smartwallet/sdk": "2.2.0",
     "@tradle/react-native-http": "^2.0.0",
     "@uniswap/sdk": "2.0.5",
     "@walletconnect/react-native": "^1.0.0-beta.47",
