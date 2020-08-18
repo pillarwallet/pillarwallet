@@ -105,7 +105,7 @@
     "exchange": "Exchange",
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
-    "inviteFiends": "Invite friends",
+    "inviteFriends": "Invite friends",
     "inviteMoreFriends": "Invite more friends",
     "inviteToPillar": "Invite to Pillar",
     "notEnoughPLR": "Not enough PLR",
@@ -554,7 +554,12 @@
       "rewardForEachInvitation": "You will receive {{reward}} for each friend installed the app with your referral link. You both should have verified your details in order to be eligible.",
       "thanksForReferring": "Thank you for spreading the word about Pillar.",
       "rewardClaimingPending": "Transaction is processing.\n It may take a few minutes.\n You can check the status later here or in Home tab.",
-      "rewardClaimingError": "We can't verify your code at this time. Please try later."
+      "rewardClaimingError": "We can't verify your code at this time. Please try later.",
+      "getBadgesForEachInvitation": "Start receiving badges for friends installed Pillar with your referral link!",
+      "allowedInviteViaEmail": "You are now able to invite friends via email.",
+      "allowedInviteViaPhone": "You are now able to invite friends via text message.",
+      "emailVerified": "Your email has been verified",
+      "phoneVerified": "Your email has been verified"
     },
     "label": {
       "invitesCount": "Your invites ({{amountText}} available today)",
