@@ -91,6 +91,7 @@
     "activatePPN": "Activate Pillar Network",
     "add": "Add",
     "addContacts": "Add contacts",
+    "addDetails": "Add details",
     "addFunds": "Add funds",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
@@ -521,7 +522,10 @@
     "referralRewardText": "{{rewardsList}} and a badge",
     "title": {
       "inviteMain": "Invite Friends",
-      "referMain": "Refer friends"
+      "referMain": "Refer friends",
+      "incomingReward": "Your reward is on the way",
+      "thanksForJoining": "Thanks for joining Pillar",
+      "thanksForUsing": "Thank you for using Pillar"
     },
     "instruction": {
       "shareLink": {
@@ -538,7 +542,8 @@
       }
     },
     "paragraph": {
-      "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after\n                confirming their phone number/email address. You will receive your reward after your contact has been\n                rewarded.",
+      "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
+      "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",
       "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number",
       "invitationViaEmailRules": "To invite via email, you need to verify your email address"
     },
