@@ -712,6 +712,10 @@
         "cancel": "Cancel",
         "backup": "Backup 12 words"
       }
+    },
+    "invalidReferralDeepLink": {
+      "title": "Invalid link",
+      "message": "Referral code is missing"
     }
   }
 }
