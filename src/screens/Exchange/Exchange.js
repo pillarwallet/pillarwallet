@@ -69,6 +69,7 @@ import type { Option } from 'models/Selector';
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
+import TransactionFeeSwitcher from './TransactionFeeSwitcher';
 import {
   getFormattedSellMax,
   getBalanceInFiat,
@@ -82,6 +83,7 @@ import {
   shouldBlockView,
 } from './utils';
 import ExchangeTextInput from './ExchangeTextInput';
+import ExchangeSwapIcon from './ExchangeSwapIcon';
 
 type Props = {
   rates: Rates,
@@ -201,7 +203,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (
       // access token has changed, init search again
       (prevProps.oAuthAccessToken !== oAuthAccessToken) ||
-      // valid input provided
+      // valid input provided or asset changed
       ((
         fromAsset !== prevFromAsset ||
         toAsset !== prevToAsset ||
@@ -230,7 +232,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       toAsset: fromAsset,
       fromAsset: toAsset,
       fromAmount: null,
-    });
+    }, this.resetSearch);
   };
 
   setErrorMessage = (errorMessage: string) => this.setState({ errorMessage });
@@ -402,6 +404,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       showEmptyMessage,
       showSellOptions,
       showBuyOptions,
+      includeTxFee,
     } = this.state;
 
     const { fromOptions, toOptions, horizontalOptions } = this.options;
@@ -434,7 +437,12 @@ class ExchangeScreen extends React.Component<Props, State> {
           >
             <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
               {this.getFromInput()}
+              <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
               {this.getToInput()}
+              <TransactionFeeSwitcher
+                isOn={includeTxFee}
+                onToggle={() => this.setState({ includeTxFee: !this.state.includeTxFee })}
+              />
             </FormWrapper>
             {!!disableNonFiatExchange &&
             <SWActivationCard
