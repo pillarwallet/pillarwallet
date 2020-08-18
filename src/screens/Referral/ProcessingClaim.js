@@ -1,6 +1,9 @@
 // @flow
+
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { fontSizes, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { LightText, MediumText } from 'components/Typography';
@@ -31,12 +34,9 @@ const ProcessingClaim = () => {
     <Center>
       <Spinner />
       <Status>
-        Claiming...
+        {t('referralsContent.label.claiming')}
       </Status>
-      <Text>Transaction is processing.</Text>
-      <Text>It may take a few minutes.</Text>
-      <Text>You can check the status later</Text>
-      <Text>here or in Home tab</Text>
+      <Text>{t('referralsContent.paragraph.rewardClaimingPending')}.</Text>
     </Center>
   );
 };

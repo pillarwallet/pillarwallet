@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Platform, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -24,8 +25,9 @@ import { connect } from 'react-redux';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -172,6 +174,7 @@ const ProfileFormTemplate = (locals: Object) => {
     optionsSearchPlaceholder,
     optionsTitle,
     onSubmit,
+    selectorModalTitle,
   } = config;
 
   const value = get(locals, 'value', {});
@@ -206,7 +209,7 @@ const ProfileFormTemplate = (locals: Object) => {
         <LabelBadge positive labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }} label="Verified" />
       );
     } else {
-      const buttonTitle = fieldDisplayValue ? 'Verify' : 'Add';
+      const buttonTitle = fieldDisplayValue ? t('button.verify') : t('button.add');
       const buttonAction = fieldDisplayValue ? (() => onPressVerify(fieldName)) : (() => onFocus(fieldName));
       description = fieldDisplayValue ? descriptionAdded : descriptionEmpty;
       sideComponent = <Button horizontalPaddings={8} small title={buttonTitle} onPress={buttonAction} />;
@@ -245,7 +248,7 @@ const ProfileFormTemplate = (locals: Object) => {
           inputProps={inputProps}
           selectorOptions={options ? {
             options,
-            selectorModalTitle: label,
+            selectorModalTitle: selectorModalTitle || label,
             optionsSearchPlaceholder,
             showOptionsTitles: true,
             optionsTitle,
@@ -305,12 +308,12 @@ const getInitialValue = (user) => {
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 
-const formStructure = t.struct({
+const formStructure = tForm.struct({
   phone: PhoneStruct,
   email: EmailStruct,
 });
 
-const { Form } = t.form;
+const { Form } = tForm.form;
 
 class AddOrEditUser extends React.PureComponent<Props, State> {
   formRef: ?Object;
@@ -343,17 +346,17 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       fields: {
         email: {
           auto: 'placeholders',
-          placeholder: 'Email',
+          placeholder: t('form.email.placeholder'),
           autoCapitalize: 'none',
           template: ProfileFormTemplate,
           config: {
             fieldName: 'email',
             isFocused: false,
             onFocus: this.onFieldFocus,
-            fieldDisplayName: 'Email',
-            descriptionEmpty: 'Add your email to be able receive special requests.',
-            descriptionAdded: 'Verify your email and you will be able to invite your friends in Pillar ',
-            descriptionVerified: 'After changing email you will have re-verify it',
+            fieldDisplayName: t('form.email.label'),
+            descriptionEmpty: t('form.email.description.empty'),
+            descriptionAdded: t('form.email.description.added'),
+            descriptionVerified: t('form.email.description.verified'),
             icon: roundedEmailIcon,
             onPressVerify: this.verifyField,
             isFormFocused: !!focusedField,
@@ -370,24 +373,23 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           template: ProfileFormTemplate,
           config: {
             fieldName: 'phone',
-            label: 'Country code',
+            label: t('form.countryCode.label'),
             hasInput: true,
             options: sortedCountries,
             isFocused: false,
             onFocus: this.onFieldFocus,
             onSelectorClose: this.onSelectorClose,
-            fieldDisplayName: 'Phone number',
-            descriptionEmpty: 'Add your phone number to be able to invite your friends.',
-            descriptionAdded:
-              'Verify your phone number and you will be able to invite your friends in Pillar community ',
-            descriptionVerified: 'After changing phone number you will have re-verify it',
+            fieldDisplayName: t('form.phoneNumber.label'),
+            descriptionEmpty: t('form.phoneNumber.description.empty'),
+            descriptionAdded: t('form.phoneNumber.description.added'),
+            descriptionVerified: t('form.phoneNumber.description.confirmed'),
             icon: roundedPhoneIcon,
             inputRef: (ref) => {
               if (this.phoneInputRef) this.phoneInputRef = ref;
             },
             onPressVerify: this.verifyField,
-            optionsSearchPlaceholder: 'Country name',
-            optionsTitle: 'All codes',
+            optionsSearchPlaceholder: t('form.countryCode.placeholder'),
+            selectorModalTitle: t('form.countryCode.selectorTitle'),
             isFormFocused: !!focusedField,
             fieldDisplayValue: value.phone.input && `+${value.phone.selector.callingCode}${value.phone.input}`,
             isVerified: isPhoneVerified,
@@ -403,20 +405,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       formOptions.fields[focusedField].config.isFocused = true;
     }
     return formOptions;
-  }
-
-  updateUser = () => {
-    const {
-      updateUser,
-      user,
-    } = this.props;
-    const { value: { email, phone: { input, selector } } } = this.state;
-    updateUser(user.walletId, { email, phone: `+${selector.callingCode}${input}` });
-  }
+  };
 
   handleFormChange = (value: Object) => {
     this.setState({ value });
-  }
+  };
 
   onFieldBlur = () => {
     const { updateUser, user } = this.props;
@@ -447,7 +440,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         }
       }
     }
-  }
+  };
 
   onClear = () => {
     const { focusedField, value } = this.state;
@@ -458,16 +451,16 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       newValue.phone.input = '';
     }
     this.setState({ value: newValue });
-  }
+  };
 
   onFieldFocus = (fieldName) => {
     this.setState({ focusedField: fieldName });
-  }
+  };
 
   onSelectorClose = () => {
     if (!this.phoneInputRef) return;
     this.phoneInputRef.focus();
-  }
+  };
 
   openCamera = async () => {
     let statusPhoto = RESULTS.GRANTED; // android doesn't need extra permission
@@ -512,14 +505,14 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       updateUser(user.walletId, { email: value.email });
     }
     this.setState({ cautionModalField: null });
-  }
+  };
 
   onDismissCautionModal = () => {
     this.setState({
       cautionModalField: null,
       value: getInitialValue(this.props.user),
     });
-  }
+  };
 
   renderInsight = () => {
     const {
@@ -537,7 +530,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     if (isPhoneVerified || isEmailVerified) {
       return (
         <InviteBanner
-          title="Pillar is social"
+          title={t('referralsContent.banner.inviteBanner.title')}
           onInvitePress={goToInvitationFlow}
           isReferralActive={isPillarRewardCampaignActive}
         />
@@ -547,7 +540,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       if (verificationNoteDismissed) return null;
       return (
         <Note
-          note="Verification is required to prevent scammers' activity. We care for our users privacy."
+          note={t('profileContent.paragraph.verificationIsRequired')}
           containerStyle={{ marginHorizontal: spacing.layoutSides }}
           onClose={dismissVerificationNote}
         />
@@ -557,17 +550,15 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     if (isPillarRewardCampaignActive) {
       return (
         <InsightWithButton
-          title="All your data is private"
-          description="We care for our users' privacy. We don't support scammers.
-                       We need to make sure you're a genuine user in order to get
-                       rewarded with PLR tokens for inviting friends."
-          buttonTitle="I understand"
+          title={t('insight.dataPrivacy.title')}
+          description={t('insight.dataPrivacy.description')}
+          buttonTitle={t('insight.dataPrivacy.button.ok')}
           onButtonPress={dismissPrivacyInsight}
         />
       );
     }
     return null;
-  }
+  };
 
   render() {
     const {
@@ -596,7 +587,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [
-            { title: 'User settings' },
+            { title: t('profileContent.title.manage') },
           ],
         }}
         inset={{ bottom: 0 }}
