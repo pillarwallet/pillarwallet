@@ -22,6 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import { HOME, REFERRAL_CONTACTS } from 'constants/navigationConstants';
 import { DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -64,6 +65,7 @@ const Title = styled(MediumText)`
 
 const rewardBadge = require('assets/images/referralBadge.png');
 
+
 class ReferralSent extends React.PureComponent<Props> {
   componentDidMount() {
     const { fetchReferralReward } = this.props;
@@ -77,11 +79,12 @@ class ReferralSent extends React.PureComponent<Props> {
       isFetchingRewards,
       isPillarRewardCampaignActive,
     } = this.props;
-    const titleText = isPillarRewardCampaignActive ? 'Your reward is on the way' : 'Invitations sent';
+    const titleText = isPillarRewardCampaignActive
+      ? t('referralsContent.title.incomingReward')
+      : t('referralsContent.title.invitationsSent');
     const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
     const rewardParagraph = isPillarRewardCampaignActive && rewardText
-      ? `\nYou will receive ${rewardText} for each friend installed the app with your referral link. ` +
-      'You both should have verified your details in order to be eligible.'
+      ? t('referralsContent.paragraph.rewardForEachInvitation', { reward: rewardText })
       : '';
     return (
       <ConfettiBackground>
@@ -96,7 +99,7 @@ class ReferralSent extends React.PureComponent<Props> {
             <Title>{titleText}</Title>
             <LoadingParagraph
               isLoading={isFetchingRewards}
-              text={`Thank you for spreading the word about Pillar. ${rewardParagraph}`
+              text={`${t('referralsContent.paragraph.thanksForReferring')} ${rewardParagraph}`
              }
               paragraphProps={{
                 center: true,
@@ -107,7 +110,7 @@ class ReferralSent extends React.PureComponent<Props> {
               }}
             />
             <Button
-              title="Invite more friends"
+              title={t('button.inviteMoreFriends')}
               block
               regularText
               onPress={() => navigation.navigate(REFERRAL_CONTACTS)}
