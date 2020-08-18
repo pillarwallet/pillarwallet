@@ -45,7 +45,7 @@ import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH, PLR, POPULAR_SWAPS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
@@ -53,7 +53,7 @@ import { spacing } from 'utils/variables';
 import { getBalance, sortAssets } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
-import { generateHorizontalOptions, type ExchangeOptions, getBestOfferRate } from 'utils/exchange';
+import { generateHorizontalOptions, type ExchangeOptions } from 'utils/exchange';
 import { formatAmount, formatFiat, isValidNumber } from 'utils/common';
 
 // selectors
@@ -73,7 +73,6 @@ import type { Option } from 'models/Selector';
 
 
 // partials
-import { HotSwapsHorizontalList } from './HotSwapsList';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import {
@@ -82,6 +81,7 @@ import {
   getBalanceInFiat,
   getAssetBalanceFromFiat,
   validateInput,
+  getBestAmountToBuy,
 } from './utils';
 import ExchangeTextInput from './ExchangeTextInput';
 
@@ -142,17 +142,13 @@ class ExchangeScreen extends React.Component<Props, State> {
     super(props);
     this.listeners = [];
     this.options = this.provideOptions();
-    const { navigation, exchangeSearchRequest } = props;
-    const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest?.fromAssetCode || ETH;
-    const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
+    const { fromAsset, toAsset } = this.getInitialAssets();
 
     this.state = {
       fromAmount: undefined,
-      toAmount: undefined,
       fromAmountInFiat: undefined,
-      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode),
-      toAsset: this.options.toOptions.find(a => a.value === toAssetCode),
-      toAmountInFiat: undefined,
+      fromAsset,
+      toAsset,
       includeTxFee: true,
       errorMessage: '',
       showSellOptions: false,
@@ -166,14 +162,22 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
+  getInitialAssets = (): { fromAsset: Asset, toAsset: Asset } => {
+    const { navigation, exchangeSearchRequest } = this.props;
+    const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest?.fromAssetCode || ETH;
+    const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
+    return {
+      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode),
+      toAsset: this.options.toOptions.find(a => a.value === toAssetCode),
+    };
+  }
+
   handleBuySellSwap = () => {
-    // TODO
     const { fromAsset, toAsset } = this.state;
     this.setState({
       toAsset: fromAsset,
       fromAsset: toAsset,
-      fromAmount: 0, // TODO - make 0 or not?
-      toAmount: 0,
+      fromAmount: null,
     });
   };
 
@@ -234,28 +238,29 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   getToInput = () => {
-    const { baseFiatCurrency, offers } = this.props;
+    const { baseFiatCurrency, offers, rates } = this.props;
     const {
-      displayFiatToAmount, toAmountInFiat, toAsset, toAmount,
+      displayFiatToAmount, toAsset, fromAmount,
     } = this.state;
 
-    const bestRate = getBestOfferRate(offers) || 0;
-    // TODO: calculate toAmount and toAmountInFiat; likely do this elsewhere, via compDidUpdate 
+    let value;
+    let toAmount;
+    let toAmountInFiat;
+    if (offers?.length && fromAmount) {
+      toAmount = getBestAmountToBuy(offers, fromAmount);
+      toAmountInFiat = getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol);
+      value = displayFiatToAmount ? toAmountInFiat : toAmount;
+    }
 
-    const value = displayFiatToAmount ? toAmountInFiat : toAmount;
     return (
       <ExchangeTextInput
-        onChange={this.handleFromInputChange}
-        value={value}
+        value={value ? formatAmount(value, 6) : null}
         onBlur={this.blurFromInput}
-        // errorMessage={errorMessage}
         asset={toAsset}
         onAssetPress={() => this.setState({ showBuyOptions: true })}
-        // labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        // onLabelPress={assetBalance && this.handleSellMax}
         leftSideText={displayFiatToAmount
           ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol}`
-          : formatFiat(toAmountInFiat, baseFiatCurrency).replace(/ /g, '')
+          : formatFiat(toAmountInFiat || '0', baseFiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="+"
         onLeftSideTextPress={() => this.setState({ displayFiatToAmount: !displayFiatToAmount })}
@@ -372,7 +377,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       searchOffers,
     } = this.props;
-    const { fromAmount, fromAsset, toAsset} = this.state;
+    const { fromAmount, fromAsset, toAsset } = this.state;
     const { symbol: from } = fromAsset;
     const { symbol: to } = toAsset;
     const amount = parseFloat(fromAmount);
@@ -453,27 +458,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       }).filter(asset => asset.key !== 'BTC');
   };
 
-  generatePopularSwaps = () => {
-    const { assets, exchangeSupportedAssets } = this.props;
-    const fromOptions = this.generateAssetsOptions(assets);
-    const toOptions = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-    return POPULAR_SWAPS.filter(({ from, to }) => {
-      return fromOptions.find(({ key }) => key === from) && toOptions.find(({ key }) => key === to);
-    });
-  };
-
-  onSwapPress = (fromAssetCode: string, toAssetCode: string) => {
-    const { assets, exchangeSupportedAssets } = this.props;
-    const { fromInput, toInput } = this.state.value;
-    const fromOptions = this.generateAssetsOptions(assets);
-    const toOptions = this.generateSupportedAssetsOptions(exchangeSupportedAssets);
-    const fromAsset = fromOptions.find(option => option.key === fromAssetCode);
-    const toAsset = toOptions.find(option => option.key === toAssetCode);
-    this.handleFormChange({
-      fromInput: { selector: fromAsset, input: fromInput.input }, toInput: { selector: toAsset, input: toInput.input },
-    });
-  };
-
   handleSelectorOptionSelect = (option: Option) => {
     const { showSellOptions } = this.state;
     const optionsStateChanges = { showSellOptions: false, showBuyOptions: false };
@@ -528,8 +512,6 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
 
-    const swaps = this.generatePopularSwaps();
-
     return (
       <>
         <ContainerWithHeader
@@ -547,7 +529,6 @@ class ExchangeScreen extends React.Component<Props, State> {
             keyboardShouldPersistTaps="handled"
             disableOnAndroid
           >
-            {!isSubmitted && <HotSwapsHorizontalList onPress={this.onSwapPress} swaps={swaps} />}
             <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
               {this.getFromInput()}
               {this.getToInput()}

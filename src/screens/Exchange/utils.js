@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import maxBy from 'lodash.maxby';
 import type { Rates, Asset } from 'models/Asset';
 import { getRate } from 'utils/assets';
 import { formatFiat, formatMoney, formatAmount } from 'utils/common';
@@ -86,6 +87,12 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
 
 export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
+};
+
+export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?number => {
+  const bestRate = maxBy(offers, 'askRate')?.askRate;
+  if (!bestRate) return null;
+  return calculateAmountToBuy(bestRate, fromAmount);
 };
 
 export const getFormattedSellMax = (asset: Option): string =>

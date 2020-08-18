@@ -21,7 +21,6 @@ import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
 import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
-import maxBy from 'lodash.maxby';
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
@@ -111,8 +110,4 @@ export const parseOffer = (
 
 export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
   return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
-};
-
-export const getBestOfferRate = (offers: Offer[]): ?number => {
-  return maxBy(offers, 'askRate')?.askRate;
 };
