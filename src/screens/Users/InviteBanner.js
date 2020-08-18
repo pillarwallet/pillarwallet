@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText, MediumText } from 'components/Typography';
@@ -93,7 +94,7 @@ const InviteBanner = (props: Props) => {
             Refer friends and earn rewards, free PLR and more.
           </BodyText>}
           <Button
-            title="Invite friends"
+            title={t('button.inviteFiends')}
             block
             onPress={onInvitePress}
             marginTop={isReferralActive ? 0 : 14}

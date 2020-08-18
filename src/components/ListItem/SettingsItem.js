@@ -73,6 +73,7 @@ const ListItemInnerWrapper = styled.View`
   flex-direction: row; 
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
 `;
 
 const Badge = styled(NBBadge)`
@@ -137,6 +138,10 @@ const Description = styled(BaseText)`
   padding-right: 10%;
 `;
 
+const LabelWrapper = styled.View`
+  flex: 1;
+`;
+
 class SettingsListItem extends React.Component<Props> {
   renderContent(processedValue: ?string | ?boolean) {
     const {
@@ -186,7 +191,9 @@ class SettingsListItem extends React.Component<Props> {
     return (
       <MainWrapper>
         <ItemLabelHolder bordered={bordered}>
-          <ItemLabel primary={isSelected}>{label}</ItemLabel>
+          <LabelWrapper>
+            <ItemLabel primary={isSelected}>{label}</ItemLabel>
+          </LabelWrapper>
           <ListAddon>
             <Switcher
               isOn={processedValue}
