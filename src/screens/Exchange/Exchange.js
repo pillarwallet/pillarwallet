@@ -248,13 +248,14 @@ class ExchangeScreen extends React.Component<Props, State> {
     let toAmountInFiat;
     if (offers?.length && fromAmount) {
       toAmount = getBestAmountToBuy(offers, fromAmount);
-      toAmountInFiat = getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol);
-      value = displayFiatToAmount ? toAmountInFiat : toAmount;
+      toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol), 2);
+      value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount, 6);
     }
 
     return (
       <ExchangeTextInput
-        value={value ? formatAmount(value, 6) : null}
+        disabled
+        value={value}
         onBlur={this.blurFromInput}
         asset={toAsset}
         onAssetPress={() => this.setState({ showBuyOptions: true })}

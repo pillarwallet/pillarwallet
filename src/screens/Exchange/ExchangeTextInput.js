@@ -26,7 +26,7 @@ import type { Option } from 'models/Selector';
 import ExchangeInputHeader from './ExchangeInputHeader';
 
 type Props = {
-  onBlur: () => void,
+  onBlur?: () => void,
   errorMessage?: string,
   asset: Option,
   onAssetPress: () => void,
@@ -38,6 +38,7 @@ type Props = {
   onLeftSideTextPress: () => void,
   leftSideSymbol: string,
   rightPlaceholder: string,
+  disabled?: boolean
 }
 
 export default class ExchangeTextInput extends React.PureComponent<Props> {
@@ -66,6 +67,7 @@ export default class ExchangeTextInput extends React.PureComponent<Props> {
         leftSideText,
         onLeftSideTextPress,
         leftSideSymbol,
+        disabled,
       } = this.props;
       const inputProps = {
         value,
@@ -75,6 +77,7 @@ export default class ExchangeTextInput extends React.PureComponent<Props> {
         onChange,
         placeholder: '0',
         keyboardType: 'decimal-pad',
+        editable: !disabled,
       };
       return (
         <TextInput
