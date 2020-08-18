@@ -18,13 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { SDK_PROVIDER } from 'react-native-dotenv';
+import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import maxBy from 'lodash.maxby';
-import type { Rates, Asset } from 'models/Asset';
-import { getRate } from 'utils/assets';
-import { formatFiat, formatMoney, formatAmount } from 'utils/common';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import Intercom from 'react-native-intercom';
+
+import { getRate, getBalance, sortAssets } from 'utils/assets';
+import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { generateHorizontalOptions } from 'utils/exchange';
+import { EXCHANGE_INFO } from 'constants/navigationConstants';
+import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+
 import type { Option } from 'models/Selector';
+import type { Rates, Asset, Assets, Balances } from 'models/Asset';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
+import type { Accounts } from 'models/Account';
 
 export const getBalanceInFiat = (
   baseFiatCurrency: ?string,
@@ -105,4 +116,159 @@ export const validateInput = (
   errorMessage: string,
 ): boolean => {
   return !errorMessage && +fromAmount && fromAmount[fromAmount.length - 1] !== '.' && fromAsset && toAsset;
+};
+
+const generateAssetsOptions = (
+  assets: Assets,
+  exchangeSupportedAssets: Asset[],
+  balances: Balances,
+  baseFiatCurrency: ?string,
+  rates: Rates,
+) => {
+  return sortAssets(assets)
+    .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
+      && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
+    .map(({ symbol, iconUrl, ...rest }) => {
+      const assetBalance = formatAmount(getBalance(balances, symbol));
+      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
+      return ({
+        key: symbol,
+        value: symbol,
+        imageUrl,
+        icon: iconUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+        assetBalance,
+        formattedBalanceInFiat,
+        customProps: {
+          balance: !!formattedBalanceInFiat && {
+            balance: assetBalance,
+            value: formattedBalanceInFiat,
+            token: symbol,
+          },
+          rightColumnInnerStyle: { alignItems: 'flex-end' },
+        },
+      });
+    });
+};
+
+const generateSupportedAssetsOptions = (
+  exchangeSupportedAssets: Asset[],
+  balances: Balances,
+  baseFiatCurrency: ?string,
+  rates: Rates,
+) => {
+  if (!Array.isArray(exchangeSupportedAssets)) return [];
+  return [...exchangeSupportedAssets] // prevent mutation of param
+    .map(({ symbol, iconUrl, ...rest }) => {
+      const rawAssetBalance = getBalance(balances, symbol);
+      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : null;
+      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
+      return {
+        key: symbol,
+        value: symbol,
+        icon: iconUrl,
+        imageUrl,
+        iconUrl,
+        symbol,
+        ...rest,
+        assetBalance,
+        formattedBalanceInFiat,
+        customProps: {
+          balance: !!formattedBalanceInFiat && {
+            balance: assetBalance,
+            value: formattedBalanceInFiat,
+            token: symbol,
+          },
+          rightColumnInnerStyle: { alignItems: 'flex-end' },
+        },
+      };
+    }).filter(asset => asset.key !== 'BTC');
+};
+
+export const provideOptions = (
+  assets: Assets,
+  exchangeSupportedAssets: Asset[],
+  balances: Balances,
+  rates: Rates,
+  baseFiatCurrency: ?string,
+): ExchangeOptions => {
+  const assetsOptionsBuying = generateSupportedAssetsOptions(
+    exchangeSupportedAssets,
+    balances,
+    baseFiatCurrency,
+    rates,
+  );
+  const assetsOptionsFrom = generateAssetsOptions(
+    assets,
+    exchangeSupportedAssets,
+    balances,
+    baseFiatCurrency,
+    rates,
+  );
+  return {
+    fromOptions: assetsOptionsFrom,
+    toOptions: assetsOptionsBuying,
+    horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
+  };
+};
+
+const settingsIcon = require('assets/icons/icon_key.png');
+
+export const getHeaderRightItems = (
+  exchangeAllowances: Allowance[],
+  hasUnreadExchangeNotification: boolean,
+  navigation: NavigationScreenProp<*>,
+  markNotificationAsSeen: () => void,
+): Object[] => {
+  const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
+  if (!isEmpty(exchangeAllowances)
+  && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
+    rightItems.push({
+      iconSource: settingsIcon,
+      indicator: hasUnreadExchangeNotification,
+      key: 'exchangeSettings',
+      onPress: () => {
+        navigation.navigate(EXCHANGE_INFO);
+        if (hasUnreadExchangeNotification) markNotificationAsSeen();
+      },
+    });
+  }
+  return rightItems;
+};
+
+const isEnoughAssetBalance = (assetBalance: string, amount: string | number) => Number(assetBalance) >= Number(amount);
+
+export const getErrorMessage = (
+  amount: string,
+  asset: Asset,
+): string => {
+  const { assetBalance, symbol } = asset;
+  const isValid = isValidNumber(amount);
+  if (!isValid) {
+    return 'Incorrect number entered';
+  } else if (!isEnoughAssetBalance(assetBalance, amount)) {
+    return `Amount should not be bigger than your balance - ${assetBalance} ${symbol}.`;
+  }
+  return '';
+};
+
+export const shouldTriggerSearch = (
+  fromAsset: Asset,
+  toAsset: Asset,
+  fromAmount: number,
+) => fromAsset !== toAsset && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
+
+export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
+  const deploymentData = getDeploymentData(smartWalletState);
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+  return !isEmpty(sendingBlockedMessage)
+    && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
+    && !deploymentData.error;
 };

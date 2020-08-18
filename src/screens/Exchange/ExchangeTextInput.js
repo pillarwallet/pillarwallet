@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import TextInput from 'components/TextInput';
+import Input from 'components/Input';
 
 import type { Option } from 'models/Selector';
 
@@ -38,7 +39,8 @@ type Props = {
   onLeftSideTextPress: () => void,
   leftSideSymbol: string,
   rightPlaceholder: string,
-  disabled?: boolean
+  disabled?: boolean,
+  getInputRef?: (Input) => void
 }
 
 export default class ExchangeTextInput extends React.PureComponent<Props> {
@@ -68,6 +70,7 @@ export default class ExchangeTextInput extends React.PureComponent<Props> {
         onLeftSideTextPress,
         leftSideSymbol,
         disabled,
+        getInputRef,
       } = this.props;
       const inputProps = {
         value,
@@ -86,6 +89,7 @@ export default class ExchangeTextInput extends React.PureComponent<Props> {
           errorMessage={errorMessage}
           inputProps={inputProps}
           numeric
+          getInputRef={getInputRef}
           itemHolderStyle={{ borderRadius: 10 }}
           leftSideText={leftSideText}
           leftSideSymbol={leftSideSymbol}
