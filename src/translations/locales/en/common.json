@@ -105,6 +105,7 @@
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
     "inviteFiends": "Invite friends",
+    "inviteMoreFriends": "Invite more friends",
     "inviteToPillar": "Invite to Pillar",
     "notEnoughPLR": "Not enough PLR",
     "purchaseMore": "Purchase more",
@@ -522,6 +523,7 @@
     "referralRewardText": "{{rewardsList}} and a badge",
     "title": {
       "inviteMain": "Invite Friends",
+      "invitationsSent": "Invitations sent",
       "referMain": "Refer friends",
       "incomingReward": "Your reward is on the way",
       "thanksForJoining": "Thanks for joining Pillar",
@@ -544,8 +546,10 @@
     "paragraph": {
       "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
       "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",
-      "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number",
-      "invitationViaEmailRules": "To invite via email, you need to verify your email address"
+      "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number.",
+      "invitationViaEmailRules": "To invite via email, you need to verify your email address.",
+      "rewardForEachInvitation": "You will receive {{reward}} for each friend installed the app with your referral link. You both should have verified your details in order to be eligible.",
+      "thanksForReferring": "Thank you for spreading the word about Pillar."
     },
     "label": {
       "invitesCount": "Your invites ({{amountText}} available today)",
