@@ -604,7 +604,7 @@ class SendEthereumTokens extends React.Component<Props, State> {
 
     const enteredMoreThanBalance = currentValue > balance;
     const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!receiver;
-    const isValidAmount = !!amount && isValidNumber(currentValue);
+    const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
 
     const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
     const showFeeForCollectible = hasAllFeeData;
