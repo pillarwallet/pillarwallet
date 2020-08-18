@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // components
 import styled from 'styled-components/native';
@@ -93,25 +94,25 @@ const ActionButtons = ({
   const addFundsModalOptions = [
     {
       key: 'buy',
-      label: `Buy with a card${Platform.OS === 'ios' ? ' or Apple Pay' : ''}`,
+      label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
       iconName: 'wallet',
       onPress: () => navigation.navigate(EXCHANGE, { fromAssetCode: fiatCurrency }),
     },
     {
       key: 'receive',
-      label: 'Send from another wallet',
+      label: t('button.sendFromAnotherWallet'),
       iconName: 'qrDetailed',
       onPress: () => setReceiveAddress(activeAccountAddress),
     },
     {
       key: 'exchange',
-      label: 'Exchange',
+      label: t('button.exchange'),
       iconName: 'flip',
       onPress: () => navigation.navigate(EXCHANGE),
     },
     {
       key: 'invite',
-      label: 'Invite and earn free tokens',
+      label: t('button.inviteAndGetTokens'),
       iconName: 'present',
       hide: !rewardActive,
       onPress: goToInvitationFlow,
@@ -134,18 +135,18 @@ const ActionButtons = ({
       <Sizer>
         <ActionButtonsWrapper>
           <CircleButton
-            label="Add Funds"
+            label={t('button.addFunds')}
             fontIcon="qrDetailed"
             onPress={() => setVisibleAddFundsModal(true)}
           />
           <CircleButton
-            label="Send"
+            label={t('button.send')}
             fontIcon="paperPlane"
             onPress={() => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW)}
             disabled={!isSendButtonActive}
           />
           <CircleButton
-            label="Exchange"
+            label={t('button.exchange')}
             fontIcon="exchange"
             onPress={() => navigation.navigate(EXCHANGE)}
           />
@@ -155,7 +156,7 @@ const ActionButtons = ({
         onModalClose={closeAddFundsModal}
         isVisible={visibleAddFundsModal}
         items={addFundsModalOptions}
-        title="Add funds to Pillar"
+        title={t('title.addFundsToWallet')}
       />
       <ReceiveModal
         isVisible={!isEmpty(receiveAddress)}

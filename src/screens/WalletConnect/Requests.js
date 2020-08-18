@@ -17,11 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
+
 import { MediumText, BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import ShadowedCard from 'components/ShadowedCard';
@@ -69,6 +72,7 @@ const Header = styled(MediumText)`
   padding: 18px ${spacing.layoutSides}px 8px;
 `;
 
+
 class Requests extends React.Component<Props> {
   renderRequest = ({ item }) => {
     const { theme, rejectWCRequest, navigation } = this.props;
@@ -88,7 +92,7 @@ class Requests extends React.Component<Props> {
               source={{ uri: icon }}
             />
             <Spacing w={15} />
-            <BaseText regular style={{ flex: 1 }}>Request from {name}</BaseText>
+            <BaseText regular style={{ flex: 1 }}>{t('walletConnectContent.label.requestFrom', { name })}</BaseText>
             <ActionCircleButton
               color={colors.secondaryText}
               margin={0}
@@ -119,7 +123,7 @@ class Requests extends React.Component<Props> {
 
     return (
       <React.Fragment>
-        <Header regular accent>Requests</Header>
+        <Header regular accent>{t('walletConnectContent.title.requestsList')}</Header>
         <FlatList
           data={requests}
           renderItem={this.renderRequest}
