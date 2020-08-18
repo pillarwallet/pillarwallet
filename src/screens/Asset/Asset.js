@@ -49,7 +49,7 @@ import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } f
 
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SERVICES } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
@@ -505,7 +505,7 @@ class AssetScreen extends React.Component<Props, State> {
           token={assetData.token}
           tokenName={assetData.name}
           onModalHidden={this.handleModalHidden}
-          showErc20Note
+          showErc20Note={assetData.token !== ETH}
         />
         <SlideModal
           title={assetData.name}
