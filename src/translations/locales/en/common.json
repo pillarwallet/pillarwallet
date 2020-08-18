@@ -99,6 +99,7 @@
     "buyWithCard": "Buy with a card",
     "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
     "confirm": "Confirm",
+    "claim": "Claim",
     "close": "Close",
     "depositMore": "Deposit more",
     "exchange": "Exchange",
@@ -527,7 +528,9 @@
       "referMain": "Refer friends",
       "incomingReward": "Your reward is on the way",
       "thanksForJoining": "Thanks for joining Pillar",
-      "thanksForUsing": "Thank you for using Pillar"
+      "thanksForUsing": "Thank you for using Pillar",
+      "claimTokens": "Claim tokens",
+      "claimTokensError": "Error"
     },
     "instruction": {
       "shareLink": {
@@ -549,12 +552,17 @@
       "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number.",
       "invitationViaEmailRules": "To invite via email, you need to verify your email address.",
       "rewardForEachInvitation": "You will receive {{reward}} for each friend installed the app with your referral link. You both should have verified your details in order to be eligible.",
-      "thanksForReferring": "Thank you for spreading the word about Pillar."
+      "thanksForReferring": "Thank you for spreading the word about Pillar.",
+      "rewardClaimingPending": "Transaction is processing.\n It may take a few minutes.\n You can check the status later here or in Home tab.",
+      "rewardClaimingError": "We can't verify your code at this time. Please try later."
     },
     "label": {
       "invitesCount": "Your invites ({{amountText}} available today)",
       "referralsCount": "Your referrals ({{amountText}} available today)",
-      "remainingCount": "{{amount}} more"
+      "remainingCount": "{{amount}} more",
+      "noReferralCode": "No code",
+      "fromCode": "From {{code}}",
+      "claiming": "Claiming..."
     }
   },
 
