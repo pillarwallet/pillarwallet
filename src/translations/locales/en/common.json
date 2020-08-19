@@ -113,9 +113,11 @@
     "buyWithCard": "Buy with a card",
     "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
     "confirm": "Confirm",
+    "connect": "Connect",
     "claim": "Claim",
     "close": "Close",
     "depositMore": "Deposit more",
+    "explore": "Explore",
     "exchange": "Exchange",
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
@@ -667,10 +669,16 @@
   "walletConnectContent": {
     "title": {
       "requestsList": "Requests",
-      "activeConnections": "Active сonnections"
+      "activeConnections": "Active сonnections",
+      "connect": "Connect"
     },
     "label": {
       "requestFrom": "Request from {{name}}"
+    },
+    "banner": {
+      "promo": {
+        "paragraph": "A collection of dapps to use with Pillar"
+      }
     }
   },
 

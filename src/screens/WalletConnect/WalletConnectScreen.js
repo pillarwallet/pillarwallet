@@ -17,8 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { ScrollView } from 'react-native';
+import t from 'translations/translate';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import PromoCard from './PromoCard';
 import QRCodeScanButton from './QRCodeScanButton';
@@ -28,7 +31,7 @@ import Requests from './Requests';
 
 const WalletConnectScreen = () => (
   <ContainerWithHeader
-    headerProps={{ noBack: true, leftItems: [{ title: 'Connect' }] }}
+    headerProps={{ noBack: true, leftItems: [{ title: t('walletConnectContent.title.connect') }] }}
     inset={{ bottom: 0 }}
     tab
   >
