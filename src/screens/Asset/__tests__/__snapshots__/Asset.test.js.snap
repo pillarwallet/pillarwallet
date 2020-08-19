@@ -1163,6 +1163,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               </Text>
             </View>
           </View>
+<<<<<<< HEAD
           <View
             style={
               Array [
@@ -1293,6 +1294,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               </Text>
             </View>
           </View>
+=======
+>>>>>>> develop
         </View>
       </View>
     </RCTScrollView>

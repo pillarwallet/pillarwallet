@@ -1,6 +1,8 @@
 // @flow
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { fontSizes, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { LightText, MediumText } from 'components/Typography';
@@ -28,17 +30,15 @@ const Center = styled.View`
   margin-horizontal: 20px;
 `;
 
-const errorMessage = "We can't verify your code at this time.";
 
 const ErrorClaim = () => {
   return (
     <Center>
       <Animation source={animationFailure} />
       <Status>
-        Error
+        {t('referralsContent.title.claimTokensError')}
       </Status>
-      <Text>{errorMessage}</Text>
-      <Text>Please try later</Text>
+      <Text>{t('referralsContent.paragraph.rewardClaimingError')}</Text>
     </Center>
   );
 };

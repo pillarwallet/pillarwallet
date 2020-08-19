@@ -24,6 +24,7 @@ import { SafeAreaView } from 'react-navigation';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // actions
 import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
@@ -90,11 +91,11 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
       return tag === SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER && status === TX_PENDING_STATUS;
     });
     const buttonTitle = switchPressed || isSwitchPending
-      ? 'Waiting for confirmation..'
-      : 'Switch';
+      ? t('relayerMigrationContent.modal.switch.label.waitingForConfirmation')
+      : t('relayerMigrationContent.modal.switch.button.switch');
     const subtitle = switchPressed || isSwitchPending
-      ? 'Switch transaction is pending'
-      : 'Switching is free';
+      ? t('relayerMigrationContent.modal.switch.label.switchPending')
+      : t('relayerMigrationContent.modal.switch.label.freeSwitching');
     return (
       <SlideModal
         isVisible={isVisible}
@@ -103,7 +104,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
       >
         <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
           <ModalContainer>
-            <MediumText center medium>Pay fees with PLR</MediumText>
+            <MediumText center medium>{t('relayerMigrationContent.modal.switch.title')}</MediumText>
             <Spacing h={18} />
             {iconUrl &&
             <CachedImage
@@ -113,10 +114,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
             />
             }
             <Spacing h={20} />
-            <BaseText medium>
-              Bye-bye ETH! After switch you will be able to pay transaction fees with PLR token.
-              Never insufficient gas again.
-            </BaseText>
+            <BaseText medium>{t('relayerMigrationContent.modal.switch.paragraph')}</BaseText>
             <Spacing h={30} />
             <Button
               title={buttonTitle}

@@ -85,7 +85,7 @@ import {
   checkForWalletBackupToastAction,
   updatePinAttemptsAction,
 } from './walletActions';
-import { fetchTransactionsHistoryAction } from './historyActions';
+import { fetchSmartWalletTransactionsAction } from './historyActions';
 import { setAppThemeAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
@@ -292,7 +292,7 @@ export const loginAction = (
         return;
       }
 
-      dispatch(fetchTransactionsHistoryAction());
+      dispatch(fetchSmartWalletTransactionsAction());
       dispatch(fetchReferralRewardAction());
       dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
 

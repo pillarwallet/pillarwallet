@@ -66,7 +66,7 @@ import type { EstimatePayload } from 'services/smartWallet';
 import type { TranslatedString } from 'models/Translations';
 
 // utils
-import { findKeyBasedAccount, getActiveAccount, findFirstSmartAccount } from './accounts';
+import { getActiveAccount } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
 import { isCaseInsensitiveMatch } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
@@ -101,15 +101,6 @@ const getMessage = (
 
 export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
   return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
-};
-
-export const getPreferredWalletId = (accounts: Accounts = []): string => {
-  const smartWallet = findFirstSmartAccount(accounts);
-  if (smartWallet) {
-    return smartWallet.walletId;
-  }
-  const legacyWallet = findKeyBasedAccount(accounts);
-  return legacyWallet ? legacyWallet.walletId : '';
 };
 
 export const getSmartWalletStatus = (

@@ -1,5 +1,19 @@
+diff --git a/node_modules/react-native-inappbrowser-reborn/android/src/main/AndroidManifest.xml b/node_modules/react-native-inappbrowser-reborn/android/src/main/AndroidManifest.xml
+index 28b092e..4c3dca7 100644
+--- a/node_modules/react-native-inappbrowser-reborn/android/src/main/AndroidManifest.xml
++++ b/node_modules/react-native-inappbrowser-reborn/android/src/main/AndroidManifest.xml
+@@ -6,7 +6,8 @@
+
+     <application>
+         <activity
+-        android:name=".ChromeTabsManagerActivity">
++            android:name=".ChromeTabsManagerActivity"
++            android:launchMode="singleInstance">
+         </activity>
+     </application>
+ </manifest>
 diff --git a/node_modules/react-native-inappbrowser-reborn/index.js b/node_modules/react-native-inappbrowser-reborn/index.js
-index e1c9c4d..63d295d 100644
+index e1c9c4d..36a4f42 100644
 --- a/node_modules/react-native-inappbrowser-reborn/index.js
 +++ b/node_modules/react-native-inappbrowser-reborn/index.js
 @@ -74,7 +74,7 @@ type InAppBrowserAndroidOptions = {

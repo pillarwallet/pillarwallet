@@ -119,6 +119,7 @@ import SablierIncomingStreamScreen from 'screens/Sablier/IncomingStream';
 import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
+import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -133,8 +134,7 @@ import {
   startListeningIntercomNotificationsAction,
   stopListeningIntercomNotificationsAction,
 } from 'actions/notificationsActions';
-import { fetchAllAccountsBalancesAction } from 'actions/assetsActions';
-import { fetchTransactionsHistoryNotificationsAction } from 'actions/historyActions';
+import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
@@ -262,6 +262,7 @@ import {
   SABLIER_OUTGOING_STREAM,
   SABLIER_WITHDRAW,
   SABLIER_WITHDRAW_REVIEW,
+  SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -353,6 +354,7 @@ const servicesFlow = createStackNavigator({
   [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
   [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
   [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
+  [SENDWYRE_INPUT]: SendwyreInputScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -761,7 +763,7 @@ type Props = {
   stopListeningIntercomNotifications: Function,
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
-  fetchTransactionsHistoryNotifications: Function,
+  checkForMissedAssets: Function,
   notifications: Object[],
   hasUnreadNotifications: boolean,
   intercomNotificationsCount: number,
@@ -794,7 +796,7 @@ class AppFlow extends React.Component<Props, State> {
     const {
       startListeningNotifications,
       startListeningIntercomNotifications,
-      fetchTransactionsHistoryNotifications,
+      checkForMissedAssets,
       fetchAllAccountsBalances,
       fetchAllCollectiblesData,
       initWalletConnect,
@@ -813,7 +815,7 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     fetchAllAccountsBalances();
-    fetchTransactionsHistoryNotifications();
+    checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
     addAppStateChangeListener(this.handleAppStateChange);
@@ -951,9 +953,7 @@ const mapDispatchToProps = dispatch => ({
   startListeningIntercomNotifications: () => dispatch(startListeningIntercomNotificationsAction()),
   initWalletConnect: () => dispatch(initWalletConnectSessions()),
   fetchAllAccountsBalances: () => dispatch(fetchAllAccountsBalancesAction()),
-  fetchTransactionsHistoryNotifications: () => {
-    dispatch(fetchTransactionsHistoryNotificationsAction());
-  },
+  checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),

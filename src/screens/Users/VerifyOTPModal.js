@@ -17,8 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -60,6 +62,7 @@ type Props = {
 type State = {
   isModalVisible: boolean,
 };
+
 
 class VerifyOTPModal extends React.PureComponent<Props, State> {
   state = {
@@ -109,7 +112,7 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
     createOneTimePassword(walletId, {
       smsNotification: verifyingField === 'phone',
     });
-  }
+  };
 
   confirmOTP = (code) => {
     const {
@@ -162,9 +165,9 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
       onModalClose,
     } = this.props;
 
-    const titleText = `Enter verification code (${
-      verifyingField === 'email' ? 'email' : 'SMS'
-    })`;
+    const titleText = verifyingField === 'email'
+      ? t('profileContent.modal.verification.title.email')
+      : t('profileContent.modal.verification.title.phone');
 
     const enteringCode = !sendingOneTimePassword;
 
@@ -186,8 +189,7 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
           {sendingOneTimePassword && <Spinner />}
           {enteringCode && <ConfirmCode
             updateCode={this.updateCode}
-            errorMessage={verificationFailed ?
-              "That didn't work, please try again" : null}
+            errorMessage={verificationFailed ? t('profileContent.modal.verification.error') : null}
           />}
         </BoxBody>
         {enteringCode && <ResendMessage onPressResend={this.sendOTP} />}

@@ -3,11 +3,8 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { saveDbAction } from 'actions/dbActions';
 import { SET_HISTORY } from 'constants/historyConstants';
-import type { Accounts } from 'models/Account';
-import type { Transaction, TransactionsStore } from 'models/Transaction';
 import {
   checkIfSmartWalletAccount,
-  findKeyBasedAccount,
   getActiveAccount,
   getActiveAccountAddress,
   getActiveAccountId,
@@ -16,20 +13,6 @@ import { addressesEqual } from 'utils/assets';
 import { updateAccountHistory } from 'utils/history';
 import { reportLog } from 'utils/common';
 
-
-export function migrateTxHistoryToAccountsFormat(history: Transaction[], accounts: Accounts): ?TransactionsStore {
-  const keyBasedAccount = findKeyBasedAccount(accounts);
-  if (!keyBasedAccount) return null;
-
-  const filteredHistory = history
-    .filter(({ hash }) => !!hash)
-    .filter(({ value }) => typeof value !== 'object');
-
-  const accountId = keyBasedAccount.id;
-  return {
-    [accountId]: [...filteredHistory],
-  };
-}
 
 export default async function (storageData: Object, dispatch: Function, getState: Function) {
   const { migratedToReduxPersist = {} } = get(storageData, 'dataMigration', {});
@@ -65,15 +48,6 @@ export default async function (storageData: Object, dispatch: Function, getState
   }
 
   await dispatch(saveDbAction('dataMigration', { migratedToReduxPersist: { history: +new Date() } }));
-
-  if (Array.isArray(history) && accounts.length) {
-    const migratedHistory = migrateTxHistoryToAccountsFormat(history, accounts);
-    if (migratedHistory) {
-      dispatch(saveDbAction('history', { history: migratedHistory }, true));
-      dispatch({ type: SET_HISTORY, payload: migratedHistory });
-      return;
-    }
-  }
 
   dispatch({ type: SET_HISTORY, payload: history });
 }

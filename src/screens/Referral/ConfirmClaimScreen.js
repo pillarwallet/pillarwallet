@@ -17,12 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { View } from 'react-native';
+import t from 'translations/translate';
+
 import type { NavigationScreenProp } from 'react-navigation';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RewardsByCompany } from 'reducers/referralsReducer';
+
 import { LightText, MediumText } from 'components/Typography';
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
@@ -31,9 +36,11 @@ import styled from 'styled-components/native';
 import AssetPattern from 'components/AssetPattern';
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { getCampaignRewardText } from 'utils/referrals';
 import { claimTokensAction } from 'actions/referralsActions';
 import ProcessingClaim from './ProcessingClaim';
 import ErrorClaim from './ErrorClaim';
+
 
 const Center = styled.View`
   alignItems: stretch;
@@ -69,12 +76,13 @@ type Props = {
   claimTokens: Function,
   user: Object,
   navigation: NavigationScreenProp<*>,
-}
+  rewardsByCampaign: RewardsByCompany,
+};
 
 type State = {
   isFetching: boolean,
   isError: boolean,
-}
+};
 
 
 class ConfirmClaimScreen extends React.Component<Props, State> {
@@ -100,17 +108,19 @@ class ConfirmClaimScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigation } = this.props;
-    const code = navigation.getParam('code', 'No code');
+    const { navigation, rewardsByCampaign } = this.props;
+    const code = navigation.getParam('code', t('referralsContent.label.noReferralCode'));
     const { isFetching, isError } = this.state;
+    const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
+
     return (
       <Container>
-        <Header gray title="claim tokens" onBack={() => navigation.goBack(null)} />
+        <Header gray title={t('referralsContent.title.claimTokens')} onBack={() => navigation.goBack(null)} />
         <MainWrapper>
-          <TextCode>From {code}</TextCode>
-          { isError && <ErrorClaim /> }
-          { isFetching && <ProcessingClaim /> }
-          { !(isError || isFetching) &&
+          <TextCode>{t('referralsContent.label.fromCode', { code })}</TextCode>
+          {isError && <ErrorClaim />}
+          {isFetching && <ProcessingClaim />}
+          {!(isError || isFetching) &&
             <View style={{ flex: 2 }}>
               <AssetPattern
                 token={assetData.token}
@@ -118,12 +128,12 @@ class ConfirmClaimScreen extends React.Component<Props, State> {
                 isListed
               />
               <TokenValue>
-                25 PLR
+                {rewardText}
               </TokenValue>
             </View>
           }
           <Center>
-            <Button disabled={isFetching || isError} onPress={this.handleClaim} title="Claim" />
+            <Button disabled={isFetching || isError} onPress={this.handleClaim} title={t('button.claim')} />
           </Center>
         </MainWrapper>
       </Container>
@@ -137,8 +147,10 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 
 const mapStateToProps = ({
   user: { data: user },
+  referrals: { rewardsByCampaign },
 }: RootReducerState): $Shape<Props> => ({
   user,
+  rewardsByCampaign,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConfirmClaimScreen);
