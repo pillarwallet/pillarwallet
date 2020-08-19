@@ -22,8 +22,7 @@ import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
 import { formatTransactionFee, getEthereumProvider } from 'utils/common';
-import { addressesEqual, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { getAccountName } from 'utils/accounts';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // services
@@ -34,17 +33,14 @@ import { buildERC721TransactionData, calculateGasEstimate, fetchRinkebyETHBalanc
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import {
-  isActiveAccountSmartWalletSelector,
-  useGasTokenSelector,
-} from 'selectors/smartWallet';
+import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
 import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { GasInfo } from 'models/GasInfo';
-import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset, Assets, Balances } from 'models/Asset';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -53,7 +49,6 @@ type Props = {
   gasInfo: GasInfo,
   wallet: Object,
   activeAccountAddress: string,
-  accounts: Accounts,
   accountAssets: Assets,
   supportedAssets: Asset[],
   balances: Balances,
@@ -67,7 +62,6 @@ type State = {
   gasLimit: number,
   txFeeInfo: ?TransactionFeeInfo,
 };
-
 
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
@@ -233,7 +227,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   render() {
     const {
       session,
-      accounts,
       balances,
     } = this.props;
     const {
@@ -245,7 +238,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
     // recipient
     const to = this.receiver;
-    const userAccount = accounts.find(({ id }) => addressesEqual(id, to));
 
     let isEnoughForFee = true;
     let feeDisplayValue = '';
@@ -287,13 +279,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       });
     }
 
-    if (userAccount) {
-      reviewData.push({
-        label: 'Recipient',
-        value: getAccountName(userAccount.type),
-      });
-    }
-
     reviewData.push(
       {
         label: 'Recipient Address',
@@ -330,13 +315,11 @@ const mapStateToProps = ({
   session: { data: session },
   history: { gasInfo },
   wallet: { data: wallet },
-  accounts: { data: accounts },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   session,
   gasInfo,
   wallet,
-  accounts,
   supportedAssets,
 });
 
