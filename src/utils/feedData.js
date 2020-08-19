@@ -34,7 +34,6 @@ import {
   findAccountByAddress,
   checkIfSmartWalletAccount,
   checkIfKeyBasedAccount,
-  getAccountName,
   getInactiveUserAccounts,
   getAccountAddress,
   getAccountTypeByAddress,
@@ -65,12 +64,9 @@ export function mapTransactionsHistory(
           || findAccountByAddress(to, getInactiveUserAccounts(accounts))
         );
 
-      const username = account ? getAccountName(account.type) : '';
-
       const accountType = account ? account.type : null;
 
       return {
-        username,
         to,
         from,
         accountType,
