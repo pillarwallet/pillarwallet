@@ -41,9 +41,8 @@ import Spinner from 'components/Spinner';
 
 // constants
 import { defaultFiatCurrency, ETH, SPEED_TYPE_LABELS, SPEED_TYPES } from 'constants/assetsConstants';
-import { EXCHANGE_RECEIVE_EXPLAINED, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE, NORMAL } from 'constants/exchangeConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -64,10 +63,9 @@ import {
   getRate,
   getBalance,
 } from 'utils/assets';
-import { buildTxFeeInfo, userHasSmartWallet } from 'utils/smartWallet';
+import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
 import { themedColors } from 'utils/themes';
-import { getAccountName } from 'utils/accounts';
 import { isProdEnv } from 'utils/environment';
 
 // services
@@ -81,7 +79,7 @@ import type { OfferOrder } from 'models/Offer';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
-import type { Account, Accounts } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
 
 // selectors
@@ -105,7 +103,6 @@ type Props = {
   balances: Balances,
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
-  accounts: Accounts,
   theme: Theme,
   activeAccountAddress: string,
   activeAccount: ?Account,
@@ -389,12 +386,9 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       balances,
       baseFiatCurrency,
       rates,
-      accounts,
       theme,
       isSmartAccount,
     } = this.props;
-
-    const hasSmartWallet = userHasSmartWallet(accounts);
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
     const {
@@ -466,19 +460,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
 
               </AllowanceWrapper>
             }
-            {!hasSmartWallet && <ButtonText
-              buttonText={getAccountName(ACCOUNT_TYPES.KEY_BASED)}
-              rightIconProps={{ name: 'selector', style: { fontSize: 16 } }}
-              onPress={() => navigation.navigate(EXCHANGE_RECEIVE_EXPLAINED)}
-              wrapperStyle={{ marginTop: 0 }}
-            />}
-            {!!hasSmartWallet &&
-              <SettingsWrapper>
-                <BaseText secondary regular center style={{ marginBottom: 0 }}>
-                  The assets will be transferred to your Smart Wallet.
-                </BaseText>
-              </SettingsWrapper>
-            }
             <SettingsWrapper>
               {!gettingFee &&
                 <BaseText secondary regular center style={{ marginBottom: 4 }}>
@@ -546,7 +527,6 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   history: { gasInfo },
   exchange: { data: { executingTransaction: executingExchangeTransaction }, exchangeSupportedAssets },
-  accounts: { data: accounts },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   session,
@@ -555,7 +535,6 @@ const mapStateToProps = ({
   gasInfo,
   executingExchangeTransaction,
   exchangeSupportedAssets,
-  accounts,
   supportedAssets,
 });
 
