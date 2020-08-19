@@ -28,7 +28,6 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
-import t from 'translations/translate';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';

@@ -262,12 +262,13 @@
       "default": "Transaction failed"
     },
     "emptyAddress": "Address cannot be empty",
-    "invalidAddress": "Invalid address",
     "contactWithAddressExist": "Contact with this address already exist",
     "emptyName": "Name cannot be empty",
     "invalid": {
+      "address": "Invalid address",
       "email": "Please enter a valid email"
-    }
+    },
+    "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address."
   },
 
   "badgeText": {

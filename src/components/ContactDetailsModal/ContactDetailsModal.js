@@ -190,7 +190,7 @@ const ContactDetailsModal = ({
   if (isEmpty(addressValue)) {
     errorMessage = t('error.emptyAddress');
   } if (!isValidAddress(addressValue)) {
-    errorMessage = t('error.invalidAddress');
+    errorMessage = t('error.invalid.address');
   } else if (!addressesEqual(contact?.ethAddress, addressValue)
     && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
     errorMessage = t('error.contactWithAddressExist');

@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // components
 import { MediumText } from 'components/Typography';
@@ -119,7 +120,7 @@ const Selector = ({
   };
 
   const handleSearchValidation = (searchQuery: string): ?string => {
-    if (disableSelfSelect && searchQuery === activeAccountAddress) return 'Sorry, you cannot send to yourself. Please use a different address.';
+    if (disableSelfSelect && searchQuery === activeAccountAddress) return t('error.cannotSendYourself');
     return null;
   };
 
