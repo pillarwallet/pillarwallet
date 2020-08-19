@@ -283,7 +283,7 @@ export const shouldTriggerSearch = (
   fromAsset: Option,
   toAsset: Option,
   fromAmount: number,
-) => fromAsset !== toAsset && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
+) => fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 
 export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
   const deploymentData = getDeploymentData(smartWalletState);

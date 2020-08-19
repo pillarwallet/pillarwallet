@@ -77,7 +77,7 @@ const AssetName = styled(MediumText)`
 
 const LabelText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.primary}
+  color: ${themedColors.link}
 `;
 
 class ExchangeInputHeader extends React.PureComponent<Props> {

@@ -44,6 +44,8 @@ const emailIconLight = require('assets/icons/icon_email_light.png');
 const emailIconDark = require('assets/icons/icon_email_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_phone_dark.png');
+const exchangeIconLight = require('assets/icons/exchange.png');
+const exchangeIconDark = require('assets/icons/exchange_dark.png');
 
 // exchange providers
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
@@ -120,6 +122,10 @@ export const images = (theme: Theme) => {
     landingPattern: getImageByTheme(currentTheme, {
       lightTheme: landingPattern,
       darkTheme: landingPattern,
+    }),
+    exchangeIcon: getImageByTheme(currentTheme, {
+      lightTheme: exchangeIconLight,
+      darkTheme: exchangeIconDark,
     }),
   };
 };

@@ -125,7 +125,7 @@ type State = {
 
 
 const FormWrapper = styled.View`
-  padding: ${({ bottomPadding }) => `${spacing.large}px 40px ${bottomPadding}px`};
+  padding: ${spacing.large}px 40px 60px;
   background-color: ${themedColors.surface};
 `;
 
@@ -333,7 +333,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setState({
       fromAmount: fromAsset.assetBalance,
       fromAmountInFiat: fiatAmount.substr(2),
-    });
+      errorMessage: '',
+    }, () => Keyboard.dismiss());
   };
 
   resetSearch = () => {
@@ -432,7 +433,7 @@ class ExchangeScreen extends React.Component<Props, State> {
             keyboardShouldPersistTaps="handled"
             disableOnAndroid
           >
-            <FormWrapper bottomPadding={isSubmitted ? 6 : 30}>
+            <FormWrapper >
               {this.getFromInput()}
               <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
               {this.getToInput()}

@@ -488,7 +488,9 @@ class TextInput extends React.Component<Props, State> {
     let { fallbackSource } = this.props;
 
     const colors = getThemeColors(theme);
-    const { value = '', selectorValue = {}, multiline } = inputProps;
+    const {
+      value = '', selectorValue = {}, multiline, editable = true,
+    } = inputProps;
     const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     const { genericToken } = images(theme);
@@ -537,7 +539,7 @@ class TextInput extends React.Component<Props, State> {
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
         {errorTop && <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>}
         {this.renderInputHeader()}
-        <InputBorder error={showErrorIndicator}>
+        <InputBorder error={showErrorIndicator} style={itemHolderStyle} >
           <ItemHolder error={showErrorIndicator} style={itemHolderStyle} >
             <Item
               isFocused={isFocused}
@@ -580,7 +582,7 @@ class TextInput extends React.Component<Props, State> {
                 onSubmitEditing={this.handleSubmit}
                 value={textInputValue}
                 autoCorrect={autoCorrect}
-                style={[defaultInputStyle, customStyle, additionalStyle]}
+                style={[defaultInputStyle, customStyle, additionalStyle, !editable && { color: colors.accent }]}
                 onLayout={onLayout}
                 placeholderTextColor={colors.accent}
                 alignTextOnRight={!!numeric}

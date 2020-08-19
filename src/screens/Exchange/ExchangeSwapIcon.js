@@ -19,11 +19,10 @@
 */
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import styled from 'styled-components/native';
-
 import { CachedImage } from 'react-native-cached-image';
-
-const exchangeIcon = require('assets/icons/exchange.png');
+import styled, { withTheme } from 'styled-components/native';
+import { images } from 'utils/images';
+import type { Theme } from 'models/Theme';
 
 const Wrapper = styled.View`
   width: 100%;
@@ -34,20 +33,24 @@ const Wrapper = styled.View`
 
 type Props = {
   onPress: () => void,
+  theme: Theme,
 }
 
 const ExchangeSwapIcon = ({
-  onPress,
-}: Props) => (
-  <Wrapper>
-    <TouchableOpacity onPress={onPress} >
-      <CachedImage
-        style={{ width: 18, height: 20 }}
-        source={exchangeIcon}
-        resizeMode="contain"
-      />
-    </TouchableOpacity>
-  </Wrapper>
-);
+  onPress, theme,
+}: Props) => {
+  const { exchangeIcon } = images(theme);
+  return (
+    <Wrapper>
+      <TouchableOpacity onPress={onPress} >
+        <CachedImage
+          style={{ width: 18, height: 20 }}
+          source={exchangeIcon}
+          resizeMode="contain"
+        />
+      </TouchableOpacity>
+    </Wrapper>
+  );
+};
 
-export default ExchangeSwapIcon;
+export default withTheme(ExchangeSwapIcon);
