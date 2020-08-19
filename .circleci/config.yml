@@ -740,7 +740,7 @@ workflows:
           filters:
             branches:
               only:
-                - upgrade/node-version-ios-vm
+                - develop
       - appcenter_android:
           requires:
             - build-and-test
