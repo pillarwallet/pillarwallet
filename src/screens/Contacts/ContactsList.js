@@ -110,6 +110,7 @@ const ContactsList = ({
   };
 
   const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
+  const showContactDetailsModal = !!selectedContact;
 
   return (
     <ContainerWithHeader
@@ -126,23 +127,25 @@ const ContactsList = ({
         contentContainerStyle={!contacts.length && emptyStyle}
         ListEmptyComponent={<EmptyStateParagraph title="No contacts added" />}
       />
-      <ContactDetailsModal
-        title={isEmpty(selectedContact) ? t('title.addNewContact') : t('title.editContact')}
-        dirtyInputs={!isEmpty(selectedContact)}
-        isVisible={!!selectedContact}
-        contact={selectedContact}
-        onSavePress={(newContact: Contact) => {
-          if (isEmpty(selectedContact)) {
-            addContact(newContact);
-          } else if (selectedContact) {
-            updateContact(selectedContact.ethAddress, newContact);
-          }
-          hideContactDetailsModal();
-        }}
-        onModalHide={hideContactDetailsModal}
-        contacts={contacts}
-        showQRScanner
-      />
+      {showContactDetailsModal && (
+        <ContactDetailsModal
+          title={isEmpty(selectedContact) ? t('title.addNewContact') : t('title.editContact')}
+          dirtyInputs={!isEmpty(selectedContact)}
+          isVisible={!!selectedContact}
+          contact={selectedContact}
+          onSavePress={(newContact: Contact) => {
+            if (isEmpty(selectedContact)) {
+              addContact(newContact);
+            } else if (selectedContact) {
+              updateContact(selectedContact.ethAddress, newContact);
+            }
+            hideContactDetailsModal();
+          }}
+          onModalHide={hideContactDetailsModal}
+          contacts={contacts}
+          showQRScanner
+        />
+      )}
       {!!contactToDelete && (
         <SlideModal
           isVisible={!isEmpty(contactToDelete)}

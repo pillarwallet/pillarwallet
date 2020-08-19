@@ -268,7 +268,8 @@
       "address": "Invalid address",
       "email": "Please enter a valid email"
     },
-    "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address."
+    "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
+    "ensNameNotFound": "ENS name not found."
   },
 
   "badgeText": {

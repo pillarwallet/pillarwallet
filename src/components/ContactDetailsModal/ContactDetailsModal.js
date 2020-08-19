@@ -37,7 +37,7 @@ import Icon from 'components/Icon';
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { isEnsName, isValidAddress } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
@@ -74,10 +74,9 @@ const FieldIcon = styled(CachedImage)`
   margin-right: ${spacing.small}px;
 `;
 
-const ErrorMessage = styled(BaseText)`
+const StatusMessage = styled(BaseText)`
   margin-top: ${spacing.large}px;
   text-align: center;
-  color: ${themedColors.negative};
   ${fontStyles.small};
 `;
 
@@ -143,6 +142,7 @@ const ContactDetailsModal = ({
   const [dirtyInputs, setDirtyInputs] = useState(false);
   const [resolvingEns, setResolvingEns] = useState(false);
   const [isScannerVisible, setIsScannerVisible] = useState(false);
+  const [ensUnresolved, setEnsUnresolved] = useState(false);
   const { walletIcon, personIcon } = images(theme);
 
   // reset input value on default change
@@ -157,34 +157,45 @@ const ContactDetailsModal = ({
     if (!dirtyInputs && (!isEmpty(nameValue) || !isEmpty(addressValue))) {
       setDirtyInputs(true);
     }
+    if (ensUnresolved) setEnsUnresolved(false); // reset
   }, [nameValue, addressValue]);
 
-  const resolveEnsName = async () => {
+  useEffect(() => {
     if (resolvingEns
       || !isEmpty(nameValue)
       || !isValidAddress(addressValue)
       || isEnsName(addressValue)) return;
 
     setResolvingEns(true);
-    const ensName = await lookupAddress(addressValue);
-    if (ensName) setNameValue(ensName);
-    setResolvingEns(false);
-  };
+    lookupAddress(addressValue)
+      .then((ensName) => {
+        if (ensName) setNameValue(ensName);
+        setResolvingEns(false);
+      })
+      .catch(() => setResolvingEns(false));
+  }, [addressValue]);
 
-  useEffect(() => { resolveEnsName(); }, [addressValue]);
-
-  const resolveEnsAddress = async () => {
+  useEffect(() => {
     if (resolvingEns
       || !isEmpty(addressValue)
       || !isEnsName(nameValue)) return;
 
+    setEnsUnresolved(false);
     setResolvingEns(true);
-    const { receiver } = await getReceiverWithEnsName(nameValue, false);
-    if (receiver) setAddressValue(receiver);
-    setResolvingEns(false);
-  };
-
-  useEffect(() => { resolveEnsAddress(); }, [nameValue]);
+    getReceiverWithEnsName(nameValue)
+      .then(({ receiver }) => {
+        if (receiver) {
+          setAddressValue(receiver);
+        } else {
+          setEnsUnresolved(true);
+        }
+        setResolvingEns(false);
+      })
+      .catch(() => {
+        setEnsUnresolved(true);
+        setResolvingEns(false);
+      });
+  }, [nameValue]);
 
   let errorMessage;
   if (isEmpty(addressValue)) {
@@ -240,7 +251,8 @@ const ContactDetailsModal = ({
         </TitleWrapper>
         {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
         {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
-        {dirtyInputs && !resolvingEns && !!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {!!ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
+        {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
         {resolvingEns && <LoadingSpinner width={25} height={25} />}
         <Button
           marginTop={spacing.large}
