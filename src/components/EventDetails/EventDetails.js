@@ -1390,6 +1390,7 @@ export class EventDetail extends React.Component<Props, State> {
     const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor);
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
+    const hasModalButtons = !isEmpty(buttons);
 
     return (
       <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
@@ -1438,8 +1439,8 @@ export class EventDetail extends React.Component<Props, State> {
           ))}
           {allowViewOnBlockchain && (
             <Button
-              squarePrimary={!isEmpty(buttons)} // styling if multiple buttons in modal
-              secondary={isEmpty(buttons)} // styling if single button in modal
+              squarePrimary={hasModalButtons} // styling if multiple buttons in modal
+              secondary={!hasModalButtons} // styling if single button in modal
               title={t('button.viewOnBlockchain')}
               onPress={this.viewOnTheBlockchain}
               regularText
