@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Alert } from 'react-native';
+import AsyncStorage from '@react-native-community/async-storage';
 import { BUILD_TYPE } from 'react-native-dotenv';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
@@ -118,7 +119,7 @@ export const switchEnvironments = async () => {
         text: 'OK',
         onPress: async () => {
           const newEnv = storedEnv === 'production' ? 'staging' : 'production';
-          await storage.removeAll();
+          await AsyncStorage.clear(); // removes storage and redux persist data
           await storage.save('environment', newEnv, true).then(async () => {
             storedEnv = newEnv;
             RNRestart.Restart();
