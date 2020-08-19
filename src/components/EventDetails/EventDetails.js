@@ -1467,7 +1467,7 @@ export class EventDetail extends React.Component<Props, State> {
           onPress: this.viewOnTheBlockchain,
         };
 
-        // per design request whenever there can only be 2 buttons and second should always be changed to Etherscan
+        // per design request there can only be 2 buttons and second should always be changed to blockchain button
         const updatedModalButtons = currentModalButtons.length > 1
           ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
           : currentModalButtons.concat(viewOnBlockchainButton);
