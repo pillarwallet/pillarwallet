@@ -33,7 +33,7 @@ type Props = {
   shadowSpread?: number,
   paddingFixAndroid?: number,
   shadowColorAndroid?: string,
-  shadowColorOS?: string,
+  shadowColoriOS?: string,
   widthIOS: number,
   heightIOS: number,
   widthAndroid?: number | string,
@@ -64,7 +64,7 @@ export const Shadow = (props: Props) => {
     widthIOS = 100,
     heightIOS = 70,
     shadowColorAndroid = '#14105baa',
-    shadowColorOS = '#EEF3F9',
+    shadowColoriOS = '#EEF3F9',
     useSVGShadow,
     shadowOpacity,
     wrapperStyle,
@@ -92,7 +92,7 @@ export const Shadow = (props: Props) => {
       <View style={[{ position: 'relative' }, wrapperStyle]}>
         <BoxShadow
           setting={{
-            color: shadowColorOS,
+            color: shadowColoriOS,
             x: shadowOffsetX,
             y: shadowOffsetY,
             opacity: shadowOpacity || 1,
