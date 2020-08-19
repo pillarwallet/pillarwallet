@@ -204,7 +204,10 @@ aliases:
     run:
       name: Install coureutils
       command: |
+        brew update
+        brew upgrade yarn
         brew install coreutils
+        node -v
   - &homebrew_restore_cache
     restore_cache:
       name: Restore homebrew cache
@@ -263,12 +266,6 @@ jobs:
       - *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
-
-      - run:
-          name: Upgrade node version for module dependency
-          command: |
-            brew unlink node
-            brew install node@14
 
       - *node_restore_cache
       - *node_artifactory_authenticate
