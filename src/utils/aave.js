@@ -42,8 +42,11 @@ import aaveConfig from 'configs/aaveConfig';
 
 // types
 import type { Transaction, AaveExtra } from 'models/Transaction';
-import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
+import type { Asset, AssetToDeposit, DepositedAsset } from 'models/Asset';
 
+export const AAVE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+
+export const parseReserveAssetAddress = (asset: Asset) => asset.symbol === ETH ? AAVE_ETH_ADDRESS : asset.address;
 
 export const buildAaveDepositTransactionData = (
   assetAddress: string,
@@ -78,39 +81,42 @@ export const getAaveDepositTransactions = async (
   asset: AssetToDeposit,
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
-  const { decimals, address: assetAddress, symbol: assetSymbol } = asset;
-  const depositTransactionData = await buildAaveDepositTransactionData(assetAddress, amount, decimals);
+  const { decimals, symbol: assetSymbol } = asset;
+  const amountBN = parseTokenBigNumberAmount(amount, decimals);
+  const assetReserveAddress = parseReserveAssetAddress(asset);
+  const depositTransactionData = await buildAaveDepositTransactionData(assetReserveAddress, amount, decimals);
   const lendingPoolContractAddress = await aaveService().getLendingPoolAddress();
 
   let aaveDepositTransactions = [{
     from: senderAddress,
     to: lendingPoolContractAddress,
     data: depositTransactionData,
-    amount: 0,
+    amount: assetSymbol === ETH ? amount : 0,
     symbol: ETH,
   }];
 
-  // allowance must be set for core contract
-  const lendingPoolCoreContractAddress = await aaveService().getLendingPoolCoreAddress();
-  const erc20Contract = getContract(assetAddress, ERC20_CONTRACT_ABI);
-  const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(senderAddress, lendingPoolCoreContractAddress)
-    : null;
-  const neededAmountBN = parseTokenBigNumberAmount(amount, decimals);
+  if (asset.symbol !== ETH) {
+    // allowance must be set for core contract
+    const lendingPoolCoreContractAddress = await aaveService().getLendingPoolCoreAddress();
+    const erc20Contract = getContract(assetReserveAddress, ERC20_CONTRACT_ABI);
+    const approvedAmountBN = erc20Contract
+      ? await erc20Contract.allowance(senderAddress, lendingPoolCoreContractAddress)
+      : null;
 
-  if (!approvedAmountBN || neededAmountBN.gt(approvedAmountBN)) {
-    const approveTransactionData = buildERC20ApproveTransactionData(lendingPoolCoreContractAddress, amount, decimals);
-    // approve must be first
-    aaveDepositTransactions = [
-      {
-        from: senderAddress,
-        to: assetAddress,
-        data: approveTransactionData,
-        amount: 0,
-        symbol: ETH,
-      },
-      ...aaveDepositTransactions,
-    ];
+    if (!approvedAmountBN || amountBN.gt(approvedAmountBN)) {
+      const approveTransactionData = buildERC20ApproveTransactionData(lendingPoolCoreContractAddress, amount, decimals);
+      // approve must be first
+      aaveDepositTransactions = [
+        {
+          from: senderAddress,
+          to: assetReserveAddress,
+          data: approveTransactionData,
+          amount: 0,
+          symbol: ETH,
+        },
+        ...aaveDepositTransactions,
+      ];
+    }
   }
 
   // only in first transaction payload:
@@ -118,7 +124,7 @@ export const getAaveDepositTransactions = async (
     ...aaveDepositTransactions[0],
     txFeeInWei,
     tag: AAVE_LENDING_DEPOSIT_TRANSACTION,
-    extra: { amount: neededAmountBN.toString(), symbol: assetSymbol, decimals },
+    extra: { amount: amountBN.toString(), symbol: assetSymbol, decimals },
   };
 
   return aaveDepositTransactions;

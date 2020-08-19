@@ -21,9 +21,13 @@ import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
 
+// constants
+import { ETH } from 'constants/assetsConstants';
+
 // utils
-import { getAssetDataByAddress } from 'utils/assets';
+import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
 import { formatAmount, reportLog } from 'utils/common';
+import { AAVE_ETH_ADDRESS, parseReserveAssetAddress } from 'utils/aave';
 
 // services
 import { getContract } from 'services/assets';
@@ -131,7 +135,11 @@ class AaveService {
     const poolAddresses = await lendingPoolCoreContract.getReserves().catch((e) => this.handleError(e, []));
 
     return poolAddresses.reduce((pool, reserveAddress) => {
-      const assetData = getAssetDataByAddress(accountAssets, supportedAssets, reserveAddress);
+      // check if it's AAVE's ETH which contains different address than our implementation
+      const assetData = addressesEqual(AAVE_ETH_ADDRESS, reserveAddress)
+        ? getAssetData(accountAssets, supportedAssets, ETH)
+        : getAssetDataByAddress(accountAssets, supportedAssets, reserveAddress);
+
       if (!isEmpty(assetData)) pool.push(assetData);
       return pool;
     }, []);
@@ -145,7 +153,7 @@ class AaveService {
 
     return Promise.all(supportedDeposits.map(async (reserveAsset) => {
       const reserveData = await lendingPoolContract
-        .getReserveData(reserveAsset.address)
+        .getReserveData(parseReserveAssetAddress(reserveAsset))
         .catch((e) => this.handleError(e, []));
       const earnInterestRate = rayToNumeric(reserveData[4]) * 100; // %
       return {
@@ -159,8 +167,10 @@ class AaveService {
     const lendingPoolContract = await this.getLendingPoolContract();
     if (!lendingPoolContract) return Promise.resolve({});
 
+    const reserveAssetAddress = parseReserveAssetAddress(asset);
+
     const depositedAssetData = await lendingPoolContract
-      .getUserReserveData(asset.address, accountAddress)
+      .getUserReserveData(reserveAssetAddress, accountAddress)
       .catch((e) => this.handleError(e, []));
 
     const earnInterestRateBN = depositedAssetData[5];
@@ -170,7 +180,7 @@ class AaveService {
 
     let earnedAmount = 0;
     let initialBalance = 0;
-    const aaveTokenContract = await this.getAaveTokenContractForAsset(asset.address);
+    const aaveTokenContract = await this.getAaveTokenContractForAsset(reserveAssetAddress);
     if (aaveTokenContract) {
       const initialBalanceBN = await aaveTokenContract.principalBalanceOf(accountAddress);
       const earnedAmountBN = currentBalanceBN.sub(initialBalanceBN);
