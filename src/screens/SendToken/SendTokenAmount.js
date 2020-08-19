@@ -21,24 +21,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
-// actions
-import { updateAppSettingsAction } from 'actions/appSettingsActions';
-
-// constants
-import { defaultFiatCurrency } from 'constants/assetsConstants';
-
 // components
 import SendEthereumTokens from 'components/SendTokens/EthereumTokens';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type {
-  Balances,
-  Rates,
-  AssetData,
-  Assets,
-} from 'models/Asset';
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { Balances, Assets } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Transaction } from 'models/Transaction';
 
@@ -52,78 +41,39 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
   session: SessionData,
-  rates: Rates,
-  baseFiatCurrency: ?string,
-  transactionSpeed: ?string,
-  updateAppSettings: (path: string, value: any) => void,
   accountAssets: Assets,
   accountHistory: Transaction[],
 };
 
-class SendTokenAmount extends React.Component<Props> {
-  assetData: AssetData;
-  receiver: string;
-  source: string;
-  receiverEnsName: string;
+const SendTokenAmount = ({
+  navigation,
+  balances,
+  session,
+  accountAssets,
+  accountHistory,
+}: Props) => {
+  const defaultContact = navigation.getParam('contact');
+  const assetData = navigation.getParam('assetData', {});
+  const source = navigation.getParam('source', '');
 
-  constructor(props: Props) {
-    super(props);
-    const { navigation } = this.props;
-
-    // TODO: this screen should fail if any of these are empty
-    this.assetData = navigation.getParam('assetData', {});
-    this.receiver = navigation.getParam('receiver', '');
-    this.source = navigation.getParam('source', '');
-    this.receiverEnsName = navigation.getParam('receiverEnsName');
-  }
-
-  updateTransactionSpeed = (speed: string) => {
-    this.props.updateAppSettings('transactionSpeed', speed);
-  };
-
-  render() {
-    const {
-      session,
-      balances,
-      rates,
-      baseFiatCurrency,
-      transactionSpeed,
-      navigation,
-      accountAssets,
-      accountHistory,
-    } = this.props;
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    return (
-      <SendEthereumTokens
-        navigation={navigation}
-        assetData={this.assetData}
-        receiver={this.receiver}
-        receiverEnsName={this.receiverEnsName}
-        source={this.source}
-        balances={balances}
-        rates={rates}
-        session={session}
-        fiatCurrency={fiatCurrency}
-        transactionSpeed={transactionSpeed}
-        onUpdateTransactionSpeed={this.updateTransactionSpeed}
-        accountAssets={accountAssets}
-        accountHistory={accountHistory}
-      />
-    );
-  }
-}
+  return (
+    <SendEthereumTokens
+      navigation={navigation}
+      assetData={assetData}
+      defaultContact={defaultContact}
+      source={source}
+      balances={balances}
+      session={session}
+      accountAssets={accountAssets}
+      accountHistory={accountHistory}
+    />
+  );
+};
 
 const mapStateToProps = ({
   session: { data: session },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency, transactionSpeed } },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
   session,
-  baseFiatCurrency,
-  transactionSpeed,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -137,8 +87,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  updateAppSettings: (path: string, value: any) => dispatch(updateAppSettingsAction(path, value)),
-});
-
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendTokenAmount);
+export default connect(combinedMapStateToProps)(SendTokenAmount);
