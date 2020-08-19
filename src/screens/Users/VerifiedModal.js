@@ -17,9 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import SlideModal from 'components/Modals/SlideModal';
@@ -56,14 +59,17 @@ const VerifiedModal = (props: Props) => {
   const {
     isVisible, onModalHide, verifiedField, onButtonPress, isPillarRewardCampaignActive, rewardsByCampaign,
   } = props;
-  const referralMethod = verifiedField === 'phone' ? 'text message' : 'email';
   const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
+  const allowedReferralMethodText = verifiedField === 'phone'
+    ? t('referralsContent.paragraph.allowedInviteViaPhone')
+    : t('referralsContent.paragraph.allowedInviteViaEmail');
+  const verifiedDataParagraph = verifiedField === 'phone'
+    ? t('referralsContent.paragraph.phoneVerified')
+    : t('referralsContent.paragraph.emailVerified');
 
   const text = (isPillarRewardCampaignActive && rewardText)
-    ? `You are now able to invite friends via ${referralMethod}. You will receive ${rewardText} for each ` +
-    'friend installed the app with your referral link.'
-    : `You are now able to invite friends via ${referralMethod}. Start receiving badges for friends installed Pillar ` +
-    'with your referral link!';
+    ? `${allowedReferralMethodText} ${t('referralsContent.paragraph.rewardForEachInvitation', { reward: rewardText })}`
+    : `${allowedReferralMethodText} ${t('referralsContent.paragraph.getBadgesForEachInvitation')}`;
 
   return (
     <SlideModal
@@ -76,11 +82,11 @@ const VerifiedModal = (props: Props) => {
       <Wrapper>
         <LikeIcon name="like" />
         <Spacing h={40} />
-        <MediumText center large >Your {verifiedField} has been verified</MediumText>
+        <MediumText center large>{verifiedDataParagraph}</MediumText>
         <Spacing h={15} />
         <BaseText center medium>{text}</BaseText>
         <Spacing h={32} />
-        <Button title="Invite friends" onPress={onButtonPress} />
+        <Button title={t('buttons.inviteFriends')} onPress={onButtonPress} />
       </Wrapper>
     </SlideModal>
   );
