@@ -10418,6 +10418,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -10546,6 +10547,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -10874,6 +10876,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11002,6 +11005,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11329,6 +11333,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11457,6 +11462,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11814,6 +11820,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11942,6 +11949,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12299,6 +12307,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12427,6 +12436,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12771,6 +12781,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -13071,6 +13082,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -13543,6 +13555,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -13885,6 +13898,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -14013,6 +14027,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -14363,6 +14378,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -14701,6 +14717,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -15037,6 +15054,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -15625,6 +15643,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16081,6 +16100,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16209,6 +16229,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16537,6 +16558,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16665,6 +16687,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16993,6 +17016,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -17449,6 +17473,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -17922,6 +17947,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18050,6 +18076,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18395,6 +18422,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18523,6 +18551,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18868,6 +18897,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18996,6 +19026,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19341,6 +19372,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19469,6 +19501,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19812,6 +19845,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -20267,6 +20301,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -20395,6 +20430,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -20896,6 +20932,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -21253,6 +21290,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -21381,6 +21419,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -21724,6 +21763,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -22179,6 +22219,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -22307,6 +22348,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -22680,6 +22722,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23165,6 +23208,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23293,6 +23337,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23621,6 +23666,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23749,6 +23795,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24077,6 +24124,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24205,6 +24253,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24503,6 +24552,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24631,6 +24681,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25057,6 +25108,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25363,6 +25415,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25871,6 +25924,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
                       "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
@@ -26108,6 +26162,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
                       "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
@@ -26337,6 +26392,7 @@ Array [
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
                       "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
@@ -26728,6 +26784,7 @@ Array [
                           "synthetic": "#2329d6",
                           "tertiary": "#EBF0F6",
                           "text": "#007AFF",
+                          "toastCloseIcon": "#ededed",
                           "transactionReceivedIcon": "#497391",
                           "userAvatar": "#d1d9e4",
                           "warning": "#ECA93A",
@@ -26805,7 +26862,7 @@ Array [
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -26819,7 +26876,7 @@ Array [
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -26927,7 +26984,7 @@ Array [
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -28126,7 +28183,7 @@ exports[`Storyshots Selector default 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -28140,7 +28197,7 @@ exports[`Storyshots Selector default 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -28248,7 +28305,7 @@ exports[`Storyshots Selector default 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -29120,7 +29177,7 @@ exports[`Storyshots Selector no options 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -29134,7 +29191,7 @@ exports[`Storyshots Selector no options 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -29242,7 +29299,7 @@ exports[`Storyshots Selector no options 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -30610,7 +30667,7 @@ exports[`Storyshots Selector selected option 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -30624,7 +30681,7 @@ exports[`Storyshots Selector selected option 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -30732,7 +30789,7 @@ exports[`Storyshots Selector selected option 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -31931,7 +31988,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -31945,7 +32002,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -32053,7 +32110,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -33531,7 +33588,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -33545,7 +33602,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -33653,7 +33710,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -35126,7 +35183,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       >
                         <View
                           accessible={true}
-                          borderRadius={6}
+                          borderRadius={20}
                           focusable={false}
                           onClick={[Function]}
                           onResponderGrant={[Function]}
@@ -35140,7 +35197,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                             Array [
                               Object {
                                 "backgroundColor": "#FFFFFF",
-                                "borderRadius": 6,
+                                "borderRadius": 20,
                                 "flexDirection": "column",
                                 "justifyContent": "flex-start",
                                 "opacity": 1,
@@ -35248,7 +35305,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 style={
                                   Array [
                                     Object {
-                                      "color": "#EDEDED",
+                                      "color": "#ededed",
                                       "fontSize": 16,
                                     },
                                     undefined,
@@ -36867,7 +36924,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       >
                         <View
                           accessible={true}
-                          borderRadius={6}
+                          borderRadius={20}
                           focusable={false}
                           onClick={[Function]}
                           onResponderGrant={[Function]}
@@ -36881,7 +36938,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             Array [
                               Object {
                                 "backgroundColor": "#FFFFFF",
-                                "borderRadius": 6,
+                                "borderRadius": 20,
                                 "flexDirection": "column",
                                 "justifyContent": "flex-start",
                                 "opacity": 1,
@@ -36989,7 +37046,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 style={
                                   Array [
                                     Object {
-                                      "color": "#EDEDED",
+                                      "color": "#ededed",
                                       "fontSize": 16,
                                     },
                                     undefined,
@@ -38468,7 +38525,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       >
                         <View
                           accessible={true}
-                          borderRadius={6}
+                          borderRadius={20}
                           focusable={false}
                           onClick={[Function]}
                           onResponderGrant={[Function]}
@@ -38482,7 +38539,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                             Array [
                               Object {
                                 "backgroundColor": "#FFFFFF",
-                                "borderRadius": 6,
+                                "borderRadius": 20,
                                 "flexDirection": "column",
                                 "justifyContent": "flex-start",
                                 "opacity": 1,
@@ -38590,7 +38647,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 style={
                                   Array [
                                     Object {
-                                      "color": "#EDEDED",
+                                      "color": "#ededed",
                                       "fontSize": 16,
                                     },
                                     undefined,

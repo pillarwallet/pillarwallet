@@ -61,6 +61,7 @@ export const lightThemeColors = {
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
   poolTogetherPink: '#e51fff',
+  toastCloseIcon: '#ededed',
 };
 
 export const darkThemeColors = {
@@ -103,6 +104,7 @@ export const darkThemeColors = {
   progressBarStart: '#ca17e1',
   progressBarEnd: '#f04cfa',
   poolTogetherPink: '#e51fff',
+  toastCloseIcon: '#ebf0f5',
 };
 
 export const themedColors = {
@@ -249,6 +251,10 @@ export const themedColors = {
   labelTertiary: theme('current', {
     lightTheme: lightThemeColors.labelTertiary,
     darkTheme: darkThemeColors.labelTertiary,
+  }),
+  toastCloseIcon: theme('current', {
+    lightTheme: lightThemeColors.toastCloseIcon,
+    darkTheme: darkThemeColors.toastCloseIcon,
   }),
 };
 

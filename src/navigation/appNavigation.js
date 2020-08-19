@@ -112,6 +112,7 @@ import KeyBasedAssetTransferEditAmountScreen from 'screens/KeyBasedAssetTransfer
 import KeyBasedAssetTransferConfirmScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferConfirm';
 import KeyBasedAssetTransferUnlockScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferUnlock';
 import KeyBasedAssetTransferStatusScreen from 'screens/KeyBasedAssetTransfer/KeyBasedAssetTransferStatus';
+import ContactsListScreen from 'screens/Contacts/ContactsList';
 import SablierStreamsScreen from 'screens/Sablier/SablierStreams';
 import SablierNewStreamScreen from 'screens/Sablier/NewStream';
 import SablierNewStreamReviewScreen from 'screens/Sablier/NewStreamReview';
@@ -254,6 +255,8 @@ import {
   KEY_BASED_ASSET_TRANSFER_UNLOCK,
   KEY_BASED_ASSET_TRANSFER_FLOW,
   KEY_BASED_ASSET_TRANSFER_STATUS,
+  CONTACTS_LIST,
+  CONTACTS_FLOW,
   SABLIER_FLOW,
   SABLIER_STREAMS,
   SABLIER_NEW_STREAM,
@@ -693,6 +696,12 @@ const keyBasedAssetTransferFlow = createStackNavigator({
 
 keyBasedAssetTransferFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const contactsFlow = createStackNavigator({
+  [CONTACTS_LIST]: ContactsListScreen,
+}, StackNavigatorConfig);
+
+contactsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 const sablierFlow = createStackNavigator({
   [SABLIER_STREAMS]: SablierStreamsScreen,
   [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
@@ -748,6 +757,7 @@ const AppFlowNavigation = createStackNavigator(
     [LENDING_WITHDRAW_DEPOSIT_FLOW]: lendingWithdrawDepositsFlow,
     [KEY_BASED_ASSET_TRANSFER_FLOW]: keyBasedAssetTransferFlow,
     [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
+    [CONTACTS_FLOW]: contactsFlow,
     [SABLIER_FLOW]: sablierFlow,
   },
   modalTransition,

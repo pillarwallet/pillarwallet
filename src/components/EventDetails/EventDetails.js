@@ -461,7 +461,8 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, {
       contact: {
         ethAddress: address,
-        username: ensRegistry[address] || address,
+        name: address,
+        ensName: ensRegistry[address],
       },
     });
     this.props.onClose();

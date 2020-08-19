@@ -20,21 +20,26 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import t from 'translations/translate';
 
+// components
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+
+// utils
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 
 type Props = {
-  onPress: Function,
+  iconName: string,
+  label: string,
+  color: string,
+  onPress?: () => void,
   expanded?: boolean,
   disabled?: boolean,
 };
 
-const HideButtonWrapper = styled.TouchableOpacity`
+const ButtonWrapper = styled.TouchableOpacity`
   padding: 10px;
   justify-content: center;
   align-items: center;
@@ -42,8 +47,8 @@ const HideButtonWrapper = styled.TouchableOpacity`
   background-color: ${themedColors.surface};
 `;
 
-const HideButtonLabel = styled(BaseText)`
-  color: ${themedColors.negative};
+const ButtonLabel = styled(BaseText)`
+  color: ${({ color }) => color};
   ${({ expanded, disabled }) => `
     font-size: ${expanded ? fontSizes.regular : fontSizes.small}px;
     opacity: ${disabled ? 0.5 : 1}
@@ -51,25 +56,28 @@ const HideButtonLabel = styled(BaseText)`
   margin-top: 8px;
 `;
 
-const TurnOffIcon = styled(Icon)`
-  color: ${themedColors.negative};
+const StyledIcon = styled(Icon)`
+  color: ${({ color }) => color};
   ${({ expanded, disabled }) => `
     font-size: ${expanded ? fontSizes.big : fontSizes.medium}px;
     opacity: ${disabled ? 0.5 : 1}
   `}
 `;
 
+const SwipeoutButton = ({
+  onPress,
+  expanded,
+  disabled,
+  iconName,
+  label,
+  color,
+}: Props) => (
+  <ButtonWrapper onPress={onPress} activeOpacity={0.8}>
+    <StyledIcon name={iconName} disabled={disabled} color={color} />
+    <ButtonLabel expanded={expanded} disabled={disabled} color={color}>
+      {label}
+    </ButtonLabel>
+  </ButtonWrapper>
+);
 
-const HideAssetButton = (props: Props) => {
-  const { onPress, expanded, disabled } = props;
-  return (
-    <HideButtonWrapper onPress={onPress} activeOpacity={0.8}>
-      <TurnOffIcon name="turn-off" disabled={disabled} />
-      <HideButtonLabel expanded={expanded} disabled={disabled}>
-        {t('button.hide')}
-      </HideButtonLabel>
-    </HideButtonWrapper>
-  );
-};
-
-export default HideAssetButton;
+export default SwipeoutButton;
