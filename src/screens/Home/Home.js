@@ -329,7 +329,7 @@ class HomeScreen extends React.Component<Props> {
           {t('poolTogetherContent.label.ownedTickets', { count: userTickets })}
         </BaseText>
         <BaseText secondary>
-          {t('poolTogetherContent.label.winChance', { chancePresent: winChance })}
+          {t('poolTogetherContent.label.winChance', { chancePercent: winChance })}
         </BaseText>
       </ListItemWithImage>
     );
