@@ -4,7 +4,7 @@
     "plugin:flowtype/recommended",
     "plugin:promise/recommended"
   ],
-  "parser": "babel-eslint",
+  "parser": "@babel/eslint-parser",
   "plugins": [
     "react",
     "react-native",
