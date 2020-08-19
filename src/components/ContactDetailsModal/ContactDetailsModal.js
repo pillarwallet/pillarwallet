@@ -41,7 +41,7 @@ import { getThemeColors } from 'utils/themes';
 import { isEnsName, isValidAddress } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
-import { lookupAddress } from 'utils/common';
+import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
 import { getReceiverWithEnsName } from 'utils/contacts';
 
 // types
@@ -205,6 +205,9 @@ const ContactDetailsModal = ({
   } else if (!addressesEqual(contact?.ethAddress, addressValue)
     && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
     errorMessage = t('error.contactWithAddressExist');
+  } else if (!isCaseInsensitiveMatch(contact?.name, nameValue)
+    && contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))) {
+    errorMessage = t('error.contactWithNameExist');
   } else if (isEmpty(nameValue)) {
     errorMessage = t('error.emptyName');
   }

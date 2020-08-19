@@ -263,6 +263,7 @@
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExist": "Contact with this address already exist",
+    "contactWithNameExist": "Contact with this name already exist",
     "emptyName": "Name cannot be empty",
     "invalid": {
       "address": "Invalid address",
@@ -475,6 +476,9 @@
       },
       "userProfile": {
         "title": "User profile"
+      },
+      "addressBook": {
+        "title": "Address book"
       }
     },
     "button": {

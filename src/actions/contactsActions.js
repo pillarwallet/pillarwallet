@@ -54,7 +54,7 @@ export const updateContactAction = (prevEthAddress: string, contact: Contact) =>
 
     // remove previous if address changed
     if (!addressesEqual(contact.ethAddress, prevEthAddress)) {
-      updatedContacts = contacts.filter(({ ethAddress }) => !addressesEqual(ethAddress, prevEthAddress));
+      updatedContacts = updatedContacts.filter(({ ethAddress }) => !addressesEqual(ethAddress, prevEthAddress));
     }
 
     Toast.show({

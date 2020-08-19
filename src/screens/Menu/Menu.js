@@ -199,7 +199,7 @@ const Menu = ({
     },
     {
       key: 'addressBook',
-      title: t('title.addressBook'),
+      title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
       card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
