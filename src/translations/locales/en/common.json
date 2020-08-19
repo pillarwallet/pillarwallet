@@ -107,6 +107,7 @@
     "addContacts": "Add contacts",
     "addDetails": "Add details",
     "addFunds": "Add funds",
+    "approve": "Approve",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
     "buyTokens": "Buy tokens",
@@ -127,6 +128,7 @@
     "notEnoughPLR": "Not enough PLR",
     "purchaseMore": "Purchase more",
     "referFriends": "Refer friends",
+    "reject": "Reject",
     "retry": "Retry",
     "receive": "Receive",
     "seeOnEtherscan": "See on Etherscan",
@@ -670,14 +672,35 @@
     "title": {
       "requestsList": "Requests",
       "activeConnections": "Active сonnections",
-      "connect": "Connect"
+      "connect": "Connect",
+      "walletConnectRequests": "WalletConnect Request",
+      "walletConnect": "Wallet Connect",
+      "requestType": {
+        "call": "Call Request",
+        "transaction": "Transaction Request",
+        "message": "Message Request",
+        "unsupported": "Unsupported Request",
+        "default": "Request"
+      }
     },
     "label": {
-      "requestFrom": "Request from {{name}}"
+      "requestFrom": "Request from {{name}}",
+      "unknownRequestName": "Unknown",
+      "requestDescription": "Description",
+      "requestLink": "Url"
     },
     "banner": {
       "promo": {
         "paragraph": "A collection of dapps to use with Pillar"
+      }
+    },
+    "button": {
+      "approveType": {
+        "call": "Approve Call",
+        "transaction": "Approve Transaction",
+        "message": "Approve Message",
+        "unsupported": "Approve Unsupported",
+        "default": "Approve"
       }
     }
   },

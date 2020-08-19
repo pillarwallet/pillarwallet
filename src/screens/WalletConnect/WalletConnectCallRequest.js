@@ -27,6 +27,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 // components
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -227,7 +228,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       params = [],
     } = request || {};
 
-    let type = 'Call';
+    let type = 'call';
     let body = null;
     let address = '';
     let message = '';
@@ -240,7 +241,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     switch (method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
-        type = 'Transaction';
+        type = 'transaction';
 
         const estimatePart = {
           txFeeInWei,
@@ -330,7 +331,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       case 'eth_sign':
-        type = 'Message';
+        type = 'message';
 
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
@@ -348,7 +349,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       case 'personal_sign':
-        type = 'Message';
+        type = 'message';
 
         address = params[1]; // eslint-disable-line
         try {
@@ -370,7 +371,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       default:
-        type = 'Unsupported';
+        type = 'unsupported';
         errorMessage = 'We are sorry, but we do not support this action yet.';
         break;
     }
@@ -378,7 +379,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: `${type} Request` }],
+          centerItems: [{
+            title: t([
+              `walletConnectContent.title.requestType.${type}`,
+              'walletConnectContent.title.requestType.default',
+            ]),
+          }],
         }}
       >
         {body}
@@ -388,15 +394,20 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             <OptionButton
               primaryInverted
               onPress={() => this.handleFormSubmit(this.request, transactionPayload)}
-              disabled={!!errorMessage || (type === 'Transaction' && gettingFee)}
+              disabled={!!errorMessage || (type === 'transaction' && gettingFee)}
               regularText
-              title={`Approve ${type}`}
+              title={
+                t([
+                  `walletConnectContent.button.approveType.${type}`,
+                  'walletConnectContent.button.approveType.default',
+                ])
+              }
             />
             <OptionButton
               dangerInverted
               onPress={this.handleDismissal}
               regularText
-              title="Reject"
+              title={t('button.reject')}
             />
           </FooterWrapper>
         </Footer>
