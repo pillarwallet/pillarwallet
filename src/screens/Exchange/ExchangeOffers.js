@@ -339,7 +339,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       navigation,
       takeOffer,
       setExecutingTransaction,
-      fromAmount
+      fromAmount,
     } = this.props;
 
     const {
