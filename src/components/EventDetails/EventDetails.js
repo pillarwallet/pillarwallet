@@ -298,15 +298,8 @@ const Divider = styled.View`
   margin: 8px 0px 18px;
 `;
 
-const ButtonHolder = styled.View`
-  flex-direction: row;
-  flex: 1;
-  justify-content: flex-end;
-`;
-
 const EventTimeHolder = styled.View`
-  flex-direction: row;
-  justify-content: center;
+  text-align: center;
   padding: 0 8px;
 `;
 
@@ -1365,7 +1358,7 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
+  renderContent = (event: Object, eventData: EventData) => {
     const { itemData } = this.props;
     const {
       date, name,
@@ -1390,18 +1383,12 @@ export class EventDetail extends React.Component<Props, State> {
     const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
     const titleColor = this.getColor(valueColor);
     const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
-    const hasModalButtons = !isEmpty(buttons);
 
     return (
       <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <Row>
-          <ButtonHolder>
-            <View />
-          </ButtonHolder>
-          <EventTimeHolder>
-            <BaseText tiny secondary>{eventTime}</BaseText>
-          </EventTimeHolder>
-        </Row>
+        <EventTimeHolder>
+          <BaseText tiny secondary>{eventTime}</BaseText>
+        </EventTimeHolder>
         <Spacing h={10} />
         <AvatarWrapper disabled>
           <BaseText medium>{label}</BaseText>
@@ -1437,15 +1424,6 @@ export class EventDetail extends React.Component<Props, State> {
               <Spacing h={4} />
             </React.Fragment>
           ))}
-          {allowViewOnBlockchain && (
-            <Button
-              squarePrimary={hasModalButtons} // styling if multiple buttons in modal
-              secondary={!hasModalButtons} // styling if single button in modal
-              title={t('button.viewOnBlockchain')}
-              onPress={this.viewOnTheBlockchain}
-              regularText
-            />
-          )}
         </ButtonsContainer>
       </Wrapper>
     );
@@ -1468,14 +1446,36 @@ export class EventDetail extends React.Component<Props, State> {
       event = { ...event, ...txInfo, type: event.type };
     }
 
-    const eventData = this.getEventData(event);
+    let eventData = this.getEventData(event);
 
     if (!eventData) return null;
     const { hash, isPPNTransaction } = event;
     const allowViewOnBlockchain = !!hash && !isPPNTransaction;
 
+    if (allowViewOnBlockchain) {
+      const currentModalButtons = eventData?.buttons || [];
+      const hasModalButtons = !isEmpty(currentModalButtons);
+
+      const viewOnBlockchainButton = {
+        squarePrimary: hasModalButtons, // styling if multiple buttons in modal
+        secondary: !hasModalButtons, // styling if single button in modal
+        title: t('button.viewOnBlockchain'),
+        onPress: this.viewOnTheBlockchain,
+      };
+
+      // per design request whenever there can only be 2 buttons and second should always be changed to Etherscan
+      const updatedModalButtons = currentModalButtons.length > 1
+        ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
+        : currentModalButtons.concat(viewOnBlockchainButton);
+
+      eventData = {
+        ...eventData,
+        buttons: updatedModalButtons,
+      };
+    }
+
     if (storybook) {
-      return this.renderContent(event, eventData, allowViewOnBlockchain);
+      return this.renderContent(event, eventData);
     }
 
     return (
@@ -1486,7 +1486,7 @@ export class EventDetail extends React.Component<Props, State> {
           noClose
           hideHeader
         >
-          {this.renderContent(event, eventData, allowViewOnBlockchain)}
+          {this.renderContent(event, eventData)}
         </SlideModal>
         <ReceiveModal
           isVisible={isReceiveModalVisible}
