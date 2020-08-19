@@ -17,11 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { FlatList, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import get from 'lodash.get';
+import t from 'translations/translate';
+
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { MediumText } from 'components/Typography';
 import { killWalletConnectSessionByUrl } from 'actions/walletConnectActions';
@@ -53,20 +56,24 @@ const filterSessionsByUrl = (connectors: any[]) => {
   return sessions;
 };
 
+
 class ActiveConnections extends React.Component<Props> {
   onItemPress = (item) => {
     const { peerMeta = {} } = item;
     const { name, url } = peerMeta;
     Alert.alert(
-      `Disconnect from ${name}`,
-      `Please confirm disconnect from ${name}.`,
+      t('alert.walletConnectDisconnect.title', { name }),
+      t('alert.walletConnectDisconnect.message', { name }),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { text: 'Disconnect', onPress: () => this.props.killWalletConnectSessionByUrl(url) },
+        { text: t('alert.walletConnectDisconnect.button.cancel'), style: 'cancel' },
+        {
+          text: t('alert.walletConnectDisconnect.button.confirm'),
+          onPress: () => this.props.killWalletConnectSessionByUrl(url),
+        },
       ],
       { cancelable: true },
     );
-  }
+  };
 
   renderConnection = ({ item }) => {
     const { peerMeta = {} } = item;
@@ -89,7 +96,7 @@ class ActiveConnections extends React.Component<Props> {
     return (
       <React.Fragment>
         <Margin>
-          <MediumText regular accent>Active сonnections</MediumText>
+          <MediumText regular accent>{t('walletConnectContent.title.activeConnections')}</MediumText>
         </Margin>
         <FlatList
           data={filtered}

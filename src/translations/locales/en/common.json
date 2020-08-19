@@ -20,11 +20,23 @@
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
 
+  "timeDaysHours": "{{days}}d {{hours}}h",
+  "timeHoursMinutes": " {{hours}}h {{minutes}}m",
+
+  "navigationTabs": {
+    "home": "Home",
+    "assets": "Assets",
+    "connect": "Connect",
+    "services": "Services"
+  },
+
   "title": {
     "accounts": "Accounts",
     "addFundsToWallet": "Add funds to Pillar",
+    "mainActivityFeed": "History",
     "publicAddress": "Public address",
     "success": "Success",
+    "totalBalance": "Total balances",
     "transactions": "Transactions"
   },
 
@@ -77,12 +89,14 @@
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
+    "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
     "topUp": "Top up",
     "toSmartWallet": "to Smart Wallet",
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
+    "yesterday": "Yesterday",
     "yourEnsName": "Your wallet ENS name"
   },
 
@@ -132,7 +146,10 @@
     "topUpPLRTank": "Top up PLR Tank",
     "transferToSmartWallet": "Transfer to Smart Wallet",
     "tryAgain": "Try again",
+    "viewAllItemsAmount": "View all {{amount}}",
+    "viewAll": "View all",
     "viewBadge": "View badge",
+    "viewBalance": "View balance",
     "viewDeposit": "View deposit",
     "viewOnBlockchain": "View on the blockchain",
     "viewPoolTogetherPool": "View pool",
@@ -355,6 +372,24 @@
     }
   },
 
+  "aaveContent": {
+    "depositedAssetsList": {
+      "title": "Aave Deposits"
+    }
+  },
+
+  "badgesContent": {
+    "badgesList": {
+      "title": "Game of badges",
+      "emptyState": {
+        "noBadges": {
+          "title": "No badges",
+          "paragraph": "You do not have badges yet"
+        }
+      }
+    }
+  },
+
   "settingsContent": {
     "settingsItem": {
       "analytics": {
@@ -567,7 +602,9 @@
       "remainingCount": "{{amount}} more",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
-      "claiming": "Claiming..."
+      "claiming": "Claiming...",
+      "inviteFriends": "Invite friends to Pillar",
+      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more."
     }
   },
 
@@ -601,6 +638,39 @@
     },
     "paragraph": {
       "allowAccess": "Please grant access to your address book in order to be able to choose your phone or email contacts."
+    }
+  },
+
+  "poolTogetherContent": {
+    "label": {
+      "prizeInDollars": "Prize ${{prize}}",
+      "ownedTickets": "{{count}} ticket",
+      "ownedTickets_plural": "{{count}} tickets",
+      "winChance": "{{chancePercent}} chance"
+    },
+    "ticketsList": {
+      "title": "PoolTogether savings game"
+    }
+  },
+
+  "sablierContent": {
+    "status": {
+      "canceled": "Canceled",
+      "ended": "Ended",
+      "Remaining": "Remaining"
+    },
+    "moneyStreamingList": {
+      "title": "Sablier money streaming"
+    }
+  },
+
+  "walletConnectContent": {
+    "title": {
+      "requestsList": "Requests",
+      "activeConnections": "Active сonnections"
+    },
+    "label": {
+      "requestFrom": "Request from {{name}}"
     }
   },
 
@@ -716,6 +786,14 @@
     "invalidReferralDeepLink": {
       "title": "Invalid link",
       "message": "Referral code is missing"
+    },
+    "walletConnectDisconnect": {
+      "title": "Disconnect from {{name}}",
+      "message": "Please confirm disconnect from {{name}}.",
+      "button": {
+        "cancel": "Cancel",
+        "confirm": "Disconnect"
+      }
     }
   }
 }
