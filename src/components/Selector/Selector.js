@@ -119,7 +119,7 @@ const Selector = ({
   };
 
   const handleSearchValidation = (searchQuery: string): ?string => {
-    if (disableSelfSelect && searchQuery === activeAccountAddress) return 'Can not send to yourself';
+    if (disableSelfSelect && searchQuery === activeAccountAddress) return 'Sorry, you cannot send to yourself. Please use a different address.';
     return null;
   };
 
