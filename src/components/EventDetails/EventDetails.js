@@ -1455,23 +1455,28 @@ export class EventDetail extends React.Component<Props, State> {
     if (allowViewOnBlockchain) {
       const currentModalButtons = eventData?.buttons || [];
       const hasModalButtons = !isEmpty(currentModalButtons);
+      const viewOnBlockchainButtonTitle = t('button.viewOnBlockchain');
+      const alreadyHasViewOnBlockchainButton = hasModalButtons
+        && currentModalButtons.some(({ title }) => title === viewOnBlockchainButtonTitle);
 
-      const viewOnBlockchainButton = {
-        squarePrimary: hasModalButtons, // styling if multiple buttons in modal
-        secondary: !hasModalButtons, // styling if single button in modal
-        title: t('button.viewOnBlockchain'),
-        onPress: this.viewOnTheBlockchain,
-      };
+      if (!alreadyHasViewOnBlockchainButton) {
+        const viewOnBlockchainButton = {
+          squarePrimary: hasModalButtons, // styling if multiple buttons in modal
+          secondary: !hasModalButtons, // styling if single button in modal
+          title: viewOnBlockchainButtonTitle,
+          onPress: this.viewOnTheBlockchain,
+        };
 
-      // per design request whenever there can only be 2 buttons and second should always be changed to Etherscan
-      const updatedModalButtons = currentModalButtons.length > 1
-        ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
-        : currentModalButtons.concat(viewOnBlockchainButton);
+        // per design request whenever there can only be 2 buttons and second should always be changed to Etherscan
+        const updatedModalButtons = currentModalButtons.length > 1
+          ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
+          : currentModalButtons.concat(viewOnBlockchainButton);
 
-      eventData = {
-        ...eventData,
-        buttons: updatedModalButtons,
-      };
+        eventData = {
+          ...eventData,
+          buttons: updatedModalButtons,
+        };
+      }
     }
 
     if (storybook) {
