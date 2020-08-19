@@ -98,6 +98,7 @@ class Switcher extends React.Component<Props, State> {
     } = this.props;
     const { offsetX } = this.state;
     const colors = getThemeColors(theme);
+
     return (
       <SwitcherWrapper disabled={disabled}>
         <TouchableOpacity

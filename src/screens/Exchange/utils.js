@@ -26,14 +26,13 @@ import Intercom from 'react-native-intercom';
 
 import { getRate, getBalance, sortAssets } from 'utils/assets';
 import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { generateHorizontalOptions } from 'utils/exchange';
+import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { Option } from 'models/Selector';
+import type { Option, HorizontalOption } from 'models/Selector';
 import type { Rates, Asset, Assets, Balances } from 'models/Asset';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Accounts } from 'models/Account';
@@ -195,6 +194,22 @@ const generateSupportedAssetsOptions = (
         },
       };
     }).filter(asset => asset.key !== 'BTC');
+};
+
+const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => {
+  return POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
+    const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
+    if (popularAsset) return [...popularAssetsList, popularAsset];
+    return popularAssetsList;
+  }, []);
+};
+
+const generateHorizontalOptions = (assetsOptionsBuying: Option[]): HorizontalOption[] => {
+  const popularOptions = generatePopularOptions(assetsOptionsBuying);
+  return [{
+    title: 'Popular',
+    data: popularOptions,
+  }];
 };
 
 export const provideOptions = (

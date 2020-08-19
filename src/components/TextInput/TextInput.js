@@ -214,6 +214,7 @@ const Placeholder = styled(MediumText)`
 
 const PlaceholderRight = styled(BaseText)`
   ${fontStyles.medium};
+  ${({ addMargin }) => !!addMargin && 'margin-right: 8px;'}
 `;
 
 const SelectorValue = styled(MediumText)`
@@ -587,7 +588,8 @@ class TextInput extends React.Component<Props, State> {
               />}
               {showRightAddon &&
               <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
-                {!!rightPlaceholder && <PlaceholderRight color={colors.accent}>{rightPlaceholder}</PlaceholderRight>}
+                {!!rightPlaceholder &&
+                  <PlaceholderRight color={colors.accent} addMargin={!!iconProps}>{rightPlaceholder}</PlaceholderRight>}
                 {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
                 {!!loading && <Spinner width={30} height={30} />}
               </RightSideWrapper>}
@@ -619,7 +621,6 @@ class TextInput extends React.Component<Props, State> {
           onOptionSelect={this.selectValue}
           renderOption={renderOption}
           horizontalOptionsData={horizontalOptions}
-
         />
       </View>
     );

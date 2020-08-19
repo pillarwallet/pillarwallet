@@ -25,8 +25,8 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
-import { POPULAR_EXCHANGE_TOKENS, ETH } from 'constants/assetsConstants';
-import type { Option } from 'models/Selector';
+import { ETH } from 'constants/assetsConstants';
+import type { Option, HorizontalOption } from 'models/Selector';
 import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
@@ -35,7 +35,7 @@ import { chainId } from './uniswap';
 export type ExchangeOptions = {
   fromOptions: Option[],
   toOptions: Option[],
-  horizontalOptions: Option[],
+  horizontalOptions: HorizontalOption[],
 }
 
 export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
@@ -69,22 +69,6 @@ export const clearWebViewCookies = () => {
   } else {
     CookieManager.clearAll().then(() => {}).catch(() => null);
   }
-};
-
-const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => {
-  return POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
-    const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
-    if (popularAsset) return [...popularAssetsList, popularAsset];
-    return popularAssetsList;
-  }, []);
-};
-
-export const generateHorizontalOptions = (assetsOptionsBuying: Option[]): Object => {
-  const popularOptions = generatePopularOptions(assetsOptionsBuying);
-  return [{
-    title: 'Popular',
-    data: popularOptions,
-  }];
 };
 
 export const parseOffer = (
