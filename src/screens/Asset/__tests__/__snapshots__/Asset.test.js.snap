@@ -1838,7 +1838,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               >
                 <View
                   accessible={true}
-                  borderRadius={6}
+                  borderRadius={20}
                   focusable={false}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
@@ -1852,7 +1852,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Array [
                       Object {
                         "backgroundColor": "#FFFFFF",
-                        "borderRadius": 6,
+                        "borderRadius": 20,
                         "flexDirection": "column",
                         "justifyContent": "flex-start",
                         "opacity": 1,
@@ -1960,7 +1960,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         style={
                           Array [
                             Object {
-                              "color": "#EDEDED",
+                              "color": "#ededed",
                               "fontSize": 16,
                             },
                             undefined,
@@ -2698,6 +2698,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "synthetic": "#2329d6",
                               "tertiary": "#EBF0F6",
                               "text": "#FCFDFF",
+                              "toastCloseIcon": "#ededed",
                               "transactionReceivedIcon": "#497391",
                               "userAvatar": "#d1d9e4",
                               "warning": "#ECA93A",
@@ -2789,7 +2790,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               >
                 <View
                   accessible={true}
-                  borderRadius={6}
+                  borderRadius={20}
                   focusable={false}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
@@ -2803,7 +2804,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Array [
                       Object {
                         "backgroundColor": "#FFFFFF",
-                        "borderRadius": 6,
+                        "borderRadius": 20,
                         "flexDirection": "column",
                         "justifyContent": "flex-start",
                         "opacity": 1,
@@ -2911,7 +2912,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         style={
                           Array [
                             Object {
-                              "color": "#EDEDED",
+                              "color": "#ededed",
                               "fontSize": 16,
                             },
                             undefined,
@@ -3443,7 +3444,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               >
                 <View
                   accessible={true}
-                  borderRadius={6}
+                  borderRadius={20}
                   focusable={false}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
@@ -3457,7 +3458,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Array [
                       Object {
                         "backgroundColor": "#FFFFFF",
-                        "borderRadius": 6,
+                        "borderRadius": 20,
                         "flexDirection": "column",
                         "justifyContent": "flex-start",
                         "opacity": 1,
@@ -3565,7 +3566,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         style={
                           Array [
                             Object {
-                              "color": "#EDEDED",
+                              "color": "#ededed",
                               "fontSize": 16,
                             },
                             undefined,

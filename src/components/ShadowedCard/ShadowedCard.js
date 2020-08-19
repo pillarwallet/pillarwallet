@@ -60,7 +60,10 @@ type Props = {
   isAnimated?: boolean,
   spacingAfterAnimation?: number,
   borderRadius?: number,
-  noShadow?: boolean
+  noShadow?: boolean,
+  forceShadow?: boolean,
+  shadowColor?: string,
+  shadowOpacity?: number
 };
 
 type State = {
@@ -137,6 +140,9 @@ class ShadowedCard extends React.Component<Props, State> {
       isAnimated,
       borderRadius,
       noShadow,
+      forceShadow,
+      shadowColor,
+      shadowOpacity,
     } = this.props;
     const currentTheme = getThemeType(theme);
     const {
@@ -145,27 +151,32 @@ class ShadowedCard extends React.Component<Props, State> {
     const readyToRenderShadow = finishedAnimating || !isAnimated;
     const animatedContentOpacity = !cardHeight ? 0 : 1;
     const contentOpacity = isAnimated ? animatedContentOpacity : 1;
+    const isDarkTheme = currentTheme === DARK_THEME;
+
     return (
       <AnimatedCardOutter
         style={{ ...wrapperStyle, transform: [{ scaleY: isAnimated ? scaleValue : 1 }] }}
         ref={ref => { this.cardOutterRef = ref; }}
         disabled={disabled}
       >
-        {!noShadow && !!(cardHeight && cardWidth) && readyToRenderShadow && currentTheme !== DARK_THEME &&
-        <Shadow
-          heightAndroid={cardHeight}
-          heightIOS={cardHeight}
-          widthIOS={cardWidth}
-          widthAndroid={cardWidth}
-          useSVGShadow
-          wrapperStyle={{
-            position: 'absolute',
-            top: -(SHADOW_LENGTH / 2),
-            left: -(SHADOW_LENGTH / 2),
-            opacity: disabled ? 0.4 : 0.8,
-          }}
-          shadowRadius={(borderRadius || 6) - 2}
-        />}
+        {!noShadow && !!(cardHeight && cardWidth) && readyToRenderShadow && (forceShadow || !isDarkTheme) &&
+          <Shadow
+            heightAndroid={cardHeight}
+            heightIOS={cardHeight}
+            widthIOS={cardWidth}
+            widthAndroid={cardWidth}
+            useSVGShadow
+            wrapperStyle={{
+              position: 'absolute',
+              top: -(SHADOW_LENGTH / 2),
+              left: -(SHADOW_LENGTH / 2),
+              opacity: shadowOpacity || (disabled ? 0.4 : 0.8),
+            }}
+            shadowRadius={(borderRadius || 6) - 2}
+            shadowColorAndroid={shadowColor}
+            shadowColoriOS={shadowColor}
+          />
+        }
         <TouchableWithoutFeedback onPress={onPress} disabled={disabled}>
           <ContentWrapper
             style={upperContentWrapperStyle}
