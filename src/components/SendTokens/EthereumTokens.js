@@ -369,7 +369,7 @@ const SendEthereumTokens = ({
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
-  const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!receiver;
+  const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!selectedContact;
   const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
 
   const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
