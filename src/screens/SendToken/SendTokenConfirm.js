@@ -29,19 +29,15 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // utils
-import { addressesEqual } from 'utils/assets';
-import { getAccountName } from 'utils/accounts';
 import { formatTransactionFee } from 'utils/common';
 
 // types
-import type { Accounts } from 'models/Account';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   session: Object,
-  accounts: Accounts,
 };
 
 class SendTokenConfirm extends React.Component<Props> {
@@ -66,7 +62,6 @@ class SendTokenConfirm extends React.Component<Props> {
     const {
       session,
       navigation,
-      accounts,
     } = this.props;
     const {
       amount,
@@ -79,9 +74,6 @@ class SendTokenConfirm extends React.Component<Props> {
 
     const feeDisplayValue = txFeeInWei === 0 ? 'free' : formatTransactionFee(txFeeInWei, gasToken);
 
-    const userAccount = accounts.find(({ id }) => addressesEqual(id, to));
-
-
     const reviewData = [
       {
         label: 'Amount',
@@ -93,13 +85,6 @@ class SendTokenConfirm extends React.Component<Props> {
       reviewData.push({
         label: 'Recipient ENS name',
         value: receiverEnsName,
-      });
-    }
-
-    if (userAccount) {
-      reviewData.push({
-        label: 'Recipient',
-        value: getAccountName(userAccount.type),
       });
     }
 
@@ -126,10 +111,8 @@ class SendTokenConfirm extends React.Component<Props> {
 
 const mapStateToProps = ({
   session: { data: session },
-  accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   session,
-  accounts,
 });
 
 export default connect(mapStateToProps)(SendTokenConfirm);

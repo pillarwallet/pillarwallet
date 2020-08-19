@@ -34,6 +34,7 @@ import {
   SET_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER,
   SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS,
   SET_KEY_BASED_WALLET_HAS_POSITIVE_BALANCE,
+  SET_CREATING_KEY_BASED_ASSET_TRANSFER_TRANSACTIONS,
 } from 'constants/keyBasedAssetTransferConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -282,9 +283,9 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
         const assetToTransferTransaction = transferTransactionsInQueue[0].signedTransaction;
         const transactionSent = await transferSigned(assetToTransferTransaction?.signedHash)
           .catch((error) => ({ error }));
-        if (!transactionSent?.hash || transactionSent.error) {
+        if (!transactionSent?.hash || transactionSent?.error) {
           reportLog('Failed to send key based asset migration signed transaction', {
-            signedTransaction: assetToTransferTransaction,
+            assetToTransferTransaction: transferTransactionsInQueue[0],
             error: transactionSent.error,
           });
         } else {
@@ -318,8 +319,11 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
     const {
       wallet: { data: { address: keyBasedWalletAddress } },
       accounts: { data: accounts },
-      keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer },
+      keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer, creatingTransactions },
     } = getState();
+
+    if (creatingTransactions) return;
+    dispatch({ type: SET_CREATING_KEY_BASED_ASSET_TRANSFER_TRANSACTIONS, payload: true });
 
     const firstSmartAccount = findFirstSmartAccount(accounts);
     if (!firstSmartAccount) {
@@ -370,6 +374,9 @@ export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet)
     }
 
     dispatch(setAndStoreKeyBasedAssetsToTransferAction(keyBasedAssetsToTransferUpdated));
+    dispatch({ type: SET_CREATING_KEY_BASED_ASSET_TRANSFER_TRANSACTIONS, payload: false });
+
+    // check and send first transaction
     dispatch(checkKeyBasedAssetTransferTransactionsAction());
   };
 };

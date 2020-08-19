@@ -59,7 +59,7 @@ export const getCryptoProviderName = (provider: string) => {
 };
 
 export const isFiatCurrency = (symbol: string) => {
-  return fiatCurrencies.find(currency => currency.symbol === symbol);
+  return !!fiatCurrencies.find(currency => currency.symbol === symbol);
 };
 
 export const clearWebViewCookies = () => {
