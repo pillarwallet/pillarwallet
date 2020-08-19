@@ -813,7 +813,7 @@
       "message": "After logging out you will not be able to log in back to this wallet without 12 words backup.",
       "button": {
         "cancel": "Cancel",
-        "confirm": "Confirm"
+        "ok": "Confirm"
       }
     },
     "attemptToLogOutWithoutBackup": {
@@ -833,7 +833,7 @@
       "message": "Please confirm disconnect from {{name}}.",
       "button": {
         "cancel": "Cancel",
-        "confirm": "Disconnect"
+        "ok": "Disconnect"
       }
     }
   }

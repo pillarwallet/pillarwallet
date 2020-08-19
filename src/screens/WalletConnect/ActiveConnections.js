@@ -67,7 +67,7 @@ class ActiveConnections extends React.Component<Props> {
       [
         { text: t('alert.walletConnectDisconnect.button.cancel'), style: 'cancel' },
         {
-          text: t('alert.walletConnectDisconnect.button.confirm'),
+          text: t('alert.walletConnectDisconnect.button.ok'),
           onPress: () => this.props.killWalletConnectSessionByUrl(url),
         },
       ],
