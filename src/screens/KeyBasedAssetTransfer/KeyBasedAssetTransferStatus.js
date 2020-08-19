@@ -40,7 +40,11 @@ import { Footer, ScrollWrapper, Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import Animation from 'components/Animation';
-import { MediumText } from 'components/Typography';
+import { MediumText, Paragraph } from 'components/Typography';
+import Spinner from 'components/Spinner';
+
+// constants
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import { mapTransactionsHistory } from 'utils/feedData';
@@ -48,6 +52,7 @@ import { buildHistoryTransaction } from 'utils/history';
 import { parseTokenBigNumberAmount } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import t from 'translations/translate';
+import { isNotKeyBasedType } from 'utils/accounts';
 
 // types
 import type { KeyBasedAssetTransfer } from 'models/Asset';
@@ -61,12 +66,21 @@ type Props = {
   checkKeyBasedAssetTransferTransactions: () => void,
   keyBasedAssetsTransfer: KeyBasedAssetTransfer[],
   accounts: Accounts,
+  creatingTransactions: boolean,
+  keyBasedWalletAddress: string,
 };
 
 const Title = styled(MediumText)`
   ${fontStyles.large};
   text-align: center;
   margin-bottom: ${spacing.small}px;
+`;
+
+const LoadingWrapper = styled.View`
+  padding-top: ${spacing.large}px;
+  flex: 1;
+  justify-content: center;
+  align-items: center;
 `;
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -77,8 +91,21 @@ const KeyBasedAssetTransferStatus = ({
   keyBasedAssetsTransfer,
   accounts,
   resetKeyBasedAssetsTransfer,
+  creatingTransactions,
+  keyBasedWalletAddress,
 }: Props) => {
   useEffect(() => { checkKeyBasedAssetTransferTransactions(); }, []);
+
+  // mock only
+  const accountsWithKeyBased = [
+    {
+      id: keyBasedWalletAddress,
+      type: ACCOUNT_TYPES.KEY_BASED,
+      isActive: false,
+      walletId: '',
+    },
+    ...accounts.filter(isNotKeyBasedType),
+  ];
 
   const assetTransferTransactions = keyBasedAssetsTransfer.map(({
     signedTransaction,
@@ -104,13 +131,15 @@ const KeyBasedAssetTransferStatus = ({
   const assetTransferTransactionsHistory = [
     ...mapTransactionsHistory(
       assetTransferTransactions.filter(({ assetData }) => assetData?.tokenType !== COLLECTIBLES),
-      accounts,
+      accountsWithKeyBased,
       TRANSACTION_EVENT,
+      true,
     ),
     ...mapTransactionsHistory(
       assetTransferTransactions.filter(({ assetData }) => assetData?.tokenType === COLLECTIBLES),
-      accounts,
+      accountsWithKeyBased,
       COLLECTIBLE_TRANSACTION,
+      true,
     ),
   ];
 
@@ -119,7 +148,7 @@ const KeyBasedAssetTransferStatus = ({
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: 'Key based assets migration' }] }}
-      footer={!transferComplete && (
+      footer={!transferComplete && !creatingTransactions && (
         <Footer>
           <Button
             title="Cancel unsent"
@@ -145,7 +174,15 @@ const KeyBasedAssetTransferStatus = ({
           </Wrapper>
         </ScrollWrapper>
       )}
-      {!transferComplete && (
+      {creatingTransactions && (
+        <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
+          <LoadingWrapper>
+            <Paragraph center>Creating transactions</Paragraph>
+            <Spinner style={{ marginTop: spacing.small }} width={25} height={25} />
+          </LoadingWrapper>
+        </ScrollWrapper>
+      )}
+      {!transferComplete && !creatingTransactions && (
         <ActivityFeed
           navigation={navigation}
           noBorder
@@ -160,10 +197,13 @@ const KeyBasedAssetTransferStatus = ({
 
 const mapStateToProps = ({
   accounts: { data: accounts },
-  keyBasedAssetTransfer: { data: keyBasedAssetsTransfer },
+  keyBasedAssetTransfer: { data: keyBasedAssetsTransfer, creatingTransactions },
+  wallet: { data: { address: keyBasedWalletAddress } },
 }: RootReducerState): $Shape<Props> => ({
   keyBasedAssetsTransfer,
   accounts,
+  creatingTransactions,
+  keyBasedWalletAddress,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

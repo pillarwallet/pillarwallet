@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Dimensions } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -26,6 +27,7 @@ import ImagePicker from 'react-native-image-crop-picker';
 import { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
+import t from 'translations/translate';
 
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
@@ -44,6 +46,7 @@ import { printLog } from 'utils/common';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme, ThemeColors } from 'models/Theme';
+
 
 type Props = {
   onModalHide?: Function,
@@ -309,9 +312,7 @@ class Camera extends React.Component<Props, State> {
           <Header light flexStart onClose={modalHide} />
         </HeaderWrapper>
         <NoPermissions>
-          <BaseText style={{ color: 'white' }}>
-            Camera permissions not granted - cannot open camera preview.
-          </BaseText>
+          <BaseText style={{ color: 'white' }}>{t('paragraph.cameraPermissionMissing')}</BaseText>
         </NoPermissions>
       </React.Fragment>
     );
@@ -453,8 +454,8 @@ class Camera extends React.Component<Props, State> {
             {preview}
           </PreviewWrapper>
           <ResultScreenFooter>
-            <Button marginBottom="20px" onPress={this.setImage} title="Confirm" />
-            <ButtonText buttonText="Try again" onPress={this.getBackToCamera} />
+            <Button marginBottom="20px" onPress={this.setImage} title={t('button.confirm')} />
+            <ButtonText buttonText={t('button.tryAgain')} onPress={this.getBackToCamera} />
           </ResultScreenFooter>
         </ResultScreen>
         }

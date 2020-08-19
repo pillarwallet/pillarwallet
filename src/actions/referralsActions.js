@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import branch, { BranchEvent } from 'react-native-branch';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -75,11 +76,6 @@ export type ClaimTokenAction = {
   code: string,
 };
 
-export type ReferralInvitation = {|
-  email?: string,
-  phone?: string,
-|};
-
 let branchIoSubscription;
 
 const referralsTokenReceivedAction = (
@@ -113,8 +109,10 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
     dispatch({
       type: ADD_NOTIFICATION,
       payload: {
-        message: errorMessage || 'Please try again later',
-        title: `${isAllInvitesNotSent ? 'Invites' : 'Some invites'} have not been sent`,
+        message: errorMessage || isAllInvitesNotSent
+          ? t('toast.referralInviteCantBeSent.allInvites')
+          : t('toast.referralInviteCantBeSent.notAllInvites'),
+        emoji: 'hushed',
         messageType: 'warning',
         autoClose: false,
       },
@@ -260,8 +258,8 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: 'Please try again later',
-          title: 'We can\'t verify your code at this time',
+          message: t('toast.cantVerifyCode'),
+          emoji: 'hushed',
           messageType: 'warning',
         },
       });

@@ -3412,39 +3412,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -3696,39 +3663,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -3980,39 +3914,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -4278,39 +4179,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -4562,39 +4430,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -4846,39 +4681,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -5144,39 +4946,6 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
               label.referralReward
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -7837,39 +7606,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8121,39 +7857,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8405,39 +8108,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8703,39 +8373,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8987,39 +8624,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -9271,39 +8875,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -13307,7 +12878,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -13645,7 +13216,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -13987,7 +13558,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -25011,7 +24582,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -25347,7 +24918,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
