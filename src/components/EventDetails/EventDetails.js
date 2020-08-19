@@ -1468,7 +1468,12 @@ export class EventDetail extends React.Component<Props, State> {
           onPress: this.viewOnTheBlockchain,
         };
 
-        // per design request there can only be 2 buttons and second should always be changed to blockchain button
+        /**
+         * per design request there SHOULD be only be 2 buttons
+         * and LAST (second) should always be changed to blockchain button,
+         * however, not cutting all buttons and just replacing last
+         * assuming that there can only be 2
+         */
         const updatedModalButtons = currentModalButtons.length > 1
           ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
           : currentModalButtons.concat(viewOnBlockchainButton);
