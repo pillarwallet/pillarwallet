@@ -304,7 +304,7 @@ const ButtonHolder = styled.View`
   justify-content: flex-end;
 `;
 
-const EventTimeHolder = styled.TouchableOpacity`
+const EventTimeHolder = styled.View`
   flex-direction: row;
   justify-content: center;
   padding: 0 8px;
@@ -874,26 +874,12 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = {
           name: t('label.newSmartWalletAccountDevice'),
           actionTitle: isPending ? t('label.adding') : t('label.added'),
-          buttons: [
-            {
-              title: t('button.viewOnBlockchain'),
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         eventData = {
           name: t('label.smartWalletAccountDevice'),
           actionTitle: isPending ? t('label.removing') : t('label.removed'),
-          buttons: [
-            {
-              title: t('button.viewOnBlockchain'),
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       case AAVE_LENDING_DEPOSIT_TRANSACTION:
@@ -1411,11 +1397,9 @@ export class EventDetail extends React.Component<Props, State> {
           <ButtonHolder>
             <View />
           </ButtonHolder>
-          {!!event?.hash && (
-            <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
-              <BaseText tiny secondary>{eventTime}</BaseText>
-            </EventTimeHolder>
-          )}
+          <EventTimeHolder>
+            <BaseText tiny secondary>{eventTime}</BaseText>
+          </EventTimeHolder>
         </Row>
         <Spacing h={10} />
         <AvatarWrapper disabled>
@@ -1452,6 +1436,15 @@ export class EventDetail extends React.Component<Props, State> {
               <Spacing h={4} />
             </React.Fragment>
           ))}
+          {allowViewOnBlockchain && (
+            <Button
+              squarePrimary={!isEmpty(buttons)} // styling if multiple buttons in modal
+              secondary={isEmpty(buttons)} // styling if single button in modal
+              title={t('button.viewOnBlockchain')}
+              onPress={this.viewOnTheBlockchain}
+              regularText
+            />
+          )}
         </ButtonsContainer>
       </Wrapper>
     );
