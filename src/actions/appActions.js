@@ -175,7 +175,7 @@ export const initAppAndRedirectAction = () => {
       const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {}) || {};
       dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
 
-      const { contacts = [] } = get(storageData, 'contacts', []);
+      const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;

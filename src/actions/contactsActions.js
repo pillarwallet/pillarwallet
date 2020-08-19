@@ -39,7 +39,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 export const setContactsAction = (contacts: Contact[]) => {
   return (dispatch: Dispatch) => {
     dispatch({ type: SET_CONTACTS, payload: contacts });
-    dispatch(saveDbAction('contacts', { contacts }, true));
+    dispatch(saveDbAction('localContacts', { contacts }, true));
   };
 };
 
