@@ -17,11 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
@@ -99,7 +101,7 @@ class AppSettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
     showRelayerMigrationModal: false,
-  }
+  };
 
   renderListItem = (
     field: string,
@@ -143,14 +145,14 @@ class AppSettings extends React.Component<Props, State> {
     return [
       {
         key: 'localFiatCurrency',
-        title: 'Local fiat currency',
+        title: t('settingsContent.settingsItem.fiatCurrency.title'),
         onPress: () => this.setState({ visibleModal: 'baseCurrency' }),
         value: baseFiatCurrency || defaultFiatCurrency,
       },
       isSmartAccount &&
       {
         key: 'preferredGasToken',
-        title: 'Pay fees with PLR',
+        title: t('settingsContent.settingsItem.payFeeWithPillar.title'),
         toggle: true,
         value: preferredGasToken === PLR,
         onPress: () => {
@@ -163,28 +165,28 @@ class AppSettings extends React.Component<Props, State> {
       },
       {
         key: 'darkMode',
-        title: 'Dark mode',
+        title: t('settingsContent.settingsItem.darkMode.title'),
         toggle: true,
         value: themeType === DARK_THEME,
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
       },
       {
         key: 'analytics',
-        title: 'Usage analytics',
+        title: t('settingsContent.settingsItem.analytics.title'),
         onPress: () => this.setState({ visibleModal: 'analytics' }),
       },
       {
         key: 'systemInfo',
-        title: 'System Info',
+        title: t('settingsContent.settingsItem.systemInfo.title'),
         onPress: () => this.setState({ visibleModal: 'systemInfo' }),
       },
     ].filter(Boolean);
-  }
+  };
 
   renderCurrencyListItem = (item) => {
     const { baseFiatCurrency } = this.props;
     return this.renderListItem('currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
-  }
+  };
 
   componentDidUpdate(prevProps: Props) {
     const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
@@ -210,7 +212,7 @@ class AppSettings extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'App settings' }] }}
+        headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.appSettings.title') }] }}
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper
@@ -229,7 +231,7 @@ class AppSettings extends React.Component<Props, State> {
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
-          title="Choose your base currency"
+          title={t('settingsContent.settingsItem.fiatCurrency.screenTitle')}
           insetTop
         >
           <FlatList
@@ -246,7 +248,7 @@ class AppSettings extends React.Component<Props, State> {
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
           avoidKeyboard
-          title="Usage analytics"
+          title={t('settingsContent.settingsItem.analytics.title')}
           insetTop
         >
           <Wrapper regularPadding flex={1}>
@@ -257,14 +259,11 @@ class AppSettings extends React.Component<Props, State> {
                 wrapperStyle={{ marginBottom: spacing.large }}
               >
                 <CheckboxText>
-                  I&apos;m happy to share anonymous application usage statistics
+                  {t('settingsContent.settingsItem.analytics.paragraph.agreeSharingInfo')}
                 </CheckboxText>
               </Checkbox>
               <SmallText>
-                By sharing application usage statistics you are helping Pillar build a better wallet.
-              </SmallText>
-              <SmallText>
-                Usage statistics do not include any personal information from you or your contacts.
+                {t('settingsContent.settingsItem.analytics.paragraph.legal')}
               </SmallText>
             </StyledWrapper>
           </Wrapper>
@@ -275,7 +274,7 @@ class AppSettings extends React.Component<Props, State> {
           isVisible={visibleModal === 'systemInfo'}
           fullScreen
           showHeader
-          title="System info"
+          title={t('settingsContent.settingsItem.systemInfo.title')}
           onModalHide={() => this.setState({ visibleModal: null })}
           insetTop
         >

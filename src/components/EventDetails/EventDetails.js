@@ -626,8 +626,8 @@ export class EventDetail extends React.Component<Props, State> {
 
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
-    if (isPillarRewardCampaignActive) return t('label.referFriends');
-    return t('label.inviteFiends');
+    if (isPillarRewardCampaignActive) return t('button.referFriends');
+    return t('button.inviteFriends');
   };
 
   renderPoolTogetherTickets = (event: Object) => {
@@ -1411,7 +1411,7 @@ export class EventDetail extends React.Component<Props, State> {
           <ButtonHolder>
             <View />
           </ButtonHolder>
-          {event.hash && (
+          {!!event?.hash && (
             <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
               <BaseText tiny secondary>{eventTime}</BaseText>
             </EventTimeHolder>

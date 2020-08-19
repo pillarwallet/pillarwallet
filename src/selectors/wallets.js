@@ -83,7 +83,8 @@ export const inactiveUserWalletForSendSelector = createSelector(
 
 export const hasKeyBasedAssetsTransferInProgressSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer.data,
-  (keyBasedAssetsTransfer) => keyBasedAssetsTransfer.some(
+  ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer.creatingTransactions,
+  (keyBasedAssetsTransfer, creatingTransactions) => creatingTransactions || keyBasedAssetsTransfer.some(
     (keyBasedAssetTransfer) => !isEmpty(keyBasedAssetTransfer?.signedTransaction),
   ),
 );
