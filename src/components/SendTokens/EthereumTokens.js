@@ -40,7 +40,7 @@ import Toast from 'components/Toast';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 
 // utils
-import { getEthereumProvider } from 'utils/common';
+import { isValidNumber, getEthereumProvider } from 'utils/common';
 import { spacing } from 'utils/variables';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -369,9 +369,10 @@ const SendEthereumTokens = ({
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
-  const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!selectedContact;
+  const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!receiver;
+  const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
 
-  const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && !!amount && !!parseFloat(amount);
+  const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
   const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
   const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
@@ -383,7 +384,7 @@ const SendEthereumTokens = ({
     : (!inputHasError && !!selectedContact && !!currentValue);
 
   let feeError = false;
-  if (txFeeInfo && assetData) {
+  if (txFeeInfo && assetData && isValidAmount) {
     feeError = !isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei: txFeeInfo.fee,
       gasToken: txFeeInfo.gasToken,
