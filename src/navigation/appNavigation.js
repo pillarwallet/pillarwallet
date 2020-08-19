@@ -120,6 +120,7 @@ import SablierIncomingStreamScreen from 'screens/Sablier/IncomingStream';
 import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
+import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -264,6 +265,7 @@ import {
   SABLIER_OUTGOING_STREAM,
   SABLIER_WITHDRAW,
   SABLIER_WITHDRAW_REVIEW,
+  SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
@@ -355,6 +357,7 @@ const servicesFlow = createStackNavigator({
   [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
   [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
   [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
+  [SENDWYRE_INPUT]: SendwyreInputScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;

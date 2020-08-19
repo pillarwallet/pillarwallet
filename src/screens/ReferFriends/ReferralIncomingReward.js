@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
@@ -68,6 +69,7 @@ const getRewardText = (rewards: RewardsByCompany, campaign: string) => {
   return getCampaignRewardText(relatedCampaignRewards);
 };
 
+
 class ReferralIncomingReward extends React.PureComponent<Props> {
   componentDidMount() {
     const { fetchReferralReward } = this.props;
@@ -86,12 +88,14 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
 
     const rewardText = getRewardText(rewardsByCampaign, relatedCampaign);
     const isGettingReward = !!rewardText;
-    const title = isGettingReward ? 'Your reward is on the way' : 'Thanks for joining Pillar';
+    const title = isGettingReward
+      ? t('referralsContent.title.incomingReward')
+      : t('referralsContent.title.thanksForJoining');
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Thank you for using Pillar' }],
+          centerItems: [{ title: t('referralsContent.title.thanksForUsing') }],
           rightItems: [{ close: true }],
           noBack: true,
         }}
@@ -104,10 +108,7 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
             <>
               <LoadingParagraph
                 isLoading={isFetchingRewards}
-                text={'Thanks for joining Pillar.\n' +
-                `To celebrate this, we also give you ${rewardText}.\n` +
-                'You need to add and verify your email or phone in order to receive the reward. ' +
-                'Reward will be issued to new user only.'}
+                text={t('referralsContent.paragraph.incomingAward', { reward: rewardText })}
                 paragraphProps={{
                   center: true,
                   style: {
@@ -117,7 +118,7 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
                 }}
               />
               <Button
-                title="Add details"
+                title={t('button.addDetails')}
                 onPress={() => navigation.navigate(ADD_EDIT_USER)}
                 marginBottom={spacing.mediumLarge}
                 marginTop={40}

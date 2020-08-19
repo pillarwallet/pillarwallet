@@ -24,6 +24,7 @@ import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import {
@@ -62,22 +63,13 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
 };
 
-const INSIGHT_ITEMS = [
-  {
-    title: 'Share your link',
-    body: 'Invite your friends to join Pillar',
-  },
-  {
-    title: 'Give Smart Wallet for free',
-    body: 'Friends who install Pillar with your link will get free Smart Wallet activation.',
-  },
-];
-
 const ButtonWrapper = styled.View`
   flex: 1;
   justify-content: ${({ justifyCenter }) => justifyCenter ? 'center' : 'flex-start'};
   padding: ${spacing.large}px 0;
 `;
+
+
 class ReferFriends extends React.PureComponent<Props> {
   sendInvites = () => {
     const { addedContactsToInvite, sendInvitation } = this.props;
@@ -106,15 +98,31 @@ class ReferFriends extends React.PureComponent<Props> {
     const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
     const hasAddedContacts = !!mappedContactsToInvite.length;
     const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - mappedContactsToInvite.length;
-    const availableInvitesText = !availableInvites ? 0 : `${availableInvites} more`;
-    const referralsOrInvitations = isPillarRewardCampaignActive ? 'referrals' : 'invitations';
+    const availableInvitesText = !availableInvites
+      ? 0
+      : t('referralsContent.label.remainingCount', { amount: availableInvites });
+    const commonSteps = [
+      {
+        title: t('referralsContent.instruction.shareLink.title'),
+        body: t('referralsContent.instruction.shareLink.paragraph'),
+      },
+      {
+        title: t('referralsContent.instruction.giveSmartWallet.title'),
+        body: t('referralsContent.instruction.giveSmartWallet.paragraph'),
+      },
+    ];
+
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends' }],
+          centerItems: [{
+            title: isPillarRewardCampaignActive
+              ? t('referralsContent.title.referMain')
+              : t('referralsContent.title.inviteMain'),
+          }],
           rightItems: [
             {
-              link: 'Support',
+              link: t('button.support'),
               onPress: () => Intercom.displayMessenger(),
             },
           ],
@@ -126,13 +134,13 @@ class ReferFriends extends React.PureComponent<Props> {
             isVisible
             insightNumberedList={isPillarRewardCampaignActive
               ? [
-                  ...INSIGHT_ITEMS,
+                  ...commonSteps,
                   {
-                    title: 'Get free PLR',
-                    body: 'Earn meta-tokens for referring friends.',
+                    title: t('referralsContent.instruction.getTokens.title'),
+                    body: t('referralsContent.instruction.getTokens.paragraph'),
                   },
                 ]
-              : INSIGHT_ITEMS
+              : commonSteps
             }
             wrapperPadding={0}
             wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
@@ -140,14 +148,17 @@ class ReferFriends extends React.PureComponent<Props> {
           {hasAddedContacts && !isSendingInvite &&
             <React.Fragment>
               <MediumText accent>
-                {`Your ${referralsOrInvitations} (${availableInvitesText} available today)`}
+                {isPillarRewardCampaignActive
+                  ? t('referralsContent.label.referralsCount', { amountText: availableInvitesText })
+                  : t('referralsContent.label.invitesCount', { amountText: availableInvitesText })
+                }
               </MediumText>
               <ClosablePillList
                 listItems={mappedContactsToInvite}
                 onItemClose={(id) => removeContactForReferral(id)}
               >
                 <Button
-                  title="Add contacts..."
+                  title={t('button.addContacts')}
                   horizontalPaddings={8}
                   small
                   card
@@ -158,15 +169,13 @@ class ReferFriends extends React.PureComponent<Props> {
               </ClosablePillList>
               {!!isPillarRewardCampaignActive &&
               <BaseText style={{ marginTop: spacing.large }} secondary small>
-                Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after
-                confirming their phone number/email address. You will receive your reward after your contact has been
-                rewarded.
+                {t('referralsContent.paragraph.rewardMechanics')}
               </BaseText>}
             </React.Fragment>}
           <ButtonWrapper justifyCenter={hasAddedContacts}>
             <Button
               isLoading={isSendingInvite}
-              title={addedContactsToInvite.length ? 'Send invites' : 'Select contacts...'}
+              title={addedContactsToInvite.length ? t('button.sendInvites') : t('button.selectContacts')}
               onPress={addedContactsToInvite.length
                 ? this.sendInvites
                 : this.proceedToSelectContacts}

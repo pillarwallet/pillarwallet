@@ -27,7 +27,7 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
-import { loadAltalixInfoAction } from 'actions/fiatToCryptoActions';
+import { loadAltalixAvailability } from 'actions/fiatToCryptoActions';
 
 // components
 import { ListCard } from 'components/ListItem/ListCard';
@@ -41,6 +41,7 @@ import {
   LENDING_CHOOSE_DEPOSIT,
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
+  SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
@@ -69,6 +70,7 @@ import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
+import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
 // assets
@@ -222,7 +224,13 @@ class ServicesScreen extends React.Component<Props, State> {
         action: () => {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
-          this.tryOpenCryptoPurchaseUrl(wyreWidgetUrl(address));
+          this.props.navigation.navigate(SENDWYRE_INPUT, {
+            onSubmit: async (values: SendwyreTrxValues) => {
+              const { user: { walletId }, getApi } = this.props;
+              const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
+              await this.tryOpenCryptoPurchaseUrl(url);
+            },
+          });
         },
       });
     }
@@ -272,9 +280,9 @@ class ServicesScreen extends React.Component<Props, State> {
     return getAccountAddress(activeAccount);
   }
 
-  tryOpenCryptoPurchaseUrl = (url: string | null) => {
+  tryOpenCryptoPurchaseUrl = async (url: string | null) => {
     if (url) {
-      openInAppBrowser(url)
+      await openInAppBrowser(url)
         .catch(this.showServiceLaunchError);
     } else {
       this.showServiceLaunchError();
@@ -359,12 +367,12 @@ const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
   smartWallet: smartWalletState,
-  fiatToCrypto: { altalix },
+  fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
   user,
   accounts,
   smartWalletState,
-  isAltalixAvailable: altalix === null ? null : altalix.isAvailable,
+  isAltalixAvailable,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -378,7 +386,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loadAltalixInfo: () => dispatch(loadAltalixInfoAction()),
+  loadAltalixInfo: () => dispatch(loadAltalixAvailability()),
 
   // When using redux-thunk, dispatch does return the result of the inner function.
   // (Although it's meant to be used inside thunks, see:

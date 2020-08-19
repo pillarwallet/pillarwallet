@@ -13307,7 +13307,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -13645,7 +13645,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -13987,7 +13987,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -25011,7 +25011,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -25347,7 +25347,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View

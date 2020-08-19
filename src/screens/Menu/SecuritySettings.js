@@ -123,12 +123,12 @@ class SecuritySettings extends React.Component<Props, State> {
     return [
       {
         key: 'changePIN',
-        title: 'Change PIN',
+        title: t('settingsContent.settingsItem.changePIN.title'),
         onPress: () => navigation.navigate(CHANGE_PIN_FLOW),
       },
       {
         key: 'biometricLogin',
-        title: 'Biometric login',
+        title: t('settingsContent.settingsItem.biometricLogin.title'),
         onPress: this.handleBiometricPress,
         value: useBiometrics,
         toggle: true,
@@ -136,7 +136,7 @@ class SecuritySettings extends React.Component<Props, State> {
       },
       {
         key: 'requirePINonLogin',
-        title: 'Require PIN on login',
+        title: t('settingsContent.settingsItem.requirePinOnLogin.title'),
         onPress: toggleOmitPinOnLogin,
         value: !omitPinOnLogin,
         toggle: true,
@@ -162,10 +162,10 @@ class SecuritySettings extends React.Component<Props, State> {
     return [
       {
         key: 'spendingLimits',
-        title: 'Spending limits',
-        subtitle: 'Secure your funds by restricting larger transactions',
+        title: t('settingsContent.settingsItem.spendingLimits.title'),
+        subtitle: t('settingsContent.settingsItem.spendingLimits.title'),
         disabled: true,
-        label: 'soon',
+        label: t('settingsContent.settingsItem.spendingLimits.label.notAvailableYet'),
       },
     ];
   };
@@ -179,16 +179,16 @@ class SecuritySettings extends React.Component<Props, State> {
     const { showPinModal } = this.state;
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Security settings' }] }}
+        headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.securitySettings.screenTitle') }] }}
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper>
           <SettingsSection
-            sectionTitle="Global"
+            sectionTitle={t('settingsContent.settingsItem.securitySettings.label.globalSettings')}
             sectionItems={this.getGlobalSettings()}
           />
           <SettingsSection
-            sectionTitle="Smart Wallet"
+            sectionTitle={t('settingsContent.settingsItem.securitySettings.label.smartWalletSettings')}
             sectionItems={this.getSmartWalletSettings()}
           />
         </ScrollWrapper>

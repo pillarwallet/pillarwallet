@@ -2,10 +2,15 @@
   "aaveDeposit": "Aave deposit",
   "ensName": "ENS name",
   "ethereum": "Ethereum",
+  "facebook": "Facebook",
   "keyWallet": "Key wallet",
+  "medium": "Medium",
   "pillarNetwork": "Pillar Network",
   "poolTogether": "Pool Together",
   "smartWallet": "Smart Wallet",
+  "telegram": "Telegram",
+  "twitter": "Twitter",
+  "youtube": "Youtube",
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
@@ -38,6 +43,7 @@
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
     "created": "Created",
+    "emailOrPhone": "Email or phone",
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
@@ -50,7 +56,6 @@
     "fromSmartWallet": "from Smart Wallet",
     "imported": "Imported",
     "incomingBalance": "Incoming balance",
-    "inviteFiends": "Invite friends",
     "keyWalletVisibilityToggle": "Legacy wallet (advanced)",
     "loadingDefaultAssets": "Loading default assets",
     "needToActivate": "Need to activate",
@@ -59,7 +64,6 @@
     "purchase": "Purchase",
     "received": "Received",
     "receiving": "Receiving",
-    "referFriends": "Refer friends",
     "referralReward": "Referral reward",
     "registered": "Registered",
     "registerEnsName": "Register ENS label",
@@ -91,32 +95,44 @@
   "button": {
     "activate": "Activate",
     "activatePPN": "Activate Pillar Network",
+    "add": "Add",
+    "addContacts": "Add contacts",
+    "addDetails": "Add details",
     "addFunds": "Add funds",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
     "buyTokens": "Buy tokens",
     "buyWithCard": "Buy with a card",
     "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
+    "confirm": "Confirm",
+    "claim": "Claim",
     "close": "Close",
     "depositMore": "Deposit more",
     "exchange": "Exchange",
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
+    "inviteFriends": "Invite friends",
+    "inviteMoreFriends": "Invite more friends",
     "inviteToPillar": "Invite to Pillar",
     "notEnoughPLR": "Not enough PLR",
     "purchaseMore": "Purchase more",
+    "referFriends": "Refer friends",
     "retry": "Retry",
     "receive": "Receive",
     "seeOnEtherscan": "See on Etherscan",
     "selectAll": "Select all",
+    "selectContacts": "Select contacts",
     "send": "Send",
     "sendBack": "Send back",
     "sendFromAnotherWallet": "Send from another wallet",
+    "sendInvites": "Send invites",
     "sendMore": "Send more",
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share Address",
     "smartWalletFAQ": "Smart Wallet FAQ",
+    "subscribe": "Subscribe",
+    "support": "Support",
     "topUp": "Top up",
     "topUpMore": "Top up more",
     "topUpPLRTank": "Top up PLR Tank",
@@ -126,6 +142,7 @@
     "viewDeposit": "View deposit",
     "viewOnBlockchain": "View on the blockchain",
     "viewPoolTogetherPool": "View pool",
+    "verify": "Verify",
     "withdraw": "Withdraw",
     "withdrawMore": "Withdraw more",
     "delete": "Delete",
@@ -134,7 +151,10 @@
   },
 
   "paragraph": {
-    "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens."
+    "addressCopiedToClipboard": "Address copied to clipboard.",
+    "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
+    "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
+    "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview."
   },
 
   "insight": {
@@ -198,6 +218,41 @@
           "default": "There was an error on our server. Please try to re-activate the account by clicking the button bellow."
         }
       }
+    },
+    "dataPrivacy": {
+      "title": "All your data is private",
+      "description": "We care for our users' privacy. We don't support scammers. We need to make sure you're a genuine user in order to get rewarded with PLR tokens for inviting friends.",
+      "button": {
+        "ok": "I understand"
+      }
+    }
+  },
+
+  "form": {
+    "countryCode": {
+      "label": "Country code",
+      "placeholder": "Country name",
+      "selectorTitle": "All codes"
+    },
+    "email": {
+      "label": "Email",
+      "placeholder": "Email",
+      "description": {
+        "empty": "Add your email to be able receive special requests.",
+        "added": "Verify your email and you will be able to invite your friends in Pillar.",
+        "confirmed": "After changing email you will have re-verify it."
+      }
+    },
+    "phoneNumber": {
+      "label": "Phone number",
+      "description": {
+        "empty": "Add your phone number to be able to invite your friends.",
+        "added": "Verify your phone number and you will be able to invite your friends in Pillar community.",
+        "confirmed": "After changing phone number you will have re-verify it."
+      }
+    },
+    "subscription": {
+      "placeholder": "Your e-mail"
     }
   },
 
@@ -209,7 +264,10 @@
     "emptyAddress": "Address cannot be empty",
     "invalidAddress": "Invalid address",
     "contactWithAddressExist": "Contact with this address already exist",
-    "emptyName": "Name cannot be empty"
+    "emptyName": "Name cannot be empty",
+    "invalid": {
+      "email": "Please enter a valid email"
+    }
   },
 
   "badgeText": {
@@ -298,7 +356,284 @@
     }
   },
 
+  "phoneBookContactsList": {
+    "emptyState": {
+      "couldNotGetContacts": {
+        "title": "Could not fetch contacts"
+      },
+      "noneFound": {
+        "title": "Nobody found",
+        "paragraph": "Make sure you entered phone or email address correctly"
+      }
+    }
+  },
+
+  "settingsContent": {
+    "settingsItem": {
+      "analytics": {
+        "title": "Usage analytics",
+        "paragraph": {
+          "agreeSharingInfo": "I'm happy to share anonymous application usage statistics",
+          "legal": "By sharing application usage statistics you are helping Pillar build a better wallet. \nUsage statistics do not include any personal information from you or your contacts."
+        }
+      },
+      "appSettings": {
+        "title": "App settings"
+      },
+      "assetsMigration": {
+        "title": "Migrate assets to Smart Wallet"
+      },
+      "backup": {
+        "title": "Backup not finished",
+        "label": {
+          "notFinished": "Warning"
+        }
+      },
+      "backupPhrase": {
+        "title": "View 12 words"
+      },
+      "biometricLogin": {
+        "title": "Biometric login"
+      },
+      "changePIN":{
+        "title": "Change PIN"
+      },
+      "community": {
+        "title": "Community",
+        "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
+        "label":{
+          "follow": "Follow us"
+        }
+      },
+      "darkMode": {
+        "title": "Dark mode"
+      },
+      "fiatCurrency": {
+        "title": "Local fiat currency",
+        "screenTitle": "Choose your base currency"
+      },
+      "faq": {
+        "title": "Knowledge base"
+      },
+      "inviteFriends": {
+        "title": "Invite friends"
+      },
+      "linkedDevices": {
+        "title": "Linked devices",
+        "subtitle": "Manage Smart Wallet account devices"
+      },
+      "payFeeWithPillar": {
+        "title": "Pay fees with PLR"
+      },
+      "privateKey": {
+        "title": "View private key"
+      },
+      "securitySettings": {
+        "title": "Security settings",
+        "screenTitle": "Security settings",
+        "label": {
+          "globalSettings": "Global",
+          "smartWalletSettings": "Smart Wallet"
+        }
+      },
+      "systemInfo": {
+        "title": "System info"
+      },
+      "spendingLimits": {
+        "title": "Spending limits",
+        "subtitle": "Secure your funds by restricting larger transactions",
+        "label": {
+          "notAvailableYet": "soon"
+        }
+      },
+      "support": {
+        "title": "Chat with support"
+      },
+      "recoveryPortal": {
+        "title": "Recovery Portal",
+        "subtitle": {
+          "default": "Smart Wallet account web recovery portal",
+          "smartWalletNotActivated": "Smart Wallet account web recovery portal (requires activated Smart Wallet)"
+        }
+      },
+      "recoverySettings": {
+        "title": "Recovery settings",
+        "screenTitle": "Recovery",
+        "label": {
+          "notFinished": "Warning",
+          "globalSettings": "Global",
+          "keyWalletSettings": "Key wallet"
+        }
+      },
+      "referFriends": {
+        "title": "Refer friends"
+      },
+      "requirePinOnLogin": {
+        "title": "Require PIN on login"
+      },
+      "userProfile": {
+        "title": "User profile"
+      }
+    },
+    "button": {
+      "termOfUse": "Terms of Use",
+      "privacyPolicy": "Privacy policy",
+      "lockWallet": "Lock wallet",
+      "signOut": "Sign out from wallet"
+    }
+  },
+
+  "profileContent": {
+    "title": {
+      "manage": "User settings"
+    },
+    "paragraph": {
+      "verificationIsRequired": "Verification is required to prevent scammers' activity. We care for our users privacy."
+    },
+    "modal": {
+      "updatingData": {
+        "title": "Proceed with caution",
+        "paragraph": {
+          "emailChanged": "After changing email you will have to re-verify it in order to retain the ability to invite friends and get rewarded.",
+          "phoneChanged": "After changing phone number you will have to re-verify it in order to retain the ability to invite friends and get rewarded."
+        },
+        "button": {
+          "changeEmail": "Change my email",
+          "changePhone": "Change my phone number"
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "Enter verification code (email)",
+          "phone": "Enter verification code (SMS)"
+        },
+        "error": "That didn't work, please try again"
+      }
+    }
+  },
+
+  "referralsContent": {
+    "banner": {
+      "inviteBanner": {
+        "title": "Pillar is social"
+      }
+    },
+    "modal": {
+      "missingPhone": {
+        "title": {
+          "activeRewardCampaign": "Invite and get rewarded",
+          "inactiveRewardCampaign": "Invite to Pillar"
+        },
+        "paragraph": {
+          "reward": "You will receive {{reward}} for each friend installed the app with your referral link.",
+          "enablingReferrals": "To enable referral system we need to make sure you're a genuine user. We care for our users' privacy and never share your data.",
+          "enablingInvitations": "To enable invitation system we need to make sure you're a genuine user. We care for our users' privacy and never share your data."
+        },
+        "button": {
+          "toUserData": "Verify email or phone"
+        }
+      }
+    },
+    "referralRewardText": "{{rewardsList}} and a badge",
+    "title": {
+      "inviteMain": "Invite Friends",
+      "invitationsSent": "Invitations sent",
+      "referMain": "Refer friends",
+      "incomingReward": "Your reward is on the way",
+      "thanksForJoining": "Thanks for joining Pillar",
+      "thanksForUsing": "Thank you for using Pillar",
+      "claimTokens": "Claim tokens",
+      "claimTokensError": "Error"
+    },
+    "instruction": {
+      "shareLink": {
+        "title": "Share your link",
+        "paragraph": "Invite your friends to join Pillar."
+      },
+      "giveSmartWallet": {
+        "title": "Give Smart Wallet for free",
+        "paragraph": "Friends who install Pillar with your link will get free Smart Wallet activation."
+      },
+      "getTokens": {
+        "title": "Get free PLR",
+        "paragraph": "Earn meta-tokens for referring friends."
+      }
+    },
+    "paragraph": {
+      "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
+      "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",
+      "invitationViaPhoneRules": "To invite via SMS, you need to verify your phone number.",
+      "invitationViaEmailRules": "To invite via email, you need to verify your email address.",
+      "rewardForEachInvitation": "You will receive {{reward}} for each friend installed the app with your referral link. You both should have verified your details in order to be eligible.",
+      "thanksForReferring": "Thank you for spreading the word about Pillar.",
+      "rewardClaimingPending": "Transaction is processing.\n It may take a few minutes.\n You can check the status later here or in Home tab.",
+      "rewardClaimingError": "We can't verify your code at this time. Please try later.",
+      "getBadgesForEachInvitation": "Start receiving badges for friends installed Pillar with your referral link!",
+      "allowedInviteViaEmail": "You are now able to invite friends via email.",
+      "allowedInviteViaPhone": "You are now able to invite friends via text message.",
+      "emailVerified": "Your email has been verified",
+      "phoneVerified": "Your email has been verified"
+    },
+    "label": {
+      "invitesCount": "Your invites ({{amountText}} available today)",
+      "referralsCount": "Your referrals ({{amountText}} available today)",
+      "remainingCount": "{{amount}} more",
+      "noReferralCode": "No code",
+      "fromCode": "From {{code}}",
+      "claiming": "Claiming..."
+    }
+  },
+
+  "relayerMigrationContent": {
+    "modal": {
+      "switch": {
+        "title": "Pay fees with PLR",
+        "paragraph": "Bye-bye ETH! After switch you will be able to pay transaction fees with PLR token. Never insufficient gas again.",
+        "button": {
+          "switch": "Switch"
+        },
+        "label": {
+          "freeSwitching": "Switching is free",
+          "switchPending": "Switch transaction is pending",
+          "waitingForConfirmation": "Waiting for confirmation..."
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "Enter verification code (email)",
+          "phone": "Enter verification code (SMS)"
+        },
+        "error": "That didn't work, please try again"
+      }
+    }
+  },
+
+  "addressBookContent": {
+    "title": {
+      "allowAccess": "Access to address book"
+    },
+    "paragraph": {
+      "allowAccess": "Please grant access to your address book in order to be able to choose your phone or email contacts."
+    }
+  },
+
   "toast": {
+    "cantUpdateUser": "Changes have not been saved. Please try again later",
+    "cantVerifyCode": "We can't verify your code at this time. Please try again later",
+    "cantVerifyInfo": {
+      "phone": "We can't verify your phone at this time. Please try again later",
+      "email": "We can't verify your email at this time. Please try again later",
+      "default": "We can't verify your data at this time. Please try again later"
+    },
+    "verificationSuccess": {
+      "email": "Email verification was successful",
+      "phone": "Phone verification was successful",
+      "referralReward": "Thank you for verifying your information, we are currently processing your reward."
+    },
+    "referralInviteCantBeSent": {
+      "allInvites": "Invites have not been sent. Please try again later",
+      "notAllInvites": "Some invites have not been sent. Please try again later"
+    },
     "userIsOffline": "It seems you're offline. Please check your internet connection.",
     "biometricLoginEnabled": "Biometric login enabled.",
     "biometricLoginDisabled": "Biometric login disabled.",
@@ -385,6 +720,26 @@
         "cancel": "Cancel",
         "ok": "Hide"
       }
+    },
+    "logOut": {
+      "title": "Logout",
+      "message": "After logging out you will not be able to log in back to this wallet without 12 words backup.",
+      "button": {
+        "cancel": "Cancel",
+        "confirm": "Confirm"
+      }
+    },
+    "attemptToLogOutWithoutBackup": {
+      "title": "Logout",
+      "message": "You can logout only after securing your 12 words backup phrase.",
+      "button": {
+        "cancel": "Cancel",
+        "backup": "Backup 12 words"
+      }
+    },
+    "invalidReferralDeepLink": {
+      "title": "Invalid link",
+      "message": "Referral code is missing"
     }
   }
 }

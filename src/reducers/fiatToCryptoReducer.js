@@ -18,34 +18,89 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SET_ALTALIX_INFO } from 'constants/fiatToCryptoConstants';
+import {
+  SET_ALTALIX_AVAILABILITY,
+  SET_SENDWYRE_RATES,
+  LOAD_SENDWYRE_COUNTRY_SUPPORT,
+  SET_SENDWYRE_COUNTRY_SUPPORT,
+  RESET_SENDWYRE_COUNTRY_SUPPORT,
+  SENDWYRE_SUPPORT,
+} from 'constants/fiatToCryptoConstants';
 
-type AltalixInfo = {
-  isAvailable: boolean,
+import type { SendwyreRates } from 'models/FiatToCryptoProviders';
+
+export type FiatToCryptoReducerState = {|
+  isAltalixAvailable: null | boolean,
+  sendwyreExchangeRates: null | SendwyreRates,
+  sendwyreCountrySupport: $Values<typeof SENDWYRE_SUPPORT>,
+|};
+
+type SetAltalixAvailabilityAction = {
+  type: typeof SET_ALTALIX_AVAILABILITY,
+  payload: boolean,
 };
 
-export type FiatToCryptoReducerState = {
-  altalix: null | AltalixInfo,
+type SetSendwyreRatesAction = {
+  type: typeof SET_SENDWYRE_RATES,
+  payload: SendwyreRates,
 };
 
-type AltalixInfoSetAction = {
-  type: typeof SET_ALTALIX_INFO,
-  payload: AltalixInfo,
+type LoadSendwyreCountrySupportAction = {
+  type: typeof LOAD_SENDWYRE_COUNTRY_SUPPORT,
 };
 
-export type FiatToCryptoReducerAction = AltalixInfoSetAction;
+type SetSendwyreCountrySupportAction = {
+  type: typeof SET_SENDWYRE_COUNTRY_SUPPORT,
+  payload: boolean,
+}
+
+type ResetSendwyreCountrySupportAction = {
+  type: typeof RESET_SENDWYRE_COUNTRY_SUPPORT,
+};
+
+export type FiatToCryptoReducerAction =
+  | SetAltalixAvailabilityAction
+  | SetSendwyreRatesAction
+  | LoadSendwyreCountrySupportAction
+  | SetSendwyreCountrySupportAction
+  | ResetSendwyreCountrySupportAction;
 
 const initialState = {
-  altalix: null,
+  isAltalixAvailable: null,
+  sendwyreExchangeRates: null,
+  sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN,
 };
 
 export default function fiatToCryptoReducer(
   state: FiatToCryptoReducerState = initialState,
   action: FiatToCryptoReducerAction,
-) {
+): FiatToCryptoReducerState {
   switch (action.type) {
-    case SET_ALTALIX_INFO:
-      return { ...state, altalix: action.payload };
+    case SET_ALTALIX_AVAILABILITY:
+      return {
+        ...state,
+        isAltalixAvailable: action.payload,
+      };
+    case SET_SENDWYRE_RATES:
+      return {
+        ...state,
+        sendwyreExchangeRates: action.payload,
+      };
+    case LOAD_SENDWYRE_COUNTRY_SUPPORT:
+      return {
+        ...state,
+        sendwyreCountrySupport: SENDWYRE_SUPPORT.LOADING,
+      };
+    case SET_SENDWYRE_COUNTRY_SUPPORT:
+      return {
+        ...state,
+        sendwyreCountrySupport: action.payload ? SENDWYRE_SUPPORT.SUPPORTED : SENDWYRE_SUPPORT.UNSUPPORTED,
+      };
+    case RESET_SENDWYRE_COUNTRY_SUPPORT:
+      return {
+        ...state,
+        sendwyreCountrySupport: SENDWYRE_SUPPORT.UNKNOWN,
+      };
     default:
       return state;
   }

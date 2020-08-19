@@ -171,11 +171,12 @@ export const initAppAndRedirectAction = () => {
       const { keyBasedAssetsToTransfer = [] } = get(storageData, 'keyBasedAssetTransfer', []);
       dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
 
+      // "|| {}" is fix for users when we released a version where Sablier streams were incoming as nulls
+      const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {}) || {};
+      dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
+
       const { contacts = [] } = get(storageData, 'contacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
-
-      const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {});
-      dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({
