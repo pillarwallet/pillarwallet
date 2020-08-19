@@ -29,7 +29,6 @@ type Props = {
   onToggle: () => void,
   disabled?: boolean,
   theme: Theme,
-  small?: boolean,
 }
 
 type State = {
@@ -40,10 +39,6 @@ const TOGGLE_DIAMETER = 28;
 const OFF_POSITION = 1.5;
 const ON_POSITION = 20.5;
 
-const TOGGLE_DIAMETER_SMALL = 14;
-const OFF_POSITION_SMALL = 0.75;
-const ON_POSITION_SMALL = 10.25;
-
 const Toggle = styled.View`
   align-items: center;
   justify-content: center;
@@ -51,6 +46,9 @@ const Toggle = styled.View`
   background-color: ${themedColors.surface};
   elevation: 2;
   ${({ theme }) => theme.current === LIGHT_THEME && 'box-shadow: 0px 2px 2px rgba(0,0,0,0.05);'}
+  width: ${TOGGLE_DIAMETER}px;
+  height: ${TOGGLE_DIAMETER}px;
+  border-radius: ${TOGGLE_DIAMETER}px;
 `;
 
 const SwitcherWrapper = styled.View`
@@ -63,17 +61,10 @@ const AnimatedToggle = Animated.createAnimatedComponent(Toggle);
 
 
 class Switcher extends React.Component<Props, State> {
-  onPosition;
-  offPosition;
-  toggleDiameter;
-
   constructor(props) {
     super(props);
-    this.toggleDiameter = props.small ? TOGGLE_DIAMETER_SMALL : TOGGLE_DIAMETER;
-    this.onPosition = props.small ? ON_POSITION_SMALL : ON_POSITION;
-    this.offPosition = props.small ? OFF_POSITION_SMALL : OFF_POSITION;
     this.state = {
-      offsetX: new Animated.Value(props.isOn ? this.onPosition : this.offPosition),
+      offsetX: new Animated.Value(props.isOn ? ON_POSITION : OFF_POSITION),
     };
   }
 
@@ -86,8 +77,8 @@ class Switcher extends React.Component<Props, State> {
     const { isOn } = this.props;
     const { offsetX } = this.state;
     const toValue = isOn
-      ? this.onPosition
-      : this.offPosition;
+      ? ON_POSITION
+      : OFF_POSITION;
 
     Animated.timing(
       offsetX,
@@ -104,7 +95,6 @@ class Switcher extends React.Component<Props, State> {
       onToggle,
       disabled,
       theme,
-      small,
     } = this.props;
     const { offsetX } = this.state;
     const colors = getThemeColors(theme);
@@ -113,9 +103,9 @@ class Switcher extends React.Component<Props, State> {
         <TouchableOpacity
           style={{
             justifyContent: 'center',
-            width: small ? 25 : 50,
-            borderRadius: (this.toggleDiameter / 2) + 3,
-            height: this.toggleDiameter + 3,
+            width: 50,
+            borderRadius: (TOGGLE_DIAMETER / 2) + 3,
+            height: TOGGLE_DIAMETER + 3,
             backgroundColor: isOn ? colors.accent : colors.border,
           }}
           activeOpacity={0.8}
@@ -126,9 +116,6 @@ class Switcher extends React.Component<Props, State> {
             isOn={isOn}
             style={{
               transform: [{ translateX: offsetX }],
-              width: this.toggleDiameter,
-              height: this.toggleDiameter,
-              borderRadius: this.toggleDiameter,
             }}
           />
         </TouchableOpacity>

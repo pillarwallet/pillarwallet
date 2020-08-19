@@ -69,7 +69,6 @@ import type { Option } from 'models/Selector';
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
-import TransactionFeeSwitcher from './TransactionFeeSwitcher';
 import {
   getFormattedSellMax,
   getBalanceInFiat,
@@ -117,7 +116,6 @@ type State = {
   fromAmountInFiat: string,
   fromAsset: Option,
   toAsset: Option,
-  includeTxFee: boolean,
   errorMessage: string,
   showSellOptions: boolean,
   showBuyOptions: boolean,
@@ -149,7 +147,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAmountInFiat: '',
       fromAsset,
       toAsset,
-      includeTxFee: false,
       errorMessage: '',
       showSellOptions: false,
       showBuyOptions: false,
@@ -405,7 +402,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       showEmptyMessage,
       showSellOptions,
       showBuyOptions,
-      includeTxFee,
     } = this.state;
 
     const { fromOptions, toOptions, horizontalOptions } = this.options;
@@ -440,10 +436,6 @@ class ExchangeScreen extends React.Component<Props, State> {
               {this.getFromInput()}
               <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
               {this.getToInput()}
-              <TransactionFeeSwitcher
-                isOn={includeTxFee}
-                onToggle={() => this.setState({ includeTxFee: !this.state.includeTxFee })}
-              />
             </FormWrapper>
             {!!disableNonFiatExchange &&
             <SWActivationCard
