@@ -237,6 +237,13 @@
       "button": {
         "ok": "I understand"
       }
+    },
+    "walletConnectAppsListExplain": {
+      "title": "What is it?",
+      "description": "A curated collection of web3 apps available to use with Pillar. Sign in without creating an account. Just scan QR and go.",
+      "button": {
+        "ok": "Cool, thanks"
+      }
     }
   },
 
@@ -670,6 +677,7 @@
 
   "walletConnectContent": {
     "title": {
+      "appsList": "Explore apps",
       "requestsList": "Requests",
       "activeConnections": "Active сonnections",
       "connect": "Connect",
@@ -687,7 +695,8 @@
       "requestFrom": "Request from {{name}}",
       "unknownRequestName": "Unknown",
       "requestDescription": "Description",
-      "requestLink": "Url"
+      "requestLink": "Url",
+      "upcomingApp": "Coming soon"
     },
     "banner": {
       "promo": {
@@ -701,7 +710,8 @@
         "message": "Approve Message",
         "unsupported": "Approve Unsupported",
         "default": "Approve"
-      }
+      },
+      "checkApp": "View"
     }
   },
 
