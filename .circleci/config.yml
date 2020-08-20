@@ -9,7 +9,7 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "11.3.1"
+      xcode: "11.5.0"
     resource_class: medium
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -204,10 +204,7 @@ aliases:
     run:
       name: Install coureutils
       command: |
-        brew update
-        brew upgrade yarn
         brew install coreutils
-        node -v
   - &homebrew_restore_cache
     restore_cache:
       name: Restore homebrew cache
@@ -740,7 +737,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - feature/upgrade-macos-ci-vm
       - appcenter_android:
           requires:
             - build-and-test
