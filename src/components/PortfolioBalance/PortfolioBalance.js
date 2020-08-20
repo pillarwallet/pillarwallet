@@ -17,10 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type {
@@ -82,6 +84,7 @@ const LabelText = styled(BaseText)`
   margin-bottom: 8px;
 `;
 
+
 const getCombinedBalances = (props: Props): number => {
   const {
     balances,
@@ -105,11 +108,11 @@ class PortfolioBalance extends React.PureComponent<Props> {
 
     return (
       <BalanceWrapper>
-        <LabelText>Total balance</LabelText>
+        <LabelText>{t('title.totalBalance')}</LabelText>
         <BalanceButton onPress={toggleBalanceVisibility}>
           <ContentWrapper>
             {!showBalance
-              ? <BalanceText>View balance</BalanceText>
+              ? <BalanceText>{t('button.viewBalance')}</BalanceText>
               : (
                 <BalanceView
                   style={style}

@@ -3412,39 +3412,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -3696,39 +3663,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -3980,39 +3914,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -4278,39 +4179,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -4562,39 +4430,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -4846,39 +4681,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -5144,39 +4946,6 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
               label.referralReward
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            keyWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -7837,39 +7606,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8121,39 +7857,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8405,39 +8108,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8703,39 +8373,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -8987,39 +8624,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
               john
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -9271,39 +8875,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               0x2222…222222
             </Text>
           </View>
-          <View
-            h={2}
-            style={
-              Array [
-                Object {
-                  "height": 2,
-                  "width": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <Text
-            numberOfLines={2}
-            style={
-              Array [
-                Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
-                },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            smartWallet
-          </Text>
         </View>
         <View
           rightColumn={true}
@@ -10204,70 +9775,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -10453,40 +9986,7 @@ Array [
         undefined,
       ]
     }
-  />,
-]
-`;
-
-exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
-Array [
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-        },
-        undefined,
-      ]
-    }
   >
-    <View
-      style={
-        Array [
-          Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
-          },
-          undefined,
-        ]
-      }
-    >
-      <View />
-    </View>
     <View
       accessible={true}
       focusable={true}
@@ -10500,33 +10000,156 @@ Array [
       onStartShouldSetResponder={[Function]}
       style={
         Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "#e6f1f9",
+          "borderColor": "#EDEDED",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
           "flexDirection": "row",
+          "height": 48,
           "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
           "opacity": 1,
           "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
+          "paddingLeft": 19,
+          "paddingRight": 19,
           "paddingTop": 0,
+          "width": "auto",
         }
       }
     >
       <Text
-        secondary={true}
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": false,
+          }
+        }
         style={
           Array [
             Object {
-              "color": "#8B939E",
+              "color": "#0A1427",
               "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
+              "fontSize": 12,
+              "lineHeight": 18,
               "textAlignVertical": "center",
             },
-            undefined,
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
           ]
         }
-        tiny={true}
-      />
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#EDEDED",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#e6f1f9",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
+      </Text>
     </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+  </View>,
+]
+`;
+
+exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
+Array [
+  <View
+    style={
+      Array [
+        Object {
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    <Text
+      secondary={true}
+      style={
+        Array [
+          Object {
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -10796,6 +10419,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -10924,6 +10548,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -10932,7 +10557,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -10957,70 +10582,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -11290,6 +10877,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11418,6 +11006,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11426,7 +11015,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -11451,70 +11040,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -11783,6 +11334,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11911,6 +11463,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -11919,7 +11472,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -11944,70 +11497,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -12306,6 +11821,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12434,6 +11950,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12442,7 +11959,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -12467,70 +11984,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -12829,6 +12308,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12957,6 +12437,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -12965,7 +12446,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -12990,30 +12471,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -13299,6 +12782,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -13307,7 +12791,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -13332,70 +12816,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -13637,6 +13083,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -13645,7 +13092,136 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -13670,30 +13246,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -13979,6 +13557,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -13987,7 +13566,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
       </Text>
     </View>
     <View
@@ -14012,30 +13591,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -14319,6 +13900,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -14447,6 +14029,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -14480,30 +14063,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -14795,6 +14380,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -14828,70 +14414,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -15171,6 +14719,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -15204,70 +14753,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -15545,6 +15056,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -15578,70 +15090,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -16171,6 +15645,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16180,6 +15655,135 @@ Array [
         }
       >
         button.settleMore
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -16204,70 +15808,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -16537,6 +16103,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16665,6 +16232,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -16673,7 +16241,7 @@ Array [
           }
         }
       >
-        button.topUpMore
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -16698,70 +16266,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -17031,6 +16561,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -17159,6 +16690,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -17167,7 +16699,7 @@ Array [
           }
         }
       >
-        button.topUpMore
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -17192,70 +16724,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -17525,6 +17019,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -17534,6 +17029,135 @@ Array [
         }
       >
         button.withdrawMore
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -17558,70 +17182,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -17891,6 +17477,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -17900,6 +17487,135 @@ Array [
         }
       >
         button.withdrawMore
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -17924,70 +17640,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -18274,6 +17952,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18402,6 +18081,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18410,7 +18090,7 @@ Array [
           }
         }
       >
-        button.viewPoolTogetherPool
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -18435,70 +18115,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -18785,6 +18427,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18913,6 +18556,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -18921,7 +18565,7 @@ Array [
           }
         }
       >
-        button.viewPoolTogetherPool
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -18946,70 +18590,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -19296,6 +18902,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19424,6 +19031,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19432,7 +19040,7 @@ Array [
           }
         }
       >
-        button.viewPoolTogetherPool
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -19457,70 +19065,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -19807,6 +19377,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19935,6 +19506,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -19943,7 +19515,7 @@ Array [
           }
         }
       >
-        button.viewPoolTogetherPool
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -19968,70 +19540,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -20316,6 +19850,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -20325,6 +19860,135 @@ Array [
         }
       >
         button.inviteToPillar
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -20349,70 +20013,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -20681,6 +20307,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -20809,6 +20436,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -20817,7 +20445,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -20842,70 +20470,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -21220,6 +20810,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -21229,6 +20820,135 @@ Array [
         }
       >
         button.inviteToPillar
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -21253,70 +20973,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -21615,6 +21297,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -21743,6 +21426,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -21751,7 +21435,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -21776,70 +21460,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -22124,6 +21770,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -22133,6 +21780,135 @@ Array [
         }
       >
         button.inviteToPillar
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -22157,70 +21933,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -22489,6 +22227,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -22617,6 +22356,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -22625,7 +22365,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -22650,70 +22390,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -23028,6 +22730,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23037,6 +22740,135 @@ Array [
         }
       >
         button.inviteToPillar
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -23061,70 +22893,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -23423,6 +23217,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23551,6 +23346,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -23559,7 +23355,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -23584,70 +23380,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -23917,6 +23675,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24045,6 +23804,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24053,7 +23813,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -24078,70 +23838,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -24411,6 +24133,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24539,6 +24262,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -24547,7 +24271,7 @@ Array [
           }
         }
       >
-        button.inviteToPillar
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -24572,70 +24296,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -24875,6 +24561,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25003,6 +24690,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25011,7 +24699,7 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -25036,70 +24724,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -25339,6 +24989,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25347,7 +24998,136 @@ Array [
           }
         }
       >
-        label.referFriends
+        button.referFriends
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -25372,70 +25152,32 @@ Array [
     style={
       Array [
         Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
+          "paddingBottom": 0,
+          "paddingLeft": 8,
+          "paddingRight": 8,
+          "paddingTop": 0,
+          "textAlign": "center",
         },
         undefined,
       ]
     }
   >
-    <View
+    <Text
+      secondary={true}
       style={
         Array [
           Object {
-            "flexBasis": 0,
-            "flexDirection": "row",
-            "flexGrow": 1,
-            "flexShrink": 1,
-            "justifyContent": "flex-end",
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 10,
+            "lineHeight": 14,
+            "textAlignVertical": "center",
           },
           undefined,
         ]
       }
-    >
-      <View />
-    </View>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexDirection": "row",
-          "justifyContent": "center",
-          "opacity": 1,
-          "paddingBottom": 0,
-          "paddingLeft": 8,
-          "paddingRight": 8,
-          "paddingTop": 0,
-        }
-      }
-    >
-      <Text
-        secondary={true}
-        style={
-          Array [
-            Object {
-              "color": "#8B939E",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 10,
-              "lineHeight": 14,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ]
-        }
-        tiny={true}
-      />
-    </View>
+      tiny={true}
+    />
   </View>,
   <View
     h={10}
@@ -25683,6 +25425,7 @@ Array [
               "synthetic": "#2329d6",
               "tertiary": "#EBF0F6",
               "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
               "transactionReceivedIcon": "#497391",
               "userAvatar": "#d1d9e4",
               "warning": "#ECA93A",
@@ -25692,6 +25435,135 @@ Array [
         }
       >
         button.activate
+      </Text>
+    </View>
+    <View
+      h={4}
+      style={
+        Array [
+          Object {
+            "height": 4,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "transparent",
+          "borderColor": "transparent",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "flexDirection": "column",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderRadius": 0,
+            "borderWidth": 0,
+            "flexDirection": "column",
+            "iconHorizontalMargin": 0,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#007AFF",
+                "fontSize": 18,
+                "lineHeight": 18,
+                "marginBottom": 0,
+                "marginTop": 3.2399999999999998,
+              },
+              undefined,
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "transparent",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "popularSwaps": "#d08cb1",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "transparent",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#007AFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        button.viewOnBlockchain
       </Text>
     </View>
     <View
@@ -26063,6 +25935,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
                       "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
@@ -26300,6 +26173,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
                       "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
@@ -26529,6 +26403,7 @@ Array [
                       "synthetic": "#2329d6",
                       "tertiary": "#EBF0F6",
                       "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
                       "transactionReceivedIcon": "#497391",
                       "userAvatar": "#d1d9e4",
                       "warning": "#ECA93A",
@@ -26920,6 +26795,7 @@ Array [
                           "synthetic": "#2329d6",
                           "tertiary": "#EBF0F6",
                           "text": "#007AFF",
+                          "toastCloseIcon": "#ededed",
                           "transactionReceivedIcon": "#497391",
                           "userAvatar": "#d1d9e4",
                           "warning": "#ECA93A",
@@ -26997,7 +26873,7 @@ Array [
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -27011,7 +26887,7 @@ Array [
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -27119,7 +26995,7 @@ Array [
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -28318,7 +28194,7 @@ exports[`Storyshots Selector default 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -28332,7 +28208,7 @@ exports[`Storyshots Selector default 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -28440,7 +28316,7 @@ exports[`Storyshots Selector default 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -29312,7 +29188,7 @@ exports[`Storyshots Selector no options 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -29326,7 +29202,7 @@ exports[`Storyshots Selector no options 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -29434,7 +29310,7 @@ exports[`Storyshots Selector no options 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -30802,7 +30678,7 @@ exports[`Storyshots Selector selected option 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -30816,7 +30692,7 @@ exports[`Storyshots Selector selected option 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -30924,7 +30800,7 @@ exports[`Storyshots Selector selected option 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -32123,7 +31999,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -32137,7 +32013,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -32245,7 +32121,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -33723,7 +33599,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -33737,7 +33613,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -33845,7 +33721,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,
@@ -35318,7 +35194,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       >
                         <View
                           accessible={true}
-                          borderRadius={6}
+                          borderRadius={20}
                           focusable={false}
                           onClick={[Function]}
                           onResponderGrant={[Function]}
@@ -35332,7 +35208,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                             Array [
                               Object {
                                 "backgroundColor": "#FFFFFF",
-                                "borderRadius": 6,
+                                "borderRadius": 20,
                                 "flexDirection": "column",
                                 "justifyContent": "flex-start",
                                 "opacity": 1,
@@ -35440,7 +35316,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 style={
                                   Array [
                                     Object {
-                                      "color": "#EDEDED",
+                                      "color": "#ededed",
                                       "fontSize": 16,
                                     },
                                     undefined,
@@ -37059,7 +36935,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       >
                         <View
                           accessible={true}
-                          borderRadius={6}
+                          borderRadius={20}
                           focusable={false}
                           onClick={[Function]}
                           onResponderGrant={[Function]}
@@ -37073,7 +36949,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             Array [
                               Object {
                                 "backgroundColor": "#FFFFFF",
-                                "borderRadius": 6,
+                                "borderRadius": 20,
                                 "flexDirection": "column",
                                 "justifyContent": "flex-start",
                                 "opacity": 1,
@@ -37181,7 +37057,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 style={
                                   Array [
                                     Object {
-                                      "color": "#EDEDED",
+                                      "color": "#ededed",
                                       "fontSize": 16,
                                     },
                                     undefined,
@@ -38660,7 +38536,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       >
                         <View
                           accessible={true}
-                          borderRadius={6}
+                          borderRadius={20}
                           focusable={false}
                           onClick={[Function]}
                           onResponderGrant={[Function]}
@@ -38674,7 +38550,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                             Array [
                               Object {
                                 "backgroundColor": "#FFFFFF",
-                                "borderRadius": 6,
+                                "borderRadius": 20,
                                 "flexDirection": "column",
                                 "justifyContent": "flex-start",
                                 "opacity": 1,
@@ -38782,7 +38658,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 style={
                                   Array [
                                     Object {
-                                      "color": "#EDEDED",
+                                      "color": "#ededed",
                                       "fontSize": 16,
                                     },
                                     undefined,

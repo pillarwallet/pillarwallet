@@ -40,6 +40,7 @@ import {
 } from 'constants/communityConstants';
 import { SettingsSection } from './SettingsSection';
 
+
 type State = {
   email: string,
   isSubmitted: boolean,
@@ -49,11 +50,12 @@ const NewsletterWrapper = styled.View`
   margin: 0 ${spacing.layoutSides}px;
 `;
 
+
 class CommunitySettings extends React.Component<{}, State> {
   state = {
     email: '',
     isSubmitted: false,
-  }
+  };
 
   goTo = (link: { web: string, app?: string}) => () => {
     if (!link.app) {
@@ -63,37 +65,37 @@ class CommunitySettings extends React.Component<{}, State> {
         .then(supported => supported ? Linking.openURL(link.app) : Linking.openURL(link.web))
         .catch(() => {});
     }
-  }
+  };
 
   getSocialMediaItems = () => {
     return [
       {
         key: 'twitter',
-        title: 'Twitter',
+        title: t('twitter'),
         onPress: this.goTo(TWITTER_SOCIAL_ADDRESS),
       },
       {
         key: 'telegram',
-        title: 'Telegram',
+        title: t('telegram'),
         onPress: this.goTo(TELEGRAM_SOCIAL_ADDRESS),
       },
       {
         key: 'youtube',
-        title: 'Youtube',
+        title: t('youtube'),
         onPress: this.goTo(YOUTUBE_SOCIAL_ADDRESS),
       },
       {
         key: 'medium',
-        title: 'Medium',
+        title: t('medium'),
         onPress: this.goTo(MEDIUM_SOCIAL_ADDRESS),
       },
       {
         key: 'facebook',
-        title: 'Facebook',
+        title: t('facebook'),
         onPress: this.goTo(FACEBOOK_SOCIAL_ADDRESS),
       },
     ];
-  }
+  };
 
   subscribe = () => {
     this.setState({ isSubmitted: true });
@@ -124,44 +126,42 @@ class CommunitySettings extends React.Component<{}, State> {
         });
         reportLog('Subscription to newsletter failed', { error: e }, Sentry.Severity.Error);
       });
-  }
+  };
 
   render() {
     const { email, isSubmitted } = this.state;
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Community' }] }}
+        headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.community.title') }] }}
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper
           contentContainerStyle={{ paddingVertical: spacing.mediumLarge }}
         >
           <NewsletterWrapper>
-            <BaseText medium>
-              Join Pillar community, subscribe to our newsletter to receive latest news, updates and more
-            </BaseText>
+            <BaseText medium>{t('settingsContent.settingsItem.community.paragraph')}</BaseText>
             <TextInput
               inputProps={{
                 value: email,
                 onChange: value => this.setState({ email: value }),
-                placeholder: 'Your e-mail',
+                placeholder: t('form.subscription.placeholder'),
                 autoCapitalize: 'none',
               }}
               inputWrapperStyle={{ marginTop: spacing.mediumLarge }}
               buttonProps={{
-                title: 'Subscribe',
+                title: t('button.subscribe'),
                 small: true,
                 regularText: true,
                 marginRight: 12,
                 height: 32,
                 onPress: this.subscribe,
               }}
-              errorMessage={isSubmitted && email && !isValidEmail(email) && 'Please enter a valid email'}
+              errorMessage={isSubmitted && email && !isValidEmail(email) && t('error.invalid.email')}
             />
           </NewsletterWrapper>
           <SettingsSection
-            sectionTitle="Follow us"
+            sectionTitle={t('settingsContent.settingsItem.community.label.follow')}
             sectionItems={this.getSocialMediaItems()}
           />
         </ScrollWrapper>

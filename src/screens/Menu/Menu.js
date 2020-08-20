@@ -26,6 +26,7 @@ import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
@@ -52,6 +53,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_STATUS,
+  CONTACTS_FLOW,
 } from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
@@ -165,16 +167,16 @@ const Menu = ({
   const menuItems = [
     {
       key: 'securitySettings',
-      title: 'Security settings',
+      title: t('settingsContent.settingsItem.securitySettings.title'),
       emoji: 'rotating_light',
       card: true,
       action: () => navigation.navigate(SECURITY_SETTINGS),
     },
     {
       key: 'recoverySettings',
-      title: 'Recovery settings',
+      title: t('settingsContent.settingsItem.recoverySettings.title'),
       labelBadge: !isBackedUp && {
-        label: 'Warning',
+        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
         color: colors.negative,
       },
       emoji: 'mage',
@@ -183,49 +185,58 @@ const Menu = ({
     },
     {
       key: 'userProfile',
-      title: 'User profile',
+      title: t('settingsContent.settingsItem.userProfile.title'),
       emoji: 'male-singer',
       card: true,
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
       key: 'appSettings',
-      title: 'App settings',
+      title: t('settingsContent.settingsItem.appSettings.title'),
       emoji: 'gear',
       card: true,
       action: () => navigation.navigate(APP_SETTINGS),
     },
     {
+      key: 'addressBook',
+      title: t('settingsContent.settingsItem.addressBook.title'),
+      emoji: 'book',
+      card: true,
+      action: () => navigation.navigate(CONTACTS_FLOW),
+    },
+    {
       key: 'referFriends',
-      title: isPillarRewardCampaignActive ? 'Refer friends' : 'Invite friends',
+      title: isPillarRewardCampaignActive
+        ? t('settingsContent.settingsItem.referFriends.title')
+        : t('settingsContent.settingsItem.inviteFriends.title'),
       icon: 'present',
       iconColor: colors.accent,
       action: goToInvitationFlow,
     },
     {
       key: 'community',
-      title: 'Community',
+      title: t('settingsContent.settingsItem.community.title'),
       icon: 'like',
       iconColor: colors.accent,
       action: () => navigation.navigate(COMMUNITY_SETTINGS),
     },
     {
       key: 'chatWithSupport',
-      title: 'Chat with support',
+      title: t('settingsContent.settingsItem.support.title'),
       icon: 'help',
       iconColor: colors.helpIcon,
       action: () => Intercom.displayMessenger(),
     },
     {
       key: 'knowledgeBase',
-      title: 'Knowledge base',
+      title: t('settingsContent.settingsItem.faq.title'),
       icon: 'dictionary',
       iconColor: colors.positive,
       action: () => Intercom.displayHelpCenter(),
     },
     {
       key: 'assetsMigration',
-      title: 'Migrate assets to Smart Wallet',
+      title: t('settingsContent.settingsItem.assetsMigration.title'),
       icon: 'send-asset',
       iconColor: colors.accent,
       hidden: isKeyBasedAssetsMigrationHidden,
@@ -287,21 +298,21 @@ const Menu = ({
   const deleteWallet = () => {
     if (isBackedUp) {
       Alert.alert(
-        'Logout',
-        'After logging out you will not be able to log in back to this wallet without 12 words backup.',
+        t('alert.logOut.title'),
+        t('alert.logOut.message'),
         [
-          { text: 'Cancel' },
-          { text: 'Confirm', onPress: logoutUser },
+          { text: t('alert.logOut.button.cancel') },
+          { text: t('alert.logOut.button.ok'), onPress: logoutUser },
         ],
       );
     } else {
       Alert.alert(
-        'Logout',
-        'You can logout only after securing your 12 words backup phrase.',
+        t('alert.attemptToLogOutWithoutBackup.title'),
+        t('alert.attemptToLogOutWithoutBackup.message'),
         [
-          { text: 'Cancel' },
+          { text: t('alert.attemptToLogOutWithoutBackup.button.cancel') },
           {
-            text: 'Backup 12 words',
+            text: t('alert.attemptToLogOutWithoutBackup.button.backup'),
             onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
           },
         ],
@@ -323,22 +334,22 @@ const Menu = ({
           <Footer>
             <LinksSection>
               <LegalTextLink onPress={() => toggleSlideModalOpen('termsOfService')}>
-                Terms of Use
+                {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
               <LegalTextLink>  •  </LegalTextLink>
               <LegalTextLink onPress={() => toggleSlideModalOpen('privacyPolicy')}>
-                Privacy policy
+                {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>
             </LinksSection>
             <LockScreenSection>
               <LockScreenTextLink onPress={lockScreen}>
-                Lock wallet
+                {t('settingsContent.button.lockWallet')}
               </LockScreenTextLink>
             </LockScreenSection>
             <LogoutSection>
               <LogoutIcon name="signout" />
               <LogoutTextLink onPress={deleteWallet}>
-                Sign out from wallet
+                {t('settingsContent.button.signOut')}
               </LogoutTextLink>
             </LogoutSection>
           </Footer>

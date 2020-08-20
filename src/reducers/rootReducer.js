@@ -60,6 +60,7 @@ import recoveryPortalReducer from './recoveryPortalReducer';
 import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
+import contactsReducer from './contactsReducer';
 import sablierReducer from './sablierReducer';
 import fiatToCryptoReducer from './fiatToCryptoReducer';
 
@@ -104,6 +105,7 @@ import type {
   KeyBasedAssetTransferReducerAction,
   KeyBasedAssetTransferReducerState,
 } from './keyBasedAssetTransferReducer';
+import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 import type { SablierReducerAction, SablierReducerState } from './sablierReducer';
 import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiatToCryptoReducer.js';
 
@@ -142,6 +144,7 @@ export type RootReducerState = {|
   lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
+  contacts: ContactsReducerState,
   sablier: SablierReducerState,
   fiatToCrypto: FiatToCryptoReducerState,
 |};
@@ -173,6 +176,7 @@ type RootReducerAction =
   | RecoveryPortalReducerAction
   | LendingReducerAction
   | KeyBasedAssetTransferReducerAction
+  | ContactsReducerAction
   | SablierReducerAction
   | FiatToCryptoReducerAction;
 
@@ -221,6 +225,7 @@ const appReducer = combineReducers({
   lending: lendingReducer,
   poolTogether: poolTogetherReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
+  contacts: contactsReducer,
   sablier: sablierReducer,
   fiatToCrypto: fiatToCryptoReducer,
 });

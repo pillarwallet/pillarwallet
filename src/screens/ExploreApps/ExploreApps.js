@@ -17,10 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { type NavigationScreenProp, withNavigation } from 'react-navigation';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { APPS, type AppItem } from 'utils/exploreApps';
 import { dismissConnectAppsIntroAction } from 'actions/appSettingsActions';
@@ -28,27 +31,29 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import ExploreAppsInfoCard from './ExploreAppsInfoCard';
 import ExploreAppsItem from './ExploreAppsItem';
 
+
 type Props = {
   navigation: NavigationScreenProp<*>,
   dismissConnectAppsIntro: () => void,
   hasDismissedConnectAppsIntro: boolean,
 };
 
-class ExploreApps extends React.PureComponent<Props> {
-  handleCardButton = () => { this.props.dismissConnectAppsIntro(); }
 
-  renderItem = ({ item }: { item: AppItem }) => <ExploreAppsItem item={item} />
+class ExploreApps extends React.PureComponent<Props> {
+  handleCardButton = () => { this.props.dismissConnectAppsIntro(); };
+
+  renderItem = ({ item }: { item: AppItem }) => <ExploreAppsItem item={item} />;
 
   renderListHeader = () => {
     if (this.props.hasDismissedConnectAppsIntro) return null;
     return <ExploreAppsInfoCard onButtonPress={this.handleCardButton} />;
-  }
+  };
 
   render() {
     return (
       <ContainerWithHeader
         navigation={this.props.navigation}
-        headerProps={{ centerItems: [{ title: 'Explore apps' }] }}
+        headerProps={{ centerItems: [{ title: t('walletConnectContent.title.appsList') }] }}
         inset={{ bottom: 'never' }}
       >
         <FlatList

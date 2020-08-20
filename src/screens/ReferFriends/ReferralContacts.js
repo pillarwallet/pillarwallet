@@ -204,7 +204,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
       if (!availableInvites) {
         Toast.show({
-          message: t('dailyInvitationsLimitReached', {
+          message: t('toast.dailyInvitationsLimitReached', {
             remainingDailyInvitations: getRemainingDailyInvitations(sentInvitationsCount),
             allowedDailyUpdates: ALLOWED_DAILY_INVITES,
           }),
@@ -253,12 +253,12 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Invite friends' }] }}
+        headerProps={{ centerItems: [{ title: t('referralsContent.title.inviteMain') }] }}
         inset={{ bottom: 0 }}
         footerContainerInset={{ bottom: 'always' }}
         footer={showConfirmButton ? (
           <ButtonWrapper>
-            <Button title="Confirm" onPress={this.setContactsForReferral} block />
+            <Button title={t('button.confirm')} onPress={this.setContactsForReferral} block />
           </ButtonWrapper>) : <View />}
         footerContainerStyle={{ flexWrap: 'nowrap' }}
       >
@@ -273,7 +273,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             contentContainerStyle={{ flexGrow: 1 }}
           >
             <SearchBlock
-              searchInputPlaceholder="Email or phone"
+              searchInputPlaceholder={t('label.emailOrPhone')}
               onSearchChange={(q) => this.handleSearch(q)}
               itemSearchState={query.length >= MIN_QUERY_LENGTH}
               wrapperStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.layoutSides }}
@@ -299,15 +299,17 @@ class ReferralContacts extends React.PureComponent<Props, State> {
               ListEmptyComponent={(
                 <EmptyStateWrapper>
                   <EmptyStateParagraph
-                    title={!phoneContactsFetchError ? 'Nobody found' : 'Could not fetch contacts'}
+                    title={!phoneContactsFetchError
+                      ? t('phoneBookContactsList.emptyState.noneFound.title')
+                      : t('phoneBookContactsList.emptyState.couldNotGetContacts.title')}
                     bodyText={!phoneContactsFetchError
-                      ? 'Make sure you entered phone or email address correctly'
-                    : ''}
+                      ? t('phoneBookContactsList.emptyState.noneFound.paragraph')
+                      : ''}
                     wide
                     large
                   >
                     {phoneContactsFetchError &&
-                    <Button title="Try again" onPress={fetchPhoneContacts} marginTop={spacing.large} />}
+                    <Button title={t('button.tryAgain')} onPress={fetchPhoneContacts} marginTop={spacing.large} />}
                   </EmptyStateParagraph>
                 </EmptyStateWrapper>
               )}

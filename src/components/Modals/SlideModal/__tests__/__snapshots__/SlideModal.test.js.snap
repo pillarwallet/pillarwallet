@@ -436,7 +436,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           >
             <View
               accessible={true}
-              borderRadius={6}
+              borderRadius={20}
               focusable={false}
               onClick={[Function]}
               onResponderGrant={[Function]}
@@ -450,7 +450,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderRadius": 6,
+                    "borderRadius": 20,
                     "flexDirection": "column",
                     "justifyContent": "flex-start",
                     "opacity": 1,
@@ -558,7 +558,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#EDEDED",
+                          "color": "#ededed",
                           "fontSize": 16,
                         },
                         undefined,

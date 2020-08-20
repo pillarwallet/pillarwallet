@@ -230,6 +230,10 @@ const themeColors = (theme: Theme) => {
       surface: colors.positive,
       text: colors.control,
     },
+    negative: {
+      surface: colors.negative,
+      text: colors.control,
+    },
   });
 };
 

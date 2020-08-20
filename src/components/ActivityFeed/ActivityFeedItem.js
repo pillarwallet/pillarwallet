@@ -41,7 +41,7 @@ import {
   isFailedTransaction,
   isTimedOutTransaction,
 } from 'utils/feedData';
-import { findAccountByAddress, getAccountName } from 'utils/accounts';
+import { findAccountByAddress } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getValueWithSymbol } from 'utils/strings';
@@ -621,7 +621,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           || ensRegistry[relevantAddress]
           || elipsizeAddress(relevantAddress);
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
-        let subtext = getAccountName(event.accountType);
 
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
@@ -669,7 +668,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         } else {
           const additionalInfo = {};
-          let itemLabel = usernameOrAddress;
           const isTrxBetweenAccounts = (isKWAddress(event.to, accounts) && isSWAddress(event.from, accounts)) ||
             (isKWAddress(event.from, accounts) && isSWAddress(event.to, accounts));
 
@@ -679,7 +677,6 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           if (isTrxBetweenAccounts) {
             if (isForAllAccounts) {
-              itemLabel = getAccountName(sendingAccountType);
               additionalInfo.itemImageSource = sendingAccountType === ACCOUNT_TYPES.KEY_BASED
                 ? keyWalletIcon
                 : smartWalletIcon;
@@ -689,10 +686,6 @@ export class ActivityFeedItem extends React.Component<Props> {
                 : smartWalletIcon;
             }
             additionalInfo.isBetweenAccounts = true;
-          }
-
-          if (isTrxBetweenAccounts && isForAllAccounts) {
-            subtext = '';
           }
 
           if (!isTrxBetweenAccounts) {
@@ -713,8 +706,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
 
           data = {
-            label: itemLabel,
-            subtext,
+            label: usernameOrAddress,
             fullItemValue: getValueWithSymbol(`${formattedFullValue} ${event.asset}`, isReceived, !formattedFullValue),
             itemValue: getValueWithSymbol(`${formattedValue} ${event.asset}`, isReceived, isZero),
             valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
@@ -745,18 +737,9 @@ export class ActivityFeedItem extends React.Component<Props> {
 
     const relevantAddress = this.getRelevantAddress(event);
 
-    let usernameOrAddress;
+    const usernameOrAddress = getElipsizeAddress(relevantAddress);
     const isBetweenAccounts = (isSWAddress(to, accounts) && isKWAddress(from, accounts))
       || (isSWAddress(from, accounts) && isKWAddress(to, accounts));
-
-    if (isBetweenAccounts) {
-      const relatedAccountType = isReceived
-        ? (findAccountByAddress(event.from, accounts) || {}).type
-        : (findAccountByAddress(event.to, accounts) || {}).type;
-      usernameOrAddress = getAccountName(relatedAccountType);
-    } else {
-      usernameOrAddress = getElipsizeAddress(relevantAddress);
-    }
 
     const subtext = isReceived
       ? t('label.collectibleFromUser', { username: usernameOrAddress })

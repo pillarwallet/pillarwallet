@@ -22,6 +22,7 @@ import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 import { Note } from 'components/Note';
 import { spacing } from 'utils/variables';
@@ -46,15 +47,6 @@ const IconWrapper = styled.View`
   padding-left: 36px;
 `;
 
-const PHONE = 'phone number';
-const EMAIL = 'email';
-
-const getMissingVerification = (isPhoneVerified: boolean, isEmailVerified: boolean): ?string => {
-  if (!isPhoneVerified) return PHONE;
-  if (!isEmailVerified) return EMAIL;
-
-  return null;
-};
 
 const MissingInfoNote = (props: Props) => {
   const {
@@ -64,20 +56,20 @@ const MissingInfoNote = (props: Props) => {
     theme,
   } = props;
 
-  const missingType = getMissingVerification(isPhoneVerified, isEmailVerified);
-
-  if (!missingType) {
+  if (isPhoneVerified && isEmailVerified) {
     return null;
   }
 
   const { roundedEmailIcon, roundedPhoneIcon } = images(theme);
-  const noteIcon = missingType === PHONE ? roundedPhoneIcon : roundedEmailIcon;
+  const noteIcon = !isPhoneVerified ? roundedPhoneIcon : roundedEmailIcon;
 
   return (
     <TouchableOpacity onPress={onPressAdd}>
       <Note
         containerStyle={{ margin: spacing.layoutSides, marginTop: 0 }}
-        note={`To invite via ${missingType === PHONE ? 'SMS' : missingType}, you need to verify your ${missingType}.`}
+        note={!isPhoneVerified
+          ? t('referralsContent.paragraph.invitationViaPhoneRules')
+          : t('referralsContent.paragraph.invitationViaEmailRules')}
       >
         <IconWrapper>
           <NoteImage source={noteIcon} />

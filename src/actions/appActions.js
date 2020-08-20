@@ -65,6 +65,7 @@ import { SET_REMOVING_CONNECTED_DEVICE_ADDRESS } from 'constants/connectedDevice
 import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 import { SET_STREAMS } from 'constants/sablierConstants';
+import { SET_CONTACTS } from 'constants/contactsConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -173,6 +174,9 @@ export const initAppAndRedirectAction = () => {
       // "|| {}" is fix for users when we released a version where Sablier streams were incoming as nulls
       const { incomingStreams = [], outgoingStreams = [] } = get(storageData, 'sablier', {}) || {};
       dispatch({ type: SET_STREAMS, payload: { incomingStreams, outgoingStreams } });
+
+      const { contacts = [] } = get(storageData, 'localContacts', []);
+      dispatch({ type: SET_CONTACTS, payload: contacts });
 
       const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
       dispatch({

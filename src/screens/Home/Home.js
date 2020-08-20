@@ -24,6 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import isEmpty from 'lodash.isempty';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import t from 'translations/translate';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
@@ -303,7 +304,7 @@ class HomeScreen extends React.Component<Props> {
         <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
       </ListItemWithImage>
     );
-  }
+  };
 
   renderPoolTogetherItem = ({ item: poolTogetherStats }: { item: Object }) => {
     const {
@@ -315,7 +316,7 @@ class HomeScreen extends React.Component<Props> {
     } = poolTogetherStats;
     return (
       <ListItemWithImage
-        label={`Prize $${currentPrize}`}
+        label={t('poolTogetherContent.label.prizeInDollars', { prize: currentPrize })}
         subtext={remainingTime}
         onPress={() => this.props.navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol })}
         iconImageSize={52}
@@ -324,15 +325,19 @@ class HomeScreen extends React.Component<Props> {
         cornerIcon={symbol === DAI ? daiIcon : usdcIcon}
         itemImageRoundedSquare
       >
-        <BaseText fontSize={fontSizes.big} primary>{userTickets} tickets</BaseText>
-        <BaseText secondary>{winChance} chance</BaseText>
+        <BaseText fontSize={fontSizes.big} primary>
+          {t('poolTogetherContent.label.ownedTickets', { count: userTickets })}
+        </BaseText>
+        <BaseText secondary>
+          {t('poolTogetherContent.label.winChance', { chancePercent: winChance })}
+        </BaseText>
       </ListItemWithImage>
     );
-  }
+  };
 
   renderSablierStream = ({ item: stream }) => {
     return <SablierStream stream={stream} />;
-  }
+  };
 
   render() {
     const {
@@ -406,8 +411,8 @@ class HomeScreen extends React.Component<Props> {
     const badgesContainerStyle = !badges.length ? { width: '100%', justifyContent: 'center' } : {};
     const colors = getThemeColors(theme);
     const referralBannerText = isPillarRewardCampaignActive
-      ? 'Refer friends and earn rewards, free PLR and more.'
-      : 'Invite friends to Pillar';
+      ? t('referralsContent.label.referAndGetRewards')
+      : t('referralsContent.label.inviteFriends');
 
     const hasPoolTickets = poolTogetherUserStats.some(({ userTickets }) => userTickets > 0);
 
@@ -441,7 +446,7 @@ class HomeScreen extends React.Component<Props> {
             centerItems: [{ custom: <UserNameAndImage user={user} /> }],
             rightItems: [
               {
-                link: 'Support',
+                link: t('button.support'),
                 onPress: () => Intercom.displayMessenger(),
                 addon: hasIntercomNotifications && (
                   <View
@@ -465,7 +470,7 @@ class HomeScreen extends React.Component<Props> {
           {onScroll => (
             <ActivityFeed
               card
-              cardHeaderTitle="History"
+              cardHeaderTitle={t('title.mainActivityFeed')}
               navigation={navigation}
               feedData={feedData}
               initialNumToRender={8}
@@ -480,7 +485,7 @@ class HomeScreen extends React.Component<Props> {
                     {walletConnectRequests.length > 1 &&
                     <ButtonText
                       onPress={() => navigation.navigate(WALLETCONNECT)}
-                      buttonText={`View all ${walletConnectRequests.length}`}
+                      buttonText={t('button.viewAllItemsAmount', { amount: walletConnectRequests.length })}
                       wrapperStyle={{ padding: spacing.layoutSides, alignSelf: 'flex-end' }}
                     />}
                     <Requests showLastOneOnly />
@@ -501,7 +506,7 @@ class HomeScreen extends React.Component<Props> {
                     onClose={dismissReferFriends}
                   />
                   <CollapsibleSection
-                    label="Game of badges"
+                    label={t('badgesContent.badgesList.title')}
                     collapseContent={
                       <FlatList
                         data={badges}
@@ -514,8 +519,8 @@ class HomeScreen extends React.Component<Props> {
                         ListEmptyComponent={(
                           <EmptyStateWrapper>
                             <EmptyStateParagraph
-                              title="No badges"
-                              bodyText="You do not have badges yet"
+                              title={t('badgesContent.badgesList.emptyState.noBadges.title')}
+                              bodyText={t('badgesContent.badgesList.emptyState.noBadges.paragraph')}
                             />
                           </EmptyStateWrapper>
                         )}
@@ -526,8 +531,8 @@ class HomeScreen extends React.Component<Props> {
                   />
                   {!isEmpty(depositedAssets) &&
                     <CollapsibleSection
-                      label="Aave Deposits"
-                      labelRight={isFetchingDepositedAssets ? null : 'View all'}
+                      label={t('aaveContent.depositedAssetsList.title')}
+                      labelRight={isFetchingDepositedAssets ? null : t('button.viewAll')}
                       showLoadingSpinner={isFetchingDepositedAssets}
                       onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
                       collapseContent={
@@ -545,7 +550,7 @@ class HomeScreen extends React.Component<Props> {
                   }
                   {!!hasPoolTickets && !!isSmartWalletActive &&
                   <CollapsibleSection
-                    label="PoolTogether savings game"
+                    label={t('poolTogetherContent.ticketsList.title')}
                     showLoadingSpinner={isFetchingPoolStats}
                     collapseContent={
                       <FlatList
@@ -561,9 +566,9 @@ class HomeScreen extends React.Component<Props> {
                   }
                   {!!hasStreams && !!isSmartWalletActive &&
                     <CollapsibleSection
-                      label="Sablier money streaming"
+                      label={t('sablierContent.moneyStreamingList.title')}
                       showLoadingSpinner={isFetchingStreams}
-                      labelRight={isFetchingStreams ? null : 'View all'}
+                      labelRight={isFetchingStreams ? null : t('button.viewAll')}
                       onPressLabelRight={() => navigation.navigate(SABLIER_STREAMS)}
                       collapseContent={
                         <FlatList

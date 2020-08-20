@@ -57,34 +57,34 @@ const Section = (props: Props) => {
         paddingVertical: spacing.medium,
       }}
       renderItem={({ item }) => {
-            const {
-              title,
-              subtitle,
-              value,
-              toggle,
-              onPress,
-              notificationsCount,
-              hidden,
-              label,
-              labelBadge,
-              disabled,
-            } = item;
-            if (hidden) return null;
-            return (
-              <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }} disabled={disabled}>
-                <SettingsListItem
-                  label={title}
-                  description={subtitle}
-                  value={value}
-                  toggle={toggle}
-                  onPress={onPress}
-                  notificationsCount={notificationsCount}
-                  rightLabel={label}
-                  labelBadge={labelBadge}
-                />
-              </ShadowedCard>
-            );
-          }}
+        const {
+          title,
+          subtitle,
+          value,
+          toggle,
+          onPress,
+          notificationsCount,
+          hidden,
+          label,
+          labelBadge,
+          disabled,
+        } = item;
+        if (hidden) return null;
+        return (
+          <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }} disabled={disabled}>
+            <SettingsListItem
+              label={title}
+              description={subtitle}
+              value={value}
+              toggle={toggle}
+              onPress={onPress}
+              notificationsCount={notificationsCount}
+              rightLabel={label}
+              labelBadge={labelBadge}
+            />
+          </ShadowedCard>
+        );
+      }}
     />
   );
 };
