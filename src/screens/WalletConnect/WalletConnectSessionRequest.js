@@ -24,6 +24,7 @@ import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -98,12 +99,12 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Wallet Connect' }],
+          centerItems: [{ title: t('walletConnectContent.title.walletConnect') }],
           customOnBack: this.handleSessionRejection,
         }}
       >
         <ScrollWrapper regularPadding>
-          <Title subtitle title="WalletConnect Request" />
+          <Title subtitle title={t('walletConnectContent.title.walletConnectRequests')} />
           {!!icon && (
             <CachedImage
               key={name}
@@ -119,17 +120,17 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
           )}
           <LabeledRow>
             <Label>Name</Label>
-            <Value>{name || 'Unknown'}</Value>
+            <Value>{name || t('walletConnectContent.label.unknownRequestName')}</Value>
           </LabeledRow>
           {!!description && (
             <LabeledRow>
-              <Label>Description</Label>
+              <Label>{t('walletConnectContent.label.requestDescription')}</Label>
               <Value>{description}</Value>
             </LabeledRow>
           )}
           {!!url && (
             <LabeledRow>
-              <Label>Url</Label>
+              <Label>{t('walletConnectContent.label.requestLink')}</Label>
               <Value>{url}</Value>
             </LabeledRow>
           )}
@@ -140,13 +141,13 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
               primaryInverted
               onPress={this.handleSessionApproval}
               regularText
-              title="Approve"
+              title={t('button.approve')}
             />
             <OptionButton
               dangerInverted
               onPress={this.handleSessionRejection}
               regularText
-              title="Reject"
+              title={t('button.reject')}
             />
           </FooterWrapper>
         </Footer>

@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -101,7 +102,7 @@ class QRCodeScanButton extends React.Component<Props, State> {
         <CircleButton
           fontIcon="connect-active"
           fontIconStyle={{ fontSize: fontSizes.large }}
-          label="Connect"
+          label={t('button.connect')}
           onPress={this.openQRScanner}
         />
         <QRCodeScanner

@@ -92,7 +92,9 @@ class Requests extends React.Component<Props> {
               source={{ uri: icon }}
             />
             <Spacing w={15} />
-            <BaseText regular style={{ flex: 1 }}>{t('walletConnectContent.label.requestFrom', { name })}</BaseText>
+            <BaseText regular style={{ flex: 1 }}>
+              {t('walletConnectContent.label.requestFrom', { name })}
+            </BaseText>
             <ActionCircleButton
               color={colors.secondaryText}
               margin={0}

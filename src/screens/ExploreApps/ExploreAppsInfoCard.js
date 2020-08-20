@@ -17,12 +17,16 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { fontStyles } from 'utils/variables';
 import { MediumText, BaseText } from 'components/Typography';
 import ShadowedCard from 'components/ShadowedCard';
 import Button from 'components/Button';
+
 
 type Props = {
   onButtonPress: () => void,
@@ -47,19 +51,19 @@ const ButtonWrapper = styled.View`
   width: 100%;
 `;
 
-const title = 'What is it?';
-// eslint-disable-next-line quotes
-const content = `A curated collection of web3 apps available to use with Pillar.\
- Sign in without creating an account. Just scan QR and go.`;
-
 
 const ExploreAppsInfoCard = (props: Props) => (
   <ShadowedCard borderRadius={30} wrapperStyle={{ marginBottom: 20 }}>
     <Wrapper>
-      <Title>{title}</Title>
-      <Text>{content}</Text>
+      <Title>{t('insight.walletConnectAppsListExplain.title')}</Title>
+      <Text>{t('insight.walletConnectAppsListExplain.description')}</Text>
       <ButtonWrapper>
-        <Button title="Cool, thanks" onPress={props.onButtonPress} height={32} small />
+        <Button
+          title={t('insight.walletConnectAppsListExplain.button.ok')}
+          onPress={props.onButtonPress}
+          height={32}
+          small
+        />
       </ButtonWrapper>
     </Wrapper>
   </ShadowedCard>
