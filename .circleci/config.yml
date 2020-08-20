@@ -737,7 +737,7 @@ workflows:
           filters:
             branches:
               only:
-                - feature/upgrade-macos-ci-vm
+                - develop
       - appcenter_android:
           requires:
             - build-and-test
