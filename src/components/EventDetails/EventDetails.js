@@ -884,13 +884,13 @@ export class EventDetail extends React.Component<Props, State> {
         const aaveDepositButtons = [];
         if (event?.asset) {
           aaveDepositButtons.push({
-            title: 'button.depositMore',
+            title: t('button.depositMore'),
             onPress: this.onAaveDepositMore,
             secondary: true,
           });
           if (aaveDepositedAsset) {
             aaveDepositButtons.push({
-              title: 'button.viewDeposit',
+              title: t('button.viewDeposit'),
               onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
               squarePrimary: true,
             });
