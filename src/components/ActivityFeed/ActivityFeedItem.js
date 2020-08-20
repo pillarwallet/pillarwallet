@@ -293,22 +293,22 @@ export class ActivityFeedItem extends React.Component<Props> {
       case SABLIER_CREATE_STREAM:
         data = {
           ...data,
-          subtext: 'Incoming stream',
-          actionLabel: 'Started',
+          subtext: t('label.incomingSablierStream'),
+          actionLabel: t('label.started'),
         };
         break;
       case SABLIER_CANCEL_STREAM:
         data = {
           ...data,
-          subtext: 'Incoming stream',
-          actionLabel: 'Canceled',
+          subtext: t('label.incomingSablierStream'),
+          actionLabel: t('label.canceled'),
         };
         break;
       case SABLIER_STREAM_ENDED: {
         data = {
           ...data,
-          subtext: event.incoming ? 'Incoming stream' : 'Outgoing stream',
-          actionLabel: 'Ended',
+          subtext: event.incoming ? t('label.incomingSablierStream') : t('label.outgoingSablierStream'),
+          actionLabel: t('label.ended'),
         };
         break;
       }
@@ -591,7 +591,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         if (event.tag === SABLIER_CREATE_STREAM) {
           data = {
             ...data,
-            subtext: 'Outgoing stream',
+            subtext: t('label.outgoingSablierStream'),
             itemValue: `- ${formattedAmount} ${symbol}`,
             fullItemValue: `- ${formattedAmount} ${symbol}`,
             valueColor: 'text',
@@ -599,7 +599,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         } else if (event.tag === SABLIER_WITHDRAW) {
           data = {
             ...data,
-            subtext: 'Withdraw',
+            subtext: t('label.withdraw'),
             itemValue: `+ ${formattedAmount} ${symbol}`,
             fullItemValue: `+ ${formattedAmount} ${symbol}`,
             valueColor: 'positive',
@@ -607,7 +607,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         } else if (event.tag === SABLIER_CANCEL_STREAM) {
           data = {
             ...data,
-            subtext: 'Outgoing stream',
+            subtext: t('label.outgoingSablierStream'),
             itemValue: `- ${formattedAmount} ${symbol}`,
             itemStatusIcon: TX_FAILED_STATUS,
             statusIconColor: this.getColor('negative'),
