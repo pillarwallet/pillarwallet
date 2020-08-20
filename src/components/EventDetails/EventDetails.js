@@ -958,12 +958,12 @@ export class EventDetail extends React.Component<Props, State> {
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
         eventData = {
           name: usernameOrAddress,
-          sublabel: 'Outgoing stream',
-          actionSubtitle: 'Started',
+          sublabel: t('label.outgoingSablierStream'),
+          actionSubtitle: t('label.started'),
           fee: this.getFeeLabel(event),
           buttons: [
             {
-              title: 'View stream',
+              title: t('button.viewSablierStream'),
               secondary: true,
               onPress: () => this.goToOutgoingStream(streamId),
             },
@@ -983,17 +983,17 @@ export class EventDetail extends React.Component<Props, State> {
 
         eventData = {
           name: usernameOrAddress,
-          sublabel: 'Withdraw',
+          sublabel: t('label.withdraw'),
           fee: this.getFeeLabel(event),
           actionSubtitle: `of ${formattedStreamAmount} ${symbol} stream`,
           buttons: [
             {
-              title: 'Withdraw more',
+              title: t('button.withdrawMore'),
               secondary: true,
               onPress: () => this.goToStreamWithdraw(streamId),
             },
             {
-              title: 'View stream',
+              title: t('button.viewSablierStream'),
               squarePrimary: true,
               onPress: () => this.goToIncomingStream(streamId),
             },
