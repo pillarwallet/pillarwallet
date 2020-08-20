@@ -37,7 +37,10 @@
     "publicAddress": "Public address",
     "success": "Success",
     "totalBalance": "Total balances",
-    "transactions": "Transactions"
+    "transactions": "Transactions",
+    "addNewContact": "Add new contact",
+    "editContact": "Edit contact",
+    "addressBook": "Address book"
   },
 
   "label": {
@@ -97,7 +100,10 @@
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
     "yesterday": "Yesterday",
-    "yourEnsName": "Your wallet ENS name"
+    "yourEnsName": "Your wallet ENS name",
+    "name": "Name",
+    "address": "Address",
+    "resolvingEnsName": "Resolving ENS name"
   },
 
   "button": {
@@ -159,7 +165,10 @@
     "viewPoolTogetherPool": "View pool",
     "verify": "Verify",
     "withdraw": "Withdraw",
-    "withdrawMore": "Withdraw more"
+    "withdrawMore": "Withdraw more",
+    "delete": "Delete",
+    "addNew": "Add new",
+    "save": "Save"
   },
 
   "paragraph": {
@@ -280,9 +289,16 @@
       "timeOut": "Transaction timed out",
       "default": "Transaction failed"
     },
+    "emptyAddress": "Address cannot be empty",
+    "contactWithAddressExist": "Contact with this address already exist",
+    "contactWithNameExist": "Contact with this name already exist",
+    "emptyName": "Name cannot be empty",
     "invalid": {
+      "address": "Invalid address",
       "email": "Please enter a valid email"
-    }
+    },
+    "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
+    "ensNameNotFound": "Sorry, ENS name not found. Please check and try again."
   },
 
   "badgeText": {
@@ -352,7 +368,7 @@
           "paragraph": "Check if the name was entered correctly or add custom token"
         }
       },
-      "withBalance":{
+      "withBalance": {
         "title": "All non-zero"
       }
     }
@@ -506,6 +522,9 @@
       },
       "userProfile": {
         "title": "User profile"
+      },
+      "addressBook": {
+        "title": "Address book"
       }
     },
     "button": {
@@ -715,7 +734,7 @@
     }
   },
 
-  "toast":{
+  "toast": {
     "cantUpdateUser": "Changes have not been saved. Please try again later",
     "cantVerifyCode": "We can't verify your code at this time. Please try again later",
     "cantVerifyInfo": {
@@ -796,10 +815,21 @@
     "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",
     "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
-    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again."
+    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
+    "contactUpdated": "Contact updated",
+    "contactDeleted": "Contact deleted",
+    "contactAdded": "New contact added"
   },
 
   "alert": {
+    "deleteContact": {
+      "title": "Delete {{contactName}}",
+      "message": "Are you sure you would like to delete this contact?",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Yes, delete"
+      }
+    },
     "hideAsset": {
       "title": "Are you sure?",
       "message": "This will hide {{asset}} from your wallet",

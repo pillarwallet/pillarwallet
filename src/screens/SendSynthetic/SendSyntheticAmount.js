@@ -38,7 +38,7 @@ import { fetchSingleAssetRatesAction } from 'actions/ratesActions';
 // utils, services
 import { parseNumber } from 'utils/common';
 import syntheticsService from 'services/synthetics';
-import { getContactsEnsName } from 'utils/contacts';
+import { getReceiverWithEnsName } from 'utils/contacts';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -149,7 +149,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   setReceiver = async (value: Option, onSuccess?: () => void) => {
-    const { receiverEnsName, receiver } = await getContactsEnsName(value?.ethAddress);
+    const { receiverEnsName, receiver } = await getReceiverWithEnsName(value?.ethAddress);
     let stateToUpdate = {};
     if (!receiver) {
       Toast.show({

@@ -241,7 +241,7 @@ class HeaderBlock extends React.Component<Props> {
     const colors = getThemeColors(theme);
     const { style: itemStyle = {} } = item;
     const commonStyle = {};
-    if (type === RIGHT) commonStyle.marginLeft = spacing.small;
+    if (type === RIGHT && !item.noMargin) commonStyle.marginLeft = spacing.small;
     if (item.title) {
       return (
         <View

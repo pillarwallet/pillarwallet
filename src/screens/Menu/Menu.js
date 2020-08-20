@@ -26,8 +26,8 @@ import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -53,6 +53,7 @@ import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
   KEY_BASED_ASSET_TRANSFER_CHOOSE,
   KEY_BASED_ASSET_TRANSFER_STATUS,
+  CONTACTS_FLOW,
 } from 'constants/navigationConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
@@ -195,6 +196,13 @@ const Menu = ({
       emoji: 'gear',
       card: true,
       action: () => navigation.navigate(APP_SETTINGS),
+    },
+    {
+      key: 'addressBook',
+      title: t('settingsContent.settingsItem.addressBook.title'),
+      emoji: 'book',
+      card: true,
+      action: () => navigation.navigate(CONTACTS_FLOW),
     },
     {
       key: 'referFriends',

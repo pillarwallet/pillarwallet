@@ -204,7 +204,10 @@ aliases:
     run:
       name: Install coureutils
       command: |
+        brew update
+        brew upgrade yarn
         brew install coreutils
+        node -v
   - &homebrew_restore_cache
     restore_cache:
       name: Restore homebrew cache

@@ -298,15 +298,8 @@ const Divider = styled.View`
   margin: 8px 0px 18px;
 `;
 
-const ButtonHolder = styled.View`
-  flex-direction: row;
-  flex: 1;
-  justify-content: flex-end;
-`;
-
-const EventTimeHolder = styled.TouchableOpacity`
-  flex-direction: row;
-  justify-content: center;
+const EventTimeHolder = styled.View`
+  text-align: center;
   padding: 0 8px;
 `;
 
@@ -468,7 +461,8 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_CONTACT_FLOW, {
       contact: {
         ethAddress: address,
-        username: ensRegistry[address] || address,
+        name: address,
+        ensName: ensRegistry[address],
       },
     });
     this.props.onClose();
@@ -874,26 +868,12 @@ export class EventDetail extends React.Component<Props, State> {
         eventData = {
           name: t('label.newSmartWalletAccountDevice'),
           actionTitle: isPending ? t('label.adding') : t('label.added'),
-          buttons: [
-            {
-              title: t('button.viewOnBlockchain'),
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         eventData = {
           name: t('label.smartWalletAccountDevice'),
           actionTitle: isPending ? t('label.removing') : t('label.removed'),
-          buttons: [
-            {
-              title: t('button.viewOnBlockchain'),
-              onPress: this.viewOnTheBlockchain,
-              secondary: true,
-            },
-          ],
         };
         break;
       case AAVE_LENDING_DEPOSIT_TRANSACTION:
@@ -1379,7 +1359,7 @@ export class EventDetail extends React.Component<Props, State> {
     return null;
   };
 
-  renderContent = (event: Object, eventData: EventData, allowViewOnBlockchain: boolean) => {
+  renderContent = (event: Object, eventData: EventData) => {
     const { itemData } = this.props;
     const {
       date, name,
@@ -1407,16 +1387,9 @@ export class EventDetail extends React.Component<Props, State> {
 
     return (
       <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <Row>
-          <ButtonHolder>
-            <View />
-          </ButtonHolder>
-          {!!event?.hash && (
-            <EventTimeHolder onPress={this.viewOnTheBlockchain} disabled={!allowViewOnBlockchain}>
-              <BaseText tiny secondary>{eventTime}</BaseText>
-            </EventTimeHolder>
-          )}
-        </Row>
+        <EventTimeHolder>
+          <BaseText tiny secondary>{eventTime}</BaseText>
+        </EventTimeHolder>
         <Spacing h={10} />
         <AvatarWrapper disabled>
           <BaseText medium>{label}</BaseText>
@@ -1474,14 +1447,46 @@ export class EventDetail extends React.Component<Props, State> {
       event = { ...event, ...txInfo, type: event.type };
     }
 
-    const eventData = this.getEventData(event);
+    let eventData = this.getEventData(event);
 
     if (!eventData) return null;
     const { hash, isPPNTransaction } = event;
     const allowViewOnBlockchain = !!hash && !isPPNTransaction;
 
+    if (allowViewOnBlockchain) {
+      const currentModalButtons = eventData?.buttons || [];
+      const hasModalButtons = !isEmpty(currentModalButtons);
+      const viewOnBlockchainButtonTitle = t('button.viewOnBlockchain');
+      const alreadyHasViewOnBlockchainButton = hasModalButtons
+        && currentModalButtons.some(({ title }) => title === viewOnBlockchainButtonTitle);
+
+      if (!alreadyHasViewOnBlockchainButton) {
+        const viewOnBlockchainButton = {
+          squarePrimary: hasModalButtons, // styling if multiple buttons in modal
+          secondary: !hasModalButtons, // styling if single button in modal
+          title: viewOnBlockchainButtonTitle,
+          onPress: this.viewOnTheBlockchain,
+        };
+
+        /**
+         * per design request there SHOULD be only be 2 buttons
+         * and LAST (second) should always be changed to blockchain button,
+         * however, not cutting all buttons and just replacing last
+         * assuming that there can only be 2
+         */
+        const updatedModalButtons = currentModalButtons.length > 1
+          ? currentModalButtons.slice(0, -1).concat(viewOnBlockchainButton)
+          : currentModalButtons.concat(viewOnBlockchainButton);
+
+        eventData = {
+          ...eventData,
+          buttons: updatedModalButtons,
+        };
+      }
+    }
+
     if (storybook) {
-      return this.renderContent(event, eventData, allowViewOnBlockchain);
+      return this.renderContent(event, eventData);
     }
 
     return (
@@ -1492,7 +1497,7 @@ export class EventDetail extends React.Component<Props, State> {
           noClose
           hideHeader
         >
-          {this.renderContent(event, eventData, allowViewOnBlockchain)}
+          {this.renderContent(event, eventData)}
         </SlideModal>
         <ReceiveModal
           isVisible={isReceiveModalVisible}
