@@ -154,7 +154,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     if (!receiver) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
-        emoji: 'woman_shrugging',
+        emoji: 'woman-shrugging',
       });
       stateToUpdate = { selectedContact: null, receiver: '', receiverEnsName: '' };
     } else {
