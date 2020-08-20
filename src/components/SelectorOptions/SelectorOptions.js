@@ -69,6 +69,9 @@ type Props = {
   validator?: (value: string) => string,
   allowEnteringCustomAddress?: boolean,
   forceTab?: string,
+  customOptionButtonLabel?: string,
+  customOptionButtonOnPress?: (option: Option) => void,
+  onCustomOptionSet?: (option: Option) => void,
 };
 
 type State = {
@@ -197,13 +200,23 @@ class SelectorOptions extends React.Component<Props, State> {
     if (address) this.addCustomOption(address);
   };
 
-  addCustomOption = async (address) => {
-    const option = {
+  addCustomOption = (address) => {
+    let option = {
       value: address,
       name: address,
       ethAddress: address,
     };
-    this.setState({ customAddressAsAnOption: option });
+    const { customOptionButtonLabel, customOptionButtonOnPress, onCustomOptionSet } = this.props;
+    if (customOptionButtonLabel && customOptionButtonOnPress) {
+      option = {
+        ...option,
+        buttonActionLabel: customOptionButtonLabel,
+        buttonAction: () => customOptionButtonOnPress(option),
+      };
+    }
+    this.setState({ customAddressAsAnOption: option }, () => {
+      if (onCustomOptionSet) onCustomOptionSet(option);
+    });
   };
 
   renderHorizontalOptions = (horizontalOptionsData) => {

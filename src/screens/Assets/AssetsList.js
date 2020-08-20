@@ -26,7 +26,7 @@ import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import Swipeout from 'react-native-swipeout';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -35,6 +35,7 @@ import t from 'translations/translate';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { MediumText } from 'components/Typography';
 import Toast from 'components/Toast';
+import SwipeoutButton from 'components/SwipeoutButton';
 
 // constants
 import { defaultFiatCurrency, TOKENS, ETH, PLR } from 'constants/assetsConstants';
@@ -48,7 +49,7 @@ import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat, formatAmount } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { getThemeColors, themedColors } from 'utils/themes';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -57,13 +58,13 @@ import assetsConfig from 'configs/assetsConfig';
 import type { Asset, Assets, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector } from 'selectors';
 import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
-import HideAssetButton from './HideAssetButton';
 
 
 const IS_IOS = Platform.OS === 'ios';
@@ -82,6 +83,7 @@ type Props = {
   paymentNetworkBalances: Balances,
   hideAsset: Function,
   scrollViewRef?: Object,
+  theme: Theme,
 };
 
 type State = {
@@ -180,6 +182,7 @@ class AssetsList extends React.Component<Props, State> {
       baseFiatCurrency,
       navigation,
       scrollViewRef,
+      theme,
     } = this.props;
 
     const {
@@ -196,6 +199,7 @@ class AssetsList extends React.Component<Props, State> {
       paymentNetworkBalanceInFiat,
     } = asset;
 
+    const colors = getThemeColors(theme);
     const fullIconMonoUrl = iconMonoUrl ? `${getEnv('SDK_PROVIDER')}/${iconMonoUrl}?size=2` : '';
     const fullIconWallpaperUrl = `${getEnv('SDK_PROVIDER')}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
     const fullIconUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
@@ -235,11 +239,14 @@ class AssetsList extends React.Component<Props, State> {
       <Swipeout
         right={[{
           component: (
-            <HideAssetButton
+            <SwipeoutButton
               onPress={() => disableRemove ? this.showNotRemovedToast(asset) : this.hideAsset(asset)}
+              iconName="turn-off"
+              color={colors.negative}
+              label={t('button.hide')}
               disabled={disableRemove}
             />
-            ),
+          ),
         }]}
         backgroundColor="transparent"
         sensitivity={10}
@@ -358,4 +365,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   hideAsset: (asset: Asset) => dispatch(hideAssetAction(asset)),
 });
 
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList));
+export default withNavigation(withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AssetsList)));

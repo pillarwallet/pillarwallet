@@ -17,10 +17,30 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import styled from 'styled-components/native';
+import { SET_CONTACTS } from 'constants/contactsConstants';
+import type { Contact } from 'models/Contact';
 
-const InputGroup = styled.View`
+export type ContactsReducerState = {
+  data: Contact[],
+};
 
-`;
+export type ContactsReducerAction = {
+  type: string,
+  payload: any,
+};
 
-export default InputGroup;
+export const initialState = {
+  data: [],
+};
+
+export default function contactsReducer(
+  state: ContactsReducerState = initialState,
+  action: ContactsReducerAction,
+): ContactsReducerState {
+  switch (action.type) {
+    case SET_CONTACTS:
+      return { ...state, data: action.payload };
+    default:
+      return state;
+  }
+}

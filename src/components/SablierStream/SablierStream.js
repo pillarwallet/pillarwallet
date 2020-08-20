@@ -24,6 +24,8 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
+import t from 'translations/translate';
+
 import { MediumText, BaseText } from 'components/Typography';
 import Progress from 'components/Progress';
 import { Spacing } from 'components/Layout';
@@ -106,13 +108,13 @@ class SablierStream extends React.Component<Props> {
   isOutgoingStream = () => {
     const { stream, activeAccountAddress } = this.props;
     return isCaseInsensitiveMatch(stream.sender, activeAccountAddress);
-  }
+  };
 
   navigateToDetails = () => {
     const { navigation, stream } = this.props;
     const isOutgoingStream = this.isOutgoingStream();
     navigation.navigate(isOutgoingStream ? SABLIER_OUTGOING_STREAM : SABLIER_INCOMING_STREAM, { stream });
-  }
+  };
 
   render() {
     const {
@@ -134,9 +136,9 @@ class SablierStream extends React.Component<Props> {
     const { days, hours, minutes } = streamCountDownDHMS(stream);
     let remainingTimeString = '';
     if (days > 0) {
-      remainingTimeString = `${days}d ${hours}h`;
+      remainingTimeString = t('timeDaysHours', { days, hours });
     } else {
-      remainingTimeString = `${hours}h ${minutes}m`;
+      remainingTimeString = t('timeHoursMinutes', { hours, minutes });
     }
 
     const isOutgoing = this.isOutgoingStream();
@@ -145,11 +147,11 @@ class SablierStream extends React.Component<Props> {
 
     let streamStatus = '';
     if (streamCanceled) {
-      streamStatus = 'Canceled';
+      streamStatus = t('sablierContent.status.canceled');
     } else if (streamEnded) {
-      streamStatus = 'Ended';
+      streamStatus = t('sablierContent.status.ended');
     } else {
-      streamStatus = 'Remaining';
+      streamStatus = t('sablierContent.status.remaining');
     }
 
     const userAddress = isOutgoing ? stream.recipient : stream.sender;
@@ -172,7 +174,7 @@ class SablierStream extends React.Component<Props> {
               <DirectionIcon name={directionIconName} color={directionIconColor} />
             </DirectionIconWrapper>
             <Spacing w={6} />
-            <MediumText big>{formattedAmount} {token.symbol}</MediumText>
+            <MediumText big>{t('tokenValue', { value: formattedAmount, token: token.symbol })}</MediumText>
           </AmountContainer>
           <Spacing h={15} />
           <Progress

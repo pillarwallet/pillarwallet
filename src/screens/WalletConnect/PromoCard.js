@@ -17,11 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
 import { withNavigation, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
+
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
@@ -90,13 +93,13 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
   };
 
   const renderExploreButton = () => (
-    <Button small positive title="Explore" leftIconName="search" onPress={handleExplorePress} />
+    <Button small positive title={t('button.explore')} leftIconName="search" onPress={handleExplorePress} />
   );
 
   if (promoCardCollapsed) {
     return (
       <CollapsedWrapper onPress={() => toggleWCPromoCard(false)}>
-        <CollapsedPromoText small secondary>A collection of dapps to use with Pillar</CollapsedPromoText>
+        <CollapsedPromoText small secondary>{t('walletConnectContent.banner.promo.paragraph')}</CollapsedPromoText>
         <Spacing w={70} />
         {renderExploreButton()}
       </CollapsedWrapper>

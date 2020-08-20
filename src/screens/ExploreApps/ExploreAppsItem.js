@@ -17,9 +17,12 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { Image, Linking } from 'react-native';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { MediumText, BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import type { AppItem } from 'utils/exploreApps';
@@ -50,9 +53,10 @@ const AppText = styled(BaseText)`
   color: ${themedColors.secondaryText};
 `;
 
-const ButtonWrapper = styled.View`
-  position: absolute;
-  right: 0;
+const TitleWrapper = styled.View`
+  flex-direction: row;
+  flex: 1;
+  flex-wrap: wrap;
 `;
 
 const ExploreAppsItem = (props: Props) => {
@@ -64,17 +68,21 @@ const ExploreAppsItem = (props: Props) => {
     <AppItemWrapper >
       <AppItemRowWrapper>
         <Image source={item.logo} style={{ height: 48, width: 48, marginRight: 15 }} />
-        <AppName>{item.name}</AppName>
-        <ButtonWrapper>
-          <Button
-            title={item.disabled ? 'Coming soon' : 'View'}
-            onPress={handleAppUrl}
-            small
-            height={32}
-            horizontalPaddings={9}
-            disabled={item.disabled}
-          />
-        </ButtonWrapper>
+        <TitleWrapper>
+          <AppName>{item.name}</AppName>
+        </TitleWrapper>
+        <Button
+          title={item.disabled
+            ? t('walletConnectContent.label.upcomingApp')
+            : t('walletConnectContent.button.checkApp')
+          }
+          onPress={handleAppUrl}
+          small
+          height={32}
+          horizontalPaddings={9}
+          disabled={item.disabled}
+          style={{ maxWidth: 150 }}
+        />
       </AppItemRowWrapper>
       <AppText>{item.text}</AppText>
     </AppItemWrapper>
