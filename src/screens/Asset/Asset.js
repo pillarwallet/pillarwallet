@@ -235,8 +235,8 @@ class AssetScreen extends React.Component<Props, State> {
     return !isEq;
   }
 
-  goToSendTokenFlow = (assetData: Object, contact?: Object) => {
-    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData, contact });
+  goToSendTokenFlow = (assetData: Object) => {
+    this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
   goToExchangeFlow = (fromAssetCode: string, toAssetCode?: string) => {

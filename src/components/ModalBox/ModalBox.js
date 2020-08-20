@@ -22,13 +22,20 @@ import { Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import Modal from 'react-native-modal';
 
+// utils
 import { themedColors } from 'utils/themes';
+
+// components
+import Icon from 'components/Icon';
+
 
 type Props = {
   isVisible: boolean,
   onModalHide: () => void,
   children: React.Node,
   modalStyle?: StyleSheet.Styles,
+  showModalClose?: boolean,
+  noBoxMinHeight?: boolean,
 };
 
 const Wrapper = styled.KeyboardAvoidingView`
@@ -39,7 +46,7 @@ const Wrapper = styled.KeyboardAvoidingView`
 
 const Box = styled.View`
   flex-direction: column;
-  min-height: 320px;
+  ${({ noBoxMinHeight }) => !noBoxMinHeight && 'min-height: 320px;'}
   width: 100%;
   margin: auto 0;
   align-self: center;
@@ -47,21 +54,45 @@ const Box = styled.View`
   background-color: ${themedColors.card};
 `;
 
-const ModalBox = (props: Props) => (
+const ModalCloseButton = styled.TouchableOpacity`
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  border-radius: 15px;
+  height: 30px;
+  width: 30px;
+  justify-content: center;
+  align-items: center;
+  opacity: 0.5;
+`;
+
+const ModalBox = ({
+  isVisible,
+  onModalHide,
+  modalStyle,
+  children,
+  showModalClose,
+  noBoxMinHeight,
+}: Props) => (
   <Modal
-    isVisible={props.isVisible}
+    isVisible={isVisible}
     hasBackdrop
     backdropOpacity={0.7}
-    onModalHide={props.onModalHide}
-    onBackdropPress={props.onModalHide}
-    style={props.modalStyle}
+    onModalHide={onModalHide}
+    onBackdropPress={onModalHide}
+    style={modalStyle}
   >
+    {showModalClose && (
+      <ModalCloseButton onPress={onModalHide}>
+        <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
+      </ModalCloseButton>
+    )}
     <Wrapper
       enabled
       behavior={Platform.OS === 'ios' ? 'padding' : null}
     >
-      <Box>
-        {props.children}
+      <Box noBoxMinHeight={noBoxMinHeight}>
+        {children}
       </Box>
     </Wrapper>
   </Modal>
