@@ -18,11 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Alert } from 'react-native';
+import Intercom from 'react-native-intercom';
 import AsyncStorage from '@react-native-community/async-storage';
 import { BUILD_TYPE } from 'react-native-dotenv';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
 import RNRestart from 'react-native-restart';
+import { clearWebViewCookies } from 'utils/exchange';
+import { reportLog } from 'utils/common';
+import { firebaseIid } from 'services/firebase';
 
 const storage = Storage.getInstance('db');
 
@@ -120,6 +124,10 @@ export const switchEnvironments = async () => {
         onPress: async () => {
           const newEnv = storedEnv === 'production' ? 'staging' : 'production';
           await AsyncStorage.clear(); // removes storage and redux persist data
+          await Intercom.logout();
+          await firebaseIid.delete()
+            .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+          clearWebViewCookies();
           await storage.save('environment', newEnv, true).then(async () => {
             storedEnv = newEnv;
             RNRestart.Restart();
