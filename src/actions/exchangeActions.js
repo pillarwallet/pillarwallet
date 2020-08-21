@@ -316,7 +316,7 @@ export const markNotificationAsSeenAction = () => {
   };
 };
 
-export const getExchangeSupportedAssetsAction = () => {
+export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { supportedAssets },
@@ -339,7 +339,7 @@ export const getExchangeSupportedAssetsAction = () => {
       type: SET_EXCHANGE_SUPPORTED_ASSETS,
       payload: exchangeSupportedAssets,
     });
-
+    if (callback) callback();
     dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
   };
 };

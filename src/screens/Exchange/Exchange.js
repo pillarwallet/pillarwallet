@@ -161,8 +161,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const { navigation, getExchangeSupportedAssets } = this.props;
+    const { fromAsset, toAsset } = this.state;
     this._isMounted = true;
-    getExchangeSupportedAssets();
+    getExchangeSupportedAssets(() => {
+      // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
+      if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
+    });
 
     this.listeners = [
       navigation.addListener('didFocus', this.focusInputWithKeyboard),
@@ -410,7 +414,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     } = this.state;
 
     const { fromOptions, toOptions, horizontalOptions } = this.options;
-
+    const assetsLoaded = !!fromOptions.length && !!toOptions.length;
     const rightItems = getHeaderRightItems(
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
     );
@@ -437,11 +441,12 @@ class ExchangeScreen extends React.Component<Props, State> {
             keyboardShouldPersistTaps="handled"
             disableOnAndroid
           >
-            <FormWrapper >
+            {assetsLoaded &&
+            <FormWrapper>
               {this.getFromInput()}
               <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
               {this.getToInput()}
-            </FormWrapper>
+            </FormWrapper>}
             {!!disableNonFiatExchange &&
             <SWActivationCard
               message={t('smartWalletContent.exchangeActivation.message')}
@@ -519,7 +524,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   resetOffers: () => dispatch(resetOffersAction()),
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
-  getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
+  getExchangeSupportedAssets: (callback) => dispatch(getExchangeSupportedAssetsAction(callback)),
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
 });
 
