@@ -116,7 +116,7 @@ class App extends React.Component<Props, *> {
       Sentry.init({ dsn: getEnv('SENTRY_DSN') });
       Sentry.setRelease(release);
       Sentry.setDist(dist);
-      //Sentry.setTags({ environment: getEnv('BUILD_TYPE') });
+      Sentry.setTags({ environment: getEnv('BUILD_TYPE') });
     }
     this.state = {
       env: null,
