@@ -467,7 +467,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <SelectorOptions
           isVisible={showBuyOptions || showSellOptions}
           onHide={() => this.setState({ showBuyOptions: false, showSellOptions: false })}
-          title={showSellOptions ? 'Sell' : 'Buy'}
+          title={t(`label.${showSellOptions ? 'sell' : 'buy'}`)}
           options={showSellOptions ? fromOptions : toOptions}
           searchPlaceholder={t('form.selector.searchPlaceholder')}
           onOptionSelect={this.handleSelectorOptionSelect}

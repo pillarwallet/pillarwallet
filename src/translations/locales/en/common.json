@@ -109,7 +109,9 @@
     "yourEnsName": "Your wallet ENS name",
     "name": "Name",
     "address": "Address",
-    "resolvingEnsName": "Resolving ENS name"
+    "resolvingEnsName": "Resolving ENS name",
+    "buy": "Buy",
+    "sell": "Sell"
   },
 
   "button": {
