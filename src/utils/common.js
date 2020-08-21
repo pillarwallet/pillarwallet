@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as Sentry from '@sentry/react-native';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -38,6 +39,7 @@ import { format as formatDate, isToday, isYesterday } from 'date-fns';
 import { INFURA_PROJECT_ID, NETWORK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import t from 'translations/translate';
 
 // constants
 import {
@@ -516,8 +518,8 @@ type GroupedAndSortedData = {|
 
 export const humanizeDateString = (date: Date): string => {
   // by default don't show the year if the event happened this year
-  if (isToday(date)) return 'Today';
-  if (isYesterday(date)) return 'Yesterday';
+  if (isToday(date)) return t('label.today');
+  if (isYesterday(date)) return t('label.yesterday');
   const dateFormat = date.getFullYear() === new Date().getFullYear()
     ? 'MMM D'
     : 'MMM D YYYY';
@@ -589,10 +591,13 @@ export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasTo
 
   if (gasToken && !isEmpty(gasToken)) {
     const { symbol, decimals } = gasToken;
-    return `${formatAmount(utils.formatUnits(feeInWei.toString(), decimals), 2)} ${symbol}`;
+    return t('tokenValue', {
+      value: formatAmount(utils.formatUnits(feeInWei.toString(), decimals), 2),
+      token: symbol,
+    });
   }
 
-  return `${formatAmount(utils.formatEther(feeInWei.toString()))} ETH`;
+  return t('tokenValue', { value: formatAmount(utils.formatEther(feeInWei.toString())), token: ETH });
 };
 
 export const humanizeHexString = (hexString: ?string) => {

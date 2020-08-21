@@ -26,10 +26,11 @@ import Intercom from 'react-native-intercom';
 
 import { getRate, getBalance, sortAssets } from 'utils/assets';
 import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
-import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Option, HorizontalOption } from 'models/Selector';
@@ -193,7 +194,7 @@ const generateSupportedAssetsOptions = (
           rightColumnInnerStyle: { alignItems: 'flex-end' },
         },
       };
-    }).filter(asset => asset.key !== 'BTC');
+    }).filter(asset => asset.key !== BTC);
 };
 
 const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => {
@@ -272,9 +273,9 @@ export const getErrorMessage = (
   const { assetBalance = '', symbol = '' } = asset;
   const isValid = isValidNumber(amount);
   if (!isValid) {
-    return 'Incorrect number entered';
+    return t('error.exchange.incorrectNumber');
   } else if (!isEnoughAssetBalance(assetBalance, amount)) {
-    return `Amount should not be bigger than your balance - ${assetBalance} ${symbol}.`;
+    return t('error.exchange.amountTooBig', { assetBalance, symbol });
   }
   return '';
 };

@@ -65,6 +65,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Option } from 'models/Selector';
 
+import t from 'translations/translate';
 
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
@@ -424,7 +425,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <ContainerWithHeader
           headerProps={{
           rightItems,
-          centerItems: [{ title: 'Exchange' }],
+          centerItems: [{ title: t('title.exchange') }],
         }}
           inset={{ bottom: 'never' }}
         >
@@ -443,8 +444,8 @@ class ExchangeScreen extends React.Component<Props, State> {
             </FormWrapper>
             {!!disableNonFiatExchange &&
             <SWActivationCard
-              message="To start exchanging assets you need to activate your Smart Wallet"
-              buttonTitle="Activate Smart Wallet"
+              message={t('smartWalletContent.exchangeActivation.message')}
+              buttonTitle={t('smartWalletContent.exchangeActivation.button')}
             />
           }
             {!!isSubmitted &&
@@ -463,7 +464,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           onHide={() => this.setState({ showBuyOptions: false, showSellOptions: false })}
           title={showSellOptions ? 'Sell' : 'Buy'}
           options={showSellOptions ? fromOptions : toOptions}
-          searchPlaceholder="Search"
+          searchPlaceholder={t('form.selector.searchPlaceholder')}
           onOptionSelect={this.handleSelectorOptionSelect}
           horizontalOptionsData={horizontalOptions}
         />

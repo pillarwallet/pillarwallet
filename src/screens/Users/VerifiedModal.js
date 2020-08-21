@@ -86,7 +86,7 @@ const VerifiedModal = (props: Props) => {
         <Spacing h={15} />
         <BaseText center medium>{text}</BaseText>
         <Spacing h={32} />
-        <Button title={t('buttons.inviteFriends')} onPress={onButtonPress} />
+        <Button title={t('button.inviteFriends')} onPress={onButtonPress} />
       </Wrapper>
     </SlideModal>
   );

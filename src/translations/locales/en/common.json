@@ -20,12 +20,28 @@
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
 
+  "timeDaysHours": "{{days}}d {{hours}}h",
+  "timeHoursMinutes": " {{hours}}h {{minutes}}m",
+
+  "navigationTabs": {
+    "home": "Home",
+    "assets": "Assets",
+    "connect": "Connect",
+    "services": "Services"
+  },
+
   "title": {
     "accounts": "Accounts",
     "addFundsToWallet": "Add funds to Pillar",
+    "mainActivityFeed": "History",
     "publicAddress": "Public address",
     "success": "Success",
-    "transactions": "Transactions"
+    "totalBalance": "Total balances",
+    "transactions": "Transactions",
+    "addNewContact": "Add new contact",
+    "editContact": "Edit contact",
+    "addressBook": "Address book",
+    "exchange": "Exchange"
   },
 
   "label": {
@@ -36,6 +52,7 @@
     "adding": "Adding",
     "backedUp": "Backup secured",
     "badge": "Badge",
+    "canceled": "Canceled",
     "collectibleFromUser": "Collectible from {{username}}",
     "collectibleToUser": "Collectible to {{username}}",
     "contactSupport": "Contact support",
@@ -44,6 +61,7 @@
     "enabled": "Enabled",
     "enableSmartWalletGasRelayerPLR": "Enable transaction fees with PLR",
     "enabling": "Enabling",
+    "ended": "Ended",
     "erc20TokensOnly": "ERC-20 tokens only",
     "faceIDSettings": "Face ID Settings",
     "feeToken": "Fee {{tokenValue}}",
@@ -53,11 +71,13 @@
     "fromSmartWallet": "from Smart Wallet",
     "imported": "Imported",
     "incomingBalance": "Incoming balance",
+    "incomingSablierStream": "Incoming stream",
     "keyWalletVisibilityToggle": "Legacy wallet (advanced)",
     "loadingDefaultAssets": "Loading default assets",
     "needToActivate": "Need to activate",
     "newSmartWalletAccountDevice": "New Smart Wallet account device",
     "notApplicable": "N/A",
+    "outgoingSablierStream": "Outgoing stream",
     "purchase": "Purchase",
     "received": "Received",
     "receiving": "Receiving",
@@ -77,13 +97,19 @@
     "smartWalletAccountDeviceAdded": "New account device added",
     "smartWalletAccountDeviceRemoved": "Account device removed",
     "smartWalletGasRelayerPLR": "Smart Wallet fees with PLR token",
+    "started": "Started",
+    "today": "Today",
     "toKeyWallet": "to Key wallet",
     "toPPN": "to Pillar Network",
     "topUp": "Top up",
     "toSmartWallet": "to Smart Wallet",
     "withdraw": "Withdraw",
     "withdrawal": "Withdrawal",
-    "yourEnsName": "Your wallet ENS name"
+    "yesterday": "Yesterday",
+    "yourEnsName": "Your wallet ENS name",
+    "name": "Name",
+    "address": "Address",
+    "resolvingEnsName": "Resolving ENS name"
   },
 
   "button": {
@@ -93,15 +119,18 @@
     "addContacts": "Add contacts",
     "addDetails": "Add details",
     "addFunds": "Add funds",
+    "approve": "Approve",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
     "buyTokens": "Buy tokens",
     "buyWithCard": "Buy with a card",
     "buyWithCardOrApplePay": "Buy with a card or Apple Pay",
     "confirm": "Confirm",
+    "connect": "Connect",
     "claim": "Claim",
     "close": "Close",
     "depositMore": "Deposit more",
+    "explore": "Explore",
     "exchange": "Exchange",
     "hide": "Hide",
     "inviteAndGetTokens": "Invite and earn free tokens",
@@ -111,6 +140,7 @@
     "notEnoughPLR": "Not enough PLR",
     "purchaseMore": "Purchase more",
     "referFriends": "Refer friends",
+    "reject": "Reject",
     "retry": "Retry",
     "receive": "Receive",
     "seeOnEtherscan": "See on Etherscan",
@@ -132,13 +162,20 @@
     "topUpPLRTank": "Top up PLR Tank",
     "transferToSmartWallet": "Transfer to Smart Wallet",
     "tryAgain": "Try again",
+    "viewAllItemsAmount": "View all {{amount}}",
+    "viewAll": "View all",
     "viewBadge": "View badge",
+    "viewBalance": "View balance",
     "viewDeposit": "View deposit",
     "viewOnBlockchain": "View on the blockchain",
     "viewPoolTogetherPool": "View pool",
+    "viewSablierStream": "View stream",
     "verify": "Verify",
     "withdraw": "Withdraw",
-    "withdrawMore": "Withdraw more"
+    "withdrawMore": "Withdraw more",
+    "delete": "Delete",
+    "addNew": "Add new",
+    "save": "Save"
   },
 
   "paragraph": {
@@ -216,6 +253,13 @@
       "button": {
         "ok": "I understand"
       }
+    },
+    "walletConnectAppsListExplain": {
+      "title": "What is it?",
+      "description": "A curated collection of web3 apps available to use with Pillar. Sign in without creating an account. Just scan QR and go.",
+      "button": {
+        "ok": "Cool, thanks"
+      }
     }
   },
 
@@ -244,6 +288,9 @@
     },
     "subscription": {
       "placeholder": "Your e-mail"
+    },
+    "selector": {
+      "searchPlaceholder": "Search"
     }
   },
 
@@ -252,8 +299,19 @@
       "timeOut": "Transaction timed out",
       "default": "Transaction failed"
     },
+    "emptyAddress": "Address cannot be empty",
+    "contactWithAddressExist": "Contact with this address already exist",
+    "contactWithNameExist": "Contact with this name already exist",
+    "emptyName": "Name cannot be empty",
     "invalid": {
+      "address": "Invalid address",
       "email": "Please enter a valid email"
+    },
+    "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
+    "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
+    "exchange": {
+      "incorrectNumber": "Incorrect number entered",
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
     }
   },
 
@@ -304,6 +362,10 @@
         "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet"
       }
     },
+    "exchangeActivation": {
+      "message": "To start exchanging assets you need to activate your Smart Wallet",
+      "button": "Activate Smart Wallet"
+    },
     "tabs": {
       "tokens": {
         "title": "Tokens"
@@ -324,7 +386,7 @@
           "paragraph": "Check if the name was entered correctly or add custom token"
         }
       },
-      "withBalance":{
+      "withBalance": {
         "title": "All non-zero"
       }
     }
@@ -351,6 +413,24 @@
       "noneFound": {
         "title": "Nobody found",
         "paragraph": "Make sure you entered phone or email address correctly"
+      }
+    }
+  },
+
+  "aaveContent": {
+    "depositedAssetsList": {
+      "title": "Aave Deposits"
+    }
+  },
+
+  "badgesContent": {
+    "badgesList": {
+      "title": "Game of badges",
+      "emptyState": {
+        "noBadges": {
+          "title": "No badges",
+          "paragraph": "You do not have badges yet"
+        }
       }
     }
   },
@@ -382,13 +462,13 @@
       "biometricLogin": {
         "title": "Biometric login"
       },
-      "changePIN":{
+      "changePIN": {
         "title": "Change PIN"
       },
       "community": {
         "title": "Community",
         "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
-        "label":{
+        "label": {
           "follow": "Follow us"
         }
       },
@@ -460,6 +540,9 @@
       },
       "userProfile": {
         "title": "User profile"
+      },
+      "addressBook": {
+        "title": "Address book"
       }
     },
     "button": {
@@ -567,7 +650,9 @@
       "remainingCount": "{{amount}} more",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
-      "claiming": "Claiming..."
+      "claiming": "Claiming...",
+      "inviteFriends": "Invite friends to Pillar",
+      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more."
     }
   },
 
@@ -604,7 +689,70 @@
     }
   },
 
-  "toast":{
+  "poolTogetherContent": {
+    "label": {
+      "prizeInDollars": "Prize ${{prize}}",
+      "ownedTickets": "{{count}} ticket",
+      "ownedTickets_plural": "{{count}} tickets",
+      "winChance": "{{chancePercent}} chance"
+    },
+    "ticketsList": {
+      "title": "PoolTogether savings game"
+    }
+  },
+
+  "sablierContent": {
+    "status": {
+      "canceled": "Canceled",
+      "ended": "Ended",
+      "Remaining": "Remaining"
+    },
+    "moneyStreamingList": {
+      "title": "Sablier money streaming"
+    }
+  },
+
+  "walletConnectContent": {
+    "title": {
+      "appsList": "Explore apps",
+      "requestsList": "Requests",
+      "activeConnections": "Active сonnections",
+      "connect": "Connect",
+      "walletConnectRequests": "WalletConnect Request",
+      "walletConnect": "Wallet Connect",
+      "requestType": {
+        "call": "Call Request",
+        "transaction": "Transaction Request",
+        "message": "Message Request",
+        "unsupported": "Unsupported Request",
+        "default": "Request"
+      }
+    },
+    "label": {
+      "requestFrom": "Request from {{name}}",
+      "unknownRequestName": "Unknown",
+      "requestDescription": "Description",
+      "requestLink": "Url",
+      "upcomingApp": "Coming soon"
+    },
+    "banner": {
+      "promo": {
+        "paragraph": "A collection of dapps to use with Pillar"
+      }
+    },
+    "button": {
+      "approveType": {
+        "call": "Approve Call",
+        "transaction": "Approve Transaction",
+        "message": "Approve Message",
+        "unsupported": "Approve Unsupported",
+        "default": "Approve"
+      },
+      "checkApp": "View"
+    }
+  },
+
+  "toast": {
     "cantUpdateUser": "Changes have not been saved. Please try again later",
     "cantVerifyCode": "We can't verify your code at this time. Please try again later",
     "cantVerifyInfo": {
@@ -685,10 +833,21 @@
     "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",
     "cryptoPurchaseLaunchFailed": "Sorry, we had a problem trying to open this service. Please try again later.",
-    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again."
+    "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
+    "contactUpdated": "Contact updated",
+    "contactDeleted": "Contact deleted",
+    "contactAdded": "New contact added"
   },
 
   "alert": {
+    "deleteContact": {
+      "title": "Delete {{contactName}}",
+      "message": "Are you sure you would like to delete this contact?",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Yes, delete"
+      }
+    },
     "hideAsset": {
       "title": "Are you sure?",
       "message": "This will hide {{asset}} from your wallet",
@@ -702,7 +861,7 @@
       "message": "After logging out you will not be able to log in back to this wallet without 12 words backup.",
       "button": {
         "cancel": "Cancel",
-        "confirm": "Confirm"
+        "ok": "Confirm"
       }
     },
     "attemptToLogOutWithoutBackup": {
@@ -716,6 +875,14 @@
     "invalidReferralDeepLink": {
       "title": "Invalid link",
       "message": "Referral code is missing"
+    },
+    "walletConnectDisconnect": {
+      "title": "Disconnect from {{name}}",
+      "message": "Please confirm disconnect from {{name}}.",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Disconnect"
+      }
     }
   }
 }
