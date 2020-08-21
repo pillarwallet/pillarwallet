@@ -102,7 +102,7 @@ type Props = {
   accounts: Accounts,
   smartWalletState: Object,
   exchangeSupportedAssets: Asset[],
-  getExchangeSupportedAssets: () => void,
+  getExchangeSupportedAssets: (callback: () => void) => void,
   hasSeenExchangeIntro: boolean,
   updateHasSeenExchangeIntro: () => void,
   theme: Theme,
