@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
@@ -63,6 +63,9 @@ export type Props = {
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
   onCustomOptionSet?: (option: Option) => void,
+  onModalsHidden?: () => void,
+  hideModals?: boolean,
+  resetOptionsModalOnHiddenOptionAdded?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -97,9 +100,26 @@ const Selector = ({
   customOptionButtonLabel,
   customOptionButtonOnPress,
   onCustomOptionSet,
+  onModalsHidden,
+  hideModals,
+  resetOptionsModalOnHiddenOptionAdded,
 }: Props) => {
+  const [changingModals, setChangingModals] = useState(false);
   const [isOptionsVisible, setIsOptionsVisible] = useState(false);
   const [isScannerVisible, setIsScannerVisible] = useState(false);
+
+  /**
+   * reset options modal if set by resetOptionsModalOnHiddenOptionAdded prop:
+   * options modal was force hidden when option value was set
+   */
+  useEffect(() => {
+    if (resetOptionsModalOnHiddenOptionAdded
+      && hideModals
+      && isOptionsVisible
+      && !isEmpty(selectedOption)) {
+      setIsOptionsVisible(false);
+    }
+  }, [selectedOption]);
 
   const handleScannerReadResult = (address: string) => {
     if (isValidAddress(address)) {
@@ -116,6 +136,8 @@ const Selector = ({
 
   const handleScannerOpen = () => {
     Keyboard.dismiss();
+    setIsOptionsVisible(false);
+    setChangingModals(true);
     setIsScannerVisible(true);
   };
 
@@ -161,6 +183,11 @@ const Selector = ({
   const disabled = !hasOptions && !allowEnteringCustomAddress;
   const placeholderText = !disabled ? `${placeholder}...` : 'no options to select';
 
+  const onModalHidden = () => {
+    setChangingModals(false);
+    if (onModalsHidden) onModalsHidden();
+  };
+
   return (
     <>
       <Wrapper style={wrapperStyle}>
@@ -175,7 +202,7 @@ const Selector = ({
         </SelectedOption>
       </Wrapper>
       <SelectorOptions
-        isVisible={isOptionsVisible}
+        isVisible={!hideModals && !changingModals && isOptionsVisible}
         onHide={() => setIsOptionsVisible(false)}
         title={optionsTitle || placeholder}
         options={options}
@@ -194,10 +221,16 @@ const Selector = ({
         onCustomOptionSet={onCustomOptionSet}
         customOptionButtonLabel={customOptionButtonLabel}
         customOptionButtonOnPress={customOptionButtonOnPress}
+        onHidden={onModalHidden}
       />
       <AddressScanner
-        isActive={isScannerVisible}
-        onCancel={() => setIsScannerVisible(false)}
+        isActive={!hideModals && !changingModals && isScannerVisible}
+        onCancel={() => {
+          setIsScannerVisible(false);
+          setChangingModals(true);
+          setIsOptionsVisible(true);
+        }}
+        onModalHidden={onModalHidden}
         onRead={handleScannerReadResult}
       />
       {children}
