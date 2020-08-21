@@ -189,8 +189,12 @@ export const isEnoughBalanceForTransactionFee = (
 
   // subtract from balance if transaction asset matches fee asset, not suitable for collectibles
   if (transactionAmount && feeSymbol === transactionSymbol) {
-    const amountInWei = new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals));
-    balanceInWei = balanceInWei.minus(amountInWei);
+    try {
+      const amountInWei = new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals));
+      balanceInWei = balanceInWei.minus(amountInWei);
+    } catch (e) {
+      //
+    }
   }
 
   const txFeeInWeiBN = new BigNumber(txFeeInWei.toString()); // compatibility

@@ -116,6 +116,13 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
 };
 
 export const formatEstimated = (estimated: ParsedEstimate) => {
+  if (!estimated) {
+    return {
+      ethCost: new BigNumber(0),
+      gasTokenCost: new BigNumber(0),
+      gasToken: new BigNumber(0),
+    };
+  }
   let { gasTokenCost, totalCost } = estimated;
   const { gasToken, relayerFeatures } = estimated;
   const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
