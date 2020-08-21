@@ -61,7 +61,7 @@ export const getAssetBalanceFromFiat = (
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const assetBalanceFromFiat = fiatBalance ?
     parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : 0;
-  return assetBalanceFromFiat;
+  return assetBalanceFromFiat || 0;
 };
 
 export const getFormattedBalanceInFiat = (
@@ -103,9 +103,9 @@ export const calculateAmountToBuy = (askRate: number | string, amountToSell: num
   return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
-export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?number => {
+export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string => {
   const bestRate = maxBy(offers, 'askRate')?.askRate;
-  if (!bestRate) return null;
+  if (!bestRate || !fromAmount) return null;
   return calculateAmountToBuy(bestRate, fromAmount);
 };
 

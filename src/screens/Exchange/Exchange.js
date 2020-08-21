@@ -229,7 +229,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       toAsset: fromAsset,
       fromAsset: toAsset,
       fromAmount: '',
-    }, this.resetSearch);
+    }, () => {
+      this.resetSearch();
+      this.focusInputWithKeyboard();
+    });
   };
 
   setErrorMessage = (errorMessage: string) => this.setState({ errorMessage });
