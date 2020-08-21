@@ -36,6 +36,7 @@ type Props = {
   modalStyle?: StyleSheet.Styles,
   showModalClose?: boolean,
   noBoxMinHeight?: boolean,
+  onModalHidden?: () => void,
 };
 
 const Wrapper = styled.KeyboardAvoidingView`
@@ -56,11 +57,12 @@ const Box = styled.View`
 
 const ModalCloseButton = styled.TouchableOpacity`
   position: absolute;
-  top: 0px;
-  right: 0px;
+  top: 15px;
+  right: -15px;
   border-radius: 15px;
-  height: 30px;
-  width: 30px;
+  height: 60px;
+  width: 60px;
+  padding: 15px;
   justify-content: center;
   align-items: center;
   opacity: 0.5;
@@ -73,24 +75,26 @@ const ModalBox = ({
   children,
   showModalClose,
   noBoxMinHeight,
+  onModalHidden,
 }: Props) => (
   <Modal
     isVisible={isVisible}
     hasBackdrop
     backdropOpacity={0.7}
-    onModalHide={onModalHide}
+    onModalHide={onModalHidden}
     onBackdropPress={onModalHide}
     style={modalStyle}
   >
-    {showModalClose && (
-      <ModalCloseButton onPress={onModalHide}>
-        <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
-      </ModalCloseButton>
-    )}
     <Wrapper
       enabled
       behavior={Platform.OS === 'ios' ? 'padding' : null}
+      style={{ flex: 1 }}
     >
+      {showModalClose && (
+        <ModalCloseButton onPress={onModalHide}>
+          <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
+        </ModalCloseButton>
+      )}
       <Box noBoxMinHeight={noBoxMinHeight}>
         {children}
       </Box>

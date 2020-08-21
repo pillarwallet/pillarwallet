@@ -60,6 +60,7 @@ type Props = {
   title?: string,
   contacts: Contact[],
   showQRScanner?: boolean,
+  onModalHidden?: () => void,
 };
 
 const InputWrapper = styled.View`
@@ -136,6 +137,7 @@ const ContactDetailsModal = ({
   title,
   contacts,
   showQRScanner,
+  onModalHidden,
 }: Props) => {
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
@@ -233,6 +235,7 @@ const ContactDetailsModal = ({
     <ModalBox
       isVisible={isVisible}
       onModalHide={onModalHide}
+      onModalHidden={onModalHidden}
       showModalClose
       noBoxMinHeight
     >
