@@ -181,7 +181,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       data,
     };
 
-    const estimated = await smartWalletService()
+    const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
       .then(result => buildTxFeeInfo(result, useGasToken))
       .catch(() => null);

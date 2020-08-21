@@ -267,7 +267,7 @@ export const getSmartWalletTxFee = async (transaction: Object, useGasToken: bool
     value: transaction.amount,
   };
 
-  const estimated = await smartWalletService()
+  const estimated = await smartWalletService
     .estimateAccountTransaction(estimateTransaction)
     .then(result => buildTxFeeInfo(result, useGasToken))
     .catch((e) => {

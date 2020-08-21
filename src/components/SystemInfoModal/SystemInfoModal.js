@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import { BUILD_NUMBER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
@@ -48,6 +47,7 @@ const SystemInfoModal = () => {
     NOTIFICATIONS_URL,
     COLLECTIBLES_NETWORK,
     OPEN_SEA_API,
+    BUILD_NUMBER,
   } = environmentVars();
   return (
     <Wrapper regularPadding>

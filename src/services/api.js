@@ -21,10 +21,6 @@ import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import { Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
-import {
-  OPEN_SEA_API_KEY,
-  ETHPLORER_API_KEY,
-} from 'react-native-dotenv';
 import { environmentVars, getEnv } from 'configs/envConfig';
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
@@ -107,7 +103,7 @@ type DirectSdkRequestOptions = {|
   params?: Object,
 |};
 
-const ethplorerSdk = new EthplorerSdk(ETHPLORER_API_KEY);
+const ethplorerSdk = new EthplorerSdk(getEnv('ETHPLORER_API_KEY'));
 
 class SDKWrapper {
   pillarWalletSdk: PillarSdk = null;
@@ -469,7 +465,7 @@ class SDKWrapper {
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          'X-API-KEY': OPEN_SEA_API_KEY,
+          'X-API-KEY': getEnv('OPEN_SEA_API_KEY'),
         },
       }))
       .then(({ data }: AxiosResponse) => data)

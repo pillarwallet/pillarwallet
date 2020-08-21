@@ -20,8 +20,8 @@
 import * as React from 'react';
 import { AppState } from 'react-native';
 import { connect } from 'react-redux';
-import { DEFAULT_PIN } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -117,8 +117,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
       return;
     }
 
-    if (!this.errorMessage && DEFAULT_PIN) {
-      this.handlePinSubmit(DEFAULT_PIN);
+    if (!this.errorMessage && getEnv('DEFAULT_PIN')) {
+      this.handlePinSubmit(getEnv('DEFAULT_PIN'));
     }
 
     if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {

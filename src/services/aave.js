@@ -49,17 +49,24 @@ class AaveService {
   lendingPoolCoreAddress: ?string;
   lendingPoolAddress: ?string;
   aaveTokenAddresses: { [string]: string } = {};
-  lendingPoolAddressesProvider: ?Object;
+  lendingPoolAddressesProvider: Object;
 
   constructor() {
-    this.lendingPoolAddressesProvider = getContract(
-      getEnv('AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS'),
-      AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
-    );
+    this.lendingPoolAddressesProvider = {};
+  }
+
+  getLendingPoolAddressesProvider(): Object {
+    if (isEmpty(this.lendingPoolAddressesProvider)) {
+      this.lendingPoolAddressesProvider = getContract(
+        getEnv('AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS'),
+        AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
+      ) || {};
+    }
+    return this.lendingPoolAddressesProvider;
   }
 
   async getLendingPoolCoreAddress(): Promise<string> {
-    if (!this.lendingPoolAddressesProvider) return '';
+    if (!isEmpty(this.getLendingPoolAddressesProvider())) return '';
 
     if (!this.lendingPoolCoreAddress) {
       this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
@@ -78,7 +85,7 @@ class AaveService {
   }
 
   async getLendingPoolAddress(): Promise<string> {
-    if (!this.lendingPoolAddressesProvider) return '';
+    if (!isEmpty(this.getLendingPoolAddressesProvider())) return '';
 
     if (!this.lendingPoolAddress) {
       this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
@@ -106,7 +113,7 @@ class AaveService {
   }
 
   async getAaveTokenContractForAsset(assetAddress: string): Promise<?Object> {
-    if (!this.lendingPoolAddressesProvider) return null;
+    if (!isEmpty(this.getLendingPoolAddressesProvider())) return null;
 
     const aaveTokenAddress = await this.getAaveTokenAddress(assetAddress);
     if (!aaveTokenAddress) return null;
@@ -248,12 +255,6 @@ class AaveService {
   }
 }
 
-let aaveInstance;
-const getAaveInsatnce = () => {
-  if (!aaveInstance) {
-    aaveInstance = new AaveService();
-  }
-  return aaveInstance;
-};
+const aaveInstance = new AaveService();
 
-export default getAaveInsatnce;
+export default aaveInstance;

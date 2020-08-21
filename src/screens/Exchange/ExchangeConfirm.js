@@ -257,7 +257,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     let transaction = { recipient, value };
     if (data) transaction = { ...transaction, data };
 
-    const estimated = await smartWalletService()
+    const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
       .then(result => buildTxFeeInfo(result, useGasToken))
       .catch(() => null);

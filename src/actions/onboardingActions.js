@@ -185,7 +185,7 @@ export const finishRegistration = async ({
   dispatch(setRatesAction(rates));
 
   // create smart wallet account only for new wallets
-  await smartWalletService().reset();
+  await smartWalletService.reset();
   await dispatch(importSmartWalletAccountsAction(privateKey));
 
   dispatch(fetchBadgesAction(false));

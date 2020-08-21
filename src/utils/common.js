@@ -36,7 +36,6 @@ import {
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
-import { INFURA_PROJECT_ID } from 'react-native-dotenv';
 import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import t from 'translations/translate';
@@ -398,7 +397,7 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraProvider = new providers.InfuraProvider(network, INFURA_PROJECT_ID);
+  const infuraProvider = new providers.InfuraProvider(network, getEnv('INFURA_PROJECT_ID'));
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);

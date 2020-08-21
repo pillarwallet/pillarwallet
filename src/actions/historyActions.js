@@ -140,7 +140,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
 
-    const smartWalletTransactions = await smartWalletService().getAccountTransactions(lastSyncedTransactionId);
+    const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     const accountAssets = smartAccountAssetsSelector(getState());
     const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     const assetsList = getAssetsAsList(accountAssets);
@@ -200,7 +200,7 @@ export const updateTransactionStatusAction = (hash: string) => {
     let sdkTransactionInfo;
     let sdkToAppStatus;
     if (isSmartAccount) {
-      sdkTransactionInfo = await smartWalletService().getTransactionInfo(hash);
+      sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
       if (!sdkTransactionInfo) {
         dispatch(transactionUpdate(''));
         return;

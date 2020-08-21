@@ -20,7 +20,6 @@
 import { Alert } from 'react-native';
 import Intercom from 'react-native-intercom';
 import AsyncStorage from '@react-native-community/async-storage';
-import { BUILD_TYPE } from 'react-native-dotenv';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
 import RNRestart from 'react-native-restart';
@@ -29,6 +28,26 @@ import { reportLog } from 'utils/common';
 import { firebaseIid } from 'services/firebase';
 
 const storage = Storage.getInstance('db');
+
+const buildType = __DEV__ ? 'development' : 'production';
+
+// the following vars are CI/BUILD/DEVELOPER related
+const buildEnvironment = {
+  SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
+  BUILD_NUMBER: '_build_number_',
+  BUILD_TYPE: buildType,
+  OPEN_SEA_API_KEY: '_open_sea_api_key_',
+  INFURA_PROJECT_ID: '_infura_project_id_',
+  ETHPLORER_API_KEY: '_ethplorer_api_key_',
+  RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
+};
+
+const devOptions = {
+  SHOW_THEME_TOGGLE: null,
+  SHOW_ONLY_STORYBOOK: null,
+  SHOW_LANG_TOGGLE: null,
+  DEFAULT_PIN: null,
+};
 
 const envVars = {
   production: {
@@ -59,6 +78,8 @@ const envVars = {
     POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions',
     SABLIER_CONTRACT_ADDRESS: '0xA4fc358455Febe425536fd1878bE67FfDBDEC59a',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier',
+    ...buildEnvironment,
+    ...devOptions,
   },
   staging: {
     TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
@@ -88,13 +109,12 @@ const envVars = {
     POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions-kovan',
     SABLIER_CONTRACT_ADDRESS: '0xc04Ad234E01327b24a831e3718DBFcbE245904CC',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier-kovan',
-  },
-  mixed: {
-
+    ...buildEnvironment,
+    ...devOptions,
   },
 };
 
-let storedEnv = BUILD_TYPE === 'production' ? 'production' : 'staging';
+let storedEnv = buildType === 'production' ? 'production' : 'staging';
 
 export const setupEnv = () => {
   return storage.get('environment').then(res => {
