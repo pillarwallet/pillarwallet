@@ -18,9 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { isFiatCurrency } from 'utils/exchange';
-import {
-  getBestAmountToBuy, validateInput, shouldTriggerSearch, getAssetBalanceFromFiat,
-} from 'screens/Exchange/utils';
+import { validateInput, shouldTriggerSearch, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 const assetEth = { value: 'ETH', assetBalance: '42.42', name: 'Ethereum' };
 const assetPlr = { value: 'PLR', assetBalance: '0.001', name: 'Pillar' };
