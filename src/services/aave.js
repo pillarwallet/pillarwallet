@@ -66,7 +66,7 @@ class AaveService {
   }
 
   async getLendingPoolCoreAddress(): Promise<string> {
-    if (!isEmpty(this.getLendingPoolAddressesProvider())) return '';
+    if (isEmpty(this.getLendingPoolAddressesProvider())) return '';
 
     if (!this.lendingPoolCoreAddress) {
       this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
@@ -85,7 +85,7 @@ class AaveService {
   }
 
   async getLendingPoolAddress(): Promise<string> {
-    if (!isEmpty(this.getLendingPoolAddressesProvider())) return '';
+    if (isEmpty(this.getLendingPoolAddressesProvider())) return '';
 
     if (!this.lendingPoolAddress) {
       this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
@@ -113,7 +113,7 @@ class AaveService {
   }
 
   async getAaveTokenContractForAsset(assetAddress: string): Promise<?Object> {
-    if (!isEmpty(this.getLendingPoolAddressesProvider())) return null;
+    if (isEmpty(this.getLendingPoolAddressesProvider())) return null;
 
     const aaveTokenAddress = await this.getAaveTokenAddress(assetAddress);
     if (!aaveTokenAddress) return null;
