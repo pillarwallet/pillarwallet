@@ -404,6 +404,7 @@ jobs:
           command: |
             export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_appcenter
       - store_artifacts:
           path: android/app/build/outputs/apk
