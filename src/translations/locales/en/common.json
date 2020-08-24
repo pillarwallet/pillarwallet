@@ -805,6 +805,53 @@
     }
   },
 
+  "servicesContent": {
+    "title": {
+      "servicesScreen": "Services"
+    },
+    "exchange": {
+      "title": "Offers engine",
+      "description": "Aggregated offers from many decentralized exchanges and token swap services",
+      "label": {
+        "exchangeCount": "{{count}} exchange",
+        "exchangeCount_plural": "{{count}} exchanges"
+      }
+    },
+    "aaveDeposit": {
+      "title": "AAVE Deposit",
+      "description": "Deposit crypto and earn interest in real-time"
+    },
+    "poolTogether": {
+      "title": "Pool Together savings game",
+      "description": "Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!"
+    },
+    "sablier": {
+      "title": "Sablier money streaming",
+      "description": "Stream money to people and organizations in real-time with just one deposit"
+    },
+    "peerToPeerTrading": {
+      "title": "Peer-to-peer trading",
+      "description": "Swap tokens directly with others. Safe, secure, anonymous"
+    },
+    "ramp": {
+      "title": "Buy with Ramp.Network (EU)",
+      "description": "Buy Now"
+    },
+    "wyre": {
+      "title": "Buy with Wyre (Non-EU)",
+      "description": "Buy Now"
+    },
+    "altalix": {
+      "title": "Buy with Altalix",
+      "description": "Buy Now"
+    },
+    "label": {
+      "requiresActivation": "Requires activation",
+      "forSmartWallet": "For Smart Wallet",
+      "soon": "soon"
+    }
+  },
+
   "toast": {
     "cantUpdateUser": "Changes have not been saved. Please try again later",
     "cantVerifyCode": "We can't verify your code at this time. Please try again later",
