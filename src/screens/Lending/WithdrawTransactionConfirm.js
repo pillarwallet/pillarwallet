@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -151,12 +152,12 @@ const WithdrawTransactionConfirm = ({
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: 'Review' }] }}
+      headerProps={{ centerItems: [{ title: t('aaveContent.title.withdrawConfirmationScreen') }] }}
       footer={
         <BottomWrapper>
           <FeeInfo alignItems="center">
             <FeeLabelToggle
-              labelText="Fee"
+              labelText={t('label.fee')}
               txFeeInWei={txFeeInfo?.fee}
               gasToken={txFeeInfo?.gasToken}
               showFiatDefault
@@ -167,7 +168,7 @@ const WithdrawTransactionConfirm = ({
             block
             disabled={isSubmitted}
             isLoading={isSubmitted}
-            title="Confirm withdraw"
+            title={t('aaveContent.button.confirmWithdrawal')}
             onPress={onNextButtonPress}
           />
         </BottomWrapper>

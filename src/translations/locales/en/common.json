@@ -20,6 +20,7 @@
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
   "percentValue": "{{value}} %",
+  "availableValue": "Available: {{value}}",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": " {{hours}}h {{minutes}}m",
@@ -114,7 +115,9 @@
     "endingSoon": "Ending soon",
     "endsIn": "Ends in {{endsIn}}",
     "fetchingFee": "Fetching fee...",
-    "notEnoughToken": "Not enough {{token}}"
+    "notEnoughToken": "Not enough {{token}}",
+    "fee": "Fee",
+    "gettingFee": "Getting fee..."
   },
 
   "button": {
@@ -185,7 +188,8 @@
     "next": "Next",
     "spendMax": "Spend max",
     "confirmWithdraw": "Confirm withdraw",
-    "enable": "Enable"
+    "enable": "Enable",
+    "useMax": "Use max"
   },
 
   "paragraph": {
@@ -420,6 +424,29 @@
   "aaveContent": {
     "depositedAssetsList": {
       "title": "Aave Deposits"
+    },
+    "title": {
+      "assetsToDepositScreen": "Choose asset to deposit",
+      "noAssetsToDeposit": "No assets to deposit",
+      "noDepositedAssets": "No deposited assets",
+      "depositedAssetsScreen": "Your deposits",
+      "depositConfirmationScreen": "Review",
+      "depositAmountScreen": "Add deposit",
+      "withdrawAmountScreen": "Withdraw",
+      "depositedAssetScreen": "Your deposit",
+      "activityFeed": "History",
+      "withdrawConfirmationScreen": "Review"
+    },
+    "label": {
+      "currentAPY": "Current APY",
+      "earned": "Earned"
+    },
+    "button": {
+      "confirmDeposit": "Confirm deposit",
+      "confirmWithdrawal": "Confirm withdraw"
+    },
+    "paragraph": {
+      "receiveOnWithdrawal": "You will receive {{token}} in your wallet"
     }
   },
 
@@ -722,7 +749,7 @@
       "automationMissing": "In order to join Pool Together you will need to automate transactions first.",
       "pendingAutomation": "Please wait for Pool Together automation",
       "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes.",
-      "recieveOnWithrawal": "You will receive {{token}} in your wallet",
+      "receiveOnWithdrawal": "You will receive {{token}} in your wallet",
       "allowAutomationWithToken": "Allow Pool Together to spend your {{token}} and automate transactions for you. You will have to do it only once. All further purchases will be executed with no automation fee."
     }
   },

@@ -370,7 +370,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             </ContentRow>
             <ContentRow>
               <Text label center>
-                {t('poolTogetherContent.paragraph.recieveOnWithrawal', { token: poolToken })}
+                {t('poolTogetherContent.paragraph.receiveOnWithdrawal', { token: poolToken })}
               </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 22 }}>
