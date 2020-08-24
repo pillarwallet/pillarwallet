@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -188,15 +189,23 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               imageSource={poolTogetherLogo}
             />
             <ContentRow>
-              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
-              <Text label>chance of win </Text>
+              <Text label>
+                {t('poolTogetherContent.label.winningChance', {
+                  primaryText: t('percentValue', { value: formatAmount(winChance, 6) }),
+                })}
+              </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 64 }}>
-              <Text label>{`Fee ${feeDisplayValue} (${feeInFiat})`}</Text>
+              <Text label>{
+                t('label.feeTokenFiat', {
+                  tokenValue: feeDisplayValue,
+                  fiatValue: feeInFiat,
+                })}
+              </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 16 }}>
               <Button
-                title="Purchase tickets"
+                title={t('poolTogetherContent.button.purchaseTickets')}
                 onPress={() => {
                   this.purchasePoolAsset();
                 }}

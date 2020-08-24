@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -171,12 +172,12 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
     const poolCurrencyTabs = [
       {
         id: DAI,
-        name: 'DAI Pool',
+        name: t('poolTogetherContent.label.daiPool'),
         onPress: () => this.setActiveTab(DAI),
       },
       {
         id: USDC,
-        name: 'USDC Pool',
+        name: t('poolTogetherContent.label.usdcPool'),
         onPress: () => this.setActiveTab(USDC),
       },
     ];
@@ -212,7 +213,7 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Pool Together' }] }}
+        headerProps={{ centerItems: [{ title: t('poolTogetherContent.title.mainScreen') }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -247,7 +248,7 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
             {!!userInfo &&
               <TicketButtonsWrapper>
                 <CircleButton
-                  label="Purchase"
+                  label={t('button.purchase')}
                   onPress={() => {
                     navigation.navigate(POOLTOGETHER_PURCHASE, {
                       poolToken: activeTab,
@@ -262,7 +263,7 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
                   disabled={poolTokenBalance <= 0}
                 />
                 <CircleButton
-                  label="Withdraw"
+                  label={t('button.withdraw')}
                   fontIcon="up-arrow"
                   fontIconStyle={{ fontSize: fontSizes.big }}
                   onPress={() => {
@@ -304,7 +305,7 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
             {!!relatedHistory.length && (
               <>
                 <ActivityFeed
-                  feedTitle="History"
+                  feedTitle={t('poolTogetherContent.title.activityFeed')}
                   navigation={navigation}
                   feedData={relatedHistory}
                 />

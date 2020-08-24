@@ -27,6 +27,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
+import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -335,7 +336,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Withdraw' }] }}
+        headerProps={{ centerItems: [{ title: t('poolTogetherContent.title.withdrawScreen') }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -353,15 +354,13 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
         >
           <ContentWrapper>
             <ContentRow>
-              <Text label center>
-                If you withdraw you will no longer be eligible to win prizes.
-              </Text>
+              <Text label center>{t('poolTogetherContent.paragraph.withdrawalNote')}</Text>
             </ContentRow>
             <ContentRow style={{ paddingLeft: 4, paddingRight: 4 }}>
               <ValueSelectorCard
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
-                maxLabel="Withdraw all"
+                maxLabel={t('button.withdrawAll')}
                 customOptions={assetOptions}
                 balances={balanceOptions}
                 baseFiatCurrency={baseFiatCurrency}
@@ -371,36 +370,37 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             </ContentRow>
             <ContentRow>
               <Text label center>
-                You will receive {poolToken} in your wallet.
+                {t('poolTogetherContent.paragraph.recieveOnWithrawal', { token: poolToken })}
               </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 22 }}>
               {(!hasAllowance && !isApprovalExecuting) &&
                 <Text center label>
-                  In order to join Pool Together you will need to automate transactions first.
+                  {t('poolTogetherContent.paragraph.automationMissing')}
                 </Text>
               }
               {!!isApprovalExecuting &&
                 <Text center label>
-                  Please wait for Pool Together automation
+                  {t('poolTogetherContent.paragraph.pendingAutomation')}
                 </Text>
               }
-              {(!!hasAllowance && !withdrawPayload) &&
-                <Text center label>
-                  Fetching fee...
-                </Text>
-              }
+              {(!!hasAllowance && !withdrawPayload) && <Text center label>{t('label.fetchingFee')}</Text>}
               {(!!hasAllowance && !!withdrawPayload) &&
                 <Text center label>
-                  {`Fee ${withdrawPayload.feeDisplayValue} (${withdrawPayload.feeInFiat})`}
-                  {withdrawPayload.isDisabled && `\nNot enough ${withdrawPayload.feeSymbol} for the transaction fee`}
+                  {t('label.feeTokenFiat', {
+                    tokenValue: withdrawPayload.feeDisplayValue,
+                    fiatValue: withdrawPayload.feeInFiat,
+                  })}
+                  {withdrawPayload.isDisabled &&
+                  `\n${t('error.notEnoughTokenForFee', { token: withdrawPayload.feeSymbol })}`
+                  }
                 </Text>
               }
             </ContentRow>
             <ContentRow>
               {!withdrawDisabled &&
                 <Button
-                  title="Next"
+                  title={t('button.next')}
                   onPress={() => {
                     if (!hasAllowance && !isApprovalExecuting) {
                       this.setState({ isAllowModalVisible: true });
@@ -414,7 +414,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
               }
               {!!withdrawDisabled && // has to update like this so it shows the disabled style
                 <Button
-                  title="Next"
+                  title={t('button.next')}
                   disabled={withdrawDisabled}
                   style={{ marginBottom: 13, width: '100%' }}
                 />

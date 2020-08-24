@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { format } from 'date-fns';
+import t from 'translations/translate';
 
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
@@ -115,7 +116,7 @@ const PoolTickets = (props: Props) => {
       }}
     >
       <TicketCounterRow>
-        <Text label>Purchase tickets for pool</Text>
+        <Text label>{t('poolTogetherContent.label.purchaseTickets')}</Text>
       </TicketCounterRow>
       <Spacing h={16} />
       <TicketCounterRow>
@@ -140,7 +141,7 @@ const PoolTickets = (props: Props) => {
         </TicketCounterColumn>
         <Spacing w={16} />
         <TicketCounterColumn>
-          <Text>{currentCount} Tickets</Text>
+          <Text>{t('poolTogetherContent.label.ownedTickets', { count: currentCount })}</Text>
         </TicketCounterColumn>
         <Spacing w={16} />
         <TicketCounterColumn>
@@ -164,13 +165,16 @@ const PoolTickets = (props: Props) => {
         </TicketCounterColumn>
       </TicketCounterRow>
       <TicketCounterRow>
-        <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
-        <Text label>chance of win</Text>
+        <Text label>
+          {t('poolTogetherContent.label.winningChance', {
+            primaryText: t('percentValue', { value: formatAmount(winChance, 6) }),
+          })}
+        </Text>
       </TicketCounterRow>
       <Spacing h={48} />
       <TicketCounterRow>
         <Button
-          title={currentCount > 0 ? 'Next' : 'Join Pool'}
+          title={currentCount > 0 ? t('button.next') : t('poolTogetherContent.button.joinPool')}
           disabled={currentCount === 0}
           onPress={onPressCallback}
           style={{ width: '100%' }}
@@ -179,7 +183,7 @@ const PoolTickets = (props: Props) => {
       <Spacing h={16} />
       <TicketCounterRow>
         <Text center label>
-          Tickets purchased today will be eligible for prizes starting after {eligibleDate}.
+          {t('poolTogetherContent.paragraph.purchasedTicketsEligibleDate', { date: eligibleDate })}
         </Text>
       </TicketCounterRow>
     </PoolTicketsWrapper>
