@@ -741,14 +741,14 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - revert/some-env-changes
       - appcenter_android:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                - develop
+                - revert/some-env-changes
       - get-latest-tag:
           requires:
             - build-and-test
