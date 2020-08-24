@@ -316,15 +316,17 @@ class SelectorOptions extends React.Component<Props, State> {
 
   resetOptions = () => {
     const { onHidden } = this.props;
-    this.setState({ query: null });
-    Keyboard.dismiss();
-    if (onHidden) onHidden();
+    this.setState({ query: null }, () => {
+      if (onHidden) onHidden();
+    });
   };
 
   closeOptions = () => {
     const { onHide } = this.props;
-    this.resetOptions();
-    if (onHide) onHide();
+    this.setState({ query: null }, () => {
+      Keyboard.dismiss();
+      if (onHide) onHide();
+    });
   };
 
   selectValue = (selectedValue) => {

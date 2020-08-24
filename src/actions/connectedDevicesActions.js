@@ -166,7 +166,7 @@ export const confirmConnectedDeviceRemoveAction = (device: ConnectedDevice) => {
         if (!smartWalletAccountDevice) {
           Toast.show({
             message: t('toast.linkedDeviceNotFound'),
-            emoji: 'woman_shrugging',
+            emoji: 'woman-shrugging',
             supportLink: true,
             autoClose: false,
           });

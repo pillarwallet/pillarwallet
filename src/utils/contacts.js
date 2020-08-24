@@ -43,7 +43,7 @@ export const getReceiverWithEnsName = async (ethAddress: ?string, showNotificati
     if (!resolvedAddress && showNotification) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
-        emoji: 'woman_shrugging',
+        emoji: 'woman-shrugging',
       });
       return { receiverEnsName, receiver };
     }
