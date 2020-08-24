@@ -21,9 +21,11 @@
   "totalValue": "Total {{value}}",
   "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
+  "ofValue": "of {{value}}",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
-  "timeHoursMinutes": " {{hours}}h {{minutes}}m",
+  "timeHoursMinutes": "{{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
   "day": "{{count}} day",
   "day_plural": "{{count}} days",
   "hour": "{{count}} hour",
@@ -117,7 +119,11 @@
     "fetchingFee": "Fetching fee...",
     "notEnoughToken": "Not enough {{token}}",
     "fee": "Fee",
-    "gettingFee": "Getting fee..."
+    "gettingFee": "Getting fee...",
+    "to": "To",
+    "from": "From",
+    "chooseReceiver": "Choose receiver",
+    "walletAddress": "Wallet address"
   },
 
   "button": {
@@ -189,7 +195,9 @@
     "spendMax": "Spend max",
     "confirmWithdraw": "Confirm withdraw",
     "enable": "Enable",
-    "useMax": "Use max"
+    "useMax": "Use max",
+    "allow": "Allow",
+    "max": "Max"
   },
 
   "paragraph": {
@@ -273,6 +281,13 @@
       "description": "A curated collection of web3 apps available to use with Pillar. Sign in without creating an account. Just scan QR and go.",
       "button": {
         "ok": "Cool, thanks"
+      }
+    },
+    "moneyStream": {
+      "title": "Stream your money or receive streams with Sablier",
+      "description": {
+        "forWorkers": "As a worker, you see your earnings increasing in real-time in the Sablier wallet.",
+        "forOrganizations": "As an organisation, our technology helps you get rid of the hassle of payroll admin.",
       }
     }
   },
@@ -762,6 +777,48 @@
     },
     "moneyStreamingList": {
       "title": "Sablier money streaming"
+    },
+    "title": {
+      "incomingStream": "Incoming stream",
+      "newStreamScreen": "New stream",
+      "newStreamReviewScreen": "Review",
+      "outgoingStreamScreen": "Outgoing stream",
+      "streamingActivityFeed": "History",
+      "allowanceModal": "Allow Sablier",
+      "cancelStreamScreen": "Cancel stream",
+      "userStreamsScreen": "Your streams",
+      "withdrawScreen": "Withdraw",
+      "withdrawReviewScreen": "Review"
+    },
+    "label": {
+      "streamed": "Streamed",
+      "withdrawn": "withdrawn",
+      "start": "Start",
+      "end": "End"
+    },
+    "button": {
+      "startImmediately": "Start immediately",
+      "plusHour": "+1 hour",
+      "plusDay": "+1 day",
+      "plus30Days": "+30 days",
+      "startStream": "Start stream",
+      "cancelStream": "Cancel stream",
+      "confirmStreamCancellation": "Confirm cancellation",
+      "cancelStreamCancellation": "Do not cancel",
+      "newStream": "New stream",
+      "confirmWithdraw": "Confirm withdraw"
+    },
+    "paragraph": {
+      "allowanceMissing": "In order to create a stream you will need to allow Sablier to send {{asset}} transactions on your behalf",
+      "allowancePending": "Please wait for Sablier allowance transaction",
+      "newStreamInformation": "You will stream a total of {{value}} {{asset}} for {{duration}} at a rate of {{streamingRate}} per minute",
+      "allowSablierWithToken": "Allow Sablier to send {{token}} transactions on your behalf",
+      "cancelStreamWarning": "If you cancel the stream, the money sent to the recipient will remain with them, and the rest will be returned to you.",
+      "receiveOnWithdrawal": "You will receive {{token}} in your wallet"
+    },
+    "tabs": {
+      "outgoingStreams": "Outgoing",
+      "incomingStreams": "Incoming"
     }
   },
 

@@ -21,6 +21,8 @@
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
+
 import styled, { withTheme } from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
 import { BaseText } from 'components/Typography';
@@ -78,7 +80,9 @@ const SablierCancellationModal = ({
       onModalHide={onModalHide}
       noClose
       headerProps={{
-        centerItems: [{ icon: 'warning', color: colors.negative, fontSize: 16 }, { title: 'Cancel stream' }],
+        centerItems: [
+          { icon: 'warning', color: colors.negative, fontSize: 16 },
+          { title: t('sablierContent.title.cancelStreamScreen') }],
         sideFlex: '0',
       }}
     >
@@ -93,20 +97,30 @@ const SablierCancellationModal = ({
         />
         <Spacing h={32} />
         <BaseText medium>
-          If you cancel the stream, the money sent to the recipient
-          will remain with them, and the rest will be returned to you.
+          {t('sablierContent.paragraph.cancelStreamWarning')}
         </BaseText>
         <Spacing h={32} />
         <FeeLabelToggle
-          labelText="Fee"
+          labelText={t('label.fee')}
           txFeeInWei={txFeeInWei}
           gasToken={gasToken}
           showFiatDefault
         />
         <Spacing h={16} />
-        <Button secondary block title="Confirm cancellation" onPress={onCancel} disabled={isDisabled} />
+        <Button
+          secondary
+          block
+          title={t('sablierContent.button.confirmStreamCancellation')}
+          onPress={onCancel}
+          disabled={isDisabled}
+        />
         <Spacing h={8} />
-        <Button squarePrimary block title="Do not cancel" onPress={onModalHide} />
+        <Button
+          squarePrimary
+          block
+          title={t('sablierContent.button.cancelStreamCancellation')}
+          onPress={onModalHide}
+        />
       </ContentWrapper>
     </SlideModal>
   );
