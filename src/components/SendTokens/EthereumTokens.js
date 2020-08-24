@@ -158,6 +158,8 @@ const SendEthereumTokens = ({
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
   const [contactToAdd, setContactToAdd] = useState(null);
   const hideAddContactModal = () => setContactToAdd(null);
+  const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
+  const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
   const getSmartWalletTxFee = async (specifiedAmount?: number): Promise<TransactionFeeInfo> => {
     const value = Number(specifiedAmount || amount || 0);
@@ -196,7 +198,7 @@ const SendEthereumTokens = ({
     if (!estimated) {
       Toast.show({
         message: t('toast.transactionFeeEstimationFailed'),
-        emoji: 'woman_shrugging',
+        emoji: 'woman-shrugging',
         supportLink: true,
         type: 'warning',
       });
@@ -399,8 +401,13 @@ const SendEthereumTokens = ({
   const isNextButtonDisabled = !session.isOnline;
 
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
+  const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
+    option,
+    setContactToAdd,
+    () => setForceHideSelectorModals(true),
+  );
   const customOptionButtonOnPress = !resolvingContactEnsName
-    ? (option: Option) => resolveAndSetContactAndFromOption(option, setContactToAdd)
+    ? addContactButtonPress
     : () => {};
   const selectedOption: ?Option = selectedContact
     ? { ...selectedContact, value: selectedContact.ethAddress }
@@ -414,6 +421,14 @@ const SendEthereumTokens = ({
         selectedOption,
         customOptionButtonLabel: 'Add to contacts',
         customOptionButtonOnPress,
+        resetOptionsModalOnHiddenOptionAdded: true,
+        hideModals: forceHideSelectorModals,
+        onModalsHidden: () => {
+          // force hide selector modals to show contact add modal
+          if (contactToAdd) {
+            setSelectorModalsHidden(true);
+          }
+        },
       }}
       customValueSelectorProps={{
         getFormValue: handleAmountChange,
@@ -448,13 +463,18 @@ const SendEthereumTokens = ({
       }
       <ContactDetailsModal
         title="Add new contact"
-        isVisible={!isEmpty(contactToAdd)}
+        isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
         contact={contactToAdd}
         onSavePress={(contact: Contact) => {
           hideAddContactModal();
           addContact(contact);
+          handleReceiverSelect({ ...contact, value: contact.ethAddress });
         }}
         onModalHide={hideAddContactModal}
+        onModalHidden={() => {
+          setSelectorModalsHidden(false);
+          setForceHideSelectorModals(false);
+        }}
         contacts={contacts}
         isDefaultNameEns
       />
