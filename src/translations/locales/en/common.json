@@ -389,7 +389,7 @@
     },
     "title": {
       "settleTransactionsScreen": "Settle transactions",
-      "fundTanksScreen": "Fund PLR tank",
+      "fundTankScreen": "Fund PLR tank",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",
       "unsettledAssetsScreen": "Unsettled Assets"
     },
