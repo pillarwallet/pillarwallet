@@ -197,13 +197,9 @@ const generateSupportedAssetsOptions = (
     }).filter(asset => asset.key !== BTC);
 };
 
-const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => {
-  return POPULAR_EXCHANGE_TOKENS.reduce((popularAssetsList, popularSymbol) => {
-    const popularAsset = assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol);
-    if (popularAsset) return [...popularAssetsList, popularAsset];
-    return popularAssetsList;
-  }, []);
-};
+const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPULAR_EXCHANGE_TOKENS
+  .map(popularSymbol => assetsOptionsBuying.find(({ symbol }) => symbol === popularSymbol) || {})
+  .filter(asset => !!asset && !isEmpty(asset));
 
 const generateHorizontalOptions = (assetsOptionsBuying: Option[]): HorizontalOption[] => {
   const popularOptions = generatePopularOptions(assetsOptionsBuying);
