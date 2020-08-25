@@ -304,6 +304,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2);
       value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount || '', 6);
     }
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
       <ExchangeTextInput
@@ -314,11 +315,11 @@ class ExchangeScreen extends React.Component<Props, State> {
         onAssetPress={() => this.setState({ showBuyOptions: true })}
         leftSideText={displayFiatToAmount
           ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol || ''}`
-          : formatFiat(toAmountInFiat || '0', baseFiatCurrency).replace(/ /g, '')
+          : formatFiat(toAmountInFiat || '0', fiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="+"
         onLeftSideTextPress={() => this.setState({ displayFiatToAmount: !displayFiatToAmount })}
-        rightPlaceholder={displayFiatToAmount ? baseFiatCurrency || defaultFiatCurrency : toAsset.symbol || ''}
+        rightPlaceholder={displayFiatToAmount ? fiatCurrency : toAsset.symbol || ''}
       />
     );
   }

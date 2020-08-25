@@ -178,7 +178,7 @@ const AddonRegularText = styled(BaseText)`
 
 const AddonBigText = styled(BaseText)`
   ${fontStyles.giant};
-  ${({ theme }) => `color: ${theme.colors.text};`}
+  color: ${themedColors.text};
   margin-right: 9;
   margin-top: -5;
 `;

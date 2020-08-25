@@ -168,7 +168,7 @@ const generateSupportedAssetsOptions = (
   rates: Rates,
 ): Option[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
-  return [...exchangeSupportedAssets] // prevent mutation of param
+  return exchangeSupportedAssets
     .map(({ symbol, iconUrl, ...rest }) => {
       const rawAssetBalance = getBalance(balances, symbol);
       const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
