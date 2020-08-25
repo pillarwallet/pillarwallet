@@ -6,6 +6,7 @@
   "keyWallet": "Key wallet",
   "medium": "Medium",
   "pillarNetwork": "Pillar Network",
+  "pillarTank": "Pillar Tank",
   "poolTogether": "Pool Together",
   "smartWallet": "Smart Wallet",
   "telegram": "Telegram",
@@ -19,9 +20,19 @@
   "negativeValue": "- {{value}}",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
+  "percentValue": "{{value}} %",
+  "availableValue": "Available: {{value}}",
+  "ofValue": "of {{value}}",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
-  "timeHoursMinutes": " {{hours}}h {{minutes}}m",
+  "timeHoursMinutes": "{{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
+  "day": "{{count}} day",
+  "day_plural": "{{count}} days",
+  "hour": "{{count}} hour",
+  "hour_plural": "{{count}} hours",
+  "minute": "{{count}} minute",
+  "minute_plural": "{{count}} minutes",
 
   "navigationTabs": {
     "home": "Home",
@@ -40,7 +51,8 @@
     "transactions": "Transactions",
     "addNewContact": "Add new contact",
     "editContact": "Edit contact",
-    "addressBook": "Address book"
+    "addressBook": "Address book",
+    "select": "Select"
   },
 
   "label": {
@@ -108,7 +120,23 @@
     "yourEnsName": "Your wallet ENS name",
     "name": "Name",
     "address": "Address",
-    "resolvingEnsName": "Resolving ENS name"
+    "resolvingEnsName": "Resolving ENS name",
+    "endingSoon": "Ending soon",
+    "endsIn": "Ends in {{endsIn}}",
+    "fetchingFee": "Fetching fee...",
+    "notEnoughToken": "Not enough {{token}}",
+    "fee": "Fee",
+    "gettingFee": "Getting fee...",
+    "to": "To",
+    "from": "From",
+    "chooseReceiver": "Choose receiver",
+    "walletAddress": "Wallet address",
+    "tokens": "Tokens",
+    "collectibles": "Collectibles",
+    "collectible": "Collectible",
+    "processing": "Processing...",
+    "mainAccount": "Main Account",
+    "free": "Free"
   },
 
   "button": {
@@ -137,6 +165,7 @@
     "inviteMoreFriends": "Invite more friends",
     "inviteToPillar": "Invite to Pillar",
     "notEnoughPLR": "Not enough PLR",
+    "purchase": "Purchase",
     "purchaseMore": "Purchase more",
     "referFriends": "Refer friends",
     "reject": "Reject",
@@ -146,6 +175,7 @@
     "selectAll": "Select all",
     "selectContacts": "Select contacts",
     "send": "Send",
+    "sendAll": "Send all",
     "sendBack": "Send back",
     "sendFromAnotherWallet": "Send from another wallet",
     "sendInvites": "Send invites",
@@ -171,10 +201,20 @@
     "viewSablierStream": "View stream",
     "verify": "Verify",
     "withdraw": "Withdraw",
+    "withdrawAll": "Withdraw all",
     "withdrawMore": "Withdraw more",
     "delete": "Delete",
     "addNew": "Add new",
-    "save": "Save"
+    "save": "Save",
+    "next": "Next",
+    "spendMax": "Spend max",
+    "confirmWithdraw": "Confirm withdraw",
+    "enable": "Enable",
+    "useMax": "Use max",
+    "allow": "Allow",
+    "max": "Max",
+    "sendTokenInstead": "Send token instead",
+    "addToContacts": "Add to contacts"
   },
 
   "paragraph": {
@@ -259,6 +299,13 @@
       "button": {
         "ok": "Cool, thanks"
       }
+    },
+    "moneyStream": {
+      "title": "Stream your money or receive streams with Sablier",
+      "description": {
+        "forWorkers": "As a worker, you see your earnings increasing in real-time in the Sablier wallet.",
+        "forOrganizations": "As an organisation, our technology helps you get rid of the hassle of payroll admin."
+      }
     }
   },
 
@@ -293,7 +340,12 @@
   "error": {
     "transactionFailed": {
       "timeOut": "Transaction timed out",
-      "default": "Transaction failed"
+      "default": "Transaction failed",
+      "offline": "You can't send transaction while offline",
+      "notEnoughGas": "Not enough gas to cover the transaction fee. Top up your ETH balance",
+      "notOwnedCollectible": "You do not longer own this collectible",
+      "collectibleCantBeTransferred": "This collectible can not be transferred",
+      "notEnoughStake": "Not enough PLR in tank"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExist": "Contact with this address already exist",
@@ -304,7 +356,9 @@
       "email": "Please enter a valid email"
     },
     "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
-    "ensNameNotFound": "Sorry, ENS name not found. Please check and try again."
+    "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
+    "notEnoughTokenForFee": "Not enough {{token}} for the transaction fee",
+    "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again."
   },
 
   "badgeText": {
@@ -331,6 +385,21 @@
           "title": "No settled transactions"
         }
       }
+    },
+    "title": {
+      "settleTransactionsScreen": "Settle transactions",
+      "fundTanksScreen": "Fund PLR tank",
+      "sendTokenViaPpnScreen": "Send {{token}} via PPN",
+      "unsettledAssetsScreen": "Unsettled Assets"
+    },
+    "button": {
+      "fundTank": "Fund Pillar Tank",
+      "releaseTankFunds": "Release Funds",
+      "withdrawFromTank": "Withdraw from PLR tank",
+      "settleTransactions": "Settle transactions"
+    },
+    "label": {
+      "availableBalance": "Available Balance"
     }
   },
 
@@ -408,6 +477,29 @@
   "aaveContent": {
     "depositedAssetsList": {
       "title": "Aave Deposits"
+    },
+    "title": {
+      "assetsToDepositScreen": "Choose asset to deposit",
+      "noAssetsToDeposit": "No assets to deposit",
+      "noDepositedAssets": "No deposited assets",
+      "depositedAssetsScreen": "Your deposits",
+      "depositConfirmationScreen": "Review",
+      "depositAmountScreen": "Add deposit",
+      "withdrawAmountScreen": "Withdraw",
+      "depositedAssetScreen": "Your deposit",
+      "activityFeed": "History",
+      "withdrawConfirmationScreen": "Review"
+    },
+    "label": {
+      "currentAPY": "Current APY",
+      "earned": "Earned"
+    },
+    "button": {
+      "confirmDeposit": "Confirm deposit",
+      "confirmWithdrawal": "Confirm withdraw"
+    },
+    "paragraph": {
+      "receiveOnWithdrawal": "You will receive {{token}} in your wallet"
     }
   },
 
@@ -682,10 +774,36 @@
       "prizeInDollars": "Prize ${{prize}}",
       "ownedTickets": "{{count}} ticket",
       "ownedTickets_plural": "{{count}} tickets",
-      "winChance": "{{chancePercent}} chance"
+      "winChance": "{{chancePercent}} chance",
+      "prizeEstimate": "Prize est.",
+      "currentPrize": "Current prize",
+      "winningChance": "<0>{{primaryText}}</0> chance of win",
+      "purchaseTickets": "Purchase tickets for pool",
+      "daiPool": "DAI Pool",
+      "usdcPool": "USDC Pool"
     },
     "ticketsList": {
       "title": "PoolTogether savings game"
+    },
+    "title": {
+      "mainScreen": "Pool Together",
+      "activityFeed": "History",
+      "ticketPurchaseScreen": "Purchase Tickets",
+      "withdrawScreen": "Withdraw",
+      "withdrawConfirmScreen": "Review",
+      "authorizePoolTogether": "Authorize Pool Together"
+    },
+    "button": {
+      "joinPool": "Join Pool",
+      "purchaseTickets": "Purchase tickets"
+    },
+    "paragraph": {
+      "purchasedTicketsEligibleDate": "Tickets purchased today will be eligible for prizes starting {{date}}",
+      "automationMissing": "In order to join Pool Together you will need to automate transactions first.",
+      "pendingAutomation": "Please wait for Pool Together automation",
+      "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes.",
+      "receiveOnWithdrawal": "You will receive {{token}} in your wallet",
+      "allowAutomationWithToken": "Allow Pool Together to spend your {{token}} and automate transactions for you. You will have to do it only once. All further purchases will be executed with no automation fee."
     }
   },
 
@@ -697,6 +815,48 @@
     },
     "moneyStreamingList": {
       "title": "Sablier money streaming"
+    },
+    "title": {
+      "incomingStream": "Incoming stream",
+      "newStreamScreen": "New stream",
+      "newStreamReviewScreen": "Review",
+      "outgoingStreamScreen": "Outgoing stream",
+      "streamingActivityFeed": "History",
+      "allowanceModal": "Allow Sablier",
+      "cancelStreamScreen": "Cancel stream",
+      "userStreamsScreen": "Your streams",
+      "withdrawScreen": "Withdraw",
+      "withdrawReviewScreen": "Review"
+    },
+    "label": {
+      "streamed": "Streamed",
+      "withdrawn": "withdrawn",
+      "start": "Start",
+      "end": "End"
+    },
+    "button": {
+      "startImmediately": "Start immediately",
+      "plusHour": "+1 hour",
+      "plusDay": "+1 day",
+      "plus30Days": "+30 days",
+      "startStream": "Start stream",
+      "cancelStream": "Cancel stream",
+      "confirmStreamCancellation": "Confirm cancellation",
+      "cancelStreamCancellation": "Do not cancel",
+      "newStream": "New stream",
+      "confirmWithdraw": "Confirm withdraw"
+    },
+    "paragraph": {
+      "allowanceMissing": "In order to create a stream you will need to allow Sablier to send {{asset}} transactions on your behalf",
+      "allowancePending": "Please wait for Sablier allowance transaction",
+      "newStreamInformation": "You will stream a total of {{value}} {{asset}} for {{duration}} at a rate of {{streamingRate}} per minute",
+      "allowSablierWithToken": "Allow Sablier to send {{token}} transactions on your behalf",
+      "cancelStreamWarning": "If you cancel the stream, the money sent to the recipient will remain with them, and the rest will be returned to you.",
+      "receiveOnWithdrawal": "You will receive {{token}} in your wallet"
+    },
+    "tabs": {
+      "outgoingStreams": "Outgoing",
+      "incomingStreams": "Incoming"
     }
   },
 
@@ -737,6 +897,88 @@
         "default": "Approve"
       },
       "checkApp": "View"
+    }
+  },
+
+  "servicesContent": {
+    "title": {
+      "servicesScreen": "Services"
+    },
+    "exchange": {
+      "title": "Offers engine",
+      "description": "Aggregated offers from many decentralized exchanges and token swap services",
+      "label": {
+        "exchangeCount": "{{count}} exchange",
+        "exchangeCount_plural": "{{count}} exchanges"
+      }
+    },
+    "aaveDeposit": {
+      "title": "AAVE Deposit",
+      "description": "Deposit crypto and earn interest in real-time"
+    },
+    "poolTogether": {
+      "title": "Pool Together savings game",
+      "description": "Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!"
+    },
+    "sablier": {
+      "title": "Sablier money streaming",
+      "description": "Stream money to people and organizations in real-time with just one deposit"
+    },
+    "peerToPeerTrading": {
+      "title": "Peer-to-peer trading",
+      "description": "Swap tokens directly with others. Safe, secure, anonymous"
+    },
+    "ramp": {
+      "title": "Buy with Ramp.Network (EU)",
+      "description": "Buy Now"
+    },
+    "wyre": {
+      "title": "Buy with Wyre (Non-EU)",
+      "description": "Buy Now"
+    },
+    "altalix": {
+      "title": "Buy with Altalix",
+      "description": "Buy Now"
+    },
+    "label": {
+      "requiresActivation": "Requires activation",
+      "forSmartWallet": "For Smart Wallet",
+      "soon": "soon"
+    }
+  },
+
+  "transactions": {
+    "title": {
+      "sendScreen": "Send",
+      "valueSelectorModal": "Send",
+      "reviewAndConfirmScreen": "Review and confirm",
+      "allowanceTransactionSuccess": "Transaction is on its way",
+      "exchangeTransactionSuccess": "Swapping tokens...",
+      "transactionSuccess": "Tokens are on their way",
+      "collectibleTransactionSuccess": "Collectible is on its way",
+      "poolTogetherTransactionSuccess": "You're in the pool!",
+      "sablierTransactionSuccess": "Your stream has begun"
+    },
+    "button": {
+      "payFeeWithPillar": "Pay fees with PLR",
+      "confirmTransaction": "Confirm Transaction"
+    },
+    "label": {
+      "amount": "Amount",
+      "recipient": "Recipient",
+      "recipientEnsName": "Recipient ENS name",
+      "recipientAddress": "Recipient Address",
+      "transactionFee": "Est. Network Fee",
+      "assetsToSettle": "Assets to settle",
+      "recipientGet": "Recipient will get",
+      "youPay": "You will pay",
+      "collectibleName": "Collectible"
+    },
+    "paragraph": {
+      "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
+      "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
+      "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
     }
   },
 

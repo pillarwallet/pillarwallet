@@ -22,6 +22,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // actions
 import { estimateTopUpVirtualAccountAction, topUpVirtualAccountAction } from 'actions/smartWalletActions';
@@ -98,22 +99,22 @@ class FundConfirm extends React.Component<Props, State> {
     } = this.props;
     const { topUpButtonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
-    const submitButtonTitle = !topUpButtonSubmitted ? 'Fund Pillar Tank' : 'Processing...';
+    const submitButtonTitle = !topUpButtonSubmitted ? t('ppnContent.button.fundTank') : t('label.processing');
 
     const gasToken = getGasToken(useGasToken, feeInfo);
     const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
     const reviewData = [
       {
-        label: 'Amount',
+        label: t('transactions.label.amount'),
         value: `${amount} ${PPN_TOKEN}`,
       },
       {
-        label: 'Recipient',
-        value: 'Pillar Tank',
+        label: t('transactions.label.recipient'),
+        value: t('pillarTank'),
       },
       {
-        label: 'Transaction fee',
+        label: t('transactions.label.transactionFee'),
         value: feeDisplayValue,
         isLoading: !topUpFee.isFetched,
       },

@@ -34444,7 +34444,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           ]
                                         }
                                       >
-                                        Select
+                                        title.select
                                       </Text>
                                     </View>
                                   </View>
@@ -35616,7 +35616,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                         ]
                       }
                     >
-                      Max
+                      button.max
                     </Text>
                   </View>
                 </View>
@@ -35807,7 +35807,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       placeholderSelector="select"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
-                      rightLabel="Max"
+                      rightLabel="button.max"
                       selectorValue={
                         Object {
                           "dontCheckBalance": false,
@@ -35817,7 +35817,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             "decimals": 18,
                             "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
                             "email": "info@pillarproject.io",
-                            "icon": "https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
+                            "icon": "https://api-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
                             "iconMonoUrl": "asset/images/tokens/icons/plr.png",
                             "iconUrl": "asset/images/tokens/icons/plrColor.png",
                             "icos": Array [],
@@ -36185,7 +36185,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           ]
                                         }
                                       >
-                                        Select
+                                        title.select
                                       </Text>
                                     </View>
                                   </View>
@@ -37786,7 +37786,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           ]
                                         }
                                       >
-                                        Select
+                                        title.select
                                       </Text>
                                     </View>
                                   </View>

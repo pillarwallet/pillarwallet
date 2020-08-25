@@ -21,6 +21,7 @@ import * as React from 'react';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -76,25 +77,25 @@ class SendTokenConfirm extends React.Component<Props> {
 
     const reviewData = [
       {
-        label: 'Amount',
-        value: `${amount} ${symbol}`,
+        label: t('transactions.label.amount'),
+        value: t('tokenValue', { value: amount, token: symbol }),
       },
     ];
 
     if (receiverEnsName) {
       reviewData.push({
-        label: 'Recipient ENS name',
+        label: t('transactions.label.recipientEnsName'),
         value: receiverEnsName,
       });
     }
 
     reviewData.push(
       {
-        label: 'Recipient Address',
+        label: t('transactions.label.recipientAddress'),
         value: to,
       },
       {
-        label: 'Est. Network Fee',
+        label: t('transactions.label.transactionFee'),
         value: feeDisplayValue,
       },
     );
