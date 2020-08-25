@@ -15319,9 +15319,9 @@ Array [
           ]
         }
       >
-        - 
+        -
         1
-         
+
         PLR
       </Text>
     </View>
@@ -15440,9 +15440,9 @@ Array [
           ]
         }
       >
-        - 
+        -
         2
-         
+
         ETH
       </Text>
     </View>
@@ -26963,7 +26963,7 @@ Array [
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
                 <View
@@ -27164,7 +27164,7 @@ exports[`Storyshots Selector default 1`] = `
       }
     >
       Select
-      : 
+      :
     </Text>
     <View
       accessible={true}
@@ -28284,7 +28284,7 @@ exports[`Storyshots Selector default 1`] = `
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
                 <View
@@ -28485,7 +28485,7 @@ exports[`Storyshots Selector no options 1`] = `
       }
     >
       Select
-      : 
+      :
     </Text>
     <View
       accessible={true}
@@ -29278,7 +29278,7 @@ exports[`Storyshots Selector no options 1`] = `
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
                 <View
@@ -29479,7 +29479,7 @@ exports[`Storyshots Selector selected option 1`] = `
       }
     >
       To
-      : 
+      :
     </Text>
     <View
       accessible={true}
@@ -30768,7 +30768,7 @@ exports[`Storyshots Selector selected option 1`] = `
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
                 <View
@@ -30969,7 +30969,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
       }
     >
       To
-      : 
+      :
     </Text>
     <View
       accessible={true}
@@ -32089,7 +32089,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
                 <View
@@ -32290,7 +32290,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
       }
     >
       Select
-      : 
+      :
     </Text>
     <View
       accessible={true}
@@ -33689,7 +33689,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                       ]
                     }
                   >
-                    
+
                   </Text>
                 </View>
                 <View
@@ -35284,7 +35284,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                   ]
                                 }
                               >
-                                
+
                               </Text>
                             </View>
                             <View
@@ -35549,7 +35549,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                   }
                 >
                   54321
-                   
+
                   PLR
                    (
                   £ 80,395.08
@@ -35781,7 +35781,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           secondary={true}
                         >
                           54321
-                           
+
                           PLR
                            (
                           £ 80,395.08
@@ -35817,7 +35817,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                             "decimals": 18,
                             "description": "Pillar is developing a decentralised solution for digital asset and personal data management.",
                             "email": "info@pillarproject.io",
-                            "icon": "https://api-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3",
+                            "icon": https://api-qa-core.pillarproject.io/asset/images/tokens/icons/plrColor.png?size=3,
                             "iconMonoUrl": "asset/images/tokens/icons/plr.png",
                             "iconUrl": "asset/images/tokens/icons/plrColor.png",
                             "icos": Array [],
@@ -37025,7 +37025,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                   ]
                                 }
                               >
-                                
+
                               </Text>
                             </View>
                             <View
@@ -38626,7 +38626,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                   ]
                                 }
                               >
-                                
+
                               </Text>
                             </View>
                             <View
