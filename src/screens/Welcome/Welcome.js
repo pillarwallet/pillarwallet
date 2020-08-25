@@ -50,7 +50,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  navigateToNewWalletPage: Function,
+  navigateToNewWalletPage: () => void,
   theme: Theme,
 };
 
