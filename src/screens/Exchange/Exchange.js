@@ -301,8 +301,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     let toAmountInFiat;
     if (offers?.length && fromAmount) {
       toAmount = getBestAmountToBuy(offers, fromAmount);
-      toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2);
-      value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount || '', 6);
+      if (toAmount) {
+        toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2);
+        value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount || '', 6);
+      }
     }
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -348,7 +350,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   resetSearch = () => {
     this.props.resetOffers();
-    this.setState({ isSubmitted: false, showEmptyMessage: false });
+    this.setState({ isSubmitted: false, showEmptyMessage: false, errorMessage: '' });
     if (this.emptyMessageTimeout) {
       clearTimeout(this.emptyMessageTimeout);
     }
@@ -412,6 +414,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       showEmptyMessage,
       showSellOptions,
       showBuyOptions,
+      errorMessage,
     } = this.state;
 
     const { fromOptions, toOptions, horizontalOptions } = this.options;
@@ -454,7 +457,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               buttonTitle={t('smartWalletContent.exchangeActivation.button')}
             />
           }
-            {!!isSubmitted &&
+            {!!isSubmitted && !errorMessage &&
             <ExchangeOffers
               fromAmount={fromAmount}
               disableNonFiatExchange={disableNonFiatExchange}

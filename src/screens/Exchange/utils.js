@@ -106,7 +106,7 @@ export const calculateAmountToBuy = (askRate: number | string, amountToSell: num
 
 export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string => {
   const bestRate = maxBy(offers, 'askRate')?.askRate;
-  if (!bestRate || !fromAmount) return null;
+  if (!bestRate || !+fromAmount) return null;
   return calculateAmountToBuy(bestRate, fromAmount);
 };
 
@@ -284,7 +284,7 @@ export const shouldTriggerSearch = (
   fromAsset: Option,
   toAsset: Option,
   fromAmount: number,
-) => fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
+) => !!+fromAmount && fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 
 export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
   const deploymentData = getDeploymentData(smartWalletState);
