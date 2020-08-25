@@ -433,7 +433,7 @@
       "collectibles": {
         "title": "Collectibles"
       }
-    },
+    }
   },
 
   "assetSearchContent": {
@@ -473,6 +473,15 @@
       "noneFound": {
         "title": "Nobody found",
         "paragraph": "Make sure you entered phone or email address correctly"
+      }
+    }
+  },
+
+  "countryList": {
+    "emptyState": {
+      "noneFound": {
+        "title": "Nothing found",
+        "paragraph": "Make sure you entered the country correctly"
       }
     }
   },
