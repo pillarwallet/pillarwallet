@@ -64,9 +64,7 @@ import { ETH } from 'constants/assetsConstants';
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-const ethProvider = () => {
-  return getEthereumProvider(getEnv('NETWORK_PROVIDER'));
-};
+const ethProvider = () => getEthereumProvider(getEnv('NETWORK_PROVIDER'));
 
 const getBackupRoute = async (
   fromAssetAddress: string,
