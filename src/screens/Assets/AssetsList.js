@@ -200,10 +200,10 @@ class AssetsList extends React.Component<Props, State> {
     } = asset;
 
     const colors = getThemeColors(theme);
-    const fullIconMonoUrl = iconMonoUrl ? `${getEnv('SDK_PROVIDER')}/${iconMonoUrl}?size=2` : '';
-    const fullIconWallpaperUrl = `${getEnv('SDK_PROVIDER')}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
-    const fullIconUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
-    const patternIcon = patternUrl ? `${getEnv('SDK_PROVIDER')}/${patternUrl}?size=3` : fullIconUrl;
+    const fullIconMonoUrl = iconMonoUrl ? `${getEnv().SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
+    const fullIconWallpaperUrl = `${getEnv().SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
+    const fullIconUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const patternIcon = patternUrl ? `${getEnv().SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
     const formattedBalanceInFiat = formatFiat(balanceInFiat, baseFiatCurrency);
     const displayAmount = formatMoney(balance, 4);
 

@@ -24,7 +24,7 @@ export default class KeyBasedWalletProvider {
   wallet: Object;
 
   constructor(privateKey: string) {
-    const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
+    const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
     this.wallet = new ethers.Wallet(privateKey, provider);
   }
 

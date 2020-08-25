@@ -62,7 +62,7 @@ class SendSyntheticConfirm extends React.Component<Props> {
     const syntheticTransaction = { ...this.syntheticTransaction };
     const transactionPayload = {
       amount: fromAmount,
-      to: getEnv('SYNTHETICS_CONTRACT_ADDRESS'),
+      to: getEnv().SYNTHETICS_CONTRACT_ADDRESS,
       receiverEnsName,
       symbol,
       contractAddress,

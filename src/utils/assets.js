@@ -288,7 +288,7 @@ export const mapAssetToAssetData = ({
   name,
   decimals,
   tokenType: TOKENS,
-  icon: iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '',
+  icon: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
 });
 
 export const mapCollectibleToAssetData = ({

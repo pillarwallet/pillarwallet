@@ -113,10 +113,10 @@ class App extends React.Component<Props, *> {
     if (!__DEV__) {
       const dist = DeviceInfo.getBuildNumber();
       const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
-      Sentry.init({ dsn: getEnv('SENTRY_DSN') });
+      Sentry.init({ dsn: getEnv().SENTRY_DSN });
       Sentry.setRelease(release);
       Sentry.setDist(dist);
-      Sentry.setTags({ environment: getEnv('BUILD_TYPE') });
+      Sentry.setTags({ environment: getEnv().BUILD_TYPE });
     }
     this.state = {
       env: null,
@@ -265,7 +265,7 @@ class App extends React.Component<Props, *> {
                 theme={current === LIGHT_THEME ? 'light' : 'dark'}
                 language={i18n.language}
               />
-              {!!getEnv('SHOW_THEME_TOGGLE') &&
+              {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
                 title={`THEME: ${current}`}
                 onPress={() => {
@@ -273,7 +273,7 @@ class App extends React.Component<Props, *> {
                   setAppTheme(themeToChangeTo);
                 }}
               />}
-              {!!getEnv('SHOW_LANG_TOGGLE') && <Button
+              {!!getEnv().SHOW_LANG_TOGGLE && <Button
                 title={`Change lang (current: ${i18n.language})`}
                 onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
               />}
@@ -320,7 +320,7 @@ const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDis
 const AppRoot = () => (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      {getEnv('SHOW_ONLY_STORYBOOK') ? <Storybook /> : <AppWithNavigationState />}
+      {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
     </PersistGate>
   </Provider>
 );

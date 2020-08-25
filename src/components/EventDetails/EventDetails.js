@@ -470,7 +470,7 @@ export class EventDetail extends React.Component<Props, State> {
 
   viewOnTheBlockchain = () => {
     const { hash } = this.props.event;
-    const url = getEnv('TX_DETAILS_URL') + hash;
+    const url = getEnv().TX_DETAILS_URL + hash;
     Linking.openURL(url);
   };
 

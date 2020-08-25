@@ -142,7 +142,7 @@ class SmartWallet {
 
   getSdk() {
     if (!this.sdk) {
-      const environmentNetwork = this.getEnvironmentNetwork(getEnv('NETWORK_PROVIDER'));
+      const environmentNetwork = this.getEnvironmentNetwork(getEnv().NETWORK_PROVIDER);
       const sdkOptions = getSdkEnvironment(environmentNetwork);
       try {
         this.sdk = createSdk(sdkOptions);

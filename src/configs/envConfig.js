@@ -31,7 +31,11 @@ const storage = Storage.getInstance('db');
 
 const buildType = __DEV__ ? 'development' : 'production';
 
-// the following vars are CI/BUILD/DEVELOPER related
+type CurrentEnvironment = {
+  [string]: string
+}
+
+// the following vars are CI/BUILD related and are fixed for both environment contexts
 const buildEnvironment = {
   SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
   BUILD_NUMBER: '_build_number_',
@@ -42,13 +46,15 @@ const buildEnvironment = {
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
 };
 
+// Optional Developer variables are fixed for both environment contexts, undefined by default
 const devOptions = {
-  SHOW_THEME_TOGGLE: null,
-  SHOW_ONLY_STORYBOOK: null,
-  SHOW_LANG_TOGGLE: null,
-  DEFAULT_PIN: null,
+  SHOW_THEME_TOGGLE: undefined,
+  SHOW_ONLY_STORYBOOK: undefined,
+  SHOW_LANG_TOGGLE: undefined,
+  DEFAULT_PIN: undefined,
 };
 
+// switchable environments constants
 const envVars = {
   production: {
     TX_DETAILS_URL: 'https://etherscan.io/tx/',
@@ -106,8 +112,10 @@ const envVars = {
   },
 };
 
+// default environment before switching
 let storedEnv = buildType === 'production' ? 'production' : 'staging';
 
+// sets up the current stored environment on App load
 export const setupEnv = () => {
   return storage.get('environment').then(res => {
     if (!isEmpty(res)) {
@@ -151,10 +159,5 @@ export const switchEnvironments = async () => {
   );
 };
 
-export const environmentVars = () => {
-  return { ...envVars[storedEnv] };
-};
-
-export const getEnv = (name: string) => {
-  return envVars[storedEnv][name];
-};
+// current environment accessor function
+export const getEnv = (): CurrentEnvironment => envVars[storedEnv];

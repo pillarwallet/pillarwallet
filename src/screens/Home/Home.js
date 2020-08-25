@@ -288,7 +288,7 @@ class HomeScreen extends React.Component<Props> {
       earningsPercentageGain,
       iconUrl,
     } = depositedAsset;
-    const cornerIcon = iconUrl ? { uri: `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` } : '';
+    const cornerIcon = iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : '';
     return (
       <ListItemWithImage
         label={`${formatAmountDisplay(currentBalance)} ${symbol}`}

@@ -53,7 +53,7 @@ const RecoveryPortalWebView = ({
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
-  const uri = `${getEnv('RECOVERY_PORTAL_URL')}/${urlPath}`;
+  const uri = `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {

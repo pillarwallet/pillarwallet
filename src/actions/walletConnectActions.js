@@ -460,7 +460,7 @@ export const approveSessionAction = (peerId: string) => {
       const smartAccAddress = getAccountAddress(account);
       await connector.approveSession({
         accounts: [smartAccAddress],
-        chainId: getEnv('NETWORK_PROVIDER') === 'kovan' ? 42 : 1,
+        chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
       });
     } catch (e) {
       dispatch(walletConnectError(SESSION_APPROVAL_ERROR, e.toString()));

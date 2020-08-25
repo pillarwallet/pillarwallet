@@ -194,7 +194,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
     const valueInFiatOutput = formatFiat(valueInFiat, baseFiatCurrency);
 
     // form
-    const icon = `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3`;
+    const icon = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
     const formStructure = makeAmountForm(maxAmount, MIN_TX_AMOUNT, true, this.formSubmitted, decimals);
     const formFields = getAmountFormFields({
       icon,

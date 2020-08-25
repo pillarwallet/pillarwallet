@@ -232,7 +232,7 @@ class AssetSearch extends React.Component<Props, State> {
       } = asset;
 
       const isAdded = !!assets[symbol];
-      const fullIconUrl = `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3`;
+      const fullIconUrl = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
 
       return (
         <ListItemWithImage
@@ -283,7 +283,7 @@ class AssetSearch extends React.Component<Props, State> {
       iconUrl,
       symbol,
     } = token;
-    const fullIconUrl = `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3`;
+    const fullIconUrl = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
     const balance = getBalance(balances, symbol);
     const isAdded = !!assets[symbol];
 

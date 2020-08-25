@@ -195,7 +195,7 @@ const ViewDepositedAsset = ({
           />
           <CachedImage
             style={{ width: 48, height: 48 }}
-            source={{ uri: iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '' }}
+            source={{ uri: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '' }}
             resizeMode="contain"
           />
         </ImagesWrapper>

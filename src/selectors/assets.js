@@ -117,7 +117,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
       const assetBalance = getBalance(activeAccountBalance, symbol);
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
-        const imageUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
+        const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
         assetsWithBalance.push({

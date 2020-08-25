@@ -169,7 +169,7 @@ export function SelectorInputTemplate(locals: Object) {
   const value = get(locals, 'value', {});
   const { selector = {} } = value;
   const { iconUrl } = selector;
-  const selectedOptionIcon = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
+  const selectedOptionIcon = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
   const selectorValue = {
     ...value,
     selector: { ...selector, icon: selectedOptionIcon },

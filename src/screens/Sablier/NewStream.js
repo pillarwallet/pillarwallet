@@ -392,7 +392,7 @@ class NewStream extends React.Component<Props, State> {
     const assetData = this.getAssetData();
     if (allowPayload && assetData) {
       const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
-      const assetIcon = `${getEnv('SDK_PROVIDER')}/${assetData.iconUrl}?size=3`;
+      const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
       allowData = {
         assetSymbol,

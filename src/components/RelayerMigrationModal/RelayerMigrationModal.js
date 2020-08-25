@@ -109,7 +109,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
             {iconUrl &&
             <CachedImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
-              source={{ uri: `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=2` }}
+              source={{ uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=2` }}
               resizeMode="contain"
             />
             }

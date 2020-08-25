@@ -90,7 +90,7 @@ const AssetEnableModal = (props: Props) => {
     assetIcon,
     isDisabled,
   } = enableData;
-  const fullIconUrl = `${getEnv('SDK_PROVIDER')}/${assetIcon}?size=3`;
+  const fullIconUrl = `${getEnv().SDK_PROVIDER}/${assetIcon}?size=3`;
 
   const { genericToken: fallbackSource } = images(theme);
   return (

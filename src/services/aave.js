@@ -54,7 +54,7 @@ class AaveService {
   getLendingPoolAddressesProvider(): ?Object {
     if (!this.lendingPoolAddressesProvider) {
       this.lendingPoolAddressesProvider = getContract(
-        getEnv('AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS'),
+        getEnv().AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS,
         AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
       );
     }
@@ -251,7 +251,7 @@ class AaveService {
         }
       }
     `;
-    return callSubgraph(getEnv('AAVE_SUBGRAPH_NAME'), query);
+    return callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query);
   }
 
   handleError(error: any, result: any): any {

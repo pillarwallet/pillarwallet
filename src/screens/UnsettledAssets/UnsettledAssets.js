@@ -77,7 +77,7 @@ class UnsettledAssets extends React.Component<Props> {
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const thisAsset = assets[tokenSymbol] || {};
     const { symbol, iconUrl, name } = thisAsset;
-    const fullIconUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
+    const fullIconUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
     return (
       <ListItemWithImage

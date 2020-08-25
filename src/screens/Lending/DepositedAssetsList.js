@@ -77,7 +77,7 @@ const DepositedAssetsList = ({
       <ListItemWithImage
         label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
         subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
-        itemImageUrl={iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : ''}
+        itemImageUrl={iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : ''}
         onPress={() => navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
         diameter={48}
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}

@@ -98,7 +98,7 @@ const SablierStreamCircles = ({
 
   const { days, hours, minutes } = streamCountDownDHMS(stream);
 
-  const assetIcon = `${getEnv('SDK_PROVIDER')}/${assetData.iconUrl}?size=3`;
+  const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
   const isStreamCanceled = !!stream.cancellation;
   const isOutgoing = isCaseInsensitiveMatch(stream.sender, activeAccountAddress);

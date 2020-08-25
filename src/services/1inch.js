@@ -49,7 +49,7 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 
 const ethProvider = () => {
-  return getEthereumProvider(getEnv('NETWORK_PROVIDER'));
+  return getEthereumProvider(getEnv().NETWORK_PROVIDER);
 };
 
 const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, fromAsset: Asset) => {

@@ -187,7 +187,7 @@ class FundTank extends React.Component<Props, State> {
     } = this.props;
 
     const { symbol: token, iconUrl, decimals } = assets[PPN_TOKEN] || {};
-    const icon = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=2` : '';
+    const icon = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=2` : '';
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     // balance

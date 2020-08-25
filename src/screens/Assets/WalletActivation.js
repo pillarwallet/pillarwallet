@@ -59,7 +59,7 @@ class WalletActivation extends React.PureComponent<Props> {
   handleEtherscan = () => {
     const { deploymentHash } = this.props;
     if (deploymentHash) {
-      Linking.openURL(`${getEnv('TX_DETAILS_URL')}${deploymentHash}`);
+      Linking.openURL(`${getEnv().TX_DETAILS_URL}${deploymentHash}`);
     }
   };
 

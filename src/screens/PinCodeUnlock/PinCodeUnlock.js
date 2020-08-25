@@ -117,8 +117,8 @@ class PinCodeUnlock extends React.Component<Props, State> {
       return;
     }
 
-    if (!this.errorMessage && getEnv('DEFAULT_PIN')) {
-      this.handlePinSubmit(getEnv('DEFAULT_PIN'));
+    if (!this.errorMessage && getEnv().DEFAULT_PIN) {
+      this.handlePinSubmit(getEnv().DEFAULT_PIN);
     }
 
     if (!this.errorMessage && lastAppState !== BACKGROUND_APP_STATE) {

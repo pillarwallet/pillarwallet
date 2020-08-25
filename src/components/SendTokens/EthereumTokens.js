@@ -170,7 +170,7 @@ const SendEthereumTokens = ({
 
     let data;
     if (isCollectible) {
-      const provider = getEthereumProvider(getEnv('COLLECTIBLES_NETWORK'));
+      const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
       const {
         name,
         id,
