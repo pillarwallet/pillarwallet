@@ -25,8 +25,9 @@ export const capitalize = (str: string): string => {
   return str.charAt(0).toUpperCase() + str.slice(1);
 };
 
-export const getValueWithSymbol = (value: string, isPositive: boolean, doNotFormat: boolean) => {
+export const getValueWithSymbol =
+  (value: string, token: string, isPositive: boolean, doNotFormat: boolean) => {
   if (doNotFormat) return value;
-  if (isPositive) return t('positiveValue', { value });
-  return t('negativeValue', { value });
+  if (isPositive) return t('positiveTokenValue', { value, token });
+  return t('negativeTokenValue', { value, token });
 };

@@ -17,6 +17,8 @@
 
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
+  "positiveTokenValue": "+ {{value}} {{token}}",
+  "negativeTokenValue": "- {{value}} {{token}}",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
 

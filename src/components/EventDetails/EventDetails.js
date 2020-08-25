@@ -626,9 +626,9 @@ export class EventDetail extends React.Component<Props, State> {
 
   renderPoolTogetherTickets = (event: Object) => {
     const { symbol, amount, decimals } = event.extra;
-    const formattedAmount = parseFloat(formatUnits(amount, decimals));
+    const formattedAmount = parseFloat(formatUnits(amount, decimals)).toString();
     const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
-    const amountText = getValueWithSymbol(`${formattedAmount} ${symbol}`, isPositive, !formattedAmount);
+    const amountText = getValueWithSymbol(formattedAmount, symbol, isPositive, !formattedAmount);
     const ticketsText = `(${t('ticketAmount', { count: formattedAmount })})`;
     const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
     const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? t('label.purchase') : t('label.withdraw');
@@ -1337,7 +1337,7 @@ export class EventDetail extends React.Component<Props, State> {
             <View>
               {groupedTransactions.map(({ value, symbol }) => (
                 <BaseText positive large key={symbol}>
-                  {t('positiveValue', { value: `${formatUnits(value.toString(), 18)} ${symbol}` })}
+                  {t('positiveTokenValue', { value: formatUnits(value.toString(), 18), token: symbol })}
                 </BaseText>
               ))}
             </View>
