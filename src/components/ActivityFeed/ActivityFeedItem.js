@@ -503,9 +503,15 @@ export class ActivityFeedItem extends React.Component<Props> {
               {!isFailed && isPPNView && transactionsCount > 1 && (
                 <BaseText regular secondary>{t('totalValue', { value: transactionsCount })}</BaseText>
               )}
-              {!isFailed && !isPPNView && formattedValuesArray.map(({ formatted, symbol }) =>
-                <ItemValue key={symbol}>{t('positiveTokenValue', { value: formatted, token: symbol})}</ItemValue>,
-              )}
+              {!isFailed && !isPPNView && formattedValuesArray
+                .map(({ formatted, symbol }) =>
+                  (
+                    <ItemValue key={symbol}>
+                      {t('positiveTokenValue', { value: formatted, token: symbol })}
+                    </ItemValue>
+                  ),
+                )
+              }
             </ListWrapper>),
         };
         break;

@@ -27,7 +27,7 @@ export const capitalize = (str: string): string => {
 
 export const getValueWithSymbol =
   (value: string, token: string, isPositive: boolean, doNotFormat: boolean) => {
-  if (doNotFormat) return value;
-  if (isPositive) return t('positiveTokenValue', { value, token });
-  return t('negativeTokenValue', { value, token });
-};
+    if (doNotFormat) return value;
+    if (isPositive) return t('positiveTokenValue', { value, token });
+    return t('negativeTokenValue', { value, token });
+  };
