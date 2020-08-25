@@ -24,7 +24,7 @@ import Input from 'components/Input';
 
 import type { Option } from 'models/Selector';
 
-import ExchangeInputHeader from './ExchangeInputHeader';
+import ExchangeInputHeader from './TextInputWithAssetSelectorHeader';
 
 type Props = {
   onBlur?: () => void,

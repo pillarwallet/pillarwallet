@@ -30,6 +30,7 @@ import { createStructuredSelector } from 'reselect';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import SelectorOptions from 'components/SelectorOptions';
+import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
 
 // actions
 import {
@@ -82,7 +83,6 @@ import {
   shouldTriggerSearch,
   shouldBlockView,
 } from './utils';
-import ExchangeTextInput from './ExchangeTextInput';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
 
 type Props = {
@@ -269,7 +269,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const value = displayFiatFromAmount ? fromAmountInFiat : fromAmount;
 
     return (
-      <ExchangeTextInput
+      <TextInput
         getInputRef={ref => { this.fromInputRef = ref; }}
         onChange={this.handleFromInputChange}
         value={value}
@@ -307,7 +307,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
-      <ExchangeTextInput
+      <TextInput
         disabled
         value={value}
         onBlur={this.blurFromInput}
