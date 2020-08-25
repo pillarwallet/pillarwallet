@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import 'utils/setup';
-import { setupEnv, switchEnvironments } from 'configs/envConfig';
+import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking } from 'react-native';
@@ -28,7 +28,6 @@ import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK, SHOW_LANG_TOGGLE } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
@@ -114,10 +113,10 @@ class App extends React.Component<Props, *> {
     if (!__DEV__) {
       const dist = DeviceInfo.getBuildNumber();
       const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
-      Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.init({ dsn: getEnv('SENTRY_DSN') });
       Sentry.setRelease(release);
       Sentry.setDist(dist);
-      Sentry.setTags({ environment: BUILD_TYPE });
+      Sentry.setTags({ environment: getEnv('BUILD_TYPE') });
     }
     this.state = {
       env: null,
@@ -266,7 +265,7 @@ class App extends React.Component<Props, *> {
                 theme={current === LIGHT_THEME ? 'light' : 'dark'}
                 language={i18n.language}
               />
-              {!!SHOW_THEME_TOGGLE &&
+              {!!getEnv('SHOW_THEME_TOGGLE') &&
               <Button
                 title={`THEME: ${current}`}
                 onPress={() => {
@@ -274,7 +273,7 @@ class App extends React.Component<Props, *> {
                   setAppTheme(themeToChangeTo);
                 }}
               />}
-              {!!SHOW_LANG_TOGGLE && <Button
+              {!!getEnv('SHOW_LANG_TOGGLE') && <Button
                 title={`Change lang (current: ${i18n.language})`}
                 onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
               />}
@@ -321,7 +320,7 @@ const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDis
 const AppRoot = () => (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      {SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+      {getEnv('SHOW_ONLY_STORYBOOK') ? <Storybook /> : <AppWithNavigationState />}
     </PersistGate>
   </Provider>
 );

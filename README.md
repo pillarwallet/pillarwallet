@@ -82,39 +82,45 @@ You must first enable them by right clicking in the `React Devtools` or `Redux D
 
 ## App configuration
 
-Add your app configuration in an **.env** file.
+Add your app configuration in the **/src/configs/envConfig.js** file.
 
 ```
-API_KEY=lorem
-ANOTHER_CONFIG=foobar
+const envVars = {
+    production: {
+        API_KEY: 'lorem',
+    }
+    staging: {
+        API_KEY: 'ipsum',
+    }
+}
+
 ```
 
 Now you can import it in your **.js** file.
 
 ```js
-import { API_KEY, ANOTHER_CONFIG } from 'react-native-dotenv'
+import { getEnv } from 'configs/envConfig'
 
-ApiClient.init(API_KEY, ANOTHER_CONFIG)
+ApiClient.init(getEnv('API_KEY'), ANOTHER_CONFIG)
 ```
 
 **How does it works?**
 
-As you can see, it's implemented as a babel plugin. All referenced imported members are replaced as the values specified in the **.env** file.
+The getEnv function loads any variable name defined in the  **/src/configs/envConfig.js** file.
 
-The example above will get compiled as below.
+The example above will get evaluated as below when in 'staging' mode
 
 ```js
-ApiClient.init('lorem', 'foobar')
+ApiClient.init('ipsum', 'foobar')
 ```
 
 **In Production**
 
-Simply create a separate **.env.production** file and the default release process of react-native will pickup the right config.
+When in production mode, 
+the default environment is production. When in developer mode, the default environment is staging.
 
-**Resource Links:**
-
-* [Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
-* [Configuration](https://github.com/zetachang/react-native-dotenv)
+The app supports switching between environments by tapping the Welcome Screen logo a certain amount of time with 
+a warning that will delete all stored items on the app before the switch.
 
 ## Storybook
 

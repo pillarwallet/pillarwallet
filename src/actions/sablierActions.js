@@ -84,7 +84,7 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
       stream,
     );
 
-    const estimate = await smartWalletService()
+    const estimate = await smartWalletService
       .estimateAccountTransaction({ recipient, value, data })
       .catch((e) => {
         reportLog('Error getting sablier withdraw transaction estimate', {

@@ -35,7 +35,7 @@ describe('Smart Wallet service', () => {
   };
 
   it('account transaction estimate fee should be equal 350000000000000', async () => {
-    const { ethCost } = await smartWalletService().estimateAccountTransaction(accountTransaction, assetData);
+    const { ethCost } = await smartWalletService.estimateAccountTransaction(accountTransaction, assetData);
     expect(ethCost.eq(350000000000000)).toBeTruthy();
   });
 });

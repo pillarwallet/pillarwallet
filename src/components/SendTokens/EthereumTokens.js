@@ -190,7 +190,7 @@ const SendEthereumTokens = ({
     }
 
     const transaction = { recipient: selectedContact.ethAddress, value, data };
-    const estimated = await smartWalletService()
+    const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
       .then(res => buildTxFeeInfo(res, useGasToken))
       .catch(() => null);
