@@ -49,27 +49,28 @@ class AaveService {
   lendingPoolCoreAddress: ?string;
   lendingPoolAddress: ?string;
   aaveTokenAddresses: { [string]: string } = {};
-  lendingPoolAddressesProvider: Object;
+  lendingPoolAddressesProvider: ?Object;
 
-  constructor() {
-    this.lendingPoolAddressesProvider = {};
-  }
-
-  getLendingPoolAddressesProvider(): Object {
-    if (isEmpty(this.lendingPoolAddressesProvider)) {
+  getLendingPoolAddressesProvider(): ?Object {
+    if (!this.lendingPoolAddressesProvider) {
       this.lendingPoolAddressesProvider = getContract(
         getEnv('AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS'),
         AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
-      ) || {};
+      );
     }
+
     return this.lendingPoolAddressesProvider;
   }
 
   async getLendingPoolCoreAddress(): Promise<string> {
-    if (isEmpty(this.getLendingPoolAddressesProvider())) return '';
+    const lendingPoolAddressesProvider = this.getLendingPoolAddressesProvider();
+
+    if (!lendingPoolAddressesProvider) {
+      return this.handleError('getLendingPoolAddressesProvider failed', '');
+    }
 
     if (!this.lendingPoolCoreAddress) {
-      this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
+      this.lendingPoolCoreAddress = lendingPoolAddressesProvider.getLendingPoolCore();
     }
 
     return this.lendingPoolCoreAddress;
@@ -85,10 +86,14 @@ class AaveService {
   }
 
   async getLendingPoolAddress(): Promise<string> {
-    if (isEmpty(this.getLendingPoolAddressesProvider())) return '';
+    const lendingPoolAddressesProvider = this.getLendingPoolAddressesProvider();
+
+    if (!lendingPoolAddressesProvider) {
+      return this.handleError('getLendingPoolAddressesProvider failed', '');
+    }
 
     if (!this.lendingPoolAddress) {
-      this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
+      this.lendingPoolAddress = await lendingPoolAddressesProvider.getLendingPool();
     }
 
     return this.lendingPoolAddress;
