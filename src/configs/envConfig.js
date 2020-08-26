@@ -41,8 +41,8 @@ const buildEnvironment = {
   BUILD_NUMBER: '_build_number_',
   BUILD_TYPE: buildType,
   OPEN_SEA_API_KEY: '_open_sea_api_key_',
-  INFURA_PROJECT_ID: '_infura_project_id_',
-  ETHPLORER_API_KEY: '_ethplorer_api_key_',
+  INFURA_PROJECT_ID: '_infura_project_id_', // gitignoreline
+  ETHPLORER_API_KEY: '_ethplorer_api_key_', // gitignoreline
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
 };
 
