@@ -32,7 +32,7 @@ export const capitalize = (str: string): string => {
 
 export const getFormattedValue = (value: string, token: string, options: ?FormattedValueOptions) => {
   const { isPositive, noSymbol } = options || {};
-  if (noSymbol || isPositive === 'undefined') return t('tokenValue', { value, token });
+  if (noSymbol || typeof isPositive === 'undefined') return t('tokenValue', { value, token });
   if (isPositive) return t('positiveTokenValue', { value, token });
   return t('negativeTokenValue', { value, token });
 };
