@@ -181,7 +181,9 @@ const Selector = ({
   const hasValue = !isEmpty(selectedOption);
   const hasOptions = !!options?.length;
   const disabled = !hasOptions && !allowEnteringCustomAddress;
-  const placeholderText = !disabled ? `${placeholder}...` : t('label.noOptionsToSelect');
+  const placeholderText = !disabled
+    ? t('ellipsedString', { string: placeholder })
+    : t('label.noOptionsToSelect');
 
   const onModalHidden = () => {
     setChangingModals(false);

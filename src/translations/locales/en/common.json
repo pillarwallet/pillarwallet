@@ -12,6 +12,7 @@
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
+  "ellipsedString": "{{string}}...",
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
