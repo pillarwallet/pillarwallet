@@ -229,10 +229,14 @@ export const navigateToAppFlow = (showIncomingReward?: boolean) => {
 
 export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const mnemonic = getState()?.wallet?.onboarding?.mnemonic;
+    // in case mnemonic is null (new user) then it will generate new, otherwise will take imported from state
+    const mnemonicPhrase = mnemonic?.original || generateMnemonicPhrase();
+    if (!mnemonic) dispatch(generateWalletMnemonicAction(mnemonicPhrase));
+
     const currentState = getState();
     const {
       onboarding: {
-        mnemonic: { original: mnemonicPhrase },
         pin,
         importedWallet,
         apiUser,
@@ -353,10 +357,6 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
  */
 export const registerOnBackendAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const mnemonic = getState()?.wallet?.onboarding?.mnemonic;
-    const mnemonicPhrase = generateMnemonicPhrase(mnemonic?.original);
-    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
-
     const {
       wallet: {
         data: walletData,
