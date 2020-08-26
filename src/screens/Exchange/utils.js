@@ -133,7 +133,7 @@ const generateAssetsOptions = (
 ): Option[] => {
   return sortAssets(assets)
     .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
-      && !!exchangeSupportedAssets.some(asset => asset.symbol === symbol))
+      && exchangeSupportedAssets.some(asset => asset.symbol === symbol))
     .map(({ symbol, iconUrl, ...rest }) => {
       const assetBalance = formatAmount(getBalance(balances, symbol));
       const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
@@ -150,11 +150,6 @@ const generateAssetsOptions = (
         assetBalance,
         formattedBalanceInFiat,
         customProps: {
-          balance: !!formattedBalanceInFiat && {
-            balance: assetBalance,
-            value: formattedBalanceInFiat,
-            token: symbol,
-          },
           rightColumnInnerStyle: { alignItems: 'flex-end' },
         },
       });
@@ -186,11 +181,6 @@ const generateSupportedAssetsOptions = (
         assetBalance,
         formattedBalanceInFiat,
         customProps: {
-          balance: !!formattedBalanceInFiat && {
-            balance: assetBalance,
-            value: formattedBalanceInFiat,
-            token: symbol,
-          },
           rightColumnInnerStyle: { alignItems: 'flex-end' },
         },
       };
@@ -246,7 +236,7 @@ export const getHeaderRightItems = (
 ): Object[] => {
   const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
   if (!isEmpty(exchangeAllowances)
-  && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
+    && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
     rightItems.push({
       iconSource: settingsIcon,
       indicator: hasUnreadExchangeNotification,

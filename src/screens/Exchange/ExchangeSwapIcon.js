@@ -34,7 +34,7 @@ const Wrapper = styled.View`
 type Props = {
   onPress: () => void,
   theme: Theme,
-}
+};
 
 const ExchangeSwapIcon = ({
   onPress, theme,

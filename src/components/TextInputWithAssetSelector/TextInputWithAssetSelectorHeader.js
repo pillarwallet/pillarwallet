@@ -36,7 +36,7 @@ type Props = {
   labelText: string,
   onLabelPress: () => void,
   onAssetPress: () => void,
-}
+};
 
 const Wrapper = styled.View`
   width: 100%;
@@ -80,35 +80,33 @@ const LabelText = styled(BaseText)`
   color: ${themedColors.link}
 `;
 
-class ExchangeInputHeader extends React.PureComponent<Props> {
-  render() {
-    const {
-      asset, labelText, onLabelPress, onAssetPress, theme,
-    } = this.props;
-    const { id, name, imageUrl } = asset;
-    const optionImageSource = resolveAssetSource(imageUrl);
-    const { genericToken } = images(theme);
-    return (
-      <Wrapper>
-        <SideWrapper onPress={onAssetPress} >
-          <Image
-            key={id}
-            source={optionImageSource}
-            fallbackSource={genericToken}
-            resizeMode="contain"
-            style={{ height: 24, width: 24 }}
-          />
-          <ChevronWrapper>
-            <SelectorChevron name="selector" />
-          </ChevronWrapper>
-          <AssetName>{name}</AssetName>
-        </SideWrapper>
-        <SideWrapper onPress={onLabelPress} >
-          <LabelText>{labelText}</LabelText>
-        </SideWrapper>
-      </Wrapper>
-    );
-  }
-}
+const ExchangeInputHeader = (props: Props) => {
+  const {
+    asset, labelText, onLabelPress, onAssetPress, theme,
+  } = props;
+  const { id, name, imageUrl } = asset;
+  const optionImageSource = resolveAssetSource(imageUrl);
+  const { genericToken } = images(theme);
+  return (
+    <Wrapper>
+      <SideWrapper onPress={onAssetPress} >
+        <Image
+          key={id}
+          source={optionImageSource}
+          fallbackSource={genericToken}
+          resizeMode="contain"
+          style={{ height: 24, width: 24 }}
+        />
+        <ChevronWrapper>
+          <SelectorChevron name="selector" />
+        </ChevronWrapper>
+        <AssetName>{name}</AssetName>
+      </SideWrapper>
+      <SideWrapper onPress={onLabelPress} >
+        <LabelText>{labelText}</LabelText>
+      </SideWrapper>
+    </Wrapper>
+  );
+};
 
 export default withTheme(ExchangeInputHeader);

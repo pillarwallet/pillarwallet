@@ -41,62 +41,62 @@ type Props = {
   rightPlaceholder: string,
   disabled?: boolean,
   getInputRef?: (Input) => void
-}
+};
 
-export default class ExchangeTextInput extends React.PureComponent<Props> {
-    getCustomLabel = () => {
-      const {
-        asset, onAssetPress, labelText, onLabelPress,
-      } = this.props;
-      return (
-        <ExchangeInputHeader
-          asset={asset}
-          onAssetPress={onAssetPress}
-          labelText={labelText}
-          onLabelPress={onLabelPress}
-        />
-      );
-    }
+const ExchangeTextInput = (props: Props) => {
+  const getCustomLabel = () => {
+    const {
+      asset, onAssetPress, labelText, onLabelPress,
+    } = props;
+    return (
+      <ExchangeInputHeader
+        asset={asset}
+        onAssetPress={onAssetPress}
+        labelText={labelText}
+        onLabelPress={onLabelPress}
+      />
+    );
+  };
 
-    render() {
-      const {
-        rightPlaceholder,
-        errorMessage,
-        onAssetPress,
-        onBlur,
-        onChange,
-        value,
-        leftSideText,
-        onLeftSideTextPress,
-        leftSideSymbol,
-        disabled,
-        getInputRef,
-      } = this.props;
-      const inputProps = {
-        value,
-        onBlur,
-        maxLength: 42,
-        customLabel: this.getCustomLabel(),
-        onChange,
-        placeholder: '0',
-        keyboardType: 'decimal-pad',
-        editable: !disabled,
-      };
-      return (
-        <TextInput
-          style={{ width: '100%' }}
-          hasError={!!errorMessage}
-          errorMessage={errorMessage}
-          inputProps={inputProps}
-          numeric
-          getInputRef={getInputRef}
-          itemHolderStyle={{ borderRadius: 10 }}
-          leftSideText={leftSideText}
-          leftSideSymbol={leftSideSymbol}
-          onLeftSideTextPress={onLeftSideTextPress}
-          rightPlaceholder={rightPlaceholder}
-          onRightAddonPress={onAssetPress}
-        />
-      );
-    }
-}
+  const {
+    rightPlaceholder,
+    errorMessage,
+    onAssetPress,
+    onBlur,
+    onChange,
+    value,
+    leftSideText,
+    onLeftSideTextPress,
+    leftSideSymbol,
+    disabled,
+    getInputRef,
+  } = props;
+  const inputProps = {
+    value,
+    onBlur,
+    maxLength: 42,
+    customLabel: getCustomLabel(),
+    onChange,
+    placeholder: '0',
+    keyboardType: 'decimal-pad',
+    editable: !disabled,
+  };
+  return (
+    <TextInput
+      style={{ width: '100%' }}
+      hasError={!!errorMessage}
+      errorMessage={errorMessage}
+      inputProps={inputProps}
+      numeric
+      getInputRef={getInputRef}
+      itemHolderStyle={{ borderRadius: 10 }}
+      leftSideText={leftSideText}
+      leftSideSymbol={leftSideSymbol}
+      onLeftSideTextPress={onLeftSideTextPress}
+      rightPlaceholder={rightPlaceholder}
+      onRightAddonPress={onAssetPress}
+    />
+  );
+};
+
+export default ExchangeTextInput;
