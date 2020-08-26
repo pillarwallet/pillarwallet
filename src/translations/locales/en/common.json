@@ -144,7 +144,8 @@
     "collectible": "Collectible",
     "processing": "Processing...",
     "mainAccount": "Main Account",
-    "free": "Free"
+    "free": "Free",
+    "estimatedFee": "Estimated fee:"
   },
 
   "button": {
