@@ -270,7 +270,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const value = formatUnits(amount, decimals);
     return getFormattedValue(formatAmount(value, getDecimalPlaces(symbol)), symbol, {
       isPositive,
-      doNotFormat: !value,
+      noSymbol: !value,
     });
   };
 
