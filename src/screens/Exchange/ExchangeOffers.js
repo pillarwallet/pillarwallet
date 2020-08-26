@@ -72,7 +72,6 @@ import { buildTxFeeInfo } from 'utils/smartWallet';
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { calculateAmountToBuy, getAvailable } from './utils';
-import type { FormValue } from './Exchange';
 import AssetEnableModal from './AssetEnableModal';
 
 
@@ -102,7 +101,7 @@ type Props = {
   isExchangeActive: boolean,
   disableNonFiatExchange: boolean,
   setFromAmount: (string) => void,
-  value: FormValue,
+  fromAmount: string,
   exchangeSupportedAssets: Asset[],
   baseFiatCurrency: ?string,
   rates: Rates,
@@ -340,11 +339,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       navigation,
       takeOffer,
       setExecutingTransaction,
-      value: {
-        fromInput: {
-          input: selectedSellAmount,
-        },
-      },
+      fromAmount,
     } = this.props;
 
     const {
@@ -355,7 +350,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       askRate,
       trackId = '',
     } = offer;
-    const amountToSell = parseFloat(selectedSellAmount);
+    const amountToSell = parseFloat(fromAmount);
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
 
     this.setState({ pressedOfferId: _id }, () => {
@@ -383,10 +378,10 @@ class ExchangeOffers extends React.Component<Props, State> {
     const {
       exchangeAllowances,
       theme,
-      value: { fromInput },
+      fromAmount,
       setFromAmount,
     } = this.props;
-    const { input: selectedSellAmount } = fromInput;
+
     const {
       _id: offerId,
       minQuantity,
@@ -411,12 +406,12 @@ class ExchangeOffers extends React.Component<Props, State> {
     }
 
     const available = getAvailable(minQuantity, maxQuantity, askRate);
-    const amountToBuy = calculateAmountToBuy(askRate, selectedSellAmount);
+    const amountToBuy = calculateAmountToBuy(askRate, fromAmount);
     const isTakeOfferPressed = pressedOfferId === offerId;
     const providerLogo = getOfferProviderLogo(offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
-    const amountToSell = parseFloat(selectedSellAmount);
+    const amountToSell = parseFloat(fromAmount);
     const minQuantityNumeric = parseFloat(minQuantity);
     const maxQuantityNumeric = parseFloat(maxQuantity);
     const isBelowMin = minQuantityNumeric !== 0 && amountToSell < minQuantityNumeric;

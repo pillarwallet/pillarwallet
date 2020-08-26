@@ -92,11 +92,3 @@ export const CURRENCY_SYMBOLS = {
   EUR: '€',
 };
 
-export const POPULAR_SWAPS = [
-  { from: ETH, to: PLR },
-  { from: ETH, to: DAI },
-  { from: DAI, to: ETH },
-  { from: PLR, to: ETH },
-  { from: ETH, to: LINK },
-  { from: ETH, to: BAT },
-];

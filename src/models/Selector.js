@@ -31,6 +31,15 @@ export type Option = {
   opacity?: number,
   hasSmartWallet?: number,
   disabled?: boolean,
+  key?: string,
+  value?: string,
+  imageUrl?: string,
+  icon?: string,
+  iconUrl?: string,
+  symbol?: string,
+  assetBalance?: string,
+  formattedBalanceInFiat?: string,
+  id?: string
 };
 
 export type HorizontalOption = {

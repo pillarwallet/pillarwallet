@@ -40,7 +40,8 @@
     "transactions": "Transactions",
     "addNewContact": "Add new contact",
     "editContact": "Edit contact",
-    "addressBook": "Address book"
+    "addressBook": "Address book",
+    "exchange": "Exchange"
   },
 
   "label": {
@@ -108,7 +109,9 @@
     "yourEnsName": "Your wallet ENS name",
     "name": "Name",
     "address": "Address",
-    "resolvingEnsName": "Resolving ENS name"
+    "resolvingEnsName": "Resolving ENS name",
+    "buy": "Buy",
+    "sell": "Sell"
   },
 
   "button": {
@@ -287,6 +290,9 @@
     },
     "subscription": {
       "placeholder": "Your e-mail"
+    },
+    "selector": {
+      "searchPlaceholder": "Search"
     }
   },
 
@@ -304,7 +310,11 @@
       "email": "Please enter a valid email"
     },
     "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
-    "ensNameNotFound": "Sorry, ENS name not found. Please check and try again."
+    "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
+    "exchange": {
+      "incorrectNumber": "Incorrect number entered",
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+    }
   },
 
   "badgeText": {
@@ -353,6 +363,10 @@
       "paragraph": {
         "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet"
       }
+    },
+    "exchangeActivation": {
+      "message": "To start exchanging assets you need to activate your Smart Wallet",
+      "button": "Activate Smart Wallet"
     },
     "tabs": {
       "tokens": {
@@ -450,13 +464,13 @@
       "biometricLogin": {
         "title": "Biometric login"
       },
-      "changePIN":{
+      "changePIN": {
         "title": "Change PIN"
       },
       "community": {
         "title": "Community",
         "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
-        "label":{
+        "label": {
           "follow": "Follow us"
         }
       },
