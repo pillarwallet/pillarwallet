@@ -291,8 +291,8 @@ class HomeScreen extends React.Component<Props> {
     const cornerIcon = iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : '';
     return (
       <ListItemWithImage
-        label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
-        subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
+        label={t('tokenValue', { value: formatAmountDisplay(currentBalance), token: symbol })}
+        subtext={t('aaveContent.label.currentAPYPercentage', { rate: formatAmountDisplay(earnInterestRate) })}
         itemImageSource={aaveImage}
         onPress={() => this.props.navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
         iconImageSize={52}
@@ -300,8 +300,12 @@ class HomeScreen extends React.Component<Props> {
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}
         itemImageRoundedSquare
       >
-        <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
-        <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
+        <DepositedAssetGain positive>
+          {t('positiveTokenValue', { value: formatAmountDisplay(earnedAmount), token: symbol })}
+        </DepositedAssetGain>
+        <BaseText secondary>
+          {t('positivePercentValue', { value: formatAmountDisplay(earningsPercentageGain) })}
+        </BaseText>
       </ListItemWithImage>
     );
   };

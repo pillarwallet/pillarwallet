@@ -18,6 +18,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
+
 
 export type AppItem = {
   name: string,
@@ -42,66 +44,64 @@ export const APPS: AppItem[] = [
   {
     name: 'Zerion',
     logo: zerionLogo,
-    text: 'A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.',
+    text: t('walletConnectContent.paragraph.zerionDescription'),
     url: 'zerion.io',
   },
   {
     name: 'Pool Together',
     logo: poolTogetherLogo,
-    text: `No-loss, audited savings game. Deposit Dai into the pool to get tickets. \
-Each ticket is a chance to win weekly prizes!`,
+    text: t('walletConnectContent.paragraph.poolTogetherDescription'),
     url: 'pooltogether.com',
   },
   {
     name: 'Mooni',
     logo: mooniLogo,
-    text: 'A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.',
+    text: t('walletConnectContent.paragraph.mooniDescription'),
     url: 'mooni.tech',
     disabled: true,
   },
   {
     name: 'Oasis',
     logo: oasisLogo,
-    text: 'Trade, borrow, and save using Dai.',
+    text: t('walletConnectContent.paragraph.oasisDescription'),
     url: 'oasis.app',
   },
   {
     name: 'Sablier',
     logo: sablierLogo,
-    text: '"Stream" money in real-time.',
+    text: t('walletConnectContent.paragraph.sablierDescription'),
     url: 'sablier.finance',
   },
   {
     name: 'Binance DEX',
     logo: binanceLogo,
-    text: `Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.`,
+    text: t('walletConnectContent.paragraph.binanceDexDescription'),
     url: 'binance.org',
     disabled: true,
   },
   {
     name: 'Local Cryptos',
     logo: localCryptosLogo,
-    text: `The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with \
-  each other. Buy and sell crypto on your own terms, using any payment method.`,
+    text: t('walletConnectContent.paragraph.localCryptosDescription'),
     url: 'localcryptos.com',
     disabled: true,
   },
   {
     name: 'Async.art',
     logo: asyncartLogo,
-    text: 'Collect and experience programmable rare art.',
+    text: t('walletConnectContent.paragraph.asyncArtDescription'),
     url: 'async.art',
   },
   {
     name: 'Known Origin',
     logo: knownOriginLogo,
-    text: 'Discover and collect rare digital artwork.',
+    text: t('walletConnectContent.paragraph.knownOriginDescription'),
     url: 'knownorigin.io',
   },
   {
     name: 'Clovers',
     logo: cloversLogo,
-    text: 'Discover, collect & trade cryptographic icons.',
+    text: t('walletConnectContent.paragraph.cloversDescription'),
     url: 'clovers.network',
   },
 ];
