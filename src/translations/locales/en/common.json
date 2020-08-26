@@ -25,10 +25,12 @@
   "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
+  "ofTotalTokenValue": "of {{value}} {{token}} total",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
   "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
   "day": "{{count}} day",
   "day_plural": "{{count}} days",
   "hour": "{{count}} hour",
@@ -147,7 +149,14 @@
     "free": "Free",
     "estimatedFee": "Estimated fee:",
     "nothingFound": "Nothing found",
-    "verified": "Verified"
+    "verified": "Verified",
+    "select": "Select",
+    "selectCurrency": "Select currency",
+    "choseOption": "Choose option",
+    "noOptionsToSelect": "No options to select",
+    "availableBalance": "Available Balance",
+    "sendingToReceiver": "Sending to {{receiver}}",
+    "sentToReceiver": "It was sent to {{receiver}}"
   },
 
   "button": {
@@ -226,14 +235,17 @@
     "allow": "Allow",
     "max": "Max",
     "sendTokenInstead": "Send token instead",
-    "addToContacts": "Add to contacts"
+    "addToContacts": "Add to contacts",
+    "copyToClipboard": "Copy to clipboard",
+    "resendIt": "Resend it"
   },
 
   "paragraph": {
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
-    "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview."
+    "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview.",
+    "didNotReceiveVerificationCodeQuestion": "Didn't receive the code?"
   },
 
   "insight": {
@@ -370,7 +382,13 @@
     "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
     "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
     "notEnoughTokenForFee": "Not enough {{token}} for the transaction fee",
-    "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again."
+    "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again.",
+    "noCameraPermission": "Camera permissions not granted - cannot open the QR scanner.",
+    "noField": {
+      "address": "No address to show",
+      "phone": "No phone to show",
+      "default": "No information to show"
+    }
   },
 
   "badgeText": {

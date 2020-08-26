@@ -27157,7 +27157,7 @@ exports[`Storyshots Selector default 1`] = `
         ]
       }
     >
-      Select
+      label.select
       : 
     </Text>
     <View
@@ -27206,7 +27206,7 @@ exports[`Storyshots Selector default 1`] = `
           ]
         }
       >
-        Choose option...
+        label.choseOption...
       </Text>
     </View>
   </View>
@@ -27502,7 +27502,7 @@ exports[`Storyshots Selector default 1`] = `
                               ]
                             }
                           >
-                            Choose option
+                            label.choseOption
                           </Text>
                         </View>
                       </View>
@@ -27542,7 +27542,7 @@ exports[`Storyshots Selector default 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -27659,7 +27659,7 @@ exports[`Storyshots Selector default 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
@@ -28478,7 +28478,7 @@ exports[`Storyshots Selector no options 1`] = `
         ]
       }
     >
-      Select
+      label.select
       : 
     </Text>
     <View
@@ -28527,7 +28527,7 @@ exports[`Storyshots Selector no options 1`] = `
           ]
         }
       >
-        no options to select
+        label.noOptionsToSelect
       </Text>
     </View>
   </View>
@@ -28823,7 +28823,7 @@ exports[`Storyshots Selector no options 1`] = `
                               ]
                             }
                           >
-                            Choose option
+                            label.choseOption
                           </Text>
                         </View>
                       </View>
@@ -28863,7 +28863,7 @@ exports[`Storyshots Selector no options 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -28876,7 +28876,7 @@ exports[`Storyshots Selector no options 1`] = `
                             fullScreen={true}
                           >
                             <EmptyStateParagraph
-                              title="Nothing found"
+                              title="label.nothingFound"
                             />
                           </SelectorOptions__EmptyStateWrapper>
                         </React.Fragment>,
@@ -28976,7 +28976,7 @@ exports[`Storyshots Selector no options 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
@@ -29109,7 +29109,7 @@ exports[`Storyshots Selector no options 1`] = `
                               ]
                             }
                           >
-                            Nothing found
+                            label.nothingFound
                           </Text>
                         </View>
                       </View>
@@ -30026,7 +30026,7 @@ exports[`Storyshots Selector selected option 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -30143,7 +30143,7 @@ exports[`Storyshots Selector selected option 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
@@ -32283,7 +32283,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
         ]
       }
     >
-      Select
+      label.select
       : 
     </Text>
     <View
@@ -32332,7 +32332,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           ]
         }
       >
-        Choose option...
+        label.choseOption...
       </Text>
     </View>
   </View>
@@ -32628,7 +32628,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               ]
                             }
                           >
-                            Choose option
+                            label.choseOption
                           </Text>
                         </View>
                       </View>
@@ -32668,7 +32668,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -32826,7 +32826,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
