@@ -54,7 +54,13 @@
     "addNewContact": "Add new contact",
     "editContact": "Edit contact",
     "addressBook": "Address book",
-    "select": "Select"
+    "select": "Select",
+    "failed": "Failed",
+    "pending": "Pending",
+    "collectibleSent": "Collectible sent",
+    "collectibleReceive": "Collectible received",
+    "badgeReceived": "Badge received",
+    "connectionRequested": "Requested"
   },
 
   "label": {
