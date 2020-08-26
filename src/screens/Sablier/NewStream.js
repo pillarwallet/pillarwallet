@@ -67,6 +67,7 @@ import type { Option } from 'models/Selector';
 import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { GasToken } from 'models/Transaction';
+import type { Contact } from 'models/Contact';
 import type { AllowData } from './SablierAllowanceModal';
 
 // partials
@@ -92,7 +93,7 @@ type State = {
   activeDatePicker: ?string,
   assetValue: number,
   assetSymbol: ?string,
-  selectedContact: ?Option,
+  selectedContact: ?Contact,
   isAllowanceModalVisible: boolean,
   txFeeInWei: number,
   isCheckingAllowance: boolean,
@@ -139,6 +140,9 @@ class NewStream extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps) {
     const { assetSymbol } = this.state;
+    if (!assetSymbol) {
+      return;
+    }
     if (prevProps.sablierApproveExecuting[assetSymbol] && !this.props.sablierApproveExecuting[assetSymbol]) {
       this.updateAllowance(assetSymbol);
     }
