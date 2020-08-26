@@ -256,7 +256,9 @@
     "migrateAssetsToSmartWallet": "Migrate assets to Smart Wallet",
     "continue": "Continue",
     "remove": "Remove",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "magic": "Magic"
   },
 
   "paragraph": {
@@ -416,7 +418,12 @@
     "pin": {
       "newShouldBeDifferent": "New pincode must be different from the current one"
     },
-    "deviceRemovalOffline": "You need to be online in order to remove Smart Wallet device."
+    "deviceRemovalOffline": "You need to be online in order to remove Smart Wallet device.",
+    "amount": {
+      "invalidNumber": "Incorrect number entered",
+      "exceedBalance": "Amount should not exceed total balance",
+      "shouldNotHaveDecimals": "Amount should not contain decimal places"
+    }
   },
 
   "badgeText": {
@@ -1037,11 +1044,15 @@
       "transactionSuccess": "Tokens are on their way",
       "collectibleTransactionSuccess": "Collectible is on its way",
       "poolTogetherTransactionSuccess": "You're in the pool!",
-      "sablierTransactionSuccess": "Your stream has begun"
+      "sablierTransactionSuccess": "Your stream has begun",
+      "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
+      "amountEditScreen": "Edit amount",
+      "assetsTransferToSmartWalletStatusScreen": "Key based assets migration"
     },
     "button": {
       "payFeeWithPillar": "Pay fees with PLR",
-      "confirmTransaction": "Confirm Transaction"
+      "confirmTransaction": "Confirm Transaction",
+      "cancelUnsent": "Cancel unsent"
     },
     "label": {
       "amount": "Amount",
@@ -1052,13 +1063,25 @@
       "assetsToSettle": "Assets to settle",
       "recipientGet": "Recipient will get",
       "youPay": "You will pay",
-      "collectibleName": "Collectible"
+      "collectibleName": "Collectible",
+      "noAssetsFound": "No assets found",
+      "noCollectiblesFound": "No collectibles found",
+      "fromKeyWallet": "From Key based wallet",
+      "toSmartWallet": "To Smart Wallet",
+      "tokensToTransfer": "Tokens to transfer",
+      "collectiblesToTransfer": "Collectibles to transfer"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
       "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
+    },
+    "emptyState": {
+      "assetsList": {
+        "title": "No assets found",
+        "paragraph": "Check if the name was entered correctly"
+      }
     }
   },
 

@@ -147,11 +147,11 @@ const KeyBasedAssetTransferStatus = ({
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Key based assets migration' }] }}
+      headerProps={{ centerItems: [{ title: t('transactions.title.assetsTransferToSmartWalletStatusScreen') }] }}
       footer={!transferComplete && !creatingTransactions && (
         <Footer>
           <Button
-            title="Cancel unsent"
+            title={t('transactions.title.button.cancelUnsent')}
             onPress={() => {
               navigation.goBack();
               resetKeyBasedAssetsTransfer();
@@ -167,7 +167,7 @@ const KeyBasedAssetTransferStatus = ({
             <Title center>Key based assets migration complete</Title>
             <Button
               block
-              title={t('auth:button.magic')}
+              title={t('button.magic')}
               onPress={() => navigation.goBack()}
               marginTop={50}
             />
