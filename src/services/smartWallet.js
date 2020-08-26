@@ -115,7 +115,16 @@ export const parseEstimatePayload = (estimatePayload: EstimatePayload): ParsedEs
   };
 };
 
-export const formatEstimated = (estimated: ParsedEstimate) => {
+export const formatEstimated = (estimated: ?ParsedEstimate) => {
+  // for some invalid inputs, tx fee estimation will return undefined
+  // screens don't handle errors ATM, so we default to 0 to prevent app crashes
+  if (!estimated) {
+    return {
+      ethCost: new BigNumber(0),
+      gasTokenCost: new BigNumber(0),
+      gasToken: new BigNumber(0),
+    };
+  }
   let { gasTokenCost, totalCost } = estimated;
   const { gasToken, relayerFeatures } = estimated;
   const hasGasTokenSupport = get(relayerFeatures, 'gasTokenSupported', false);
@@ -452,7 +461,7 @@ class SmartWallet {
   async estimateAccountTransaction(
     transaction: AccountTransaction,
     assetData?: AssetData,
-  ): Promise<EstimatedTransactionFee> {
+  ): Promise<?EstimatedTransactionFee> {
     const {
       value: rawValue,
       sequentialTransactions = [],

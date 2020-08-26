@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import smartWalletService from 'services/smartWallet';
+import { BigNumber } from 'bignumber.js';
 
 import type { AccountTransaction } from 'services/smartWallet';
 import type { AssetData } from 'models/Asset';
@@ -35,7 +36,8 @@ describe('Smart Wallet service', () => {
   };
 
   it('account transaction estimate fee should be equal 350000000000000', async () => {
-    const { ethCost } = await smartWalletService.estimateAccountTransaction(accountTransaction, assetData);
+    const { ethCost = new BigNumber(0) } =
+      await smartWalletService.estimateAccountTransaction(accountTransaction, assetData) || {};
     expect(ethCost.eq(350000000000000)).toBeTruthy();
   });
 });
