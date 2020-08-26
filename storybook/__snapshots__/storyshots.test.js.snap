@@ -27138,7 +27138,7 @@ exports[`Storyshots Selector default 1`] = `
           ]
         }
       >
-        label.choseOption...
+        ellipsedString
       </Text>
     </View>
   </View>
@@ -30943,7 +30943,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
           ]
         }
       >
-        Choose contact...
+        ellipsedString
       </Text>
     </View>
   </View>
@@ -32264,7 +32264,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           ]
         }
       >
-        label.choseOption...
+        ellipsedString
       </Text>
     </View>
   </View>
