@@ -25,6 +25,7 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // actions
 import { fetchDepositedAssetAction } from 'actions/lendingActions';
@@ -172,7 +173,7 @@ const ViewDepositedAsset = ({
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: 'Your deposit' }] }}
+      headerProps={{ centerItems: [{ title: t('aaveContent.title.depositedAssetScreen') }] }}
       inset={{ bottom: 0 }}
     >
       <ScrollWrapper
@@ -184,8 +185,10 @@ const ViewDepositedAsset = ({
         }
       >
         <CurrentInterestRate>
-          <BaseText secondary>Current APY</BaseText>
-          <InterestRate>{formatAmountDisplay(earnInterestRate)}%</InterestRate>
+          <BaseText secondary>{t('aaveContent.label.currentAPY')}</BaseText>
+          <InterestRate>
+            {t('percentValue', { value: formatAmountDisplay(earnInterestRate) })}
+          </InterestRate>
         </CurrentInterestRate>
         <ImagesWrapper>
           <CachedImage
@@ -215,25 +218,34 @@ const ViewDepositedAsset = ({
             }}
           >
             <BaseText secondary fontSize={fontSizes.medium}>
-              Earned
+              {t('aaveContent.label.earned')}
             </BaseText>
             <MediumText positive fontSize={fontSizes.medium}>
-              + {formatAmountDisplay(earnedAmount)} {assetSymbol}
+              {t('positiveValue', {
+                value: t('tokenaValue', {
+                  value: formatAmountDisplay(earnedAmount),
+                  token: assetSymbol,
+                }),
+              })}
             </MediumText>
             <BaseText success fontSize={fontSizes.medium}>
-              +{formatAmountDisplay(earningsPercentageGain)}%
+              {t('positiveValue', {
+                value: t('percentValue', {
+                  value: formatAmountDisplay(earningsPercentageGain),
+                }),
+              })}
             </BaseText>
           </ShadowedCard>
         </DetailsWrapper>
         <AssetButtonsWrapper>
           <CircleButton
-            label="Add funds"
+            label={t('button.addFunds')}
             fontIcon="plus"
             fontIconStyle={{ fontSize: fontSizes.big }}
             onPress={() => navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: assetSymbol })}
           />
           <CircleButton
-            label="Withdraw"
+            label={t('button.withdraw')}
             fontIcon="up-arrow"
             fontIconStyle={{ fontSize: fontSizes.big }}
             onPress={() => navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: assetSymbol })}
@@ -241,7 +253,7 @@ const ViewDepositedAsset = ({
         </AssetButtonsWrapper>
         {!isEmpty(activityFeedData) && (
           <ActivityFeed
-            feedTitle="History"
+            feedTitle={t('aaveContent.title.activityFeed')}
             navigation={navigation}
             noBorder
             feedData={activityFeedData}

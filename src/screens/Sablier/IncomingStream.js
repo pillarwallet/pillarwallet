@@ -24,6 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
@@ -123,11 +124,11 @@ class IncomingStream extends React.Component<Props> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Incoming stream ' }] }}
+        headerProps={{ centerItems: [{ title: t('sablierContent.title.incomingStream') }] }}
         putContentInScrollView
       >
         <Selector
-          label="From"
+          label={t('label.from')}
           disabled
           selectedOption={sender}
           customOptions={[]}
@@ -138,7 +139,7 @@ class IncomingStream extends React.Component<Props> {
         />
         <Spacing h={27} />
         <WithdrawCardWrapper>
-          <MediumText big>Streamed</MediumText>
+          <MediumText big>{t('sablierContent.label.streamed')}</MediumText>
           <Spacing h={6} />
           <ShadowedCard
             contentWrapperStyle={{ padding: 16 }}
@@ -148,16 +149,18 @@ class IncomingStream extends React.Component<Props> {
               <Spacing w={12} />
               <Column>
                 <MediumText fontSize={20} lineHeight={20}>{formattedStreamedAmount}
-                  <MediumText regular secondary> {assetData.symbol} of {formattedDeposit}</MediumText>
+                  <MediumText regular secondary>
+                    {assetData.symbol} {t('ofValue', { value: formattedDeposit })}
+                  </MediumText>
                 </MediumText>
                 <BaseText regular>{formattedWithdrawnAmount}
-                  <BaseText secondary> {assetData.symbol} withdrawn</BaseText>
+                  <BaseText secondary> {assetData.symbol} {t('withdrawn')}</BaseText>
                 </BaseText>
               </Column>
             </Row>
             <Spacing h={14} />
             <Button
-              title="Withdraw"
+              title={t('button.withdraw')}
               onPress={this.goToWithdrawScreen}
               disabled={!hasStreamStarted}
             />
@@ -168,7 +171,7 @@ class IncomingStream extends React.Component<Props> {
           navigation={navigation}
           feedData={combinedHistory}
           card
-          cardHeaderTitle="History"
+          cardHeaderTitle={t('sablierContent.title.streamingActivityFeed')}
         />
       </ContainerWithHeader>
     );

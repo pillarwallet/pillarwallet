@@ -826,7 +826,7 @@
     "status": {
       "canceled": "Canceled",
       "ended": "Ended",
-      "Remaining": "Remaining"
+      "remaining": "Remaining"
     },
     "moneyStreamingList": {
       "title": "Sablier money streaming"
