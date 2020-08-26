@@ -27,7 +27,7 @@ import { SDK_PROVIDER } from 'react-native-dotenv';
 import { COLLECTIBLES, ETH, TOKENS } from 'constants/assetsConstants';
 
 // utils
-import { formatFiat, formatAmount, isCaseInsensitiveMatch } from 'utils/common';
+import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
 
 // types
 import type {
@@ -193,7 +193,7 @@ export const isEnoughBalanceForTransactionFee = (
       const amountInWei = new BigNumber(utils.parseUnits(transactionAmount.toString(), transactionDecimals));
       balanceInWei = balanceInWei.minus(amountInWei);
     } catch (e) {
-      //
+      reportOrWarn('Error parsing asset balance', e, 'error');
     }
   }
 
