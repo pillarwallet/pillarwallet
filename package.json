@@ -23,6 +23,7 @@
     "jest-update": "jest --colors -u",
     "postinstall": "./node_modules/.bin/rn-nodeify --install --hack --yarn && mv shim.js src/utils && patch-package && jetifier",
     "storybook": "start-storybook -p 7007",
+    "precommit": "git config --global filter.ignoreline.clean \"sed '/\\/\\/ gitignoreline$/'d\" && git config --global filter.ignoreline.smudge cat",
     "prestorybook": "rnstl"
   },
   "dependencies": {

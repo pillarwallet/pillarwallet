@@ -1,1 +1,2 @@
 *.pbxproj -text
+./src/configs/envConfig.js filter=gitignoreline
