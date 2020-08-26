@@ -436,7 +436,9 @@ export class EventDetail extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const rate = getRate(rates, token, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-    return t('label.feeTokenFiat', { tokenValue: `${formattedFee} ${token}`, fiatValue: formattedFiatValue });
+    return t('label.feeTokenFiat', {
+      tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
+    });
   };
 
   getFeeLabel = (event: Object) => {
@@ -764,12 +766,6 @@ export class EventDetail extends React.Component<Props, State> {
     const { fullItemValue, isReceived } = itemData;
     const formattedValue = formatAmount(value);
 
-    let directionSymbol = isReceived ? '+' : '-';
-
-    if (formattedValue === '0') {
-      directionSymbol = '';
-    }
-
     const isPending = isPendingTransaction(event);
     const isFailed = isFailedTransaction(event);
     const isTimedOut = isTimedOutTransaction(event);
@@ -1014,7 +1010,7 @@ export class EventDetail extends React.Component<Props, State> {
           eventData = {
             customActionTitle: !isTrxBetweenSWAccount && (
               <TankAssetBalance
-                amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
+                amount={getValueWithSymbol(formattedValue, event.asset, !!isReceived, formattedValue === '0')}
                 textStyle={{ fontSize: fontSizes.large }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
@@ -1300,7 +1296,6 @@ export class EventDetail extends React.Component<Props, State> {
       }, []);
 
     const groupedTransactions: TransactionsGroup[] = groupPPNTransactions(mappedTransactions);
-    const valueSymbol = isFailed ? '' : '- ';
 
     return (
       <SettleWrapper>
@@ -1309,7 +1304,7 @@ export class EventDetail extends React.Component<Props, State> {
             <Row marginBottom={10}>
               <BaseText regular synthetic>From Pillar Tank</BaseText>
               <TankAssetBalance
-                amount={`${valueSymbol}${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
+                amount={getValueWithSymbol(formatUnits(group.value.toString(), 18), group.symbol, !isFailed, !isFailed)}
                 textStyle={{ fontSize: fontSizes.big }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
                 secondary={isFailed}
@@ -1323,7 +1318,9 @@ export class EventDetail extends React.Component<Props, State> {
               return (
                 <Row marginBottom={13} key={hash}>
                   <BaseText secondary tiny>{formattedDate}</BaseText>
-                  <BaseText secondary small>{valueSymbol}{formattedAmount} {asset}</BaseText>
+                  <BaseText secondary small>
+                    {getValueWithSymbol(formattedAmount, asset, !isFailed, !isFailed)}
+                  </BaseText>
                 </Row>
               );
             })}
