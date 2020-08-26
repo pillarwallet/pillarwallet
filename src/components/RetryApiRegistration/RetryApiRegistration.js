@@ -29,7 +29,7 @@ import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import { MediumText } from 'components/Typography';
-import { REGISTRATION_FAILED, USERNAME_EXISTS, USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
+import { REGISTRATION_FAILED, USERNAME_OK, CHECKING_USERNAME, USERNAME_FAILED } from 'constants/walletConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { fontStyles } from 'utils/variables';
 
@@ -49,7 +49,7 @@ const Text = styled(MediumText)`
 `;
 
 
-const USERNAME_STATUS = [USERNAME_EXISTS, CHECKING_USERNAME, USERNAME_OK];
+const USERNAME_STATUS = [USERNAME_FAILED, CHECKING_USERNAME, USERNAME_OK];
 
 class RetryApiRegistration extends React.Component<Props> {
   componentDidMount() {

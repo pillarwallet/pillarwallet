@@ -42,6 +42,7 @@ import {
   IMPORTED,
   SET_WALLET_RECOVERY_PENDING,
   SET_WALLET_RECOVERY_COMPLETE,
+  SET_USERNAME_CHECK_ERROR_MESSAGE,
 } from 'constants/walletConstants';
 import { utils } from 'ethers';
 
@@ -93,7 +94,8 @@ const initialState = {
     pin: '',
     confirmedPin: '',
     importedWallet: null,
-    apiUser: {},
+    apiUser: null,
+    usernameCheckErrorMessage: null,
   },
   walletState: null,
   pinAttemptsCount: 0,
@@ -145,12 +147,17 @@ const walletReducer = (
     case RESET_WALLET_IMPORT:
       return {
         ...state,
-        onboarding: { ...state.onboarding, importedWallet: null, apiUser: {} },
+        onboarding: { ...state.onboarding, importedWallet: null, apiUser: null },
       };
     case SET_API_USER:
       return {
         ...state,
         onboarding: { ...state.onboarding, apiUser: action.payload },
+      };
+    case SET_USERNAME_CHECK_ERROR_MESSAGE:
+      return {
+        ...state,
+        onboarding: { ...state.onboarding, usernameCheckErrorMessage: action.payload },
       };
     case UPDATE_WALLET_IMPORT_STATE:
       return merge(
