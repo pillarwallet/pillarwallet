@@ -24,6 +24,8 @@ import { BigNumber } from 'bignumber.js';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
@@ -149,7 +151,9 @@ class NewStreamReview extends React.Component<Props, State> {
 
     const receiverUsername = ensRegistry[receiverAddress] || receiverAddress;
 
-    const startStreamButtonTitle = isFetchingTransactionFee ? 'Getting fee..' : 'Start stream';
+    const startStreamButtonTitle = isFetchingTransactionFee
+      ? t('label.gettingFee')
+      : t('sablierContent.button.startStream');
     const isEnoughForFee = !!txFeeInWei && isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei,
       amount: assetValue,
@@ -164,7 +168,7 @@ class NewStreamReview extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Review' }] }}
+        headerProps={{ centerItems: [{ title: t('sablierContent.title.newStreamReviewScreen') }] }}
         putContentInScrollView
       >
         <RootContainer>
@@ -172,12 +176,12 @@ class NewStreamReview extends React.Component<Props, State> {
             assetValue={formatAmount(utils.formatUnits(assetValue, 18))}
             assetValueFiat={assetValueFiat}
             assetSymbol={assetSymbol}
-            time={`${days}d ${hours}h ${minutes}m`}
+            time={t('timeDaysHoursMinutes', { days, hours, minutes })}
             receiver={receiverUsername}
           />
           <Spacing h={70} />
           <FeeLabelToggle
-            labelText="Fee"
+            labelText={t('label.fee')}
             txFeeInWei={txFeeInWei}
             gasToken={gasToken}
             showFiatDefault

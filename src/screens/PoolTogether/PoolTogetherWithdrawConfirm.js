@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -157,7 +158,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Review' }] }}
+        headerProps={{ centerItems: [{ title: t('walletConnectContent.title.withdrawConfirmScreen') }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -179,11 +180,11 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
               user={user}
             />
             <ContentRow style={{ paddingTop: 64 }}>
-              <Text label>{`Fee ${feeDisplayValue} (${feeInFiat})`}</Text>
+              <Text label>{t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}</Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 16 }}>
               <Button
-                title="Confirm withdraw"
+                title={t('button.confirmWithdraw')}
                 onPress={() => {
                   this.withdrawPoolAsset();
                 }}

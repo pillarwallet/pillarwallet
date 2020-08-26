@@ -26,13 +26,22 @@ import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
 
 const t = (key: string | string[], options?: TranslationOptions = {}): TranslatedString => {
-  const { linkedText, onPress } = options;
+  const { linkedText, primaryText, onPress } = options;
   if (linkedText) {
     return (
       <Trans
         i18nKey={key}
         components={onPress ? [<BaseText {...options} link />] : []}
         values={{ linkedText }}
+      />
+    );
+  }
+  if (primaryText) {
+    return (
+      <Trans
+        i18nKey={key}
+        components={[<BaseText {...options} primary />]}
+        values={{ primaryText }}
       />
     );
   }
