@@ -23,15 +23,18 @@ import { connect } from 'react-redux';
 import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
 import { availableStakeSelector } from 'selectors/paymentNetwork';
+
 
 // models, types
 import type { Asset } from 'models/Asset';
@@ -88,41 +91,34 @@ class SendSyntheticConfirm extends React.Component<Props> {
     } = this.syntheticTransaction;
 
     let errorMessage;
-    if (availableStake < fromAmount) errorMessage = 'Not enough PLR in tank';
-    else if (!isOnline) errorMessage = 'Cannot send while offline';
+    if (availableStake < fromAmount) errorMessage = t('error.transactionFailed.notEnoughStake');
+    else if (!isOnline) errorMessage = t('error.transactionFailed.offline');
 
     const reviewData = [];
 
     if (receiverEnsName) {
       reviewData.push({
-        label: 'Recipient ENS name',
-        value: receiverEnsName,
-      });
-    }
-
-    if (receiverEnsName) {
-      reviewData.push({
-        label: 'Recipient ENS name',
+        label: t('transactions.label.recipientEnsName'),
         value: receiverEnsName,
       });
     }
 
     reviewData.push(
       {
-        label: 'Recipient Address',
+        label: t('transactions.label.recipientAddress'),
         value: toAddress,
       },
       {
-        label: 'Recipient will get',
-        value: `${toAmount} ${toAssetCode}`,
+        label: t('transactions.label.recipientGet'),
+        value: t('tokenValue', { value: toAmount, token: toAssetCode }),
       },
       {
-        label: 'You will pay',
-        value: `${fromAmount} PLR`,
+        label: t('transactions.label.youPay'),
+        value: t('tokenValue', { value: fromAmount, token: PPN_TOKEN }),
       },
       {
-        label: 'Est. Network Fee',
-        value: 'free',
+        label: t('transactions.label.transactionFee'),
+        value: t('label.free'),
       },
     );
 

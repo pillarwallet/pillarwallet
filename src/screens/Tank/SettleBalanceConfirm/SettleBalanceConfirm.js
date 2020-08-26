@@ -143,11 +143,11 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
       session, settleTxFee, useGasToken, settleTxFee: { feeInfo },
     } = this.props;
 
-    let submitButtonTitle = 'Release Funds';
+    let submitButtonTitle = t('ppnContent.button.releaseTankFunds');
     if (!settleTxFee.isFetched) {
-      submitButtonTitle = 'Getting the fee...';
+      submitButtonTitle = t('label.gettingFee');
     } else if (settleButtonSubmitted) {
-      submitButtonTitle = 'Processing...';
+      submitButtonTitle = t('label.processing');
     }
 
     const submitButtonDisabled = !session.isOnline
@@ -162,11 +162,11 @@ class SettleBalanceConfirm extends React.Component<Props, State> {
 
     const reviewData = [
       {
-        label: 'Assets to settle',
+        label: t('transactions.label.assetsToSettle'),
         valueArray: txToSettle,
       },
       {
-        label: 'Transaction fee',
+        label: t('transactions.label.transactionFee'),
         value: feeDisplayValue,
         isLoading: !settleTxFee.isFetched,
       },

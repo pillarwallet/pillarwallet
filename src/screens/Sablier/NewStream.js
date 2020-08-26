@@ -27,6 +27,7 @@ import DatePicker from 'react-native-date-picker';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import t from 'translations/translate';
+import isEmpty from 'lodash.isempty';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -43,6 +44,8 @@ import { getThemeColors, getThemeType } from 'utils/themes';
 import { countDownDHMS } from 'utils/common';
 import { getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
+import { getContactWithEnsName } from 'utils/contacts';
+import { isEnsName } from 'utils/validators';
 
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
@@ -65,6 +68,7 @@ import type { Option } from 'models/Selector';
 import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { GasToken } from 'models/Transaction';
+import type { Contact } from 'models/Contact';
 import type { AllowData } from './SablierAllowanceModal';
 
 // partials
@@ -90,7 +94,7 @@ type State = {
   activeDatePicker: ?string,
   assetValue: number,
   assetSymbol: ?string,
-  selectedContact: ?Option,
+  selectedContact: ?Contact,
   isAllowanceModalVisible: boolean,
   txFeeInWei: number,
   isCheckingAllowance: boolean,
@@ -135,11 +139,20 @@ class NewStream extends React.Component<Props, State> {
     };
   }
 
+  componentDidUpdate(prevProps) {
+    const { assetSymbol } = this.state;
+    if (!assetSymbol) {
+      return;
+    }
+    if (prevProps.sablierApproveExecuting[assetSymbol] && !this.props.sablierApproveExecuting[assetSymbol]) {
+      this.updateAllowance(assetSymbol);
+    }
+  }
+
   updateAllowance = async (assetSymbol: string) => {
-    const { assets, supportedAssets } = this.props;
+    const { assets, supportedAssets, activeAccountAddress } = this.props;
     const assetData = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
     this.setState({ isCheckingAllowance: true });
-    const { activeAccountAddress } = this.props;
     const allowance = await checkSablierAllowance(assetData?.address, activeAccountAddress);
     this.setState({ allowance, isCheckingAllowance: false });
   }
@@ -156,9 +169,27 @@ class NewStream extends React.Component<Props, State> {
     this.updateAllowance(value?.selector?.symbol);
   }
 
-  handleReceiverSelect = (value: Option, onSuccess?: () => void) => {
-    this.setState({ selectedContact: value });
+  handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
+    const ethAddress = value?.ethAddress || '';
+    let contact = {
+      name: value?.name || '',
+      ethAddress,
+      ensName: null,
+    };
+
+    if (isEnsName(ethAddress)) {
+      contact = await getContactWithEnsName(contact, ethAddress);
+      if (!contact?.ensName) {
+        // getContactWithEnsName should've shown the toast that ens lookup failed
+        return Promise.resolve();
+      }
+    }
+
+    if (isEmpty(contact.name)) contact = { ...contact, name: contact.ethAddress };
+
+    this.setState({ selectedContact: contact });
     if (onSuccess) onSuccess();
+    return Promise.resolve();
   }
 
   getAssetData = () => {
