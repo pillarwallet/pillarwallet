@@ -44,6 +44,8 @@ const emailIconLight = require('assets/icons/icon_email_light.png');
 const emailIconDark = require('assets/icons/icon_email_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
 const phoneIconDark = require('assets/icons/icon_phone_dark.png');
+const exchangeIconLight = require('assets/icons/exchange.png');
+const exchangeIconDark = require('assets/icons/exchange_dark.png');
 const walletIconLight = require('assets/icons/iconRoundedWalletLight.png');
 const walletIconDark = require('assets/icons/iconRoundedWalletDark.png');
 const personIconLight = require('assets/icons/iconRoundedPersonLight.png');
@@ -124,6 +126,10 @@ export const images = (theme: Theme) => {
     landingPattern: getImageByTheme(currentTheme, {
       lightTheme: landingPattern,
       darkTheme: landingPattern,
+    }),
+    exchangeIcon: getImageByTheme(currentTheme, {
+      lightTheme: exchangeIconLight,
+      darkTheme: exchangeIconDark,
     }),
     walletIcon: getImageByTheme(currentTheme, {
       lightTheme: walletIconLight,
