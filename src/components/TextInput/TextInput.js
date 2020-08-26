@@ -64,6 +64,7 @@ type Props = {
   onLayout?: () => void,
   additionalStyle?: Object,
   errorMessageStyle?: Object,
+  itemHolderStyle?: Object,
   getInputRef?: (Input) => void,
   innerImageURI?: string,
   fallbackSource?: number,
@@ -82,6 +83,9 @@ type Props = {
   optionKeyExtractor?: (item: Object) => string,
   hasError?: boolean,
   customInputHeight?: number,
+  onLeftSideTextPress?: () => void,
+  onRightAddonPress?: () => void,
+  leftSideSymbol?: string,
 };
 
 type State = {
@@ -101,7 +105,7 @@ const ErrorMessage = styled(BaseText)`
 
 const InputField = styled(Input)`
   color: ${themedColors.text};
-  padding: 0 14px;
+  ${({ smallPadding }) => `padding: 0 ${smallPadding ? 6 : 14}px`};
   align-self: center;
   margin: 0;
   text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'auto'};
@@ -156,7 +160,7 @@ const LeftSideWrapper = styled.View`
   max-width: 25%;
 `;
 
-const RightSideWrapper = styled.View`
+const RightSideWrapper = styled.TouchableOpacity`
   padding-right: 14px;
   flex-direction: row;
   align-items: center;
@@ -172,6 +176,13 @@ const Image = styled(CachedImage)`
 const AddonRegularText = styled(BaseText)`
   color: ${themedColors.secondaryText};
   flex-wrap: wrap;
+`;
+
+const AddonBigText = styled(BaseText)`
+  ${fontStyles.giant};
+  color: ${themedColors.text};
+  margin-right: 9;
+  margin-top: -5;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -205,7 +216,7 @@ const Placeholder = styled(MediumText)`
 
 const PlaceholderRight = styled(BaseText)`
   ${fontStyles.medium};
-  margin-right: 8px;
+  ${({ addMargin }) => !!addMargin && 'margin-right: 8px;'}
 `;
 
 const SelectorValue = styled(MediumText)`
@@ -339,6 +350,8 @@ class TextInput extends React.Component<Props, State> {
   };
 
   onMultilineInputFieldPress = () => {
+    const { onLeftSideTextPress } = this.props;
+    if (onLeftSideTextPress) onLeftSideTextPress();
     if (this.multilineInputField) this.multilineInputField.focus();
   };
 
@@ -470,11 +483,16 @@ class TextInput extends React.Component<Props, State> {
       customInputHeight,
       inputWrapperStyle = {},
       renderOption,
+      itemHolderStyle,
+      leftSideSymbol,
+      onRightAddonPress,
     } = this.props;
     let { fallbackSource } = this.props;
 
     const colors = getThemeColors(theme);
-    const { value = '', selectorValue = {}, multiline } = inputProps;
+    const {
+      value = '', selectorValue = {}, multiline, editable = true,
+    } = inputProps;
     const { input: inputValue } = selectorValue;
     const textInputValue = inputValue || value;
     const { genericToken } = images(theme);
@@ -498,7 +516,7 @@ class TextInput extends React.Component<Props, State> {
       horizontalOptions,
     } = selectorOptions;
 
-    const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText;
+    const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText || !!leftSideSymbol;
     const showRightAddon = !!iconProps || loading || rightPlaceholder;
 
     const selectorOptionsCount = this.getSelectorOptionsCount(selectorOptions);
@@ -510,12 +528,21 @@ class TextInput extends React.Component<Props, State> {
     const showErrorIndicator = hasError || !!errorMessage;
     const disabledSelector = selectorOptionsCount <= 1;
 
+    const defaultInputStyle = {
+      fontSize: getFontSize(value, numeric),
+      lineHeight: multiline ? getLineHeight(value, numeric) : null,
+      fontFamily: getFontFamily(value, numeric),
+      textAlignVertical: multiline ? 'top' : 'center',
+      height: inputHeight,
+      flex: 1,
+    };
+
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
         {errorTop && <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>}
         {this.renderInputHeader()}
-        <InputBorder error={showErrorIndicator}>
-          <ItemHolder error={showErrorIndicator}>
+        <InputBorder error={showErrorIndicator} style={itemHolderStyle} >
+          <ItemHolder error={showErrorIndicator} style={itemHolderStyle} >
             <Item
               isFocused={isFocused}
               height={inputHeight}
@@ -539,6 +566,7 @@ class TextInput extends React.Component<Props, State> {
                     fallbackSource={fallbackSource}
                     style={{ marginRight: 9 }}
                   />}
+                  <AddonBigText>{leftSideSymbol}</AddonBigText>
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
                 </LeftSideWrapper>
               </TouchableWithoutFeedback>}
@@ -556,23 +584,16 @@ class TextInput extends React.Component<Props, State> {
                 onSubmitEditing={this.handleSubmit}
                 value={textInputValue}
                 autoCorrect={autoCorrect}
-                style={[{
-                  fontSize: getFontSize(value, numeric),
-                  lineHeight: multiline ? getLineHeight(value, numeric) : null,
-                  fontFamily: getFontFamily(value, numeric),
-                  textAlignVertical: multiline ? 'top' : 'center',
-                  height: inputHeight,
-                  flex: 1,
-                }, customStyle,
-                  additionalStyle,
-                ]}
+                style={[defaultInputStyle, customStyle, additionalStyle, !editable && { color: colors.accent }]}
                 onLayout={onLayout}
                 placeholderTextColor={colors.accent}
                 alignTextOnRight={!!numeric}
+                smallPadding={!!onRightAddonPress}
               />}
               {showRightAddon &&
-              <RightSideWrapper>
-                {!!rightPlaceholder && <PlaceholderRight color={colors.accent}>{rightPlaceholder}</PlaceholderRight>}
+              <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
+                {!!rightPlaceholder &&
+                  <PlaceholderRight color={colors.accent} addMargin={!!iconProps}>{rightPlaceholder}</PlaceholderRight>}
                 {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
                 {!!loading && <Spinner width={30} height={30} />}
               </RightSideWrapper>}

@@ -62,7 +62,8 @@
     "collectibleSent": "Collectible sent",
     "collectibleReceive": "Collectible received",
     "badgeReceived": "Badge received",
-    "connectionRequested": "Requested"
+    "connectionRequested": "Requested",
+    "exchange": "Exchange"
   },
 
   "label": {
@@ -156,7 +157,9 @@
     "noOptionsToSelect": "No options to select",
     "availableBalance": "Available Balance",
     "sendingToReceiver": "Sending to {{receiver}}",
-    "sentToReceiver": "It was sent to {{receiver}}"
+    "sentToReceiver": "It was sent to {{receiver}}",
+    "buy": "Buy",
+    "sell": "Sell"
   },
 
   "button": {
@@ -358,6 +361,9 @@
     },
     "subscription": {
       "placeholder": "Your e-mail"
+    },
+    "selector": {
+      "searchPlaceholder": "Search"
     }
   },
 
@@ -367,8 +373,8 @@
       "default": "Transaction failed",
       "offline": "You can't send transaction while offline",
       "notEnoughGas": "Not enough gas to cover the transaction fee. Top up your ETH balance",
-      "notOwnedCollectible": "You do not longer own this collectible",
-      "collectibleCantBeTransferred": "This collectible can not be transferred",
+      "notOwnedCollectible": "You no longer own this collectible",
+      "collectibleCantBeTransferred": "This collectible can't be transferred",
       "notEnoughStake": "Not enough PLR in tank"
     },
     "emptyAddress": "Address cannot be empty",
@@ -388,6 +394,10 @@
       "address": "No address to show",
       "phone": "No phone to show",
       "default": "No information to show"
+    },
+    "exchange": {
+      "incorrectNumber": "Incorrect number entered",
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
     }
   },
 
@@ -452,6 +462,10 @@
       "paragraph": {
         "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet"
       }
+    },
+    "exchangeActivation": {
+      "message": "To start exchanging assets you need to activate your Smart Wallet",
+      "button": "Activate Smart Wallet"
     },
     "tabs": {
       "tokens": {
@@ -581,13 +595,13 @@
       "biometricLogin": {
         "title": "Biometric login"
       },
-      "changePIN":{
+      "changePIN": {
         "title": "Change PIN"
       },
       "community": {
         "title": "Community",
         "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
-        "label":{
+        "label": {
           "follow": "Follow us"
         }
       },
@@ -850,7 +864,7 @@
     "status": {
       "canceled": "Canceled",
       "ended": "Ended",
-      "Remaining": "Remaining"
+      "remaining": "Remaining"
     },
     "moneyStreamingList": {
       "title": "Sablier money streaming"
@@ -1007,7 +1021,7 @@
       "recipient": "Recipient",
       "recipientEnsName": "Recipient ENS name",
       "recipientAddress": "Recipient Address",
-      "transactionFee": "Est. Network Fee",
+      "transactionFee": "Est. Fee",
       "assetsToSettle": "Assets to settle",
       "recipientGet": "Recipient will get",
       "youPay": "You will pay",

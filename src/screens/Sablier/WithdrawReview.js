@@ -23,6 +23,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -31,7 +33,7 @@ import { Spacing } from 'components/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import { lineHeights } from 'utils/variables';
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { formatAmount, formatFiat, findEnsNameCaseInsensitive, formatUnits } from 'utils/common';
+import { formatAmount, formatFiat, findEnsNameCaseInsensitive, formatUnits, getDecimalPlaces } from 'utils/common';
 import { getRate, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -43,7 +45,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Asset, Rates } from 'models/Asset';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import { getDecimalPlaces } from '../../utils/common';
 
 
 type Props = {
@@ -116,7 +117,7 @@ const WithdrawReview = ({
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Review' }] }}
+      headerProps={{ centerItems: [{ title: t('sablierContent.title.withdrawReviewScreen') }] }}
     >
       <MainContainer>
         <ProfileImage
@@ -143,13 +144,13 @@ const WithdrawReview = ({
 
         <Spacing h={60} />
         <FeeLabelToggle
-          labelText="Fee"
+          labelText={t('label.fee')}
           txFeeInWei={txFeeInfo?.fee}
           gasToken={txFeeInfo?.gasToken}
           showFiatDefault
         />
         <Spacing h={16} />
-        <Button title="Confirm withdraw" block onPress={onNextButtonPress} />
+        <Button title={t('sablierContent.button.confirmWithdraw')} block onPress={onNextButtonPress} />
       </MainContainer>
     </ContainerWithHeader>
   );

@@ -21,6 +21,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
@@ -161,11 +163,11 @@ class OutgoingStream extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Outgoing stream' }] }}
+        headerProps={{ centerItems: [{ title: t('sablierContent.title.outgoingStreamScreen') }] }}
         putContentInScrollView
       >
         <Selector
-          label="To"
+          label={t('label.to')}
           disabled
           selectedOption={recipient}
         />
@@ -174,7 +176,7 @@ class OutgoingStream extends React.Component<Props, State> {
         />
         <Spacing h={40} />
         <Button
-          title="Cancel stream"
+          title={t('sablierContent.button.cancelStream')}
           onPress={this.onCancel}
           isLoading={isFetchingCancellationFee}
           marginLeft={20}
@@ -185,9 +187,8 @@ class OutgoingStream extends React.Component<Props, State> {
           navigation={navigation}
           feedData={combinedHistory}
           card
-          cardHeaderTitle="History"
+          cardHeaderTitle={t('sablierContent.title.streamingActivityFeed')}
         />
-
         <SablierCancellationModal
           isVisible={isCancellationModalVisible}
           cancelData={cancelData}

@@ -22,6 +22,7 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
@@ -75,28 +76,44 @@ const DepositedAssetsList = ({
 
     return (
       <ListItemWithImage
-        label={`${formatAmountDisplay(currentBalance)} ${symbol}`}
-        subtext={`Current APY ${formatAmountDisplay(earnInterestRate)}%`}
+        label={t('tokenValue', { value: formatAmountDisplay(currentBalance), token: symbol })}
+        subtext={`${t('aaveContent.label.currentAPY')} ` +
+        `${t('percentValue', { value: formatAmountDisplay(earnInterestRate) })}`}
         itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
         onPress={() => navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
         diameter={48}
         rightColumnInnerStyle={{ alignItems: 'flex-end' }}
       >
-        <DepositedAssetGain positive>+ {formatAmountDisplay(earnedAmount)} {symbol}</DepositedAssetGain>
-        <BaseText secondary>+{formatAmountDisplay(earningsPercentageGain)}%</BaseText>
+        <DepositedAssetGain positive>
+          {t('positiveValue', {
+            value: t('tokenValue', {
+              value: formatAmountDisplay(earnedAmount),
+              token: symbol,
+            }),
+          })}
+        </DepositedAssetGain>
+        <BaseText secondary>
+          {t('positiveValue', {
+            value: t('percentValue', {
+              value: formatAmountDisplay(earningsPercentageGain),
+            }),
+          })}
+        </BaseText>
       </ListItemWithImage>
     );
   };
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Your deposits' }] }}>
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('aaveContent.title.depositedAssetsScreen') }] }}>
       <FlatList
         data={depositedAssets}
         keyExtractor={({ address }) => address}
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!depositedAssets.length && emptyStyle}
-        ListEmptyComponent={!isFetchingDepositedAssets && <EmptyStateParagraph title="No deposited assets" />}
+        ListEmptyComponent={!isFetchingDepositedAssets &&
+        <EmptyStateParagraph title={t('aaveContent.title.noDepositedAssets')} />
+        }
         refreshControl={
           <RefreshControl
             refreshing={isFetchingDepositedAssets}

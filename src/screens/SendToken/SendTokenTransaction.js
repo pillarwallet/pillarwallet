@@ -75,41 +75,43 @@ const animationFailure = require('assets/animations/transactionFailureAnimation.
 
 const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
-    'transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
-    'replacement transaction underpriced': 'Not enough gas to cover the transaction fee. Top up your ETH balance',
-    'is not owned': 'You do not longer own this collectible',
-    'can not be transferred': 'This collectible can not be transferred',
+    'transaction underpriced': t('error.transactionFailed.notEnoughGas'),
+    'replacement transaction underpriced': t('error.transactionFailed.notEnoughGas'),
+    'is not owned': t('error.transactionFailed.notOwnedCollectible'),
+    'can not be transferred': t('error.transactionFailed.collectibleCantBeTransferred'),
   };
-  const transactionFailureText = 'Something went wrong';
+  const transactionFailureText = t('error.transactionFailed.default');
   return TRANSACTION_ERRORS[error] || transactionFailureText;
 };
 
 const getTransactionSuccessMessage = (transactionType: ?string, extra?: Object) => {
   if (transactionType === EXCHANGE) {
-    return 'It may take some time for this transaction to complete';
+    return t('transactions.paragraph.exchangeTransactionSuccess');
   } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-    return 'Watch the pool and let luck be with you';
+    return t('transactions.paragraph.poolTogetherDepositTransactionSuccess');
   } else if (transactionType === SABLIER_CREATE_STREAM) {
-    return `Now you can watch how the funds go to ${extra?.contactAddress || ''}`;
+    return t('transactions.paragraph.sablierStreamTransactionSuccess', {
+      address: extra?.contactAddress || '',
+    });
   }
-  return 'It will be settled in a few moments, depending on your gas price settings and Ethereum network load';
+  return t('transactions.paragraph.transactionSuccess');
 };
 
 const getTransactionSuccessTitle = (props) => {
   const { transactionTokenType, transactionType, isAllowanceTransaction } = props;
   if (transactionType === EXCHANGE) {
     if (isAllowanceTransaction) {
-      return 'Transaction is on its way';
+      return t('transactions.title.allowanceTransactionSuccess');
     }
-    return 'Swapping tokens...';
+    return t('transactions.title.exchangeTransactionSuccess');
   } else if (transactionTokenType === COLLECTIBLES) {
-    return 'Collectible is on its way';
+    return t('transactions.title.collectibleTransactionSuccess');
   } else if (transactionType === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-    return 'You\'re in the pool!';
+    return t('transactions.title.poolTogetherTransactionSuccess');
   } else if (transactionType === SABLIER_CREATE_STREAM) {
-    return 'Your stream has begun';
+    return t('transactions.title.sablierTransactionSuccess');
   }
-  return 'Tokens are on their way';
+  return t('transactions.title.transactionSuccess');
 };
 
 const CancelText = styled(MediumText)`
@@ -258,7 +260,7 @@ class SendTokenTransaction extends React.Component<Props> {
     const isAllowanceTransaction = Object.keys(allowance).length;
     const transactionStatusTitle = isSuccess
       ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
-      : 'Transaction failed';
+      : t('error.transactionFailed.default');
     const titleStyle = { ...fontStyles.large, marginTop: 16, marginBottom: 7 };
     const textStyle = { ...fontStyles.regular, marginBottom: 75 };
     return (

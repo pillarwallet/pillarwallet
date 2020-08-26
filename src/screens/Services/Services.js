@@ -136,22 +136,24 @@ class ServicesScreen extends React.Component<Props, State> {
     } = this.props;
     const colors = getThemeColors(theme);
     const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
-      label: `${PROVIDERS_META.length} exchanges`,
+      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length }),
       color: colors.primary,
     } : null;
 
     const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
     let SWServiceLabel;
     if (SWServiceDisabled) {
-      SWServiceLabel = !isSmartWalletActivated ? 'Requires activation' : 'For Smart Wallet';
+      SWServiceLabel = !isSmartWalletActivated
+        ? t('servicesContent.label.requiresActivation')
+        : t('servicesContent.label.forSmartWallet');
     }
 
     const services = [];
     if (isOffersEngineEnabled) {
       services.push({
         key: 'offersEngine',
-        title: 'Offers engine',
-        body: 'Aggregated offers from many decentralized exchanges and token swap services',
+        title: t('servicesContent.exchange.title'),
+        body: t('servicesContent.exchange.description'),
         action: () => navigation.navigate(EXCHANGE),
         labelBadge: offersBadge,
       });
@@ -160,8 +162,8 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isAaveEnabled) {
       services.push({
         key: 'depositPool',
-        title: 'AAVE Deposit',
-        body: 'Deposit crypto and earn interest in real-time',
+        title: t('servicesContent.aaveDeposit.title'),
+        body: t('servicesContent.aaveDeposit.description'),
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
         action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
@@ -170,8 +172,8 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isPoolTogetherEnabled) {
       services.push({
         key: 'poolTogether',
-        title: 'Pool Together savings game',
-        body: 'Deposit DAI/USDC into the pool to get tickets. Each ticket is a chance to win weekly/daily prizes!',
+        title: t('servicesContent.poolTogether.title'),
+        body: t('servicesContent.poolTogether.description'),
         hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       });
@@ -179,8 +181,8 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isSablierEnabled) {
       services.push({
         key: 'sablier',
-        title: 'Sablier money streaming',
-        body: 'Stream money to people and organizations in real-time with just one deposit',
+        title: t('servicesContent.sablier.title'),
+        body: t('servicesContent.sablier.description'),
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
         action: () => navigation.navigate(SABLIER_STREAMS),
@@ -189,10 +191,10 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isPeerToPeerEnabled) {
       services.push({
         key: 'peerToPeerTrading',
-        title: 'Peer-to-peer trading',
-        body: 'Swap tokens directly with others. Safe, secure, anonymous',
+        title: t('servicesContent.peerToPeerTrading.title'),
+        body: t('servicesContent.peerToPeerTrading.description'),
         disabled: true,
-        label: 'soon',
+        label: t('servicesContent.label.soon'),
       });
     }
     return services;
@@ -205,8 +207,8 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isRampEnabled) {
       buyCryptoServices.push({
         key: 'ramp',
-        title: 'Buy with Ramp.Network (EU)',
-        body: 'Buy Now',
+        title: t('servicesContent.ramp.title'),
+        body: t('servicesContent.ramp.description'),
         action: () => {
           const { user: { email } } = this.props;
           const address = this.getCryptoPurchaseAddress();
@@ -219,8 +221,8 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isWyreEnabled) {
       buyCryptoServices.push({
         key: 'wyre',
-        title: 'Buy with Wyre (Non-EU)',
-        body: 'Buy Now',
+        title: t('servicesContent.wyre.title'),
+        body: t('servicesContent.wyre.description'),
         action: () => {
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
@@ -238,8 +240,8 @@ class ServicesScreen extends React.Component<Props, State> {
     if (isAltalixEnabled && isAltalixAvailable) {
       buyCryptoServices.push({
         key: 'altalix',
-        title: 'Buy with Altalix',
-        body: 'Buy Now',
+        title: t('servicesContent.altalix.title'),
+        body: t('servicesContent.altalix.description'),
         action: async () => {
           const { user: { walletId }, getApi } = this.props;
           const address = this.getCryptoPurchaseAddress();
@@ -335,8 +337,8 @@ class ServicesScreen extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           noBack: true,
-          rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
-          leftItems: [{ title: 'Services' }],
+          rightItems: [{ link: t('button.support'), onPress: () => Intercom.displayMessenger() }],
+          leftItems: [{ title: t('servicesContent.title.servicesScreen') }],
         }}
         inset={{ bottom: 'never' }}
         tab

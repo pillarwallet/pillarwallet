@@ -48,6 +48,7 @@ export type InputPropsType = {
   onPressRightLabel?: () => void,
   inputHeaderStyle?: Object,
   customLabel?: React.Node,
+  editable?: boolean,
 };
 
 export type SelectorOptions = {

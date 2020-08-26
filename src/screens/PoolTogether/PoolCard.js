@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
+import t from 'translations/translate';
 
 import { DAI } from 'constants/assetsConstants';
 
@@ -84,12 +85,12 @@ const PoolCard = (props: Props) => {
 
   let remainingTime;
   if (days === 0 && hours === 0 && minutes === 0) {
-    remainingTime = 'Ending soon';
+    remainingTime = t('label.endingSoon');
   } else {
-    const dayW = days === 1 ? 'day' : 'days';
-    const hourW = hours === 1 ? 'hour' : 'hours';
-    const minW = minutes === 1 ? 'minute' : 'minutes';
-    remainingTime = `Ends in ${days} ${dayW}, ${hours} ${hourW}, ${minutes} ${minW}`;
+    const endsIn = `${t('day', { count: 0 })}, ` +
+    `${t('hour', { count: hours })}, ` +
+    `${t('hour', { count: minutes })}`;
+    remainingTime = t('label.endsIn', { endsIn });
   }
 
   let winChance = 0;
@@ -111,7 +112,7 @@ const PoolCard = (props: Props) => {
       <CardRow style={{ width: '100%' }}>
         <CardColumn style={{ width: '50%' }}>
           <CardRow>
-            <BaseText regular secondary>Prize est.</BaseText>
+            <BaseText regular secondary>{t('poolTogetherContent.label.prizeEstimate')}</BaseText>
           </CardRow>
           <Spacing h={6} />
           <CardRow>
@@ -129,7 +130,7 @@ const PoolCard = (props: Props) => {
         <Separator />
         <CardColumn style={{ width: '50%' }}>
           <CardRow>
-            <BaseText regular secondary>Current prize</BaseText>
+            <BaseText regular secondary>{t('poolTogetherContent.label.currentPrize')}</BaseText>
           </CardRow>
           <Spacing h={6} />
           <CardRow>
@@ -153,16 +154,20 @@ const PoolCard = (props: Props) => {
         <>
           <Spacing h={16} />
           <CardRow>
-            <MediumText big>{userTickets} tickets</MediumText>
+            <MediumText big>
+              {t('poolTogetherContent.label.ownedTickets', { count: userTickets })}
+            </MediumText>
             <Spacing w={4} />
-            <BaseText medium secondary>({userTickets} {symbol})</BaseText>
+            <BaseText medium secondary>
+              {`(${t('tokenValue', { value: userTickets, token: symbol })})`}
+            </BaseText>
           </CardRow>
           <CardRow>
-            <BaseText regular primary>
-              {formatAmount(winChance, 6)} %
+            <BaseText>
+              {t('poolTogetherContent.label.winningChance', {
+                primaryText: t('percentValue', { value: formatAmount(winChance, 6) }),
+              })}
             </BaseText>
-            <Spacing w={4} />
-            <BaseText regular>chance of win </BaseText>
           </CardRow>
         </>
       }
