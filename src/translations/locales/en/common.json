@@ -71,7 +71,8 @@
     "enterNewPincode": "Enter new pincode",
     "manageDevices": "Manage devices",
     "noConnectedDevices": "No Connected Devices",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "privateKey": "Private key"
   },
 
   "label": {
@@ -171,7 +172,8 @@
     "thisDevice": "This device",
     "onHold": "On hold",
     "deviceAddress": "Device address",
-    "noContactsAdded": "No contacts added"
+    "noContactsAdded": "No contacts added",
+    "comingSoon": "Coming soon"
   },
 
   "button": {
@@ -260,7 +262,8 @@
     "edit": "Edit",
     "magic": "Magic",
     "disconnect": "Disconnect",
-    "open": "Open"
+    "open": "Open",
+    "proceed": "Proceed"
   },
 
   "paragraph": {
@@ -273,7 +276,10 @@
     "backupPhraseVerificationInstructions": "Please select the correct words.",
     "deviceRemovalConfirm": "Please confirm that the details below are correct before removing device.",
     "loggingOutFirstMessage": "Deleting takes a moment",
-    "loggingOutSecondMessage": "Sorry to see you go"
+    "loggingOutSecondMessage": "Sorry to see you go",
+    "backupPhraseRevealedPurpose": "Please use this 12 word backup phrase in order to restore the wallet.",
+    "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
+    "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it."
   },
 
   "insight": {
@@ -427,6 +433,9 @@
       "invalidNumber": "Incorrect number entered",
       "exceedBalance": "Amount should not exceed total balance",
       "shouldNotHaveDecimals": "Amount should not contain decimal places"
+    },
+    "synthetics": {
+      "failedToCalculate": "Failed to calculate synthetics exchange"
     }
   },
 
@@ -465,10 +474,31 @@
       "fundTank": "Fund Pillar Tank",
       "releaseTankFunds": "Release Funds",
       "withdrawFromTank": "Withdraw from PLR tank",
-      "settleTransactions": "Settle transactions"
+      "settleTransactions": "Settle transactions",
+      "enableSmartWalletForTank": "Enable Smart Wallet to create Tank",
+      "goToTank": "Go to PLR Tank"
     },
     "label": {
-      "availableBalance": "Available Balance"
+      "availableBalance": "Available Balance",
+      "paidByPillar": "No fees - paid by Pillar"
+    },
+    "paragraph": {
+      "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
+      "introSecondParagraph": "Draw from your PLR tank to send whatever you’d like."
+    },
+    "ppnFeatures": {
+      "first": {
+        "title": "Instant.",
+        "description": "No waiting for miner or block confirmations. Seriously instant transactions."
+      },
+      "second": {
+        "title": "Free.",
+        "description": "No need to pay network costs or gas for any transactions."
+      },
+      "three": {
+        "title": "Private.",
+        "description": "Only final settlement is recorded on-chain. Batched transactions allow multiple transfers to be combined."
+      }
     }
   },
 
@@ -499,6 +529,18 @@
       "collectibles": {
         "title": "Collectibles"
       }
+    },
+    "paragraph": {
+      "introFirstParagraph": "Your new Pillar Smart Wallet is powered by a personal smart contract. This provides better asset management, security and recovery functionality.",
+      "introSecondParagraph": "Pillar also recommends that you transfer most of your assets to your Smart Wallet due to the benefits listed.",
+      "walletIsActivated": "You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right and side of the Assets screen"
+    },
+    "button": {
+      "goToSmartWallet": "Go to Smart Wallet"
+    },
+    "title": {
+      "smartWalletIsActivated": "Your Smart Wallet is now activated",
+      "walletActivatedScreen": "What's next"
     }
   },
 
@@ -1253,6 +1295,14 @@
       "button": {
         "cancel": "Cancel",
         "ok": "Disconnect"
+      }
+    },
+    "addressIsNotOnPillarNetwork": {
+      "title": "This address is not on Pillar Network",
+      "message": "Invite it's owner to install Pillar wallet in order to be able to send instant transactions for free or switch to Ethereum Mainnet to send regular transaction.",
+      "button": {
+        "switchToMainnet": "Switch to Ethereum Mainnet",
+        "cancel": "Cancel"
       }
     }
   }

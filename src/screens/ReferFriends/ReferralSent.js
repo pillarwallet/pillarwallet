@@ -116,7 +116,7 @@ class ReferralSent extends React.PureComponent<Props> {
               onPress={() => navigation.navigate(REFERRAL_CONTACTS)}
             />
             <Button
-              title="Close"
+              title={t('button.close')}
               secondary
               block
               marginTop={12}
