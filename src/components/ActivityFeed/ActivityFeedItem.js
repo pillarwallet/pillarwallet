@@ -44,7 +44,7 @@ import {
 import { findAccountByAddress } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
-import { getValueWithSymbol } from 'utils/strings';
+import { getFormattedValue } from 'utils/strings';
 
 // components
 import {
@@ -268,7 +268,10 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { amount, symbol, decimals }: AaveExtra = event.extra;
     if (!amount || !symbol) return '';
     const value = formatUnits(amount, decimals);
-    return getValueWithSymbol(formatAmount(value, getDecimalPlaces(symbol)), symbol, isPositive, !value);
+    return getFormattedValue(formatAmount(value, getDecimalPlaces(symbol)), symbol, {
+      isPositive,
+      doNotFormat: !value,
+    });
   };
 
   getAaveDepositedAssetImage = () => {
@@ -412,8 +415,14 @@ export class ActivityFeedItem extends React.Component<Props> {
       keyWalletIcon,
     } = images(theme);
 
-    const fullItemValuePPN = getValueWithSymbol(formattedFullValue, event.asset, isPositivePPN, isZero);
-    const itemValuePPN = getValueWithSymbol(formattedValue, event.asset, isPositivePPN, isZero);
+    const fullItemValuePPN = getFormattedValue(formattedFullValue, event.asset, {
+      isPositive: isPositivePPN,
+      noSymbol: isZero,
+    });
+    const itemValuePPN = getFormattedValue(formattedValue, event.asset, {
+      isPositive: isPositivePPN,
+      noSymbol: isZero,
+    });
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -496,7 +505,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               {formattedValuesArray.map(({ formatted, symbol }) => (
                 <TankAssetBalance
                   key={symbol}
-                  amount={getValueWithSymbol(formatted, symbol, !isFailed, isZero)}
+                  amount={getFormattedValue(formatted, symbol, { isPositive: !isFailed, noSymbol: isZero })}
                   secondary={isFailed}
                 />
               ))}
@@ -573,7 +582,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES.POOL_TOGETHER,
           itemImageSource: poolTogetherLogo,
           cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
-          itemValue: getValueWithSymbol(formattedVal, symbol, isPositive, !amount),
+          itemValue: getFormattedValue(formattedVal, symbol, { isPositive, noSymbol: !amount }),
           itemImageRoundedSquare: true,
           valueColor: isPositive ? 'positive' : 'text',
         };
@@ -599,23 +608,23 @@ export class ActivityFeedItem extends React.Component<Props> {
           data = {
             ...data,
             subtext: t('label.outgoingSablierStream'),
-            itemValue: getValueWithSymbol(formattedAmount, symbol, false, false),
-            fullItemValue: getValueWithSymbol(formattedAmount, symbol, false, false),
+            itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: false }),
+            fullItemValue: getFormattedValue(formattedAmount, symbol, { isPositive: false }),
             valueColor: 'text',
           };
         } else if (event.tag === SABLIER_WITHDRAW) {
           data = {
             ...data,
             subtext: t('label.withdraw'),
-            itemValue: getValueWithSymbol(formattedAmount, symbol, true, false),
-            fullItemValue: getValueWithSymbol(formattedAmount, symbol, true, false),
+            itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
+            fullItemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             valueColor: 'positive',
           };
         } else if (event.tag === SABLIER_CANCEL_STREAM) {
           data = {
             ...data,
             subtext: t('label.outgoingSablierStream'),
-            itemValue: getValueWithSymbol(formattedAmount, symbol, false, false),
+            itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             itemStatusIcon: TX_FAILED_STATUS,
             statusIconColor: this.getColor('negative'),
             isFailed: true,
@@ -653,7 +662,9 @@ export class ActivityFeedItem extends React.Component<Props> {
               const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
               data.customAddon = (
                 <ListWrapper>
-                  <TankAssetBalance amount={getValueWithSymbol(toAmount, toAssetCode, isReceived, !toAmount)} />
+                  <TankAssetBalance
+                    amount={getFormattedValue(toAmount, toAssetCode, { isPositive: isReceived, noSymbol: !toAmount })}
+                  />
                   {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
                 </ListWrapper>
               );
@@ -661,7 +672,10 @@ export class ActivityFeedItem extends React.Component<Props> {
               data.customAddon = (
                 <ListWrapper>
                   <TankAssetBalance
-                    amount={getValueWithSymbol(formattedValue, event.asset, isReceived, isZero)}
+                    amount={getFormattedValue(formattedValue, event.asset, {
+                      isPositive: isReceived,
+                      noSymbol: isZero,
+                    })}
                   />
                 </ListWrapper>
               );
@@ -714,8 +728,11 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           data = {
             label: usernameOrAddress,
-            fullItemValue: getValueWithSymbol(formattedFullValue, event.asset, isReceived, !formattedFullValue),
-            itemValue: getValueWithSymbol(formattedValue, event.asset, isReceived, isZero),
+            fullItemValue: getFormattedValue(formattedFullValue, event.asset, {
+              isPositive: isReceived,
+              noSymbol: !formattedFullValue,
+            }),
+            itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
             valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
