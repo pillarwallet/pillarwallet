@@ -258,7 +258,9 @@
     "remove": "Remove",
     "cancel": "Cancel",
     "edit": "Edit",
-    "magic": "Magic"
+    "magic": "Magic",
+    "disconnect": "Disconnect",
+    "open": "Open"
   },
 
   "paragraph": {
@@ -269,7 +271,9 @@
     "didNotReceiveVerificationCodeQuestion": "Didn't receive the code?",
     "instructionsOnBackingUpBackupPhase": "Write down your 12 word backup phrase in the correct order.",
     "backupPhraseVerificationInstructions": "Please select the correct words.",
-    "deviceRemovalConfirm": "Please confirm that the details below are correct before removing device."
+    "deviceRemovalConfirm": "Please confirm that the details below are correct before removing device.",
+    "loggingOutFirstMessage": "Deleting takes a moment",
+    "loggingOutSecondMessage": "Sorry to see you go"
   },
 
   "insight": {
@@ -949,7 +953,8 @@
         "message": "Message Request",
         "unsupported": "Unsupported Request",
         "default": "Request"
-      }
+      },
+      "manageSessionsScreen": "Manage Sessions"
     },
     "label": {
       "requestFrom": "Request from {{name}}",
@@ -984,6 +989,20 @@
       "asyncArtDescription": "Collect and experience programmable rare art.",
       "knownOriginDescription": "Discover and collect rare digital artwork.",
       "cloversDescription": "Discover, collect & trade cryptographic icons."
+    },
+    "tabs": {
+      "active": {
+        "title": "Active",
+        "emptyState": {
+          "title": "No Active Sessions"
+        }
+      },
+      "requests": {
+        "title": "Requests",
+        "emptyState": {
+          "title": "No Pending Requests"
+        }
+      }
     }
   },
 
