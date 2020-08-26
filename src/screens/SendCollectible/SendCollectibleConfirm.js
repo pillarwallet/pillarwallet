@@ -1,4 +1,23 @@
 // @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+
 import * as React from 'react';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -9,6 +28,7 @@ import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import isEqual from 'lodash.isequal';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -257,35 +277,35 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     }
 
     const feeSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
-    const errorMessage = !isEnoughForFee ? `Not enough ${feeSymbol} for transaction fee` : '';
+    const errorMessage = !isEnoughForFee ? t('error.notEnoughTokenForFee', { token: feeSymbol }) : '';
 
     // confirm button
     const isConfirmDisabled = gettingFee || !session.isOnline || !txFeeInfo || !isEnoughForFee;
     const confirmButtonTitle = gettingFee
-      ? 'Getting the fee..'
-      : 'Confirm Transaction';
+      ? t('label.gettingFee')
+      : t('transactions.button.confirmTransaction');
 
     const reviewData = [
       {
-        label: 'Collectible',
+        label: t('transactions.label.collectibleName'),
         value: name,
       },
     ];
 
     if (this.receiverEnsName) {
       reviewData.push({
-        label: 'Recipient ENS name',
+        label: t('transactions.label.recipientEnsName'),
         value: this.receiverEnsName,
       });
     }
 
     reviewData.push(
       {
-        label: 'Recipient Address',
+        label: t('transactions.label.recipientAddress'),
         value: to,
       },
       {
-        label: 'Est. Network Fee',
+        label: t('transactions.label.transactionFee'),
         value: feeDisplayValue,
         isLoading: gettingFee,
       },

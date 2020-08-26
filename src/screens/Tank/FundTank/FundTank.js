@@ -20,12 +20,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -113,11 +114,11 @@ type State = {
   inputHasError: boolean,
 };
 
-const { Form } = t.form;
+const { Form } = tForm.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
 class FundTank extends React.Component<Props, State> {
-  _form: t.form;
+  _form: tForm.form;
   formSubmitted: boolean = false;
   state = {
     value: null,
@@ -238,7 +239,7 @@ class FundTank extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Fund PLR tank' }] }}
+        headerProps={{ centerItems: [{ title: t('ppnContent.title.fundTankScreen') }] }}
         footer={(
           <FooterInner>
             <FeeLabelToggle
@@ -251,7 +252,7 @@ class FundTank extends React.Component<Props, State> {
               disabled={!session.isOnline || !topUpFee.isFetched}
               small
               flexRight
-              title="Next"
+              title={t('button.next')}
               onPress={this.handleFormSubmit}
             />
             }
@@ -269,17 +270,17 @@ class FundTank extends React.Component<Props, State> {
           />
           <ActionsWrapper>
             <SendTokenDetails>
-              <Label small>Available Balance</Label>
+              <Label small>{t('ppnContent.label.availableBalance')}</Label>
               <TextRow>
                 <SendTokenDetailsValue>
-                  {formattedBalance} {token}
+                  {t('tokenValue', { value: formattedBalance, token })}
                 </SendTokenDetailsValue>
                 <HelperText>{formattedBalanceInFiat}</HelperText>
               </TextRow>
             </SendTokenDetails>
             {topUpFee.isFetched &&
             <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send all</TextLink>
+              <TextLink>{t('button.sendAll')}</TextLink>
             </TouchableOpacity>
             }
           </ActionsWrapper>
