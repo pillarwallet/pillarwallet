@@ -146,7 +146,7 @@ class AssetsList extends React.Component<Props, State> {
 
     return (
       <ListHeaderWrapper>
-        <HeaderTitle>{`Wallet balance ${walletBalance}`}</HeaderTitle>
+        <HeaderTitle>{t('label.walletBalance', { balance: walletBalance })}</HeaderTitle>
       </ListHeaderWrapper>
     );
   };
