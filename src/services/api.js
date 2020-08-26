@@ -21,7 +21,7 @@ import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import { Platform } from 'react-native';
 import * as Sentry from '@sentry/react-native';
-import { environmentVars, getEnv } from 'configs/envConfig';
+import { getEnv } from 'configs/envConfig';
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 import { GasPriceOracle } from 'gas-price-oracle';
@@ -103,7 +103,7 @@ type DirectSdkRequestOptions = {|
   params?: Object,
 |};
 
-const ethplorerSdk = new EthplorerSdk(getEnv('ETHPLORER_API_KEY'));
+const ethplorerSdk = new EthplorerSdk(getEnv().ETHPLORER_API_KEY);
 
 class SDKWrapper {
   pillarWalletSdk: PillarSdk = null;
@@ -119,7 +119,7 @@ class SDKWrapper {
       SDK_PROVIDER,
       NOTIFICATIONS_URL,
       INVESTMENTS_URL,
-    } = environmentVars();
+    } = getEnv();
     this.pillarWalletSdk = new PillarSdk({
       apiUrl: SDK_PROVIDER, // ONLY if you have platform running locally
       notificationsUrl: NOTIFICATIONS_URL,
@@ -447,7 +447,7 @@ class SDKWrapper {
 
   fetchCollectibles(walletAddress: string) {
     if (!walletAddress) return Promise.resolve({ assets: [] });
-    const url = `${getEnv('OPEN_SEA_API')}/assets/?owner=${walletAddress}` +
+    const url = `${getEnv().OPEN_SEA_API}/assets/?owner=${walletAddress}` +
       '&exclude_currencies=true&order_by=listing_date&order_direction=asc';
     return new Promise((resolve, reject) => {
       getLimitedData(url, [], 300, 0, 'assets', resolve, reject);
@@ -458,14 +458,14 @@ class SDKWrapper {
 
   fetchCollectiblesTransactionHistory(walletAddress: string) {
     const url =
-      `${getEnv('OPEN_SEA_API')}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+      `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
     return Promise.resolve()
       .then(() => axios.get(url, {
         ...defaultAxiosRequestConfig,
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json',
-          'X-API-KEY': getEnv('OPEN_SEA_API_KEY'),
+          'X-API-KEY': getEnv().OPEN_SEA_API_KEY,
         },
       }))
       .then(({ data }: AxiosResponse) => data)
@@ -681,7 +681,7 @@ class SDKWrapper {
   }
 
   importedEthTransactionHistory(walletAddress: string) {
-    if (getEnv('NETWORK_PROVIDER') !== 'homestead') return Promise.resolve([]);
+    if (getEnv().NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressTransactions(walletAddress, { limit: 40 }))
       .then(data => Array.isArray(data) ? data : [])
@@ -690,7 +690,7 @@ class SDKWrapper {
   }
 
   importedErc20TransactionHistory(walletAddress: string) {
-    if (getEnv('NETWORK_PROVIDER') !== 'homestead') return Promise.resolve([]);
+    if (getEnv().NETWORK_PROVIDER !== 'homestead') return Promise.resolve([]);
     return Promise.resolve()
       .then(() => ethplorerSdk.getAddressHistory(walletAddress, { limit: 40 }))
       .then(data => get(data, 'operations', []))
@@ -699,8 +699,8 @@ class SDKWrapper {
   }
 
   getAddressErc20TokensInfo(walletAddress: string) {
-    if (getEnv('NETWORK_PROVIDER') !== 'homestead') {
-      const url = `https://blockchainparser.appspot.com/${getEnv('NETWORK_PROVIDER')}/${walletAddress}/`;
+    if (getEnv().NETWORK_PROVIDER !== 'homestead') {
+      const url = `https://blockchainparser.appspot.com/${getEnv().NETWORK_PROVIDER}/${walletAddress}/`;
       return Promise.resolve()
         .then(() => axios.get(url, defaultAxiosRequestConfig))
         .then(({ data }: AxiosResponse) => data)
@@ -714,7 +714,7 @@ class SDKWrapper {
 
   makeDirectSdkRequest({ path, method = 'GET', ...rest }: DirectSdkRequestOptions): Promise<AxiosResponse> {
     const requestOptions = {
-      url: getEnv('SDK_PROVIDER') + path,
+      url: getEnv().SDK_PROVIDER + path,
       defaultRequest: {
         method,
         httpsAgent: new https.Agent({ rejectUnathorized: false }),

@@ -51,18 +51,18 @@ const DAI_DECIMALS = 18;
 const USDC_DECIMALS = 6;
 
 const getPoolNetwork = () => {
-  return getEnv('NETWORK_PROVIDER') === 'ropsten' ? 'kovan' : getEnv('NETWORK_PROVIDER');
+  return getEnv().NETWORK_PROVIDER === 'ropsten' ? 'kovan' : getEnv().NETWORK_PROVIDER;
 };
 
 const getPoolTogetherTokenContract = (symbol: string) => {
   const poolContractAddress =
-    symbol === DAI ? getEnv('POOL_DAI_CONTRACT_ADDRESS') : getEnv('POOL_USDC_CONTRACT_ADDRESS');
+    symbol === DAI ? getEnv().POOL_DAI_CONTRACT_ADDRESS : getEnv().POOL_USDC_CONTRACT_ADDRESS;
   const poolAbi = symbol === DAI ? POOL_DAI_ABI : POOL_USDC_ABI;
   const unitType = symbol === DAI ? DAI_DECIMALS : USDC_DECIMALS;
   const provider = getEthereumProvider(getPoolNetwork());
   const poolContract = new Contract(poolContractAddress, poolAbi, provider);
 
-  const tokenContractAddress = symbol === DAI ? getEnv('DAI_ADDRESS') : getEnv('USDC_ADDRESS');
+  const tokenContractAddress = symbol === DAI ? getEnv().DAI_ADDRESS : getEnv().USDC_ADDRESS;
   const tokenABI = symbol === DAI ? DAI_ABI : USDC_ABI;
   const tokenContract = new Contract(tokenContractAddress, tokenABI, provider);
 
@@ -104,7 +104,7 @@ const fetchPoolTogetherGraph = async (
         },
     }
   `;
-  return callSubgraph(getEnv('POOLTOGETHER_SUBGRAPH_NAME'), query);
+  return callSubgraph(getEnv().POOLTOGETHER_SUBGRAPH_NAME, query);
 };
 
 const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress: string): Promise<Object> => {
@@ -126,7 +126,7 @@ const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress:
       },
     }
   `;
-  return callSubgraph(getEnv('POOLTOGETHER_SUBGRAPH_NAME'), query);
+  return callSubgraph(getEnv().POOLTOGETHER_SUBGRAPH_NAME, query);
 };
 
 export async function getPoolTogetherInfo(symbol: string, address: string): Promise<?PoolInfo> {

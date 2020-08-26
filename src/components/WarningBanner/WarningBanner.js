@@ -47,7 +47,7 @@ const WarningBannerText = styled(MediumText)`
 `;
 
 const WarningBanner = (props: Props) => {
-  if (getEnv('NETWORK_PROVIDER') === 'kovan') {
+  if (getEnv().NETWORK_PROVIDER === 'kovan') {
     return (
       <WarningBannerBackground small={props.small} rounded={props.rounded}>
         <WarningBannerText small={props.small}>{t('paragraph.doNotSendRealEthOrTokens')}</WarningBannerText>

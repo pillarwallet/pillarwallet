@@ -397,7 +397,7 @@ export const smallScreen = () => {
 
 export const getEthereumProvider = (network: string) => {
   // Connect to INFURA
-  const infuraProvider = new providers.InfuraProvider(network, getEnv('INFURA_PROJECT_ID'));
+  const infuraProvider = new providers.InfuraProvider(network, getEnv().INFURA_PROJECT_ID);
 
   // Connect to Etherscan
   const etherscanProvider = new providers.EtherscanProvider(network);
@@ -408,12 +408,12 @@ export const getEthereumProvider = (network: string) => {
 };
 
 export const resolveEnsName = (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   return provider.resolveName(ensName);
 };
 
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv('NETWORK_PROVIDER'));
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   let ensName;
   try {
     ensName = await provider.lookupAddress(address);

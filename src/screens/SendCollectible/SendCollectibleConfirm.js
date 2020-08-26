@@ -76,7 +76,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
     this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
-    this.isKovanNetwork = getEnv('NETWORK_PROVIDER') === 'kovan';
+    this.isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
     this.state = {
       rinkebyETH: '',
@@ -178,7 +178,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   getSmartWalletTxFee = async (transaction: CollectibleTransactionPayload): Promise<TransactionFeeInfo> => {
     const { useGasToken } = this.props;
     const defaultResponse = { fee: new BigNumber(0) };
-    const provider = getEthereumProvider(getEnv('COLLECTIBLES_NETWORK'));
+    const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
     const data = await buildERC721TransactionData(transaction, provider);
 
     const estimateTransaction = {

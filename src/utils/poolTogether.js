@@ -45,8 +45,8 @@ export const isPoolTogetherTag = (tag: ?string) => {
 };
 
 export const isPoolTogetherAddress = (address: string) => {
-  return addressesEqual(getEnv('POOL_DAI_CONTRACT_ADDRESS'), address)
-    || addressesEqual(getEnv('POOL_USDC_CONTRACT_ADDRESS'), address);
+  return addressesEqual(getEnv().POOL_DAI_CONTRACT_ADDRESS, address)
+    || addressesEqual(getEnv().POOL_USDC_CONTRACT_ADDRESS, address);
 };
 
 const buildPoolTogetherTransaction = (

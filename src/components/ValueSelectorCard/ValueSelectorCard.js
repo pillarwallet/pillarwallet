@@ -128,7 +128,7 @@ const formatOptions = (options: Object[], balances: Balances, rates: Rates, base
     const { iconUrl, symbol, address } = option;
     const assetBalance = getBalance(balances, symbol);
     const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-    const imageUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
+    const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return {
       imageUrl,
       formattedBalanceInFiat,

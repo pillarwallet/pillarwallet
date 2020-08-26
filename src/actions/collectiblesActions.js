@@ -249,7 +249,7 @@ export const updateCollectibleTransactionAction = (hash: string) => {
     if (!isOnline) return;
 
     dispatch(collectibleTransactionUpdate(hash));
-    const trxInfo = await getTrxInfo(api, hash, getEnv('COLLECTIBLES_NETWORK'));
+    const trxInfo = await getTrxInfo(api, hash, getEnv().COLLECTIBLES_NETWORK);
     if (!trxInfo) {
       dispatch(collectibleTransactionUpdate(''));
       return;

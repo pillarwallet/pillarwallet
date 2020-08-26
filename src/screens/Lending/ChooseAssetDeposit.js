@@ -85,7 +85,7 @@ const ChooseAssetDeposit = ({
     <ListItemWithImage
       label={name}
       subtext={`Available: ${formatAmountDisplay(getBalance(balances, symbol))} ${symbol}`}
-      itemImageUrl={iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : ''}
+      itemImageUrl={iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : ''}
       onPress={() => navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol })}
       diameter={48}
       rightColumnInnerStyle={{ alignItems: 'flex-end' }}

@@ -62,7 +62,7 @@ const assetOptionsSelector = (symbols: string[], assets: Assets): Option[] => {
       iconUrl: `asset/images/fiat/ic_52_${symbol}.png`,
     };
 
-    const icon = iconUrl && `${getEnv('SDK_PROVIDER')}/${iconUrl}`;
+    const icon = iconUrl && `${getEnv().SDK_PROVIDER}/${iconUrl}`;
 
     return {
       symbol,

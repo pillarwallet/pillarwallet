@@ -716,7 +716,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
             notificationMessage = t('toast.lendingWithdrawSuccess', { paymentInfo: getPaymentFromHistory() });
             dispatch(fetchDepositedAssetsAction());
-          } else if (addressesEqual(getEnv('SABLIER_CONTRACT_ADDRESS'), txReceiverAddress)) {
+          } else if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
             if (txFromHistory?.tag === SABLIER_WITHDRAW) {
               const symbol = get(txFromHistory, 'extra.symbol', '');
               const currentAccountAssets = accountAssetsSelector(getState());

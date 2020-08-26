@@ -1,30 +1,26 @@
 // @flow
+
+// Simplified envConfig mock with minimal dependencies for tests
+
+// the following vars are CI/BUILD/DEVELOPER related
+const buildEnvironment = {
+  SENTRY_DSN: '',
+  BUILD_NUMBER: '',
+  BUILD_TYPE: 'staging',
+  OPEN_SEA_API_KEY: '',
+  INFURA_PROJECT_ID: '',
+  ETHPLORER_API_KEY: '',
+  RAMPNETWORK_API_KEY: '',
+};
+
+const devOptions = {
+  SHOW_THEME_TOGGLE: undefined,
+  SHOW_ONLY_STORYBOOK: undefined,
+  SHOW_LANG_TOGGLE: undefined,
+  DEFAULT_PIN: undefined,
+};
+
 const envVars = {
-  production: {
-    TX_DETAILS_URL: 'https://etherscan.io/tx/',
-    NETWORK_PROVIDER: 'homestead',
-    COLLECTIBLES_NETWORK: 'homestead',
-    SDK_PROVIDER: 'https://api-core.pillarproject.io',
-    NOTIFICATIONS_URL: 'https://api-notifications.pillarproject.io',
-    INVESTMENTS_URL: 'https://api-investments.pillarproject.io',
-    SYNTHETICS_URL: 'https://0p895xsjjc.execute-api.us-east-2.amazonaws.com/production',
-    SYNTHETICS_CONTRACT_ADDRESS: '0xB64C48629eDFB9fA8860aa0AF802EA2e0F48017e',
-    OPEN_SEA_API: 'https://api.opensea.io/api/v1',
-    SOCKET_NOTIFICATIONS: 'wss://platform-websockets-prod.prod.pillarproject.io?walletId=',
-    RAMPNETWORK_WIDGET_URL: 'https://buy.ramp.network/',
-    RECOVERY_PORTAL_URL: 'https://recovery.pillarproject.io',
-    NEWSLETTER_SUBSCRIBE_URL: 'https://pillarproject.us14.list-manage.com/subscribe/post-json?u=0056162978ccced9e0e2e2939&amp;id=637ab55cf8',
-    AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS: '0x24a42fD28C976A61Df5D00D0599C34c4f90748c8',
-    AAVE_SUBGRAPH_NAME: 'aave/protocol-multy-raw',
-    BALANCE_CHECK_CONTRACT: '0xb1F8e55c7f64D203C1400B9D8555d050F94aDF39',
-    POOL_DAI_CONTRACT_ADDRESS: '0x29fe7D60DdF151E5b52e5FAB4f1325da6b2bD958',
-    POOL_USDC_CONTRACT_ADDRESS: '0x0034Ea9808E620A0EF79261c51AF20614B742B24',
-    DAI_ADDRESS: '0x6B175474E89094C44Da98b954EedeAC495271d0F',
-    USDC_ADDRESS: '0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48',
-    POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions',
-    SABLIER_CONTRACT_ADDRESS: '0xA4fc358455Febe425536fd1878bE67FfDBDEC59a',
-    SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier',
-  },
   staging: {
     TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
     NETWORK_PROVIDER: 'kovan',
@@ -49,9 +45,8 @@ const envVars = {
     POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions-kovan',
     SABLIER_CONTRACT_ADDRESS: '0xc04Ad234E01327b24a831e3718DBFcbE245904CC',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier-kovan',
-  },
-  mixed: {
-
+    ...buildEnvironment,
+    ...devOptions,
   },
 };
 
@@ -61,17 +56,10 @@ const setupEnv = () => ({});
 
 const switchEnvironments = async () => ({});
 
-const environmentVars = () => {
-  return { ...envVars[storedEnv] };
-};
-
-const getEnv = (name: string) => {
-  return envVars[storedEnv][name];
-};
+const getEnv = () => envVars[storedEnv];
 
 export default {
   getEnv,
-  environmentVars,
   setupEnv,
   switchEnvironments,
 };

@@ -21,5 +21,5 @@ import axios from 'axios';
 import { getEnv } from 'configs/envConfig';
 
 export const subscribeToNewsletter = (email: string) => {
-  return axios.post(`${getEnv('NEWSLETTER_SUBSCRIBE_URL')}&EMAIL=${email}`);
+  return axios.post(`${getEnv().NEWSLETTER_SUBSCRIBE_URL}&EMAIL=${email}`);
 };

@@ -53,7 +53,7 @@ Socket.prototype.onMessage = function (callback: (data: any) => void) {
 
 Socket.prototype.init = async function () {
   const { user = {} } = await storage.get('user');
-  this.socket = new WebSocket(`${getEnv('SOCKET_NOTIFICATIONS')}${user.walletId}`);
+  this.socket = new WebSocket(`${getEnv().SOCKET_NOTIFICATIONS}${user.walletId}`);
   this.socket.onerror = this.onerror;
   this.socket.onopen = this.onopen;
 };

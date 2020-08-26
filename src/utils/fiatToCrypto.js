@@ -27,12 +27,12 @@ import type SDKWrapper from 'services/api';
 export function rampWidgetUrl(address: string, email?: string) {
   const params = {
     swapAsset: 'PLR', // This turns on the ability to purchase PLR
-    hostApiKey: getEnv('RAMPNETWORK_API_KEY'),
+    hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
   };
 
-  return `${getEnv('RAMPNETWORK_WIDGET_URL')}?${querystring.stringify(params)}`;
+  return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 
 export const wyreWidgetUrl = async (params: SendwyreTrxParams, api: SDKWrapper) =>

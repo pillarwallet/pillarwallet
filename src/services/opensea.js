@@ -29,7 +29,7 @@ const requestConfig = {
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'X-API-KEY': getEnv('OPEN_SEA_API_KEY'),
+    'X-API-KEY': getEnv().OPEN_SEA_API_KEY,
   },
 };
 

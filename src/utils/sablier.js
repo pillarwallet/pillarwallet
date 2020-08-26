@@ -179,7 +179,7 @@ export const mapTransactionsHistoryWithSablier = async (
   ) => {
     const { to, tag } = transaction;
     if (isSablierTransactionTag(tag)) return transactions;
-    if (addressesEqual(getEnv('SABLIER_CONTRACT_ADDRESS'), to)) {
+    if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, to)) {
       transactions[transactionIndex] = buildSablierTransaction(
         transaction,
         streamsTransactions,

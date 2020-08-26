@@ -23,7 +23,7 @@ import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-import { environmentVars } from 'configs/envConfig';
+import { getEnv } from 'configs/envConfig';
 
 const LabeledRow = styled.View`
   margin: 6px 0;
@@ -48,7 +48,7 @@ const SystemInfoModal = () => {
     COLLECTIBLES_NETWORK,
     OPEN_SEA_API,
     BUILD_NUMBER,
-  } = environmentVars();
+  } = getEnv();
   return (
     <Wrapper regularPadding>
       <LabeledRow>

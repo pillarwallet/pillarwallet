@@ -98,7 +98,7 @@ class IncomingStream extends React.Component<Props> {
     const totalWithdrawnAmount = getTotalWithdrawn(stream);
     const formattedWithdrawnAmount = formatAmount(formatUnits(totalWithdrawnAmount, assetData.decimals), decimalPlaces);
     const formattedDeposit = formatAmount(formatUnits(stream.deposit, assetData.decimals), decimalPlaces);
-    const assetIcon = `${getEnv('SDK_PROVIDER')}/${assetData.iconUrl}?size=3`;
+    const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
     const transactionsOnMainnet = mapTransactionsHistory(
       history,

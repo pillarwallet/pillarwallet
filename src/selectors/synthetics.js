@@ -40,7 +40,7 @@ export const activeSyntheticAssetsSelector = createSelector(
       } = asset;
       if (availableBalance < 0) return availableAssets;
 
-      const imageUrl = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
+      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
       availableAssets.push({
         token: symbol,
         value: symbol,

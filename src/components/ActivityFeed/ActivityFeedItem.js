@@ -275,7 +275,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { event, supportedAssets } = this.props;
     if (!event?.extra?.symbol) return null;
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
-    return iconUrl ? { uri: `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` } : null;
+    return iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : null;
   };
 
   getSablierEventData = (event: Object) => {
@@ -698,7 +698,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             const referralAwardAssetData = supportedAssets.find(({ symbol }) => symbol === event.asset);
             if (referralAwardAssetData) {
               const { iconUrl } = referralAwardAssetData;
-              referralAwardTokenImage = iconUrl ? `${getEnv('SDK_PROVIDER')}/${iconUrl}?size=3` : '';
+              referralAwardTokenImage = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
               additionalInfo.iconName = null;
               additionalInfo.avatarUrl = referralAwardTokenImage;
             }

@@ -27,7 +27,7 @@ type SyntheticsConfig = {
 };
 
 const buildApiUrl = (path: string) => {
-  return `${getEnv('SYNTHETICS_URL')}/${path}`;
+  return `${getEnv().SYNTHETICS_URL}/${path}`;
 };
 
 class SyntheticsService {

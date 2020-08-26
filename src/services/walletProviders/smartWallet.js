@@ -190,7 +190,7 @@ export default class SmartWalletProvider {
     const from = getAccountAddress(account);
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
-    const provider = getEthereumProvider(getEnv('COLLECTIBLES_NETWORK'));
+    const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
     const data = await buildERC721TransactionData({ ...transaction, from }, provider);
 
     return smartWalletService

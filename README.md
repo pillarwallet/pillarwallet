@@ -101,12 +101,12 @@ Now you can import it in your **.js** file.
 ```js
 import { getEnv } from 'configs/envConfig'
 
-ApiClient.init(getEnv('API_KEY'), ANOTHER_CONFIG)
+ApiClient.init(getEnv().API_KEY, ANOTHER_CONFIG)
 ```
 
-**How does it works?**
+**How does it work ?**
 
-The getEnv function loads any variable name defined in the  **/src/configs/envConfig.js** file.
+The getEnv function loads the current environment variables defined in the  **/src/configs/envConfig.js** file.
 
 The example above will get evaluated as below when in 'staging' mode
 
@@ -119,7 +119,7 @@ ApiClient.init('ipsum', 'foobar')
 When in production mode, 
 the default environment is production. When in developer mode, the default environment is staging.
 
-The app supports switching between environments by tapping the Welcome Screen logo a certain amount of time with 
+The app supports switching between environments by tapping the Welcome Screen logo a certain amount of times with 
 a warning that will delete all stored items on the app before the switch.
 
 ## Storybook
