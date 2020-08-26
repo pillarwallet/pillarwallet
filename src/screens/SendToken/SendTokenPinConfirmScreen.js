@@ -19,16 +19,19 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import t from 'translations/translate';
+
 import CheckAuth from 'components/CheckAuth';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
+import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionPayload } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -72,7 +75,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
 
     if (!isOnline) {
       this.setState({
-        errorMessage: 'You can\'t send transaction while offline',
+        errorMessage: t('error.transactionFailed.offline'),
       });
       return;
     }

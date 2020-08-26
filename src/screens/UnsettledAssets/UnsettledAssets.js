@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
@@ -24,6 +25,7 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -98,7 +100,7 @@ class UnsettledAssets extends React.Component<Props> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Unsettled Assets' }] }}
+        headerProps={{ centerItems: [{ title: t('ppnContent.title.unsettledAssetsScreen') }] }}
         inset={{ bottom: 0 }}
       >
         <FlatList
@@ -115,7 +117,7 @@ class UnsettledAssets extends React.Component<Props> {
           <Button
             style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
             width="auto"
-            title="Settle transactions"
+            title={t('ppnContent.button.settleTransactions')}
             onPress={() => navigation.navigate(SETTLE_BALANCE)}
           />
         </FloatingButtonView>

@@ -249,7 +249,7 @@ class SettleBalance extends React.Component<Props, State> {
     const formattedFeedData = groupAndSortByDate(availableToSettleTx, 0);
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Settle transactions' }] }}
+        headerProps={{ centerItems: [{ title: t('ppnContent.title.settleTransactionsScreen') }] }}
         footer={(
           <FooterInner style={{ alignItems: 'center' }}>
             <Label>&nbsp;</Label>
@@ -257,7 +257,7 @@ class SettleBalance extends React.Component<Props, State> {
               <Button
                 small
                 disabled={!session.isOnline}
-                title="Next"
+                title={t('button.next')}
                 onPress={this.goToConfirm}
               />
             )}

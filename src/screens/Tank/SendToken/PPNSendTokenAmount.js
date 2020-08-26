@@ -20,11 +20,11 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { SDK_PROVIDER } from 'react-native-dotenv';
-
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -105,11 +105,11 @@ type State = {
   },
 };
 
-const { Form } = t.form;
+const { Form } = tForm.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
 class PPNSendTokenAmount extends React.Component<Props, State> {
-  _form: t.form;
+  _form: tForm.form;
   assetData: Object;
   formSubmitted: boolean = false;
   receiver: string;
@@ -206,7 +206,9 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: `Send ${this.assetData.symbol} via PPN` }] }}
+        headerProps={{
+          centerItems: [{ title: t('ppnContent.title.sendTokenViaPpnScreen', { token: this.assetData.symbol }) }],
+        }}
         footer={
           <FooterWrapper>
             {!!value && !!parseFloat(value.amount) &&
@@ -214,7 +216,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
                 disabled={!session.isOnline}
                 small
                 flexRight
-                title="Next"
+                title={t('button.next')}
                 onPress={this.handleFormSubmit}
               />
             }
@@ -233,16 +235,16 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
             />
             <ActionsWrapper>
               <SendTokenDetails>
-                <Label small>Available Balance</Label>
+                <Label small>{t('ppnContent.label.availableBalance')}</Label>
                 <TextRow>
                   <SendTokenDetailsValue>
-                    {formattedBalance} {symbol}
+                    {t('tokenValue', { value: formattedBalance, token: symbol })}
                   </SendTokenDetailsValue>
                   <HelperText>{formattedBalanceInFiat}</HelperText>
                 </TextRow>
               </SendTokenDetails>
               <TouchableOpacity onPress={this.useMaxValue}>
-                <TextLink>Send all</TextLink>
+                <TextLink>{t('button.sendAll')}</TextLink>
               </TouchableOpacity>
             </ActionsWrapper>
           </Wrapper>
