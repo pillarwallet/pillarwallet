@@ -25,10 +25,18 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
+import { ETH } from 'constants/assetsConstants';
+import type { Option, HorizontalOption } from 'models/Selector';
 import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
 import { chainId } from './uniswap';
+
+export type ExchangeOptions = {
+  fromOptions: Option[],
+  toOptions: Option[],
+  horizontalOptions: HorizontalOption[],
+}
 
 export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
 
@@ -85,5 +93,5 @@ export const parseOffer = (
 };
 
 export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
-  return fromAssetSymbol === 'ETH' && contractAddress === WETH[chainId].address;
+  return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
 };
