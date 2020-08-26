@@ -22,6 +22,7 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import { Platform } from 'react-native';
+import t from 'translations/translate';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -32,6 +33,7 @@ import Spinner from 'components/Spinner';
 
 import { fontSizes, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
 
 type Data = {
   label: string,
@@ -93,7 +95,7 @@ const ReviewAndConfirm = (props: Props) => {
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: 'Review and confirm' }],
+        centerItems: [{ title: t('transactions.title.reviewAndConfirmScreen') }],
         customOnBack,
       }}
       footer={(
@@ -102,7 +104,7 @@ const ReviewAndConfirm = (props: Props) => {
           <Button
             disabled={isConfirmDisabled}
             onPress={onConfirm}
-            title={submitButtonTitle || 'Confirm Transaction'}
+            title={submitButtonTitle || t('transactions.button.confirmTransaction')}
           />
         </FooterWrapper>
       )}

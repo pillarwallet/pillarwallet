@@ -31,6 +31,7 @@ export type TranslationOptions = {
   prefix?: string,
   capitalize?: boolean,
   linkedText?: string,
+  primaryText?: string,
   onPress?: () => void,
 };
 

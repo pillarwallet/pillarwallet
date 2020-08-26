@@ -113,8 +113,7 @@ const renderFeeToggle = (
       <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />
       {!!feeError &&
       <BaseText center secondary>
-        Sorry, you do not have enough {gasTokenSymbol} in your wallet to make this transaction.
-        Please top up your wallet and try again.
+        {t('error.notEnoughTokenForFeeExtended', { token: gasTokenSymbol })}
       </BaseText>
       }
     </>
@@ -328,7 +327,7 @@ const SendEthereumTokens = ({
 
   const renderRelayerMigrationButton = () => (
     <Button
-      title="Pay fees with PLR"
+      title={t('transactions.button.payFeeWithPillar')}
       onPress={() => setShowRelayerMigrationModal(true)}
       secondary
       small
@@ -419,7 +418,7 @@ const SendEthereumTokens = ({
         onOptionSelect: !resolvingContactEnsName && !contactToAdd ? handleReceiverSelect : () => {},
         options: contactsAsOptions,
         selectedOption,
-        customOptionButtonLabel: 'Add to contacts',
+        customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress,
         resetOptionsModalOnHiddenOptionAdded: true,
         hideModals: forceHideSelectorModals,
@@ -462,7 +461,7 @@ const SendEthereumTokens = ({
         />
       }
       <ContactDetailsModal
-        title="Add new contact"
+        title={t('title.addNewContact')}
         isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
         contact={contactToAdd}
         onSavePress={(contact: Contact) => {

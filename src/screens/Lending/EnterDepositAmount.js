@@ -25,6 +25,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { calculateLendingDepositTransactionEstimateAction, fetchAssetsToDepositAction } from 'actions/lendingActions';
@@ -142,7 +143,7 @@ const EnterDepositAmount = ({
     || !depositAmount
     || !isEnoughForFee
     || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
-  const nextButtonTitle = isCalculatingDepositTransactionEstimate ? 'Getting fee..' : 'Next';
+  const nextButtonTitle = isCalculatingDepositTransactionEstimate ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(
     LENDING_DEPOSIT_TRANSACTION_CONFIRM,
     { amount: depositAmount, asset: assetToDeposit },
@@ -171,20 +172,22 @@ const EnterDepositAmount = ({
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: 'Add deposit' }] }}
+      headerProps={{ centerItems: [{ title: t('aaveContent.title.depositAmountScreen') }] }}
       footer={(
         <FooterInner>
           {showTxFee && (
             <FeeInfo alignItems="center">
               <FeeLabelToggle
-                labelText="Fee"
+                labelText={t('label.fee')}
                 txFeeInWei={txFeeInfo?.fee}
                 gasToken={txFeeInfo?.gasToken}
                 isLoading={isCalculatingDepositTransactionEstimate}
                 showFiatDefault
               />
               {!isCalculatingDepositTransactionEstimate && !isEnoughForFee && (
-                <NotEnoughFee negative>Not enough {gasTokenSymbol} for transaction fee</NotEnoughFee>
+                <NotEnoughFee negative>
+                  {t('error.notEnoughTokenForFee', { token: gasTokenSymbol })}
+                </NotEnoughFee>
               )}
             </FeeInfo>
           )}
@@ -209,14 +212,16 @@ const EnterDepositAmount = ({
           balances={balances}
           baseFiatCurrency={baseFiatCurrency}
           rates={rates}
-          maxLabel="Use max"
+          maxLabel={t('button.useMax')}
           getFormValue={onValueChanged}
         />
       )}
       {!isFetchingAssetsToDeposit && assetToDeposit && (
         <CurrentInterestRate>
-          <BaseText secondary>Current APY</BaseText>
-          <InterestRate>&nbsp;{formatAmountDisplay(assetToDeposit?.earnInterestRate)}%</InterestRate>
+          <BaseText secondary>{t('aaveContent.label.currentAPY')}</BaseText>
+          <InterestRate>
+            &nbsp;{t('percentValue', { value: formatAmountDisplay(assetToDeposit?.earnInterestRate) })}
+          </InterestRate>
         </CurrentInterestRate>
       )}
     </ContainerWithHeader>

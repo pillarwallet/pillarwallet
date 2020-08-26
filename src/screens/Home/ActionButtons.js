@@ -34,8 +34,7 @@ import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { SEND_TOKEN_FROM_HOME_FLOW } from 'constants/navigationConstants';
-import { EXCHANGE } from 'constants/exchangeConstants';
+import { SEND_TOKEN_FROM_HOME_FLOW, EXCHANGE, SERVICES } from 'constants/navigationConstants';
 
 // actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
@@ -96,7 +95,7 @@ const ActionButtons = ({
       key: 'buy',
       label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
       iconName: 'wallet',
-      onPress: () => navigation.navigate(EXCHANGE, { fromAssetCode: fiatCurrency }),
+      onPress: () => navigation.navigate(SERVICES, { fromAssetCode: fiatCurrency }),
     },
     {
       key: 'receive',

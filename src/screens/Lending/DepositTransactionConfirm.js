@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -153,12 +154,12 @@ const DepositTransactionConfirm = ({
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: 'Review' }] }}
+      headerProps={{ centerItems: [{ title: t('aaveContent.title.depositConfirmationScreen') }] }}
       footer={
         <BottomWrapper>
           <FeeInfo alignItems="center">
             <FeeLabelToggle
-              labelText="Fee"
+              labelText={t('label.fee')}
               txFeeInWei={txFeeInfo?.fee}
               gasToken={txFeeInfo?.gasToken}
               showFiatDefault
@@ -169,7 +170,7 @@ const DepositTransactionConfirm = ({
             block
             disabled={isSubmitted}
             isLoading={isSubmitted}
-            title="Confirm deposit"
+            title={t('aaveContent.button.confirmDeposit')}
             onPress={onNextButtonPress}
           />
         </BottomWrapper>
@@ -192,7 +193,7 @@ const DepositTransactionConfirm = ({
           source={aaveImage}
           resizeMode="contain"
         />
-        <BaseText fontSize={15}>Aave Deposit</BaseText>
+        <BaseText fontSize={15}>{t('aaveDeposit')}</BaseText>
       </DepositWrapper>
     </ContainerWithHeader>
   );

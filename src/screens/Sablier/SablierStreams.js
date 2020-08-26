@@ -23,6 +23,7 @@ import { RefreshControl, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight/Insight';
@@ -65,15 +66,6 @@ const SablierLogo = styled(CachedImage)`
   align-self: center;
 `;
 
-const INSIGHT_ITEMS = [
-  {
-    title: 'As a worker, you see your earnings increasing in real-time in the Sablier wallet.',
-  },
-  {
-    title: 'As an organisation, our technology helps you get rid of the hassle of payroll admin. ',
-  },
-];
-
 const sablierLogo = require('assets/icons/sablier.png');
 
 const OUTGOING = 'OUTGOING';
@@ -102,8 +94,11 @@ class SablierStreams extends React.Component<Props, State> {
         <Spacing h={40} />
         <Insight
           isVisible
-          title="Stream your money or receive streams with Sablier"
-          insightChecklist={INSIGHT_ITEMS}
+          title={t('insight.moneyStream.title')}
+          insightChecklist={[
+            { title: t('insight.moneyStream.description.forWorkers') },
+            { title: t('insight.moneyStream.description.forOrganizations') },
+          ]}
           titleStyle={{
             ...fontStyles.big,
             textAlign: 'center',
@@ -111,7 +106,7 @@ class SablierStreams extends React.Component<Props, State> {
         />
         <Spacing h={64} />
         <Button
-          title="New stream"
+          title={t('sablierContent.button.newStream')}
           onPress={this.goToNewStreamFlow}
         />
         <Spacing h={20} />
@@ -132,12 +127,12 @@ class SablierStreams extends React.Component<Props, State> {
     const tabs = [
       {
         id: OUTGOING,
-        name: 'Outgoing',
+        name: t('sablierContent.tabs.outgoingStreams'),
         onPress: () => this.setState({ activeTab: OUTGOING }),
       },
       {
         id: INCOMING,
-        name: 'Incoming',
+        name: t('sablierContent.tabs.incomingStreams'),
         onPress: () => this.setState({ activeTab: INCOMING }),
       },
     ];
@@ -162,10 +157,14 @@ class SablierStreams extends React.Component<Props, State> {
       outgoingStreams, incomingStreams, isFetchingStreams, fetchUserStreams,
     } = this.props;
 
-    const headerProps = { centerItems: [{ title: 'Your streams' }], rightItems: [], sideFlex: 1 };
+    const headerProps = {
+      centerItems: [{ title: t('sablierContent.title.userStreamsScreen') }],
+      rightItems: [],
+      sideFlex: 1,
+    };
     const isEmpty = outgoingStreams.length > 0 || incomingStreams.length > 0;
     if (isEmpty) {
-      headerProps.rightItems = [{ link: 'New stream', onPress: this.goToNewStreamFlow }];
+      headerProps.rightItems = [{ link: t('sablierContent.button.newStream'), onPress: this.goToNewStreamFlow }];
       headerProps.sideFlex = 4;
     }
 
