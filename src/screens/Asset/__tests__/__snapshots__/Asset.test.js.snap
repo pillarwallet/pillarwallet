@@ -2684,7 +2684,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "notice": "#ea480e",
                               "orange": "#f57c00",
                               "poolTogetherPink": "#e51fff",
-                              "popularSwaps": "#d08cb1",
                               "positive": "#2AA057",
                               "primary": "#007AFF",
                               "progressBarEnd": "#f04cfa",

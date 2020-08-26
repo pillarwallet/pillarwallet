@@ -52,7 +52,8 @@
     "addNewContact": "Add new contact",
     "editContact": "Edit contact",
     "addressBook": "Address book",
-    "select": "Select"
+    "select": "Select",
+    "exchange": "Exchange"
   },
 
   "label": {
@@ -136,7 +137,9 @@
     "collectible": "Collectible",
     "processing": "Processing...",
     "mainAccount": "Main Account",
-    "free": "Free"
+    "free": "Free",
+    "buy": "Buy",
+    "sell": "Sell"
   },
 
   "button": {
@@ -335,6 +338,9 @@
     },
     "subscription": {
       "placeholder": "Your e-mail"
+    },
+    "selector": {
+      "searchPlaceholder": "Search"
     }
   },
 
@@ -359,7 +365,11 @@
     "cannotSendYourself": "Sorry, you cannot send to yourself. Please use a different address.",
     "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
     "notEnoughTokenForFee": "Not enough {{token}} for the transaction fee",
-    "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again."
+    "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again.",
+    "exchange": {
+      "incorrectNumber": "Incorrect number entered",
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+    }
   },
 
   "badgeText": {
@@ -423,6 +433,10 @@
       "paragraph": {
         "smartWalletActivating": "It won’t take long. While activation is in progress, feel free to explore exciting features of Pillar Smart Wallet"
       }
+    },
+    "exchangeActivation": {
+      "message": "To start exchanging assets you need to activate your Smart Wallet",
+      "button": "Activate Smart Wallet"
     },
     "tabs": {
       "tokens": {
@@ -543,13 +557,13 @@
       "biometricLogin": {
         "title": "Biometric login"
       },
-      "changePIN":{
+      "changePIN": {
         "title": "Change PIN"
       },
       "community": {
         "title": "Community",
         "paragraph": "Join Pillar community, subscribe to our newsletter to receive latest news, updates and more",
-        "label":{
+        "label": {
           "follow": "Follow us"
         }
       },
