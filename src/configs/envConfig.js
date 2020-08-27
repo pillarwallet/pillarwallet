@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { Alert } from 'react-native';
+import * as Sentry from '@sentry/react-native';
 import Intercom from 'react-native-intercom';
 import AsyncStorage from '@react-native-community/async-storage';
 import Storage from 'services/storage';
@@ -108,7 +109,9 @@ export const setupEnv = () => {
     }
     return storedEnv;
   })
-    .catch(() => null);
+    .catch(() => {
+      reportLog('Error getting environment storage value', { buildType }, Sentry.Severity.Error);
+    });
 };
 
 export const switchEnvironments = async () => {
