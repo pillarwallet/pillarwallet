@@ -111,6 +111,7 @@ export const setupEnv = () => {
   })
     .catch(() => {
       reportLog('Error getting environment storage value', { buildType }, Sentry.Severity.Error);
+      return null;
     });
 };
 
