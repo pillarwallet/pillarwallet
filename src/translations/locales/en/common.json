@@ -27,6 +27,9 @@
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
   "ofTotalTokenValue": "of {{value}} {{token}} total",
+  "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
+  "maxTokenValue": "Max {{value}} {{token}}",
+  "minTokenValue": "Min {{value}} {{token}}",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
@@ -176,7 +179,10 @@
     "noContactsAdded": "No contacts added",
     "comingSoon": "Coming soon",
     "buy": "Buy",
-    "sell": "Sell"
+    "sell": "Sell",
+    "unknown": "Unknown",
+    "pending": "Pending",
+    "notAvailableIYourCountry": "Not available in Your country"
   },
 
   "button": {
@@ -266,7 +272,9 @@
     "magic": "Magic",
     "disconnect": "Disconnect",
     "open": "Open",
-    "proceed": "Proceed"
+    "proceed": "Proceed",
+    "readMore": "Read more",
+    "activateSmartWallet": "Activate Smart Wallet"
   },
 
   "paragraph": {
@@ -410,7 +418,8 @@
       "notEnoughGas": "Not enough gas to cover the transaction fee. Top up your ETH balance",
       "notOwnedCollectible": "You no longer own this collectible",
       "collectibleCantBeTransferred": "This collectible can't be transferred",
-      "notEnoughStake": "Not enough PLR in tank"
+      "notEnoughStake": "Not enough PLR in tank",
+      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExist": "Contact with this address already exist",
@@ -1128,7 +1137,8 @@
     "button": {
       "payFeeWithPillar": "Pay fees with PLR",
       "confirmTransaction": "Confirm Transaction",
-      "cancelUnsent": "Cancel unsent"
+      "cancelUnsent": "Cancel unsent",
+      "speedSettings": "Speed settings"
     },
     "label": {
       "amount": "Amount",
@@ -1145,13 +1155,15 @@
       "fromKeyWallet": "From Key based wallet",
       "toSmartWallet": "To Smart Wallet",
       "tokensToTransfer": "Tokens to transfer",
-      "collectiblesToTransfer": "Collectibles to transfer"
+      "collectiblesToTransfer": "Collectibles to transfer",
+      "speed": "Speed"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
+      "finalFeeInformation": "Final rate may be slightly higher or lower at the end of the transaction."
     },
     "emptyState": {
       "assetsList": {
@@ -1263,6 +1275,47 @@
         "button": {
           "selectAccount": "Select account"
         }
+      },
+      "enableAsset": {
+        "title": "Enable {{asset}}",
+        "paragraph": "Once enabled, it will be available for exchanging on {{providerName}}",
+        "button": {
+          "enable": "Enable"
+        }
+      },
+      "intro": {
+        "title": "Exchange.",
+        "paragraph": "Pillar Exchange or Offers Engine, as we call it, aggregates offers from multiple providers vetted by Pillar. \n\nBuy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.",
+        "button": {
+          "next": "Next"
+        }
+      }
+    },
+    "title": {
+      "confirmScreen": "Details",
+      "settingsScreens": "Settings",
+      "activateSmartWalletScreen": "Activate Smart Wallet",
+      "buyWithWyreScreen": "Buy with Wyre"
+    },
+    "button": {
+      "enableAsset": "Enable Asset",
+      "allowExchange": "Allow this exchange"
+    },
+    "paragraph": {
+      "tokenAllowanceInReviewScreen": "Review the details and enable asset as well as confirm the cost of data transaction.",
+      "ruleToGetExchangedTokensIntoSmartWallet": "Activate Smart Wallet \n in order to receive exchanged tokens into"
+    },
+    "label": {
+      "assetToEnable": "Asset to enable",
+      "enabledAssets": "Enabled exchange assets:",
+      "exchangeRate": "Exchange rate",
+      "availableAmount": "Available",
+      "updatedRealTime": "Updated in realtime"
+    },
+    "emptyState": {
+      "noOffers": {
+        "title": "No live offers",
+        "paragraph": "Currently no matching offers from exchange services are provided.\nNew offers may appear at any time — don’t miss it."
       }
     }
   },
