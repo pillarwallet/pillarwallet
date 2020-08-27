@@ -94,107 +94,6 @@ const TickIcon = styled(Icon)`
   margin-top: 1px;
 `;
 
-const sections = [
-  {
-    key: 'ACCESS_PERMISSIONS',
-    title: t('auth:permissions.title.accessPermissions'),
-    content: [
-      {
-        key: 'INTERNET',
-        title: t('auth:permissions.title.internetPermissions'),
-        paragraph: t('auth:permissions.paragraph.internetPermissions'),
-      },
-      {
-        key: 'STORAGE_STATE',
-        title: t('auth:permissions.title.storagePermissions'),
-        paragraph: t('auth:permissions.paragraph.storagePermission'),
-      },
-      {
-        key: 'PUSH_NOTIFICATIONS',
-        title: t('auth:permissions.title.notificationPermissions'),
-        paragraph: t('auth:permissions.paragraph.notificationPermissions'),
-      },
-    ],
-  },
-  {
-    key: 'FEATURE_PERMISSIONS',
-    title: t('auth:permissions.title.featurePermissions'),
-    content: [
-      {
-        key: 'LAUNCHER',
-        title: t('auth:permissions.title.launcherPermissions'),
-        paragraph: t('auth:permissions.paragraph.launcherPermissions'),
-      },
-      {
-        key: 'VIBRATION',
-        title: t('auth:permissions.title.vibrationPermissions'),
-        paragraph: t('auth:permissions.paragraph.vibrationPermissions'),
-      },
-      {
-        key: 'CAMERA',
-        title: t('auth:permissions.title.cameraPermissions'),
-        paragraph: t('auth:permissions.paragraph.cameraPermissions'),
-      },
-      {
-        key: 'BIOMETRICS',
-        title: t('auth:permissions.title.biometricsPermissions'),
-        paragraph: t('auth:permissions.paragraph.biometricsPermissions'),
-      },
-    ],
-  },
-  {
-    key: 'COLLECTED_DATA',
-    title: t('auth:permissions.title.collectedData'),
-    content: [
-      {
-        key: 'DEBUG_DATA',
-        title: t('auth:permissions.title.debugData'),
-        paragraph: t('auth:permissions.paragraph.debugData'),
-      },
-      {
-        key: 'USER_DATA',
-        title: t('auth:permissions.title.userData'),
-        paragraph: t('auth:permissions.paragraph.userData'),
-      },
-      {
-        key: 'FIREBASE',
-        title: t('auth:permissions.title.firebase'),
-        paragraph: t('auth:permissions.withLink.firebase', {
-          linkedText: 'https://firebase.google.com/policies/analytics',
-          onPress: () => handleUrlPress('https://firebase.google.com/policies/analytics'),
-        }),
-      },
-      {
-        key: 'INTERCOM',
-        title: t('auth:permissions.title.intercom'),
-        paragraph: t('auth:permissions.withLink.intercom', {
-          linkedText: 'https://www.intercom.com/terms-and-policies#privacy',
-          onPress: () => handleUrlPress('https://www.intercom.com/terms-and-policies#privacy'),
-        }),
-      },
-      {
-        key: 'SENTRY',
-        title: t('auth:permissions.title.sentry'),
-        paragraph: t('auth:permissions.withLink.sentry', {
-          linkedText: 'https://sentry.io/privacy/',
-          onPress: () => handleUrlPress('https://sentry.io/privacy/'),
-        }),
-      },
-      {
-        key: 'DISCLAIMER',
-        custom: (
-          <Paragraph light small style={{ padding: spacing.mediumLarge }} key="disclaimer">
-            {t('auth:permissions.withLink.disclaimer', {
-              linkedText: 'dpo@pillarproject.io',
-              onPress: () => handleUrlPress('mailto:dpo@pillarproject.io.'),
-            })}
-          </Paragraph>
-        ),
-      },
-    ],
-  },
-];
-
 const Permissions = ({
   navigation,
   theme,
@@ -202,6 +101,108 @@ const Permissions = ({
   const [openCollapseKey, setOpenCollapseKey] = useState(null);
   const [openInnerCollapseKey, setOpenInnerCollapseKey] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
+
+  // keep sections in component scope due translations
+  const sections = [
+    {
+      key: 'ACCESS_PERMISSIONS',
+      title: t('auth:permissions.title.accessPermissions'),
+      content: [
+        {
+          key: 'INTERNET',
+          title: t('auth:permissions.title.internetPermissions'),
+          paragraph: t('auth:permissions.paragraph.internetPermissions'),
+        },
+        {
+          key: 'STORAGE_STATE',
+          title: t('auth:permissions.title.storagePermissions'),
+          paragraph: t('auth:permissions.paragraph.storagePermission'),
+        },
+        {
+          key: 'PUSH_NOTIFICATIONS',
+          title: t('auth:permissions.title.notificationPermissions'),
+          paragraph: t('auth:permissions.paragraph.notificationPermissions'),
+        },
+      ],
+    },
+    {
+      key: 'FEATURE_PERMISSIONS',
+      title: t('auth:permissions.title.featurePermissions'),
+      content: [
+        {
+          key: 'LAUNCHER',
+          title: t('auth:permissions.title.launcherPermissions'),
+          paragraph: t('auth:permissions.paragraph.launcherPermissions'),
+        },
+        {
+          key: 'VIBRATION',
+          title: t('auth:permissions.title.vibrationPermissions'),
+          paragraph: t('auth:permissions.paragraph.vibrationPermissions'),
+        },
+        {
+          key: 'CAMERA',
+          title: t('auth:permissions.title.cameraPermissions'),
+          paragraph: t('auth:permissions.paragraph.cameraPermissions'),
+        },
+        {
+          key: 'BIOMETRICS',
+          title: t('auth:permissions.title.biometricsPermissions'),
+          paragraph: t('auth:permissions.paragraph.biometricsPermissions'),
+        },
+      ],
+    },
+    {
+      key: 'COLLECTED_DATA',
+      title: t('auth:permissions.title.collectedData'),
+      content: [
+        {
+          key: 'DEBUG_DATA',
+          title: t('auth:permissions.title.debugData'),
+          paragraph: t('auth:permissions.paragraph.debugData'),
+        },
+        {
+          key: 'USER_DATA',
+          title: t('auth:permissions.title.userData'),
+          paragraph: t('auth:permissions.paragraph.userData'),
+        },
+        {
+          key: 'FIREBASE',
+          title: t('auth:permissions.title.firebase'),
+          paragraph: t('auth:permissions.withLink.firebase', {
+            linkedText: 'https://firebase.google.com/policies/analytics',
+            onPress: () => handleUrlPress('https://firebase.google.com/policies/analytics'),
+          }),
+        },
+        {
+          key: 'INTERCOM',
+          title: t('auth:permissions.title.intercom'),
+          paragraph: t('auth:permissions.withLink.intercom', {
+            linkedText: 'https://www.intercom.com/terms-and-policies#privacy',
+            onPress: () => handleUrlPress('https://www.intercom.com/terms-and-policies#privacy'),
+          }),
+        },
+        {
+          key: 'SENTRY',
+          title: t('auth:permissions.title.sentry'),
+          paragraph: t('auth:permissions.withLink.sentry', {
+            linkedText: 'https://sentry.io/privacy/',
+            onPress: () => handleUrlPress('https://sentry.io/privacy/'),
+          }),
+        },
+        {
+          key: 'DISCLAIMER',
+          custom: (
+            <Paragraph light small style={{ padding: spacing.mediumLarge }} key="disclaimer">
+              {t('auth:permissions.withLink.disclaimer', {
+                linkedText: 'dpo@pillarproject.io',
+                onPress: () => handleUrlPress('mailto:dpo@pillarproject.io.'),
+              })}
+            </Paragraph>
+          ),
+        },
+      ],
+    },
+  ];
 
   const toggleCollapse = (key: string) => {
     setOpenCollapseKey(openCollapseKey === key ? null : key);
