@@ -24,6 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 import { MediumText } from 'components/Typography';
 import CircularProgressBar from 'components/CircularProgressBar';
 import { Spacing } from 'components/Layout';
@@ -136,7 +137,7 @@ const SablierStreamCircles = ({
         </MediumText>
         <Spacing h={8} />
         <MediumText big color={isStreamCanceled ? colors.labelTertiary : colors.secondaryText}>
-          of {formattedDeposit} {assetData.symbol} total
+          {t('ofTotalTokenValue', { value: formattedDeposit, token: assetData.symbol })}
         </MediumText>
       </CirclesWrapper>
       <Spacing h={32} />
@@ -144,7 +145,13 @@ const SablierStreamCircles = ({
         <RemainingTimeWrapper>
           <ClockIcon name="pending" />
           <Spacing w={10} />
-          <MediumText fontSize={20} lineHeight={20}>{days} days {hours} hours {minutes} min</MediumText>
+          <MediumText fontSize={20} lineHeight={20}>
+            {t('timeDaysHoursMinutesLayout', {
+              days: t('day', { count: days }),
+              hours: t('hour', { count: hours }),
+              minutes: t('minute', { count: minutes }),
+            })}
+          </MediumText>
         </RemainingTimeWrapper>
       </ShadowedCard>
     </View>
