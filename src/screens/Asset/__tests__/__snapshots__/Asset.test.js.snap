@@ -36,9 +36,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
         style={
           Array [
             Object {
-              "minHeight": 58,
+              "height": 52,
               "paddingHorizontal": 16,
-              "paddingVertical": 15,
+              "paddingVertical": 14,
               "width": "100%",
             },
             undefined,
@@ -67,9 +67,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "flexGrow": 1,
                   "flexShrink": 1,
-                  "flexWrap": "wrap",
+                  "height": 24,
                   "justifyContent": "flex-start",
-                  "minHeight": 28,
                 },
                 Object {},
               ]
@@ -89,7 +88,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               style={
                 Object {
                   "alignItems": "flex-start",
-                  "height": 34,
+                  "height": 24,
                   "justifyContent": "center",
                   "marginLeft": -12,
                   "opacity": 1,
@@ -127,8 +126,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "flexGrow": 4,
                   "flexShrink": 1,
+                  "height": 24,
                   "justifyContent": "center",
-                  "minHeight": 28,
                   "paddingBottom": 0,
                   "paddingLeft": 12,
                   "paddingRight": 12,
@@ -148,8 +147,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexGrow": 1,
                   "flexShrink": 1,
                   "flexWrap": "wrap",
+                  "height": 24,
                   "justifyContent": "flex-end",
-                  "minHeight": 28,
                 },
                 undefined,
               ]
@@ -2326,9 +2325,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
+                          "height": 52,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 15,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -2358,9 +2357,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -2440,8 +2438,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
@@ -3212,8 +3210,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
-                          "paddingVertical": 15,
+                          "height": 52,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -3243,9 +3241,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -3261,8 +3258,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
