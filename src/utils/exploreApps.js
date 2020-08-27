@@ -18,13 +18,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import t from 'translations/translate';
-
 
 export type AppItem = {
   name: string,
   logo: number,
-  text: string,
+  translationKey: string,
   url: string,
   disabled?: boolean,
 };
@@ -44,64 +42,64 @@ export const APPS: AppItem[] = [
   {
     name: 'Zerion',
     logo: zerionLogo,
-    text: t('walletConnectContent.paragraph.zerionDescription'),
+    translationKey: 'zerion',
     url: 'zerion.io',
   },
   {
     name: 'Pool Together',
     logo: poolTogetherLogo,
-    text: t('walletConnectContent.paragraph.poolTogetherDescription'),
+    translationKey: 'poolTogether',
     url: 'pooltogether.com',
   },
   {
     name: 'Mooni',
     logo: mooniLogo,
-    text: t('walletConnectContent.paragraph.mooniDescription'),
+    translationKey: 'mooni',
     url: 'mooni.tech',
     disabled: true,
   },
   {
     name: 'Oasis',
     logo: oasisLogo,
-    text: t('walletConnectContent.paragraph.oasisDescription'),
+    translationKey: 'oasis',
     url: 'oasis.app',
   },
   {
     name: 'Sablier',
     logo: sablierLogo,
-    text: t('walletConnectContent.paragraph.sablierDescription'),
+    translationKey: 'sablier',
     url: 'sablier.finance',
   },
   {
     name: 'Binance DEX',
     logo: binanceLogo,
-    text: t('walletConnectContent.paragraph.binanceDexDescription'),
+    translationKey: 'binanceDex',
     url: 'binance.org',
     disabled: true,
   },
   {
     name: 'Local Cryptos',
     logo: localCryptosLogo,
-    text: t('walletConnectContent.paragraph.localCryptosDescription'),
+    translationKey: 'localCryptos',
     url: 'localcryptos.com',
     disabled: true,
   },
   {
     name: 'Async.art',
     logo: asyncartLogo,
-    text: t('walletConnectContent.paragraph.asyncArtDescription'),
+    translationKey: 'asyncArt',
     url: 'async.art',
   },
   {
     name: 'Known Origin',
     logo: knownOriginLogo,
-    text: t('walletConnectContent.paragraph.knownOriginDescription'),
+    translationKey: 'knownOrigin',
     url: 'knownorigin.io',
   },
   {
     name: 'Clovers',
     logo: cloversLogo,
-    text: t('walletConnectContent.paragraph.cloversDescription'),
+    translationKey: 'clovers',
     url: 'clovers.network',
   },
 ];

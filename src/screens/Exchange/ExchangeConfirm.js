@@ -439,7 +439,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'exchangeContent.title.confirmScreen' }],
+          centerItems: [{ title: t('exchangeContent.title.confirmScreen') }],
           customOnBack: this.handleBack,
         }}
       >

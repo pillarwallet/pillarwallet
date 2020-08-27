@@ -1044,17 +1044,18 @@
       },
       "checkApp": "View"
     },
-    "paragraph": {
-      "zerionDescription": "A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.",
-      "poolTogetherDescription": "No-loss, audited savings game. Deposit Dai into the pool to get tickets. Each ticket is a chance to win weekly prizes!",
-      "mooniDescription": "A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.",
-      "oasisDescription": "Trade, borrow, and save using Dai.",
-      "sablierDescription": "\"Stream\" money in real-time.",
-      "binanceDexDescription": "Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.",
-      "localCryptosDescription": "The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with each other. Buy and sell crypto on your own terms, using any payment method.",
-      "asyncArtDescription": "Collect and experience programmable rare art.",
-      "knownOriginDescription": "Discover and collect rare digital artwork.",
-      "cloversDescription": "Discover, collect & trade cryptographic icons."
+    "appDescription": {
+      "zerion": "A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.",
+      "poolTogether": "No-loss, audited savings game. Deposit Dai into the pool to get tickets. Each ticket is a chance to win weekly prizes!",
+      "mooni": "A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.",
+      "oasis": "Trade, borrow, and save using Dai.",
+      "sablier": "\"Stream\" money in real-time.",
+      "binanceDex": "Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.",
+      "localCryptos": "The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with each other. Buy and sell crypto on your own terms, using any payment method.",
+      "asyncArt": "Collect and experience programmable rare art.",
+      "knownOrigin": "Discover and collect rare digital artwork.",
+      "clovers": "Discover, collect & trade cryptographic icons.",
+      "default": "N/A"
     },
     "tabs": {
       "active": {
