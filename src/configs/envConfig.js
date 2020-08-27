@@ -27,6 +27,8 @@ import { clearWebViewCookies } from 'utils/exchange';
 import { reportLog } from 'utils/common';
 import { firebaseIid } from 'services/firebase';
 
+import { buildEnvironment, devOptions } from './buildConfig';
+
 const storage = Storage.getInstance('db');
 
 const buildType = __DEV__ ? 'development' : 'production';
@@ -34,25 +36,6 @@ const buildType = __DEV__ ? 'development' : 'production';
 type CurrentEnvironment = {
   [string]: string
 }
-
-// the following vars are CI/BUILD related and are fixed for both environment contexts
-const buildEnvironment = {
-  SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',
-  BUILD_NUMBER: '_build_number_',
-  BUILD_TYPE: buildType,
-  OPEN_SEA_API_KEY: '_open_sea_api_key_',
-  INFURA_PROJECT_ID: '_infura_project_id_',
-  ETHPLORER_API_KEY: '_ethplorer_api_key_',
-  RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
-};
-
-// Optional Developer variables are fixed for both environment contexts, undefined by default
-const devOptions = {
-  SHOW_THEME_TOGGLE: undefined,
-  SHOW_ONLY_STORYBOOK: undefined,
-  SHOW_LANG_TOGGLE: undefined,
-  DEFAULT_PIN: undefined,
-};
 
 // switchable environments constants
 const envVars = {
