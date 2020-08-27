@@ -20,6 +20,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 import type { User } from 'models/User';
 
@@ -48,14 +49,17 @@ const statusText = (props: Props) => {
 
   const destination = user[field];
   if (isEmpty(destination)) {
-    return `(No ${field} to show)`;
+    return t([
+      `error.noField.${field}`,
+      'error.noField.default',
+    ]);
   }
 
   if (sendingOneTimePassword) {
-    return `Sending to ${destination}`;
+    return t('label.sendingToReceiver', { receiver: destination });
   }
 
-  return `It was sent to ${destination}`;
+  return t('label.sentToReceiver', { receiver: destination });
 };
 
 const StatusLabel = (props: Props) => (

@@ -19,6 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { Label, BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
@@ -63,10 +65,10 @@ const SendTokenDetails = (props: Props) => {
 
   return (
     <Details>
-      <Label small>Available Balance</Label>
+      <Label small>{t('label.availableBalance')}</Label>
       <TextRow>
         <SendTokenDetailsValue>
-          {formattedBalance} {token}
+          {t('tokenValue', { value: formattedBalance, token })}
         </SendTokenDetailsValue>
         <HelperText>{formattedBalanceInFiat}</HelperText>
       </TextRow>

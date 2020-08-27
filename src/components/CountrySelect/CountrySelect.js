@@ -25,6 +25,7 @@ import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Wrapper } from 'components/Layout';
 import { spacing } from 'utils/variables';
 import countries from 'utils/countries.json';
+import t from 'translations/translate';
 
 const sortedCountries = countries.sort((a, b) => a.name.localeCompare(b.name));
 
@@ -80,7 +81,7 @@ export default class CountrySelect extends React.Component<Props, State> {
               value: query,
               autoCapitalize: 'none',
             }}
-            placeholder="Search"
+            placeholder={t('label.search')}
           />
         </SearchBarWrapper>
         <FlatList
@@ -98,7 +99,10 @@ export default class CountrySelect extends React.Component<Props, State> {
                 alignItems: 'center',
               }}
             >
-              <EmptyStateParagraph title="Nothing found" bodyText="Make sure you entered the country correctly" />
+              <EmptyStateParagraph
+                title={t('countryList.emptyState.noneFound.title')}
+                bodyText={t('countryList.emptyState.noneFound.paragraph')}
+              />
             </Wrapper>
           }
         />

@@ -24,6 +24,7 @@ const height = Platform.OS === 'android'
   ? ExtraDimensions.get('REAL_WINDOW_HEIGHT') - ExtraDimensions.getSoftMenuBarHeight()
   : windowHeight;
 
+
 type Props = {
   steps: Steps;
   waitingForStepId: string,
@@ -241,7 +242,7 @@ class Walkthrough extends React.Component<Props, State> {
                   <Title>{title}</Title>
                   <WhiteParagraph small>{body}</WhiteParagraph>
                 </MainContent>
-                <Button title={buttonText || 'Next'} onPress={this.nextStep} />
+                <Button title={buttonText || t('button.next')} onPress={this.nextStep} />
               </ShadeContent>
             </SafeAreaView>
           </KeyboardAvoidWrapper>}
