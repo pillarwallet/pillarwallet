@@ -290,14 +290,17 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
-    const { inputProps, keyboardAvoidance } = this.props;
-    if (Platform.OS === 'ios' && inputProps.multiline && keyboardAvoidance) {
+    const { inputProps: { multiline, onFocus }, keyboardAvoidance } = this.props;
+    if (Platform.OS === 'ios' && multiline && keyboardAvoidance) {
       this.handleMultilineFocus();
       return;
     }
     this.setState({
       isFocused: true,
     });
+    if (onFocus) {
+      onFocus();
+    }
   };
 
   handleRNFocus = () => {

@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard, InputAccessoryView, Platform } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -31,6 +31,8 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import SelectorOptions from 'components/SelectorOptions';
 import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
+import PercentsInputAccessory from 'components/PercentsInputAccessory';
+import PercentsInputAccessoryAndroid from 'components/PercentsInputAccessory/PercentsInputAccessoryAndroid';
 
 // actions
 import {
@@ -129,6 +131,8 @@ const FormWrapper = styled.View`
   padding: ${spacing.large}px 40px 60px;
   background-color: ${themedColors.surface};
 `;
+
+const accessoryNativeID = 'accessoryNativeID2';
 
 class ExchangeScreen extends React.Component<Props, State> {
   fromInputRef: RNTextInput;
@@ -273,12 +277,13 @@ class ExchangeScreen extends React.Component<Props, State> {
         getInputRef={ref => { this.fromInputRef = ref; }}
         onChange={this.handleFromInputChange}
         value={value}
+        onFocus={this.onFocusInput}
         onBlur={this.blurFromInput}
         errorMessage={errorMessage}
         asset={fromAsset}
         onAssetPress={() => this.setState({ showSellOptions: true })}
         labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        onLabelPress={this.handleSellMax}
+        onLabelPress={() => this.handleUsePercent(100)}
         leftSideText={displayFiatFromAmount
           ? `${formatAmount(fromAmount || '0', 2)} ${fromAsset.symbol || ''}`
           : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
@@ -286,6 +291,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         leftSideSymbol="-"
         onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
         rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
+        inputAccessoryViewID={accessoryNativeID}
       />
     );
   };
@@ -328,7 +334,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   blurFromInput = () => {
     if (this.fromInputRef) this.fromInputRef.blur();
+    PercentsInputAccessoryAndroid.removeAccessory();
   };
+
+  onFocusInput = () => {
+    PercentsInputAccessoryAndroid.addAccessory(this.handleUsePercent);
+  }
 
   focusInputWithKeyboard = () => {
     const { hasSeenExchangeIntro } = this.props;
@@ -338,12 +349,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     }, 200);
   };
 
-  handleSellMax = () => {
+  handleUsePercent = (percent: number) => {
     const { fromAsset } = this.state;
     const fiatAmount = fromAsset.formattedBalanceInFiat || '';
     this.setState({
-      fromAmount: fromAsset.assetBalance,
-      fromAmountInFiat: fiatAmount.substr(2),
+      fromAmount: (parseFloat(fromAsset.assetBalance) * (percent / 100)).toString(),
+      fromAmountInFiat: (parseFloat(fiatAmount) * (percent / 100)).toString().substr(2),
       errorMessage: '',
     }, () => Keyboard.dismiss());
   };
@@ -393,6 +404,17 @@ class ExchangeScreen extends React.Component<Props, State> {
       ? { fromAsset: option, ...optionsStateChanges }
       : { toAsset: option, ...optionsStateChanges },
     () => this.setErrorMessage(getErrorMessage(fromAmount, this.state.fromAsset)),
+    );
+  }
+
+  renderInputAccessory = () => {
+    if (Platform.OS === 'android') {
+      return null;
+    }
+    return (
+      <InputAccessoryView nativeID={accessoryNativeID}>
+        <PercentsInputAccessory handleUsePercent={this.handleUsePercent} />
+      </InputAccessoryView>
     );
   }
 
@@ -447,6 +469,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           >
             {assetsLoaded &&
             <FormWrapper>
+              {this.renderInputAccessory()}
               {this.getFromInput()}
               <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
               {this.getToInput()}

@@ -60,6 +60,7 @@ const FooterInner = styled.View`
 
 const SendFooter = (props: FooterProps) => {
   const { isNextButtonVisible, buttonProps = {}, footerTopAddon } = props;
+  if (!footerTopAddon && !isNextButtonVisible) return null;
   return (
     <FooterInner>
       {footerTopAddon}
