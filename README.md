@@ -96,6 +96,15 @@ const envVars = {
 
 ```
 
+Add your local api keys and preferences in the **/src/configs/buildConfig.js** file.
+Please do not commit changes of .env and buildConfig.js and be careful not to publish your local keys
+To avoid that use the following command after editing the files:
+```
+git update-index --assume-unchanged src/configs/buildConfig.js
+
+git update-index --assume-unchanged .env
+```
+
 Now you can import it in your **.js** file.
 
 ```js
