@@ -22,7 +22,7 @@ import { NETWORK_PROVIDER, COLLECTIBLES_NETWORK, BALANCE_CHECK_CONTRACT } from '
 import cryptocompare from 'cryptocompare';
 
 // constants
-import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, HOT, HOLO, WaBi, supportedFiatCurrencies } from 'constants/assetsConstants';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
@@ -346,6 +346,12 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
       if (data[HOLO]) {
         data[HOT] = { ...data[HOLO] };
         delete data[HOLO];
+      }
+      // WaBi fix as different sources have different symbol
+      const WABI = WaBi.toUpperCase();
+      if (data[WABI]) {
+        data[WaBi] = { ...data[WABI] };
+        delete data[WABI];
       }
       return data;
     }).catch(() => ({}));
