@@ -29,6 +29,7 @@ import { Paragraph, MediumText, BaseText } from 'components/Typography';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
 import { NextFooter } from 'components/Layout/NextFooter';
+import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 
 // utils
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -37,8 +38,6 @@ import { getThemeColors, themedColors } from 'utils/themes';
 
 // constants
 import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
-import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
-
 
 // types
 import type { Theme } from 'models/Theme';
