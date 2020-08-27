@@ -21,9 +21,10 @@
 import * as React from 'react';
 import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -41,13 +42,12 @@ import Button from 'components/Button';
 
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 
 // utils
-import { themedColors, getThemeColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
@@ -83,7 +83,6 @@ type Props = {
   session: Object,
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
-  theme: Theme,
 };
 
 type State = {
@@ -144,10 +143,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      fetchPoolStats,
-      theme,
-    } = this.props;
+    const { fetchPoolStats } = this.props;
 
     const {
       poolToken,
@@ -158,8 +154,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       feeInFiat,
       isDisabled,
     } = this.state;
-
-    const colors = getThemeColors(theme);
 
     const winChance = getWinChance(tokenValue + userTickets, totalPoolTicketsCount);
 
@@ -188,15 +182,23 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               imageSource={poolTogetherLogo}
             />
             <ContentRow>
-              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
-              <Text label>chance of win </Text>
+              <Text label>
+                {t('poolTogetherContent.label.winningChance', {
+                  primaryText: t('percentValue', { value: formatAmount(winChance, 6) }),
+                })}
+              </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 64 }}>
-              <Text label>{`Fee ${feeDisplayValue} (${feeInFiat})`}</Text>
+              <Text label>{
+                t('label.feeTokenFiat', {
+                  tokenValue: feeDisplayValue,
+                  fiatValue: feeInFiat,
+                })}
+              </Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 16 }}>
               <Button
-                title="Purchase tickets"
+                title={t('poolTogetherContent.button.purchaseTickets')}
                 onPress={() => {
                   this.purchasePoolAsset();
                 }}
@@ -231,4 +233,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(withTheme(PoolTogetherPurchaseConfirm));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherPurchaseConfirm);

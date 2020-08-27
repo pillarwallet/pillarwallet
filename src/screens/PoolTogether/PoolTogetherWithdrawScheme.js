@@ -21,6 +21,7 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // components
 import { MediumText, BaseText } from 'components/Typography';
@@ -77,7 +78,7 @@ const PoolTogetherWithdrawScheme = (props: Props) => {
           fallbackHeight={64}
         />
         <Spacing h={8} />
-        <BaseText medium>Pool Together</BaseText>
+        <BaseText medium>{t('poolTogether')}</BaseText>
       </LogoWrapper>
       <Spacing h={16} />
       <CachedImage

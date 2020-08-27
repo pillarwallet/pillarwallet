@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
+import t from 'translations/translate';
 
 // constants
 import styled, { withTheme } from 'styled-components/native';
@@ -115,7 +116,7 @@ const PoolTokenAllowModal = (props: Props) => {
       onModalHide={onModalHide}
       noClose
       headerProps={{
-        centerItems: [{ title: 'Authorize Pool Together' }],
+        centerItems: [{ title: t('poolTogetherContent.title.authorizePoolTogether') }],
         sideFlex: '0',
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
       }}
@@ -134,14 +135,11 @@ const PoolTokenAllowModal = (props: Props) => {
           />
         </ContentRow>
         <Paragraph>
-          {
-            `Allow Pool Together to spend your ${assetSymbol} and automate transactions for you. ` +
-            'You will have to do it only once. All further purchases will be executed with no automation fee.'
-          }
+          {t('poolTogetherContent.paragraph.allowAutomationWithToken', { token: assetSymbol })}
         </Paragraph>
         <Button
           secondary
-          title={isDisabled ? `Not enough ${feeToken}` : 'Enable'}
+          title={isDisabled ? t('label.notEnoughToken', { token: feeToken }) : t('button.enable')}
           onPress={onAllow}
           regularText
           style={{ marginBottom: 28 }}
@@ -150,7 +148,7 @@ const PoolTokenAllowModal = (props: Props) => {
           disabled={isDisabled}
         />
         <BaseText secondary>
-          {`Fee ${feeDisplayValue} (${feeInFiat})`}
+          {t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
         </BaseText>
       </ContentWrapper>
     </SlideModal>

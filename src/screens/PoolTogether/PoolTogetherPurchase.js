@@ -21,12 +21,13 @@
 import * as React from 'react';
 import { RefreshControl, Platform } from 'react-native';
 import { connect } from 'react-redux';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
+import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -53,7 +54,6 @@ import type { Accounts } from 'models/Account';
 import type { Balances, Rates, Assets, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Theme } from 'models/Theme';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -62,7 +62,7 @@ import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
-import { themedColors, getThemeColors } from 'utils/themes';
+import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
@@ -109,7 +109,6 @@ type Props = {
   fetchPoolStats: (symbol: string) => void,
   fetchPoolAllowanceStatus: (symbol: string) => void,
   setDismissApprove: (symbol: string) => void,
-  theme: Theme,
   useGasToken: boolean,
   baseFiatCurrency: ?string,
   poolAllowance: { [string]: boolean },
@@ -257,7 +256,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const {
       navigation,
       fetchPoolStats,
-      theme,
       balances,
       baseFiatCurrency,
       rates,
@@ -281,8 +279,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     } = this.state;
 
     const hasAllowance = poolAllowance[poolToken];
-
-    const colors = getThemeColors(theme);
 
     const winChance = getWinChance(tokenValue + userTickets, totalPoolTicketsCount);
 
@@ -331,7 +327,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Purchase Tickets' }] }}
+        headerProps={{ centerItems: [{ title: t('poolTogetherContent.title.ticketPurchaseScreen') }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -352,7 +348,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               <ValueSelectorCard
                 preselectedAsset={poolToken}
                 getFormValue={this.getFormValue}
-                maxLabel="Spend max"
+                maxLabel={t('button.spendMax')}
                 customOptions={assetOptions}
                 balances={balances}
                 baseFiatCurrency={baseFiatCurrency}
@@ -362,36 +358,36 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               />
             </ContentRow>
             <ContentRow>
-              <Text label style={{ color: colors.primary, paddingRight: 4 }}>{formatAmount(winChance, 6)} %</Text>
-              <Text label>chance of win </Text>
+              <Text label>
+                {t('poolTogetherContent.label.winningChance', {
+                  primaryText: t('percentValue', { value: formatAmount(winChance, 6) }),
+                })}
+              </Text>
             </ContentRow>
             <ContentRow>
               {(!hasAllowance && !isApprovalExecuting) &&
-                <Text center label>
-                  In order to join Pool Together you will need to automate transactions first.
-                </Text>
+                <Text center label>{t('poolTogetherContent.paragraph.automationMissing')}</Text>
               }
               {!!isApprovalExecuting &&
-                <Text center label>
-                  Please wait for Pool Together automation
-                </Text>
+                <Text center label>{t('poolTogetherContent.paragraph.pendingAutomation')}</Text>
               }
-              {(!!hasAllowance && !purchasePayload) &&
-                <Text center label>
-                  Fetching fee...
-                </Text>
-              }
+              {(!!hasAllowance && !purchasePayload) && <Text center label>{t('label.fetchingFee')}</Text>}
               {(!!hasAllowance && !!purchasePayload) &&
                 <Text center label>
-                  {`Fee ${purchasePayload.feeDisplayValue} (${purchasePayload.feeInFiat})`}
-                  {purchasePayload.isDisabled && `\nNot enough ${purchasePayload.feeSymbol} for the transaction fee`}
+                  {t('label.feeTokenFiat', {
+                    tokenValue: purchasePayload.feeDisplayValue,
+                    fiatValue: purchasePayload.feeInFiat,
+                  })}
+                  {purchasePayload.isDisabled &&
+                  `\n${t('error.notEnoughTokenForFee', { token: purchasePayload.feeSymbol })}`
+                  }
                 </Text>
               }
             </ContentRow>
             <ContentRow>
               {!purchaseDisabled &&
                 <Button
-                  title="Next"
+                  title={t('button.next')}
                   onPress={() => {
                     if (!hasAllowance && !isApprovalExecuting) {
                       this.setState({ isAllowModalVisible: true });
@@ -405,7 +401,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               }
               {!!purchaseDisabled && // has to update like this so it shows the disabled style
                 <Button
-                  title="Next"
+                  title={t('button.next')}
                   disabled={purchaseDisabled}
                   style={{ marginBottom: 13, width: '100%' }}
                 />
@@ -465,4 +461,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(withTheme(PoolTogetherPurchase));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherPurchase);
