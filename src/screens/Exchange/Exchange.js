@@ -51,6 +51,7 @@ import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import type { ExchangeOptions } from 'utils/exchange';
 import { formatAmount, formatFiat } from 'utils/common';
+import { getBalanceInFiat } from 'utils/assets';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -73,7 +74,6 @@ import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import {
   getFormattedSellMax,
-  getBalanceInFiat,
   getAssetBalanceFromFiat,
   validateInput,
   getBestAmountToBuy,

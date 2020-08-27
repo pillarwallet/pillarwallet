@@ -951,6 +951,10 @@
       "title": "Buy with Wyre (Non-EU)",
       "description": "Buy Now"
     },
+    "wbtcCafe": {
+      "title": "WBTC Cafe",
+      "description": "Swap between BTC and WBTC todo change this description"
+    },
     "altalix": {
       "title": "Buy with Altalix",
       "description": "Buy Now"

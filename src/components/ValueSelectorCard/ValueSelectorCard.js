@@ -41,7 +41,7 @@ import type { Option } from 'models/Selector';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { getBalance, getRate, calculateMaxAmount } from 'utils/assets';
+import { getBalance, getRate, calculateMaxAmount, getFormattedBalanceInFiat } from 'utils/assets';
 import { themedColors } from 'utils/themes';
 import {
   SelectorInputTemplate,
@@ -50,7 +50,6 @@ import {
   inputParser,
   ItemSelectorTemplate,
 } from 'utils/formHelpers';
-import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';

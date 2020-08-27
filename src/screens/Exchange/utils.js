@@ -18,14 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import maxBy from 'lodash.maxby';
 import Intercom from 'react-native-intercom';
 
-import { getRate, getBalance, sortAssets } from 'utils/assets';
-import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
+import { getRate, getBalance, sortAssets, generateAssetSelectorOption } from 'utils/assets';
+import { formatMoney, formatAmount, isValidNumber } from 'utils/common';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -41,18 +40,6 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Allowance, Offer } from 'models/Offer';
 import type { ExchangeOptions } from 'utils/exchange';
 
-export const getBalanceInFiat = (
-  baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
-  rates: Rates,
-  symbol: string,
-): number => {
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
-  return assetBalanceInFiat;
-};
-
 export const getAssetBalanceFromFiat = (
   baseFiatCurrency: ?string,
   fiatBalance: ?string | ?number,
@@ -63,17 +50,6 @@ export const getAssetBalanceFromFiat = (
   const assetBalanceFromFiat = fiatBalance ?
     parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : 0;
   return assetBalanceFromFiat || 0;
-};
-
-export const getFormattedBalanceInFiat = (
-  baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
-  rates: Rates,
-  symbol: string): string => {
-  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-  if (!assetBalanceInFiat) return '';
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
 };
 
 export const getAvailable = (_min: string, _max: string, rate: string) => {
@@ -134,26 +110,7 @@ const generateAssetsOptions = (
   return sortAssets(assets)
     .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
       && exchangeSupportedAssets.some(asset => asset.symbol === symbol))
-    .map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = formatAmount(getBalance(balances, symbol));
-      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
-      return ({
-        key: symbol,
-        value: symbol,
-        imageUrl,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        formattedBalanceInFiat,
-        customProps: {
-          rightColumnInnerStyle: { alignItems: 'flex-end' },
-        },
-      });
-    });
+    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
 };
 
 const generateSupportedAssetsOptions = (
@@ -164,27 +121,8 @@ const generateSupportedAssetsOptions = (
 ): Option[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
   return exchangeSupportedAssets
-    .map(({ symbol, iconUrl, ...rest }) => {
-      const rawAssetBalance = getBalance(balances, symbol);
-      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
-      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
-      return {
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        imageUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        formattedBalanceInFiat,
-        customProps: {
-          rightColumnInnerStyle: { alignItems: 'flex-end' },
-        },
-      };
-    }).filter(asset => asset.key !== BTC);
+    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency))
+    .filter(asset => asset.key !== BTC);
 };
 
 const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPULAR_EXCHANGE_TOKENS

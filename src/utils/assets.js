@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -40,6 +40,7 @@ import type {
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
+import type { Option } from 'models/Selector';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -309,3 +310,52 @@ export const mapCollectibleToAssetData = ({
   icon: icon || '',
   tokenType: COLLECTIBLES,
 });
+
+export const getBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): number => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceInFiat = assetBalance ?
+    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
+  return assetBalanceInFiat;
+};
+
+export const getFormattedBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): string => {
+  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+  if (!assetBalanceInFiat) return '';
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
+};
+
+export const generateAssetSelectorOption = (
+  asset: Asset, balances: Balances, rates: Rates, baseFiatCurrency: ?string,
+): Option => {
+  const { symbol, iconUrl, ...rest } = asset;
+  const rawAssetBalance = getBalance(balances, symbol);
+  const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
+  const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+  const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
+  return ({
+    key: symbol,
+    value: symbol,
+    imageUrl,
+    icon: iconUrl,
+    iconUrl,
+    symbol,
+    ...rest,
+    assetBalance,
+    formattedBalanceInFiat,
+    customProps: {
+      rightColumnInnerStyle: { alignItems: 'flex-end' },
+    },
+  });
+};
