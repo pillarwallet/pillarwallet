@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // components
 import Selector from 'components/Selector';
@@ -64,7 +65,7 @@ const SendFooter = (props: FooterProps) => {
       {footerTopAddon}
       {isNextButtonVisible &&
         <Button
-          title="Next"
+          title={t('button.next')}
           block
           marginTop={spacing.medium}
           {...buttonProps}
@@ -84,14 +85,14 @@ const SendContainer = (props: Props) => {
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Send' }] }}
+      headerProps={{ centerItems: [{ title: t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={260}
     >
       <Selector
-        label="To"
-        placeholder="Choose receiver"
-        searchPlaceholder="Wallet address"
+        label={t('label.to')}
+        placeholder={t('label.chooseReceiver')}
+        searchPlaceholder={t('label.walletAddress')}
         wrapperStyle={{ marginTop: spacing.medium }}
         noOptionImageFallback
         hasQRScanner
@@ -100,8 +101,8 @@ const SendContainer = (props: Props) => {
         {...customSelectorProps}
       />
       <ValueSelectorCard
-        selectorModalTitle="Send"
-        maxLabel="Send max"
+        selectorModalTitle={t('transactions.title.valueSelectorModal')}
+        maxLabel={t('button.sendMax')}
         wrapperStyle={{ paddingTop: spacing.medium }}
         {...customValueSelectorProps}
       />

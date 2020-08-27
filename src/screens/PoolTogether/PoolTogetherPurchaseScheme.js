@@ -22,6 +22,7 @@ import * as React from 'react';
 import { Dimensions } from 'react-native';
 import styled from 'styled-components/native';
 import { AnimatedSVGPath } from 'react-native-svg-animations';
+import t from 'translations/translate';
 
 // components
 import { MediumText } from 'components/Typography';
@@ -171,7 +172,7 @@ class PoolTogetherPurchaseScheme extends React.Component<Props, State> {
             fallbackWidth={64}
             fallbackHeight={64}
           />
-          <SymbolText style={{ paddingTop: 8 }}>Pool Together</SymbolText>
+          <SymbolText style={{ paddingTop: 8 }}>{t('poolTogether')}</SymbolText>
           {!!valueToWidth &&
           <ArrowHolder isLeft>
             <AnimatedSVGPath

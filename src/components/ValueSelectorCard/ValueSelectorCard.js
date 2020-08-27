@@ -20,12 +20,13 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import t from 'translations/translate';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
@@ -114,10 +115,10 @@ const ErrorMessage = styled(BaseText)`
   text-align: center;
 `;
 
-const { Form } = t.form;
+const { Form } = tForm.form;
 
 const getFormStructure = (balances: Balances, txFeeInfo: ?TransactionFeeInfo) => {
-  return t.struct({
+  return tForm.struct({
     formSelector: selectorStructure(balances, false, txFeeInfo),
   });
 };
@@ -172,7 +173,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               inputWrapperStyle: { width: '100%', paddingTop: 4, paddingBottom: 0 },
               rightLabel: '',
               customInputHeight: 56,
-              selectorModalTitle: 'Select',
+              selectorModalTitle: t('title.select'),
               inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
               onPressRightLabel: this.handleUseMax,
               activeTabOnItemClick: COLLECTIBLES,
@@ -244,8 +245,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     let optionTabs;
     if (showAllAssetTypes) {
       optionTabs = [
-        { name: 'Tokens', options: basicOptions, id: TOKENS },
-        { name: 'Collectibles', options: collectibles, id: COLLECTIBLES },
+        { name: t('label.tokens'), options: basicOptions, id: TOKENS },
+        { name: t('label.collectibles'), options: collectibles, id: COLLECTIBLES },
       ];
     } else {
       options = basicOptions;
@@ -275,9 +276,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       newValue.formSelector.input = preselectedValue.toString();
     }
     const { symbol } = pickedAsset;
-    const label = maxLabel || 'Max';
+    const label = maxLabel || t('button.max');
 
-    const newOptions = t.update(formOptions, {
+    const newOptions = tForm.update(formOptions, {
       fields: {
         formSelector: {
           config: {
@@ -285,8 +286,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
             optionTabs: { $set: optionTabs },
             rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
-            optionsOpenText: { $set: 'Send token instead' },
-            selectorModalTitle: { $set: selectorModalTitle || 'Select' },
+            optionsOpenText: { $set: t('button.sendTokenInstead') },
+            selectorModalTitle: { $set: selectorModalTitle || t('title.select') },
             renderOption: { $set: renderOption },
           },
         },
@@ -323,7 +324,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
     if (newTokenType !== tokenType) {
       const updatedValue = { ...value };
-      let newOptions = t.update(formOptions, {
+      let newOptions = tForm.update(formOptions, {
         fields: {
           formSelector: {
             template: { $set: SelectorInputTemplate },
@@ -337,12 +338,12 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       if (newTokenType === COLLECTIBLES) {
         updatedValue.formSelector.input = '1';
         updatedValue.formSelector.dontCheckBalance = true;
-        newOptions = t.update(formOptions, {
+        newOptions = tForm.update(formOptions, {
           fields: {
             formSelector: {
               template: { $set: ItemSelectorTemplate },
               config: {
-                label: { $set: 'Collectible' },
+                label: { $set: t('label.collectible') },
               },
             },
           },
@@ -390,9 +391,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       const totalInFiat = parseFloat(amount) * getRate(rates, symbol, fiatCurrency);
       valueInFiat = symbol ? formatFiat(totalInFiat, baseFiatCurrency) : null;
     }
-    const label = maxLabel || 'Max';
+    const label = maxLabel || t('button.max');
 
-    const newOptions = t.update(formOptions, {
+    const newOptions = tForm.update(formOptions, {
       fields: {
         formSelector: {
           config: {
@@ -453,7 +454,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     const newValue = { ...value };
     newValue.formSelector.input = selectedAssetBalance.toString();
 
-    const newOptions = t.update(formOptions, {
+    const newOptions = tForm.update(formOptions, {
       fields: {
         formSelector: {
           config: {

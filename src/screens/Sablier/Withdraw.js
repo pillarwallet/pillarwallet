@@ -24,6 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -151,15 +152,15 @@ const Withdraw = (props: Props) => {
     || !withdrawAmountInWei
     || !isEnoughForFee
     || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
-  const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? 'Getting fee..' : 'Next';
+  const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? t('label.gettingFee') : t('button.next');
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Withdraw' }] }}
+      headerProps={{ centerItems: [{ title: t('sablierContent.title.withdrawScreen') }] }}
       footer={
         <FooterWrapper>
           <FeeLabelToggle
-            labelText="Fee"
+            labelText={t('label.fee')}
             txFeeInWei={txFeeInfo?.fee}
             gasToken={txFeeInfo?.gasToken}
             isLoading={isCalculatingWithdrawTransactionEstimate}
@@ -181,11 +182,11 @@ const Withdraw = (props: Props) => {
         balances={streamedAssetBalance}
         baseFiatCurrency={baseFiatCurrency}
         rates={rates}
-        maxLabel="Max"
+        maxLabel={t('button.max')}
         getFormValue={onValueChanged}
         isLoading={isFetchingMaxWithdraw}
       />
-      <BaseText regular secondary center>You will receive {assetData.symbol} in your wallet.</BaseText>
+      <BaseText regular secondary center>{t('receiveOnWithdrawal', { token: assetData.symbol })}</BaseText>
     </ContainerWithHeader>
   );
 };

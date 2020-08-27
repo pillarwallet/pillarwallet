@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // actions
 import {
@@ -106,20 +107,20 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
 
     const submitButtonTitle = buttonSubmitted
-      ? 'Processing...'
-      : 'Withdraw from PLR tank';
+      ? t('label.processing')
+      : t('ppnContent.button.withdrawFromTank');
 
     const reviewData = [
       {
-        label: 'Amount',
-        value: `${amount} ${PPN_TOKEN}`,
+        label: t('transactions.label.amount'),
+        value: t('tokenValue', { value: amount, token: PPN_TOKEN }),
       },
       {
-        label: 'Recipient',
-        value: 'Main Account',
+        label: t('transactions.label.receiver'),
+        value: t('label.mainAccount'),
       },
       {
-        label: 'Transaction fee',
+        label: t('transactions.label.transactionFee'),
         value: feeDisplayValue,
         isLoading: !withdrawalFee.isFetched,
       },

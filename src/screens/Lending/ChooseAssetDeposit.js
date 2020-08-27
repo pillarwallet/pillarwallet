@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { fetchAssetsToDepositAction } from 'actions/lendingActions';
@@ -84,14 +85,21 @@ const ChooseAssetDeposit = ({
   }: { item: AssetToDeposit }) => (
     <ListItemWithImage
       label={name}
-      subtext={`Available: ${formatAmountDisplay(getBalance(balances, symbol))} ${symbol}`}
+      subtext={t('availableValue', {
+        value: t('tokenValue', {
+          value: formatAmountDisplay(getBalance(balances, symbol)),
+          token: symbol,
+        }),
+      })}
       itemImageUrl={iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : ''}
       onPress={() => navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol })}
       diameter={48}
       rightColumnInnerStyle={{ alignItems: 'flex-end' }}
     >
-      <BaseText secondary>Current APY</BaseText>
-      <InterestText primary>&nbsp;{formatAmountDisplay(earnInterestRate)}%</InterestText>
+      <BaseText secondary>{t('aaveContent.label.currentAPY')}</BaseText>
+      <InterestText primary>
+        &nbsp;{t('percentValue', { value: formatAmountDisplay(earnInterestRate) })}
+      </InterestText>
     </ListItemWithImage>
   );
 
@@ -99,14 +107,16 @@ const ChooseAssetDeposit = ({
   const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Choose asset to deposit' }] }}>
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('aaveContent.title.assetsToDepositScreen') }] }}>
       <FlatList
         data={assetsByHighestInterest}
         keyExtractor={({ address }) => address}
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!assetsByHighestInterest.length && emptyStyle}
-        ListEmptyComponent={!isFetchingAssetsToDeposit && <EmptyStateParagraph title="No assets to deposit" />}
+        ListEmptyComponent={!isFetchingAssetsToDeposit &&
+        <EmptyStateParagraph title={t('aaveContent.title.noAssetsToDeposit')} />
+        }
         refreshControl={
           <RefreshControl
             refreshing={isFetchingAssetsToDeposit}

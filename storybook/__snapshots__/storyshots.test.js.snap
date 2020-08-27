@@ -34378,7 +34378,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           ]
                                         }
                                       >
-                                        Select
+                                        title.select
                                       </Text>
                                     </View>
                                   </View>
@@ -35550,7 +35550,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                         ]
                       }
                     >
-                      Max
+                      button.max
                     </Text>
                   </View>
                 </View>
@@ -35741,7 +35741,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       placeholderSelector="select"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
-                      rightLabel="Max"
+                      rightLabel="button.max"
                       selectorValue={
                         Object {
                           "dontCheckBalance": false,
@@ -36121,7 +36121,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           ]
                                         }
                                       >
-                                        Select
+                                        title.select
                                       </Text>
                                     </View>
                                   </View>
@@ -37724,7 +37724,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           ]
                                         }
                                       >
-                                        Select
+                                        title.select
                                       </Text>
                                     </View>
                                   </View>

@@ -22,6 +22,8 @@ import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import SlideModal from 'components/Modals/SlideModal';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
@@ -76,7 +78,7 @@ const SablierAllowanceModal = ({
       onModalHide={onModalHide}
       noClose
       headerProps={{
-        centerItems: [{ title: 'Allow Sablier' }],
+        centerItems: [{ title: t('sablierContent.title.allowanceModal') }],
         sideFlex: '0',
       }}
     >
@@ -92,12 +94,14 @@ const SablierAllowanceModal = ({
           />
         </IconsWrapper>
         <Spacing h={20} />
-        <BaseText medium center>Allow Sablier to send {assetSymbol} transactions on your behalf</BaseText>
+        <BaseText medium center>
+          {t('sablierContent.paragraph.allowSablierWithToken', { token: assetSymbol })}
+        </BaseText>
         <Spacing h={36} />
-        <Button title="Allow" block onPress={onAllow} disabled={isDisabled} />
+        <Button title={t('button.allow')} block onPress={onAllow} disabled={isDisabled} />
         <Spacing h={16} />
         <FeeLabelToggle
-          labelText="Fee"
+          labelText={t('label.fee')}
           txFeeInWei={txFeeInWei}
           gasToken={gasToken}
           showFiatDefault

@@ -26,6 +26,7 @@ import { addHours, addDays, addMinutes } from 'date-fns';
 import DatePicker from 'react-native-date-picker';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { SDK_PROVIDER } from 'react-native-dotenv';
+import t from 'translations/translate';
 import isEmpty from 'lodash.isempty';
 
 // components
@@ -269,18 +270,26 @@ class NewStream extends React.Component<Props, State> {
 
     const header = picker === START_TIME ? (
       <Row>
-        <MediumText labelTertiary regular>Start</MediumText>
-        <TextLink onPress={() => this.setState({ modalDate: this.getMinimalDate() })}>Start immediately</TextLink>
+        <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
+        <TextLink onPress={() => this.setState({ modalDate: this.getMinimalDate() })}>
+          {t('sablierContent.button.startImmediately')}
+        </TextLink>
       </Row>
     ) : (
       <Row>
-        <MediumText labelTertiary regular>End</MediumText>
+        <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
         <Row>
-          <TextLink onPress={() => this.setState({ modalDate: addHours(modalDate, 1) })}>+1 hour</TextLink>
+          <TextLink onPress={() => this.setState({ modalDate: addHours(modalDate, 1) })}>
+            {t('sablierContent.button.plusHour')}
+          </TextLink>
           <Spacing w={10} />
-          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate, 1) })}>+1 day</TextLink>
+          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate, 1) })}>
+            {t('sablierContent.button.plusDay')}
+          </TextLink>
           <Spacing w={10} />
-          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate, 30) })}>+30 days</TextLink>
+          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate, 30) })}>
+            {t('sablierContent.button.plus30Days')}
+          </TextLink>
         </Row>
       </Row>
     );
@@ -312,7 +321,7 @@ class NewStream extends React.Component<Props, State> {
           />
           <Spacing h={20} />
           <Button
-            title="Next"
+            title={t('button.next')}
             onPress={this.handleDateModalConfirm}
           />
         </PickerWrapper>
@@ -348,8 +357,8 @@ class NewStream extends React.Component<Props, State> {
 
     if (!isApprovalExecuting && !hasAllowance) {
       return (
-        <BaseText regular secondary >
-          In order to create a stream you will need to allow Sablier to send {assetSymbol} transactions on your behalf
+        <BaseText regular secondary>
+          {t('sablierContent.paragraph.allowanceMissing', { asset: assetSymbol })}
         </BaseText>
       );
     }
@@ -357,7 +366,7 @@ class NewStream extends React.Component<Props, State> {
     if (isApprovalExecuting) {
       return (
         <BaseText regular secondary>
-          Please wait for Sablier allowance transaction
+          {t('sablierContent.paragraph.allowancePending')}
         </BaseText>
       );
     }
@@ -371,20 +380,19 @@ class NewStream extends React.Component<Props, State> {
     const { days, hours } = countDownDHMS(timeDelta);
     let duration = '';
     if (days === 0) {
-      if (hours === 1) {
-        duration = '1 hour';
-      } else {
-        duration = `${hours} hours`;
-      }
-    } else if (days === 1) {
-      duration = '1 day';
+      duration = t('hour', { count: hours });
     } else {
-      duration = `${days} days`;
+      duration = t('day', { count: days });
     }
 
     return (
       <BaseText regular secondary>
-        You will stream a total of {assetValue} {assetSymbol} for {duration} at a rate of {streamingRate} per minute
+        {t('sablierContent.paragraph.newStreamInformation', {
+          value: assetValue,
+          asset: assetSymbol,
+          duration,
+          streamingRate,
+        })}
       </BaseText>
     );
   }
@@ -439,13 +447,13 @@ class NewStream extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'New stream' }] }}
+        headerProps={{ centerItems: [{ title: t('sablierContent.title.newStreamScreen') }] }}
         putContentInScrollView
       >
         <Selector
-          label="To"
-          placeholder="Choose receiver"
-          searchPlaceholder="Wallet address"
+          label={t('label.to')}
+          placeholder={t('label.chooseReceiver')}
+          searchPlaceholder={t('label.walletAddress')}
           noOptionImageFallback
           hasQRScanner
           disableSelfSelect
@@ -457,7 +465,7 @@ class NewStream extends React.Component<Props, State> {
 
         <ValueSelectorCard
           preselectedAsset={DAI}
-          maxLabel="Send max"
+          maxLabel={t('button.sendMax')}
           getFormValue={this.getFormValue}
           customOptions={assetsOptions}
         />
@@ -465,8 +473,10 @@ class NewStream extends React.Component<Props, State> {
         <Spacing h={34} />
         <ContentWrapper>
           <Row>
-            <MediumText regular>Start</MediumText>
-            <TextLink onPress={() => this.setState({ startDate: this.getMinimalDate() })}>Start immediately</TextLink>
+            <MediumText regular>{t('sablierContent.label.start')}</MediumText>
+            <TextLink onPress={() => this.setState({ startDate: this.getMinimalDate() })}>
+              {t('sablierContent.button.startImmediately')}
+            </TextLink>
           </Row>
           <Spacing h={8} />
           <TimingInput filled value={startDate} onPress={() => this.openDatePicker(START_TIME, startDate)} />
@@ -474,13 +484,19 @@ class NewStream extends React.Component<Props, State> {
           <Spacing h={38} />
 
           <Row>
-            <MediumText regular>End</MediumText>
+            <MediumText regular>{t('sablierContent.label.end')}</MediumText>
             <Row>
-              <TextLink onPress={() => this.setState({ endDate: addHours(endDate, 1) })}>+1 hour</TextLink>
+              <TextLink onPress={() => this.setState({ endDate: addHours(endDate, 1) })}>
+                {t('sablierContent.button.plusHour')}
+              </TextLink>
               <Spacing w={10} />
-              <TextLink onPress={() => this.setState({ endDate: addDays(endDate, 1) })}>+1 day</TextLink>
+              <TextLink onPress={() => this.setState({ endDate: addDays(endDate, 1) })}>
+                {t('sablierContent.button.plusDay')}
+              </TextLink>
               <Spacing w={10} />
-              <TextLink onPress={() => this.setState({ endDate: addDays(endDate, 30) })}>+30 days</TextLink>
+              <TextLink onPress={() => this.setState({ endDate: addDays(endDate, 30) })}>
+                {t('sablierContent.button.plus30Days')}
+              </TextLink>
             </Row>
           </Row>
           <Spacing h={8} />
@@ -488,7 +504,7 @@ class NewStream extends React.Component<Props, State> {
 
           <Spacing h={64} />
           <Button
-            title="Next"
+            title={t('button.next')}
             disabled={!formValid}
             isLoading={isCheckingAllowance || this.isApprovalExecuting()}
             onPress={this.onSubmit}

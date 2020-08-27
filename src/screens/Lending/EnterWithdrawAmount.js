@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import get from 'lodash.get';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { calculateLendingWithdrawTransactionEstimateAction } from 'actions/lendingActions';
@@ -119,7 +120,7 @@ const EnterWithdrawAmount = ({
     || !depositAmount
     || !isEnoughForFee
     || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
-  const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? 'Getting fee..' : 'Next';
+  const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(
     LENDING_WITHDRAW_TRANSACTION_CONFIRM,
     { amount: depositAmount, asset: depositedAsset },
@@ -153,20 +154,22 @@ const EnterWithdrawAmount = ({
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: 'Withdraw' }] }}
+      headerProps={{ centerItems: [{ title: t('aaveContent.title.withdrawAmountScreen') }] }}
       footer={(
         <FooterInner>
           {showTxFee && (
             <FeeInfo alignItems="center">
               <FeeLabelToggle
-                labelText="Fee"
+                labelText={t('label.fee')}
                 txFeeInWei={txFeeInfo?.fee}
                 gasToken={txFeeInfo?.gasToken}
                 isLoading={isCalculatingWithdrawTransactionEstimate}
                 showFiatDefault
               />
               {!isCalculatingWithdrawTransactionEstimate && !isEnoughForFee && (
-                <NotEnoughFee negative>Not enough {gasTokenSymbol} for transaction fee</NotEnoughFee>
+                <NotEnoughFee negative>
+                  {t('error.notEnoughTokenForFee', { token: gasTokenSymbol })}
+                </NotEnoughFee>
               )}
             </FeeInfo>
           )}
@@ -191,7 +194,9 @@ const EnterWithdrawAmount = ({
         rates={rates}
         getFormValue={onValueChanged}
       />
-      <BaseText secondary center>You will receive {selectedAssetSymbol} in your wallet.</BaseText>
+      <BaseText secondary center>
+        {t('aaveContent.paragraph.receiveOnWithdrawal', { token: selectedAssetSymbol })}
+      </BaseText>
     </ContainerWithHeader>
   );
 };
