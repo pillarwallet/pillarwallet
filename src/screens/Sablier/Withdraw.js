@@ -175,6 +175,7 @@ const Withdraw = (props: Props) => {
           />
         </FooterWrapper>
       }
+      minAvoidHeight={600}
     >
       <ValueSelectorCard
         preselectedAsset={assetData.symbol}

@@ -88,7 +88,7 @@ const SendContainer = (props: Props) => {
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
-      minAvoidHeight={260}
+      minAvoidHeight={800}
     >
       <Selector
         label={t('label.to')}
