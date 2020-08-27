@@ -19,7 +19,7 @@
 */
 
 import * as React from 'react';
-import { TextInput as RNTextInput, ScrollView, Keyboard, InputAccessoryView, Platform } from 'react-native';
+import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -31,8 +31,9 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import SelectorOptions from 'components/SelectorOptions';
 import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
-import PercentsInputAccessory from 'components/PercentsInputAccessory';
-import PercentsInputAccessoryAndroid from 'components/PercentsInputAccessory/PercentsInputAccessoryAndroid';
+import PercentsInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 // actions
 import {
@@ -131,8 +132,6 @@ const FormWrapper = styled.View`
   padding: ${spacing.large}px 40px 60px;
   background-color: ${themedColors.surface};
 `;
-
-const accessoryNativeID = 'accessoryNativeID2';
 
 class ExchangeScreen extends React.Component<Props, State> {
   fromInputRef: RNTextInput;
@@ -291,7 +290,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         leftSideSymbol="-"
         onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
         rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
-        inputAccessoryViewID={accessoryNativeID}
+        inputAccessoryViewID={INPUT_ACCESSORY_NATIVE_ID}
       />
     );
   };
@@ -334,11 +333,11 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   blurFromInput = () => {
     if (this.fromInputRef) this.fromInputRef.blur();
-    PercentsInputAccessoryAndroid.removeAccessory();
+    PercentsInputAccessoryHolder.removeAccessory();
   };
 
   onFocusInput = () => {
-    PercentsInputAccessoryAndroid.addAccessory(this.handleUsePercent);
+    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
   }
 
   focusInputWithKeyboard = () => {
@@ -407,17 +406,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     );
   }
 
-  renderInputAccessory = () => {
-    if (Platform.OS === 'android') {
-      return null;
-    }
-    return (
-      <InputAccessoryView nativeID={accessoryNativeID}>
-        <PercentsInputAccessory handleUsePercent={this.handleUsePercent} />
-      </InputAccessoryView>
-    );
-  }
-
   render() {
     const {
       navigation,
@@ -469,7 +457,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           >
             {assetsLoaded &&
             <FormWrapper>
-              {this.renderInputAccessory()}
               {this.getFromInput()}
               <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
               {this.getToInput()}

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Keyboard, Platform } from 'react-native';
+import { Keyboard, Platform, InputAccessoryView } from 'react-native';
 import { noop } from 'utils/common';
 import PercentsInputAccessory from './PercentsInputAccessory';
 
@@ -28,7 +28,9 @@ type State = {
   handleUsePercentCallback: (number) => void,
 };
 
-class PercentsInputAccessoryAndroid extends React.Component<{}, State> {
+export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID';
+
+class PercentsInputAccessoryHolder extends React.Component<{}, State> {
   static instances: Object[] = [];
 
   static addAccessory = (handleUsePercentCallback: (number) => void) => {
@@ -60,7 +62,7 @@ class PercentsInputAccessoryAndroid extends React.Component<{}, State> {
   componentWillUnmount() {
     Keyboard.removeListener('keyboardDidShow', this.handleKeyboardDidShow);
     Keyboard.removeListener('keyboardDidHide', this.handleKeyboardDidHide);
-    PercentsInputAccessoryAndroid.instances.splice(PercentsInputAccessoryAndroid.instances.length - 1);
+    PercentsInputAccessoryHolder.instances.splice(PercentsInputAccessoryHolder.instances.length - 1);
   }
 
   handleAddAccessory = (handleUsePercentCallback: (number) => void) => {
@@ -87,10 +89,14 @@ class PercentsInputAccessoryAndroid extends React.Component<{}, State> {
   }
 
   render() {
-    if (Platform.OS !== 'android') {
-      return null;
-    }
     const { isVisible, isActive, handleUsePercentCallback } = this.state;
+    if (Platform.OS !== 'android') {
+      return (
+        <InputAccessoryView nativeID={INPUT_ACCESSORY_NATIVE_ID}>
+          <PercentsInputAccessory handleUsePercent={handleUsePercentCallback} />
+        </InputAccessoryView>
+      );
+    }
     if (!isVisible || !isActive) {
       return null;
     }
@@ -100,4 +106,4 @@ class PercentsInputAccessoryAndroid extends React.Component<{}, State> {
   }
 }
 
-export default PercentsInputAccessoryAndroid;
+export default PercentsInputAccessoryHolder;

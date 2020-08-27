@@ -58,7 +58,7 @@ import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/Button';
-import PercentsInputAccessoryAndroid from 'components/PercentsInputAccessory/PercentsInputAccessoryAndroid';
+import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
@@ -273,10 +273,10 @@ class App extends React.Component<Props, *> {
                 onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
-              <PercentsInputAccessoryAndroid
+              <PercentsInputAccessoryHolder
                 ref={c => {
-                  if (c && !PercentsInputAccessoryAndroid.instances.includes(c)) {
-                    PercentsInputAccessoryAndroid.instances.push(c);
+                  if (c && !PercentsInputAccessoryHolder.instances.includes(c)) {
+                    PercentsInputAccessoryHolder.instances.push(c);
                   }
                 }}
               />

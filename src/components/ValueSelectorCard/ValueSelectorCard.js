@@ -27,13 +27,13 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import { SDK_PROVIDER } from 'react-native-dotenv';
 import t from 'translations/translate';
-import { InputAccessoryView, Platform } from 'react-native';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
-import PercentsInputAccessory from 'components/PercentsInputAccessory';
-import PercentsInputAccessoryAndroid from 'components/PercentsInputAccessory/PercentsInputAccessoryAndroid';
+import PercentsInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -147,8 +147,6 @@ const formatOptions = (options: Object[], balances: Balances, rates: Rates, base
     };
   });
 };
-
-const accessoryNativeID = 'accessoryNativeID';
 
 export class ValueSelectorCard extends React.Component<Props, State> {
   form: Form;
@@ -295,7 +293,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
             optionsOpenText: { $set: t('button.sendTokenInstead') },
             selectorModalTitle: { $set: selectorModalTitle || t('title.select') },
             renderOption: { $set: renderOption },
-            inputAccessoryViewID: { $set: !isEmpty(pickedAsset) ? accessoryNativeID : null },
+            inputAccessoryViewID: { $set: !isEmpty(pickedAsset) ? INPUT_ACCESSORY_NATIVE_ID : null },
           },
         },
       },
@@ -407,7 +405,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
             rightLabel: { $set: formSelector ? label : '' },
-            inputAccessoryViewID: { $set: formSelector ? accessoryNativeID : null },
+            inputAccessoryViewID: { $set: formSelector ? INPUT_ACCESSORY_NATIVE_ID : null },
           },
         },
       },
@@ -476,23 +474,12 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     getFormValue(newValue?.formSelector);
   }
 
-  renderInputAccessory = () => {
-    if (Platform.OS === 'android') {
-      return null;
-    }
-    return (
-      <InputAccessoryView nativeID={accessoryNativeID}>
-        <PercentsInputAccessory handleUsePercent={this.handleUsePercent} />
-      </InputAccessoryView>
-    );
-  }
-
   onTextInputFocus = () => {
-    PercentsInputAccessoryAndroid.addAccessory(this.handleUsePercent);
+    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
   }
 
   onTextInputBlur = () => {
-    PercentsInputAccessoryAndroid.removeAccessory();
+    PercentsInputAccessoryHolder.removeAccessory();
   }
 
   render() {
@@ -530,7 +517,6 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           borderRadius={10}
         >
           <FormWrapper>
-            {this.renderInputAccessory()}
             {isLoading
               ? <Spinner style={{ alignSelf: 'center' }} />
               : (
