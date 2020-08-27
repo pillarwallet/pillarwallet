@@ -87,17 +87,19 @@ Add your app configuration in the **/src/configs/envConfig.js** file.
 ```
 const envVars = {
     production: {
-        API_KEY: 'lorem',
+        NETWORK_PROVIDER: 'lorem',
     }
     staging: {
-        API_KEY: 'ipsum',
+        NETWORK_PROVIDER: 'ipsum',
     }
 }
 
 ```
 
 Add your local api keys and preferences in the **/src/configs/buildConfig.js** file.
-Please do not commit changes of .env and buildConfig.js and be careful not to publish your local keys
+
+Please do not commit changes of .env and buildConfig.js and be careful not to publish your local keys.
+
 To avoid that use the following command after editing the files:
 ```
 git update-index --assume-unchanged src/configs/buildConfig.js
@@ -110,7 +112,7 @@ Now you can import it in your **.js** file.
 ```js
 import { getEnv } from 'configs/envConfig'
 
-ApiClient.init(getEnv().API_KEY, ANOTHER_CONFIG)
+ApiClient.init(getEnv().NETWORK_PROVIDER, ANOTHER_CONFIG)
 ```
 
 **How does it work ?**
