@@ -23,9 +23,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
-
 import { MediumText } from 'components/Typography';
 import CircularProgressBar from 'components/CircularProgressBar';
 import { Spacing } from 'components/Layout';
@@ -100,7 +99,7 @@ const SablierStreamCircles = ({
 
   const { days, hours, minutes } = streamCountDownDHMS(stream);
 
-  const assetIcon = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
+  const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
   const isStreamCanceled = !!stream.cancellation;
   const isOutgoing = isCaseInsensitiveMatch(stream.sender, activeAccountAddress);

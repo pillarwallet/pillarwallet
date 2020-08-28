@@ -29,8 +29,8 @@ import {
 } from '@uniswap/sdk';
 import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
+import { getEnv } from 'configs/envConfig';
 
 // utils
 import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
@@ -64,7 +64,7 @@ import { ETH } from 'constants/assetsConstants';
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-const ethProvider = getEthereumProvider(NETWORK_PROVIDER);
+const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -129,7 +129,7 @@ const getTrade = async (
 
 const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise<boolean> => {
   if (fromAsset.code === ETH) return true;
-  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
+  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider());
   const allowance: BigNumber = await assetContract.allowance(clientAddress, ADDRESSES.router);
   return allowance.gt(0);
 };
@@ -268,7 +268,7 @@ export const createUniswapOrder = async (
     return null;
   }
 
-  const txCount = await ethProvider.getTransactionCount(clientSendAddress);
+  const txCount = await ethProvider().getTransactionCount(clientSendAddress);
   const txObject = generateTxObject(
     txCount.toString(),
     ADDRESSES.router,
@@ -300,7 +300,7 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
     [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
   );
 
-  const txCount = await ethProvider.getTransactionCount(clientAddress);
+  const txCount = await ethProvider().getTransactionCount(clientAddress);
 
   return {
     nonce: txCount.toString(),

@@ -18,8 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import axios, { AxiosError, AxiosResponse } from 'axios';
-import { SYNTHETICS_URL } from 'react-native-dotenv';
-
+import { getEnv } from 'configs/envConfig';
 import { API_REQUEST_TIMEOUT } from './api';
 
 
@@ -28,7 +27,7 @@ type SyntheticsConfig = {
 };
 
 const buildApiUrl = (path: string) => {
-  return `${SYNTHETICS_URL}/${path}`;
+  return `${getEnv().SYNTHETICS_URL}/${path}`;
 };
 
 class SyntheticsService {

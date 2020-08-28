@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import orderBy from 'lodash.orderby';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { fetchConnectedAccountAction } from 'actions/smartWalletActions';
@@ -104,7 +105,7 @@ const ManageConnectedDevices = ({
           </HorizontalView>
         )}
       >
-        {isCurrentDevice && <MediumText secondary>This device</MediumText>}
+        {isCurrentDevice && <MediumText secondary>{t('label.thisDevice')}</MediumText>}
         {thisDeviceBeingRemoved &&
           <HorizontalView>
             <BaseText secondary>Removing</BaseText>
@@ -113,12 +114,12 @@ const ManageConnectedDevices = ({
         }
         {!thisDeviceBeingRemoved && !isCurrentDevice && anyDeviceBeingRemoved &&
           <RemoveAction onPress={() => removeDevice(item)}>
-            <BaseText secondary>On hold</BaseText>
+            <BaseText secondary>{t('label.onHold')}</BaseText>
           </RemoveAction>
         }
         {!isCurrentDevice && !anyDeviceBeingRemoved &&
           <RemoveAction onPress={() => removeDevice(item)}>
-            <BaseText negative>Remove</BaseText>
+            <BaseText negative>{t('button.remove')}</BaseText>
           </RemoveAction>
         }
       </ListItemWithImage>
@@ -129,7 +130,7 @@ const ManageConnectedDevices = ({
   const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: 'Manage devices' }] }}>
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('title.manageDevices') }] }}>
       <ScrollWrapper contentContainerStyle={!devicesByLatest.length && emptyStyle}>
         <FlatList
           data={devicesByLatest}
@@ -137,7 +138,7 @@ const ManageConnectedDevices = ({
           renderItem={renderListItem}
           initialNumToRender={9}
           contentContainerStyle={!devicesByLatest.length && emptyStyle}
-          ListEmptyComponent={<EmptyStateParagraph title="No Connected Devices" />}
+          ListEmptyComponent={<EmptyStateParagraph title={t('title.noConnectedDevices')} />}
           refreshControl={
             <RefreshControl
               refreshing={false}

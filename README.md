@@ -82,39 +82,56 @@ You must first enable them by right clicking in the `React Devtools` or `Redux D
 
 ## App configuration
 
-Add your app configuration in an **.env** file.
+Add your app configuration in the **/src/configs/envConfig.js** file.
 
 ```
-API_KEY=lorem
-ANOTHER_CONFIG=foobar
+const envVars = {
+    production: {
+        NETWORK_PROVIDER: 'lorem',
+    }
+    staging: {
+        NETWORK_PROVIDER: 'ipsum',
+    }
+}
+
+```
+
+Add your local api keys and preferences in the **/src/configs/buildConfig.js** file.
+
+Please do not commit changes of .env and buildConfig.js and be careful not to publish your local keys.
+
+To avoid that use the following command after editing the files:
+```
+git update-index --assume-unchanged src/configs/buildConfig.js
+
+git update-index --assume-unchanged .env
 ```
 
 Now you can import it in your **.js** file.
 
 ```js
-import { API_KEY, ANOTHER_CONFIG } from 'react-native-dotenv'
+import { getEnv } from 'configs/envConfig'
 
-ApiClient.init(API_KEY, ANOTHER_CONFIG)
+ApiClient.init(getEnv().NETWORK_PROVIDER, ANOTHER_CONFIG)
 ```
 
-**How does it works?**
+**How does it work ?**
 
-As you can see, it's implemented as a babel plugin. All referenced imported members are replaced as the values specified in the **.env** file.
+The getEnv function loads the current environment variables defined in the  **/src/configs/envConfig.js** file.
 
-The example above will get compiled as below.
+The example above will get evaluated as below when in 'staging' mode
 
 ```js
-ApiClient.init('lorem', 'foobar')
+ApiClient.init('ipsum', 'foobar')
 ```
 
 **In Production**
 
-Simply create a separate **.env.production** file and the default release process of react-native will pickup the right config.
+When in production mode, 
+the default environment is production. When in developer mode, the default environment is staging.
 
-**Resource Links:**
-
-* [Deployment](https://docs.expo.io/versions/v26.0.0/guides/building-standalone-apps.html)
-* [Configuration](https://github.com/zetachang/react-native-dotenv)
+The app supports switching between environments by tapping the Welcome Screen logo a certain amount of times with 
+a warning that will delete all stored items on the app before the switch.
 
 ## Storybook
 

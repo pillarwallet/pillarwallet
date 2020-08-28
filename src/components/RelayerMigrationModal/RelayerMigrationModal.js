@@ -21,9 +21,9 @@
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
 import { SafeAreaView } from 'react-navigation';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -109,7 +109,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
             {iconUrl &&
             <CachedImage
               style={{ width: 64, height: 64, alignSelf: 'center' }}
-              source={{ uri: `${SDK_PROVIDER}/${iconUrl}?size=2` }}
+              source={{ uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=2` }}
               resizeMode="contain"
             />
             }

@@ -20,6 +20,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
+
 import { fontSizes, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import styled, { withTheme } from 'styled-components/native';
@@ -237,7 +239,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Verify backup phrase' }] }}
+        headerProps={{ centerItems: [{ title: t('title.verifyBackupPhrase') }] }}
         footer={(
           <FooterWrapper>
             <ShuffledWordWrapper>
@@ -253,7 +255,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
             </ShuffledWordWrapper>
             <Button
               onPress={this.handlePassedValidation}
-              title="Next"
+              title={t('button.next')}
               disabled={!isFormValid}
             />
           </FooterWrapper>
@@ -264,14 +266,14 @@ class BackupPhraseValidate extends React.Component<Props, State> {
           contentContainerStyle={{ paddingTop: spacing.mediumLarge }}
         >
           <Paragraph>
-            Please select the correct words.
+            {t('paragraph.backupPhraseVerificationInstructions')}
           </Paragraph>
           <WordInputFields>
             {this.renderInputFields()}
           </WordInputFields>
           {enteredWords.length === 3 && !isFormValid &&
           <ErrorParagraph small>
-            Incorrect words selected
+            {t('error.incorrectBackupPhraseWordsSelected')}
           </ErrorParagraph>
           }
         </ScrollWrapper>

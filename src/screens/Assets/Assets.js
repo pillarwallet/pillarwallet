@@ -293,7 +293,7 @@ class AssetsScreen extends React.Component<Props, State> {
             showInsight={showKeyWalletInsight}
             hideInsight={() => this.hideWalletInsight('KEY')}
             insightList={this.getInsightsList()}
-            insightsTitle="Never lose your funds"
+            insightsTitle={t('insight.keyWalletIntro.title')}
             onScroll={onScroll}
           />);
       default:
@@ -326,7 +326,7 @@ class AssetsScreen extends React.Component<Props, State> {
             },
           }],
           leftItems: [{
-            title: 'Assets',
+            title: t('title.assets'),
           }],
           noBack: true,
         }}

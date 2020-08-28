@@ -18,22 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
-import OverlayModal from 'components/OverlayModal/OverlayModal';
-import t from 'translations/translate';
+// not to be confused with envConfig
 
-
-type Props = {
-  isVisible: boolean,
-  onButtonPress: () => void,
-};
-
-export default (props: Props) => (
-  <OverlayModal
-    isVisible={props.isVisible}
-    onButtonPress={props.onButtonPress}
-    title={t('exchangeContent.modal.intro.title')}
-    content={t('exchangeContent.modal.intro.paragraph')}
-    buttonText={t('exchangeContent.modal.intro.button.next')}
-  />
-);
+export const PRODUCTION = 'production';
+export const STAGING = 'staging';
+export const DEVELOPMENT = 'development';

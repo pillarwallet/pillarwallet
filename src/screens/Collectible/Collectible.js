@@ -26,6 +26,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import ImageViewer from 'react-native-image-zoom-viewer';
+import t from 'translations/translate';
 
 import { SEND_COLLECTIBLE_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -226,7 +227,7 @@ class CollectibleScreen extends React.Component<Props, State> {
           <ActionButtonsWrapper>
             <CircleButtonsWrapper center horizontal>
               <CircleButton
-                label="Send"
+                label={t('button.send')}
                 fontIcon="paperPlane"
                 onPress={() => this.goToSendTokenFlow(assetData)}
                 disabled={!isOwned}
@@ -240,7 +241,7 @@ class CollectibleScreen extends React.Component<Props, State> {
             showArrowsOnly
             contentContainerStyle={{ paddingTop: 10 }}
             invertAddon
-            feedTitle="Transactions"
+            feedTitle={t('title.transactions')}
           />}
         </ScrollWrapper>
       </ContainerWithHeader>
