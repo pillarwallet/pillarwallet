@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SOCKET_NOTIFICATIONS } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import Storage from './storage';
 
 const storage = Storage.getInstance('db');
@@ -53,9 +53,17 @@ Socket.prototype.onMessage = function (callback: (data: any) => void) {
 
 Socket.prototype.init = async function () {
   const { user = {} } = await storage.get('user');
-  this.socket = new WebSocket(`${SOCKET_NOTIFICATIONS}${user.walletId}`);
+  this.socket = new WebSocket(`${getEnv().SOCKET_NOTIFICATIONS}${user.walletId}`);
   this.socket.onerror = this.onerror;
   this.socket.onopen = this.onopen;
 };
 
-export const SOCKET = new Socket();
+let socketInstance;
+const getSocketInstance = () => {
+  if (!socketInstance) {
+    socketInstance = new Socket();
+  }
+  return socketInstance;
+};
+
+export const SOCKET = getSocketInstance;

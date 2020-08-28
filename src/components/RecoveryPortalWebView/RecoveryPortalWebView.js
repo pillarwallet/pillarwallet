@@ -16,9 +16,9 @@
 */
 import * as React from 'react';
 import { WebView } from 'react-native-webview';
-import { RECOVERY_PORTAL_URL } from 'react-native-dotenv';
 import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -53,7 +53,7 @@ const RecoveryPortalWebView = ({
 }: Props) => {
   let webViewRef;
   let canWebViewNavigateBack = false;
-  const uri = `${RECOVERY_PORTAL_URL}/${urlPath}`;
+  const uri = `${getEnv().RECOVERY_PORTAL_URL}/${urlPath}`;
 
   const handleNavigationBack = () => {
     if (!webViewRef || !canWebViewNavigateBack) {

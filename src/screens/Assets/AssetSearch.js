@@ -22,10 +22,10 @@ import * as React from 'react';
 import { Keyboard, SectionList, FlatList, Alert, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -232,7 +232,7 @@ class AssetSearch extends React.Component<Props, State> {
       } = asset;
 
       const isAdded = !!assets[symbol];
-      const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+      const fullIconUrl = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
 
       return (
         <ListItemWithImage
@@ -283,7 +283,7 @@ class AssetSearch extends React.Component<Props, State> {
       iconUrl,
       symbol,
     } = token;
-    const fullIconUrl = `${SDK_PROVIDER}/${iconUrl}?size=3`;
+    const fullIconUrl = `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3`;
     const balance = getBalance(balances, symbol);
     const isAdded = !!assets[symbol];
 

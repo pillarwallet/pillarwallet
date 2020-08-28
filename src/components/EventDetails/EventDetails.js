@@ -29,7 +29,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -472,7 +472,7 @@ export class EventDetail extends React.Component<Props, State> {
 
   viewOnTheBlockchain = () => {
     const { hash } = this.props.event;
-    const url = TX_DETAILS_URL + hash;
+    const url = getEnv().TX_DETAILS_URL + hash;
     Linking.openURL(url);
   };
 

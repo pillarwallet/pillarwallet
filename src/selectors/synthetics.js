@@ -19,7 +19,7 @@
 */
 
 import { createSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 import type { SyntheticAsset } from 'models/Asset';
 import { formatAmount } from 'utils/common';
@@ -40,7 +40,7 @@ export const activeSyntheticAssetsSelector = createSelector(
       } = asset;
       if (availableBalance < 0) return availableAssets;
 
-      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
       availableAssets.push({
         token: symbol,
         value: symbol,

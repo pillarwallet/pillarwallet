@@ -23,7 +23,7 @@ import type { NavigationScreenProp, NavigationEventSubscription } from 'react-na
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
 import isEmpty from 'lodash.isempty';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -288,7 +288,7 @@ class HomeScreen extends React.Component<Props> {
       earningsPercentageGain,
       iconUrl,
     } = depositedAsset;
-    const cornerIcon = iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : '';
+    const cornerIcon = iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : '';
     return (
       <ListItemWithImage
         label={t('tokenValue', { value: formatAmountDisplay(currentBalance), token: symbol })}

@@ -32,7 +32,7 @@ import { encodeContractMethod } from 'services/assets';
 import type { Asset } from 'models/Asset';
 
 const isMainnet = isProdEnv;
-export const chainId = isMainnet ? ChainId.MAINNET : ChainId.ROPSTEN;
+export const chainId = isMainnet ? ChainId.MAINNET : ChainId.KOVAN;
 const ALLOWED_SLIPPAGE = 0.97;
 const DEADLINE_FROM_NOW = 60 * 15; // seconds
 export const ADDRESSES = isMainnet ?

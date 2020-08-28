@@ -41,7 +41,6 @@ i18n
     postProcess: POST_PROCESSORS,
     fallbackLng: DEFAULT_LANGUAGE,
     supportedLngs: __DEV__ ? [...SUPPORTED_LANGUAGES, 'fr'] : SUPPORTED_LANGUAGES,
-
     debug: !!__DEV__,
   });
 
