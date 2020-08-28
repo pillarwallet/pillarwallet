@@ -205,7 +205,7 @@ const AccountsScreen = ({
   if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {
     walletsToShow.push({
       type: ITEM_TYPE.BUTTON,
-      title: 'Migrate assets to Smart Wallet',
+      title: t('button.migrateAssetsToSmartWallet'),
       mainAction: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_CHOOSE),
     });
   }

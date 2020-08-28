@@ -21,10 +21,13 @@ import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native/index';
 import LinearGradient from 'react-native-linear-gradient';
+import t from 'translations/translate';
+
 import { fontStyles, fontTrackings } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
+
 
 type Props = {
   isPending?: boolean,
@@ -41,12 +44,11 @@ type Props = {
   emptyBarBorder?: boolean,
 };
 
-
 type State = {
   label: string,
   progress: number,
   progressAnimated: Object,
-}
+};
 
 const ProgressBarWrapper = styled.View`
   flex-direction: row;
@@ -211,7 +213,7 @@ class Progress extends React.Component<Props, State> {
           height={height}
         >
           {!!showLabel &&
-            <ProgressLabel>{label}%</ProgressLabel>
+            <ProgressLabel>{t('percentValue', { value: label })}</ProgressLabel>
           }
         </AnimatedStyledLinearGradient>
       </ProgressBarWrapper>

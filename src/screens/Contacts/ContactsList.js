@@ -125,7 +125,7 @@ const ContactsList = ({
         renderItem={renderListItem}
         initialNumToRender={9}
         contentContainerStyle={!contacts.length && emptyStyle}
-        ListEmptyComponent={<EmptyStateParagraph title="No contacts added" />}
+        ListEmptyComponent={<EmptyStateParagraph title={t('label.noContactsAdded')} />}
       />
       {showContactDetailsModal && (
         <ContactDetailsModal

@@ -3484,7 +3484,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -3735,7 +3735,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -3986,7 +3986,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
               <View
                 name="pending"
@@ -4251,7 +4251,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -4502,7 +4502,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -4753,7 +4753,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
               <View
                 name="pending"
@@ -5018,7 +5018,7 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -5552,7 +5552,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -5805,7 +5805,7 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -6025,7 +6025,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit DAI 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -6245,7 +6245,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit USDC 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -6465,7 +6465,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw DAI 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -6685,7 +6685,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -7123,7 +7123,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                       ]
                     }
                   >
-                    3 PLR
+                    tokenValue
                   </Text>
                 </View>
               </View>
@@ -7146,7 +7146,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -7678,7 +7678,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -7929,7 +7929,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -8180,7 +8180,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
               <View
                 name="pending"
@@ -8445,7 +8445,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
             </View>
           </View>
@@ -8696,7 +8696,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
                   ]
                 }
               >
-                negativeValue
+                negativeTokenValue
               </Text>
             </View>
           </View>
@@ -8947,7 +8947,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                   ]
                 }
               >
-                positiveValue
+                positiveTokenValue
               </Text>
               <View
                 name="pending"
@@ -9250,7 +9250,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                       ]
                     }
                   >
-                    positiveValue
+                    positiveTokenValue
                   </Text>
                 </View>
               </View>
@@ -9541,7 +9541,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                       ]
                     }
                   >
-                    negativeValue
+                    negativeTokenValue
                   </Text>
                 </View>
               </View>
@@ -14539,7 +14539,7 @@ Array [
             ]
           }
         >
-          + 1 PLR
+          positiveTokenValue
         </Text>
       </View>
     </View>
@@ -14877,7 +14877,7 @@ Array [
             ]
           }
         >
-          - 1 PLR
+          negativeTokenValue
         </Text>
       </View>
     </View>
@@ -15247,7 +15247,7 @@ Array [
               ]
             }
           >
-            - 1.0 PLR
+            tokenValue
           </Text>
         </View>
       </View>
@@ -15299,10 +15299,7 @@ Array [
           ]
         }
       >
-        - 
-        1
-         
-        PLR
+        tokenValue
       </Text>
     </View>
     <View
@@ -15368,7 +15365,7 @@ Array [
               ]
             }
           >
-            - 2.0 ETH
+            tokenValue
           </Text>
         </View>
       </View>
@@ -15420,10 +15417,7 @@ Array [
           ]
         }
       >
-        - 
-        2
-         
-        ETH
+        tokenValue
       </Text>
     </View>
     <View
@@ -15489,7 +15483,7 @@ Array [
             ]
           }
         >
-          positiveValue
+          positiveTokenValue
         </Text>
         <Text
           large={true}
@@ -15507,7 +15501,7 @@ Array [
             ]
           }
         >
-          positiveValue
+          positiveTokenValue
         </Text>
       </View>
     </View>
@@ -17775,7 +17769,7 @@ Array [
           ]
         }
       >
-        negativeValue
+        negativeTokenValue
       </Text>
       <Text
         medium={true}
@@ -18248,7 +18242,7 @@ Array [
           ]
         }
       >
-        negativeValue
+        negativeTokenValue
       </Text>
       <Text
         medium={true}
@@ -18721,7 +18715,7 @@ Array [
           ]
         }
       >
-        positiveValue
+        positiveTokenValue
       </Text>
       <Text
         medium={true}
@@ -19194,7 +19188,7 @@ Array [
           ]
         }
       >
-        positiveValue
+        positiveTokenValue
       </Text>
       <Text
         medium={true}
@@ -27095,7 +27089,7 @@ exports[`Storyshots Selector default 1`] = `
         ]
       }
     >
-      Select
+      label.select
       : 
     </Text>
     <View
@@ -27144,7 +27138,7 @@ exports[`Storyshots Selector default 1`] = `
           ]
         }
       >
-        Choose option...
+        ellipsedString
       </Text>
     </View>
   </View>
@@ -27440,7 +27434,7 @@ exports[`Storyshots Selector default 1`] = `
                               ]
                             }
                           >
-                            Choose option
+                            label.choseOption
                           </Text>
                         </View>
                       </View>
@@ -27480,7 +27474,7 @@ exports[`Storyshots Selector default 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -27597,7 +27591,7 @@ exports[`Storyshots Selector default 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
@@ -28416,7 +28410,7 @@ exports[`Storyshots Selector no options 1`] = `
         ]
       }
     >
-      Select
+      label.select
       : 
     </Text>
     <View
@@ -28465,7 +28459,7 @@ exports[`Storyshots Selector no options 1`] = `
           ]
         }
       >
-        no options to select
+        label.noOptionsToSelect
       </Text>
     </View>
   </View>
@@ -28761,7 +28755,7 @@ exports[`Storyshots Selector no options 1`] = `
                               ]
                             }
                           >
-                            Choose option
+                            label.choseOption
                           </Text>
                         </View>
                       </View>
@@ -28801,7 +28795,7 @@ exports[`Storyshots Selector no options 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -28814,7 +28808,7 @@ exports[`Storyshots Selector no options 1`] = `
                             fullScreen={true}
                           >
                             <EmptyStateParagraph
-                              title="Nothing found"
+                              title="label.nothingFound"
                             />
                           </SelectorOptions__EmptyStateWrapper>
                         </React.Fragment>,
@@ -28914,7 +28908,7 @@ exports[`Storyshots Selector no options 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
@@ -29047,7 +29041,7 @@ exports[`Storyshots Selector no options 1`] = `
                               ]
                             }
                           >
-                            Nothing found
+                            label.nothingFound
                           </Text>
                         </View>
                       </View>
@@ -29964,7 +29958,7 @@ exports[`Storyshots Selector selected option 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -30081,7 +30075,7 @@ exports[`Storyshots Selector selected option 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
@@ -30949,7 +30943,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
           ]
         }
       >
-        Choose contact...
+        ellipsedString
       </Text>
     </View>
   </View>
@@ -32221,7 +32215,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
         ]
       }
     >
-      Select
+      label.select
       : 
     </Text>
     <View
@@ -32270,7 +32264,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           ]
         }
       >
-        Choose option...
+        ellipsedString
       </Text>
     </View>
   </View>
@@ -32566,7 +32560,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               ]
                             }
                           >
-                            Choose option
+                            label.choseOption
                           </Text>
                         </View>
                       </View>
@@ -32606,7 +32600,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                           inputRef={[Function]}
                           marginBottom="0"
                           noClose={true}
-                          placeholder="Search"
+                          placeholder="label.search"
                         />
                       </SelectorOptions__SearchBarWrapper>
                     </React.Fragment>
@@ -32764,7 +32758,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               onBlur={[Function]}
                               onChange={[Function]}
                               onFocus={[Function]}
-                              placeholder="Search"
+                              placeholder="label.search"
                               placeholderTextColor="#8B939E"
                               rejectResponderTermination={true}
                               style={
