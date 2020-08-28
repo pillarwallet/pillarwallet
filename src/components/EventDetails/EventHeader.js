@@ -21,9 +21,10 @@
 import * as React from 'react';
 import { Platform } from 'react-native';
 import { MediumText, BaseText } from 'components/Typography';
-import { fontTrackings, fontSizes, spacing, fontStyles } from 'utils/variables';
+import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
+
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
@@ -31,6 +32,7 @@ import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'consta
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
 import { BADGE_REWARD_EVENT } from 'constants/badgesConstants';
 
+import { fontTrackings, fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 
@@ -59,38 +61,38 @@ const getEventInfo = (eventType, eventStatus, colors) => {
 
     if (isConfirmed) {
       return {
-        title: 'Success',
+        title: t('title.success'),
         iconName: 'tick-circle',
         iconColor: colors.positive,
       };
     }
     if (isFailed) {
       return {
-        title: 'Failed',
+        title: t('title.failed'),
         iconName: 'warning-circle',
         iconColor: colors.negative,
       };
     }
     return {
-      title: 'Pending',
+      title: t('title.pending'),
       iconName: 'pending-circle',
     };
   }
   if (eventType === COLLECTIBLE_TRANSACTION) {
     return {
-      title: eventStatus === COLLECTIBLE_SENT ? 'Collectible sent' : 'Collectible received',
+      title: eventStatus === COLLECTIBLE_SENT ? t('title.collectibleSent') : t('title.collectibleReceive'),
       iconName: null,
     };
   }
   if (eventType === BADGE_REWARD_EVENT) {
     return {
-      title: 'Badge received',
+      title: t('title.badgeReceived'),
       iconName: null,
     };
   }
 
   return {
-    title: 'Requested',
+    title: t('title.connectionRequested'),
     iconName: 'connection-circle',
   };
 };

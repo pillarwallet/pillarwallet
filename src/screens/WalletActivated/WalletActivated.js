@@ -22,6 +22,8 @@ import { ScrollView, Image } from 'react-native';
 import { connect } from 'react-redux';
 import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
+import t from 'translations/translate';
+
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
@@ -78,7 +80,7 @@ class WalletActivated extends React.PureComponent<Props> {
     return (
       <ContainerWithHeader
         headerProps={{
-          leftItems: [{ title: "What's next" }],
+          leftItems: [{ title: t('smartWalletContent.title.walletActivatedScreen') }],
           rightItems: [{ close: true }],
           onClose: () => navigation.goBack(),
           close: true,
@@ -88,16 +90,13 @@ class WalletActivated extends React.PureComponent<Props> {
           showsVerticalScrollIndicator={false}
           style={{ flex: 1 }}
         >
-          <Title>Your Smart Wallet is now activated</Title>
+          <Title>{t('smartWalletContent.title.smartWalletIsActivated')}</Title>
           <Image source={swActivated} style={{ height: 137, width: '100%' }} resizeMode="stretch" />
-          <Text>
-            You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right
-            hand side of the Assets screen
-          </Text>
+          <Text>{t('smartWalletContent.paragraph.walletIsActivated')}</Text>
           <ButtonWrapper>
             <Button
               isLoading={isChanging}
-              title="Go to Smart Wallet"
+              title={t('smartWalletContent.button.goToSmartWallet')}
               onPress={this.handleNavigate}
               secondary
               textStyle={fontStyles.medium}

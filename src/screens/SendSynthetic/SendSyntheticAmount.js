@@ -136,12 +136,14 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       this.setReceiver(value, onSuccess);
     } else {
       Alert.alert(
-        'This address is not on Pillar Network',
-        'Invite it\'s owner to install Pillar wallet in order to be able to send instant transactions ' +
-        'for free or switch to Ethereum Mainet to send regular transaction.',
+        t('alert.addressIsNotOnPillarNetwork.title'),
+        t('alert.addressIsNotOnPillarNetwork.message'),
         [
-          { text: 'Switch to Ethereum Mainnet', onPress: () => navigation.navigate(ACCOUNTS) },
-          { text: 'Cancel', style: 'cancel' },
+          {
+            text: t('alert.addressIsNotOnPillarNetwork.button.switchToMainnet'),
+            onPress: () => navigation.navigate(ACCOUNTS),
+          },
+          { text: t('alert.addressIsNotOnPillarNetwork.button.cancel'), style: 'cancel' },
         ],
         { cancelable: true },
       );
@@ -244,7 +246,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         .catch(() => {
           this.setState({
             submitPressed: false,
-            intentError: 'Failed to calculate synthetics exchange',
+            intentError: t('error.synthetics.failedToCalculate'),
           });
         });
     });
@@ -287,7 +289,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
             disabled: isNextButtonDisabled,
             isLoading: submitPressed,
           },
-          footerTopAddon: showFeesLabel && <Label small>No fees - paid by Pillar</Label>,
+          footerTopAddon: showFeesLabel && <Label small>{t('ppnContent.label.paidByPillar')}</Label>,
         }}
       />
     );

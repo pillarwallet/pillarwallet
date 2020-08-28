@@ -27,6 +27,7 @@ import {
   FlatList,
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
@@ -409,7 +410,7 @@ class SelectorOptions extends React.Component<Props, State> {
 
     const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
       && !filteredHorizontalOptionsData.some(({ data }) => data.length);
-    const emptyStateMessage = allowEnteringCustomAddress ? 'Enter valid address' : 'Nothing found';
+    const emptyStateMessage = allowEnteringCustomAddress ? t('error.invalid.address') : t('label.nothingFound');
 
     const extendedHeaderItems = {
       value: 'extendedHeaderItems',

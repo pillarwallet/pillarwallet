@@ -27,6 +27,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // actions
 import {
@@ -138,27 +139,6 @@ const OfferCardWrapper = styled.View`
   padding: 0 ${spacing.layoutSides}px;
 `;
 
-// const PromoWrapper = styled.View`
-//   width: 100%;
-//   align-items: center;
-//   padding: ${spacing.large}px ${spacing.layoutSides}px;
-//   margin-bottom: 30px;
-// `;
-//
-// const PromoText = styled(BaseText)`
-//   ${fontStyles.medium};
-//   color: ${themedColors.secondaryText};
-//   text-align: center;
-// `;
-//
-// const PopularSwapsGridWrapper = styled.View`
-//   border-top-width: 1px;
-//   border-bottom-width: 1px;
-//   border-color: ${themedColors.tertiary};
-//   background-color: ${themedColors.card};
-//   padding: ${spacing.large}px ${spacing.layoutSides}px 0;
-// `;
-
 
 function getCardAdditionalButtonData(additionalData) {
   const {
@@ -185,12 +165,14 @@ function getCardAdditionalButtonData(additionalData) {
 
   if (minOrMaxNeeded) {
     return {
-      title: `${isBelowMin ? 'Min' : 'Max'} ${minOrMaxAmount} ${fromAssetCode}`,
+      title: isBelowMin
+        ? t('minTokenValue', { value: minOrMaxAmount, token: fromAssetCode })
+        : t('maxTokenValue', { value: minOrMaxAmount, token: fromAssetCode }),
       onPress: () => setFromAmount(isBelowMin ? minQuantity : maxQuantity),
     };
   } else if (!allowanceSet) {
     return {
-      title: storedAllowance ? 'Pending' : 'Allow this exchange',
+      title: storedAllowance ? t('label.pending') : t('exchangeContent.button.allowExchange'),
       onPress: () => onSetTokenAllowancePress(offer),
       disabled: isSetAllowancePressed || !!storedAllowance,
       isLoading: isSetAllowancePressed,
@@ -438,13 +420,13 @@ class ExchangeOffers extends React.Component<Props, State> {
         <OfferCard
           isDisabled={isTakeButtonDisabled || disableNonFiatExchange}
           onPress={() => this.onOfferPress(offer)}
-          labelTop="Exchange rate"
+          labelTop={t('exchangeContent.label.exchangeRate')}
           valueTop={formatAmountDisplay(askRate)}
           cardImageSource={providerLogo}
-          labelBottom="Available"
+          labelBottom={t('exchangeContent.label.availableAmount')}
           valueBottom={available}
           cardButton={{
-            title: `${amountToBuyString} ${toAssetCode}`,
+            title: t('tokenValue', { value: amountToBuyString, token: toAssetCode }),
             onPress: () => this.onOfferPress(offer),
             disabled: isTakeButtonDisabled || disableNonFiatExchange,
             isLoading: isTakeOfferPressed,
@@ -485,25 +467,13 @@ class ExchangeOffers extends React.Component<Props, State> {
           ListEmptyComponent={!!showEmptyMessage && (
             <ESWrapper style={{ marginTop: '15%', marginBottom: spacing.large }}>
               <EmptyStateParagraph
-                title="No live offers"
-                bodyText="Currently no matching offers from exchange services are provided.
-                                New offers may appear at any time — don’t miss it."
+                title={t('exchangeContent.emptyState.noOffers.title')}
+                bodyText={t('exchangeContent.emptyState.noOffers.paragraph')}
                 large
                 wide
               />
             </ESWrapper>
           )}
-          // ListFooterComponentStyle={{ flex: 1, justifyContent: 'flex-end' }}
-          // ListFooterComponent={
-          //   <PopularSwapsGridWrapper>
-          //     <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
-          //       <MediumText medium style={{ marginBottom: spacing.medium }}>
-          //           Try these popular swaps
-          //       </MediumText>
-          //       <HotSwapsGridList onPress={this.onSwapPress} swaps={swaps} />
-          //     </SafeAreaView>
-          //   </PopularSwapsGridWrapper>
-          // }
         />
         <AssetEnableModal
           isVisible={isEnableAssetModalVisible}

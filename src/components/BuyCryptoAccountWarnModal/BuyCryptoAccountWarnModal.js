@@ -21,6 +21,7 @@
 import React, { useMemo } from 'react';
 import { SafeAreaView, withNavigation } from 'react-navigation';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -68,9 +69,9 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
     switch (message) {
       case ACCOUNT_MSG.NO_SW_ACCOUNT:
         return {
-          title: 'Enable Smart Wallet',
-          text: 'You need a Smart Wallet to receive assets.',
-          buttonTitle: 'Enable',
+          title: t('exchangeContent.modal.smartWalletMissing.title'),
+          text: t('exchangeContent.modal.smartWalletMissing.paragraph'),
+          buttonTitle: t('exchangeContent.modal.smartWalletMissing.button.enable'),
           buttonAction: () => {
             onClose();
             navigation.navigate(SMART_WALLET_INTRO);
@@ -79,9 +80,9 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
 
       case ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE:
         return {
-          title: 'Use Smart Wallet account',
-          text: 'Please select your Smart Wallet account to buy cryptocurrency.',
-          buttonTitle: 'Select account',
+          title: t('exchangeContent.modal.smartWalletIsNotActive.title'),
+          text: t('exchangeContent.modal.smartWalletIsNotActive.paragraph'),
+          buttonTitle: t('exchangeContent.modal.smartWalletIsNotActive.button.selectAccount'),
           buttonAction: () => {
             onClose();
             navigation.navigate(ACCOUNTS);

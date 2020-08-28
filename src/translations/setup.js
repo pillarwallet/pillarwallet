@@ -34,6 +34,7 @@ i18n
   .use(SuffixPrefixPostProcessor)
   .use(CapitalizationPostProcessor)
   .init({
+    interpolation: { escapeValue: false },
     transSupportBasicHtmlNodes: false,
     ns: NAMESPACES,
     defaultNS: DEFAULT_NAMESPACE,
