@@ -21,8 +21,8 @@
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { FlatList, RefreshControl } from 'react-native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { connect } from 'react-redux';
+import { getEnv } from 'configs/envConfig';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
@@ -134,7 +134,7 @@ class ExchangeInfo extends React.Component<Props, State> {
   renderToken = ({ item: token }: Object) => {
     const { exchangeAllowances } = this.props;
     const { openCollapseKey } = this.state;
-    const fullIconUrl = `${SDK_PROVIDER}/${token.iconUrl}?size=3`;
+    const fullIconUrl = `${getEnv().SDK_PROVIDER}/${token.iconUrl}?size=3`;
     const tokenAllowances = exchangeAllowances.filter(({ fromAssetCode }) => fromAssetCode === token.symbol);
 
     return (

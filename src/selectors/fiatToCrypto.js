@@ -20,8 +20,7 @@
 
 import { createSelector } from 'reselect';
 import uniq from 'lodash.uniq';
-import { SDK_PROVIDER } from 'react-native-dotenv';
-
+import { getEnv } from 'configs/envConfig';
 import { supportedAssetsSelector } from 'selectors/selectors';
 import { getSendwyreCurrencyPairs } from 'utils/fiatToCrypto';
 import { ETH, USD } from 'constants/assetsConstants';
@@ -63,7 +62,7 @@ const assetOptionsSelector = (symbols: string[], assets: Assets): Option[] => {
       iconUrl: `asset/images/fiat/ic_52_${symbol}.png`,
     };
 
-    const icon = iconUrl && `${SDK_PROVIDER}/${iconUrl}`;
+    const icon = iconUrl && `${getEnv().SDK_PROVIDER}/${iconUrl}`;
 
     return {
       symbol,

@@ -20,10 +20,10 @@
 
 import * as React from 'react';
 import tForm from 'tcomb-form-native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import t from 'translations/translate';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import t from 'translations/translate';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -170,7 +170,7 @@ export function SelectorInputTemplate(locals: Object) {
   const value = get(locals, 'value', {});
   const { selector = {} } = value;
   const { iconUrl } = selector;
-  const selectedOptionIcon = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  const selectedOptionIcon = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
   const selectorValue = {
     ...value,
     selector: { ...selector, icon: selectedOptionIcon },

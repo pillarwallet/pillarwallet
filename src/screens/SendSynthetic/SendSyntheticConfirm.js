@@ -20,9 +20,9 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { SYNTHETICS_CONTRACT_ADDRESS } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -65,7 +65,7 @@ class SendSyntheticConfirm extends React.Component<Props> {
     const syntheticTransaction = { ...this.syntheticTransaction };
     const transactionPayload = {
       amount: fromAmount,
-      to: SYNTHETICS_CONTRACT_ADDRESS,
+      to: getEnv().SYNTHETICS_CONTRACT_ADDRESS,
       receiverEnsName,
       symbol,
       contractAddress,

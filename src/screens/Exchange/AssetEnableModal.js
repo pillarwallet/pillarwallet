@@ -21,7 +21,7 @@
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
@@ -92,7 +92,7 @@ const AssetEnableModal = (props: Props) => {
     assetIcon,
     isDisabled,
   } = enableData;
-  const fullIconUrl = `${SDK_PROVIDER}/${assetIcon}?size=3`;
+  const fullIconUrl = `${getEnv().SDK_PROVIDER}/${assetIcon}?size=3`;
 
   const { genericToken: fallbackSource } = images(theme);
   return (

@@ -24,7 +24,7 @@ import t from 'translations/translate';
 
 import { fontStyles } from 'utils/variables';
 import { MediumText } from 'components/Typography';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import { themedColors } from 'utils/themes';
 
 
@@ -47,7 +47,7 @@ const WarningBannerText = styled(MediumText)`
 `;
 
 const WarningBanner = (props: Props) => {
-  if (NETWORK_PROVIDER === 'ropsten') {
+  if (getEnv().NETWORK_PROVIDER === 'kovan') {
     return (
       <WarningBannerBackground small={props.small} rounded={props.rounded}>
         <WarningBannerText small={props.small}>{t('paragraph.doNotSendRealEthOrTokens')}</WarningBannerText>

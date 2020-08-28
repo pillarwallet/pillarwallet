@@ -19,7 +19,7 @@
 */
 import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
-import { AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS, AAVE_SUBGRAPH_NAME } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -51,18 +51,26 @@ class AaveService {
   aaveTokenAddresses: { [string]: string } = {};
   lendingPoolAddressesProvider: ?Object;
 
-  constructor() {
-    this.lendingPoolAddressesProvider = getContract(
-      AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS,
-      AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
-    );
+  getLendingPoolAddressesProvider(): ?Object {
+    if (!this.lendingPoolAddressesProvider) {
+      this.lendingPoolAddressesProvider = getContract(
+        getEnv().AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ADDRESS,
+        AAVE_LENDING_POOL_ADDRESSES_PROVIDER_CONTRACT_ABI,
+      );
+    }
+
+    return this.lendingPoolAddressesProvider;
   }
 
   async getLendingPoolCoreAddress(): Promise<string> {
-    if (!this.lendingPoolAddressesProvider) return '';
+    const lendingPoolAddressesProvider = this.getLendingPoolAddressesProvider();
+
+    if (!lendingPoolAddressesProvider) {
+      return this.handleError('getLendingPoolAddressesProvider failed', '');
+    }
 
     if (!this.lendingPoolCoreAddress) {
-      this.lendingPoolCoreAddress = await this.lendingPoolAddressesProvider.getLendingPoolCore();
+      this.lendingPoolCoreAddress = await lendingPoolAddressesProvider.getLendingPoolCore();
     }
 
     return this.lendingPoolCoreAddress;
@@ -78,10 +86,14 @@ class AaveService {
   }
 
   async getLendingPoolAddress(): Promise<string> {
-    if (!this.lendingPoolAddressesProvider) return '';
+    const lendingPoolAddressesProvider = this.getLendingPoolAddressesProvider();
+
+    if (!lendingPoolAddressesProvider) {
+      return this.handleError('getLendingPoolAddressesProvider failed', '');
+    }
 
     if (!this.lendingPoolAddress) {
-      this.lendingPoolAddress = await this.lendingPoolAddressesProvider.getLendingPool();
+      this.lendingPoolAddress = await lendingPoolAddressesProvider.getLendingPool();
     }
 
     return this.lendingPoolAddress;
@@ -106,7 +118,7 @@ class AaveService {
   }
 
   async getAaveTokenContractForAsset(assetAddress: string): Promise<?Object> {
-    if (!this.lendingPoolAddressesProvider) return null;
+    if (isEmpty(this.getLendingPoolAddressesProvider())) return null;
 
     const aaveTokenAddress = await this.getAaveTokenAddress(assetAddress);
     if (!aaveTokenAddress) return null;
@@ -239,7 +251,7 @@ class AaveService {
         }
       }
     `;
-    return callSubgraph(AAVE_SUBGRAPH_NAME, query);
+    return callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query);
   }
 
   handleError(error: any, result: any): any {
