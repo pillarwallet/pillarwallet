@@ -76,6 +76,7 @@ export type ExternalProps = {
   customBalances?: Balances,
   activeTokenType?: string,
   showAllAssetTypes?: boolean,
+  calculateMaxBalanceTxFee?: (symbol: string) => Promise<void>,
 };
 
 type Props = ExternalProps & {
@@ -87,6 +88,8 @@ type Props = ExternalProps & {
   showSyntheticOptions?: boolean,
   customError?: string,
   syntheticAssets?: Option[],
+  gettingFee?: boolean,
+  hideMaxSend?: boolean,
 };
 
 type FormValue = {
@@ -196,13 +199,22 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { preselectedAsset, preselectedCollectible, isLoading } = this.props;
+    const {
+      preselectedAsset,
+      preselectedCollectible,
+      isLoading,
+      gettingFee,
+      hideMaxSend,
+    } = this.props;
     const { value } = this.state;
     const selectedAsset = get(value, 'formSelector.selector.symbol');
     const preselectedAssetChanged = !selectedAsset && ((!prevProps.preselectedAsset && preselectedAsset)
       || (!prevProps.preselectedCollectible && preselectedCollectible));
     const finishedLoading = prevProps.isLoading && !isLoading;
-    if (preselectedAssetChanged || finishedLoading) {
+    if (preselectedAssetChanged
+      || finishedLoading
+      || prevProps.gettingFee !== gettingFee
+      || prevProps.hideMaxSend !== hideMaxSend) {
       this.handleCustomInfo();
     }
   }
@@ -233,6 +245,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       preselectedAsset,
       preselectedCollectible,
       preselectedValue,
+      hideMaxSend,
+      gettingFee,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -284,11 +298,12 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             options: { $set: options },
             optionTabs: { $set: optionTabs },
-            rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
+            rightLabel: { $set: !isEmpty(pickedAsset) && !hideMaxSend ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
             optionsOpenText: { $set: t('button.sendTokenInstead') },
             selectorModalTitle: { $set: selectorModalTitle || t('title.select') },
             renderOption: { $set: renderOption },
+            customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
           },
         },
       },
@@ -366,6 +381,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       rates,
       maxLabel,
       getError,
+      hideMaxSend,
+      gettingFee,
     } = this.props;
 
     const { formSelector } = value;
@@ -399,7 +416,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
-            rightLabel: { $set: formSelector ? label : '' },
+            rightLabel: { $set: formSelector && !hideMaxSend ? label : '' },
+            customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
           },
         },
       },
@@ -432,22 +450,30 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     if (showSyntheticOptions) {
       const syntheticAsset = syntheticAssets.find(({ symbol: _symbol }) => _symbol === selectedAssetSymbol);
       rawSelectedAssetBalance = get(syntheticAsset, 'availableBalance', 0);
-      selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
     } else {
       rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
-      selectedAssetBalance = forSending
-        ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
-        : formatAmount(rawSelectedAssetBalance);
+      if (forSending) {
+        selectedAssetBalance = formatAmount(calculateMaxAmount(
+          selectedAssetSymbol,
+          rawSelectedAssetBalance,
+          txFeeInfo?.fee,
+          txFeeInfo?.gasToken,
+        ));
+      }
     }
+    if (!selectedAssetBalance) selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
     const totalInFiat = parseFloat(rawSelectedAssetBalance) * getRate(rates, selectedAssetSymbol, fiatCurrency);
     const amountValueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     return { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol };
   };
 
-  handleUseMax = () => {
+  handleUseMax = async () => {
     const { value, formOptions } = this.state;
-    const { getFormValue } = this.props;
+    const { getFormValue, calculateMaxBalanceTxFee } = this.props;
+    const selectedAssetSymbol = get(value, 'formSelector.selector.symbol');
+
+    if (calculateMaxBalanceTxFee) await calculateMaxBalanceTxFee(selectedAssetSymbol);
 
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;

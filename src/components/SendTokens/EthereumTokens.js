@@ -17,10 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
-import { BigNumber } from 'bignumber.js';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -160,12 +159,14 @@ const SendEthereumTokens = ({
   const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
   const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
-  const getSmartWalletTxFee = async (specifiedAmount?: number): Promise<TransactionFeeInfo> => {
+  const updateTxFee = async (specifiedAmount?: number) => {
     const value = Number(specifiedAmount || amount || 0);
-    const defaultResponse = { fee: new BigNumber(0) };
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
-    if (inputHasError || !assetData || !selectedContact) return defaultResponse;
+    if (inputHasError || !assetData || !selectedContact) {
+      setTxFeeInfo(null);
+      return;
+    }
 
     let data;
     if (isCollectible) {
@@ -201,30 +202,32 @@ const SendEthereumTokens = ({
         supportLink: true,
         type: 'warning',
       });
-      return defaultResponse;
+      setTxFeeInfo(null);
+      return;
     }
 
-    return estimated;
+    setTxFeeInfo(estimated);
   };
 
-  const updateTxFee = debounce(async () => {
-    setGettingFee(true);
-    const newTxFeeInfo = await getSmartWalletTxFee();
-    setTxFeeInfo(newTxFeeInfo);
-    setGettingFee(false);
-  }, 500);
+  const updateTxFeeDebounced = useCallback(
+    debounce(updateTxFee, 500),
+    [amount, selectedContact, useGasToken, assetData],
+  );
 
-
-  // update fee omn amount changed
+  // update fee on amount changed
   useEffect(() => {
-    updateTxFee();
-  }, [amount, selectedContact, useGasToken]);
+    if (!gettingFee) setGettingFee(true);
+    updateTxFeeDebounced();
+    return updateTxFeeDebounced.cancel;
+  }, [updateTxFeeDebounced]);
 
-  const handleAmountChange = debounce((value: ?Object) => {
+  // fee changed, no longer getting
+  useEffect(() => { if (gettingFee) setGettingFee(false); }, [txFeeInfo]);
+
+  const handleAmountChange = (value: ?Object) => {
     setAmount(value?.input || '0');
-    if (value) setAssetData(value.selector);
-    updateTxFee();
-  }, 500);
+    if (value && assetData !== value.selector) setAssetData(value.selector);
+  };
 
   useEffect(() => {
     if (!defaultAssetData) return;
@@ -315,7 +318,7 @@ const SendEthereumTokens = ({
       decimals: assetData.decimals,
     };
 
-    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+    if (txFeeInfo?.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
 
     Keyboard.dismiss();
     setSubmitPressed(false);
@@ -323,6 +326,12 @@ const SendEthereumTokens = ({
       transactionPayload,
       source,
     });
+  };
+
+  const calculateMaxBalanceTxFee = async (assetSymbol: string) => {
+    setGettingFee(true);
+    const maxBalance = getBalance(balances, assetSymbol);
+    await updateTxFee(maxBalance); // not debounced call to make sure it's not cancelled
   };
 
   const renderRelayerMigrationButton = () => (
@@ -333,7 +342,6 @@ const SendEthereumTokens = ({
       small
     />
   );
-
 
   const renderFee = (props: FooterProps) => {
     const {
@@ -436,6 +444,9 @@ const SendEthereumTokens = ({
         preselectedAsset: token,
         preselectedCollectible,
         showAllAssetTypes: true,
+        gettingFee: gettingFee && !!selectedContact, // receiver check to not show spinner on initial render
+        hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
+        calculateMaxBalanceTxFee,
       }}
       footerProps={{
         isNextButtonVisible: showNextButton,

@@ -164,6 +164,7 @@ export function SelectorInputTemplate(locals: Object) {
       noErrorText,
       renderOption,
       optionTabs,
+      customRightLabel,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -190,6 +191,7 @@ export function SelectorInputTemplate(locals: Object) {
     rightLabel,
     onPressRightLabel,
     inputHeaderStyle,
+    customRightLabel,
   };
 
   return (
@@ -211,6 +213,7 @@ export function SelectorInputTemplate(locals: Object) {
         selectorModalTitle: selectorModalTitle || label,
         selectorPlaceholder: placeholderSelector,
         optionsSearchPlaceholder: 'Asset search',
+        customRightLabel,
       }}
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}

@@ -49,6 +49,7 @@ export type InputPropsType = {
   inputHeaderStyle?: Object,
   customLabel?: React.Node,
   editable?: boolean,
+  customRightLabel?: React.Node,
 };
 
 export type SelectorOptions = {

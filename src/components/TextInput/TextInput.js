@@ -413,6 +413,7 @@ class TextInput extends React.Component<Props, State> {
       rightLabel,
       inputHeaderStyle = {},
       customLabel,
+      customRightLabel,
     } = inputProps;
 
     if (!label && !rightLabel && !customLabel) return null;
@@ -431,6 +432,7 @@ class TextInput extends React.Component<Props, State> {
         {!!rightLabel &&
           <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
         }
+        {customRightLabel}
       </View>
     );
   };
