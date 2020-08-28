@@ -77,7 +77,6 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { SABLIER_WITHDRAW, SABLIER_CANCEL_STREAM } from 'constants/sablierConstants';
 
 // configs
@@ -336,13 +335,9 @@ export const deploySmartWalletAction = () => {
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
       if (error && error === 'reverted') {
-        dispatch({
-          type: ADD_NOTIFICATION,
-          payload: {
-            message: 'Activation is temporarily unavailable. Please try again latter',
-            title: 'Could not activate Smart Wallet',
-            messageType: 'warning',
-          },
+        Toast.show({
+          message: t('toast.smartWalletActivationUnavailable'),
+          emoji: 'hushed',
         });
         return;
       }
