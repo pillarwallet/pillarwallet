@@ -1,5 +1,3 @@
 // @flow
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
-
-export const isProdEnv = NETWORK_PROVIDER === 'homestead';
+export const isProdEnv = !__DEV__; // avoid cyclic imports (no getEnv needed)
 export const isTest = !!process.env.IS_TEST;

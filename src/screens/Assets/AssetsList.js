@@ -24,11 +24,11 @@ import { Alert, FlatList, Platform, View } from 'react-native';
 import isEqualWith from 'lodash.isequalwith';
 import isEqual from 'lodash.isequal';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import Swipeout from 'react-native-swipeout';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -200,10 +200,10 @@ class AssetsList extends React.Component<Props, State> {
     } = asset;
 
     const colors = getThemeColors(theme);
-    const fullIconMonoUrl = iconMonoUrl ? `${SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
-    const fullIconWallpaperUrl = `${SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
-    const patternIcon = patternUrl ? `${SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
+    const fullIconMonoUrl = iconMonoUrl ? `${getEnv().SDK_PROVIDER}/${iconMonoUrl}?size=2` : '';
+    const fullIconWallpaperUrl = `${getEnv().SDK_PROVIDER}/${wallpaperUrl}${IS_IOS ? '?size=3' : ''}`;
+    const fullIconUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const patternIcon = patternUrl ? `${getEnv().SDK_PROVIDER}/${patternUrl}?size=3` : fullIconUrl;
     const formattedBalanceInFiat = formatFiat(balanceInFiat, baseFiatCurrency);
     const displayAmount = formatMoney(balance, 4);
 

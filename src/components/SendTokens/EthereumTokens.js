@@ -24,7 +24,7 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -170,7 +170,7 @@ const SendEthereumTokens = ({
 
     let data;
     if (isCollectible) {
-      const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+      const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
       const {
         name,
         id,
