@@ -17,6 +17,8 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { BaseText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
 
@@ -47,7 +49,7 @@ const VerifyView = ({
     disabled={isVerified}
   >
     <VerifyLabel isVerified={isVerified}>
-      {isVerified ? 'Verified' : 'Verify'}
+      {isVerified ? t('label.verified') : t('button.verify')}
     </VerifyLabel>
   </VerifyWrapper>
 );

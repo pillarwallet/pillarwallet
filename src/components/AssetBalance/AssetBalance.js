@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 import type { Rates } from 'models/Asset';
 
@@ -77,7 +78,7 @@ const AssetBalance = (props: Props) => {
   return (
     <BalanceWrapper>
       <Balance>
-        {formattedBalance} {token}
+        {t('tokenValue', { value: formattedBalance, token })}
       </Balance>
       <ValueInFiat>{formattedBalanceInFiat}</ValueInFiat>
     </BalanceWrapper>

@@ -22,6 +22,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { View } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import ButtonText from 'components/ButtonText';
@@ -138,7 +139,7 @@ class ItemSelector extends React.Component<Props, State> {
     const { icon: selectedOptionIcon, iconFallback: selectedOptionFallback, name: selectedValue } = selector;
 
     if (!selectedValue) {
-      return <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>;
+      return <Placeholder>{selectorOptions.selectorPlaceholder || t('label.select')}</Placeholder>;
     }
 
     const optionImageSource = resolveAssetSource(selectedOptionIcon);

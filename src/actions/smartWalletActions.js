@@ -23,7 +23,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { SABLIER_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import * as Sentry from '@sentry/react-native';
 
@@ -716,7 +716,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
             notificationMessage = t('toast.lendingWithdrawSuccess', { paymentInfo: getPaymentFromHistory() });
             dispatch(fetchDepositedAssetsAction());
-          } else if (addressesEqual(SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
+          } else if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
             if (txFromHistory?.tag === SABLIER_WITHDRAW) {
               const symbol = get(txFromHistory, 'extra.symbol', '');
               const currentAccountAssets = accountAssetsSelector(getState());

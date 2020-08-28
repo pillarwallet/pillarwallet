@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -68,8 +69,6 @@ import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Option } from 'models/Selector';
-
-import t from 'translations/translate';
 
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
@@ -284,7 +283,10 @@ class ExchangeScreen extends React.Component<Props, State> {
         labelText={assetBalance && getFormattedSellMax(fromAsset)}
         onLabelPress={() => this.handleUsePercent(100)}
         leftSideText={displayFiatFromAmount
-          ? `${formatAmount(fromAmount || '0', 2)} ${fromAsset.symbol || ''}`
+          ? t('tokenValue', {
+            value: formatAmount(fromAmount || '0', 2) || '0',
+            token: fromAsset.symbol || '',
+          })
           : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="-"
@@ -321,7 +323,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         asset={toAsset}
         onAssetPress={() => this.setState({ showBuyOptions: true })}
         leftSideText={displayFiatToAmount
-          ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol || ''}`
+          ? t('tokenValue', { value: formatAmount(toAmount || '0', 2), token: toAsset.symbol || '' })
           : formatFiat(toAmountInFiat || '0', fiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="+"

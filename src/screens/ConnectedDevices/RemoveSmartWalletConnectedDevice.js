@@ -25,6 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -171,14 +172,14 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
 
     let errorMessage;
     if (!isOnline) {
-      errorMessage = 'You need to be online in order to remove Smart Wallet device.';
+      errorMessage = t('error.deviceRemovalOffline');
     } else if (!isEnoughForFee) {
-      errorMessage = `Not enough ${feeSymbol} for transaction fee`;
+      errorMessage = t('error.notEnoughTokenForFee', { token: feeSymbol });
     }
 
     const submitButtonTitle = isOnline && gettingFee
-      ? 'Getting fee..'
-      : 'Confirm';
+      ? t('label.gettingFee')
+      : t('button.confirm');
 
     const isSubmitDisabled = !isEmpty(errorMessage) || gettingFee;
     const isDeviceBeingRemoved = addressesEqual(removingDeviceAddress, deviceAddress);
@@ -186,11 +187,11 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
     return (
       <React.Fragment>
         <DetailsLine>
-          <DetailsTitle>Device address</DetailsTitle>
+          <DetailsTitle>{t('label.deviceAddress')}</DetailsTitle>
           <DetailsValue>{deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
-          <DetailsTitle>Est. fee for removing transaction</DetailsTitle>
+          <DetailsTitle>{t('transactions.label.estFee')}</DetailsTitle>
           {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
@@ -205,7 +206,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
               marginBottom={spacing.large}
             />
             <ButtonText
-              buttonText="Cancel"
+              buttonText={t('button.cancel')}
               onPress={() => navigation.goBack()}
               fontSize={fontSizes.medium}
             />
@@ -221,11 +222,11 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
     const showSpinner = !gasInfo.isFetched || isDeviceBeingRemoved;
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Confirm' }] }}
+        headerProps={{ centerItems: [{ title: t('title.confirm') }] }}
       >
         <ScrollView contentContainerStyle={{ flexGrow: 1 }} style={{ flexGrow: 1 }}>
           <Paragraph small style={{ margin: spacing.large }}>
-            Please confirm that the details below are correct before removing device.
+            {t('paragraph.deviceRemovalConfirm')}
           </Paragraph>
           <DetailsWrapper>
             {showSpinner && this.renderSpinner()}

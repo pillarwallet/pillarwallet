@@ -20,11 +20,14 @@
 import * as React from 'react';
 import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import SearchBar from 'components/SearchBar';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Wrapper } from 'components/Layout';
 import { spacing } from 'utils/variables';
 import ProfileSettingsItem from 'components/ListItem/SettingsItem';
+
 
 const SearchBarWrapper = styled.View`
   padding: 0 ${spacing.rhythm}px;
@@ -81,7 +84,7 @@ export default class SelectList extends React.Component<Props, State> {
               value: query,
               autoCapitalize: 'none',
             }}
-            placeholder="Search"
+            placeholder={t('label.search')}
           />
         </SearchBarWrapper>
         <FlatList
@@ -105,7 +108,7 @@ export default class SelectList extends React.Component<Props, State> {
                 alignItems: 'center',
               }}
             >
-              <EmptyStateParagraph title="Nothing found" />
+              <EmptyStateParagraph title={t('label.nothingFound')} />
             </Wrapper>
           }
         />

@@ -19,6 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 // components
 import { BaseText, TextLink } from 'components/Typography';
@@ -53,8 +54,8 @@ type Props = {
 
 const ResendMessage = ({ onPressResend }: Props) => (
   <Wrapper>
-    <CustomText>Didn&apos;t receive the code?</CustomText>
-    <CustomLink onPress={onPressResend}> Resend it. </CustomLink>
+    <CustomText>{t('paragraph.didNotReceiveVerificationCodeQuestion')}</CustomText>
+    <CustomLink onPress={onPressResend}>{t('button.resendIt')}</CustomLink>
   </Wrapper>
 );
 

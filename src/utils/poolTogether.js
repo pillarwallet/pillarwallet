@@ -20,7 +20,7 @@
 
 import isEmpty from 'lodash.isempty';
 
-import { POOL_DAI_CONTRACT_ADDRESS, POOL_USDC_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 import { DAI, USDC } from 'constants/assetsConstants';
 
@@ -45,7 +45,8 @@ export const isPoolTogetherTag = (tag: ?string) => {
 };
 
 export const isPoolTogetherAddress = (address: string) => {
-  return addressesEqual(POOL_DAI_CONTRACT_ADDRESS, address) || addressesEqual(POOL_USDC_CONTRACT_ADDRESS, address);
+  return addressesEqual(getEnv().POOL_DAI_CONTRACT_ADDRESS, address)
+    || addressesEqual(getEnv().POOL_USDC_CONTRACT_ADDRESS, address);
 };
 
 const buildPoolTogetherTransaction = (

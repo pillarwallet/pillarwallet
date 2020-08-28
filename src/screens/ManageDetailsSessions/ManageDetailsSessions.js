@@ -24,6 +24,8 @@ import get from 'lodash.get';
 import styled from 'styled-components/native';
 import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import t from 'translations/translate';
+
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { WALLETCONNECT_CALL_REQUEST_SCREEN } from 'constants/navigationConstants';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
@@ -75,22 +77,22 @@ class ManageDetailsSessions extends React.Component<Props, State> {
   };
 
   getRequestLabel = (payload: CallRequest) => {
-    let label = 'Transaction Request';
+    let label = t('walletConnectContent.requestType.transaction');
 
     switch (payload.method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
-        label = 'Transaction Request';
+        label = t('walletConnectContent.requestType.transaction');
         break;
       case 'eth_sign':
       case 'eth_signTypedData':
       case 'eth_signTypedData_v1':
       case 'eth_signTypedData_v3':
       case 'personal_sign':
-        label = 'Message Request';
+        label = t('walletConnectContent.requestType.message');
         break;
       default:
-        label = 'Call Request';
+        label = t('walletConnectContent.requestType.call');
         break;
     }
     return label;
@@ -129,7 +131,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         label={name}
         avatarUrl={icon}
         buttonAction={() => this.props.killWalletConnectSessionByUrl(url)}
-        buttonActionLabel="Disconnect"
+        buttonActionLabel={t('button.disconnect')}
       />
     );
   };
@@ -139,7 +141,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
 
     return (
       <ListItemWithImage
-        buttonActionLabel="Open"
+        buttonActionLabel={t('button.open')}
         label={this.getRequestLabel(item)}
         avatarUrl={icon}
         buttonAction={() => this.onRequestItemPress(item)}
@@ -158,7 +160,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         data={requests}
         keyExtractor={({ url }) => `walletconnect-request-${url}`}
         renderItem={this.renderRequestItem}
-        ListEmptyComponent={<EmptyStateParagraph title="No Pending Requests" />}
+        ListEmptyComponent={<EmptyStateParagraph title={t('walletConnectContent.tabs.requests.emptyState.title')} />}
       />
     );
   }
@@ -174,7 +176,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
         data={filtered}
         keyExtractor={({ peerMeta }) => `walletconnect-session-${peerMeta.url}`}
         renderItem={this.renderSessionItem}
-        ListEmptyComponent={<EmptyStateParagraph title="No Active Sessions" />}
+        ListEmptyComponent={<EmptyStateParagraph title={t('walletConnectContent.tabs.active.emptyState.title')} />}
       />
     );
   }
@@ -186,12 +188,12 @@ class ManageDetailsSessions extends React.Component<Props, State> {
     const sessionTabs = [
       {
         id: ACTIVE,
-        name: 'Active',
+        name: t('tabs.active.title'),
         onPress: () => this.setActiveTab(ACTIVE),
       },
       {
         id: REQUESTS,
-        name: 'Requests',
+        name: t('tabs.requests.title'),
         onPress: () => this.setActiveTab(REQUESTS),
       },
     ];
@@ -203,8 +205,8 @@ class ManageDetailsSessions extends React.Component<Props, State> {
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
         headerProps={{
-          centerItems: [{ title: 'Manage Sessions' }],
-          rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
+          centerItems: [{ title: t('walletConnectContent.title.manageSessionsScreen') }],
+          rightItems: [{ link: t('button.support'), onPress: () => Intercom.displayMessenger() }],
           sideFlex: 2,
         }}
       >
