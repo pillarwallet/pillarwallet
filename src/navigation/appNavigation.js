@@ -123,7 +123,6 @@ import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
-import WBTCCafeScreen from 'screens/WBTCCafe';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -362,7 +361,6 @@ const servicesFlow = createStackNavigator({
   [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
   [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
-  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -100,6 +100,20 @@ export const validateInput = (
 ): boolean =>
   !errorMessage && !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
 
+const getBtcOption = (): Option => {
+  const btcAsset = {
+    name: 'Bitcoin',
+    address: '',
+    description: '',
+    iconUrl: 'asset/images/tokens/icons/btcColor.png',
+    symbol: BTC,
+    decimals: 8,
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+  };
+  return generateAssetSelectorOption(btcAsset);
+};
+
 const generateAssetsOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
@@ -121,8 +135,7 @@ const generateSupportedAssetsOptions = (
 ): Option[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
   return exchangeSupportedAssets
-    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency))
-    .filter(asset => asset.key !== BTC);
+    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
 };
 
 const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPULAR_EXCHANGE_TOKENS
@@ -158,8 +171,8 @@ export const provideOptions = (
     rates,
   );
   return {
-    fromOptions: assetsOptionsFrom,
-    toOptions: assetsOptionsBuying,
+    fromOptions: assetsOptionsFrom.concat([getBtcOption()]),
+    toOptions: assetsOptionsBuying.concat([getBtcOption()]),
     horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
   };
 };

@@ -336,12 +336,12 @@ export const getFormattedBalanceInFiat = (
 };
 
 export const generateAssetSelectorOption = (
-  asset: Asset, balances: Balances, rates: Rates, baseFiatCurrency: ?string,
+  asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
 ): Option => {
   const { symbol, iconUrl, ...rest } = asset;
-  const rawAssetBalance = getBalance(balances, symbol);
+  const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
   const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
-  const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
   const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
   return ({

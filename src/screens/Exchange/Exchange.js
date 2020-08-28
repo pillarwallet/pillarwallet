@@ -42,7 +42,7 @@ import {
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR, BTC, WBTC } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
@@ -84,6 +84,7 @@ import {
   shouldBlockView,
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
+import WBTCCafeInfo from './WBTCCafeInfo';
 
 type Props = {
   rates: Rates,
@@ -224,7 +225,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
     return {
       fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode),
-      toAsset: this.options.toOptions.find(a => a.value === toAssetCode),
+      toAsset: this.getToOption(toAssetCode),
     };
   }
 
@@ -387,14 +388,21 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleSelectorOptionSelect = (option: Option) => {
-    const { showSellOptions, fromAmount } = this.state;
-    const optionsStateChanges = { showSellOptions: false, showBuyOptions: false };
+    const { showSellOptions, fromAmount, toAsset } = this.state;
+    const shouldEnforceToWbtc = showSellOptions && option.symbol === BTC;
+    const optionsStateChanges = {
+      showSellOptions: false,
+      showBuyOptions: false,
+      toAsset: shouldEnforceToWbtc ? this.getToOption(WBTC) || toAsset : toAsset,
+    };
     this.setState(showSellOptions
       ? { fromAsset: option, ...optionsStateChanges }
       : { toAsset: option, ...optionsStateChanges },
     () => this.setErrorMessage(getErrorMessage(fromAmount, this.state.fromAsset)),
     );
-  }
+  };
+
+  getToOption = (symbol: string): ?Option => this.options.toOptions.find(a => a.value === symbol);
 
   render() {
     const {
@@ -415,6 +423,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       showSellOptions,
       showBuyOptions,
       errorMessage,
+      toAsset,
+      fromAsset,
     } = this.state;
 
     const { fromOptions, toOptions, horizontalOptions } = this.options;
@@ -425,7 +435,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     const deploymentData = getDeploymentData(smartWalletState);
     const blockView = shouldBlockView(smartWalletState, accounts);
-
+    const isWbtcCafe = fromAsset.symbol === BTC || (fromAsset.symbol === WBTC && toAsset.symbol === BTC);
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
 
     return (
@@ -466,6 +476,8 @@ class ExchangeScreen extends React.Component<Props, State> {
               setFromAmount={val => this.setState({ fromAmount: val })}
               navigation={navigation}
             />}
+            {isWbtcCafe &&
+            <WBTCCafeInfo />}
           </ScrollView>}
         </ContainerWithHeader>
         <SelectorOptions

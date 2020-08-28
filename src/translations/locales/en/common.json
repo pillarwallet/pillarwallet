@@ -677,6 +677,13 @@
     }
   },
 
+  "wbtcCafe": {
+    "rate": "Exchange rate",
+    "renFee": "RenVM fee",
+    "btcFee": "Bitcoin fee",
+    "slippage": "Mac. price slippage",
+  },
+
   "referralsContent": {
     "banner": {
       "inviteBanner": {
