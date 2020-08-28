@@ -20,6 +20,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
+
 import { ENCRYPTING, CREATED } from 'constants/walletConstants';
 import { MENU } from 'constants/navigationConstants';
 import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
@@ -32,6 +34,7 @@ import Header from 'components/Header';
 import Loader from 'components/Loader';
 import { validatePin } from 'utils/validators';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   changePin: (newPin: string, currentPin: string) => void,
@@ -94,7 +97,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
       return (
         <Container center>
           <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
-          <Button title="Continue" onPress={() => this.props.navigation.navigate(MENU)} />
+          <Button title={t('button.continue')} onPress={() => this.props.navigation.navigate(MENU)} />
         </Container>
       );
     }
@@ -102,7 +105,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     return (
       <Container>
         <Header
-          title="confirm new pincode"
+          title={t('title.confirmNewPin')}
           centerTitle
           onClose={this.handleScreenDismissal}
         />

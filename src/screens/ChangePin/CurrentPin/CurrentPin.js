@@ -20,6 +20,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
+
 import { Container } from 'components/Layout';
 import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
@@ -46,7 +48,7 @@ class CurrentPin extends React.Component<Props> {
     if (walletState === DECRYPTING) {
       return (
         <Container center>
-          <Loader messages={['Checking']} />
+          <Loader messages={[t('label.checking')]} />
         </Container>
       );
     }

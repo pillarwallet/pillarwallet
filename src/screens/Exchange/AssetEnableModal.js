@@ -22,9 +22,11 @@ import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
+import styled, { withTheme } from 'styled-components/native';
+import t from 'translations/translate';
 
 // constants
-import styled, { withTheme } from 'styled-components/native';
+import { ETH } from 'constants/assetsConstants';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -99,7 +101,7 @@ const AssetEnableModal = (props: Props) => {
       onModalHide={onModalHide}
       noClose
       headerProps={{
-        centerItems: [{ title: `Enable ${assetSymbol}` }],
+        centerItems: [{ title: t('exchangeContent.modal.enableAsset.title', { asset: assetSymbol }) }],
         sideFlex: '0',
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
       }}
@@ -110,11 +112,14 @@ const AssetEnableModal = (props: Props) => {
           fallbackSource={fallbackSource}
         />
         <Paragraph>
-          {`Once enabled, it will be available for exchanging on ${providerName}`}
+          {t('exchangeContent.modal.enableAsset.paragraph', { providerName })}
         </Paragraph>
         <Button
           secondary
-          title={isDisabled ? 'Not enough ETH' : 'Enable'}
+          title={isDisabled
+            ? t('label.notEnoughToken', { token: ETH })
+            : t('exchangeContent.modal.enableAsset.button.enable')
+          }
           onPress={onEnable}
           regularText
           style={{ marginBottom: 28 }}
@@ -123,7 +128,7 @@ const AssetEnableModal = (props: Props) => {
           disabled={isDisabled}
         />
         <BaseText secondary>
-          {`Fee ${feeDisplayValue} (${feeInFiat})`}
+          {t('feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
         </BaseText>
       </ContentWrapper>
     </SlideModal>

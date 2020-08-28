@@ -27,6 +27,7 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -116,14 +117,14 @@ class ExchangeInfo extends React.Component<Props, State> {
   renderProvider = ({ item: { provider, enabled: providerEnabled } }: Object) => {
     const providerInfo = getProviderInfo(provider);
     const { name } = providerInfo;
-    const providerName = name || 'Unknown';
+    const providerName = name || t('label.unknown');
     return (
       <ProviderItem>
         <ProviderName>{providerName}</ProviderName>
         <ProviderStatus isPending={!providerEnabled}>
           {providerEnabled
-            ? 'Enabled'
-            : 'Pending'
+            ? t('label.enabled')
+            : t('label.pending')
           }
         </ProviderStatus>
       </ProviderItem>
@@ -176,8 +177,8 @@ class ExchangeInfo extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Settings' }],
-          rightItems: [{ link: 'Support', onPress: () => Intercom.displayMessenger() }],
+          centerItems: [{ title: t('exchangeContent.title.settingsScreen') }],
+          rightItems: [{ link: t('label.support'), onPress: () => Intercom.displayMessenger() }],
           sideFlex: 2,
         }}
         inset={{ bottom: 'never' }}
@@ -185,7 +186,7 @@ class ExchangeInfo extends React.Component<Props, State> {
         <ScrollWrapper>
           {!isEmpty(assetsArray) &&
             <React.Fragment>
-              <SectionTitle>Enabled exchange assets:</SectionTitle>
+              <SectionTitle>{t('exchangeContent.label.enabledAssets')}</SectionTitle>
               <FlatList
                 data={assetsArray}
                 keyExtractor={(item) => item.id}

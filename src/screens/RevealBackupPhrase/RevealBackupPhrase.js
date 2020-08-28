@@ -22,6 +22,8 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import get from 'lodash.get';
+import t from 'translations/translate';
+
 import type { Dispatch } from 'reducers/rootReducer';
 import { Container, Wrapper, ScrollWrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
@@ -86,13 +88,10 @@ class RevealBackupPhrase extends React.Component<Props, State> {
     if (wallet?.mnemonic?.phrase && !showPrivateKey) {
       return (
         <Container>
-          <Header title="Backup phrase" onClose={this.handleScreenDismissal} />
+          <Header title={t('title.backupPhrase')} onClose={this.handleScreenDismissal} />
           <ScrollWrapper regularPadding>
-            <Paragraph>Please use this 12 word backup phrase in order to restore the wallet.</Paragraph>
-            <Paragraph light>
-              Keep it secure as it&#39;s the only way to recover your account in an emergency.
-              Don&#39;t email or screenshot it.
-            </Paragraph>
+            <Paragraph>{t('paragraph.backupPhraseRevealedPurpose')}</Paragraph>
+            <Paragraph light>{t('paragraph.doNotShareBackup')}</Paragraph>
             <MnemonicPhrase phrase={wallet.mnemonic.phrase} />
           </ScrollWrapper>
         </Container>
@@ -101,16 +100,11 @@ class RevealBackupPhrase extends React.Component<Props, State> {
 
     return (
       <Container>
-        <Header title="Private key" onClose={this.handleScreenDismissal} />
+        <Header title={t('title.privateKey')} onClose={this.handleScreenDismissal} />
         <Wrapper regularPadding>
-          <Paragraph>Please use this private key in order to restore the wallet.</Paragraph>
-          <Paragraph light>
-            Keep it secure as it&#39;s the only way to recover your account in an emergency.
-            Don&#39;t email or screenshot it.
-          </Paragraph>
-          <PrivateKeyWrapper>
-            {wallet.privateKey}
-          </PrivateKeyWrapper>
+          <Paragraph>{t('paragraph.privateKeyRevealedPurpose')}</Paragraph>
+          <Paragraph light>{t('paragraph.doNotShareBackup')}</Paragraph>
+          <PrivateKeyWrapper>{wallet.privateKey}</PrivateKeyWrapper>
         </Wrapper>
       </Container>
     );

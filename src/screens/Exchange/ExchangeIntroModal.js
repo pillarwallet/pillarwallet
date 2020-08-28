@@ -20,23 +20,20 @@
 
 import * as React from 'react';
 import OverlayModal from 'components/OverlayModal/OverlayModal';
+import t from 'translations/translate';
+
 
 type Props = {
   isVisible: boolean,
   onButtonPress: () => void,
 };
 
-const content = `Pillar Exchange or Offers Engine, as we call it,\
- aggregates offers from multiple providers vetted by Pillar. 
-
-Buy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.`;
-
 export default (props: Props) => (
   <OverlayModal
     isVisible={props.isVisible}
     onButtonPress={props.onButtonPress}
-    title="Exchange."
-    content={content}
-    buttonText="Next"
+    title={t('exchangeContent.modal.intro.title')}
+    content={t('exchangeContent.modal.intro.paragraph')}
+    buttonText={t('exchangeContent.modal.intro.button.next')}
   />
 );

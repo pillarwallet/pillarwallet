@@ -23,6 +23,7 @@ import { FlatList, Platform } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
+import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -127,25 +128,6 @@ const ButtonWrapper = styled(Wrapper)`
   padding: 0 46px 20px;
 `;
 
-const features = [
-  {
-    key: 'instant',
-    label: 'Instant.',
-    subtext: 'No waiting for miner or block confirmations. Seriously instant transactions.',
-  },
-  {
-    key: 'free',
-    label: 'Free.',
-    subtext: 'No need to pay network costs or gas for any transactions.',
-  },
-  {
-    key: 'private',
-    label: 'Private.',
-    subtext: 'Only final settlement is recorded on-chain. ' +
-      'Batched transactions allow multiple transfers to be combined.',
-  },
-];
-
 const PPNIcon = require('assets/images/logo_PPN.png');
 
 class PillarNetworkIntro extends React.Component<Props, State> {
@@ -193,6 +175,24 @@ class PillarNetworkIntro extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const needsSmartWallet = !smartWalletStatus.hasAccount;
+    const features = [
+      {
+        key: 'instant',
+        label: t('ppnContent.ppnFeatures.first.title'),
+        subtext: t('ppnContent.ppnFeatures.first.description'),
+      },
+      {
+        key: 'free',
+        label: t('ppnContent.ppnFeatures.second.title'),
+        subtext: t('ppnContent.ppnFeatures.second.description'),
+      },
+      {
+        key: 'private',
+        label: t('ppnContent.ppnFeatures.three.title'),
+        subtext: t('ppnContent.ppnFeatures.three.description'),
+      },
+    ];
+
 
     return (
       <ContainerWithHeader
@@ -207,20 +207,18 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           <CustomWrapper>
             <FeatureIcon source={PPNIcon} />
             <Title>
-              Pillar Network
+              {t('pillarNetwork')}
             </Title>
             <BodyText>
-              Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts.
-              PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar
-              Payment Network.
+              {t('ppnContent.paragraph.introFirstParagraph')}
             </BodyText>
             <LabelBadge
-              label="COMING SOON"
+              label={t('label.comingSoon')}
               containerStyle={{ backgroundColor: colors.orange, marginTop: 57, paddingVertical: 2 }}
               labelStyle={{ color: colors.PPNText, fontSize: responsiveSize(11) }}
             />
             <BodyText style={{ marginTop: 10 }}>
-              Draw from your PLR tank to send whatever you’d like.
+              {t('ppnContent.paragraph.introSecondParagraph')}
             </BodyText>
             <FlatList
               data={features}
@@ -251,7 +249,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
               marginBottom: 70,
               borderColor: colors.PPNText,
             }}
-            label="Enable Smart Wallet to create Tank"
+            label={t('ppnContent.button.enableSmartWalletForTank')}
             onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
             color={colors.PPNText}
             bordered
@@ -260,7 +258,7 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           <ButtonWrapper>
             <Button
               block
-              title="Go to PLR Tank"
+              title={t('ppnContent.button.goToTank')}
               onPress={this.goToPLRTank}
               style={{
                 backgroundColor: colors.PPNText,

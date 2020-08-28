@@ -96,7 +96,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, showRightPlaceholder?: bo
   fields: {
     username: {
       auto: 'placeholders',
-      placeholder: 'Username',
+      placeholder: t('auth:formData.usernamePlaceholder'),
       template: InputTemplate,
       maxLength: MAX_USERNAME_LENGTH,
       config: {
