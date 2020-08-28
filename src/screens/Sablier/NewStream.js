@@ -25,9 +25,9 @@ import styled, { withTheme } from 'styled-components/native';
 import { addHours, addDays, addMinutes } from 'date-fns';
 import DatePicker from 'react-native-date-picker';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
-import { SDK_PROVIDER } from 'react-native-dotenv';
-import t from 'translations/translate';
 import isEmpty from 'lodash.isempty';
+import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -431,7 +431,7 @@ class NewStream extends React.Component<Props, State> {
     const assetData = this.getAssetData();
     if (allowPayload && assetData) {
       const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
-      const assetIcon = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
+      const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
       allowData = {
         assetSymbol,

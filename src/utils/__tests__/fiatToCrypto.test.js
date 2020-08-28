@@ -23,7 +23,7 @@ import { rampWidgetUrl } from '../fiatToCrypto';
 
 describe('The fiatToCrypto.js utility module', () => {
   describe('The rampWidgetUrl function', () => {
-    const rampStagingUrl = 'https://ri-widget-staging-ropsten.firebaseapp.com/';
+    const rampStagingUrl = 'https://ri-widget-staging-kovan.firebaseapp.com/';
 
     it('successfully returns a RAMP url', () => {
       const fakeEthAddress = '0x123';

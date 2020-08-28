@@ -4,7 +4,7 @@ import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { sdkConstants } from '@smartwallet/sdk';
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -190,7 +190,7 @@ export default class SmartWalletProvider {
     const from = getAccountAddress(account);
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
-    const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+    const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
     const data = await buildERC721TransactionData({ ...transaction, from }, provider);
 
     return smartWalletService

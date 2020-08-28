@@ -19,6 +19,8 @@
 */
 import * as React from 'react';
 import { Icon, Picker } from 'native-base';
+import t from 'translations/translate';
+
 import { supportedFiatCurrencies } from 'constants/assetsConstants';
 import { connect } from 'react-redux';
 import { saveBaseFiatCurrencyAction } from 'actions/appSettingsActions';
@@ -48,7 +50,7 @@ class CurrencySelector extends React.Component<Props, State> {
     const { selectedCurrency } = this.state;
     return (
       <Picker
-        iosHeader="Select currency"
+        iosHeader={t('label.selectCurrency')}
         mode="dropdown"
         selectedValue={selectedCurrency}
         onValueChange={this.onCurrencyChanged}

@@ -24,7 +24,7 @@ import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // utils
@@ -44,7 +44,7 @@ import {
 import { findAccountByAddress } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
-import { getValueWithSymbol } from 'utils/strings';
+import { getFormattedValue } from 'utils/strings';
 
 // components
 import {
@@ -268,14 +268,17 @@ export class ActivityFeedItem extends React.Component<Props> {
     const { amount, symbol, decimals }: AaveExtra = event.extra;
     if (!amount || !symbol) return '';
     const value = formatUnits(amount, decimals);
-    return getValueWithSymbol(`${formatAmount(value, getDecimalPlaces(symbol))} ${symbol}`, isPositive, !value);
+    return getFormattedValue(formatAmount(value, getDecimalPlaces(symbol)), symbol, {
+      isPositive,
+      noSymbol: !value,
+    });
   };
 
   getAaveDepositedAssetImage = () => {
     const { event, supportedAssets } = this.props;
     if (!event?.extra?.symbol) return null;
     const { iconUrl } = supportedAssets.find(({ symbol }) => symbol === event.extra.symbol) || {};
-    return iconUrl ? { uri: `${SDK_PROVIDER}/${iconUrl}?size=3` } : null;
+    return iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : null;
   };
 
   getSablierEventData = (event: Object) => {
@@ -412,8 +415,14 @@ export class ActivityFeedItem extends React.Component<Props> {
       keyWalletIcon,
     } = images(theme);
 
-    const fullItemValuePPN = getValueWithSymbol(`${formattedFullValue} ${event.asset}`, isPositivePPN, isZero);
-    const itemValuePPN = getValueWithSymbol(`${formattedValue} ${event.asset}`, isPositivePPN, isZero);
+    const fullItemValuePPN = getFormattedValue(formattedFullValue, event.asset, {
+      isPositive: isPositivePPN,
+      noSymbol: isZero,
+    });
+    const itemValuePPN = getFormattedValue(formattedValue, event.asset, {
+      isPositive: isPositivePPN,
+      noSymbol: isZero,
+    });
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -496,16 +505,22 @@ export class ActivityFeedItem extends React.Component<Props> {
               {formattedValuesArray.map(({ formatted, symbol }) => (
                 <TankAssetBalance
                   key={symbol}
-                  amount={getValueWithSymbol(`${formatted} ${symbol}`, !isFailed, isZero)}
+                  amount={getFormattedValue(formatted, symbol, { isPositive: !isFailed, noSymbol: isZero })}
                   secondary={isFailed}
                 />
               ))}
               {!isFailed && isPPNView && transactionsCount > 1 && (
                 <BaseText regular secondary>{t('totalValue', { value: transactionsCount })}</BaseText>
               )}
-              {!isFailed && !isPPNView && formattedValuesArray.map(({ formatted, symbol }) =>
-                <ItemValue key={symbol}>{t('positiveValue', { value: `${formatted} ${symbol}` })}</ItemValue>,
-              )}
+              {!isFailed && !isPPNView && formattedValuesArray
+                .map(({ formatted, symbol }) =>
+                  (
+                    <ItemValue key={symbol}>
+                      {t('positiveTokenValue', { value: formatted, token: symbol })}
+                    </ItemValue>
+                  ),
+                )
+              }
             </ListWrapper>),
         };
         break;
@@ -562,11 +577,12 @@ export class ActivityFeedItem extends React.Component<Props> {
       case POOLTOGETHER_WITHDRAW_TRANSACTION: {
         const { symbol, decimals, amount } = event.extra;
         const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
+        const formattedVal = parseFloat(formatUnits(amount, decimals)).toString();
         data = {
           label: this.NAMES.POOL_TOGETHER,
           itemImageSource: poolTogetherLogo,
           cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
-          itemValue: getValueWithSymbol(`${parseFloat(formatUnits(amount, decimals))} ${symbol}`, isPositive, !amount),
+          itemValue: getFormattedValue(formattedVal, symbol, { isPositive, noSymbol: !amount }),
           itemImageRoundedSquare: true,
           valueColor: isPositive ? 'positive' : 'text',
         };
@@ -592,23 +608,23 @@ export class ActivityFeedItem extends React.Component<Props> {
           data = {
             ...data,
             subtext: t('label.outgoingSablierStream'),
-            itemValue: `- ${formattedAmount} ${symbol}`,
-            fullItemValue: `- ${formattedAmount} ${symbol}`,
+            itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: false }),
+            fullItemValue: getFormattedValue(formattedAmount, symbol, { isPositive: false }),
             valueColor: 'text',
           };
         } else if (event.tag === SABLIER_WITHDRAW) {
           data = {
             ...data,
             subtext: t('label.withdraw'),
-            itemValue: `+ ${formattedAmount} ${symbol}`,
-            fullItemValue: `+ ${formattedAmount} ${symbol}`,
+            itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
+            fullItemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             valueColor: 'positive',
           };
         } else if (event.tag === SABLIER_CANCEL_STREAM) {
           data = {
             ...data,
             subtext: t('label.outgoingSablierStream'),
-            itemValue: `- ${formattedAmount} ${symbol}`,
+            itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             itemStatusIcon: TX_FAILED_STATUS,
             statusIconColor: this.getColor('negative'),
             isFailed: true,
@@ -632,8 +648,8 @@ export class ActivityFeedItem extends React.Component<Props> {
               subtext: isAssetView ? '' : this.FROM.PPN_NETWORK,
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
-              fullItemValue: t('positiveValue', { value: `${formattedFullValue} ${event.asset}` }),
-              itemValue: t('positiveValue', { value: `${formattedValue} ${event.asset}` }),
+              fullItemValue: t('positiveTokenValue', { value: formattedFullValue, token: event.asset }),
+              itemValue: t('positiveTokenValue', { value: formattedValue, token: event.asset }),
               valueColor: 'positive',
             };
           } else {
@@ -646,7 +662,9 @@ export class ActivityFeedItem extends React.Component<Props> {
               const { syntheticTransaction: { toAmount, toAssetCode } } = event.extra;
               data.customAddon = (
                 <ListWrapper>
-                  <TankAssetBalance amount={getValueWithSymbol(`${toAmount} ${toAssetCode}`, isReceived, !toAmount)} />
+                  <TankAssetBalance
+                    amount={getFormattedValue(toAmount, toAssetCode, { isPositive: isReceived, noSymbol: !toAmount })}
+                  />
                   {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
                 </ListWrapper>
               );
@@ -654,7 +672,10 @@ export class ActivityFeedItem extends React.Component<Props> {
               data.customAddon = (
                 <ListWrapper>
                   <TankAssetBalance
-                    amount={getValueWithSymbol(`${formattedValue} ${event.asset}`, isReceived, isZero)}
+                    amount={getFormattedValue(formattedValue, event.asset, {
+                      isPositive: isReceived,
+                      noSymbol: isZero,
+                    })}
                   />
                 </ListWrapper>
               );
@@ -698,7 +719,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             const referralAwardAssetData = supportedAssets.find(({ symbol }) => symbol === event.asset);
             if (referralAwardAssetData) {
               const { iconUrl } = referralAwardAssetData;
-              referralAwardTokenImage = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+              referralAwardTokenImage = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
               additionalInfo.iconName = null;
               additionalInfo.avatarUrl = referralAwardTokenImage;
             }
@@ -707,8 +728,11 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           data = {
             label: usernameOrAddress,
-            fullItemValue: getValueWithSymbol(`${formattedFullValue} ${event.asset}`, isReceived, !formattedFullValue),
-            itemValue: getValueWithSymbol(`${formattedValue} ${event.asset}`, isReceived, isZero),
+            fullItemValue: getFormattedValue(formattedFullValue, event.asset, {
+              isPositive: isReceived,
+              noSymbol: !formattedFullValue,
+            }),
+            itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
             valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,

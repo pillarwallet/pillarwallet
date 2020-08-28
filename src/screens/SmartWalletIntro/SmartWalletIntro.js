@@ -22,6 +22,7 @@ import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // actions
 import { importSmartWalletAccountsAction } from 'actions/smartWalletActions';
@@ -133,22 +134,14 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
         <ScrollWrapper contentContainerStyle={{ paddingTop: 80 }}>
           <CustomWrapper>
             <FeatureIcon source={smartWalletIcon} />
-            <Title>
-              Smart Wallet
-            </Title>
-            <BodyText>
-              Your new Pillar Smart Wallet is powered by a personal smart contract. This provides better asset
-              management, security and recovery functionality.
-            </BodyText>
-            <BodyText>
-              Pillar also recommends that you transfer most of your assets to your Smart Wallet due to the benefits
-              listed.
-            </BodyText>
+            <Title>{t('smartWallet')}</Title>
+            <BodyText>{t('smartWalletContent.paragraph.introFirstParagraph')}</BodyText>
+            <BodyText>{t('smartWalletContent.paragraph.introSecondParagraph')}</BodyText>
           </CustomWrapper>
           <ButtonWrapper>
             <Button
               block
-              title="Proceed"
+              title={t('button.proceed')}
               onPress={() => this.setState({ showPinModal: true })}
               style={{
                 backgroundColor: colors.smartWalletText,

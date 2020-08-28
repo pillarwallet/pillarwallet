@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import axios, { AxiosResponse } from 'axios';
-import { OPEN_SEA_API_KEY } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // services
 import { API_REQUEST_TIMEOUT } from './api';
@@ -29,7 +29,7 @@ const requestConfig = {
   headers: {
     Accept: 'application/json',
     'Content-Type': 'application/json',
-    'X-API-KEY': OPEN_SEA_API_KEY,
+    'X-API-KEY': getEnv().OPEN_SEA_API_KEY,
   },
 };
 

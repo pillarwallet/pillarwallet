@@ -23,7 +23,7 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import * as Sentry from '@sentry/react-native';
 import { isHexString } from '@walletconnect/utils';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 import {
   getRandomInt,
@@ -80,7 +80,7 @@ export function catchTransactionError(e: Object, type: string, tx: Object) {
 
 // handle eth_signTransaction
 export function signTransaction(trx: Object, walletInstance: Object): Promise<string> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
   const signTx = trx ? { ...trx } : trx;
   if (signTx && signTx.from) {
@@ -91,7 +91,7 @@ export function signTransaction(trx: Object, walletInstance: Object): Promise<st
 
 // handle eth_sign
 export function signMessage(message: any, walletInstance: Object): string {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
   // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
   return ethSign(message, wallet.privateKey);
@@ -99,7 +99,7 @@ export function signMessage(message: any, walletInstance: Object): string {
 
 // handle personal_sign
 export function signPersonalMessage(message: string, walletInstance: Object): Promise<string> {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
   return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
 }
@@ -135,7 +135,7 @@ export async function getWalletFromStorage(storageData: Object, dispatch: Dispat
 }
 
 export async function decryptWallet(encryptedWallet: Object, saltedPin: string) {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   let wallet = await ethers.Wallet.fromEncryptedJson(JSON.stringify(encryptedWallet), saltedPin);
   if (wallet) {
     wallet = wallet.connect(provider);
@@ -144,7 +144,7 @@ export async function decryptWallet(encryptedWallet: Object, saltedPin: string) 
 }
 
 export function constructWalletFromPrivateKey(privateKey: string): Object {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   let wallet = new ethers.Wallet(privateKey);
   if (wallet) {
     wallet = wallet.connect(provider);
@@ -153,7 +153,7 @@ export function constructWalletFromPrivateKey(privateKey: string): Object {
 }
 
 export function constructWalletFromMnemonic(mnemonic: string): Object {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   let wallet = ethers.Wallet.fromMnemonic(mnemonic);
   if (wallet) {
     wallet = wallet.connect(provider);

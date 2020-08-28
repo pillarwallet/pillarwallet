@@ -12,21 +12,30 @@
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
+  "ellipsedString": "{{string}}...",
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
 
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
+  "positiveTokenValue": "+ {{value}} {{token}}",
+  "negativeTokenValue": "- {{value}} {{token}}",
+  "positivePercentValue": "+ {{value}} %",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
   "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
+  "ofTotalTokenValue": "of {{value}} {{token}} total",
+  "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
+  "maxTokenValue": "Max {{value}} {{token}}",
+  "minTokenValue": "Min {{value}} {{token}}",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
   "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
+  "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
   "day": "{{count}} day",
   "day_plural": "{{count}} days",
   "hour": "{{count}} hour",
@@ -53,6 +62,21 @@
     "editContact": "Edit contact",
     "addressBook": "Address book",
     "select": "Select",
+    "failed": "Failed",
+    "pending": "Pending",
+    "collectibleSent": "Collectible sent",
+    "collectibleReceive": "Collectible received",
+    "badgeReceived": "Badge received",
+    "connectionRequested": "Requested",
+    "assets": "Assets",
+    "backupPhrase": "Backup phrase",
+    "verifyBackupPhrase": "Verify backup phrase",
+    "confirmNewPin": "Confirm new pincode",
+    "enterNewPincode": "Enter new pincode",
+    "manageDevices": "Manage devices",
+    "noConnectedDevices": "No Connected Devices",
+    "confirm": "Confirm",
+    "privateKey": "Private key",
     "exchange": "Exchange"
   },
 
@@ -138,8 +162,28 @@
     "processing": "Processing...",
     "mainAccount": "Main Account",
     "free": "Free",
+    "estimatedFee": "Estimated fee:",
+    "nothingFound": "Nothing found",
+    "verified": "Verified",
+    "select": "Select",
+    "selectCurrency": "Select currency",
+    "choseOption": "Choose option",
+    "noOptionsToSelect": "No options to select",
+    "availableBalance": "Available Balance",
+    "sendingToReceiver": "Sending to {{receiver}}",
+    "sentToReceiver": "It was sent to {{receiver}}",
+    "walletBalance": "Wallet balance {{balance}}",
+    "checking": "Checking",
+    "thisDevice": "This device",
+    "onHold": "On hold",
+    "deviceAddress": "Device address",
+    "noContactsAdded": "No contacts added",
+    "comingSoon": "Coming soon",
     "buy": "Buy",
-    "sell": "Sell"
+    "sell": "Sell",
+    "unknown": "Unknown",
+    "pending": "Pending",
+    "notAvailableIYourCountry": "Not available in Your country"
   },
 
   "button": {
@@ -218,18 +262,41 @@
     "allow": "Allow",
     "max": "Max",
     "sendTokenInstead": "Send token instead",
-    "addToContacts": "Add to contacts"
+    "addToContacts": "Add to contacts",
+    "copyToClipboard": "Copy to clipboard",
+    "resendIt": "Resend it",
+    "migrateAssetsToSmartWallet": "Migrate assets to Smart Wallet",
+    "continue": "Continue",
+    "remove": "Remove",
+    "cancel": "Cancel",
+    "edit": "Edit",
+    "magic": "Magic",
+    "disconnect": "Disconnect",
+    "open": "Open",
+    "proceed": "Proceed",
+    "readMore": "Read more",
+    "activateSmartWallet": "Activate Smart Wallet"
   },
 
   "paragraph": {
     "addressCopiedToClipboard": "Address copied to clipboard.",
     "doNotSendRealEthOrTokens": "Do not send real ETH or ERC20 tokens.",
     "ensNameCopiedToClipboard": "ENS name copied to clipboard.",
-    "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview."
+    "cameraPermissionMissing": "Camera permissions not granted - cannot open camera preview.",
+    "didNotReceiveVerificationCodeQuestion": "Didn't receive the code?",
+    "instructionsOnBackingUpBackupPhase": "Write down your 12 word backup phrase in the correct order.",
+    "backupPhraseVerificationInstructions": "Please select the correct words.",
+    "deviceRemovalConfirm": "Please confirm that the details below are correct before removing device.",
+    "loggingOutFirstMessage": "Deleting takes a moment",
+    "loggingOutSecondMessage": "Sorry to see you go",
+    "backupPhraseRevealedPurpose": "Please use this 12 word backup phrase in order to restore the wallet.",
+    "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
+    "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it."
   },
 
   "insight": {
     "keyWalletIntro": {
+      "title": "Never lose your funds",
       "description": {
         "backupWallet": "Backup wallet",
         "setPinCode": "Set PIN code",
@@ -352,7 +419,8 @@
       "notEnoughGas": "Not enough gas to cover the transaction fee. Top up your ETH balance",
       "notOwnedCollectible": "You no longer own this collectible",
       "collectibleCantBeTransferred": "This collectible can't be transferred",
-      "notEnoughStake": "Not enough PLR in tank"
+      "notEnoughStake": "Not enough PLR in tank",
+      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExist": "Contact with this address already exist",
@@ -366,6 +434,25 @@
     "ensNameNotFound": "Sorry, ENS name not found. Please check and try again.",
     "notEnoughTokenForFee": "Not enough {{token}} for the transaction fee",
     "notEnoughTokenForFeeExtended": "Sorry, you do not have enough {{token}} in your wallet to make this transaction. Please top up your wallet and try again.",
+    "noCameraPermission": "Camera permissions not granted - cannot open the QR scanner.",
+    "noField": {
+      "address": "No address to show",
+      "phone": "No phone to show",
+      "default": "No information to show"
+    },
+    "incorrectBackupPhraseWordsSelected": "Incorrect words selected",
+    "pin": {
+      "newShouldBeDifferent": "New pincode must be different from the current one"
+    },
+    "deviceRemovalOffline": "You need to be online in order to remove Smart Wallet device.",
+    "amount": {
+      "invalidNumber": "Incorrect number entered",
+      "exceedBalance": "Amount should not exceed total balance",
+      "shouldNotHaveDecimals": "Amount should not contain decimal places"
+    },
+    "synthetics": {
+      "failedToCalculate": "Failed to calculate synthetics exchange"
+    },
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
       "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
@@ -407,10 +494,32 @@
       "fundTank": "Fund Pillar Tank",
       "releaseTankFunds": "Release Funds",
       "withdrawFromTank": "Withdraw from PLR tank",
-      "settleTransactions": "Settle transactions"
+      "settleTransactions": "Settle transactions",
+      "enableSmartWalletForTank": "Enable Smart Wallet to create Tank",
+      "goToTank": "Go to PLR Tank"
     },
     "label": {
-      "availableBalance": "Available Balance"
+      "availableBalance": "Available Balance",
+      "paidByPillar": "No fees - paid by Pillar"
+    },
+    "paragraph": {
+      "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
+      "introSecondParagraph": "Draw from your PLR tank to send whatever you’d like."
+    },
+    "ppnFeatures": {
+      "first": {
+        "title": "Instant.",
+        "description": "No waiting for miner or block confirmations. Seriously instant transactions."
+      },
+      "second": {
+        "title": "Free.",
+        "description": "No need to pay network costs or gas for any transactions."
+      },
+      "three": {
+        "title": "Private.",
+        "description": "Only final settlement is recorded on-chain. Batched transactions allow multiple transfers to be combined."
+      },
+      "settleTransactions": "Settle transactions"
     }
   },
 
@@ -445,6 +554,18 @@
       "collectibles": {
         "title": "Collectibles"
       }
+    },
+    "paragraph": {
+      "introFirstParagraph": "Your new Pillar Smart Wallet is powered by a personal smart contract. This provides better asset management, security and recovery functionality.",
+      "introSecondParagraph": "Pillar also recommends that you transfer most of your assets to your Smart Wallet due to the benefits listed.",
+      "walletIsActivated": "You can now access your new Smart Wallet and the new Pillar Payment Network from the upper right and side of the Assets screen"
+    },
+    "button": {
+      "goToSmartWallet": "Go to Smart Wallet"
+    },
+    "title": {
+      "smartWalletIsActivated": "Your Smart Wallet is now activated",
+      "walletActivatedScreen": "What's next"
     }
   },
 
@@ -489,6 +610,15 @@
     }
   },
 
+  "countryList": {
+    "emptyState": {
+      "noneFound": {
+        "title": "Nothing found",
+        "paragraph": "Make sure you entered the country correctly"
+      }
+    }
+  },
+
   "aaveContent": {
     "depositedAssetsList": {
       "title": "Aave Deposits"
@@ -507,6 +637,7 @@
     },
     "label": {
       "currentAPY": "Current APY",
+      "currentAPYPercentage": "Current APY {{rate}} %",
       "earned": "Earned"
     },
     "button": {
@@ -889,7 +1020,8 @@
         "message": "Message Request",
         "unsupported": "Unsupported Request",
         "default": "Request"
-      }
+      },
+      "manageSessionsScreen": "Manage Sessions"
     },
     "label": {
       "requestFrom": "Request from {{name}}",
@@ -912,6 +1044,33 @@
         "default": "Approve"
       },
       "checkApp": "View"
+    },
+    "appDescription": {
+      "zerion": "A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.",
+      "poolTogether": "No-loss, audited savings game. Deposit Dai into the pool to get tickets. Each ticket is a chance to win weekly prizes!",
+      "mooni": "A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.",
+      "oasis": "Trade, borrow, and save using Dai.",
+      "sablier": "\"Stream\" money in real-time.",
+      "binanceDex": "Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.",
+      "localCryptos": "The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with each other. Buy and sell crypto on your own terms, using any payment method.",
+      "asyncArt": "Collect and experience programmable rare art.",
+      "knownOrigin": "Discover and collect rare digital artwork.",
+      "clovers": "Discover, collect & trade cryptographic icons.",
+      "default": "N/A"
+    },
+    "tabs": {
+      "active": {
+        "title": "Active",
+        "emptyState": {
+          "title": "No Active Sessions"
+        }
+      },
+      "requests": {
+        "title": "Requests",
+        "emptyState": {
+          "title": "No Pending Requests"
+        }
+      }
     }
   },
 
@@ -972,11 +1131,16 @@
       "transactionSuccess": "Tokens are on their way",
       "collectibleTransactionSuccess": "Collectible is on its way",
       "poolTogetherTransactionSuccess": "You're in the pool!",
-      "sablierTransactionSuccess": "Your stream has begun"
+      "sablierTransactionSuccess": "Your stream has begun",
+      "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
+      "amountEditScreen": "Edit amount",
+      "assetsTransferToSmartWalletStatusScreen": "Key based assets migration"
     },
     "button": {
       "payFeeWithPillar": "Pay fees with PLR",
-      "confirmTransaction": "Confirm Transaction"
+      "confirmTransaction": "Confirm Transaction",
+      "cancelUnsent": "Cancel unsent",
+      "speedSettings": "Speed settings"
     },
     "label": {
       "amount": "Amount",
@@ -987,13 +1151,27 @@
       "assetsToSettle": "Assets to settle",
       "recipientGet": "Recipient will get",
       "youPay": "You will pay",
-      "collectibleName": "Collectible"
+      "collectibleName": "Collectible",
+      "noAssetsFound": "No assets found",
+      "noCollectiblesFound": "No collectibles found",
+      "fromKeyWallet": "From Key based wallet",
+      "toSmartWallet": "To Smart Wallet",
+      "tokensToTransfer": "Tokens to transfer",
+      "collectiblesToTransfer": "Collectibles to transfer",
+      "speed": "Speed"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
+      "finalFeeInformation": "Final rate may be slightly higher or lower at the end of the transaction."
+    },
+    "emptyState": {
+      "assetsList": {
+        "title": "No assets found",
+        "paragraph": "Check if the name was entered correctly"
+      }
     }
   },
 
@@ -1084,6 +1262,66 @@
     "contactAdded": "New contact added"
   },
 
+  "exchangeContent": {
+    "modal": {
+      "smartWalletMissing": {
+        "title": "Enable Smart Wallet",
+        "paragraph": "You need a Smart Wallet to receive assets.",
+        "button": {
+          "enable": "Enable"
+        }
+      },
+      "smartWalletIsNotActive": {
+        "title": "Use Smart Wallet account",
+        "paragraph": "Please select your Smart Wallet account to buy cryptocurrency.",
+        "button": {
+          "selectAccount": "Select account"
+        }
+      },
+      "enableAsset": {
+        "title": "Enable {{asset}}",
+        "paragraph": "Once enabled, it will be available for exchanging on {{providerName}}",
+        "button": {
+          "enable": "Enable"
+        }
+      },
+      "intro": {
+        "title": "Exchange.",
+        "paragraph": "Pillar Exchange or Offers Engine, as we call it, aggregates offers from multiple providers vetted by Pillar. \n\nBuy crypto with credit cards, Apple Pay or Google Pay. Exchange tokens in a few taps.",
+        "button": {
+          "next": "Next"
+        }
+      }
+    },
+    "title": {
+      "confirmScreen": "Details",
+      "settingsScreens": "Settings",
+      "activateSmartWalletScreen": "Activate Smart Wallet",
+      "buyWithWyreScreen": "Buy with Wyre"
+    },
+    "button": {
+      "enableAsset": "Enable Asset",
+      "allowExchange": "Allow this exchange"
+    },
+    "paragraph": {
+      "tokenAllowanceInReviewScreen": "Review the details and enable asset as well as confirm the cost of data transaction.",
+      "ruleToGetExchangedTokensIntoSmartWallet": "Activate Smart Wallet \n in order to receive exchanged tokens into"
+    },
+    "label": {
+      "assetToEnable": "Asset to enable",
+      "enabledAssets": "Enabled exchange assets:",
+      "exchangeRate": "Exchange rate",
+      "availableAmount": "Available",
+      "updatedRealTime": "Updated in realtime"
+    },
+    "emptyState": {
+      "noOffers": {
+        "title": "No live offers",
+        "paragraph": "Currently no matching offers from exchange services are provided.\nNew offers may appear at any time — don’t miss it."
+      }
+    }
+  },
+
   "alert": {
     "deleteContact": {
       "title": "Delete {{contactName}}",
@@ -1127,6 +1365,14 @@
       "button": {
         "cancel": "Cancel",
         "ok": "Disconnect"
+      }
+    },
+    "addressIsNotOnPillarNetwork": {
+      "title": "This address is not on Pillar Network",
+      "message": "Invite it's owner to install Pillar wallet in order to be able to send instant transactions for free or switch to Ethereum Mainnet to send regular transaction.",
+      "button": {
+        "switchToMainnet": "Switch to Ethereum Mainnet",
+        "cancel": "Cancel"
       }
     }
   }

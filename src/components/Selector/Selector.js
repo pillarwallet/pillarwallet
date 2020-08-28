@@ -85,11 +85,11 @@ const Selector = ({
   disableSelfSelect,
   activeAccountAddress,
   onOptionImagePress,
-  label = 'Select',
-  placeholder = 'Choose option',
+  label = t('label.select'),
+  placeholder = t('label.choseOption'),
   optionsTitle,
   options,
-  searchPlaceholder = 'Search',
+  searchPlaceholder = t('label.search'),
   selectedOption,
   horizontalOptionsData,
   wrapperStyle,
@@ -181,7 +181,9 @@ const Selector = ({
   const hasValue = !isEmpty(selectedOption);
   const hasOptions = !!options?.length;
   const disabled = !hasOptions && !allowEnteringCustomAddress;
-  const placeholderText = !disabled ? `${placeholder}...` : 'no options to select';
+  const placeholderText = !disabled
+    ? t('ellipsedString', { string: placeholder })
+    : t('label.noOptionsToSelect');
 
   const onModalHidden = () => {
     setChangingModals(false);

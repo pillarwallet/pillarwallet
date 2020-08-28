@@ -17,9 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { NEWSLETTER_SUBSCRIBE_URL } from 'react-native-dotenv';
 import axios from 'axios';
+import { getEnv } from 'configs/envConfig';
 
 export const subscribeToNewsletter = (email: string) => {
-  return axios.post(`${NEWSLETTER_SUBSCRIBE_URL}&EMAIL=${email}`);
+  return axios.post(`${getEnv().NEWSLETTER_SUBSCRIBE_URL}&EMAIL=${email}`);
 };

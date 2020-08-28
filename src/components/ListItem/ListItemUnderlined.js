@@ -19,6 +19,8 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
 import { spacing, fontStyles } from 'utils/variables';
 import { TextLink, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
@@ -106,7 +108,7 @@ const ListItemUnderlined = (props: Props) => {
         </ItemValueHolder>
         {!!onPress &&
         <ItemWrapperButton onPress={onPress}>
-          <TextLink>Copy to clipboard</TextLink>
+          <TextLink>{t('button.copyToClipboard')}</TextLink>
         </ItemWrapperButton>}
       </Column>
     </ItemWrapper>
