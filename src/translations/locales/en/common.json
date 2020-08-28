@@ -293,7 +293,7 @@
     "backupPhraseRevealedPurpose": "Please use this 12 word backup phrase in order to restore the wallet.",
     "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
     "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
-    "sessionExpiredRenterPin": "Login session expired, please enter your PIN to proceed."
+    "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed."
   },
 
   "insight": {
@@ -454,7 +454,7 @@
       "shouldNotHaveDecimals": "Amount should not contain decimal places",
       "notProvided": "Amount should be specified",
       "shouldBeGreaterThanValue": "Amount should be greater than {{value}} {{token}}",
-      "shouldNotBeGreaterThanBalanceValue": "Amount should not be bigger than your balance - {{balance}} {{token}}.",
+      "shouldNotBeGreaterThanBalanceValue": "Amount should not be bigger than your balance - {{balance}} {{token}}",
       "amountShouldBeBiggerThan0": "Amount should be bigger than 0",
       "notEnoughToken": "Not enough {{token}}",
       "shouldBeGreaterThan1Wei": "Amount should be greater than 1 Wei (0.000000000000000001 ETH)"

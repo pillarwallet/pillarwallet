@@ -45,7 +45,7 @@ export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
     dispatch(lockScreenAction(
       refreshTokensCallback,
-      t('paragraph.sessionExpiredRenterPin'),
+      t('paragraph.sessionExpiredReEnterPin'),
     ));
   };
 };
