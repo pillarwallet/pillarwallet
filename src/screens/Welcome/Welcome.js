@@ -107,7 +107,7 @@ class Welcome extends React.Component<Props, State> {
 
   handleClick = () => {
     const newCount = this.state.clickCount + 1;
-    this.setState({ clickCount: newCount });
+    this.setState({ clickCount: newCount > 16 ? 0 : newCount });
     if (newCount === 16) { // on the 16th click switch network and reset.
       switchEnvironments();
     }
