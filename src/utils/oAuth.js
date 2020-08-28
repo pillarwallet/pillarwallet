@@ -17,11 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
+
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { saveDbAction } from 'actions/dbActions';
 import { lockScreenAction } from 'actions/authActions';
 
 import type { Dispatch } from 'reducers/rootReducer';
+
 
 export type OAuthTokens = {
   refreshToken: ?string,
@@ -42,7 +45,7 @@ export const onOAuthTokensFailedCB = (dispatch: Dispatch) => {
   return async (refreshTokensCallback: (privateKey: string) => void) => {
     dispatch(lockScreenAction(
       refreshTokensCallback,
-      'Login session expired, please enter your PIN to proceed.',
+      t('paragraph.sessionExpiredRenterPin'),
     ));
   };
 };
