@@ -21,6 +21,7 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Paragraph } from 'components/Typography';
@@ -36,6 +37,7 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+
 
 const FooterWrapper = styled.View`
   justify-content: center;
@@ -121,20 +123,20 @@ class BackupPhrase extends React.Component<Props, State> {
     if (!mnemonic) return null;
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Backup phrase' }] }}
+        headerProps={{ centerItems: [{ title: t('title.backupPhrase') }] }}
         footer={(
           <FooterWrapper>
             <Button
               onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,
                 { backupViaSettings: this._isBackingupViaSettings })}
-              title="Next"
+              title={t('button.next')}
             />
           </FooterWrapper>
         )}
       >
         <ScrollWrapper regularPadding>
           <Paragraph style={{ marginTop: spacing.medium }}>
-            Write down your 12 word backup phrase in the correct order.
+            {t('paragraph.instructionsOnBackingUpBackupPhase')}
           </Paragraph>
           <MnemonicPhrase phrase={mnemonic} />
         </ScrollWrapper>
