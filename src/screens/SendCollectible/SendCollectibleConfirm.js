@@ -207,7 +207,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       value: 0,
     };
 
-    const estimated = smartWalletService
+    const estimated = await smartWalletService
       .estimateAccountTransaction(estimateTransaction)
       .then(result => buildTxFeeInfo(result, useGasToken))
       .catch(() => null);

@@ -19,7 +19,9 @@
 */
 // This file should not be committed if the existing values are changed to a constant
 // the following vars are CI/BUILD related and are fixed for both environment contexts
-const buildType = __DEV__ ? 'development' : 'production';
+import { DEVELOPMENT, PRODUCTION } from 'constants/envConstants';
+
+const buildType = __DEV__ ? DEVELOPMENT : PRODUCTION;
 
 export const buildEnvironment = {
   SENTRY_DSN: 'https://3ea39df26dd24e479c27642d11566e43@sentry.io/1294444',

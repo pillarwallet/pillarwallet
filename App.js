@@ -50,6 +50,7 @@ import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { STAGING } from 'constants/envConstants';
 
 // components
 import { Container } from 'components/Layout';
@@ -278,7 +279,7 @@ class App extends React.Component<Props, *> {
                 onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
-              {this.state.env === 'staging' &&
+              {this.state.env === STAGING &&
                 <Button
                   title={`Environment: ${this.state.env}`}
                   onPress={() => switchEnvironments()}

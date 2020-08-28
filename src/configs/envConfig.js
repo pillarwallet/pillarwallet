@@ -27,12 +27,13 @@ import RNRestart from 'react-native-restart';
 import { clearWebViewCookies } from 'utils/exchange';
 import { reportLog } from 'utils/common';
 import { firebaseIid } from 'services/firebase';
+import { DEVELOPMENT, STAGING, PRODUCTION } from 'constants/envConstants';
 
 import { buildEnvironment, devOptions } from './buildConfig';
 
 const storage = Storage.getInstance('db');
 
-const buildType = __DEV__ ? 'development' : 'production';
+const buildType = __DEV__ ? DEVELOPMENT : PRODUCTION;
 
 type CurrentEnvironment = {
   [string]: string
@@ -97,7 +98,7 @@ const envVars = {
 };
 
 // default environment before switching
-let storedEnv = buildType === 'production' ? 'production' : 'staging';
+let storedEnv = buildType === PRODUCTION ? PRODUCTION : STAGING;
 
 // sets up the current stored environment on App load
 export const setupEnv = () => {
@@ -115,7 +116,7 @@ export const setupEnv = () => {
     });
 };
 
-export const switchEnvironments = async () => {
+export const switchEnvironments = () => {
   Alert.alert(
     'Warning: Environment Switch !',
     'Switching environments will DELETE THE WALLET STORAGE,' +
@@ -129,7 +130,7 @@ export const switchEnvironments = async () => {
       {
         text: 'OK',
         onPress: async () => {
-          const newEnv = storedEnv === 'production' ? 'staging' : 'production';
+          const newEnv = storedEnv === PRODUCTION ? STAGING : PRODUCTION;
           await AsyncStorage.clear(); // removes storage and redux persist data
           await Intercom.logout();
           await firebaseIid.delete()

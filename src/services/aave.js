@@ -70,7 +70,7 @@ class AaveService {
     }
 
     if (!this.lendingPoolCoreAddress) {
-      this.lendingPoolCoreAddress = lendingPoolAddressesProvider.getLendingPoolCore();
+      this.lendingPoolCoreAddress = await lendingPoolAddressesProvider.getLendingPoolCore();
     }
 
     return this.lendingPoolCoreAddress;
