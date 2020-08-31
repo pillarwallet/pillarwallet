@@ -77,7 +77,8 @@
     "noConnectedDevices": "No Connected Devices",
     "confirm": "Confirm",
     "privateKey": "Private key",
-    "exchange": "Exchange"
+    "exchange": "Exchange",
+    "unlockWithBiometrics": "Unlock with biometric sensor"
   },
 
   "label": {
@@ -291,7 +292,8 @@
     "loggingOutSecondMessage": "Sorry to see you go",
     "backupPhraseRevealedPurpose": "Please use this 12 word backup phrase in order to restore the wallet.",
     "privateKeyRevealedPurpose": "Please use this private key in order to restore the wallet.",
-    "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it."
+    "doNotShareBackup": "Keep it secure as it's the only way to recover your account in an emergency. Don't email or screenshot it.",
+    "sessionExpiredReEnterPin": "Login session expired, please enter your PIN to proceed."
   },
 
   "insight": {
@@ -407,7 +409,8 @@
       "placeholder": "Your e-mail"
     },
     "selector": {
-      "searchPlaceholder": "Search"
+      "searchPlaceholder": "Search",
+      "assetSearchPlaceholder": "Asset search"
     }
   },
 
@@ -448,14 +451,16 @@
     "amount": {
       "invalidNumber": "Incorrect number entered",
       "exceedBalance": "Amount should not exceed total balance",
-      "shouldNotHaveDecimals": "Amount should not contain decimal places"
+      "shouldNotHaveDecimals": "Amount should not contain decimal places",
+      "notProvided": "Amount should be specified",
+      "shouldBeGreaterThanValue": "Amount should be greater than {{value}} {{token}}",
+      "shouldNotBeGreaterThanBalanceValue": "Amount should not be bigger than your balance - {{balance}} {{token}}",
+      "amountShouldBeBiggerThanZero": "Amount should be bigger than 0",
+      "notEnoughToken": "Not enough {{token}}",
+      "shouldBeGreaterThan1Wei": "Amount should be greater than 1 Wei (0.000000000000000001 ETH)"
     },
     "synthetics": {
       "failedToCalculate": "Failed to calculate synthetics exchange"
-    },
-    "exchange": {
-      "incorrectNumber": "Incorrect number entered",
-      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
     }
   },
 
@@ -1259,7 +1264,8 @@
     "exchangeAllowanceFailed": "We are sorry. Token allowance could not be set. Please try again.",
     "contactUpdated": "Contact updated",
     "contactDeleted": "Contact deleted",
-    "contactAdded": "New contact added"
+    "contactAdded": "New contact added",
+    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later"
   },
 
   "exchangeContent": {
@@ -1374,6 +1380,25 @@
         "switchToMainnet": "Switch to Ethereum Mainnet",
         "cancel": "Cancel"
       }
+    },
+    "removeConnectedDevice": {
+      "title": "Are you sure?",
+      "message": "You are going to remove the link between this device and your account.\n\nPlease make sure you have all your funds backed up.",
+      "button": {
+        "cancel": "Cancel",
+        "ok": "Confirm remove"
+      }
     }
+  },
+
+  "notification": {
+    "received": "Received",
+    "transactionConfirmed": "Transaction confirmed",
+    "transactionSent": "Transaction sent",
+    "transactionReceived": "Transaction was received",
+    "success": "Success",
+    "newBadgeReceived": "New badge received!",
+    "receivedCollectible": "You received a collectible",
+    "collectibleSentAndReceived": "Your collectible has been received"
   }
 }

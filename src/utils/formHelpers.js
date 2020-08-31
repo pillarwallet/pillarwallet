@@ -19,7 +19,8 @@
 */
 
 import * as React from 'react';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
+import t from 'translations/translate';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
@@ -50,7 +51,7 @@ export function makeAmountForm(
   decimals: number,
   feeSymbol?: string,
 ) {
-  const Amount = t.refinement(t.String, (amount): boolean => {
+  const Amount = tForm.refinement(tForm.String, (amount): boolean => {
     if (!isValidNumber(amount.toString())) return false;
 
     if (decimals === 0 && amount.toString().includes('.')) return false;
@@ -67,14 +68,14 @@ export function makeAmountForm(
 
   Amount.getValidationErrorMessage = (amount): ?string => {
     if (!isValidNumber(amount.toString())) {
-      return 'Incorrect number entered.';
+      return t('error.amount.invalidNumber');
     }
 
     amount = parseNumber(amount.toString());
     if (!enoughForFee) {
-      return `Not enough ${feeSymbol || ETH} to process the transaction fee`;
+      return t('error.notEnoughTokenForFee', { token: feeSymbol || ETH });
     } else if (amount >= maxAmount) {
-      return 'Amount should not exceed the total balance';
+      return t('error.amount.exceedBalance');
     } else if (amount === 0) {
       /**
        * 0 is the first number that can be typed therefore we don't want
@@ -84,14 +85,14 @@ export function makeAmountForm(
        */
       return null;
     } else if (amount < minAmount) {
-      return `Amount should be greater than ${minAmount} ${feeSymbol || ETH})`;
+      return t('error.amount.shouldBeGreaterThanValue', { value: minAmount, token: feeSymbol || ETH });
     } else if (decimals === 0 && amount.toString().includes('.')) {
-      return 'Amount should not contain decimal places';
+      return t('error.amount.shouldNotHaveDecimals');
     }
-    return 'Amount should be specified.';
+    return t('error.amount.notProvided');
   };
 
-  return t.struct({
+  return tForm.struct({
     amount: Amount,
   });
 }
@@ -210,7 +211,7 @@ export function SelectorInputTemplate(locals: Object) {
         fullWidth: !hasInput,
         selectorModalTitle: selectorModalTitle || label,
         selectorPlaceholder: placeholderSelector,
-        optionsSearchPlaceholder: 'Asset search',
+        optionsSearchPlaceholder: t('form.selector.assetSearchPlaceholder'),
       }}
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}
@@ -266,7 +267,7 @@ export function ItemSelectorTemplate(locals: Object) {
         horizontalOptionsTitle,
         selectorModalTitle: selectorModalTitle || label,
         selectorPlaceholder: placeholderSelector,
-        optionsSearchPlaceholder: 'Asset search',
+        optionsSearchPlaceholder: t('form.selector.assetSearchPlaceholder'),
       }}
       renderOption={renderOption}
       activeTabOnItemClick={activeTabOnItemClick}
@@ -284,7 +285,7 @@ export const selectorStructure = (
   let maxAmount;
   let amount;
 
-  const Selector = t.refinement(t.Object, ({ selector, input, dontCheckBalance }) => {
+  const Selector = tForm.refinement(tForm.Object, ({ selector, input, dontCheckBalance }) => {
     if (!selector
       || isEmpty(selector)
       || !input
@@ -315,7 +316,7 @@ export const selectorStructure = (
     const isFiat = isFiatCurrency(symbol);
 
     if (!isValidNumber(input.toString())) {
-      return 'Incorrect number entered';
+      return t('error.amount.invalidNumber');
     }
 
     const numericAmount = parseFloat(input || 0);
@@ -329,7 +330,7 @@ export const selectorStructure = (
        */
       return null;
     } else if (numericAmount < 0) {
-      return 'Amount should be bigger than 0';
+      return t('error.amount.amountShouldBeBiggerThanZero');
     }
 
     // all possible fiat validation is done
@@ -342,13 +343,13 @@ export const selectorStructure = (
 
     if (amount > maxAmount) {
       if (showErrorMessageWithBalance) {
-        return `Amount should not be bigger than your balance - ${balance} ${symbol}.`;
+        return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance, token: symbol });
       }
-      return `Not enough ${symbol}`;
+      return t('error.amount', { token: symbol });
     } else if (amount < MIN_TX_AMOUNT) {
-      return 'Amount should be greater than 1 Wei (0.000000000000000001 ETH)';
+      return t('error.amount.shouldBeGreaterThan1Wei');
     } else if (decimals === 0 && amount.toString().includes('.')) {
-      return 'Amount should not contain decimal places';
+      return t('error.amount.shouldNotHaveDecimals');
     }
 
     return true;
