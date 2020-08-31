@@ -73,11 +73,12 @@ export const printLog = (...params: any) => {
 
 export const reportLog = (
   message: string,
-  extra?: Object,
+  extra: Object = {},
   level: Sentry.Severity = Sentry.Severity.Info,
 ) => {
   Sentry.withScope((scope) => {
-    scope.setExtras({ extra, level });
+    // stringify extra as deeper object levels are not added
+    scope.setExtras({ extra: JSON.stringify(extra), level });
     if (level === Sentry.Severity.Info) {
       Sentry.captureMessage(message, Sentry.Severity.Info);
     } else {

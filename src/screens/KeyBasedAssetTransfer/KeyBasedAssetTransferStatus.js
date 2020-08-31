@@ -151,10 +151,10 @@ const KeyBasedAssetTransferStatus = ({
       footer={!transferComplete && !creatingTransactions && (
         <Footer>
           <Button
-            title={t('transactions.title.button.cancelUnsent')}
+            title={t('transactions.button.cancelUnsent')}
             onPress={() => {
-              navigation.goBack();
               resetKeyBasedAssetsTransfer();
+              navigation.goBack();
             }}
           />
         </Footer>
@@ -164,7 +164,7 @@ const KeyBasedAssetTransferStatus = ({
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <Wrapper flex={1} center regularPadding>
             <Animation source={animationSuccess} />
-            <Title center>Key based assets migration complete</Title>
+            <Title center>{t('transactions.title.keyBasedAssetsMigrationComplete')}</Title>
             <Button
               block
               title={t('button.magic')}
@@ -177,7 +177,7 @@ const KeyBasedAssetTransferStatus = ({
       {creatingTransactions && (
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <LoadingWrapper>
-            <Paragraph center>Creating transactions</Paragraph>
+            <Paragraph center>{t('transactions.title.creatingTransactions')}</Paragraph>
             <Spinner style={{ marginTop: spacing.small }} width={25} height={25} />
           </LoadingWrapper>
         </ScrollWrapper>
