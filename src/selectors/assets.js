@@ -20,7 +20,7 @@
 
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 import type { Assets, Balance, Rates } from 'models/Asset';
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
@@ -117,7 +117,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
       const assetBalance = getBalance(activeAccountBalance, symbol);
       if (assetBalance) {
         const { iconUrl, address } = relatedAsset;
-        const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+        const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
         assetsWithBalance.push({

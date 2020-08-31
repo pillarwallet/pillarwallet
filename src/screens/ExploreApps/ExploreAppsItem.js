@@ -84,7 +84,12 @@ const ExploreAppsItem = (props: Props) => {
           style={{ maxWidth: 150 }}
         />
       </AppItemRowWrapper>
-      <AppText>{item.text}</AppText>
+      <AppText>
+        {t([
+          `walletConnectContent.appDescription.${item.translationKey}`,
+          'walletConnectContent.appDescription.default',
+        ])}
+      </AppText>
     </AppItemWrapper>
   );
 };

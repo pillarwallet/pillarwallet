@@ -29,7 +29,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { TX_DETAILS_URL } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -69,7 +69,7 @@ import { images } from 'utils/images';
 import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
-import { getValueWithSymbol } from 'utils/strings';
+import { getFormattedValue } from 'utils/strings';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
@@ -436,7 +436,9 @@ export class EventDetail extends React.Component<Props, State> {
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const rate = getRate(rates, token, fiatCurrency);
     const formattedFiatValue = formatFiat(formattedFee * rate, fiatCurrency);
-    return t('label.feeTokenFiat', { tokenValue: `${formattedFee} ${token}`, fiatValue: formattedFiatValue });
+    return t('label.feeTokenFiat', {
+      tokenValue: t('tokenValue', { value: formattedFee, token }), fiatValue: formattedFiatValue,
+    });
   };
 
   getFeeLabel = (event: Object) => {
@@ -470,7 +472,7 @@ export class EventDetail extends React.Component<Props, State> {
 
   viewOnTheBlockchain = () => {
     const { hash } = this.props.event;
-    const url = TX_DETAILS_URL + hash;
+    const url = getEnv().TX_DETAILS_URL + hash;
     Linking.openURL(url);
   };
 
@@ -626,9 +628,9 @@ export class EventDetail extends React.Component<Props, State> {
 
   renderPoolTogetherTickets = (event: Object) => {
     const { symbol, amount, decimals } = event.extra;
-    const formattedAmount = parseFloat(formatUnits(amount, decimals));
+    const formattedAmount = parseFloat(formatUnits(amount, decimals)).toString();
     const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
-    const amountText = getValueWithSymbol(`${formattedAmount} ${symbol}`, isPositive, !formattedAmount);
+    const amountText = getFormattedValue(formattedAmount, symbol, { isPositive, noSymbol: !formattedAmount });
     const ticketsText = `(${t('ticketAmount', { count: formattedAmount })})`;
     const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
     const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? t('label.purchase') : t('label.withdraw');
@@ -763,12 +765,6 @@ export class EventDetail extends React.Component<Props, State> {
     const relevantAddress = this.getRelevantAddress(event);
     const { fullItemValue, isReceived } = itemData;
     const formattedValue = formatAmount(value);
-
-    let directionSymbol = isReceived ? '+' : '-';
-
-    if (formattedValue === '0') {
-      directionSymbol = '';
-    }
 
     const isPending = isPendingTransaction(event);
     const isFailed = isFailedTransaction(event);
@@ -1009,12 +1005,15 @@ export class EventDetail extends React.Component<Props, State> {
 
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
         const actionSubtitle = isReceived ? t('label.toPPN') : t('label.fromPPN');
+        const isZeroValue = formattedValue === '0';
 
         if (isPPNTransaction) {
           eventData = {
             customActionTitle: !isTrxBetweenSWAccount && (
               <TankAssetBalance
-                amount={`${directionSymbol} ${formattedValue} ${event.asset}`}
+                amount={
+                  getFormattedValue(formattedValue, event.asset, { isPositive: !!isReceived, noSymbol: isZeroValue })
+                }
                 textStyle={{ fontSize: fontSizes.large }}
                 iconStyle={{ height: 14, width: 8, marginRight: 9 }}
               />
@@ -1300,35 +1299,39 @@ export class EventDetail extends React.Component<Props, State> {
       }, []);
 
     const groupedTransactions: TransactionsGroup[] = groupPPNTransactions(mappedTransactions);
-    const valueSymbol = isFailed ? '' : '- ';
 
     return (
       <SettleWrapper>
-        {!!groupedTransactions && groupedTransactions.map(group => (
-          <React.Fragment key={group.symbol}>
-            <Row marginBottom={10}>
-              <BaseText regular synthetic>From Pillar Tank</BaseText>
-              <TankAssetBalance
-                amount={`${valueSymbol}${formatUnits(group.value.toString(), 18)} ${group.symbol}`}
-                textStyle={{ fontSize: fontSizes.big }}
-                iconStyle={{ height: 14, width: 8, marginRight: 9 }}
-                secondary={isFailed}
-              />
-            </Row>
-            {group.transactions.map(({
-              createdAt, asset, value, hash,
-            }) => {
-              const formattedDate = formatDate(new Date(createdAt * 1000), 'MMM D HH:mm');
-              const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
-              return (
-                <Row marginBottom={13} key={hash}>
-                  <BaseText secondary tiny>{formattedDate}</BaseText>
-                  <BaseText secondary small>{valueSymbol}{formattedAmount} {asset}</BaseText>
-                </Row>
-              );
-            })}
-          </React.Fragment>
-        ))}
+        {!!groupedTransactions && groupedTransactions.map(group => {
+          const formattedVal = formatUnits(group.value.toString(), 18);
+          return (
+            <React.Fragment key={group.symbol}>
+              <Row marginBottom={10}>
+                <BaseText regular synthetic>From Pillar Tank</BaseText>
+                <TankAssetBalance
+                  amount={getFormattedValue(formattedVal, group.symbol, { isPositive: !isFailed, noSymbol: !isFailed })}
+                  textStyle={{ fontSize: fontSizes.big }}
+                  iconStyle={{ height: 14, width: 8, marginRight: 9 }}
+                  secondary={isFailed}
+                />
+              </Row>
+              {group.transactions.map(({
+                createdAt, asset, value, hash,
+              }) => {
+                const formattedDate = formatDate(new Date(createdAt * 1000), 'MMM D HH:mm');
+                const formattedAmount = formatAmount(formatUnits(value.toString(), 18));
+                return (
+                  <Row marginBottom={13} key={hash}>
+                    <BaseText secondary tiny>{formattedDate}</BaseText>
+                    <BaseText secondary small>
+                      {getFormattedValue(formattedAmount, asset, { isPositive: !isFailed, noSymbol: !isFailed })}
+                    </BaseText>
+                  </Row>
+                );
+              })}
+            </React.Fragment>
+          );
+        })}
         {!isFailed &&
         <>
           <Divider />
@@ -1337,7 +1340,7 @@ export class EventDetail extends React.Component<Props, State> {
             <View>
               {groupedTransactions.map(({ value, symbol }) => (
                 <BaseText positive large key={symbol}>
-                  {t('positiveValue', { value: `${formatUnits(value.toString(), 18)} ${symbol}` })}
+                  {t('positiveTokenValue', { value: formatUnits(value.toString(), 18), token: symbol })}
                 </BaseText>
               ))}
             </View>

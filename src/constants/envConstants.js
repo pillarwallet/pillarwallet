@@ -18,21 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import t from 'translations/translate';
+// not to be confused with envConfig
 
-type FormattedValueOptions = {|
-  isPositive?: boolean,
-  noSymbol?: boolean
-|}
-
-export const capitalize = (str: string): string => {
-  if (typeof str !== 'string') return '';
-  return str.charAt(0).toUpperCase() + str.slice(1);
-};
-
-export const getFormattedValue = (value: string, token: string, options: ?FormattedValueOptions) => {
-  const { isPositive, noSymbol } = options || {};
-  if (noSymbol || typeof isPositive === 'undefined') return t('tokenValue', { value, token });
-  if (isPositive) return t('positiveTokenValue', { value, token });
-  return t('negativeTokenValue', { value, token });
-};
+export const PRODUCTION = 'production';
+export const STAGING = 'staging';
+export const DEVELOPMENT = 'development';

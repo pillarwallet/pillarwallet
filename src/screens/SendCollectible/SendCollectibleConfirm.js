@@ -24,10 +24,10 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
-import { COLLECTIBLES_NETWORK, NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import isEqual from 'lodash.isequal';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -88,7 +88,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   receiver: string;
   receiverEnsName: string;
   source: string;
-  isRopstenNetwork: boolean;
+  isKovanNetwork: boolean;
 
   constructor(props) {
     super(props);
@@ -96,7 +96,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     this.receiver = this.props.navigation.getParam('receiver', '');
     this.source = this.props.navigation.getParam('source', '');
     this.receiverEnsName = this.props.navigation.getParam('receiverEnsName');
-    this.isRopstenNetwork = NETWORK_PROVIDER === 'ropsten';
+    this.isKovanNetwork = getEnv().NETWORK_PROVIDER === 'kovan';
 
     this.state = {
       rinkebyETH: '',
@@ -155,12 +155,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
 
   fetchETHBalanceInRinkeby = async () => {
     /**
-     * we're fetching Rinkeby ETH if current network is Ropsten because
+     * we're fetching Rinkeby ETH if current network is Kovan because
      * our used collectibles in testnets are sent only using Rinkeby
      * so if we're not on Rinkeby itself we can only check Rinkeby balance
      * using this additional call
      */
-    if (!this.isRopstenNetwork) return;
+    if (!this.isKovanNetwork) return;
     const { wallet } = this.props;
     const rinkebyETH = await fetchRinkebyETHBalance(wallet.address);
     this.setState({ rinkebyETH });
@@ -198,7 +198,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
   getSmartWalletTxFee = async (transaction: CollectibleTransactionPayload): Promise<TransactionFeeInfo> => {
     const { useGasToken } = this.props;
     const defaultResponse = { fee: new BigNumber(0) };
-    const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+    const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
     const data = await buildERC721TransactionData(transaction, provider);
 
     const estimateTransaction = {
@@ -264,7 +264,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     if (txFeeInfo) {
       // rinkeby testnet fee check
       const txFee = utils.formatEther(txFeeInfo.fee.toString());
-      const canProceedTesting = this.isRopstenNetwork && parseFloat(rinkebyETH) > parseFloat(txFee);
+      const canProceedTesting = this.isKovanNetwork && parseFloat(rinkebyETH) > parseFloat(txFee);
 
       // fee
       const balanceCheckTransaction = {
@@ -311,9 +311,9 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       },
     );
 
-    if (this.isRopstenNetwork) {
+    if (this.isKovanNetwork) {
       reviewData.push({
-        label: 'Balance in Rinkeby ETH (visible in dev and staging while on Ropsten)',
+        label: 'Balance in Rinkeby ETH (visible in dev and staging while on Kovan)',
         value: `${rinkebyETH} ETH`,
       });
     }

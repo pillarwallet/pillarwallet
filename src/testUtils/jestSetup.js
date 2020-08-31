@@ -32,7 +32,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // mocks
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
-
+import envConfigMock from './envConfigMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -278,7 +278,7 @@ jest.setMock('@smartwallet/sdk', {
   },
   SdkEnvironmentNames: {
     Rinkeby: 'Rinkeby',
-    Ropsten: 'Ropsten',
+    Kovan: 'Kovan',
   },
   getSdkEnvironment: () => mockArchanovaSdkInstance,
   createSdk: () => ({
@@ -331,4 +331,6 @@ jest.setMock('react-native-notifications');
 jest.setMock('@react-native-community/netinfo');
 
 jest.setMock('react-native-appearance', {});
+
+jest.setMock('configs/envConfig', envConfigMock);
 

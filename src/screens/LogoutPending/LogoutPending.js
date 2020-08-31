@@ -1,8 +1,10 @@
 // @flow
 import * as React from 'react';
-import { Wrapper } from 'components/Layout';
 import { withTheme } from 'styled-components';
+import t from 'translations/translate';
+
 import Loader from 'components/Loader';
+import { Wrapper } from 'components/Layout';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
@@ -15,7 +17,10 @@ const LogoutPending = (props: Props) => {
   const colors = getThemeColors(theme);
   return (
     <Wrapper fullscreen center style={{ backgroundColor: colors.surface }}>
-      <Loader messages={['Deleting takes a moment', 'Sorry to see you go']} firstMessageWithoutDelay />
+      <Loader
+        messages={[t('paragraph.loggingOutFirstMessage'), t('paragraph.loggingOutSecondMessage')]}
+        firstMessageWithoutDelay
+      />
     </Wrapper>
   );
 };

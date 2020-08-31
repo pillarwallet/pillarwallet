@@ -21,10 +21,11 @@ import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { BUILD_TYPE } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'utils/wallet';
+import { STAGING } from 'constants/envConstants';
 
-const KEYCHAIN_SERVICE = `com.pillarproject.wallet${BUILD_TYPE === 'staging' ? '.staging' : ''}`;
+const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
 const KEYCHAIN_DATA_KEY = 'data';
 const BIOMETRICS_PROMPT_MESSAGE = {
   title: 'Unlock with biometric sensor',

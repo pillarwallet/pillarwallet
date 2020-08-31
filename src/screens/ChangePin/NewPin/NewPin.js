@@ -19,6 +19,8 @@
 */
 import * as React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
+
 import { Container } from 'components/Layout';
 import Header from 'components/Header';
 import PinCode from 'components/PinCode';
@@ -45,7 +47,7 @@ export default class NewPin extends React.Component<Props, State> {
 
     if (currentPin === newPin) {
       this.setState({
-        pinError: 'New pincode must be different from the current one',
+        pinError: t('error.pin.newShouldBeDifferent'),
       });
       return;
     }
@@ -73,7 +75,7 @@ export default class NewPin extends React.Component<Props, State> {
     return (
       <Container>
         <Header
-          title="enter new pincode"
+          title={t('title.enterNewPincode')}
           centerTitle
           onClose={this.handleScreenDismissal}
         />

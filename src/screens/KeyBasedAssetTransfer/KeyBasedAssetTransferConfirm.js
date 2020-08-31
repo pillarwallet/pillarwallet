@@ -26,6 +26,7 @@ import { BigNumber } from 'bignumber.js';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -117,7 +118,7 @@ const KeyBasedAssetTransferConfirm = ({
       <Footer>
         <FooterInner>
           <FeeLabelToggle
-            labelText="Fee"
+            labelText={t('label.fee')}
             txFeeInWei={totalTransferFeeWeiBN}
             showFiatDefault={!notEnoughFee}
           />
@@ -125,7 +126,7 @@ const KeyBasedAssetTransferConfirm = ({
           <Button
             style={{ marginTop: spacing.large }}
             disabled={!!notEnoughFee}
-            title="Confirm"
+            title={t('button.confirm')}
             onPress={() => navigation.navigate(KEY_BASED_ASSET_TRANSFER_UNLOCK)}
           />
         </FooterInner>
@@ -137,24 +138,26 @@ const KeyBasedAssetTransferConfirm = ({
     <ScrollView>
       <DetailsWrapper>
         <DetailsLine>
-          <DetailsTitle>From Key based wallet</DetailsTitle>
+          <DetailsTitle>{t('transactions.label.fromKeyWallet')}</DetailsTitle>
           <DetailsValue>{humanizeHexString(keyBasedWalletAddress)}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
-          <DetailsTitle>To Smart Wallet</DetailsTitle>
+          <DetailsTitle>{t('transactions.label.toSmartWallet')}</DetailsTitle>
           <DetailsValue>{humanizeHexString(activeAccountAddress)}</DetailsValue>
         </DetailsLine>
         {!isEmpty(tokensTransfer) && (
           <DetailsLine>
-            <DetailsTitle>Tokens to transfer</DetailsTitle>
+            <DetailsTitle>{t('transactions.label.tokensToTransfer')}</DetailsTitle>
             {tokensTransfer.map(({ assetData: { token: symbol }, amount }) => (
-              <DetailsValue key={symbol}>{formatFullAmount(amount || '')} {symbol}</DetailsValue>
+              <DetailsValue key={symbol}>
+                {t('tokenValue', { value: formatFullAmount(amount || ''), token: symbol })}
+              </DetailsValue>
             ))}
           </DetailsLine>
         )}
         {!isEmpty(collectiblesTransfer) && (
           <DetailsLine>
-            <DetailsTitle>Collectibles to transfer</DetailsTitle>
+            <DetailsTitle>{t('transactions.label.collectiblesToTransfer')}</DetailsTitle>
             {collectiblesTransfer.map(({ assetData: { name } }) => (
               <DetailsValue key={name}>{name}</DetailsValue>
             ))}
@@ -166,7 +169,7 @@ const KeyBasedAssetTransferConfirm = ({
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: 'Confirm' }] }}
+      headerProps={{ centerItems: [{ title: t('title.confirm') }] }}
       footer={!isLoading && renderFooter()}
     >
       {isLoading && <Wrapper flex={1} center><Spinner /></Wrapper>}

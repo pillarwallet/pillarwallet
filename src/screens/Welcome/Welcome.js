@@ -24,6 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
+import { switchEnvironments } from 'configs/envConfig';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -83,7 +84,7 @@ const LogoWrapper = styled.View`
   margin-top: -${INITIAL_TOP_MARGIN}px;
 `;
 
-const Spacer = styled.View`
+const Spacer = styled.TouchableOpacity`
   flex: 2.5;
   width: 100%;
   align-items: center;
@@ -102,6 +103,16 @@ const ButtonsWrapper = styled.View`
 const AnimatedLogoWrapper = Animated.createAnimatedComponent(LogoWrapper);
 
 const translateY = new Animated.Value(0);
+
+let clickCount = 0;
+const handleSecretClick = () => {
+  clickCount++;
+  console.log('clickCount: ', clickCount)
+  if (clickCount === 16) { // on the 16th click switch network and reset.
+    clickCount = 0;
+    switchEnvironments();
+  }
+};
 
 const Welcome = ({
   navigation,
@@ -130,7 +141,7 @@ const Welcome = ({
         statusbarColor={{ [LIGHT_THEME]: LIGHT_CONTENT }}
       >
         <Wrapper fullScreen>
-          <Spacer />
+          <Spacer onPress={handleSecretClick} />
           <ButtonsWrapper>
             <Button
               roundedCorners

@@ -22,9 +22,9 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -79,7 +79,7 @@ class UnsettledAssets extends React.Component<Props> {
     const formattedAmountInFiat = formatFiat(totalInFiat, baseFiatCurrency);
     const thisAsset = assets[tokenSymbol] || {};
     const { symbol, iconUrl, name } = thisAsset;
-    const fullIconUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const fullIconUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
     return (
       <ListItemWithImage

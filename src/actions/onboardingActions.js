@@ -248,11 +248,15 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       },
     } = currentState.wallet;
 
-    // STEP 0: Clear local storage and reset app state
+    // STEP 0: Clear local storage and reset app state except env if setup
+    const env = await storage.get('environment');
     if (isImported) {
       await resetAppState();
     } else {
       await storage.removeAll();
+    }
+    if (env) {
+      await storage.save('environment', env, true);
     }
 
     dispatch({ type: UPDATE_ACCOUNTS, payload: [] });

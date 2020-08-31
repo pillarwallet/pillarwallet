@@ -70,7 +70,7 @@ class RetryApiRegistration extends React.Component<Props> {
         {walletState === REGISTRATION_FAILED && (
           <>
             <Text>Registration failed</Text>
-            <Button title="Try again" onPress={registerOnBackend} />
+            <Button title={t('auth:button.tryAgain')} onPress={registerOnBackend} />
           </>
         )}
       </Container>
