@@ -58,12 +58,11 @@ import { saveDbAction } from './dbActions';
 
 
 const removePrompt = (callback) => Alert.alert(
-  'Are you sure?',
-  'You are going to remove the link between this device and your account.' +
-  '\n\nPlease make sure you have all your funds backed up.',
+  t('alert.removeConnectedDevice.title'),
+  t('alert.removeConnectedDevice.message'),
   [
-    { text: 'Confirm remove', onPress: callback },
-    { text: 'Cancel', style: 'cancel' },
+    { text: t('alert.removeConnectedDevice.button.ok'), onPress: callback },
+    { text: t('alert.removeConnectedDevice.button.cancel'), style: 'cancel' },
   ],
   { cancelable: true },
 );
