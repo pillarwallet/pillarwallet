@@ -17,176 +17,173 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
 import styled from 'styled-components/native';
-import { Animated, StatusBar } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import merge from 'lodash.merge';
 import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
-import ToastCard from './ToastCard';
+import { noop } from 'utils/common';
 
-type ToastOptions = {
+import ToastCard from './ToastCard';
+import AnimatedToastList from './AnimatedToastList';
+
+import type { Props as CardProps } from './ToastCard';
+
+type ToastOptions = {|
   autoClose?: boolean,
   onPress?: () => void,
+  onClose?: () => void,
   emoji: string,
   message: string,
   supportLink?: boolean,
   link?: string,
   onLinkPress?: () => void,
+|};
+
+type ToastItem = {
+  id: string,
+  data: $Exact<CardProps>,
 };
 
-type State = {
-  isVisible: boolean,
-  animSlide: Object,
-  toastOptions: ToastOptions,
+type Instance = {
+  show: (options: ToastItem) => void;
+  close: (id: string) => void;
+  closeAll: () => void;
+  count: () => number;
 };
 
-const toastInitialOptions: ToastOptions = {
-  autoClose: false,
-  message: '',
-  emoji: 'ok_hand',
-  supportLink: false,
-};
+const AUTOCLOSE_DELAY = 2000;
 
-const ToastHolder = styled(SafeAreaView)`
-  width: 100%;
-`;
-
-const ToastWrapper = styled.View`
-  opacity: ${props => props.opacity};
+const ToastsWrapper = styled(SafeAreaView)`
   position: absolute;
   left: 0;
   top: 0;
   width: 100%;
   z-index: 1000;
-  justify-content: center;
-  align-items: center;
-  margin-top: ${props => props.androidStatusbarHeight || 0}px;
+  margin-top: ${({ statusBarHeight = 0 }) => statusBarHeight}px;
   padding: 40px 20px;
 `;
 
-const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
+const toastInstances: Instance[] = [];
 
+const Toast = () => {
+  const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const instance = useRef<Instance>({
+    show: noop,
+    close: noop,
+    closeAll: noop,
+    count: () => 0,
+  });
 
-class Toast extends React.Component<{}, State> {
-  timeout: TimeoutID;
+  instance.current.show = useCallback((toast: ToastItem) => setToasts(prev => [toast, ...prev]), []);
 
-  state = {
-    isVisible: false,
-    animSlide: new Animated.Value(0),
-    toastOptions: toastInitialOptions,
-  };
-
-  static toastInstances: Object[] = [];
-
-  static show(toastOptions: ToastOptions) {
-    const toast = this.toastInstances[this.toastInstances.length - 1];
+  const close = useCallback((targetId: string) => {
+    const toast = toasts.find(({ id }) => id === targetId);
     if (toast) {
-      toast.handleOpen(toastOptions);
+      setToasts(prev => prev.filter(({ id }) => id !== targetId));
+      if (toast.data.onClose) toast.data.onClose();
     }
-  }
+  }, [toasts]);
+  instance.current.close = close;
 
-  static close() {
-    const toast = this.toastInstances[this.toastInstances.length - 1];
-    if (toast) {
-      toast.handleClose();
-    }
-  }
+  instance.current.closeAll = useCallback(() => {
+    setToasts([]);
+    toasts.forEach(({ data: { onClose = noop } }) => onClose());
+  }, [toasts]);
 
-  static isVisible() {
-    const toast = this.toastInstances[this.toastInstances.length - 1];
-    return toast ? toast.state.isVisible : false;
-  }
+  instance.current.count = useCallback(() => toasts.length, [toasts.length]);
 
-  componentWillUnmount() {
-    clearTimeout(this.timeout);
-    Toast.toastInstances.splice(Toast.toastInstances.length - 1);
-  }
+  useEffect(() => {
+    // This proxy ensures that the identities of the instance and its methods
+    // available on outside are stable.
+    const instanceWrapper: Instance = {
+      show: toast => instance.current.show(toast),
+      close: id => instance.current.close(id),
+      closeAll: () => instance.current.closeAll(),
+      count: () => instance.current.count(),
+    };
 
-  handleOpen = (toastOptions: ToastOptions) => {
-    if (this.state.isVisible) return;
-    const { options } = merge({}, { options: this.state.toastOptions }, { options: toastOptions });
+    toastInstances.push(instanceWrapper);
 
-    this.setState({
-      isVisible: true,
-      toastOptions: options,
-    });
+    return () => {
+      const index = toastInstances.indexOf(instanceWrapper);
+      if (index !== -1) toastInstances.splice(index, 1);
+    };
+  }, []);
 
-    Animated.timing(this.state.animSlide, {
-      toValue: 1,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => {
-      if (!this.state.toastOptions.autoClose) return;
-      this.timeout = setTimeout(() => {
-        this.handleClose();
-        clearTimeout(this.timeout);
-      }, 2000);
-    });
-  };
+  const renderToast = useCallback(({ id, data: { onPress = noop, ...rest } }) => (
+    <ToastCard
+      key={id}
+      {...rest}
+      onPress={() => {
+        close(id);
+        onPress();
+      }}
+      onClose={() => close(id)}
+    />
+  ), [close]);
 
-  handleClose = () => {
-    this.setState({ isVisible: false });
-    Animated.timing(this.state.animSlide, {
-      toValue: 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => this.setState({ toastOptions: toastInitialOptions }));
-  };
+  return (
+    <ToastsWrapper
+      forceInset={{ top: 'always', bottom: 'never' }}
+      statusBarHeight={StatusBar.currentHeight}
+    >
+      <AnimatedToastList
+        items={toasts}
+        renderItem={renderToast}
+        onSwipeDismiss={close}
+      />
+    </ToastsWrapper>
+  );
+};
 
-  handlePress = () => {
-    const { toastOptions: { onPress } } = this.state;
-    if (!onPress) {
-      return;
-    }
+const getTopInstance = (): ?Instance => toastInstances[toastInstances.length - 1];
+const goToSupport = () => Intercom.displayMessenger();
+const closeWithDelay = (id: string) => setTimeout(() => Toast.close(id), AUTOCLOSE_DELAY);
 
-    this.handleClose();
-    onPress();
-  };
+let lastToastId = 0;
 
-  goToSupport = () => {
-    Intercom.displayMessenger();
-  }
+Toast.show = (options: ToastOptions): string | null => {
+  const instance = getTopInstance();
 
-  render() {
+  if (instance) {
     const {
-      toastOptions: {
-        message, emoji, supportLink, link, onLinkPress,
-      },
-    } = this.state;
-    const animation = this.state.animSlide.interpolate({
-      inputRange: [0, 1],
-      outputRange: [-260, 0],
-    });
+      link,
+      onLinkPress,
+      supportLink,
+      autoClose = false,
+      ...rest
+    } = options;
+
+    const id = (++lastToastId).toString();
 
     const linkProps = supportLink ? {
       link: t('label.contactSupport'),
-      onLinkPress: this.goToSupport,
+      onLinkPress: goToSupport,
     } : {
-      link, onLinkPress,
+      link,
+      onLinkPress,
     };
 
-    return (
-      <AnimatedToastWrapper
-        style={{
-          transform: [{ translateY: animation }],
-        }}
-        opacity={+!!this.state.toastOptions.message}
-        androidStatusbarHeight={StatusBar.currentHeight}
-      >
-        <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
-          <ToastCard
-            message={message}
-            emoji={emoji}
-            onClose={this.handleClose}
-            {...linkProps}
-          />
-        </ToastHolder>
-      </AnimatedToastWrapper>
-    );
+    instance.show({
+      id,
+      data: {
+        ...linkProps,
+        ...rest,
+      },
+    });
+
+    if (autoClose) closeWithDelay(id);
+    return id;
   }
-}
+
+  return null;
+};
+
+Toast.close = (id: string) => toastInstances.forEach(instance => instance.close(id));
+Toast.closeAll = () => toastInstances.forEach(instance => instance.closeAll());
+Toast.isVisible = () => toastInstances.some(instance => instance.count() > 0);
 
 export default Toast;

@@ -29,11 +29,7 @@ type Props = {
 const Root = (props: Props) => (
   <View {...props} style={{ flex: 1 }}>
     {props.children}
-    <Toast
-      ref={c => {
-        if (c && !Toast.toastInstances.includes(c)) Toast.toastInstances.push(c);
-      }}
-    />
+    <Toast />
     <ActionSheet
       ref={c => {
         if (c) ActionSheet.actionsheetInstance = c;

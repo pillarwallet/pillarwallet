@@ -29,7 +29,7 @@ import Icon from 'components/Icon';
 
 import { themedColors } from 'utils/themes';
 
-type Props = {
+export type Props = {
   message: string,
   emoji: string,
   link?: string,

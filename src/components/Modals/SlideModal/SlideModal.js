@@ -180,7 +180,7 @@ class SlideModal extends React.Component<Props, *> {
     Keyboard.dismiss();
     const TIMEOUT = Toast.isVisible() ? 150 : 0;
     if (Toast.isVisible()) {
-      Toast.close();
+      Toast.closeAll();
     }
     const timer = setTimeout(() => {
       if (this.props.onModalHide) {
@@ -194,7 +194,7 @@ class SlideModal extends React.Component<Props, *> {
   handleScroll = (p: ScrollToProps) => {
     const { handleScrollTo } = this.props;
     if (Toast.isVisible()) {
-      Toast.close();
+      Toast.closeAll();
     }
     if (handleScrollTo) handleScrollTo(p);
   };
