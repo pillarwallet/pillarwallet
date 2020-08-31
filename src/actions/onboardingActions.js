@@ -426,7 +426,11 @@ export const checkUsernameAvailabilityAction = (username: string) => {
 
     api.init();
 
-    const result: any = await api.usernameSearch(username);
+    const result: {
+      status?: number,
+      username?: string,
+      message?: string,
+    } = await api.usernameSearch(username);
 
     const usernameTaken = isCaseInsensitiveMatch(result?.username, username);
 
