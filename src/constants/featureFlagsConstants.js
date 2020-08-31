@@ -28,6 +28,7 @@ export const FEATURE_FLAGS = {
   PEER_TO_PEER: 'feature_services_peer_to_peer',
   KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
   SABLIER: 'feature_services_sablier',
+  SABLIER_TIME_START_TOLERANCE: 'feature_services_sablier_time_start_tolerance',
   ALTALIX: 'feature_services_altalix',
 };
 
@@ -41,4 +42,6 @@ export const INITIAL_FEATURE_FLAGS = {
   [FEATURE_FLAGS.PEER_TO_PEER]: true,
   [FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION]: true,
   [FEATURE_FLAGS.ALTALIX]: true,
+  [FEATURE_FLAGS.SABLIER]: true,
+  [FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE]: 5,
 };
