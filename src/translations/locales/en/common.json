@@ -1255,8 +1255,6 @@
     "notEnoughForTransactionFee": "Not enough {{feeSymbol}} to pay for transaction fee.",
     "languageChanged": "Language changed.",
     "languageChangeFailed": "Can't change language. Please try again.",
-    "sablierAllowanceEnabled": "{{assetName}} ({{assetSymbol}}) enabled.",
-    "sablierAllowanceFailed": "Can't enable {{assetName}} ({{assetSymbol}}). Please try again.",
     "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) withdrawn.",
     "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",
