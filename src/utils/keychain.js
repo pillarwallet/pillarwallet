@@ -21,17 +21,14 @@ import { Platform } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
+
 import { getEnv } from 'configs/envConfig';
 import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'utils/wallet';
 import { STAGING } from 'constants/envConstants';
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
 const KEYCHAIN_DATA_KEY = 'data';
-const BIOMETRICS_PROMPT_MESSAGE = {
-  title: 'Unlock with biometric sensor',
-  subtitle: '', // required as empty
-  description: '', // required as empty
-};
 
 export type KeyChainData = {
   privateKey?: string,
@@ -68,7 +65,11 @@ export const setKeychainDataObject = async (data: KeyChainData, biometry?: ?bool
 export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
-    authenticationPrompt: BIOMETRICS_PROMPT_MESSAGE,
+    authenticationPrompt: {
+      title: t('title.unlockWithBiometrics'),
+      subtitle: '', // required as empty
+      description: '', // required as empty
+    },
   })
   .then(({ password = '{}' }) => JSON.parse(password))
   .catch(errorHandler || (() => null));

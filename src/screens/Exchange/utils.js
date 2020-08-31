@@ -259,9 +259,9 @@ export const getErrorMessage = (
   const { assetBalance = '', symbol = '' } = asset;
   const isValid = isValidNumber(amount);
   if (!isValid) {
-    return t('error.exchange.incorrectNumber');
+    return t('error.amount.invalidNumber');
   } else if (!isEnoughAssetBalance(assetBalance, amount)) {
-    return t('error.exchange.amountTooBig', { assetBalance, symbol });
+    return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance: assetBalance, token: symbol });
   }
   return '';
 };
