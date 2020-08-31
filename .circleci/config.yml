@@ -293,15 +293,16 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            rm .env
-            cp environments/.env.staging ./.env
+            sed -i.bak "s/_build_type_/staging/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
-            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
-            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
-            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
-            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           no_output_timeout: 20m
@@ -378,15 +379,16 @@ jobs:
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            rm .env
-            cp environments/.env.staging ./.env
+            sed -i.bak "s/_build_type_/staging/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
-            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
-            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
-            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
-            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
           name: Initial build
@@ -461,15 +463,16 @@ jobs:
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
-            rm .env
-            cp environments/.env.production ./.env
+            sed -i.bak "s/_build_type_/production/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
-            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
-            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
-            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
-            sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" ios/pillarwallet.xcodeproj/project.pbxproj
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 
@@ -579,15 +582,16 @@ jobs:
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
             export buildNumber="$(cat /tmp/workspace/build-num/app_version.txt)"
-            rm .env
-            cp environments/.env.production ./.env
+            sed -i.bak "s/_build_type_/production/g" .env
+            sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_build_number_/$buildNumber/g" .env
-            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" .env
-            sed -i.bak "s/_infura_project_id_/$INFURA_PROJECT_ID/g" .env
+            sed -i.bak "s/_open_sea_api_key_/$OPEN_SEA_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_infura_project_id_/$STAGING_INFURA_PROJECT_ID/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_sentry_auth_token_/$SENTRY_AUTH_TOKEN/g" .env
-            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" .env
-            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" .env
-            sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" .env
+            sed -i.bak "s/_ethplorer_api_key_/$ETHPLORER_API_KEY/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
+            sed -i.bak "s/_rampnetwork_api_key_/$RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_branch_io_key_live_/$BRANCH_IO_KEY_LIVE/g" android/app/src/main/assets/branch.json
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
 

@@ -23,7 +23,7 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import { SABLIER_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import * as Sentry from '@sentry/react-native';
 
@@ -77,7 +77,6 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
-import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { SABLIER_WITHDRAW, SABLIER_CANCEL_STREAM } from 'constants/sablierConstants';
 
 // configs
@@ -336,13 +335,9 @@ export const deploySmartWalletAction = () => {
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
       if (error && error === 'reverted') {
-        dispatch({
-          type: ADD_NOTIFICATION,
-          payload: {
-            message: 'Activation is temporarily unavailable. Please try again latter',
-            title: 'Could not activate Smart Wallet',
-            messageType: 'warning',
-          },
+        Toast.show({
+          message: t('toast.smartWalletActivationUnavailable'),
+          emoji: 'hushed',
         });
         return;
       }
@@ -716,7 +711,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           } else if (aaveTokenAddresses.some((tokenAddress) => addressesEqual(txReceiverAddress, tokenAddress))) {
             notificationMessage = t('toast.lendingWithdrawSuccess', { paymentInfo: getPaymentFromHistory() });
             dispatch(fetchDepositedAssetsAction());
-          } else if (addressesEqual(SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
+          } else if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, txReceiverAddress)) {
             if (txFromHistory?.tag === SABLIER_WITHDRAW) {
               const symbol = get(txFromHistory, 'extra.symbol', '');
               const currentAccountAssets = accountAssetsSelector(getState());
