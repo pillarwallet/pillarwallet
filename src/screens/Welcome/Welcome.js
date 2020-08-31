@@ -107,7 +107,6 @@ const translateY = new Animated.Value(0);
 let clickCount = 0;
 const handleSecretClick = () => {
   clickCount++;
-  console.log('clickCount: ', clickCount)
   if (clickCount === 16) { // on the 16th click switch network and reset.
     clickCount = 0;
     switchEnvironments();
