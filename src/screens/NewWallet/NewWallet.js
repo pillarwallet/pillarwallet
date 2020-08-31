@@ -55,7 +55,7 @@ class NewWallet extends React.PureComponent<Props> {
         {failedToRegister && (
           <Wrapper fullScreen center flex={1}>
             <BaseText style={{ marginBottom: 20 }} bigText={!failedToRegister}>
-              Registration failed
+              {t('auth:label.registrationFailed')}
             </BaseText>
             <Button title={t('auth:button.tryAgain')} onPress={tryToReRegister} />
           </Wrapper>

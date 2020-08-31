@@ -1,5 +1,5 @@
 {
-  "aaveDeposit": "Aave deposit",
+  "aaveDeposit": "Aave Deposit",
   "ensName": "ENS name",
   "ethereum": "Ethereum",
   "facebook": "Facebook",
@@ -27,6 +27,7 @@
   "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
+  "valueOfValue": "{{partOfValue}} of {{allValue}}",
   "ofTotalTokenValue": "of {{value}} {{token}} total",
   "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
   "maxTokenValue": "Max {{value}} {{token}}",
@@ -183,7 +184,10 @@
     "sell": "Sell",
     "unknown": "Unknown",
     "pending": "Pending",
-    "notAvailableIYourCountry": "Not available in Your country"
+    "notAvailableIYourCountry": "Not available in Your country",
+    "fromPillarTank": "From Pillar Tank",
+    "pinChanged": "Pin changed",
+    "device": "Device {{address}}"
   },
 
   "button": {
@@ -420,7 +424,8 @@
       "notOwnedCollectible": "You no longer own this collectible",
       "collectibleCantBeTransferred": "This collectible can't be transferred",
       "notEnoughStake": "Not enough PLR in tank",
-      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}"
+      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}",
+      "cantCalculateFee": "Unable to calculate transaction fee"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExist": "Contact with this address already exist",
@@ -456,6 +461,10 @@
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
       "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+    },
+    "walletConnect": {
+      "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
+      "unsupportedAction": "We are sorry, but we do not support this action yet"
     }
   },
 
@@ -500,7 +509,8 @@
     },
     "label": {
       "availableBalance": "Available Balance",
-      "paidByPillar": "No fees - paid by Pillar"
+      "paidByPillar": "No fees - paid by Pillar",
+      "transactionsAvailableToSettle": "Transactions available to settle"
     },
     "paragraph": {
       "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
@@ -972,7 +982,8 @@
       "cancelStreamScreen": "Cancel stream",
       "userStreamsScreen": "Your streams",
       "withdrawScreen": "Withdraw",
-      "withdrawReviewScreen": "Review"
+      "withdrawReviewScreen": "Review",
+      "startFirstStream": "Start your first stream"
     },
     "label": {
       "streamed": "Streamed",
@@ -1028,11 +1039,15 @@
       "unknownRequestName": "Unknown",
       "requestDescription": "Description",
       "requestLink": "Url",
-      "upcomingApp": "Coming soon"
+      "upcomingApp": "Coming soon",
+      "name": "Name"
     },
     "banner": {
       "promo": {
         "paragraph": "A collection of dapps to use with Pillar"
+      },
+      "promoExtended": {
+        "paragraph": "Swap tokens on decentralized exchanges, lend & borrow crypto, play games and more"
       }
     },
     "button": {
@@ -1071,6 +1086,9 @@
           "title": "No Pending Requests"
         }
       }
+    },
+    "paragraph": {
+      "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
     }
   },
 
@@ -1134,7 +1152,8 @@
       "sablierTransactionSuccess": "Your stream has begun",
       "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
       "amountEditScreen": "Edit amount",
-      "assetsTransferToSmartWalletStatusScreen": "Key based assets migration"
+      "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
+      "keyWalletAssetsMigrationDone": "Key based assets migration complete"
     },
     "button": {
       "payFeeWithPillar": "Pay fees with PLR",
@@ -1158,7 +1177,11 @@
       "toSmartWallet": "To Smart Wallet",
       "tokensToTransfer": "Tokens to transfer",
       "collectiblesToTransfer": "Collectibles to transfer",
-      "speed": "Speed"
+      "speed": "Speed",
+      "creatingTransactions": "Creating transactions",
+      "data": "Data",
+      "message": "Message",
+      "address": "Address"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",

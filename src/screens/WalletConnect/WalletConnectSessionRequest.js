@@ -119,7 +119,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
             />
           )}
           <LabeledRow>
-            <Label>Name</Label>
+            <Label>{t('walletConnectContent.label.name')}</Label>
             <Value>{name || t('walletConnectContent.label.unknownRequestName')}</Value>
           </LabeledRow>
           {!!description && (

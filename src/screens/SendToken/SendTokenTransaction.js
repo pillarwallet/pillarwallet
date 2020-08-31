@@ -228,11 +228,11 @@ class SendTokenTransaction extends React.Component<Props> {
       <FailureButtonsWrapper>
         {!noRetry && (
           <ButtonWrapper>
-            <Button onPress={this.handleNavigationBack} title="Retry" />
+            <Button onPress={this.handleNavigationBack} title={t('button.retry')} />
           </ButtonWrapper>
         )}
         <TouchableOpacity onPress={this.handleDismissal}>
-          <CancelText>Cancel</CancelText>
+          <CancelText>{t('button.cancel')}</CancelText>
         </TouchableOpacity>
       </FailureButtonsWrapper>
     );

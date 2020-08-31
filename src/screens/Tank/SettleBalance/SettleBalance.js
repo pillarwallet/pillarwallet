@@ -268,9 +268,9 @@ class SettleBalance extends React.Component<Props, State> {
         {!showSpinner &&
           <React.Fragment>
             <SubtitleView>
-              <Paragraph light small>Transactions available to settle</Paragraph>
+              <Paragraph light small>{t('ppnContent.label.transactionsAvailableToSettle')}</Paragraph>
               <Paragraph style={{ textAlign: 'right', marginLeft: 4 }} small>
-                {txToSettle.length} of {MAX_TX_TO_SETTLE}
+                {t('valueOfValue', { partOfValue: txToSettle.length, allValue: MAX_TX_TO_SETTLE })}
               </Paragraph>
             </SubtitleView>
             <UnsettledTransactionsList

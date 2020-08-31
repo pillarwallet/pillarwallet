@@ -1307,7 +1307,7 @@ export class EventDetail extends React.Component<Props, State> {
           return (
             <React.Fragment key={group.symbol}>
               <Row marginBottom={10}>
-                <BaseText regular synthetic>From Pillar Tank</BaseText>
+                <BaseText regular synthetic>{t('label.fromPillarTank')}</BaseText>
                 <TankAssetBalance
                   amount={getFormattedValue(formattedVal, group.symbol, { isPositive: !isFailed, noSymbol: !isFailed })}
                   textStyle={{ fontSize: fontSizes.big }}

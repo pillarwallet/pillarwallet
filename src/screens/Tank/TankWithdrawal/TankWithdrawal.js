@@ -252,7 +252,7 @@ class TankWithdrawal extends React.Component<Props, State> {
               disabled={!session.isOnline || !withdrawalFee.isFetched}
               small
               flexRight
-              title="Next"
+              title={t('button.next')}
               onPress={this.handleFormSubmit}
             />
             }
@@ -270,17 +270,17 @@ class TankWithdrawal extends React.Component<Props, State> {
           />
           <ActionsWrapper>
             <SendTokenDetails>
-              <Label small>Available Balance</Label>
+              <Label small>{t('ppnContent.label.availableBalance')}</Label>
               <TextRow>
                 <SendTokenDetailsValue>
-                  {formattedBalance} {token}
+                  {t('tokenValue', { value: formattedBalance, token })}
                 </SendTokenDetailsValue>
                 <HelperText>{formattedBalanceInFiat}</HelperText>
               </TextRow>
             </SendTokenDetails>
             {withdrawalFee.isFetched &&
             <TouchableOpacity onPress={this.useMaxValue}>
-              <TextLink>Send all</TextLink>
+              <TextLink>{t('button.sendAll')}</TextLink>
             </TouchableOpacity>
             }
           </ActionsWrapper>

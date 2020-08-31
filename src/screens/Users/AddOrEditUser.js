@@ -206,7 +206,11 @@ const ProfileFormTemplate = (locals: Object) => {
 
     if (isVerified) {
       sideComponent = (
-        <LabelBadge positive labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }} label="Verified" />
+        <LabelBadge
+          positive
+          labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }}
+          label={t('label.verified')}
+        />
       );
     } else {
       const buttonTitle = fieldDisplayValue ? t('button.verify') : t('button.add');
