@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { fontStyles } from 'utils/variables';
+import { fontSizes } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
@@ -45,7 +45,8 @@ const HeaderButtonRounded = styled.TouchableOpacity`
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
-  ${fontStyles.regular};
+  font-size: ${fontSizes.regular};
+  line-height: 20px;
   color: ${props => props.isLight ? themedColors.control : themedColors.text};
   margin-left: 6px;
 `;
