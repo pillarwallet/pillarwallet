@@ -336,7 +336,7 @@ const Menu = ({
               <LegalTextLink onPress={() => toggleSlideModalOpen('termsOfService')}>
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
-              <LegalTextLink>  •  </LegalTextLink>
+              <LegalTextLink>  •  </LegalTextLink> {/* eslint-disable-line i18next/no-literal-string */}
               <LegalTextLink onPress={() => toggleSlideModalOpen('privacyPolicy')}>
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>

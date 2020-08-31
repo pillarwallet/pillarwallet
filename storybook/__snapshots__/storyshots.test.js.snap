@@ -15213,7 +15213,7 @@ Array [
         }
         synthetic={true}
       >
-        From Pillar Tank
+        label.fromPillarTank
       </Text>
       <View>
         <View
@@ -15331,7 +15331,7 @@ Array [
         }
         synthetic={true}
       >
-        From Pillar Tank
+        label.fromPillarTank
       </Text>
       <View>
         <View

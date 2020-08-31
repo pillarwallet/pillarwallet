@@ -11,7 +11,8 @@
     "jest",
     "flowtype-errors",
     "flowtype",
-    "promise"
+    "promise",
+    "i18next"
   ],
   "env": {
     "node": true,
@@ -51,6 +52,82 @@
     "function-paren-newline": [0],
     "no-param-reassign": ["off"],
     "react/default-props-match-prop-types": ["off"],
-    "react/no-did-mount-set-state": ["off"]
-  }
+    "react/no-did-mount-set-state": ["off"],
+    "i18next/no-literal-string": ["error", {
+      "markupOnly": true,
+      "ignore": ["ios", "android"],
+      "ignoreCallee": [
+        "t",
+        "require",
+        "get",
+        "jest.mock",
+        "Dimensions.get",
+        "saveDbAction",
+        "getInstance",
+        "printLog",
+        "reportLog",
+        "reportToSentry",
+        "lockScreenAction"
+      ],
+      "ignoreAttribute": [
+        "backgroundColor",
+        "resizeMode",
+        "resizeMethod",
+        "icon",
+        "name",
+        "padding",
+        "margin",
+        "fontIcon",
+        "horizontalAlign",
+        "fill",
+        "fill-rule",
+        "animationIn",
+        "animationOut",
+        "marginBottom",
+        "strokeLinecap",
+        "stroke",
+        "strokeLineCap",
+        "align",
+        "keyboardShouldPersistTaps",
+        "ellipsizeMode",
+        "shadowColorAndroid",
+        "mode",
+        "viewBox",
+        "gradientStart",
+        "gradientEnd",
+        "underlineColorAndroid",
+        "fontIcon",
+        "swipeDirection",
+        "iconName",
+        "key",
+        "iconImageResizeMode",
+        "url",
+        "strokeColor",
+        "leftIconName",
+        "listKey",
+        "htmlEndpoint",
+        "keyboardType",
+        "alignItems",
+        "contentAlign",
+        "androidVariant"
+      ],
+      "ignoreComponent": ["MnemonicPhraseWordText"],
+      "ignoreProperty": [
+        "id",
+        "gasLimit",
+        "gasPrice",
+        "WETH",
+        "router"
+      ]
+//      "validateTemplate": true
+    }]
+  },
+  "overrides": [
+    {
+      "files": ["*.test.js", "*.stories.js", "constants/*.js"],
+      "rules": {
+        "i18next/no-literal-string": "off"
+      }
+    }
+  ]
 }
