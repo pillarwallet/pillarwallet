@@ -410,7 +410,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
     // if user is offline then proceed with local registration
     if (!getState()?.session?.data?.isOnline) {
       Toast.show({
-        message: t('toast.userIsOffline'),
+        message: t('auth:toast.userIsOffline'),
         emoji: 'satellite_antenna',
       });
       dispatch({
