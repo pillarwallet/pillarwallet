@@ -78,7 +78,7 @@
     "confirm": "Confirm",
     "privateKey": "Private key",
     "exchange": "Exchange",
-    "unlockWithBiiometrics": "Unlock with biometric sensor"
+    "unlockWithBiometrics": "Unlock with biometric sensor"
   },
 
   "label": {
@@ -455,7 +455,7 @@
       "notProvided": "Amount should be specified",
       "shouldBeGreaterThanValue": "Amount should be greater than {{value}} {{token}}",
       "shouldNotBeGreaterThanBalanceValue": "Amount should not be bigger than your balance - {{balance}} {{token}}",
-      "amountShouldBeBiggerThan0": "Amount should be bigger than 0",
+      "amountShouldBeBiggerThanZero": "Amount should be bigger than 0",
       "notEnoughToken": "Not enough {{token}}",
       "shouldBeGreaterThan1Wei": "Amount should be greater than 1 Wei (0.000000000000000001 ETH)"
     },
@@ -1265,7 +1265,7 @@
     "contactUpdated": "Contact updated",
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
-    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again latter"
+    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later"
   },
 
   "exchangeContent": {

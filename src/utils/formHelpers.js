@@ -330,7 +330,7 @@ export const selectorStructure = (
        */
       return null;
     } else if (numericAmount < 0) {
-      return t('error.amount.amountShouldBeBiggerThan0');
+      return t('error.amount.amountShouldBeBiggerThanZero');
     }
 
     // all possible fiat validation is done

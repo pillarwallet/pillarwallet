@@ -66,7 +66,7 @@ export const getKeychainDataObject = (errorHandler?: Function) => Keychain
   .getGenericPassword({
     service: KEYCHAIN_SERVICE,
     authenticationPrompt: {
-      title: t('title.unlockWithBiiometrics'),
+      title: t('title.unlockWithBiometrics'),
       subtitle: '', // required as empty
       description: '', // required as empty
     },
