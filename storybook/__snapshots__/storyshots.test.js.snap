@@ -33973,7 +33973,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                             ]
                           }
                         >
-                          select
+                          form.selector.placeholder
                         </Text>
                       </View>
                       <View
@@ -34011,7 +34011,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       onPressRightLabel={[Function]}
                       onSubmitEditing={[Function]}
                       placeholder="0"
-                      placeholderSelector="select"
+                      placeholderSelector="form.selector.placeholder"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
                       rightLabel=""
@@ -35732,7 +35732,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       onPressRightLabel={[Function]}
                       onSubmitEditing={[Function]}
                       placeholder="0"
-                      placeholderSelector="select"
+                      placeholderSelector="form.selector.placeholder"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
                       rightLabel="button.max"
@@ -37319,7 +37319,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                             ]
                           }
                         >
-                          select
+                          form.selector.placeholder
                         </Text>
                       </View>
                       <View
@@ -37357,7 +37357,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       onPressRightLabel={[Function]}
                       onSubmitEditing={[Function]}
                       placeholder="0"
-                      placeholderSelector="select"
+                      placeholderSelector="form.selector.placeholder"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
                       rightLabel=""

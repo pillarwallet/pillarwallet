@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import t from 'translations/translate';
 
 // constants
 import {
@@ -25,6 +26,11 @@ import {
   PPN_INIT_EVENT,
   WALLET_CREATE_EVENT,
   WALLET_BACKUP_EVENT,
+  WALLET_CREATED,
+  KEY_WALLET,
+  PILLAR_NETWORK,
+  SMART_WALLET_CREATED,
+  UNKNOWN_EVENT,
 } from 'constants/userEventsConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
@@ -48,13 +54,13 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
 
     switch (type) {
       case ACCOUNT_TYPES.KEY_BASED:
-        eventTitle = 'Wallet created';
+        eventTitle = WALLET_CREATED;
         break;
       case ACCOUNT_TYPES.SMART_WALLET:
-        eventTitle = 'Smart Wallet created';
+        eventTitle = SMART_WALLET_CREATED;
         break;
       default:
-        eventTitle = 'Unknown event';
+        eventTitle = UNKNOWN_EVENT;
     }
 
     const eventId = eventTitle.replace(/ /g, '');
@@ -76,8 +82,8 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
     if (type === ACCOUNT_TYPES.SMART_WALLET) {
       ppnCreateEvent = {
         id: PPN_INIT_EVENT,
-        eventTitle: 'Pillar Network',
-        eventSubtitle: 'Enabled',
+        eventTitle: PILLAR_NETWORK,
+        eventSubtitle: t('label.enabled'),
         createdAt: createdAt + 1, // to list it after smart wallet is created
         type: USER_EVENT,
         subType: PPN_INIT_EVENT,
@@ -128,8 +134,8 @@ export const addWalletBackupEventAction = () => {
 
     const walletBackupEvent = {
       id: WALLET_BACKUP_EVENT,
-      eventTitle: 'Key wallet',
-      eventSubtitle: 'Backup secured',
+      eventTitle: KEY_WALLET,
+      eventSubtitle: t('label.backedUp'),
       createdAt: +new Date() / 1000,
       type: USER_EVENT,
       subType: WALLET_BACKUP_EVENT,

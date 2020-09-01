@@ -38,6 +38,7 @@ const knownOriginLogo = require('assets/images/apps/known_origin.png');
 const cloversLogo = require('assets/images/apps/clovers.png');
 const localCryptosLogo = require('assets/images/apps/local_cryptos.png');
 
+/* eslint-disable i18next/no-literal-string */
 export const APPS: AppItem[] = [
   {
     name: 'Zerion',
@@ -103,3 +104,4 @@ export const APPS: AppItem[] = [
     url: 'clovers.network',
   },
 ];
+/* eslint-enable i18next/no-literal-string */

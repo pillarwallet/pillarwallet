@@ -67,7 +67,7 @@ function getLabelColor(theme: Theme, isDisabled: boolean) {
   return colors.control;
 }
 
-const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
+const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9']; // eslint-disable-line i18next/no-literal-string
 
 const CircleButtonWrapper = styled.TouchableOpacity`
   justify-content: center;

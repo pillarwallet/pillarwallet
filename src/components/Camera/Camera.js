@@ -362,7 +362,7 @@ class Camera extends React.Component<Props, State> {
     a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
     `;
     const overlayColor = isFlashOn && cameraType === FRONT ? FRONT_FLASH_COLOR : '#000000';
-    const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
+    const flashIcon = isFlashOn ? 'flash-on' : 'flash-off'; // eslint-disable-line i18next/no-literal-string
     return (
       <React.Fragment>
         {!!isVisible &&

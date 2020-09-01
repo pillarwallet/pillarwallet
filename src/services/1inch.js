@@ -134,6 +134,7 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     return null;
   }
 
+  /* eslint-disable i18next/no-literal-string */
   const abiFunction = [{
     name: 'approve',
     outputs: [{ type: 'bool', name: 'out' }],
@@ -143,6 +144,7 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     type: 'function',
     gas: 38769,
   }];
+  /* eslint-enable i18next/no-literal-string */
 
   const encodedContractFunction = encodeContractMethod(
     abiFunction,

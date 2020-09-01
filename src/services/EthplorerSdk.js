@@ -55,9 +55,10 @@ export function parseEthValue(value: number): string {
   return new BigNumber(Math.floor(+parsed.toString())).toString();
 }
 
+const BASE_URL = 'https://api.ethplorer.io/';
 class EthplorerSdk {
   apiKey: string;
-  baseURL = 'https://api.ethplorer.io/';
+  baseURL = BASE_URL;
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;

@@ -17,17 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
 
-import { requireNativeComponent } from 'react-native';
-
-/**
- * Composes View with a shadow for Android.
- *
- * - shadowAngle: number
- * - shadowRadius: number
- * - shadowDistance: number
- * - shadowColor: string
- */
-
-export default requireNativeComponent('NativeShadow');
+export const ERROR_TYPE = {
+  CANT_BE_TRANSFERRED: 'can not be transferred',
+  NOT_OWNED: 'is not owned',
+  TRANSACTION_UNDERPRISED: 'transaction underpriced',
+  REPLACEMENT_TRANSACTION_UNDERPRISED: 'replacement transaction underpriced',
+};

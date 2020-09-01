@@ -398,7 +398,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const decimalPlaces = getDecimalPlaces(assetSymbol);
     const formattedValue = formatAmount(value, decimalPlaces);
     const formattedFullValue = formatAmount(value);
-    const directionIcon = isReceived ? 'received' : 'sent';
+    const directionIcon = isReceived ? 'received' : 'sent'; // eslint-disable-line i18next/no-literal-string
 
     const isFailed = isFailedTransaction(event) || isTimedOutTransaction(event);
     const isPositivePPN = event.tag === PAYMENT_NETWORK_ACCOUNT_TOPUP && !isAssetView && !event.smartWalletEvent;
@@ -484,8 +484,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         if (isPPNView) {
           data.label = t('label.withdraw');
-          data.iconName = 'sent';
-          data.iconColor = 'negative';
+          data.iconName = 'sent'; // eslint-disable-line i18next/no-literal-string
+          data.iconColor = 'negative'; // eslint-disable-line i18next/no-literal-string
         } else {
           data.label = this.NAMES.PPN_NETWORK;
           data.subtext = t('label.withdrawal');
@@ -584,7 +584,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
           itemValue: getFormattedValue(formattedVal, symbol, { isPositive, noSymbol: !amount }),
           itemImageRoundedSquare: true,
-          valueColor: isPositive ? 'positive' : 'text',
+          valueColor: isPositive ? 'positive' : 'text', // eslint-disable-line i18next/no-literal-string
         };
         break;
       }
@@ -711,7 +711,8 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           if (!isTrxBetweenAccounts) {
             additionalInfo.iconName = directionIcon;
-            additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
+            additionalInfo.iconColor =
+              isReceived ? 'transactionReceivedIcon' : 'negative'; // eslint-disable-line i18next/no-literal-string
           }
 
           if (isReferralRewardTransaction) {
@@ -733,7 +734,8 @@ export class ActivityFeedItem extends React.Component<Props> {
               noSymbol: !formattedFullValue,
             }),
             itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
-            valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
+            valueColor: isReceived &&
+            !this.isZeroValue(value) ? 'positive' : 'text', // eslint-disable-line i18next/no-literal-string
             ...additionalInfo,
             isReceived,
           };

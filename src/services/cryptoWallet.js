@@ -22,7 +22,7 @@ export default class CryptoWallet {
         this.initWalletProviderPromise = this.walletProvider.getInitStatus();
         break;
       default:
-        throw new Error('Unsupported account type provided');
+        throw new Error('Unsupported account type provided'); // eslint-disable-line i18next/no-literal-string
     }
   }
 

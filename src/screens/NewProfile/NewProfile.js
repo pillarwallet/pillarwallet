@@ -109,7 +109,7 @@ const getDefaultFormOptions = (inputDisabled: boolean, showRightPlaceholder?: bo
         statusIcon: null,
         statusIconColor: null,
         inputType: 'bigText',
-        rightPlaceholder: showRightPlaceholder ? '.pillar.eth' : null,
+        rightPlaceholder: showRightPlaceholder ? '.pillar.eth' : null, // eslint-disable-line i18next/no-literal-string
         additionalStyle: {
           fontSize: fontSizes.large,
           fontFamily: appFont.medium,
@@ -185,7 +185,7 @@ class NewProfile extends React.Component<Props, State> {
     const hasError = !isValidUsername && value.username;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
-    const statusIcon = hasError ? 'close' : null;
+    const statusIcon = hasError ? 'close' : null; // eslint-disable-line i18next/no-literal-string
     const iconColor = hasError ? colors.negative : 'transparent';
     const options = tForm.update(this.state.formOptions, {
       fields: {
@@ -241,7 +241,7 @@ class NewProfile extends React.Component<Props, State> {
             error: { $set: errorMessage },
             config: {
               isLoading: { $set: false },
-              statusIcon: { $set: 'close' },
+              statusIcon: { $set: 'close' }, // eslint-disable-line i18next/no-literal-string
               statusIconColor: { $set: colors.negative },
             },
           },
@@ -270,7 +270,7 @@ class NewProfile extends React.Component<Props, State> {
           username: {
             config: {
               isLoading: { $set: false },
-              statusIcon: { $set: 'check' },
+              statusIcon: { $set: 'check' }, // eslint-disable-line i18next/no-literal-string
               statusIconColor: { $set: colors.positive },
             },
           },

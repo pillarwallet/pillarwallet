@@ -183,7 +183,7 @@ const KeyBasedAssetTransferEditAmount = ({
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('transactions.title.amountEditScreen') }],
-        rightItems: [!isEmpty(updatedValues) ? { link: 'Save', onPress: onNextPress } : {}],
+        rightItems: [!isEmpty(updatedValues) ? { link: t('button.save'), onPress: onNextPress } : {}],
       }}
     >
       <ScrollView scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>

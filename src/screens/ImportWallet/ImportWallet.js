@@ -372,7 +372,7 @@ class ImportWallet extends React.Component<Props, State> {
     if (__DEV__) {
       restoreWalletTabs.push({
         id: DEV,
-        name: 'Dev\'s phrase',
+        name: 'Dev\'s phrase', // eslint-disable-line i18next/no-literal-string
         onPress: () => this.setActiveTab(DEV),
       });
     }
@@ -380,13 +380,13 @@ class ImportWallet extends React.Component<Props, State> {
     const tabsInfo = {
       TWORDSPHRASE: {
         inputLabel: t('auth:label.backupPhrase'),
-        changeName: 'currentBPWord',
+        changeName: 'currentBPWord', // eslint-disable-line i18next/no-literal-string
         value: currentBPWord,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
       DEV: {
         inputLabel: t('auth:label.backupPhrase'),
-        changeName: 'tWordsPhrase',
+        changeName: 'tWordsPhrase', // eslint-disable-line i18next/no-literal-string
         value: tWordsPhrase,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },

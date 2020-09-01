@@ -9,11 +9,11 @@ export const InputTemplate = (locals: Object) => {
   const { config } = locals;
   const errorMessage = locals.error;
   const inputProps = {
-    autoCapitalize: config.autoCapitalize || 'words',
+    autoCapitalize: config.autoCapitalize || 'words', // eslint-disable-line i18next/no-literal-string
     onChange: locals.onChange,
     onBlur: locals.onBlur,
     value: locals.value,
-    keyboardType: config.keyboardType || 'default',
+    keyboardType: config.keyboardType || 'default', // eslint-disable-line i18next/no-literal-string
     placeholder: config.placeholder || '',
     ...config.inputProps,
   };

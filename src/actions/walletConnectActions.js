@@ -223,7 +223,7 @@ const subscribeToSessionRequestEvent = (connector: Connector) => {
       const { peerId, peerMeta } = get(payload, 'params[0]', {});
 
       if (!peerId || !peerMeta) {
-        dispatch(walletConnectError(SESSION_REQUEST_ERROR, 'Invalid session'));
+        dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
 
         return;
       }
@@ -257,7 +257,7 @@ export const killWalletConnectSession = (peerId: string) => {
 
     if (!matchingConnectors.length) {
       dispatch(
-        walletConnectError(SESSION_REQUEST_ERROR, 'No Matching Wallet Connect Requests Found'),
+        walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')),
       );
 
       return;
@@ -316,7 +316,7 @@ export const killWalletConnectSessionByUrl = (url: string, skipPeerId?: string) 
     if (!matchingConnectors.length) {
       if (!skipPeerId) {
         dispatch(
-          walletConnectError(SESSION_REQUEST_ERROR, 'No Matching Wallet Connect Requests Found'),
+          walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')),
         );
       }
 
@@ -391,7 +391,7 @@ export const requestSessionAction = (uri: string) => {
       const { walletConnect: { pendingConnector } } = getState();
       if (pendingConnector) {
         dispatch(
-          walletConnectError(SESSION_REQUEST_ERROR, 'A connection is already waiting'),
+          walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.alreadyPending')),
         );
         return;
       }
@@ -420,14 +420,14 @@ export const approveSessionAction = (peerId: string) => {
 
     if (!connector) {
       dispatch(
-        walletConnectError(SESSION_REQUEST_ERROR, 'No Matching Wallet Connect Requests Found'),
+        walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')),
       );
 
       return;
     }
 
     if (connector.peerId !== peerId) {
-      dispatch(walletConnectError(SESSION_REQUEST_ERROR, 'Invalid Wallet Connect session'));
+      dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
 
       return;
     }
@@ -486,7 +486,7 @@ export const rejectSessionAction = (peerId: string) => {
     }
 
     if (connector.peerId !== peerId) {
-      dispatch(walletConnectError(SESSION_REQUEST_ERROR, 'Invalid Wallet Connect session'));
+      dispatch(walletConnectError(SESSION_REQUEST_ERROR, t('error.walletConnect.invalidSession')));
 
       return;
     }
@@ -509,16 +509,19 @@ export const rejectCallRequestAction = (callId: number, errorMsg?: string) => {
 
     const request = requests.find(({ callId: requestCallId }) => requestCallId === callId);
     if (!request) {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, 'Request not found'));
+      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.requestNotFound')));
       return;
     }
 
     const connector = connectors.find(c => c.peerId === request.peerId);
     if (connector) {
       dispatch(walletConnectCallRejected(callId));
-      connector.rejectRequest({ id: +callId, error: { message: errorMsg || 'Call Request Rejected' } });
+      connector.rejectRequest({
+        id: +callId,
+        error: { message: errorMsg || t('error.walletConnect.requestRejected') },
+      });
     } else {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, 'No Matching Wallet Connect Connectors Found'));
+      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
     }
   };
 };
@@ -530,7 +533,7 @@ export const approveCallRequestAction = (callId: number, result: any) => {
     const request = requests.find(({ callId: requestCallId }) => requestCallId === callId);
     if (!request) {
       if (result) {
-        dispatch(walletConnectError(CALL_REQUEST_ERROR, 'Request not found'));
+        dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.requestNotFound')));
       }
 
       return;
@@ -546,7 +549,7 @@ export const approveCallRequestAction = (callId: number, result: any) => {
       dispatch(walletConnectCallApproved(callId));
       connector.approveRequest({ id: +callId, result });
     } else {
-      dispatch(walletConnectError(CALL_REQUEST_ERROR, 'No Matching Wallet Connect Connectors Found'));
+      dispatch(walletConnectError(CALL_REQUEST_ERROR, t('error.walletConnect.noMatchingWallet')));
     }
   };
 };

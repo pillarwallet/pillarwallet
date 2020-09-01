@@ -87,12 +87,23 @@ type Props = {
 
 type State = {
   permissionsGranted: boolean,
-  visibleModal: string,
+  showCamera: boolean,
   verifyingField: ?string,
   focusedField: ?string,
   value: Object,
   cautionModalField: ?string,
   verifiedModalField: ?string,
+};
+
+
+const VISIBLE_CAUTION_MODAL = {
+  PHONE: 'phone',
+  EMAIL: 'email',
+};
+
+const FIELD_NAME = {
+  PHONE: 'phone',
+  EMAIL: 'email',
 };
 
 const RootContainer = styled.View`
@@ -184,10 +195,10 @@ const ProfileFormTemplate = (locals: Object) => {
     selector: { ...selector },
   } : undefined;
   const inputProps = {
-    autoCapitalize: locals.autoCapitalize || 'words',
+    autoCapitalize: locals.autoCapitalize || 'words', // eslint-disable-line i18next/no-literal-string
     onChange: locals.onChange,
     value: locals.value,
-    keyboardType: locals.keyboardType || 'default',
+    keyboardType: locals.keyboardType || 'default', // eslint-disable-line i18next/no-literal-string
     placeholder: config.placeholder || '',
     fieldName,
     selectorValue,
@@ -330,7 +341,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.state = {
       verifyingField: null,
       permissionsGranted: false,
-      visibleModal: '',
+      showCamera: false,
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
@@ -354,7 +365,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           autoCapitalize: 'none',
           template: ProfileFormTemplate,
           config: {
-            fieldName: 'email',
+            fieldName: FIELD_NAME.EMAIL,
             isFocused: false,
             onFocus: this.onFieldFocus,
             fieldDisplayName: t('form.email.label'),
@@ -376,7 +387,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           keyboardType: 'phone-pad',
           template: ProfileFormTemplate,
           config: {
-            fieldName: 'phone',
+            fieldName: FIELD_NAME.PHONE,
             label: t('form.countryCode.label'),
             hasInput: true,
             options: sortedCountries,
@@ -422,22 +433,22 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     if (!focusedField || !this.formRef) return;
     const e = this.formRef.getComponent(focusedField).validate();
-    const isEmpty = focusedField === 'phone' ? !value.phone.input : !value.email;
+    const isEmpty = focusedField === FIELD_NAME.PHONE ? !value.phone.input : !value.email;
 
     if (e.isValid() || isEmpty) {
       this.setState({ focusedField: null });
-      if (focusedField === 'email' && value.email !== user.email) {
+      if (focusedField === FIELD_NAME.EMAIL && value.email !== user.email) {
         if (isEmailVerified) {
-          this.setState({ cautionModalField: 'email' });
+          this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.EMAIL });
         } else {
           updateUser(user.walletId, { email: value.email });
         }
-      } else if (focusedField === 'phone') {
+      } else if (focusedField === FIELD_NAME.PHONE) {
         const { phone: { input, selector } } = value;
         const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
         if (formattedPhone !== user.phone) {
           if (isPhoneVerified) {
-            this.setState({ cautionModalField: 'phone' });
+            this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.PHONE });
           } else {
             updateUser(user.walletId, { phone: formattedPhone });
           }
@@ -449,9 +460,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onClear = () => {
     const { focusedField, value } = this.state;
     const newValue = { ...value };
-    if (focusedField === 'email') {
+    if (focusedField === FIELD_NAME.EMAIL) {
       newValue.email = '';
-    } else if (focusedField === 'phone') {
+    } else if (focusedField === FIELD_NAME.PHONE) {
       newValue.phone.input = '';
     }
     this.setState({ value: newValue });
@@ -477,12 +488,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     }));
     this.setState({
       permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
-      visibleModal: 'camera',
+      showCamera: true,
     });
   };
 
   closeCamera = () => {
-    this.setState({ visibleModal: '' });
+    this.setState({ showCamera: false });
   };
 
   verifyField = (verifyingField) => {
@@ -492,7 +503,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onCloseVerification = () => {
     const { verifyingField } = this.state;
     const { isPhoneVerified, isEmailVerified } = this.props.user;
-    if ((verifyingField === 'phone' && isPhoneVerified) || (verifyingField === 'email' && isEmailVerified)) {
+    if ((verifyingField === FIELD_NAME.PHONE && isPhoneVerified)
+      || (verifyingField === FIELD_NAME.EMAIL && isEmailVerified)) {
       this.setState({ verifiedModalField: verifyingField });
     }
     this.setState({ verifyingField: null });
@@ -501,11 +513,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   changeField = () => {
     const { updateUser, user } = this.props;
     const { cautionModalField, value } = this.state;
-    if (cautionModalField === 'phone') {
+    if (cautionModalField === VISIBLE_CAUTION_MODAL.PHONE) {
       const { phone: { input, selector } } = value;
       const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
       updateUser(user.walletId, { phone: formattedPhone });
-    } else if (cautionModalField === 'email') {
+    } else if (cautionModalField === VISIBLE_CAUTION_MODAL.EMAIL) {
       updateUser(user.walletId, { email: value.email });
     }
     this.setState({ cautionModalField: null });
@@ -567,7 +579,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   render() {
     const {
       permissionsGranted,
-      visibleModal,
+      showCamera,
       verifyingField,
       value,
       focusedField,
@@ -635,7 +647,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         </ScrollWrapper>
 
         <Camera
-          isVisible={visibleModal === 'camera'}
+          isVisible={showCamera}
           modalHide={this.closeCamera}
           permissionsGranted={permissionsGranted}
           navigation={navigation}

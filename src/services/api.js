@@ -26,6 +26,7 @@ import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 import { GasPriceOracle } from 'gas-price-oracle';
 import https from 'https';
+import t from 'translations/translate';
 
 // constants
 import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
@@ -58,6 +59,7 @@ import EthplorerSdk from './EthplorerSdk';
 import { getLimitedData } from './opensea';
 
 
+const ERROR = 'error';
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
@@ -303,14 +305,14 @@ class SDKWrapper {
         walletId,
       }))
       .then(({ data }) => data)
-      .catch(() => ({ result: 'error' }));
+      .catch(() => ({ result: ERROR }));
   }
 
   sendReferralInvitation(params: SendReferralInvitationParams) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', error }));
+      .catch((error) => ({ result: ERROR, error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -445,6 +447,7 @@ class SDKWrapper {
       .catch(() => []);
   }
 
+  /* eslint-disable i18next/no-literal-string */
   fetchCollectibles(walletAddress: string) {
     if (!walletAddress) return Promise.resolve({ assets: [] });
     const url = `${getEnv().OPEN_SEA_API}/assets/?owner=${walletAddress}` +
@@ -455,6 +458,7 @@ class SDKWrapper {
       .then(response => ({ assets: response }))
       .catch(() => ({ error: true }));
   }
+  /* eslint-enable i18next/no-literal-string */
 
   fetchCollectiblesTransactionHistory(walletAddress: string) {
     const url =
@@ -762,6 +766,7 @@ class SDKWrapper {
       });
   }
 
+  /* eslint-disable i18next/no-literal-string */
   getSendwyreCountrySupport(walletId: string): Promise<boolean | null> {
     // NOTE: this request should always return an error from the server.
     // Because testing whether the user location is within a country supported
@@ -781,14 +786,16 @@ class SDKWrapper {
         const { response: { status, data } } = error;
 
         if (status === 400) return true;
-        if (status === 403 && data.message === 'Location not supported') return false;
+        if (status === 403 && data.message === t('error.locationNotSupported')) return false;
 
         // Any other type of error is unexpected and will be reported as usual.
         reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);
         return null;
       });
   }
+  /* eslint-enable i18next/no-literal-string */
 
+  /* eslint-disable i18next/no-literal-string */
   getSendwyreWidgetURL({ address, ...params }: SendwyreTrxParams): Promise<string | null> {
     return this.makeDirectSdkRequest({
       path: '/partners/wyre/generate-order-reservation',
@@ -805,6 +812,7 @@ class SDKWrapper {
         return null;
       });
   }
+  /* eslint-enable i18next/no-literal-string */
 }
 
 export default SDKWrapper;

@@ -27,7 +27,10 @@ import { getEnv } from 'configs/envConfig';
 import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'utils/wallet';
 import { STAGING } from 'constants/envConstants';
 
+/* eslint-disable i18next/no-literal-string */
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
+/* eslint-enable i18next/no-literal-string */
+
 const KEYCHAIN_DATA_KEY = 'data';
 
 export type KeyChainData = {

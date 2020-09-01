@@ -283,6 +283,7 @@ export const createUniswapOrder = async (
   };
 };
 
+/* eslint-disable i18next/no-literal-string */
 export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
   const abiFunction = [{
     name: 'approve',
@@ -312,6 +313,7 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
     data: encodedContractFunction,
   };
 };
+/* eslint-enable i18next/no-literal-string */
 
 export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
   let finished = false;

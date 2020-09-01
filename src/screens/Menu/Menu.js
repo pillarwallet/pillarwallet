@@ -140,6 +140,11 @@ const LockScreenTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
+const MODAL = {
+  PRIVACY_POLICY: 'privacyPolicy',
+  SERVICES: 'termsOfService',
+};
+
 const Menu = ({
   theme,
   navigation,
@@ -248,7 +253,7 @@ const Menu = ({
     },
     {
       key: 'storybook',
-      title: 'Storybook',
+      title: 'Storybook', // eslint-disable-line i18next/no-literal-string
       icon: 'dictionary',
       iconColor: colors.primary,
       action: () => navigation.navigate(STORYBOOK),
@@ -333,11 +338,11 @@ const Menu = ({
         ListFooterComponent={
           <Footer>
             <LinksSection>
-              <LegalTextLink onPress={() => toggleSlideModalOpen('termsOfService')}>
+              <LegalTextLink onPress={() => toggleSlideModalOpen(MODAL.SERVICES)}>
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
               <LegalTextLink>  •  </LegalTextLink> {/* eslint-disable-line i18next/no-literal-string */}
-              <LegalTextLink onPress={() => toggleSlideModalOpen('privacyPolicy')}>
+              <LegalTextLink onPress={() => toggleSlideModalOpen(MODAL.PRIVACY_POLICY)}>
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>
             </LinksSection>
@@ -357,13 +362,13 @@ const Menu = ({
       />
       {/* LEGAL MODALS */}
       <HTMLContentModal
-        isVisible={visibleModal === 'termsOfService'}
+        isVisible={visibleModal === MODAL.SERVICES}
         modalHide={toggleSlideModalOpen}
         htmlEndpoint="terms_of_service"
       />
 
       <HTMLContentModal
-        isVisible={visibleModal === 'privacyPolicy'}
+        isVisible={visibleModal === MODAL.PRIVACY_POLICY}
         modalHide={toggleSlideModalOpen}
         htmlEndpoint="privacy_policy"
       />

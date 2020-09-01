@@ -632,7 +632,8 @@ export class EventDetail extends React.Component<Props, State> {
     const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
     const amountText = getFormattedValue(formattedAmount, symbol, { isPositive, noSymbol: !formattedAmount });
     const ticketsText = `(${t('ticketAmount', { count: formattedAmount })})`;
-    const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
+    const amountTextColor = event.tag ===
+    POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text'; // eslint-disable-line i18next/no-literal-string
     const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? t('label.purchase') : t('label.withdraw');
 
     return (
@@ -1106,14 +1107,14 @@ export class EventDetail extends React.Component<Props, State> {
         }
     }
     if (isPending) {
-      eventData.actionIcon = 'pending';
+      eventData.actionIcon = 'pending'; // eslint-disable-line i18next/no-literal-string
     }
     if (isFailed || isTimedOut) {
       eventData.isFailed = true;
       eventData.errorMessage = isFailed
         ? t('error.transactionFailed.default')
         : t('error.transactionFailed.timeOut');
-      eventData.actionIcon = 'failed';
+      eventData.actionIcon = 'failed'; // eslint-disable-line i18next/no-literal-string
     }
 
     return eventData;
@@ -1146,7 +1147,7 @@ export class EventDetail extends React.Component<Props, State> {
     }
 
     if (isPending) {
-      eventData.actionIcon = 'pending';
+      eventData.actionIcon = 'pending'; // eslint-disable-line i18next/no-literal-string
     }
 
     return eventData;
@@ -1161,7 +1162,7 @@ export class EventDetail extends React.Component<Props, State> {
       imageUrl,
       actionTitle: isPending ? t('label.receiving') : t('label.received'),
       actionSubtitle: t('label.badge'),
-      actionIcon: isPending ? 'pending' : null,
+      actionIcon: isPending ? 'pending' : null, // eslint-disable-line i18next/no-literal-string
       buttons: [{
         title: t('button.viewBadge'),
         onPress: this.viewBadge,

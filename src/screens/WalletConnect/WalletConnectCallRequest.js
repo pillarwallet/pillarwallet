@@ -49,6 +49,7 @@ import smartWalletService from 'services/smartWallet';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TX, REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
@@ -146,7 +147,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const requestMethod = get(this.request, 'method');
-    if (['eth_sendTransaction', 'eth_signTransaction'].includes(requestMethod)) {
+    if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
   }
@@ -228,7 +229,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       params = [],
     } = request || {};
 
-    let type = 'call';
+    let type = REQUEST_TYPE.CALL;
     let body = null;
     let address = '';
     let message = '';
@@ -239,9 +240,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const txFeeInWei = txFeeInfo?.fee || new BigNumber(0);
 
     switch (method) {
-      case 'eth_sendTransaction':
-      case 'eth_signTransaction':
-        type = 'transaction';
+      case ETH_SEND_TX:
+      case ETH_SIGN_TX:
+        type = REQUEST_TYPE.TRANSACTION;
 
         const estimatePart = {
           txFeeInWei,
@@ -330,7 +331,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       case 'eth_sign':
-        type = 'message';
+        type = REQUEST_TYPE.MESSAGE;
 
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
@@ -347,8 +348,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
           </ScrollWrapper>
         );
         break;
-      case 'personal_sign':
-        type = 'message';
+      case PERSONAL_SIGN:
+        type = REQUEST_TYPE.MESSAGE;
 
         address = params[1]; // eslint-disable-line
         try {
@@ -370,7 +371,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       default:
-        type = 'unsupported';
+        type = REQUEST_TYPE.UNSUPPORTED;
         errorMessage = t('error.walletConnect.unsupportedAction');
         break;
     }
@@ -393,7 +394,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             <OptionButton
               primaryInverted
               onPress={() => this.handleFormSubmit(this.request, transactionPayload)}
-              disabled={!!errorMessage || (type === 'transaction' && gettingFee)}
+              disabled={!!errorMessage || (type === REQUEST_TYPE.TRANSACTION && gettingFee)}
               regularText
               title={
                 t([

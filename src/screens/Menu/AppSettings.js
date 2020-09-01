@@ -96,6 +96,12 @@ const CheckboxText = styled(BaseText)`
 
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
+const CURRENCY = 'currency';
+const MODAL = {
+  SYSTEM_INFO: 'systemInfo',
+  BASE_CURRENCY: 'baseCurrency',
+  ANALYTICS: 'analytics',
+};
 
 class AppSettings extends React.Component<Props, State> {
   state = {
@@ -146,7 +152,7 @@ class AppSettings extends React.Component<Props, State> {
       {
         key: 'localFiatCurrency',
         title: t('settingsContent.settingsItem.fiatCurrency.title'),
-        onPress: () => this.setState({ visibleModal: 'baseCurrency' }),
+        onPress: () => this.setState({ visibleModal: MODAL.BASE_CURRENCY }),
         value: baseFiatCurrency || defaultFiatCurrency,
       },
       isSmartAccount &&
@@ -171,21 +177,21 @@ class AppSettings extends React.Component<Props, State> {
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
       },
       {
-        key: 'analytics',
+        key: MODAL.ANALYTICS,
         title: t('settingsContent.settingsItem.analytics.title'),
-        onPress: () => this.setState({ visibleModal: 'analytics' }),
+        onPress: () => this.setState({ visibleModal: MODAL.ANALYTICS }),
       },
       {
-        key: 'systemInfo',
+        key: MODAL.SYSTEM_INFO,
         title: t('settingsContent.settingsItem.systemInfo.title'),
-        onPress: () => this.setState({ visibleModal: 'systemInfo' }),
+        onPress: () => this.setState({ visibleModal: MODAL.SYSTEM_INFO }),
       },
     ].filter(Boolean);
   };
 
   renderCurrencyListItem = (item) => {
     const { baseFiatCurrency } = this.props;
-    return this.renderListItem('currency', this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
+    return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -227,7 +233,7 @@ class AppSettings extends React.Component<Props, State> {
 
         {/* BASE CURRENCY */}
         <SlideModal
-          isVisible={visibleModal === 'baseCurrency'}
+          isVisible={visibleModal === MODAL.BASE_CURRENCY}
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
@@ -243,7 +249,7 @@ class AppSettings extends React.Component<Props, State> {
 
         {/* ANALYTICS */}
         <SlideModal
-          isVisible={visibleModal === 'analytics'}
+          isVisible={visibleModal === MODAL.ANALYTICS}
           fullScreen
           showHeader
           onModalHide={() => this.setState({ visibleModal: null })}
@@ -271,7 +277,7 @@ class AppSettings extends React.Component<Props, State> {
 
         {/* SYSTEM INFO MODAL */}
         <SlideModal
-          isVisible={visibleModal === 'systemInfo'}
+          isVisible={visibleModal === MODAL.SYSTEM_INFO}
           fullScreen
           showHeader
           title={t('settingsContent.settingsItem.systemInfo.title')}

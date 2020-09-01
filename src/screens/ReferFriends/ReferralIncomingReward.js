@@ -70,6 +70,9 @@ const getRewardText = (rewards: RewardsByCompany, campaign: string) => {
 };
 
 
+const ONE_WORLD = '1world';
+const PILLAR = 'pillar';
+
 class ReferralIncomingReward extends React.PureComponent<Props> {
   componentDidMount() {
     const { fetchReferralReward } = this.props;
@@ -84,7 +87,7 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
     } = this.props;
 
     // temp solution. Would be best to pass campaign via branch.io
-    const relatedCampaign = rewardsByCampaign['1world'] ? '1world' : 'pillar';
+    const relatedCampaign = rewardsByCampaign[ONE_WORLD] ? ONE_WORLD : PILLAR;
 
     const rewardText = getRewardText(rewardsByCampaign, relatedCampaign);
     const isGettingReward = !!rewardText;

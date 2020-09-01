@@ -51,6 +51,7 @@ import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { STAGING } from 'constants/envConstants';
+import { DEFAULT_LANGUAGE, DEV_LANG } from 'translations/config';
 
 // components
 import { Container } from 'components/Layout';
@@ -263,7 +264,7 @@ class App extends React.Component<Props, *> {
                   if (!node) return;
                   setTopLevelNavigator(node);
                 }}
-                theme={current === LIGHT_THEME ? 'light' : 'dark'}
+                theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18n.language}
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
@@ -276,7 +277,7 @@ class App extends React.Component<Props, *> {
               />}
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
                 title={`Change lang (current: ${i18n.language})`}
-                onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
+                onPress={() => changeLanguage(i18n.language === DEV_LANG ? DEFAULT_LANGUAGE : DEV_LANG)}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&

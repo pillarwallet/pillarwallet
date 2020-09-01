@@ -60,6 +60,7 @@ const SOCIAL_NETWORKS = [{
 }];
 
 export default class ShareSocial extends React.Component<Props> {
+  /* eslint-disable i18next/no-literal-string */
   shareOnSocialMedia = (platform: string, sharerUrl: string) => () => {
     Share.shareSingle({
       message: 'pillarproject.io/wallet',
@@ -70,6 +71,7 @@ export default class ShareSocial extends React.Component<Props> {
         Linking.openURL(sharerUrl);
       });
   };
+  /* eslint-enable i18next/no-literal-string */
 
   renderSharingButton(): TouchableNativeFeedback | TouchableOpacity {
     return SOCIAL_NETWORKS.map(social => {

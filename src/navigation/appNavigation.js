@@ -526,7 +526,7 @@ const tabNavigation = createBottomTabNavigator(
         height: 54,
       },
     },
-    tabBarPosition: 'bottom',
+    tabBarPosition: 'bottom', // eslint-disable-line i18next/no-literal-string
     animationEnabled: false,
     swipeEnabled: false,
     tabBarComponent: props => <CustomTabBarComponent {...props} />,

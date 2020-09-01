@@ -239,7 +239,7 @@ class TankWithdrawal extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Withdraw from PLR tank' }] }}
+        headerProps={{ centerItems: [{ title: t('ppnContent.title.withdrawFromTankScreen') }] }}
         footer={(
           <FooterInner>
             <FeeLabelToggle

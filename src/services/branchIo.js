@@ -34,10 +34,12 @@ export const getUserReferralLink = async (
     { contentMetadata: { customMetadata: { ...data, inviterWalletId } } },
   );
 
+  /* eslint-disable i18next/no-literal-string */
   const result = await branchIoUniversalObject.generateShortUrl({
     feature: 'referral',
     channel: 'app',
   });
+  /* eslint-enable i18next/no-literal-string */
 
   return result.url;
 };
