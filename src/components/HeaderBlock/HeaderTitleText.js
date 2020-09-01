@@ -30,7 +30,7 @@ type Props = {
 
 const StyledText = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
-  line-height: 26px;
+  line-height: 24px;
   color: ${({ color, theme }) => color || theme.colors.text};
   text-align: ${props => props.centerText ? 'center' : 'left'};
 `;
