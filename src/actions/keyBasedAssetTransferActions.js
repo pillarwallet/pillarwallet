@@ -52,6 +52,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
 import { formatFullAmount, getGasPriceWei, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
 // services
 import { calculateGasEstimate, fetchTransactionInfo, transferSigned } from 'services/assets';
@@ -272,43 +273,36 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     // check if ETH is being transferred and adjust transfer amount if needed
     const ethTransfer = keyBasedAssetsToTransferUpdated.find(({ assetData }) => assetData?.token === ETH);
     if (ethTransfer) {
-      const ethBalanceBN = new BigNumber(getBalance(availableBalances, ETH));
-
+      const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount);
       const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransferUpdated.reduce(
         (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
         new BigNumber(0),
       );
       const totalTransferFeeEthBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
+      const adjustedEthTransferAmountBN = calculateETHTransactionAmountAfterFee(
+        ethTransferAmountBN,
+        availableBalances,
+        totalTransferFeeEthBN,
+      );
 
-      const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount);
-      const ethBalanceLeftAfterTransactionBN = ethBalanceBN
-        .minus(totalTransferFeeEthBN)
-        .minus(ethTransferAmountBN);
-
-      // check if not enough ETH left to cover fees and adjust ETH amount by calculating max available after fees
-      if (!ethBalanceLeftAfterTransactionBN.isPositive()) {
-        const adjustedEthTransferAmountBN = ethBalanceBN
-          .minus(totalTransferFeeEthBN);
-
-        // check if adjusted amount is enough to cover fees, otherwise it's not enough ETH in general
-        if (adjustedEthTransferAmountBN.isPositive()) {
-          const adjustedEthTransferAmount = formatFullAmount(adjustedEthTransferAmountBN.toString());
-          const estimateTransaction = buildAssetTransferTransaction(ethTransfer.assetData, {
-            amount: adjustedEthTransferAmount,
-            from: keyBasedWalletAddress,
-            to: getAccountAddress(firstSmartAccount),
-          });
-          const gasLimit = await calculateGasEstimate(estimateTransaction);
-          const adjustedEthTransfer = {
-            ...ethTransfer,
-            amount: adjustedEthTransferAmount,
-            calculatedGasLimit: gasLimit,
-            gasPrice,
-          };
-          keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
-            .filter(({ assetData }) => assetData.token !== ETH)
-            .concat(adjustedEthTransfer);
-        }
+      // check if adjusted amount is enough to cover fees, otherwise it's not enough ETH in general
+      if (adjustedEthTransferAmountBN.isPositive()) {
+        const adjustedEthTransferAmount = formatFullAmount(adjustedEthTransferAmountBN.toString());
+        const estimateTransaction = buildAssetTransferTransaction(ethTransfer.assetData, {
+          amount: adjustedEthTransferAmount,
+          from: keyBasedWalletAddress,
+          to: getAccountAddress(firstSmartAccount),
+        });
+        const gasLimit = await calculateGasEstimate(estimateTransaction);
+        const adjustedEthTransfer = {
+          ...ethTransfer,
+          amount: adjustedEthTransferAmount,
+          calculatedGasLimit: gasLimit,
+          gasPrice,
+        };
+        keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
+          .filter(({ assetData }) => assetData.token !== ETH)
+          .concat(adjustedEthTransfer);
       }
     }
 
