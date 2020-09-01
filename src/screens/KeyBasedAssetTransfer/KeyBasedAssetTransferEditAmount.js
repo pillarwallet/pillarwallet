@@ -131,7 +131,7 @@ const KeyBasedAssetTransferEditAmount = ({
   };
 
   const renderAsset = ({ item }) => {
-    const { assetData: { token: symbol, name, icon }, amount } = item;
+    const { assetData: { token: symbol, name, icon }, draftAmount: amount } = item;
     const assetBalance = getBalance(availableBalances, symbol);
     const formattedAssetBalance = formatFullAmount(assetBalance);
     const displayAmount = updatedValues[symbol]?.amount || '';

@@ -159,7 +159,7 @@ export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
 export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
-    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, amount });
+    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, draftAmount: amount });
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: updatedKeyBasedAssetsToTransfer });
   };
 };
@@ -243,14 +243,19 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
 
     let keyBasedAssetsToTransferUpdated = await Promise.all(
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {
-        const { assetData, amount } = keyBasedAssetToTransfer;
+        const { assetData, draftAmount } = keyBasedAssetToTransfer;
         const estimateTransaction = buildAssetTransferTransaction(assetData, {
-          amount,
+          amount: draftAmount,
           from: keyBasedWalletAddress,
           to: getAccountAddress(firstSmartAccount),
         });
         const gasLimit = await calculateGasEstimate(estimateTransaction);
-        return { ...keyBasedAssetToTransfer, gasPrice, calculatedGasLimit: gasLimit };
+        return {
+          ...keyBasedAssetToTransfer,
+          calculatedGasLimit: gasLimit,
+          amount: draftAmount,
+          gasPrice,
+        };
       }),
     );
 
@@ -275,20 +280,18 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
       );
       const totalTransferFeeEthBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
 
-      const ethTransferAmountBN = new BigNumber(ethTransfer.amount);
+      const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount);
       const ethBalanceLeftAfterTransactionBN = ethBalanceBN
         .minus(totalTransferFeeEthBN)
         .minus(ethTransferAmountBN);
 
       // check if not enough ETH left to cover fees and if so – adjust ETH transfer amount
       if (!ethBalanceLeftAfterTransactionBN.isPositive()) {
-        const adjustedEthTransferAmountBN = ethTransferAmountBN.minus(totalTransferFeeEthBN);
-        const ethBalanceLeftAfterAdjustedEthTransactionBN = ethBalanceBN
-          .minus(totalTransferFeeEthBN)
-          .minus(adjustedEthTransferAmountBN);
+        const adjustedEthTransferAmountBN = ethBalanceBN
+          .minus(totalTransferFeeEthBN);
 
         // check if adjusted amount is enough to cover fees, otherwise it's not enough ETH in general
-        if (ethBalanceLeftAfterAdjustedEthTransactionBN.isPositive()) {
+        if (adjustedEthTransferAmountBN.isPositive()) {
           const adjustedEthTransferAmount = formatFullAmount(adjustedEthTransferAmountBN.toString());
           const estimateTransaction = buildAssetTransferTransaction(ethTransfer.assetData, {
             amount: adjustedEthTransferAmount,
