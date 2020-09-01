@@ -285,7 +285,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
         .minus(totalTransferFeeEthBN)
         .minus(ethTransferAmountBN);
 
-      // check if not enough ETH left to cover fees and if so – adjust ETH transfer amount
+      // check if not enough ETH left to cover fees and adjust ETH amount by calculating max available after fees
       if (!ethBalanceLeftAfterTransactionBN.isPositive()) {
         const adjustedEthTransferAmountBN = ethBalanceBN
           .minus(totalTransferFeeEthBN);
