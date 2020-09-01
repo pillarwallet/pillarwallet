@@ -89,7 +89,7 @@ const ExchangeInputHeader = (props: Props) => {
   const { genericToken } = images(theme);
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} >
+      <SideWrapper onPress={onAssetPress} disabled={!onAssetPress} >
         <Image
           key={id}
           source={optionImageSource}

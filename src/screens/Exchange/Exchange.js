@@ -294,7 +294,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   getToInput = () => {
     const { baseFiatCurrency, offers, rates } = this.props;
     const {
-      displayFiatToAmount, toAsset, fromAmount,
+      displayFiatToAmount, toAsset, fromAmount, fromAsset,
     } = this.state;
 
     let value;
@@ -315,7 +315,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         value={value}
         onBlur={this.blurFromInput}
         asset={toAsset}
-        onAssetPress={() => this.setState({ showBuyOptions: true })}
+        onAssetPress={fromAsset.symbol === BTC ? null : () => this.setState({ showBuyOptions: true })}
         leftSideText={displayFiatToAmount
           ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol || ''}`
           : formatFiat(toAmountInFiat || '0', fiatCurrency).replace(/ /g, '')

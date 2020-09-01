@@ -21,8 +21,11 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { BaseText } from 'components/Typography';
+import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
+
+// import { getBTCDepositMint } from 'services/wbtcCafe';
 
 import t from 'translations/translate';
 
@@ -46,6 +49,7 @@ const InfoWrapper = styled.View`
   border-width: 1px;
   border-style: solid;
   border-color: ${themedColors.secondaryAccent};
+  margin-bottom: 30px;
 `;
 
 const Row = styled.TouchableOpacity`
@@ -62,7 +66,11 @@ const Row = styled.TouchableOpacity`
 const Label = styled(BaseText)`
   ${fontStyles.regular};
   color: ${({ textColor }) => textColor || themedColors.secondaryText};
-  `;
+`;
+
+const ButtonWrapper = styled.View`
+  margin: 0px ${spacing.layoutSides}px 20px;
+`;
 
 class WBTCCafeInfo extends React.Component<Props, State> {
   state = {
@@ -73,29 +81,36 @@ class WBTCCafeInfo extends React.Component<Props, State> {
     // modal
   }
 
+  handleNextPress = () => {
+    // const mint = getBTCDepositMint('', 0.00001);
+  }
+
   render() {
-    const { rate = '-', renFee = '-', btcFee = '-' } = this.props;
+    const { rate, renFee, btcFee } = this.props;
     const { maxSlippage } = this.state;
     return (
       <Container>
         <InfoWrapper>
           <Row disabled>
             <Label>{t('wbtcCafe.rate')}</Label>
-            <Label textColor={themedColors.text}>{rate}</Label>
+            <Label textColor={themedColors.text}>{rate || '-'}</Label>
           </Row>
           <Row disabled>
             <Label>{t('wbtcCafe.renFee')}</Label>
-            <Label>{renFee}</Label>
+            <Label>{renFee || '-'}</Label>
           </Row>
           <Row disabled>
             <Label>{t('wbtcCafe.btcFee')}</Label>
-            <Label>{btcFee}</Label>
+            <Label>{btcFee || '-'}</Label>
           </Row>
           <Row onPress={this.handleSlippagePress} noBorder>
             <Label textColor={themedColors.link}>{t('wbtcCafe.slippage')}</Label>
             <Label>{`${maxSlippage}%`}</Label>
           </Row>
         </InfoWrapper>
+        <ButtonWrapper>
+          <Button title="Next" onPress={this.handleNextPress} disabled={false} />
+        </ButtonWrapper>
       </Container>
     );
   }
