@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import SDKWrapper from 'services/api';
-import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { REGISTRATION_FAILED, USERNAME_FAILED } from 'constants/walletConstants';
 
 const sdkWrapper = new SDKWrapper();
 
@@ -105,7 +105,7 @@ describe('API service', () => {
     );
     expect(result).toEqual({
       error: true,
-      reason: USERNAME_EXISTS,
+      reason: USERNAME_FAILED,
     });
   });
 
