@@ -60,6 +60,7 @@ const FooterInner = styled.View`
 
 const SendFooter = (props: FooterProps) => {
   const { isNextButtonVisible, buttonProps = {}, footerTopAddon } = props;
+  if (!footerTopAddon && !isNextButtonVisible) return null;
   return (
     <FooterInner>
       {footerTopAddon}
@@ -87,7 +88,7 @@ const SendContainer = (props: Props) => {
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
-      minAvoidHeight={260}
+      minAvoidHeight={800}
     >
       <Selector
         label={t('label.to')}

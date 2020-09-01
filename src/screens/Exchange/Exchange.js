@@ -32,6 +32,9 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import SelectorOptions from 'components/SelectorOptions';
 import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
+import PercentsInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 // actions
 import {
@@ -272,12 +275,13 @@ class ExchangeScreen extends React.Component<Props, State> {
         getInputRef={ref => { this.fromInputRef = ref; }}
         onChange={this.handleFromInputChange}
         value={value}
+        onFocus={this.onFocusInput}
         onBlur={this.blurFromInput}
         errorMessage={errorMessage}
         asset={fromAsset}
         onAssetPress={() => this.setState({ showSellOptions: true })}
         labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        onLabelPress={this.handleSellMax}
+        onLabelPress={() => this.handleUsePercent(100)}
         leftSideText={displayFiatFromAmount
           ? t('tokenValue', {
             value: formatAmount(fromAmount || '0', 2) || '0',
@@ -288,6 +292,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         leftSideSymbol="-"
         onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
         rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
+        inputAccessoryViewID={INPUT_ACCESSORY_NATIVE_ID}
       />
     );
   };
@@ -330,7 +335,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   blurFromInput = () => {
     if (this.fromInputRef) this.fromInputRef.blur();
+    PercentsInputAccessoryHolder.removeAccessory();
   };
+
+  onFocusInput = () => {
+    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
+  }
 
   focusInputWithKeyboard = () => {
     const { hasSeenExchangeIntro } = this.props;
@@ -340,12 +350,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     }, 200);
   };
 
-  handleSellMax = () => {
+  handleUsePercent = (percent: number) => {
     const { fromAsset } = this.state;
     const fiatAmount = fromAsset.formattedBalanceInFiat || '';
     this.setState({
-      fromAmount: fromAsset.assetBalance,
-      fromAmountInFiat: fiatAmount.substr(2),
+      fromAmount: (parseFloat(fromAsset.assetBalance) * (percent / 100)).toString(),
+      fromAmountInFiat: (parseFloat(fiatAmount) * (percent / 100)).toString().substr(2),
       errorMessage: '',
     }, () => Keyboard.dismiss());
   };

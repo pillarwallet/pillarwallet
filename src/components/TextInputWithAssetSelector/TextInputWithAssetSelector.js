@@ -28,6 +28,7 @@ import ExchangeInputHeader from './TextInputWithAssetSelectorHeader';
 
 type Props = {
   onBlur?: () => void,
+  onFocus?: () => void,
   errorMessage?: string,
   asset: Option,
   onAssetPress: () => void,
@@ -40,7 +41,8 @@ type Props = {
   leftSideSymbol: string,
   rightPlaceholder: string,
   disabled?: boolean,
-  getInputRef?: (Input) => void
+  getInputRef?: (Input) => void,
+  inputAccessoryViewID?: string,
 };
 
 const ExchangeTextInput = (props: Props) => {
@@ -63,6 +65,7 @@ const ExchangeTextInput = (props: Props) => {
     errorMessage,
     onAssetPress,
     onBlur,
+    onFocus,
     onChange,
     value,
     leftSideText,
@@ -70,16 +73,19 @@ const ExchangeTextInput = (props: Props) => {
     leftSideSymbol,
     disabled,
     getInputRef,
+    inputAccessoryViewID,
   } = props;
   const inputProps = {
     value,
     onBlur,
+    onFocus,
     maxLength: 42,
     customLabel: getCustomLabel(),
     onChange,
     placeholder: '0',
     keyboardType: 'decimal-pad',
     editable: !disabled,
+    inputAccessoryViewID,
   };
   return (
     <TextInput
