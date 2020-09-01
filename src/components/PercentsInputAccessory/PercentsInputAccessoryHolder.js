@@ -22,6 +22,7 @@ import { Keyboard, Platform, InputAccessoryView } from 'react-native';
 import { noop } from 'utils/common';
 import PercentsInputAccessory from './PercentsInputAccessory';
 
+
 type State = {
   isVisible: boolean,
   isActive: boolean,

@@ -39,7 +39,6 @@ const AccessoryContentWrapper = styled.View`
   border-color: ${themedColors.tertiary};
 `;
 
-
 const PercentsInputAccessory = ({ handleUsePercent }: Props) => {
   return (
     <AccessoryContentWrapper>
