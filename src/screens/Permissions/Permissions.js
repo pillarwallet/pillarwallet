@@ -17,33 +17,35 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useState } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native/index';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import t from 'translations/translate';
 
+// components
 import { Paragraph, MediumText, BaseText } from 'components/Typography';
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { handleUrlPress } from 'utils/common';
-import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
-import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
 import { NextFooter } from 'components/Layout/NextFooter';
+import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
+
+// utils
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { handleUrlPress } from 'utils/common';
 import { getThemeColors, themedColors } from 'utils/themes';
+
+// constants
+import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
+
+// types
 import type { Theme } from 'models/Theme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
-};
-
-type State = {
-  openCollapseKey: string,
-  openInnerCollapseKey: string,
-  hasAgreedToTerms: boolean,
 };
 
 const SectionToggle = styled.View`
@@ -92,14 +94,16 @@ const TickIcon = styled(Icon)`
   margin-top: 1px;
 `;
 
-class Permissions extends React.Component<Props, State> {
-  state = {
-    openCollapseKey: '',
-    openInnerCollapseKey: '',
-    hasAgreedToTerms: false,
-  };
+const Permissions = ({
+  navigation,
+  theme,
+}: Props) => {
+  const [openCollapseKey, setOpenCollapseKey] = useState(null);
+  const [openInnerCollapseKey, setOpenInnerCollapseKey] = useState(null);
+  const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
 
-  sections = [
+  // keep sections in component scope due translations
+  const sections = [
     {
       key: 'ACCESS_PERMISSIONS',
       title: t('auth:permissions.title.accessPermissions'),
@@ -200,70 +204,23 @@ class Permissions extends React.Component<Props, State> {
     },
   ];
 
-  toggleCollapse = (key: string) => {
-    const { openCollapseKey } = this.state;
-    if (openCollapseKey === key) {
-      this.setState({ openCollapseKey: '', openInnerCollapseKey: '' });
-    } else {
-      this.setState({ openCollapseKey: key, openInnerCollapseKey: '' });
-    }
+  const toggleCollapse = (key: string) => {
+    setOpenCollapseKey(openCollapseKey === key ? null : key);
+    setOpenInnerCollapseKey(null);
   };
 
-  toggleInnerCollapse = (key: string) => {
-    const { openInnerCollapseKey } = this.state;
-    if (openInnerCollapseKey === key) {
-      this.setState({ openInnerCollapseKey: '' });
-    } else {
-      this.setState({ openInnerCollapseKey: key });
-    }
+  const toggleInnerCollapse = (key: string) => {
+    setOpenInnerCollapseKey(openInnerCollapseKey === key ? null : key);
   };
 
-  handleAgree = () => {
-    const { navigation } = this.props;
+  const handleAgree = () => {
     const username = navigation.getParam('username');
     navigation.navigate(SET_WALLET_PIN_CODE, { username });
-    return null;
   };
 
-  renderSection = ({ item: section }: Object) => {
-    const { theme } = this.props;
-    const { openCollapseKey } = this.state;
-    const { title, key } = section;
-    const colors = getThemeColors(theme);
+  const colors = getThemeColors(theme);
 
-    return (
-      <CollapsibleListItem
-        customToggle={(
-          <SectionToggle>
-            <SectionTitle>{title}</SectionTitle>
-            <IconHolder>
-              <TickIcon name="check" />
-            </IconHolder>
-          </SectionToggle>
-        )}
-        open={openCollapseKey === key}
-        onPress={() => this.toggleCollapse(key)}
-        toggleWrapperStyle={{
-          borderBottomColor: colors.border,
-          borderBottomWidth: 0.5,
-          borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-          paddingRight: 15,
-        }}
-        wrapperStyle={{
-          borderTopColor: colors.border,
-          borderTopWidth: 0.5,
-        }}
-        collapseContent={this.renderCollapseContent(key)}
-        noPadding
-      />
-    );
-  };
-
-  renderSectionContent = ({ item: sectionContent }: Object) => {
-    const { openInnerCollapseKey } = this.state;
-    const { theme } = this.props;
-    const colors = getThemeColors(theme);
+  const renderSectionContent = ({ item: sectionContent }: Object) => {
     const {
       key,
       title,
@@ -279,7 +236,7 @@ class Permissions extends React.Component<Props, State> {
             </InnerSectionToggle>
           )}
           open={openInnerCollapseKey === key}
-          onPress={() => this.toggleInnerCollapse(key)}
+          onPress={() => toggleInnerCollapse(key)}
           toggleWrapperStyle={{
             borderTopColor: colors.border,
             borderTopWidth: 0.5,
@@ -318,62 +275,82 @@ class Permissions extends React.Component<Props, State> {
     );
   };
 
-  renderCollapseContent = (sectionKey: string) => {
-    const section = this.sections.find((thisSection) => thisSection.key === sectionKey) || {};
+  const renderCollapseContent = (sectionKey: string) => {
+    const section = sections.find((thisSection) => thisSection.key === sectionKey) || {};
     const { content } = section;
     return (
       <FlatList
         keyExtractor={item => item.key}
         data={content}
-        extraData={this.state}
-        renderItem={this.renderSectionContent}
+        renderItem={renderSectionContent}
       />
     );
   };
 
-  render() {
-    const { hasAgreedToTerms } = this.state;
-    const { theme } = this.props;
-    const colors = getThemeColors(theme);
+  const renderSection = ({ item: { title, key } }: Object) => (
+    <CollapsibleListItem
+      customToggle={(
+        <SectionToggle>
+          <SectionTitle>{title}</SectionTitle>
+          <IconHolder>
+            <TickIcon name="check" />
+          </IconHolder>
+        </SectionToggle>
+      )}
+      open={openCollapseKey === key}
+      onPress={() => toggleCollapse(key)}
+      toggleWrapperStyle={{
+        borderBottomColor: colors.border,
+        borderBottomWidth: 0.5,
+        borderTopColor: colors.border,
+        borderTopWidth: 0.5,
+        paddingRight: 15,
+      }}
+      wrapperStyle={{
+        borderTopColor: colors.border,
+        borderTopWidth: 0.5,
+      }}
+      collapseContent={renderCollapseContent(key)}
+      noPadding
+    />
+  );
 
-    return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: t('auth:title.permissions') }] }}
+  return (
+    <ContainerWithHeader
+      headerProps={{ centerItems: [{ title: t('auth:title.permissions') }] }}
+    >
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          justifyContent: 'space-between',
+        }}
       >
-        <ScrollView
+        <StyledFlatList
+          keyExtractor={item => item.key}
+          data={sections}
+          renderItem={renderSection}
           contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'space-between',
+            borderBottomWidth: 1,
+            borderBottomColor: colors.border,
           }}
+        />
+        <NextFooter
+          onNextPress={handleAgree}
+          nextDisabled={!hasAgreedToTerms}
+          contentAlign="center"
         >
-          <StyledFlatList
-            keyExtractor={item => item.key}
-            data={this.sections}
-            extraData={this.state}
-            renderItem={this.renderSection}
-            contentContainerStyle={{
-              borderBottomWidth: 1,
-              borderBottomColor: colors.border,
-            }}
-          />
-          <NextFooter
-            onNextPress={this.handleAgree}
-            nextDisabled={!hasAgreedToTerms}
-            contentAlign="center"
+          <Checkbox
+            onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
+            small
+            lightText
+            checked={hasAgreedToTerms}
           >
-            <Checkbox
-              onPress={() => { this.setState({ hasAgreedToTerms: !hasAgreedToTerms }); }}
-              small
-              lightText
-              checked={hasAgreedToTerms}
-            >
-              {t('auth:withLink.readUnderstandAgreeTo', { linkedText: t('auth:termsOfUse') })}
-            </Checkbox>
-          </NextFooter>
-        </ScrollView>
-      </ContainerWithHeader>
-    );
-  }
-}
+            {t('auth:withLink.readUnderstandAgreeTo', { linkedText: t('auth:termsOfUse') })}
+          </Checkbox>
+        </NextFooter>
+      </ScrollView>
+    </ContainerWithHeader>
+  );
+};
 
 export default withTheme(Permissions);

@@ -39,7 +39,6 @@ import { ScrollWrapper, Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import { BaseText, MediumText } from 'components/Typography';
 import Camera from 'components/Camera';
-import { EmailStruct, PhoneStruct } from 'components/ProfileForm/profileFormDefs';
 import TextInput from 'components/TextInput';
 import Flag from 'components/Flag';
 import Button from 'components/Button';
@@ -53,6 +52,7 @@ import countries from 'utils/countries.json';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { getEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
+import { EmailStruct, PhoneStruct } from 'utils/validators';
 
 // actions
 import { updateUserAction } from 'actions/userActions';
