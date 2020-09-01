@@ -22,14 +22,10 @@ import styled from 'styled-components/native';
 import { Animated, StatusBar } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import merge from 'lodash.merge';
-import Emoji from 'react-native-emoji';
 import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
-import Icon from 'components/Icon';
-import ShadowedCard from 'components/ShadowedCard';
-import { Spacing } from 'components/Layout';
-import { MediumText, TextLink } from 'components/Typography';
-import { themedColors } from 'utils/themes';
+
+import ToastCard from './ToastCard';
 
 type ToastOptions = {
   autoClose?: boolean,
@@ -58,12 +54,6 @@ const ToastHolder = styled(SafeAreaView)`
   width: 100%;
 `;
 
-const ContentWrapper = styled.View`
-  flex-direction: row;
-  padding: 14px 55px 14px 20px;
-  align-items: flex-start;
-`;
-
 const ToastWrapper = styled.View`
   opacity: ${props => props.opacity};
   position: absolute;
@@ -75,18 +65,6 @@ const ToastWrapper = styled.View`
   align-items: center;
   margin-top: ${props => props.androidStatusbarHeight || 0}px;
   padding: 40px 20px;
-`;
-
-const CloseIconWrapper = styled.TouchableOpacity`
-  position: absolute;
-  top: 7px;
-  right: 8px;
-  padding: 10px;
-`;
-
-const CloseIcon = styled(Icon)`
-  color: ${themedColors.toastCloseIcon};
-  font-size: 16px;
 `;
 
 const AnimatedToastWrapper = Animated.createAnimatedComponent(ToastWrapper);
@@ -182,6 +160,14 @@ class Toast extends React.Component<{}, State> {
       inputRange: [0, 1],
       outputRange: [-260, 0],
     });
+
+    const linkProps = supportLink ? {
+      link: t('label.contactSupport'),
+      onLinkPress: this.goToSupport,
+    } : {
+      link, onLinkPress,
+    };
+
     return (
       <AnimatedToastWrapper
         style={{
@@ -191,20 +177,12 @@ class Toast extends React.Component<{}, State> {
         androidStatusbarHeight={StatusBar.currentHeight}
       >
         <ToastHolder forceInset={{ top: 'always', bottom: 'never' }}>
-          <ShadowedCard forceShadow shadowColor="#000" shadowOpacity={0.06} borderRadius={20}>
-            <ContentWrapper>
-              {emoji && <Emoji name={emoji} style={{ fontSize: 16 }} />}
-              <Spacing w={18} />
-              <MediumText regular style={{ flex: 1 }}>
-                {message}
-                {link && <TextLink onPress={onLinkPress} regular> {link}</TextLink>}
-                {supportLink && <TextLink onPress={this.goToSupport} regular> {t('label.contactSupport')}</TextLink>}
-              </MediumText>
-            </ContentWrapper>
-            <CloseIconWrapper onPress={this.handleClose}>
-              <CloseIcon name="rounded-close" />
-            </CloseIconWrapper>
-          </ShadowedCard>
+          <ToastCard
+            message={message}
+            emoji={emoji}
+            onClose={this.handleClose}
+            {...linkProps}
+          />
         </ToastHolder>
       </AnimatedToastWrapper>
     );
