@@ -1140,7 +1140,9 @@
       "sablierTransactionSuccess": "Your stream has begun",
       "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
       "amountEditScreen": "Edit amount",
-      "assetsTransferToSmartWalletStatusScreen": "Key based assets migration"
+      "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
+      "creatingTransactions": "Creating transactions",
+      "keyBasedAssetsMigrationComplete": "Key based assets migration complete"
     },
     "button": {
       "payFeeWithPillar": "Pay fees with PLR",
