@@ -77,7 +77,6 @@ import {
   walletConnectSessionsRemovedAction,
 } from 'actions/walletConnectSessionsActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // components
 import Toast from 'components/Toast';
@@ -449,10 +448,7 @@ export const approveSessionAction = (peerId: string) => {
           message: t('toast.walletConnectSmartWalletNotActive'),
           emoji: 'point_up',
           link: t('label.activateSmartWallet'),
-          onLinkPress: () => {
-            dispatch(deploySmartWalletAction());
-            navigate(NavigationActions.navigate({ routeName: ASSETS }));
-          },
+          onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })),
           autoClose: false,
         });
         return;
