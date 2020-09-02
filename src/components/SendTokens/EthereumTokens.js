@@ -168,7 +168,7 @@ const SendEthereumTokens = ({
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
     // specified amount is always valid and not necessarily matches input amount
-    if ((!specifiedAmount && !isValidAmount) || !assetData || !selectedContact) {
+    if ((!specifiedAmount && !isValidAmount) || value === 0 || !assetData || !selectedContact) {
       setGettingFee(false);
       setTxFeeInfo(null);
       return;
