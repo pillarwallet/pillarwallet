@@ -55,7 +55,6 @@ type Props = {
   theme: Theme,
 };
 
-
 const SWActivationCard = ({
   title,
   buttonTitle = t('smartWalletContent.activationCard.button.activate'),
