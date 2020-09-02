@@ -1558,8 +1558,8 @@ export const estimateSmartWalletDeploymentAction = () => {
 
     const rawEstimate = await smartWalletService
       .estimateAccountDeployment()
-      .catch(() => {
-        reportLog('estimateSmartWalletDeploymentAction failed when getting fee');
+      .catch((error) => {
+        reportLog('estimateAccountDeployment failed', { error });
         return null;
       });
 

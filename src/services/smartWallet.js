@@ -540,10 +540,7 @@ class SmartWallet {
   }
 
   estimateAccountDeployment() {
-    return this.getSdk().estimateAccountDeployment().catch((err) => {
-      this.handleError(err);
-      return {};
-    });
+    return this.getSdk().estimateAccountDeployment();
   }
 
   getTransactionInfo(hash: string) {
