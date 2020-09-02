@@ -147,6 +147,8 @@ jest.setMock('ethers', {
     parseUnits: utils.parseUnits,
     HDNode: utils.HDNode,
     formatEther: utils.formatEther,
+    randomBytes: utils.randomBytes,
+    entropyToMnemonic: utils.entropyToMnemonic,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,

@@ -342,6 +342,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             />
           }
           innerRef={ref => { this.scroll = ref; }}
+          keyboardShouldPersistTaps="always"
         >
           <ContentWrapper>
             <ContentRow style={{ paddingLeft: 4, paddingRight: 4 }}>

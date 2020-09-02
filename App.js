@@ -60,6 +60,7 @@ import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/Button';
+import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
@@ -286,6 +287,13 @@ class App extends React.Component<Props, *> {
                   onPress={() => switchEnvironments()}
                 />
               }
+              <PercentsInputAccessoryHolder
+                ref={c => {
+                  if (c && !PercentsInputAccessoryHolder.instances.includes(c)) {
+                    PercentsInputAccessoryHolder.instances.push(c);
+                  }
+                }}
+              />
             </Root>
           </React.Fragment>
         </ThemeProvider>

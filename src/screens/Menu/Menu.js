@@ -145,6 +145,8 @@ const MODAL = {
   SERVICES: 'termsOfService',
 };
 
+const SEPARATOR_SYMBOL = '  •  ';
+
 const Menu = ({
   theme,
   navigation,
@@ -341,7 +343,7 @@ const Menu = ({
               <LegalTextLink onPress={() => toggleSlideModalOpen(MODAL.SERVICES)}>
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
-              <LegalTextLink>  •  </LegalTextLink> {/* eslint-disable-line i18next/no-literal-string */}
+              <LegalTextLink>{SEPARATOR_SYMBOL}</LegalTextLink>
               <LegalTextLink onPress={() => toggleSlideModalOpen(MODAL.PRIVACY_POLICY)}>
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>

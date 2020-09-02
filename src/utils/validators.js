@@ -21,6 +21,11 @@ import { utils } from 'ethers';
 import { ETH } from 'constants/assetsConstants';
 import { pipe, decodeETHAddress } from 'utils/common';
 import t from 'translations/translate';
+import * as tForm from 'tcomb-form-native';
+
+// types
+import type { TranslatedString } from 'models/Translations';
+
 
 type AddressValidator = {
   validator: (address: string) => boolean,
@@ -119,3 +124,59 @@ export function isValidPhoneWithoutCountryCode(phone: string) {
   const re = /^(\d{5,20}$)/;
   return re.test(phone);
 }
+
+export const MIN_USERNAME_LENGTH = 4;
+export const MAX_USERNAME_LENGTH = 30;
+
+export const validateUsername = (
+  username: ?string,
+  minLength: number = MIN_USERNAME_LENGTH,
+  maxLength: number = MAX_USERNAME_LENGTH,
+): ?TranslatedString => {
+  const usernameRegex = /^[a-z]+([a-z0-9-]+[a-z0-9])?$/i;
+  const startsWithNumberRegex = /^[0-9]/i;
+  const startsOrEndsWithDash = /(^-|-$)/i;
+
+  if (!username) {
+    return t('auth:error.missingData', { missingData: t('auth:formData.username') });
+  } else if (username.length < minLength) {
+    return t('auth:error.invalidUsername.tooShort', { requiredLength: MIN_USERNAME_LENGTH - 1 });
+  } else if (username.length > maxLength) {
+    return t('auth:error.invalidUsername.tooLong', { requiredLength: MAX_USERNAME_LENGTH + 1 });
+  } else if (!usernameRegex.test(username)) {
+    if (startsWithNumberRegex.test(username)) return t('auth:error.invalidUsername.cantStartWithNumber');
+    if (startsOrEndsWithDash.test(username)) return t('auth:error.invalidUsername.cantStartEndWithDash');
+    return t('auth:error.invalidUsername.useAlphanumericSymbolsOnly');
+  }
+
+  return null;
+};
+
+const EmailStructDef = tForm.refinement(tForm.String, (email: string = ''): boolean => {
+  const maxLength = 100;
+  return isValidEmail(email) && email.length <= maxLength;
+});
+
+const PhoneStructDef = tForm.refinement(tForm.Object, ({ input }): boolean => {
+  return isValidPhoneWithoutCountryCode(input);
+});
+
+EmailStructDef.getValidationErrorMessage = (email): string => {
+  const maxLength = 100;
+  if (email && !isValidEmail(email)) {
+    return t('auth:error.invalidEmailAddress.default');
+  } else if (email && email.length > maxLength) {
+    return t('auth:error.invalidEmailAddress.tooLong', { requiredLength: maxLength });
+  }
+  return '';
+};
+
+PhoneStructDef.getValidationErrorMessage = (phone): string => {
+  if (phone && !isValidPhoneWithoutCountryCode(phone)) {
+    return t('auth:error.invalidPhoneNumber.default');
+  }
+  return '';
+};
+
+export const EmailStruct = EmailStructDef;
+export const PhoneStruct = PhoneStructDef;

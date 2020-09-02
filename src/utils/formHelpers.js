@@ -165,6 +165,7 @@ export function SelectorInputTemplate(locals: Object) {
       noErrorText,
       renderOption,
       optionTabs,
+      inputAccessoryViewID,
     },
   } = locals;
   const value = get(locals, 'value', {});
@@ -179,6 +180,7 @@ export function SelectorInputTemplate(locals: Object) {
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
+    onFocus: locals.onFocus,
     keyboardType: locals.keyboardType,
     autoCapitalize: locals.autoCapitalize,
     maxLength: 42,
@@ -191,6 +193,7 @@ export function SelectorInputTemplate(locals: Object) {
     rightLabel,
     onPressRightLabel,
     inputHeaderStyle,
+    inputAccessoryViewID,
   };
 
   return (

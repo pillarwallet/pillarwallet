@@ -29,7 +29,7 @@ import https from 'https';
 import t from 'translations/translate';
 
 // constants
-import { USERNAME_EXISTS, REGISTRATION_FAILED } from 'constants/walletConstants';
+import { REGISTRATION_FAILED, USERNAME_FAILED } from 'constants/walletConstants';
 import { ALTALIX_AVAILABLE_COUNTRIES } from 'constants/fiatToCryptoConstants';
 
 // utils
@@ -157,7 +157,7 @@ class SDKWrapper {
         if (status === USERNAME_EXISTS_ERROR_CODE) {
           return {
             error: true,
-            reason: USERNAME_EXISTS,
+            reason: USERNAME_FAILED,
           };
         }
         return {
@@ -198,7 +198,7 @@ class SDKWrapper {
         reportLog('Registration error', { error }, Sentry.Severity.Error);
         const responseStatus = get(error, 'response.status');
         const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
-          ? USERNAME_EXISTS
+          ? USERNAME_FAILED
           : REGISTRATION_FAILED;
         return { error: true, reason };
       });

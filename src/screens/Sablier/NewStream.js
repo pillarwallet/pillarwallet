@@ -51,9 +51,11 @@ import { isEnsName } from 'utils/validators';
 import { DAI, ETH } from 'constants/assetsConstants';
 import { SABLIER_NEW_STREAM_REVIEW, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // services
 import { checkSablierAllowance, getApproveFeeAndTransaction } from 'services/sablier';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -157,7 +159,11 @@ class NewStream extends React.Component<Props, State> {
     this.setState({ allowance, isCheckingAllowance: false });
   }
 
-  getMinimalDate = () => addMinutes(new Date(), 5);
+  getMinimalDate = () => {
+    // default to 5 minutes
+    const delayInMinutes = firebaseRemoteConfig.getNumber(FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE) || 5;
+    return addMinutes(new Date(), delayInMinutes);
+  }
 
   getFormValue = (value) => {
     const { input = '0' } = value || {};
@@ -294,7 +300,7 @@ class NewStream extends React.Component<Props, State> {
       </Row>
     );
 
-    const minimumDate = picker === START_TIME ? this.getMinimalDate() : startDate;
+    const minimumDate = picker === START_TIME ? this.getMinimalDate() : addMinutes(startDate, 1);
     const maximumDate = picker === START_TIME ? endDate : null;
 
     return (
@@ -449,6 +455,7 @@ class NewStream extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{ centerItems: [{ title: t('sablierContent.title.newStreamScreen') }] }}
         putContentInScrollView
+        keyboardShouldPersistTaps="always"
       >
         <Selector
           label={t('label.to')}

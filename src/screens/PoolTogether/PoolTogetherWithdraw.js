@@ -351,6 +351,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             />
           }
           innerRef={ref => { this.scroll = ref; }}
+          keyboardShouldPersistTaps="always"
         >
           <ContentWrapper>
             <ContentRow>

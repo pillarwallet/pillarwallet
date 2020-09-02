@@ -37,13 +37,14 @@ const mockWallet: Object = {
 const mockOnboarding: Object = {
   confirmedPin: '',
   importedWallet: null,
-  apiUser: { },
+  apiUser: null,
   mnemonic: {
     original: '',
     shuffled: '',
     wordsToValidate: [],
   },
   pin: '',
+  usernameCheckErrorMessage: null,
 };
 
 const mockBackupStatus: BackupStatus = {

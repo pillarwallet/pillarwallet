@@ -27296,9 +27296,9 @@ exports[`Storyshots Selector default 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
+                          "height": 52,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 15,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -27327,9 +27327,8 @@ exports[`Storyshots Selector default 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -27349,7 +27348,7 @@ exports[`Storyshots Selector default 1`] = `
                           style={
                             Object {
                               "alignItems": "flex-start",
-                              "height": 34,
+                              "height": 24,
                               "justifyContent": "center",
                               "marginLeft": -12,
                               "opacity": 1,
@@ -27387,8 +27386,8 @@ exports[`Storyshots Selector default 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
+                              "height": 24,
                               "justifyContent": "center",
-                              "minHeight": 28,
                               "paddingBottom": 0,
                               "paddingLeft": 12,
                               "paddingRight": 12,
@@ -27425,7 +27424,7 @@ exports[`Storyshots Selector default 1`] = `
                                     Object {
                                       "color": "#0A1427",
                                       "fontSize": 16,
-                                      "lineHeight": 26,
+                                      "lineHeight": 24,
                                       "textAlign": "center",
                                     },
                                     Object {},
@@ -27448,8 +27447,8 @@ exports[`Storyshots Selector default 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
@@ -28617,9 +28616,9 @@ exports[`Storyshots Selector no options 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
+                          "height": 52,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 15,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -28648,9 +28647,8 @@ exports[`Storyshots Selector no options 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -28670,7 +28668,7 @@ exports[`Storyshots Selector no options 1`] = `
                           style={
                             Object {
                               "alignItems": "flex-start",
-                              "height": 34,
+                              "height": 24,
                               "justifyContent": "center",
                               "marginLeft": -12,
                               "opacity": 1,
@@ -28708,8 +28706,8 @@ exports[`Storyshots Selector no options 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
+                              "height": 24,
                               "justifyContent": "center",
-                              "minHeight": 28,
                               "paddingBottom": 0,
                               "paddingLeft": 12,
                               "paddingRight": 12,
@@ -28746,7 +28744,7 @@ exports[`Storyshots Selector no options 1`] = `
                                     Object {
                                       "color": "#0A1427",
                                       "fontSize": 16,
-                                      "lineHeight": 26,
+                                      "lineHeight": 24,
                                       "textAlign": "center",
                                     },
                                     Object {},
@@ -28769,8 +28767,8 @@ exports[`Storyshots Selector no options 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
@@ -29780,9 +29778,9 @@ exports[`Storyshots Selector selected option 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
+                          "height": 52,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 15,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -29811,9 +29809,8 @@ exports[`Storyshots Selector selected option 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -29833,7 +29830,7 @@ exports[`Storyshots Selector selected option 1`] = `
                           style={
                             Object {
                               "alignItems": "flex-start",
-                              "height": 34,
+                              "height": 24,
                               "justifyContent": "center",
                               "marginLeft": -12,
                               "opacity": 1,
@@ -29871,8 +29868,8 @@ exports[`Storyshots Selector selected option 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
+                              "height": 24,
                               "justifyContent": "center",
-                              "minHeight": 28,
                               "paddingBottom": 0,
                               "paddingLeft": 12,
                               "paddingRight": 12,
@@ -29909,7 +29906,7 @@ exports[`Storyshots Selector selected option 1`] = `
                                     Object {
                                       "color": "#0A1427",
                                       "fontSize": 16,
-                                      "lineHeight": 26,
+                                      "lineHeight": 24,
                                       "textAlign": "center",
                                     },
                                     Object {},
@@ -29932,8 +29929,8 @@ exports[`Storyshots Selector selected option 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
@@ -31101,9 +31098,9 @@ exports[`Storyshots Selector with custom wording 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
+                          "height": 52,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 15,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -31132,9 +31129,8 @@ exports[`Storyshots Selector with custom wording 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -31154,7 +31150,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                           style={
                             Object {
                               "alignItems": "flex-start",
-                              "height": 34,
+                              "height": 24,
                               "justifyContent": "center",
                               "marginLeft": -12,
                               "opacity": 1,
@@ -31192,8 +31188,8 @@ exports[`Storyshots Selector with custom wording 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
+                              "height": 24,
                               "justifyContent": "center",
-                              "minHeight": 28,
                               "paddingBottom": 0,
                               "paddingLeft": 12,
                               "paddingRight": 12,
@@ -31230,7 +31226,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                     Object {
                                       "color": "#0A1427",
                                       "fontSize": 16,
-                                      "lineHeight": 26,
+                                      "lineHeight": 24,
                                       "textAlign": "center",
                                     },
                                     Object {},
@@ -31253,8 +31249,8 @@ exports[`Storyshots Selector with custom wording 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
@@ -32422,9 +32418,9 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                     style={
                       Array [
                         Object {
-                          "minHeight": 58,
+                          "height": 52,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 15,
+                          "paddingVertical": 14,
                           "width": "100%",
                         },
                         undefined,
@@ -32453,9 +32449,8 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
-                              "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-start",
-                              "minHeight": 28,
                             },
                             Object {},
                           ]
@@ -32475,7 +32470,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                           style={
                             Object {
                               "alignItems": "flex-start",
-                              "height": 34,
+                              "height": 24,
                               "justifyContent": "center",
                               "marginLeft": -12,
                               "opacity": 1,
@@ -32513,8 +32508,8 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
+                              "height": 24,
                               "justifyContent": "center",
-                              "minHeight": 28,
                               "paddingBottom": 0,
                               "paddingLeft": 12,
                               "paddingRight": 12,
@@ -32551,7 +32546,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                     Object {
                                       "color": "#0A1427",
                                       "fontSize": 16,
-                                      "lineHeight": 26,
+                                      "lineHeight": 24,
                                       "textAlign": "center",
                                     },
                                     Object {},
@@ -32574,8 +32569,8 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
+                              "height": 24,
                               "justifyContent": "flex-end",
-                              "minHeight": 28,
                             },
                             undefined,
                           ]
@@ -33995,6 +33990,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       allowFontScaling={true}
                       autoCorrect={false}
                       customLabel={null}
+                      inputAccessoryViewID={null}
                       inputHeaderStyle={
                         Object {
                           "alignItems": "center",
@@ -34234,9 +34230,9 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                 style={
                                   Array [
                                     Object {
-                                      "minHeight": 58,
+                                      "height": 52,
                                       "paddingHorizontal": 16,
-                                      "paddingVertical": 15,
+                                      "paddingVertical": 14,
                                       "width": "100%",
                                     },
                                     undefined,
@@ -34265,9 +34261,8 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           "flexDirection": "row",
                                           "flexGrow": 1,
                                           "flexShrink": 1,
-                                          "flexWrap": "wrap",
+                                          "height": 24,
                                           "justifyContent": "flex-start",
-                                          "minHeight": 28,
                                         },
                                         Object {},
                                       ]
@@ -34287,7 +34282,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                       style={
                                         Object {
                                           "alignItems": "flex-start",
-                                          "height": 34,
+                                          "height": 24,
                                           "justifyContent": "center",
                                           "marginLeft": -12,
                                           "opacity": 1,
@@ -34325,8 +34320,8 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           "flexDirection": "row",
                                           "flexGrow": 4,
                                           "flexShrink": 1,
+                                          "height": 24,
                                           "justifyContent": "center",
-                                          "minHeight": 28,
                                           "paddingBottom": 0,
                                           "paddingLeft": 12,
                                           "paddingRight": 12,
@@ -34363,7 +34358,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                                 Object {
                                                   "color": "#0A1427",
                                                   "fontSize": 16,
-                                                  "lineHeight": 26,
+                                                  "lineHeight": 24,
                                                   "textAlign": "center",
                                                 },
                                                 Object {},
@@ -34386,8 +34381,8 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "flexWrap": "wrap",
+                                          "height": 24,
                                           "justifyContent": "flex-end",
-                                          "minHeight": 28,
                                         },
                                         undefined,
                                       ]
@@ -35716,6 +35711,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           )
                         </Typography__BaseText>
                       }
+                      inputAccessoryViewID="INPUT_ACCESSORY_NATIVE_ID"
                       inputHeaderStyle={
                         Object {
                           "alignItems": "center",
@@ -35977,9 +35973,9 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                 style={
                                   Array [
                                     Object {
-                                      "minHeight": 58,
+                                      "height": 52,
                                       "paddingHorizontal": 16,
-                                      "paddingVertical": 15,
+                                      "paddingVertical": 14,
                                       "width": "100%",
                                     },
                                     undefined,
@@ -36008,9 +36004,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           "flexDirection": "row",
                                           "flexGrow": 1,
                                           "flexShrink": 1,
-                                          "flexWrap": "wrap",
+                                          "height": 24,
                                           "justifyContent": "flex-start",
-                                          "minHeight": 28,
                                         },
                                         Object {},
                                       ]
@@ -36030,7 +36025,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                       style={
                                         Object {
                                           "alignItems": "flex-start",
-                                          "height": 34,
+                                          "height": 24,
                                           "justifyContent": "center",
                                           "marginLeft": -12,
                                           "opacity": 1,
@@ -36068,8 +36063,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           "flexDirection": "row",
                                           "flexGrow": 4,
                                           "flexShrink": 1,
+                                          "height": 24,
                                           "justifyContent": "center",
-                                          "minHeight": 28,
                                           "paddingBottom": 0,
                                           "paddingLeft": 12,
                                           "paddingRight": 12,
@@ -36106,7 +36101,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                                 Object {
                                                   "color": "#0A1427",
                                                   "fontSize": 16,
-                                                  "lineHeight": 26,
+                                                  "lineHeight": 24,
                                                   "textAlign": "center",
                                                 },
                                                 Object {},
@@ -36129,8 +36124,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "flexWrap": "wrap",
+                                          "height": 24,
                                           "justifyContent": "flex-end",
-                                          "minHeight": 28,
                                         },
                                         undefined,
                                       ]
@@ -37341,6 +37336,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       allowFontScaling={true}
                       autoCorrect={false}
                       customLabel={null}
+                      inputAccessoryViewID={null}
                       inputHeaderStyle={
                         Object {
                           "alignItems": "center",
@@ -37580,9 +37576,9 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                 style={
                                   Array [
                                     Object {
-                                      "minHeight": 58,
+                                      "height": 52,
                                       "paddingHorizontal": 16,
-                                      "paddingVertical": 15,
+                                      "paddingVertical": 14,
                                       "width": "100%",
                                     },
                                     undefined,
@@ -37611,9 +37607,8 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           "flexDirection": "row",
                                           "flexGrow": 1,
                                           "flexShrink": 1,
-                                          "flexWrap": "wrap",
+                                          "height": 24,
                                           "justifyContent": "flex-start",
-                                          "minHeight": 28,
                                         },
                                         Object {},
                                       ]
@@ -37633,7 +37628,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                       style={
                                         Object {
                                           "alignItems": "flex-start",
-                                          "height": 34,
+                                          "height": 24,
                                           "justifyContent": "center",
                                           "marginLeft": -12,
                                           "opacity": 1,
@@ -37671,8 +37666,8 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           "flexDirection": "row",
                                           "flexGrow": 4,
                                           "flexShrink": 1,
+                                          "height": 24,
                                           "justifyContent": "center",
-                                          "minHeight": 28,
                                           "paddingBottom": 0,
                                           "paddingLeft": 12,
                                           "paddingRight": 12,
@@ -37709,7 +37704,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                                 Object {
                                                   "color": "#0A1427",
                                                   "fontSize": 16,
-                                                  "lineHeight": 26,
+                                                  "lineHeight": 24,
                                                   "textAlign": "center",
                                                 },
                                                 Object {},
@@ -37732,8 +37727,8 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "flexWrap": "wrap",
+                                          "height": 24,
                                           "justifyContent": "flex-end",
-                                          "minHeight": 28,
                                         },
                                         undefined,
                                       ]
