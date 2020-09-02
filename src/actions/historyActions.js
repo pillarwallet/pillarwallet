@@ -75,14 +75,12 @@ import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
-import { checkSablierApprovalTransactionAction } from './sablierActions';
 
 
 export const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
     dispatch(checkPoolTogetherApprovalTransactionAction());
-    dispatch(checkSablierApprovalTransactionAction());
   };
 };
 
