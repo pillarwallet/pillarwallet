@@ -21,6 +21,7 @@
 import BigNumber from 'bignumber.js';
 import orderBy from 'lodash.orderby';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 import type { Accounts } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
@@ -93,7 +94,7 @@ export function mapTransactionsHistory(
             accountType: getAccountTypeByAddress(toAddress, accounts),
             isReceived: true,
             betweenAccTrxDuplicate: true,
-            _id: `${historyItem._id}_duplicate`,
+            _id: `${historyItem._id}_duplicate`, // eslint-disable-line i18next/no-literal-string
             createdAt: historyItem.createdAt + 1,
           }];
         }
@@ -104,7 +105,7 @@ export function mapTransactionsHistory(
           const duplicate = {
             ...historyItem,
             smartWalletEvent: true,
-            _id: `${historyItem._id}_duplicate`,
+            _id: `${historyItem._id}_duplicate`, // eslint-disable-line i18next/no-literal-string
             createdAt: historyItem.createdAt - 1,
           };
           return [...alteredHistory, duplicate, historyItem];
@@ -171,7 +172,7 @@ export function groupPPNTransactions(ppnTransactions: Object[]): TransactionsGro
 }
 
 export const elipsizeAddress = (address: string) => {
-  return `${address.slice(0, 6)}…${address.slice(-6)}`;
+  return t('ellipsedMiddleString', { stringStart: address.slice(0, 6), stringEnd: address.slice(-6) });
 };
 
 export const isPendingTransaction = ({ status }: Object) => {

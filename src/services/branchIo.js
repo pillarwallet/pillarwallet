@@ -30,7 +30,7 @@ export const getUserReferralLink = async (
   data: LinkMetadata,
 ): Promise<string> => {
   const branchIoUniversalObject = await branch.createBranchUniversalObject(
-    `${inviterWalletId}-referral-link-${+new Date()}`,
+    `${inviterWalletId}-referral-link-${+new Date()}`, // eslint-disable-line i18next/no-literal-string
     { contentMetadata: { customMetadata: { ...data, inviterWalletId } } },
   );
 

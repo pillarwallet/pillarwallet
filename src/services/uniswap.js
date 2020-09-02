@@ -322,6 +322,7 @@ export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[])
   const parsedAssetCodes = supportedAssetCodes.map(a => `"${a}"`);
   while (!finished) {
     /* eslint-disable no-await-in-loop */
+    /* eslint-disable i18next/no-literal-string */
     const query = `
       {
         tokens(first: 1000, skip: ${i * 1000},
@@ -333,6 +334,7 @@ export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[])
         }
       }
     `;
+    /* eslint-enable i18next/no-literal-string */
     const response = await callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
     const assets = response?.tokens;
     if (assets) {

@@ -126,7 +126,10 @@ export const createOneTimePasswordAction = (
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.title.default']),
+          message: t([
+            `toast.cantVerifyInfo.${fieldName}`, // eslint-disable-line i18next/no-literal-string
+            'toast.cantVerifyInfo.title.default',
+          ]),
           emoji: 'hushed',
           messageType: 'warning',
         },

@@ -3409,7 +3409,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -3911,7 +3911,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -4176,7 +4176,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -4678,7 +4678,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -7603,7 +7603,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -8105,7 +8105,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -8370,7 +8370,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -8872,7 +8872,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>

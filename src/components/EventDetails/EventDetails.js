@@ -982,7 +982,7 @@ export class EventDetail extends React.Component<Props, State> {
           name: usernameOrAddress,
           sublabel: t('label.withdraw'),
           fee: this.getFeeLabel(event),
-          actionSubtitle: `of ${formattedStreamAmount} ${symbol} stream`,
+          actionSubtitle: t('ofTokenValueStream', { value: formattedStreamAmount, token: symbol }),
           buttons: [
             {
               title: t('button.withdrawMore'),

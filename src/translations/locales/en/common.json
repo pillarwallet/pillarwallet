@@ -13,6 +13,7 @@
   "twitter": "Twitter",
   "youtube": "Youtube",
   "ellipsedString": "{{string}}...",
+  "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
@@ -1020,7 +1021,8 @@
       "streamed": "Streamed",
       "withdrawn": "withdrawn",
       "start": "Start",
-      "end": "End"
+      "end": "End",
+      "ofTokenValueStream": "of {{value}} {{token}} stream"
     },
     "button": {
       "startImmediately": "Start immediately",

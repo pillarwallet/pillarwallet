@@ -102,7 +102,7 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
           <Title>{modalTitle}</Title>
           <LoadingParagraph
             isLoading={isFetchingRewards}
-            text={`${rewardParagraph}\n${enablingParagraph}`}
+            text={`${rewardParagraph}\n${enablingParagraph}`} // eslint-disable-line i18next/no-literal-string
             paragraphProps={{
               center: true,
               style: {

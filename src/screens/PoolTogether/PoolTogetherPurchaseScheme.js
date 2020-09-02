@@ -104,6 +104,7 @@ const getRightArrowPath = (fromValueWith: number) => {
     : RIGHT_ARROW_TOP_X;
 
   const RIGHT_ARROW_SIDE_X = (SCREEN_WIDTH / 2) - 18;
+  /* eslint-disable i18next/no-literal-string */
   return `
     M ${RIGHT_ARROW_START_X},1
     L ${RIGHT_ARROW_TOP_X},1
@@ -116,6 +117,7 @@ const getRightArrowPath = (fromValueWith: number) => {
     L ${(IMAGE_WIDTH_WITH_SPACING / 2) + 1},136
     L ${(IMAGE_WIDTH_WITH_SPACING / 2) + 12},143
     `;
+  /* eslint-enable i18next/no-literal-string */
 };
 
 const getLeftArrowPath = (toValueWith: number) => {
@@ -124,6 +126,7 @@ const getLeftArrowPath = (toValueWith: number) => {
   const _endX = (SCREEN_WIDTH / 2) - (toValueWith / 2);
   const END_X = _endX > BEND_START_SAFE ? _endX : BEND_START_SAFE;
 
+  /* eslint-disable i18next/no-literal-string */
   return `
     M ${(SCREEN_WIDTH / 2) - (IMAGE_WIDTH_WITH_SPACING / 2)},1
     L ${BEND_START_X},1
@@ -135,6 +138,7 @@ const getLeftArrowPath = (toValueWith: number) => {
     L ${END_X - 12},129
     L ${END_X - 1},136
     L ${END_X - 12},143`;
+  /* eslint-enable i18next/no-literal-string */
 };
 
 

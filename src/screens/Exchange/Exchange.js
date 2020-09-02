@@ -473,7 +473,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <SelectorOptions
           isVisible={showBuyOptions || showSellOptions}
           onHide={() => this.setState({ showBuyOptions: false, showSellOptions: false })}
-          title={t(`label.${showSellOptions ? 'sell' : 'buy'}`)}
+          title={t(`label.${showSellOptions ? 'sell' : 'buy'}`)} // eslint-disable-line i18next/no-literal-string, max-len
           options={showSellOptions ? fromOptions : toOptions}
           searchPlaceholder={t('form.selector.searchPlaceholder')}
           onOptionSelect={this.handleSelectorOptionSelect}

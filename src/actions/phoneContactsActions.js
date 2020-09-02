@@ -105,7 +105,7 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
           arrayOfContacts.push({
             name: name || email,
             photo: thumbnailPath,
-            id: `${recordID}-email-${index}`,
+            id: `${recordID}-email-${index}`, // eslint-disable-line i18next/no-literal-string
             email,
           });
         });
@@ -119,7 +119,7 @@ const formatContacts = (contacts: PhoneContact[]): ReferralContact[] => {
           arrayOfContacts.push({
             name: name || phone,
             photo: thumbnailPath,
-            id: `${recordID}-phone-${index}`,
+            id: `${recordID}-phone-${index}`, // eslint-disable-line i18next/no-literal-string
             phone,
           });
         });

@@ -532,7 +532,7 @@ class TextInput extends React.Component<Props, State> {
       fontSize: getFontSize(value, numeric),
       lineHeight: multiline ? getLineHeight(value, numeric) : null,
       fontFamily: getFontFamily(value, numeric),
-      textAlignVertical: multiline ? 'top' : 'center',
+      textAlignVertical: multiline ? 'top' : 'center', // eslint-disable-line i18next/no-literal-string
       height: inputHeight,
       flex: 1,
     };

@@ -30,18 +30,18 @@ export default class InMemoryStorage {
   }
 
   getItem(key: string) {
-    this.debug(`storage:getItem: ${key}`, this.data[key]);
+    this.debug(`storage:getItem: ${key}`, this.data[key]); // eslint-disable-line i18next/no-literal-string
     return this.data[key];
   }
 
   setItem(key: string, value: any) {
-    this.debug(`storage:setItem: ${key}`, value);
+    this.debug(`storage:setItem: ${key}`, value); // eslint-disable-line i18next/no-literal-string
     this.data[key] = value;
     return this;
   }
 
   removeItem(key: string) {
-    this.debug(`storage:removeItem: ${key}`);
+    this.debug(`storage:removeItem: ${key}`); // eslint-disable-line i18next/no-literal-string
     if (this.data[key]) {
       delete this.data[key];
     }

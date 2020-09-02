@@ -109,7 +109,7 @@ export const updateFcmTokenAction = (walletId: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const fcmToken = await firebaseMessaging.getToken().catch(e => {
       // We was unable to fetch the FCM token.
-      reportLog(`Unable to fetch Firebase FCM token: ${e.message}`, e);
+      reportLog(`Unable to fetch Firebase FCM token: ${e.message}`, e); // eslint-disable-line i18next/no-literal-string, max-len
 
       return null;
     });
@@ -117,7 +117,7 @@ export const updateFcmTokenAction = (walletId: string) => {
     dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
     Intercom.sendTokenToIntercom(fcmToken).catch(e => {
       // Unable to send the FCM token to Intercom
-      reportLog(`Unable to send FCM token to Intercom: ${e.message}`, e);
+      reportLog(`Unable to send FCM token to Intercom: ${e.message}`, e); // eslint-disable-line i18next/no-literal-string, max-len
 
       return null;
     });
@@ -321,11 +321,11 @@ export const loginAction = (
           .then(url => {
             if (url) dispatch(executeDeepLinkAction(url, true));
           })
-          .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e));
+          .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e)); // eslint-disable-line i18next/no-literal-string, max-len
       }
       navigate(navigateToAppAction);
     } catch (e) {
-      reportLog(`An error occured whilst trying to complete auth actions: ${e.errorMessage}`, e);
+      reportLog(`An error occurred whilst trying to complete auth actions: ${e.errorMessage}`, e); // eslint-disable-line i18next/no-literal-string, max-len
 
       dispatch(updatePinAttemptsAction(true));
       dispatch({
@@ -427,7 +427,7 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete()
-    .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+    .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e)); // eslint-disable-line i18next/no-literal-string, max-len
   await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();

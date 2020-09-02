@@ -366,7 +366,7 @@ export const modalTransition = {
 
 export const handleUrlPress = (url: string) => {
   if (WWW_URL_PATTERN.test(url)) {
-    handleUrlPress(`http://${url}`);
+    handleUrlPress(`http://${url}`); // eslint-disable-line i18next/no-literal-string
   } else {
     Linking.canOpenURL(url)
       .then(supported => {

@@ -379,7 +379,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                     fiatValue: purchasePayload.feeInFiat,
                   })}
                   {purchasePayload.isDisabled &&
-                  `\n${t('error.notEnoughTokenForFee', { token: purchasePayload.feeSymbol })}`
+                  `\n${t('error.notEnoughTokenForFee', { token: purchasePayload.feeSymbol })}` // eslint-disable-line i18next/no-literal-string, max-len
                   }
                 </Text>
               }

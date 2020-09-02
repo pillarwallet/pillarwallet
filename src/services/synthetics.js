@@ -36,7 +36,7 @@ class SyntheticsService {
   init(config: SyntheticsConfig) {
     this.apiConfig = {
       headers: {
-        Authorization: `Bearer ${config.accessToken}`,
+        Authorization: `Bearer ${config.accessToken}`, // eslint-disable-line i18next/no-literal-string
         Accept: 'application/json',
         'Content-Type': 'application/json',
       },

@@ -174,7 +174,10 @@ class SettleBalance extends React.Component<Props, State> {
       createdAt: item.createdAt,
     };
 
-    const nameOrAddress = `${senderAddress.slice(0, 6)}…${senderAddress.slice(-6)}`;
+    const nameOrAddress = t('ellipsedMiddleString', {
+      stringStart: senderAddress.slice(0, 6),
+      stringEnd: senderAddress.slice(-6),
+    });
     const formattedAmount = formatAmount(assetInfo.value.toString());
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const totalInFiat = assetInfo.value.toNumber() * getRate(rates, assetInfo.symbol, fiatCurrency);

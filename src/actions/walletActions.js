@@ -121,7 +121,9 @@ export const importWalletFromPrivateKeyAction = (privateKey: string) => {
       payload: IMPORTING,
     });
 
-    const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
+    const walletPrivateKey = privateKey.substr(0, 2) === '0x'
+      ? privateKey
+      : `0x${privateKey}`; // eslint-disable-line i18next/no-literal-string
     try {
       const importedWallet = new ethers.Wallet(walletPrivateKey);
 

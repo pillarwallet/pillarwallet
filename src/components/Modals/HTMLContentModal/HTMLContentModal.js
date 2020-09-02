@@ -106,7 +106,7 @@ class HTMLContentModal extends React.Component<Props, State> {
 
   componentDidUpdate(prevProps: Props) {
     const { isVisible, htmlEndpoint } = this.props;
-    const htmlEndpointFull = `${LEGAL_HTML_ENDPOINT}${htmlEndpoint}.html`;
+    const htmlEndpointFull = `${LEGAL_HTML_ENDPOINT}${htmlEndpoint}.html`; // eslint-disable-line i18next/no-literal-string, max-len
 
     if (prevProps.isVisible !== isVisible && !!isVisible) {
       fetch(htmlEndpointFull)

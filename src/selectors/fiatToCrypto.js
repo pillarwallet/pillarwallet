@@ -59,7 +59,7 @@ const destSymbolsSelector = createSelector(
 const assetOptionsSelector = (symbols: string[], assets: Assets): Option[] => {
   return symbols.map((symbol: string): Option => {
     const { name = symbol, iconUrl } = assets[symbol] ?? {
-      iconUrl: `asset/images/fiat/ic_52_${symbol}.png`,
+      iconUrl: `asset/images/fiat/ic_52_${symbol}.png`, // eslint-disable-line i18next/no-literal-string
     };
 
     const icon = iconUrl && `${getEnv().SDK_PROVIDER}/${iconUrl}`;

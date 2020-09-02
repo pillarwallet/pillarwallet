@@ -158,7 +158,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
       <FlatList
         {...listProps}
         data={requests}
-        keyExtractor={({ url }) => `walletconnect-request-${url}`}
+        keyExtractor={({ url }) => `walletconnect-request-${url}`} // eslint-disable-line i18next/no-literal-string, max-len
         renderItem={this.renderRequestItem}
         ListEmptyComponent={<EmptyStateParagraph title={t('walletConnectContent.tabs.requests.emptyState.title')} />}
       />
@@ -174,7 +174,7 @@ class ManageDetailsSessions extends React.Component<Props, State> {
       <FlatList
         {...listProps}
         data={filtered}
-        keyExtractor={({ peerMeta }) => `walletconnect-session-${peerMeta.url}`}
+        keyExtractor={({ peerMeta }) => `walletconnect-session-${peerMeta.url}`} // eslint-disable-line i18next/no-literal-string, max-len
         renderItem={this.renderSessionItem}
         ListEmptyComponent={<EmptyStateParagraph title={t('walletConnectContent.tabs.active.emptyState.title')} />}
       />

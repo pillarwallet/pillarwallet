@@ -269,20 +269,20 @@ class App extends React.Component<Props, *> {
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
-                title={`THEME: ${current}`}
+                title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
                 onPress={() => {
                   const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
                   setAppTheme(themeToChangeTo);
                 }}
               />}
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
-                title={`Change lang (current: ${i18n.language})`}
+                title={`Change lang (current: ${i18n.language})`} // eslint-disable-line i18next/no-literal-string
                 onPress={() => changeLanguage(i18n.language === DEV_LANG ? DEFAULT_LANGUAGE : DEV_LANG)}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&
                 <Button
-                  title={`Environment: ${this.state.env}`}
+                  title={`Environment: ${this.state.env}`} // eslint-disable-line i18next/no-literal-string
                   onPress={() => switchEnvironments()}
                 />
               }
