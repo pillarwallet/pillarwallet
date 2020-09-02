@@ -159,11 +159,17 @@ const SendEthereumTokens = ({
   const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
   const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
+  // parse value
+  const currentValue = parseFloat(amount || 0);
+  const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
+
   const updateTxFee = async (specifiedAmount?: number) => {
     const value = Number(specifiedAmount || amount || 0);
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
-    if (inputHasError || !assetData || !selectedContact) {
+    // specified amount is always valid and not necessarily matches input amount
+    if ((!specifiedAmount && !isValidAmount) || !assetData || !selectedContact) {
+      setGettingFee(false);
       setTxFeeInfo(null);
       return;
     }
@@ -202,6 +208,7 @@ const SendEthereumTokens = ({
         supportLink: true,
         type: 'warning',
       });
+      setGettingFee(false);
       setTxFeeInfo(null);
       return;
     }
@@ -214,7 +221,6 @@ const SendEthereumTokens = ({
     [amount, selectedContact, useGasToken, assetData],
   );
 
-  // update fee on amount changed
   useEffect(() => {
     if (!gettingFee) setGettingFee(true);
     updateTxFeeDebounced();
@@ -225,7 +231,7 @@ const SendEthereumTokens = ({
   useEffect(() => { if (gettingFee) setGettingFee(false); }, [txFeeInfo]);
 
   const handleAmountChange = (value: ?Object) => {
-    setAmount(value?.input || '0');
+    if (amount !== value?.input) setAmount(value?.input || '0');
     if (value && assetData !== value.selector) setAssetData(value.selector);
   };
 
@@ -371,15 +377,11 @@ const SendEthereumTokens = ({
   const token = get(assetData, 'token');
   const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
-  // value
-  const currentValue = parseFloat(amount || 0);
-
   // balance
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
   const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!selectedContact;
-  const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
 
   const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
@@ -444,7 +446,7 @@ const SendEthereumTokens = ({
         preselectedAsset: token,
         preselectedCollectible,
         showAllAssetTypes: true,
-        gettingFee: gettingFee && !!selectedContact, // receiver check to not show spinner on initial render
+        gettingFee,
         hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
         calculateBalancePercentTxFee,
       }}
@@ -458,7 +460,7 @@ const SendEthereumTokens = ({
         footerTopAddon: !!selectedContact && renderFee({
           showRelayerMigration,
           showFee,
-          isLoading: gettingFee && !inputHasError,
+          isLoading: gettingFee,
           feeError,
         }),
       }}

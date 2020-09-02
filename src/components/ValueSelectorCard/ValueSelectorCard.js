@@ -199,7 +199,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.handleCustomInfo();
+    this.handleCustomInfo(true);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -223,16 +223,16 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     }
   }
 
-  handleCustomInfo = () => {
+  handleCustomInfo = (isInitial?: boolean) => {
     const { value } = this.state;
     const { activeTokenType, preselectedCollectible } = this.props;
     const selectedTokenType = preselectedCollectible || activeTokenType === COLLECTIBLES
       ? COLLECTIBLES
       : TOKENS;
-    this.manageFormType(selectedTokenType, value, this.addCustomFormInfo);
+    this.manageFormType(selectedTokenType, value, () => this.addCustomFormInfo(isInitial));
   };
 
-  addCustomFormInfo = () => {
+  addCustomFormInfo = (isInitial?: boolean) => {
     const {
       assets,
       syntheticAssets,
@@ -251,6 +251,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       preselectedValue,
       hideMaxSend,
       gettingFee,
+      getFormValue,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -293,6 +294,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     if (preselectedValue) {
       newValue.formSelector.input = preselectedValue.toString();
     }
+
     const { symbol } = pickedAsset;
     const label = maxLabel || t('button.max');
 
@@ -317,6 +319,14 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     this.setState({ formOptions: newOptions, value: newValue });
     if (!isEmpty(pickedAsset)) {
       this.showPercentAccessory();
+    }
+
+    /**
+     * initially if there's no asset data from navigation we add option manually in code above,
+     * that's why we want it to trigger the getFormValue prop as well
+     */
+    if (getFormValue && isInitial) {
+      getFormValue(newValue.formSelector);
     }
   };
 
@@ -375,8 +385,11 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         updatedValue.formSelector.input = '0';
         updatedValue.formSelector.dontCheckBalance = false;
       }
-      this.setState({ formOptions: newOptions, tokenType: newTokenType, value: updatedValue },
-        () => callback(updatedValue));
+      this.setState({
+        formOptions: newOptions,
+        tokenType: newTokenType,
+        value: updatedValue,
+      }, () => callback(updatedValue));
     } else {
       callback(value);
     }
@@ -495,7 +508,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     if (!selectedAssetBalance) return;
 
     const newValue = { ...value };
-    newValue.formSelector.input = (parseFloat(selectedAssetBalance) * balancePercentageModifier).toString();
+    newValue.formSelector.input = formatAmount(parseFloat(selectedAssetBalance) * balancePercentageModifier);
 
     const newOptions = tForm.update(formOptions, {
       fields: {
