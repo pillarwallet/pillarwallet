@@ -202,7 +202,7 @@ const EnterDepositAmount = ({
           )}
         </FooterInner>
       )}
-      minAvoidHeight={200}
+      minAvoidHeight={600}
     >
       {isFetchingAssetsToDeposit && <Spinner style={{ marginTop: spacing.large, alignSelf: 'center' }} />}
       {!isFetchingAssetsToDeposit && (

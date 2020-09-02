@@ -30,8 +30,10 @@ import t from 'translations/translate';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
-
 import Spinner from 'components/Spinner';
+import PercentsInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -178,7 +180,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               customInputHeight: 56,
               selectorModalTitle: t('title.select'),
               inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
-              onPressRightLabel: this.handleUseMax,
+              onPressRightLabel: () => this.handleUsePercent(100),
               activeTabOnItemClick: COLLECTIBLES,
               activeTabOnOptionOpenClick: TOKENS,
             },
@@ -186,6 +188,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               parse: inputParser,
               format: inputFormatter,
             },
+            onFocus: this.onTextInputFocus,
+            onBlur: this.onTextInputBlur,
           },
         },
       },
@@ -304,6 +308,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
             selectorModalTitle: { $set: selectorModalTitle || t('title.select') },
             renderOption: { $set: renderOption },
             customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
+            inputAccessoryViewID: { $set: !isEmpty(pickedAsset) ? INPUT_ACCESSORY_NATIVE_ID : null },
           },
         },
       },
@@ -416,6 +421,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
+            inputAccessoryViewID: { $set: formSelector ? INPUT_ACCESSORY_NATIVE_ID : null },
             rightLabel: { $set: formSelector && !hideMaxSend ? label : '' },
             customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
           },
@@ -468,7 +474,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     return { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol };
   };
 
-  handleUseMax = async () => {
+  handleUsePercent = async (percent: number) => {
     const { value, formOptions } = this.state;
     const { getFormValue, calculateMaxBalanceTxFee } = this.props;
     const selectedAssetSymbol = get(value, 'formSelector.selector.symbol');
@@ -478,7 +484,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
     const newValue = { ...value };
-    newValue.formSelector.input = selectedAssetBalance.toString();
+    newValue.formSelector.input = (parseFloat(selectedAssetBalance) * (percent / 100)).toString();
 
     const newOptions = tForm.update(formOptions, {
       fields: {
@@ -492,7 +498,15 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
     this.setState({ value: newValue, formOptions: newOptions });
     getFormValue(newValue?.formSelector);
-  };
+  }
+
+  onTextInputFocus = () => {
+    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
+  }
+
+  onTextInputBlur = () => {
+    PercentsInputAccessoryHolder.removeAccessory();
+  }
 
   render() {
     const { value, formOptions, errorMessage } = this.state;
