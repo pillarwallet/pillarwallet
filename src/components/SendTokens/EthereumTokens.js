@@ -328,10 +328,10 @@ const SendEthereumTokens = ({
     });
   };
 
-  const calculateMaxBalanceTxFee = async (assetSymbol: string) => {
+  const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
     setGettingFee(true);
-    const maxBalance = getBalance(balances, assetSymbol);
-    await updateTxFee(maxBalance); // not debounced call to make sure it's not cancelled
+    const calculatedBalanceAmount = parseFloat(getBalance(balances, assetSymbol)) * percentageModifier;
+    await updateTxFee(calculatedBalanceAmount); // not debounced call to make sure it's not cancelled
   };
 
   const renderRelayerMigrationButton = () => (
@@ -446,7 +446,7 @@ const SendEthereumTokens = ({
         showAllAssetTypes: true,
         gettingFee: gettingFee && !!selectedContact, // receiver check to not show spinner on initial render
         hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
-        calculateMaxBalanceTxFee,
+        calculateBalancePercentTxFee,
       }}
       footerProps={{
         isNextButtonVisible: showNextButton,

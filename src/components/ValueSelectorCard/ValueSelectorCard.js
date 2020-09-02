@@ -78,7 +78,7 @@ export type ExternalProps = {
   customBalances?: Balances,
   activeTokenType?: string,
   showAllAssetTypes?: boolean,
-  calculateMaxBalanceTxFee?: (symbol: string) => Promise<void>,
+  calculateBalancePercentTxFee?: (symbol: string, percentageModifier: number) => Promise<void>,
 };
 
 type Props = ExternalProps & {
@@ -476,15 +476,20 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
   handleUsePercent = async (percent: number) => {
     const { value, formOptions } = this.state;
-    const { getFormValue, calculateMaxBalanceTxFee } = this.props;
+    const { getFormValue, calculateBalancePercentTxFee } = this.props;
     const selectedAssetSymbol = get(value, 'formSelector.selector.symbol');
+    const balancePercentageModifier = (percent / 100);
 
-    if (calculateMaxBalanceTxFee) await calculateMaxBalanceTxFee(selectedAssetSymbol);
+    // calculate fee for max balance so it can be applied to calculation below
+    if (calculateBalancePercentTxFee) {
+      await calculateBalancePercentTxFee(selectedAssetSymbol, balancePercentageModifier);
+    }
 
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
+
     const newValue = { ...value };
-    newValue.formSelector.input = (parseFloat(selectedAssetBalance) * (percent / 100)).toString();
+    newValue.formSelector.input = (parseFloat(selectedAssetBalance) * balancePercentageModifier).toString();
 
     const newOptions = tForm.update(formOptions, {
       fields: {
