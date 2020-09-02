@@ -336,8 +336,14 @@ const SendEthereumTokens = ({
 
   const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
     setGettingFee(true);
-    const calculatedBalanceAmount = parseFloat(getBalance(balances, assetSymbol)) * percentageModifier;
-    await updateTxFee(calculatedBalanceAmount); // not debounced call to make sure it's not cancelled
+    const maxBalance = parseFloat(getBalance(balances, assetSymbol));
+    const calculatedBalanceAmount = maxBalance * percentageModifier;
+
+    // update fee only on max balance
+    if (maxBalance === calculatedBalanceAmount) {
+      // not debounced call to make sure it's not cancelled
+      await updateTxFee(calculatedBalanceAmount);
+    }
   };
 
   const renderRelayerMigrationButton = () => (
