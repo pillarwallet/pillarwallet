@@ -256,8 +256,10 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deployAccount(): Promise<{ error?: string, deployTxHash?: string }> {
-    const deployEstimate = await this.getSdk().estimateAccountDeployment().catch(this.handleError);
+  async deployAccount(
+    estimate?: sdkInterfaces.IEstimatedAccountDeployment,
+  ): Promise<{ error?: string, deployTxHash?: string }> {
+    const deployEstimate = estimate || await this.getSdk().estimateAccountDeployment().catch(this.handleError);
     if (!deployEstimate) return { error: 'reverted' };
 
     return this.getSdk().deployAccount(deployEstimate, false)
@@ -535,6 +537,13 @@ class SmartWallet {
       .catch(() => ({}));
 
     return formatEstimated(estimated);
+  }
+
+  estimateAccountDeployment() {
+    return this.getSdk().estimateAccountDeployment().catch((err) => {
+      this.handleError(err);
+      return {};
+    });
   }
 
   getTransactionInfo(hash: string) {

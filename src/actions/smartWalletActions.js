@@ -49,6 +49,8 @@ import {
   ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
   SMART_WALLET_ACCOUNT_DEVICE_REMOVED,
   SMART_WALLET_ACCOUNT_DEVICE_ADDED,
+  SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_SMART_WALLET_DEPLOYMENT_ESTIMATE,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -83,7 +85,7 @@ import { SABLIER_WITHDRAW, SABLIER_CANCEL_STREAM } from 'constants/sablierConsta
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // services
-import smartWalletService from 'services/smartWallet';
+import smartWalletService, { formatEstimated, parseEstimatePayload } from 'services/smartWallet';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import aaveService from 'services/aave';
@@ -313,6 +315,7 @@ export const deploySmartWalletAction = () => {
         upgrade: {
           status: upgradeStatus,
           deploymentStarted,
+          deploymentEstimate,
         },
       },
     } = getState();
@@ -330,7 +333,7 @@ export const deploySmartWalletAction = () => {
       return;
     }
 
-    const { deployTxHash, error } = await smartWalletService.deployAccount();
+    const { deployTxHash, error } = await smartWalletService.deployAccount(deploymentEstimate?.raw);
 
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
@@ -1546,5 +1549,25 @@ export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartW
       payload: updatedAccounts,
     });
     dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
+  };
+};
+
+export const estimateSmartWalletDeploymentAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch({ type: SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE, payload: true });
+
+    const rawEstimate = await smartWalletService
+      .estimateAccountDeployment()
+      .catch(() => {
+        reportLog('estimateSmartWalletDeploymentAction failed when getting fee');
+        return null;
+      });
+
+    const estimated = {
+      raw: rawEstimate,
+      formatted: formatEstimated(parseEstimatePayload(rawEstimate)),
+    };
+
+    dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_ESTIMATE, payload: estimated });
   };
 };

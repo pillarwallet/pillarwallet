@@ -184,7 +184,8 @@
     "sell": "Sell",
     "unknown": "Unknown",
     "pending": "Pending",
-    "notAvailableIYourCountry": "Not available in Your country"
+    "notAvailableIYourCountry": "Not available in Your country",
+    "cannotProceedOffline": "Cannot proceed offline"
   },
 
   "button": {

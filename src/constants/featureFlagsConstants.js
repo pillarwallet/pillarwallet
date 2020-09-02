@@ -30,6 +30,7 @@ export const FEATURE_FLAGS = {
   SABLIER: 'feature_services_sablier',
   SABLIER_TIME_START_TOLERANCE: 'feature_services_sablier_time_start_tolerance',
   ALTALIX: 'feature_services_altalix',
+  SMART_WALLET_ACTIVATION_PAID_BY_PILLAR: 'app_smart_wallet_paid_for_by_pillar',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
