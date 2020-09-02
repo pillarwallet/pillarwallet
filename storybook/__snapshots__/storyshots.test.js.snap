@@ -34090,6 +34090,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       allowFontScaling={true}
                       autoCorrect={false}
                       customLabel={null}
+                      customRightLabel={null}
                       inputAccessoryViewID={null}
                       inputHeaderStyle={
                         Object {
@@ -35811,6 +35812,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           )
                         </Typography__BaseText>
                       }
+                      customRightLabel={null}
                       inputAccessoryViewID="INPUT_ACCESSORY_NATIVE_ID"
                       inputHeaderStyle={
                         Object {
@@ -37436,6 +37438,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       allowFontScaling={true}
                       autoCorrect={false}
                       customLabel={null}
+                      customRightLabel={null}
                       inputAccessoryViewID={null}
                       inputHeaderStyle={
                         Object {

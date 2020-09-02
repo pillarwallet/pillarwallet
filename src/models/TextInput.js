@@ -51,6 +51,7 @@ export type InputPropsType = {
   customLabel?: React.Node,
   editable?: boolean,
   inputAccessoryViewID?: string,
+  customRightLabel?: React.Node,
 };
 
 export type SelectorOptions = {
