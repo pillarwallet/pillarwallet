@@ -30,7 +30,7 @@ import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 
 // constants
-import { SMART_WALLET_INTRO, ACCOUNTS } from 'constants/navigationConstants';
+import { ACCOUNTS } from 'constants/navigationConstants';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -74,7 +74,8 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
           buttonTitle: t('exchangeContent.modal.smartWalletMissing.button.enable'),
           buttonAction: () => {
             onClose();
-            navigation.navigate(SMART_WALLET_INTRO);
+            // intro screen deprecated, show message only, let user activate manually from home screen
+            // navigation.navigate(SMART_WALLET_INTRO);
           },
         };
 

@@ -29,12 +29,18 @@ import {
   START_SMART_WALLET_DEPLOYMENT,
   RESET_SMART_WALLET_DEPLOYMENT,
   ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
+  SET_SMART_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE,
 } from 'constants/smartWalletConstants';
+
+// types
 import type {
   SmartWalletAccount,
   ConnectedSmartWalletAccount,
   SmartWalletDeploymentError,
 } from 'models/SmartWalletAccount';
+import type { EstimatedTransactionFee } from 'models/Transaction';
+
 
 export type SmartWalletReducerState = {
   sdkInitialized: boolean,
@@ -42,6 +48,11 @@ export type SmartWalletReducerState = {
   accounts: SmartWalletAccount[],
   upgrade: {
     status: ?string,
+    deploymentEstimate: ?{
+      raw: Object,
+      formatted: EstimatedTransactionFee,
+    },
+    gettingDeploymentEstimate: boolean,
     deploymentStarted: boolean,
     deploymentData: {
       hash: ?string,
@@ -63,6 +74,8 @@ export const initialState = {
   accounts: [],
   upgrade: {
     status: null,
+    deploymentEstimate: null,
+    gettingDeploymentEstimate: false,
     deploymentStarted: false,
     deploymentData: {
       hash: null,
@@ -148,6 +161,23 @@ export default function smartWalletReducer(
             ...state.connectedAccount.devices,
             action.payload,
           ],
+        },
+      };
+    case SET_SMART_WALLET_DEPLOYMENT_ESTIMATE:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          deploymentEstimate: action.payload,
+          gettingDeploymentEstimate: false,
+        },
+      };
+    case SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE:
+      return {
+        ...state,
+        upgrade: {
+          ...state.upgrade,
+          gettingDeploymentEstimate: action.payload,
         },
       };
     default:

@@ -26620,6 +26620,105 @@ Array [
                   }
                 />
                 <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    accessible={true}
+                    focusable={true}
+                    isTVSelectable={true}
+                    onClick={[Function]}
+                    onResponderGrant={[Function]}
+                    onResponderMove={[Function]}
+                    onResponderRelease={[Function]}
+                    onResponderTerminate={[Function]}
+                    onResponderTerminationRequest={[Function]}
+                    onStartShouldSetResponder={[Function]}
+                    style={
+                      Object {
+                        "flexDirection": "row",
+                        "opacity": 1,
+                      }
+                    }
+                  >
+                    <Text
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#8B939E",
+                                "fontSize": 14,
+                                "lineHeight": 22,
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                    >
+                      label.fee
+                       
+                    </Text>
+                    <Text
+                      style={
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Regular",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
+                            },
+                            Array [
+                              Object {
+                                "color": "#8B939E",
+                                "fontSize": 14,
+                                "lineHeight": 22,
+                              },
+                              undefined,
+                            ],
+                          ],
+                        ]
+                      }
+                    >
+                      £NaN
+                    </Text>
+                  </View>
+                </View>
+                <View
+                  h={34}
+                  style={
+                    Array [
+                      Object {
+                        "height": 34,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
                   accessible={true}
                   focusable={true}
                   isTVSelectable={true}
@@ -26646,7 +26745,7 @@ Array [
                       "marginLeft": 0,
                       "marginRight": 0,
                       "marginTop": 0,
-                      "opacity": 1,
+                      "opacity": 0.5,
                       "paddingBottom": 0,
                       "paddingLeft": 19,
                       "paddingRight": 19,
@@ -26659,6 +26758,7 @@ Array [
                     customTheme={
                       Object {
                         "borderWidth": 0,
+                        "opacity": 0.5,
                         "shadow": false,
                       }
                     }
@@ -26730,7 +26830,7 @@ Array [
                       }
                     }
                   >
-                    button.activate
+                    label.notEnoughToken
                   </Text>
                 </View>
               </View>
