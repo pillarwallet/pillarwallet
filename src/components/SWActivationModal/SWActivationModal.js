@@ -57,6 +57,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 import type { Theme } from 'models/Theme';
 import type { Balances } from 'models/Asset';
 import type { EstimatedTransactionFee } from 'models/Transaction';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
@@ -174,7 +175,7 @@ const SWActivationModal = ({
 const mapStateToProps = ({
   smartWallet: { upgrade: { gettingDeploymentEstimate, deploymentEstimate } },
   session: { data: { isOnline } },
-}) => ({
+}: RootReducerState): $Shape<Props> => ({
   deploymentEstimate,
   gettingDeploymentEstimate,
   isOnline,
@@ -189,7 +190,7 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch) => ({
+const mapDispatchToProps = (dispatch: Dispatch) => ({
   deploySmartWallet: () => dispatch(deploySmartWalletAction()),
   estimateSmartWalletDeployment: () => dispatch(estimateSmartWalletDeploymentAction()),
 });
