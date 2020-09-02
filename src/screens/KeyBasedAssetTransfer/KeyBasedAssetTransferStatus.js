@@ -164,7 +164,7 @@ const KeyBasedAssetTransferStatus = ({
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <Wrapper flex={1} center regularPadding>
             <Animation source={animationSuccess} />
-            <Title center>{t('transactions.keyWalletAssetsMigrationDone')}</Title>
+            <Title center>{t('transactions.title.keyWalletAssetsMigrationDone')}</Title>
             <Button
               block
               title={t('button.magic')}
