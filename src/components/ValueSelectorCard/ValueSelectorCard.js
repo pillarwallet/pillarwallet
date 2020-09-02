@@ -188,8 +188,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               parse: inputParser,
               format: inputFormatter,
             },
-            onFocus: this.onTextInputFocus,
-            onBlur: this.onTextInputBlur,
+            onFocus: this.showPercentAccessory,
+            onBlur: this.hidePercentAccessory,
           },
         },
       },
@@ -308,13 +308,16 @@ export class ValueSelectorCard extends React.Component<Props, State> {
             selectorModalTitle: { $set: selectorModalTitle || t('title.select') },
             renderOption: { $set: renderOption },
             customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
-            inputAccessoryViewID: { $set: !isEmpty(pickedAsset) ? INPUT_ACCESSORY_NATIVE_ID : null },
+            inputAccessoryViewID: { $set: !isEmpty(pickedAsset) && !hideMaxSend ? INPUT_ACCESSORY_NATIVE_ID : null },
           },
         },
       },
     });
 
     this.setState({ formOptions: newOptions, value: newValue });
+    if (!isEmpty(pickedAsset)) {
+      this.showPercentAccessory();
+    }
   };
 
   renderCustomLabel = (symbol?: string) => {
@@ -421,7 +424,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
-            inputAccessoryViewID: { $set: formSelector ? INPUT_ACCESSORY_NATIVE_ID : null },
+            inputAccessoryViewID: { $set: formSelector && !hideMaxSend ? INPUT_ACCESSORY_NATIVE_ID : null },
             rightLabel: { $set: formSelector && !hideMaxSend ? label : '' },
             customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
           },
@@ -433,6 +436,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     this.setState({ ...stateUpdates });
     if (isEmpty(currentErrorMessage)) {
       getFormValue(value?.formSelector);
+    }
+    if (formSelector) {
+      this.showPercentAccessory();
     }
   };
 
@@ -505,11 +511,14 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     getFormValue(newValue?.formSelector);
   }
 
-  onTextInputFocus = () => {
-    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
+  showPercentAccessory = () => {
+    const { hideMaxSend } = this.props;
+    if (!hideMaxSend) {
+      PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
+    }
   }
 
-  onTextInputBlur = () => {
+  hidePercentAccessory = () => {
     PercentsInputAccessoryHolder.removeAccessory();
   }
 

@@ -25,7 +25,7 @@ import { BaseText } from 'components/Typography';
 
 
 type Props = {
-  handleUsePercent: (number) => void,
+  handleUsePercent: (number) => any,
 };
 
 const PERCENTS = [10, 25, 50, 75, 100];
