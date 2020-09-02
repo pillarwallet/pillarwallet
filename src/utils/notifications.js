@@ -21,6 +21,8 @@ import { Platform } from 'react-native';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { Notifications } from 'react-native-notifications';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
+
 // $FlowFixMe – throws "react-native-android-badge" not found
 import BadgeAndroid from 'react-native-android-badge';
 
@@ -86,17 +88,17 @@ export const processNotification = (notification: Object, myEthAddress?: string)
     const amount = utils.formatUnits(EthersBigNumber.from(value.toString()), decimals);
 
     if (receiver === myEthAddress && status === 'pending') {
-      title = `${amount} ${asset}`;
-      message = 'Received';
+      title = t('tokenValue', { value: amount, token: asset });
+      message = t('notification.received');
     } else if (receiver === myEthAddress && status === 'confirmed') {
       title = `${amount} ${asset}`;
-      message = 'Transaction confirmed';
+      message = t('notification.transactionConfirmed');
     } else if (sender === myEthAddress && status === 'pending') {
-      title = `${amount} ${asset}`;
-      message = 'Transaction sent';
+      title = t('tokenValue', { value: amount, token: asset });
+      message = t('notification.transactionSent');
     } else if (sender === myEthAddress && status === 'confirmed') {
-      title = `${amount} ${asset}`;
-      message = 'Transaction was received';
+      title = t('tokenValue', { value: amount, token: asset });
+      message = t('notification.transactionReceived');
     }
 
     result = {
@@ -110,8 +112,8 @@ export const processNotification = (notification: Object, myEthAddress?: string)
 
   if (notification.type === BADGE) {
     result = {
-      title: 'Success',
-      message: 'New badge received!',
+      title: t('notification.success'),
+      message: t('notification.newBadgeReceived'),
       type: notification.type,
     };
   }
@@ -129,10 +131,10 @@ export const processNotification = (notification: Object, myEthAddress?: string)
 
     if (receiver === myEthAddress) {
       title = contractName;
-      message = 'You received a collectible';
+      message = t('notification.receivedCollectible');
     } else if (sender === myEthAddress) {
       title = contractName;
-      message = 'Your collectible has been received';
+      message = t('notification.collectibleSentAndReceived');
     }
 
     result = {

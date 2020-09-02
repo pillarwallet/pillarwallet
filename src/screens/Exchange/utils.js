@@ -18,11 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import maxBy from 'lodash.maxby';
 import Intercom from 'react-native-intercom';
+import { getEnv } from 'configs/envConfig';
 
 import { getRate, getBalance, sortAssets } from 'utils/assets';
 import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
@@ -137,7 +137,7 @@ const generateAssetsOptions = (
     .map(({ symbol, iconUrl, ...rest }) => {
       const assetBalance = formatAmount(getBalance(balances, symbol));
       const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
       return ({
         key: symbol,
@@ -168,7 +168,7 @@ const generateSupportedAssetsOptions = (
       const rawAssetBalance = getBalance(balances, symbol);
       const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
       const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
       return {
         key: symbol,
@@ -259,9 +259,9 @@ export const getErrorMessage = (
   const { assetBalance = '', symbol = '' } = asset;
   const isValid = isValidNumber(amount);
   if (!isValid) {
-    return t('error.exchange.incorrectNumber');
+    return t('error.amount.invalidNumber');
   } else if (!isEnoughAssetBalance(assetBalance, amount)) {
-    return t('error.exchange.amountTooBig', { assetBalance, symbol });
+    return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance: assetBalance, token: symbol });
   }
   return '';
 };

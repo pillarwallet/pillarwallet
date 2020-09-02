@@ -18,99 +18,181 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
-import { connect } from 'react-redux';
+import React, { useEffect } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
+import type { NavigationScreenProp } from 'react-navigation';
+
+// actions
+import { deploySmartWalletAction, estimateSmartWalletDeploymentAction } from 'actions/smartWalletActions';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
 import { ASSETS } from 'constants/navigationConstants';
-
-// actions
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
+import { ETH } from 'constants/assetsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
 import { images } from 'utils/images';
+import { buildTxFeeInfo } from 'utils/smartWallet';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { Accounts } from 'models/Account';
 import type { Theme } from 'models/Theme';
+import type { Balances } from 'models/Asset';
+import type { EstimatedTransactionFee } from 'models/Transaction';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   theme: Theme,
-  navigation: NavigationScreenProp<*>,
   isVisible: Boolean,
   onClose: () => void,
-  accounts: Accounts,
+  navigation: NavigationScreenProp<*>,
+  deploymentEstimate: ?{ raw: Object, formatted: EstimatedTransactionFee },
+  gettingDeploymentEstimate: boolean,
+  balances: Balances,
+  isOnline: boolean,
   deploySmartWallet: () => void,
-  switchAccount: (accountId: string) => void,
+  estimateSmartWalletDeployment: () => void,
 };
-
 
 const ModalContainer = styled.View`
   padding: 20px 0 40px;
 `;
 
+const Centered = styled.View`
+  align-items: center;
+`;
 
-class SWActivationModal extends React.Component<Props> {
-  activateSW = async () => {
-    const {
-      deploySmartWallet,
-      navigation,
-      onClose,
-    } = this.props;
+const SWActivationModal = ({
+  theme,
+  isVisible,
+  onClose,
+  navigation,
+  deploymentEstimate,
+  gettingDeploymentEstimate,
+  balances,
+  isOnline,
+  deploySmartWallet,
+  estimateSmartWalletDeployment,
+}: Props) => {
+  const paidByPillar = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SMART_WALLET_ACTIVATION_PAID_BY_PILLAR);
 
+  useEffect(() => {
+    if (!paidByPillar) {
+      estimateSmartWalletDeployment();
+    }
+  }, [isVisible]);
+
+  const { smartWalletIcon } = images(theme);
+
+  const txFeeInfo = buildTxFeeInfo(deploymentEstimate?.formatted, false);
+  const isEnoughETH = paidByPillar || (
+    txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, { txFeeInWei: txFeeInfo.fee })
+  );
+
+  const submitButtonDisabled = !isEnoughETH || !isOnline;
+  const submitButtonVisible = true;
+
+  let submitButtonTitle = t('button.activate');
+
+  if (gettingDeploymentEstimate) {
+    submitButtonTitle = t('label.gettingFee');
+  } else if (!isEnoughETH) {
+    submitButtonTitle = t('label.notEnoughToken', { token: ETH });
+  } else if (!isOnline) {
+    submitButtonTitle = t('label.cannotProceedOffline');
+  }
+
+  const onSubmitPress = () => {
+    if (submitButtonDisabled) return;
     deploySmartWallet();
     navigation.navigate(ASSETS);
     if (onClose) onClose();
   };
 
-  render() {
-    const { theme, isVisible, onClose } = this.props;
-    const { smartWalletIcon } = images(theme);
-
-    return (
-      <SlideModal
-        isVisible={isVisible}
-        onModalHide={onClose}
-        hideHeader
-      >
-        <SafeAreaView>
-          <ModalContainer>
-            <MediumText center medium>{t('smartWalletContent.activationModal.title')}</MediumText>
-            <Spacing h={18} />
-            <CachedImage
-              style={{ width: 64, height: 64, alignSelf: 'center' }}
-              source={smartWalletIcon}
-            />
-            <Spacing h={20} />
-            <BaseText medium>{t('smartWalletContent.activationModal.paragraph')}</BaseText>
-            <Spacing h={34} />
+  return (
+    <SlideModal
+      isVisible={isVisible}
+      onModalHide={onClose}
+      hideHeader
+    >
+      <SafeAreaView>
+        <ModalContainer>
+          <MediumText center medium>{t('smartWalletContent.activationModal.title')}</MediumText>
+          <Spacing h={18} />
+          <CachedImage
+            style={{ width: 64, height: 64, alignSelf: 'center' }}
+            source={smartWalletIcon}
+          />
+          <Spacing h={20} />
+          <BaseText medium>{t('smartWalletContent.activationModal.paragraph')}</BaseText>
+          <Spacing h={34} />
+          {!paidByPillar && (
+            <Centered>
+              <FeeLabelToggle
+                labelText={t('label.fee')}
+                txFeeInWei={txFeeInfo?.fee}
+                gasToken={txFeeInfo?.gasToken}
+                isLoading={gettingDeploymentEstimate}
+                showFiatDefault
+              />
+            </Centered>
+          )}
+          <Spacing h={34} />
+          {submitButtonVisible && (
             <Button
+              title={submitButtonTitle}
+              disabled={submitButtonDisabled}
+              onPress={onSubmitPress}
               secondary
-              title={t('button.activate')}
-              onPress={this.activateSW}
               regularText
             />
-          </ModalContainer>
-        </SafeAreaView>
-      </SlideModal>
-    );
-  }
-}
+          )}
+        </ModalContainer>
+      </SafeAreaView>
+    </SlideModal>
+  );
+};
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+const mapStateToProps = ({
+  smartWallet: { upgrade: { gettingDeploymentEstimate, deploymentEstimate } },
+  session: { data: { isOnline } },
+}: RootReducerState): $Shape<Props> => ({
+  deploymentEstimate,
+  gettingDeploymentEstimate,
+  isOnline,
 });
 
-export default withTheme(connect(null, mapDispatchToProps)(SWActivationModal));
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state) => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
+  estimateSmartWalletDeployment: () => dispatch(estimateSmartWalletDeploymentAction()),
+});
+
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationModal));

@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import { useState } from 'react';
+import t from 'translations/translate';
 
 // components
 import { Label } from 'components/Typography';
@@ -82,7 +83,7 @@ const FeeLabelToggle = ({
 
   return (
     <LabelWrapper onPress={() => setIsFiatValueVisible(!isFiatValueVisible)}>
-      <Label>{labelText || 'Estimated fee:'}&nbsp;</Label>
+      <Label>{labelText || t('label.estimatedFee')}&nbsp;</Label>
       <Label>{labelValue}</Label>
     </LabelWrapper>
   );

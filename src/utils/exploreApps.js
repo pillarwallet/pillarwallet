@@ -22,7 +22,7 @@
 export type AppItem = {
   name: string,
   logo: number,
-  text: string,
+  translationKey: string,
   url: string,
   disabled?: boolean,
 };
@@ -42,66 +42,64 @@ export const APPS: AppItem[] = [
   {
     name: 'Zerion',
     logo: zerionLogo,
-    text: 'A simple interface to access decentralized finance to invest, earn interest and borrow crypto assets.',
+    translationKey: 'zerion',
     url: 'zerion.io',
   },
   {
     name: 'Pool Together',
     logo: poolTogetherLogo,
-    text: `No-loss, audited savings game. Deposit Dai into the pool to get tickets. \
-Each ticket is a chance to win weekly prizes!`,
+    translationKey: 'poolTogether',
     url: 'pooltogether.com',
   },
   {
     name: 'Mooni',
     logo: mooniLogo,
-    text: 'A simple solution to cash out cryptocurrencies in fiat to a bank account, without KYC.',
+    translationKey: 'mooni',
     url: 'mooni.tech',
     disabled: true,
   },
   {
     name: 'Oasis',
     logo: oasisLogo,
-    text: 'Trade, borrow, and save using Dai.',
+    translationKey: 'oasis',
     url: 'oasis.app',
   },
   {
     name: 'Sablier',
     logo: sablierLogo,
-    text: '"Stream" money in real-time.',
+    translationKey: 'sablier',
     url: 'sablier.finance',
   },
   {
     name: 'Binance DEX',
     logo: binanceLogo,
-    text: `Decentralized digital asset exchange from creators of one of the world's leading crypto exchanges.`,
+    translationKey: 'binanceDex',
     url: 'binance.org',
     disabled: true,
   },
   {
     name: 'Local Cryptos',
     logo: localCryptosLogo,
-    text: `The world's most popular non-custodial peer-to-peer marketplace where people exchange crypto with \
-  each other. Buy and sell crypto on your own terms, using any payment method.`,
+    translationKey: 'localCryptos',
     url: 'localcryptos.com',
     disabled: true,
   },
   {
     name: 'Async.art',
     logo: asyncartLogo,
-    text: 'Collect and experience programmable rare art.',
+    translationKey: 'asyncArt',
     url: 'async.art',
   },
   {
     name: 'Known Origin',
     logo: knownOriginLogo,
-    text: 'Discover and collect rare digital artwork.',
+    translationKey: 'knownOrigin',
     url: 'knownorigin.io',
   },
   {
     name: 'Clovers',
     logo: cloversLogo,
-    text: 'Discover, collect & trade cryptographic icons.',
+    translationKey: 'clovers',
     url: 'clovers.network',
   },
 ];

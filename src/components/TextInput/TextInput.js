@@ -29,6 +29,7 @@ import {
 } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -51,6 +52,7 @@ import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
 import type { InputPropsType, SelectorOptions as SelectorOptionsType } from 'models/TextInput';
+
 
 type Props = {
   errorMessage?: string,
@@ -290,14 +292,17 @@ class TextInput extends React.Component<Props, State> {
   };
 
   handleFocus = () => {
-    const { inputProps, keyboardAvoidance } = this.props;
-    if (Platform.OS === 'ios' && inputProps.multiline && keyboardAvoidance) {
+    const { inputProps: { multiline, onFocus }, keyboardAvoidance } = this.props;
+    if (Platform.OS === 'ios' && multiline && keyboardAvoidance) {
       this.handleMultilineFocus();
       return;
     }
     this.setState({
       isFocused: true,
     });
+    if (onFocus) {
+      onFocus();
+    }
   };
 
   handleRNFocus = () => {
@@ -373,7 +378,7 @@ class TextInput extends React.Component<Props, State> {
     if (!selectedValue) {
       return (
         <View style={{ flexDirection: 'row' }}>
-          <Placeholder>{selectorOptions.selectorPlaceholder || 'select'}</Placeholder>
+          <Placeholder>{selectorOptions.selectorPlaceholder || t('label.select')}</Placeholder>
           {shouldDisplaySpinner && <Spinner width={30} height={30} style={{ paddingLeft: 15 }} />}
         </View>
       );
@@ -413,6 +418,7 @@ class TextInput extends React.Component<Props, State> {
       rightLabel,
       inputHeaderStyle = {},
       customLabel,
+      customRightLabel,
     } = inputProps;
 
     if (!label && !rightLabel && !customLabel) return null;
@@ -431,6 +437,7 @@ class TextInput extends React.Component<Props, State> {
         {!!rightLabel &&
           <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
         }
+        {customRightLabel}
       </View>
     );
   };

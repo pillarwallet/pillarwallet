@@ -18,6 +18,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -27,9 +28,6 @@ import Button from 'components/Button';
 
 // constants
 import { SMART_WALLET_INTRO } from 'constants/navigationConstants';
-
-// utils
-import { spacing } from 'utils/variables';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -59,7 +57,7 @@ class ExchangeReceiveExplained extends React.Component<Props> {
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Activate Smart Wallet' }],
+          centerItems: [{ title: t('exchangeContent.title.activateSmartWalletScreen') }],
           rightItems: [{ close: true }],
           noBack: true,
           onClose: this.handleBack,
@@ -67,13 +65,14 @@ class ExchangeReceiveExplained extends React.Component<Props> {
       >
         <Wrapper flex={1} center regularPadding>
           <View style={{ justifyContent: 'center', flex: 1, alignItems: 'center' }}>
-            <Paragraph center>Activate Smart Wallet</Paragraph>
-            <Paragraph center style={{ paddingBottom: spacing.rhythm }}>
-              in order to receive exchanged tokens into <ArrowSymbol /> Smart Wallet.
+            <Paragraph center>
+              {t('exchangeContent.paragraph.ruleToGetExchangedTokensIntoSmartWallet')}
+              <ArrowSymbol />
+              {t('smartWallet')}
             </Paragraph>
             <Button
               onPress={() => navigation.navigate(SMART_WALLET_INTRO)}
-              title="Activate Smart Wallet"
+              title={t('button.activateSmartWallet')}
             />
           </View>
         </Wrapper>

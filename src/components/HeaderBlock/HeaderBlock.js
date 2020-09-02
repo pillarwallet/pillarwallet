@@ -75,10 +75,10 @@ const Wrapper = styled(Animated.View)`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding-vertical: 15px;
+  padding-vertical: 14px;
   ${({ noHorizonatalPadding }) => !noHorizonatalPadding && `padding-horizontal: ${spacing.layoutSides}px;`}
   width: 100%;
-  min-height: 58px;
+  height: 52px;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -100,7 +100,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  min-height: 28px;
+  height: 24px;
 `;
 
 const LeftItems = styled.View`
@@ -108,8 +108,7 @@ const LeftItems = styled.View`
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
-  flex-wrap: wrap;
-  min-height: 28px;
+  height: 24px;
 `;
 
 const RightItems = styled.View`
@@ -118,12 +117,12 @@ const RightItems = styled.View`
   justify-content: flex-end;
   flex-direction: row;
   flex-wrap: wrap;
-  min-height: 28px;
+  height: 24px;
 `;
 
 const BackIcon = styled(IconButton)`
   position: relative;
-  height: 34px;
+  height: 24px;
   width: 44px;
   padding-left: 10px;
   margin-left: -12px;

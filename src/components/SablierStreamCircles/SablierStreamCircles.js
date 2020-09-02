@@ -23,7 +23,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 import { MediumText } from 'components/Typography';
 import CircularProgressBar from 'components/CircularProgressBar';
 import { Spacing } from 'components/Layout';
@@ -98,7 +99,7 @@ const SablierStreamCircles = ({
 
   const { days, hours, minutes } = streamCountDownDHMS(stream);
 
-  const assetIcon = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
+  const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
   const isStreamCanceled = !!stream.cancellation;
   const isOutgoing = isCaseInsensitiveMatch(stream.sender, activeAccountAddress);
@@ -136,7 +137,7 @@ const SablierStreamCircles = ({
         </MediumText>
         <Spacing h={8} />
         <MediumText big color={isStreamCanceled ? colors.labelTertiary : colors.secondaryText}>
-          of {formattedDeposit} {assetData.symbol} total
+          {t('ofTotalTokenValue', { value: formattedDeposit, token: assetData.symbol })}
         </MediumText>
       </CirclesWrapper>
       <Spacing h={32} />
@@ -144,7 +145,13 @@ const SablierStreamCircles = ({
         <RemainingTimeWrapper>
           <ClockIcon name="pending" />
           <Spacing w={10} />
-          <MediumText fontSize={20} lineHeight={20}>{days} days {hours} hours {minutes} min</MediumText>
+          <MediumText fontSize={20} lineHeight={20}>
+            {t('timeDaysHoursMinutesLayout', {
+              days: t('day', { count: days }),
+              hours: t('hour', { count: hours }),
+              minutes: t('minute', { count: minutes }),
+            })}
+          </MediumText>
         </RemainingTimeWrapper>
       </ShadowedCard>
     </View>

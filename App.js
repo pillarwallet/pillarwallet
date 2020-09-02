@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import 'utils/setup';
+import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import * as React from 'react';
 import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking } from 'react-native';
@@ -27,7 +28,6 @@ import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
 import styled, { ThemeProvider } from 'styled-components/native';
 import { AppearanceProvider } from 'react-native-appearance';
-import { SENTRY_DSN, BUILD_TYPE, SHOW_THEME_TOGGLE, SHOW_ONLY_STORYBOOK, SHOW_LANG_TOGGLE } from 'react-native-dotenv';
 import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-community/netinfo';
 import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
@@ -50,6 +50,7 @@ import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { STAGING } from 'constants/envConstants';
 
 // components
 import { Container } from 'components/Layout';
@@ -58,6 +59,7 @@ import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/Button';
+import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
@@ -113,11 +115,14 @@ class App extends React.Component<Props, *> {
     if (!__DEV__) {
       const dist = DeviceInfo.getBuildNumber();
       const release = `${DeviceInfo.getBundleId()}@${DeviceInfo.getVersion()}+${dist}`;
-      Sentry.init({ dsn: SENTRY_DSN });
+      Sentry.init({ dsn: getEnv().SENTRY_DSN });
       Sentry.setRelease(release);
       Sentry.setDist(dist);
-      Sentry.setTags({ environment: BUILD_TYPE });
+      Sentry.setTags({ environment: getEnv().BUILD_TYPE });
     }
+    this.state = {
+      env: null,
+    };
   }
 
   // https://reactjs.org/blog/2018/03/27/update-on-async-rendering.html#gradual-migration-path
@@ -144,6 +149,9 @@ class App extends React.Component<Props, *> {
       startReferralsListener,
     } = this.props;
 
+    const env = await setupEnv();
+    log.info('Environment: ', env);
+    this.setState({ env });
     /**
      * First, we need to set the defaults for Remote Config.
      * This makes the default values immedidately available
@@ -259,7 +267,7 @@ class App extends React.Component<Props, *> {
                 theme={current === LIGHT_THEME ? 'light' : 'dark'}
                 language={i18n.language}
               />
-              {!!SHOW_THEME_TOGGLE &&
+              {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
                 title={`THEME: ${current}`}
                 onPress={() => {
@@ -267,11 +275,24 @@ class App extends React.Component<Props, *> {
                   setAppTheme(themeToChangeTo);
                 }}
               />}
-              {!!SHOW_LANG_TOGGLE && <Button
+              {!!getEnv().SHOW_LANG_TOGGLE && <Button
                 title={`Change lang (current: ${i18n.language})`}
                 onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+              {this.state.env === STAGING &&
+                <Button
+                  title={`Environment: ${this.state.env}`}
+                  onPress={() => switchEnvironments()}
+                />
+              }
+              <PercentsInputAccessoryHolder
+                ref={c => {
+                  if (c && !PercentsInputAccessoryHolder.instances.includes(c)) {
+                    PercentsInputAccessoryHolder.instances.push(c);
+                  }
+                }}
+              />
             </Root>
           </React.Fragment>
         </ThemeProvider>
@@ -308,7 +329,7 @@ const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDis
 const AppRoot = () => (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      {SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+      {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
     </PersistGate>
   </Provider>
 );

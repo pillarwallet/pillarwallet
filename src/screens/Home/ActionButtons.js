@@ -45,11 +45,15 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // models, types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Balances, Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
+import type { SmartWalletStatus } from 'models/SmartWalletStatus';
+import type { Accounts } from 'models/Account';
+import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 
 
 type Props = {
@@ -60,6 +64,8 @@ type Props = {
   goToInvitationFlow: () => void,
   rewardActive?: boolean,
   rates: Rates,
+  accounts: Accounts,
+  smartWalletState: SmartWalletReducerState,
 };
 
 const Sizer = styled.View`
@@ -83,12 +89,13 @@ const ActionButtons = ({
   rewardActive,
   goToInvitationFlow,
   rates,
+  accounts,
+  smartWalletState,
 }: Props) => {
   const [receiveAddress, setReceiveAddress] = useState('');
   const [visibleAddFundsModal, setVisibleAddFundsModal] = useState(false);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const isSendButtonActive = calculateBalanceInFiat(rates, activeAccountBalances, fiatCurrency);
 
   const addFundsModalOptions = [
     {
@@ -128,6 +135,10 @@ const ActionButtons = ({
       }, 500);
     }
   };
+
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
+  const isSendButtonActive = calculateBalanceInFiat(rates, activeAccountBalances, fiatCurrency)
+    && isEmpty(smartWalletStatus?.sendingBlockedMessage);
 
   return (
     <React.Fragment>
@@ -169,9 +180,13 @@ const ActionButtons = ({
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
+  accounts: { data: accounts },
+  smartWallet: smartWalletState,
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   rates,
+  accounts,
+  smartWalletState,
 });
 
 const structuredSelector = createStructuredSelector({

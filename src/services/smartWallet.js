@@ -29,9 +29,9 @@ import {
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -141,32 +141,40 @@ export const formatEstimated = (estimated: ?ParsedEstimate) => {
 };
 
 class SmartWallet {
-  sdk: Sdk;
-  sdkInitialized: boolean = false;
+  sdk: Sdk = null;
+  sdkInitialized: boolean;
 
   constructor() {
-    const environmentNetwork = this.getEnvironmentNetwork(NETWORK_PROVIDER);
-    const sdkOptions = getSdkEnvironment(environmentNetwork);
-    try {
-      this.sdk = createSdk(sdkOptions);
-    } catch (err) {
-      this.handleError(err);
+    this.sdk = null;
+    this.sdkInitialized = false;
+  }
+
+  getSdk() {
+    if (!this.sdk) {
+      const environmentNetwork = this.getEnvironmentNetwork(getEnv().NETWORK_PROVIDER);
+      const sdkOptions = getSdkEnvironment(environmentNetwork);
+      try {
+        this.sdk = createSdk(sdkOptions);
+      } catch (err) {
+        this.handleError(err);
+      }
     }
+    return this.sdk;
   }
 
   getEnvironmentNetwork(networkName: string) {
     switch (networkName) {
       case 'rinkeby': return SdkEnvironmentNames.Rinkeby;
-      case 'ropsten': return SdkEnvironmentNames.Ropsten;
+      case 'kovan': return SdkEnvironmentNames.Kovan;
       case 'homestead': return SdkEnvironmentNames.Main;
-      default: return SdkEnvironmentNames.Ropsten;
+      default: return SdkEnvironmentNames.Kovan;
     }
   }
 
   async init(privateKey: string, onEvent?: Function) {
     if (this.sdkInitialized) return;
 
-    await this.sdk
+    await this.getSdk()
       .initialize({ device: { privateKey } })
       .then(() => { this.sdkInitialized = true; })
       .catch(() => {
@@ -181,14 +189,14 @@ class SmartWallet {
 
   subscribeToEvents(onEvent?: Function) {
     if (subscribedToEvents || !onEvent) return;
-    this.sdk.event$.subscribe(event => {
+    this.getSdk().event$.subscribe(event => {
       if (onEvent) onEvent(event);
     });
     subscribedToEvents = true;
   }
 
   async getAccounts(): Promise<SmartWalletAccount[]> {
-    const accounts = await this.sdk.getConnectedAccounts()
+    const accounts = await this.getSdk().getConnectedAccounts()
       .then(({ items = [] }) => items)
       .catch(() => []);
 
@@ -201,7 +209,7 @@ class SmartWallet {
 
   createAccount(username: string) {
     const ensName = normalizeForEns(username);
-    return this.sdk
+    return this.getSdk()
       .createAccount(ensName)
       .catch((e) => {
         this.reportError('Unable to create Smart Account', { username, e });
@@ -210,14 +218,14 @@ class SmartWallet {
   }
 
   getConnectedAccountDevices() {
-    return this.sdk.getConnectedAccountDevices()
+    return this.getSdk().getConnectedAccountDevices()
       .then((result) => get(result, 'items', []))
       .catch(this.handleError);
   }
 
   async connectAccount(address: string) {
-    if (!get(this.sdk, 'state.account')) {
-      await this.sdk.connectAccount(address).catch(this.handleError);
+    if (!get(this.getSdk(), 'state.account')) {
+      await this.getSdk().connectAccount(address).catch(this.handleError);
     }
 
     return this.fetchConnectedAccount();
@@ -248,11 +256,13 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deployAccount(): Promise<{ error?: string, deployTxHash?: string }> {
-    const deployEstimate = await this.sdk.estimateAccountDeployment().catch(this.handleError);
+  async deployAccount(
+    estimate?: sdkInterfaces.IEstimatedAccountDeployment,
+  ): Promise<{ error?: string, deployTxHash?: string }> {
+    const deployEstimate = estimate || await this.estimateAccountDeployment().catch(this.handleError);
     if (!deployEstimate) return { error: 'reverted' };
 
-    return this.sdk.deployAccount(deployEstimate, false)
+    return this.getSdk().deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
         this.reportError('Unable to deploy account', { e });
@@ -261,10 +271,10 @@ class SmartWallet {
   }
 
   async deployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false): Promise<?string> {
-    const deployEstimate = await this.sdk.estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
+    const deployEstimate = await this.getSdk().estimateAccountDeviceDeployment(deviceAddress).catch(this.handleError);
     if (!deployEstimate) return null;
 
-    return this.sdk.submitAccountTransaction(deployEstimate, payForGasWithToken)
+    return this.getSdk().submitAccountTransaction(deployEstimate, payForGasWithToken)
       .catch((e) => {
         this.reportError('Unable to deploy device', { e });
         return null;
@@ -272,8 +282,9 @@ class SmartWallet {
   }
 
   async unDeployAccountDevice(deviceAddress: string, payForGasWithToken: boolean = false) {
-    const unDeployEstimate = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
-    return this.sdk.submitAccountTransaction(unDeployEstimate, payForGasWithToken)
+    const unDeployEstimate =
+      await this.getSdk().estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
+    return this.getSdk().submitAccountTransaction(unDeployEstimate, payForGasWithToken)
       .catch((e) => {
         this.reportError('Unable to undeploy device', { e });
         return null;
@@ -282,7 +293,7 @@ class SmartWallet {
 
   getAccountStakedAmount(tokenAddress: ?string): BigNumber {
     if (!tokenAddress) return new BigNumber(0);
-    return this.sdk.getConnectedAccountVirtualBalance(tokenAddress)
+    return this.getSdk().getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
         let value;
         if (data.items) { // NOTE: we're getting the data.items response when tokenAddress is null
@@ -299,7 +310,7 @@ class SmartWallet {
   }
 
   getAccountPendingBalances() {
-    return this.sdk.getConnectedAccountVirtualPendingBalances()
+    return this.getSdk().getConnectedAccountVirtualPendingBalances()
       .catch((e) => {
         this.handleError(e);
         return [];
@@ -308,9 +319,9 @@ class SmartWallet {
 
   async fetchConnectedAccount(): Promise<ConnectedSmartWalletAccount> {
     try {
-      const { state: { account: accountData } } = this.sdk;
+      const { state: { account: accountData } } = this.getSdk();
       const devices = await this.getConnectedAccountDevices();
-      const activeDeviceAddress = get(this.sdk, 'state.accountDevice.device.address');
+      const activeDeviceAddress = get(this.getSdk(), 'state.accountDevice.device.address');
       return { ...accountData, devices, activeDeviceAddress };
     } catch (e) {
       this.handleError(e);
@@ -347,7 +358,7 @@ class SmartWallet {
 
     estimateMethodParams = [...estimateMethodParams, transactionSpeed];
 
-    const estimatedTransaction = await this.sdk
+    const estimatedTransaction = await this.getSdk()
       .estimateAccountTransaction(...estimateMethodParams)
       .catch((e) => { estimateError = e; });
 
@@ -357,45 +368,46 @@ class SmartWallet {
 
     const payForGasWithToken = !isEmpty(gasToken);
 
-    return this.sdk.submitAccountTransaction(estimatedTransaction, payForGasWithToken);
+    return this.getSdk().submitAccountTransaction(estimatedTransaction, payForGasWithToken);
   }
 
   createAccountPayment(recipient: string, token: ?string, value: BigNumber, paymentType?: string, reference?: string) {
     token = toChecksumAddress(token);
-    return this.sdk.createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
+    return this.getSdk().createAccountPayment(recipient, token, value.toHexString(), paymentType, reference);
   }
 
   getConnectedAccountTransaction(txHash: string) {
-    return this.sdk.getConnectedAccountTransaction(txHash);
+    return this.getSdk().getConnectedAccountTransaction(txHash);
   }
 
   estimateTopUpAccountVirtualBalance(value: BigNumber, tokenAddress: ?string) {
-    return this.sdk.estimateTopUpAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
+    return this.getSdk().estimateTopUpAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
   estimateWithdrawFromVirtualAccount(value: BigNumber, tokenAddress: ?string) {
-    return this.sdk.estimateWithdrawFromAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
+    return this.getSdk()
+      .estimateWithdrawFromAccountVirtualBalance(value.toHexString(), toChecksumAddress(tokenAddress));
   }
 
   estimatePaymentSettlement(hashes: string[] = []) {
     const items = hashes.length === 1 ? hashes[0] : hashes;
-    return this.sdk.estimateWithdrawAccountPayment(items);
+    return this.getSdk().estimateWithdrawAccountPayment(items);
   }
 
   topUpAccountVirtualBalance(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.submitAccountTransaction(estimated, payForGasWithToken);
+    return this.getSdk().submitAccountTransaction(estimated, payForGasWithToken);
   }
 
   withdrawFromVirtualAccount(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.withdrawFromAccountVirtualBalance(estimated, payForGasWithToken);
+    return this.getSdk().withdrawFromAccountVirtualBalance(estimated, payForGasWithToken);
   }
 
   withdrawAccountPayment(estimated: Object, payForGasWithToken: boolean = false) {
-    return this.sdk.accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
+    return this.getSdk().accountTransaction.submitAccountProxyTransaction(estimated, payForGasWithToken);
   }
 
   searchAccount(address: string) {
-    return this.sdk.searchAccount({ address });
+    return this.getSdk().searchAccount({ address });
   }
 
   /**
@@ -404,7 +416,7 @@ class SmartWallet {
    */
   async getAccountPayments(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
-    const data = await this.sdk.getConnectedAccountPayments(page).catch(this.handleError);
+    const data = await this.getSdk().getConnectedAccountPayments(page).catch(this.handleError);
     if (!data) return [];
 
     const items = data.items || [];
@@ -424,7 +436,7 @@ class SmartWallet {
   async getAccountTransactions(lastSyncedId: ?number, page?: number = 0) {
     if (!this.sdkInitialized) return [];
     // make sure getConnectedAccountTransactions passed hash is empty string
-    const data = await this.sdk.getConnectedAccountTransactions('', page).catch(this.handleError);
+    const data = await this.getSdk().getConnectedAccountTransactions('', page).catch(this.handleError);
     if (!data) return [];
 
     const items = data.items || [];
@@ -442,7 +454,7 @@ class SmartWallet {
     const filters = {
       state: PAYMENT_COMPLETED,
     };
-    const data = await this.sdk.getConnectedAccountPayments(page, filters).catch(this.handleError);
+    const data = await this.getSdk().getConnectedAccountPayments(page, filters).catch(this.handleError);
     if (!data) return [];
 
     const items = (data.items || [])
@@ -503,7 +515,7 @@ class SmartWallet {
 
     estimateMethodParams = [...estimateMethodParams, transactionSpeed];
 
-    const estimated = await this.sdk
+    const estimated = await this.getSdk()
       .estimateAccountTransaction(...estimateMethodParams)
       .then(parseEstimatePayload)
       .catch(() => ({}));
@@ -512,7 +524,7 @@ class SmartWallet {
   }
 
   async estimateAccountDeviceDeployment(deviceAddress: string) {
-    const estimated = await this.sdk.estimateAccountDeviceDeployment(deviceAddress)
+    const estimated = await this.getSdk().estimateAccountDeviceDeployment(deviceAddress)
       .then(parseEstimatePayload)
       .catch(() => ({}));
 
@@ -520,42 +532,46 @@ class SmartWallet {
   }
 
   async estimateAccountDeviceUnDeployment(deviceAddress: string) {
-    const estimated = await this.sdk.estimateAccountDeviceUnDeployment(deviceAddress)
+    const estimated = await this.getSdk().estimateAccountDeviceUnDeployment(deviceAddress)
       .then(parseEstimatePayload)
       .catch(() => ({}));
 
     return formatEstimated(estimated);
   }
 
+  estimateAccountDeployment() {
+    return this.getSdk().estimateAccountDeployment();
+  }
+
   getTransactionInfo(hash: string) {
     if (!this.sdkInitialized) return null;
-    return this.sdk.getConnectedAccountTransaction(hash).catch(() => null);
+    return this.getSdk().getConnectedAccountTransaction(hash).catch(() => null);
   }
 
   async setAccountEnsName(username: string) {
     if (!this.sdkInitialized) return null;
 
     const ensName = normalizeForEns(username);
-    const estimated = await this.sdk
+    const estimated = await this.getSdk()
       .estimateSetAccountEnsName(ensName)
       .catch(e => this.reportError('Unable to estimate ENS update transaction', { e, username, ensName }));
 
     if (!estimated) return null;
-    return this.sdk
+    return this.getSdk()
       .setAccountEnsName(estimated)
       .catch(e => this.reportError('Unable to set ENS name for user', { e, username, ensName }));
   }
 
   switchToGasTokenRelayer() {
-    return this.sdk.switchToGasTokenRelayer().catch(() => null);
+    return this.getSdk().switchToGasTokenRelayer().catch(() => null);
   }
 
   addAccountDevice(address: string) {
-    return this.sdk.createAccountDevice(address).catch(() => null);
+    return this.getSdk().createAccountDevice(address).catch(() => null);
   }
 
   removeAccountDevice(address: string) {
-    return this.sdk.removeAccountDevice(address).catch(() => null);
+    return this.getSdk().removeAccountDevice(address).catch(() => null);
   }
 
   handleError(error: any) {

@@ -19,7 +19,7 @@
 */
 
 import { BigNumber as EthersBigNumber } from 'ethers';
-import { SABLIER_CONTRACT_ADDRESS } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import {
   SABLIER_CREATE_STREAM,
   SABLIER_WITHDRAW,
@@ -179,7 +179,7 @@ export const mapTransactionsHistoryWithSablier = async (
   ) => {
     const { to, tag } = transaction;
     if (isSablierTransactionTag(tag)) return transactions;
-    if (addressesEqual(SABLIER_CONTRACT_ADDRESS, to)) {
+    if (addressesEqual(getEnv().SABLIER_CONTRACT_ADDRESS, to)) {
       transactions[transactionIndex] = buildSablierTransaction(
         transaction,
         streamsTransactions,

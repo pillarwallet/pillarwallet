@@ -24,6 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -193,7 +194,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
           inputProps={{
             onChange: this.onSourceChange,
             selectorValue: source,
-            label: 'Sell',
+            label: t('label.sell'),
             maxLength: 42,
             placeholder: '0',
             keyboardType: 'numeric',
@@ -202,7 +203,7 @@ class SendwyreInputScreen extends React.Component<Props, State> {
           selectorOptions={{
             options: sourceOptions,
             fullWidth: false,
-            selectorModalTitle: 'Sell',
+            selectorModalTitle: t('label.sell'),
           }}
         />
 
@@ -210,12 +211,12 @@ class SendwyreInputScreen extends React.Component<Props, State> {
           inputProps={{
             onChange: this.onDestChange,
             selectorValue: dest,
-            label: 'Buy',
+            label: t('label.buy'),
           }}
           selectorOptions={{
             options: destOptions,
             fullWidth: true,
-            selectorModalTitle: 'Buy',
+            selectorModalTitle: t('label.buy'),
           }}
         />
       </FormWrapper>
@@ -230,12 +231,12 @@ class SendwyreInputScreen extends React.Component<Props, State> {
     const isLoading = countrySupport === SENDWYRE_SUPPORT.LOADING || isHandlingSubmit;
     const isButtonDisabled = !this.validateForm() || countrySupport !== SENDWYRE_SUPPORT.SUPPORTED;
     const buttonTitle = countrySupport === SENDWYRE_SUPPORT.UNSUPPORTED
-      ? 'Not available in Your country'
-      : 'Next';
+      ? t('label.notAvailableInYourCountry')
+      : t('button.next');
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: 'Buy with Wyre' }] }}
+        headerProps={{ centerItems: [{ title: t('exchangeContent.title.buyWithWyreScreen') }] }}
         inset={{ bottom: 'never' }}
       >
         <ScrollView

@@ -428,7 +428,7 @@ class AssetScreen extends React.Component<Props, State> {
                 <SyntheticAssetIcon source={lightningIcon} />
               }
               <TokenValue isSynthetic={isSynthetic}>
-                {`${displayAmount} ${token}`}
+                {t('tokenValue', { value: displayAmount, token })}
               </TokenValue>
             </ValueWrapper>
             {!!isListed &&

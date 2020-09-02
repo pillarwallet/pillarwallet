@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import {
@@ -192,14 +193,14 @@ const KeyBasedAssetTransferChoose = ({
     const checkedAsset = keyBasedAssetsToTransfer.find(
       (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
     );
-    const assetAmount = checkedAsset?.amount || assetBalance;
+    const assetAmount = checkedAsset?.draftAmount || assetBalance;
     const formattedAmount = formatFullAmount(assetAmount);
     const onCheck = () => onAssetSelect(item, assetAmount);
     return (
       <ListItemWithImage
         label={assetName}
         itemImageUrl={icon}
-        itemValue={`${formattedAmount} ${assetSymbol}`}
+        itemValue={t('tokenValue', { value: formattedAmount, token: assetSymbol })}
         fallbackToGenericToken
         onPress={onCheck}
         customAddon={renderCheckbox(onCheck, !!checkedAsset, { marginLeft: 12 })}
@@ -215,7 +216,7 @@ const KeyBasedAssetTransferChoose = ({
       keyExtractor={(item) => item.token}
       renderItem={renderAsset}
       initialNumToRender={9}
-      ListEmptyComponent={renderEmptyResult('No assets found', isFetchingAvailableBalances)}
+      ListEmptyComponent={renderEmptyResult(t('transactions.label.noAssetsFound'), isFetchingAvailableBalances)}
       refreshControl={
         <RefreshControl
           refreshing={isFetchingAvailableBalances}
@@ -256,7 +257,9 @@ const KeyBasedAssetTransferChoose = ({
       keyExtractor={(item) => `${item.contractAddress}${item.id}`}
       renderItem={renderCollectible}
       initialNumToRender={9}
-      ListEmptyComponent={renderEmptyResult('No collectibles found', isFetchingAvailableCollectibles)}
+      ListEmptyComponent={
+        renderEmptyResult(t('transactions.label.noCollectiblesFound'), isFetchingAvailableCollectibles)
+      }
       refreshControl={
         <RefreshControl
           refreshing={isFetchingAvailableCollectibles}
@@ -269,18 +272,18 @@ const KeyBasedAssetTransferChoose = ({
   const assetsTabs = [
     {
       id: TOKENS,
-      name: 'Tokens',
+      name: t('label.tokens'),
       onPress: () => setActiveTab(TOKENS),
     },
     {
       id: COLLECTIBLES,
-      name: 'Collectibles',
+      name: t('label.collectibles'),
       onPress: () => setActiveTab(COLLECTIBLES),
     },
   ];
 
   const editAmountSetting = {
-    link: 'Edit',
+    link: t('button.edit'),
     onPress: () => navigation.navigate(KEY_BASED_ASSET_TRANSFER_EDIT_AMOUNT),
   };
 
@@ -291,7 +294,7 @@ const KeyBasedAssetTransferChoose = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: 'Choose assets to transfer' }],
+        centerItems: [{ title: t('transactions.title.transferAssetsToSmartWalletScreen') }],
         rightItems: [hasTokensSelected && activeTab !== COLLECTIBLES ? editAmountSetting : {}],
       }}
       footer={!isEmpty(keyBasedAssetsToTransfer) && !inSearchMode && (
@@ -300,7 +303,7 @@ const KeyBasedAssetTransferChoose = ({
             <Button
               style={{ marginLeft: 'auto' }}
               small
-              title="Next"
+              title={t('button.next')}
               onPress={() => {
                 calculateTransactionsGas(); // start calculating
                 navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
@@ -316,7 +319,7 @@ const KeyBasedAssetTransferChoose = ({
         contentContainerStyle={{ flex: 1 }}
       >
         <SearchBlock
-          searchInputPlaceholder="Search asset"
+          searchInputPlaceholder={t('label.searchAsset')}
           onSearchChange={(query) => setSearchQuery(query)}
           itemSearchState={searchQuery.length >= 2}
           navigation={navigation}

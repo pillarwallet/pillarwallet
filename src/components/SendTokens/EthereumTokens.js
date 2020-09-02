@@ -17,15 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
-import { BigNumber } from 'bignumber.js';
 import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
-import { COLLECTIBLES_NETWORK } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -160,16 +159,24 @@ const SendEthereumTokens = ({
   const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
   const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
-  const getSmartWalletTxFee = async (specifiedAmount?: number): Promise<TransactionFeeInfo> => {
+  // parse value
+  const currentValue = parseFloat(amount || 0);
+  const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
+
+  const updateTxFee = async (specifiedAmount?: number) => {
     const value = Number(specifiedAmount || amount || 0);
-    const defaultResponse = { fee: new BigNumber(0) };
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
-    if (inputHasError || !assetData || !selectedContact) return defaultResponse;
+    // specified amount is always valid and not necessarily matches input amount
+    if ((!specifiedAmount && !isValidAmount) || value === 0 || !assetData || !selectedContact) {
+      setGettingFee(false);
+      setTxFeeInfo(null);
+      return;
+    }
 
     let data;
     if (isCollectible) {
-      const provider = getEthereumProvider(COLLECTIBLES_NETWORK);
+      const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
       const {
         name,
         id,
@@ -201,30 +208,32 @@ const SendEthereumTokens = ({
         supportLink: true,
         type: 'warning',
       });
-      return defaultResponse;
+      setGettingFee(false);
+      setTxFeeInfo(null);
+      return;
     }
 
-    return estimated;
+    setTxFeeInfo(estimated);
   };
 
-  const updateTxFee = debounce(async () => {
-    setGettingFee(true);
-    const newTxFeeInfo = await getSmartWalletTxFee();
-    setTxFeeInfo(newTxFeeInfo);
-    setGettingFee(false);
-  }, 500);
+  const updateTxFeeDebounced = useCallback(
+    debounce(updateTxFee, 500),
+    [amount, selectedContact, useGasToken, assetData],
+  );
 
-
-  // update fee omn amount changed
   useEffect(() => {
-    updateTxFee();
-  }, [amount, selectedContact, useGasToken]);
+    if (!gettingFee) setGettingFee(true);
+    updateTxFeeDebounced();
+    return updateTxFeeDebounced.cancel;
+  }, [updateTxFeeDebounced]);
 
-  const handleAmountChange = debounce((value: ?Object) => {
-    setAmount(value?.input || '0');
-    if (value) setAssetData(value.selector);
-    updateTxFee();
-  }, 500);
+  // fee changed, no longer getting
+  useEffect(() => { if (gettingFee) setGettingFee(false); }, [txFeeInfo]);
+
+  const handleAmountChange = (value: ?Object) => {
+    if (amount !== value?.input) setAmount(value?.input || '0');
+    if (value && assetData !== value.selector) setAssetData(value.selector);
+  };
 
   useEffect(() => {
     if (!defaultAssetData) return;
@@ -315,7 +324,7 @@ const SendEthereumTokens = ({
       decimals: assetData.decimals,
     };
 
-    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+    if (txFeeInfo?.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
 
     Keyboard.dismiss();
     setSubmitPressed(false);
@@ -323,6 +332,18 @@ const SendEthereumTokens = ({
       transactionPayload,
       source,
     });
+  };
+
+  const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
+    setGettingFee(true);
+    const maxBalance = parseFloat(getBalance(balances, assetSymbol));
+    const calculatedBalanceAmount = maxBalance * percentageModifier;
+
+    // update fee only on max balance
+    if (maxBalance === calculatedBalanceAmount) {
+      // not debounced call to make sure it's not cancelled
+      await updateTxFee(calculatedBalanceAmount);
+    }
   };
 
   const renderRelayerMigrationButton = () => (
@@ -333,7 +354,6 @@ const SendEthereumTokens = ({
       small
     />
   );
-
 
   const renderFee = (props: FooterProps) => {
     const {
@@ -363,15 +383,11 @@ const SendEthereumTokens = ({
   const token = get(assetData, 'token');
   const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
-  // value
-  const currentValue = parseFloat(amount || 0);
-
   // balance
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
   const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!selectedContact;
-  const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
 
   const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
@@ -436,6 +452,9 @@ const SendEthereumTokens = ({
         preselectedAsset: token,
         preselectedCollectible,
         showAllAssetTypes: true,
+        gettingFee,
+        hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
+        calculateBalancePercentTxFee,
       }}
       footerProps={{
         isNextButtonVisible: showNextButton,
@@ -447,7 +466,7 @@ const SendEthereumTokens = ({
         footerTopAddon: !!selectedContact && renderFee({
           showRelayerMigration,
           showFee,
-          isLoading: gettingFee && !inputHasError,
+          isLoading: gettingFee,
           feeError,
         }),
       }}

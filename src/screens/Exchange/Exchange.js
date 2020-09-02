@@ -25,12 +25,16 @@ import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import SelectorOptions from 'components/SelectorOptions';
 import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
+import PercentsInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 // actions
 import {
@@ -65,8 +69,6 @@ import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Option } from 'models/Selector';
-
-import t from 'translations/translate';
 
 // partials
 import ExchangeIntroModal from './ExchangeIntroModal';
@@ -273,19 +275,24 @@ class ExchangeScreen extends React.Component<Props, State> {
         getInputRef={ref => { this.fromInputRef = ref; }}
         onChange={this.handleFromInputChange}
         value={value}
+        onFocus={this.onFocusInput}
         onBlur={this.blurFromInput}
         errorMessage={errorMessage}
         asset={fromAsset}
         onAssetPress={() => this.setState({ showSellOptions: true })}
         labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        onLabelPress={this.handleSellMax}
+        onLabelPress={() => this.handleUsePercent(100)}
         leftSideText={displayFiatFromAmount
-          ? `${formatAmount(fromAmount || '0', 2)} ${fromAsset.symbol || ''}`
+          ? t('tokenValue', {
+            value: formatAmount(fromAmount || '0', 2) || '0',
+            token: fromAsset.symbol || '',
+          })
           : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="-"
         onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
         rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
+        inputAccessoryViewID={INPUT_ACCESSORY_NATIVE_ID}
       />
     );
   };
@@ -316,7 +323,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         asset={toAsset}
         onAssetPress={() => this.setState({ showBuyOptions: true })}
         leftSideText={displayFiatToAmount
-          ? `${formatAmount(toAmount || '0', 2)} ${toAsset.symbol || ''}`
+          ? t('tokenValue', { value: formatAmount(toAmount || '0', 2), token: toAsset.symbol || '' })
           : formatFiat(toAmountInFiat || '0', fiatCurrency).replace(/ /g, '')
         }
         leftSideSymbol="+"
@@ -328,7 +335,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   blurFromInput = () => {
     if (this.fromInputRef) this.fromInputRef.blur();
+    PercentsInputAccessoryHolder.removeAccessory();
   };
+
+  onFocusInput = () => {
+    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
+  }
 
   focusInputWithKeyboard = () => {
     const { hasSeenExchangeIntro } = this.props;
@@ -338,12 +350,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     }, 200);
   };
 
-  handleSellMax = () => {
+  handleUsePercent = (percent: number) => {
     const { fromAsset } = this.state;
     const fiatAmount = fromAsset.formattedBalanceInFiat || '';
     this.setState({
-      fromAmount: fromAsset.assetBalance,
-      fromAmountInFiat: fiatAmount.substr(2),
+      fromAmount: (parseFloat(fromAsset.assetBalance) * (percent / 100)).toString(),
+      fromAmountInFiat: (parseFloat(fiatAmount) * (percent / 100)).toString().substr(2),
       errorMessage: '',
     }, () => Keyboard.dismiss());
   };
