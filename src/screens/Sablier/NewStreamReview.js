@@ -110,7 +110,7 @@ class NewStreamReview extends React.Component<Props, State> {
       activeAccountAddress,
       receiverAddress,
       assetValue,
-      assetData.address,
+      assetData,
       getTimestamp(startDate),
       getTimestamp(endDate),
       useGasToken,

@@ -22,8 +22,6 @@ import {
   SET_FETCHING_STREAMS,
   SET_CALCULATING_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE,
   SET_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE,
-  SET_EXECUTING_SABLIER_APPROVE,
-  SET_DISMISS_SABLIER_APPROVE,
 } from 'constants/sablierConstants';
 import type { Stream } from 'models/Sablier';
 
@@ -34,9 +32,6 @@ export type SablierReducerState = {
   isFetchingStreams: boolean,
   isCalculatingWithdrawTransactionEstimate: boolean,
   withdrawTransactionEstimate: ?Object,
-  sablierApproveExecuting: {
-    [string]: string | boolean,
-  },
 };
 
 export type SablierReducerAction = {
@@ -50,7 +45,6 @@ export const initialState = {
   isFetchingStreams: false,
   isCalculatingWithdrawTransactionEstimate: false,
   withdrawTransactionEstimate: null,
-  sablierApproveExecuting: {},
 };
 
 export default function sablierReducer(
@@ -69,22 +63,6 @@ export default function sablierReducer(
         ...state,
         withdrawTransactionEstimate: action.payload,
         isCalculatingWithdrawTransactionEstimate: false,
-      };
-    case SET_EXECUTING_SABLIER_APPROVE:
-      return {
-        ...state,
-        sablierApproveExecuting: {
-          ...state.sablierApproveExecuting,
-          [action.payload.assetSymbol]: action.payload.txHash,
-        },
-      };
-    case SET_DISMISS_SABLIER_APPROVE:
-      return {
-        ...state,
-        sablierApproveExecuting: {
-          ...state.sablierApproveExecuting,
-          [action.payload]: false,
-        },
       };
     default:
       return state;
