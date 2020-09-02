@@ -124,5 +124,4 @@ const mapStateToProps = ({
   smartWalletState,
 });
 
-
 export default withNavigation(connect(mapStateToProps)(SWActivationCard));
