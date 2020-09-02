@@ -165,6 +165,7 @@ export function SelectorInputTemplate(locals: Object) {
       noErrorText,
       renderOption,
       optionTabs,
+      customRightLabel,
       inputAccessoryViewID,
     },
   } = locals;
@@ -193,6 +194,7 @@ export function SelectorInputTemplate(locals: Object) {
     rightLabel,
     onPressRightLabel,
     inputHeaderStyle,
+    customRightLabel,
     inputAccessoryViewID,
   };
 
@@ -215,6 +217,7 @@ export function SelectorInputTemplate(locals: Object) {
         selectorModalTitle: selectorModalTitle || label,
         selectorPlaceholder: placeholderSelector,
         optionsSearchPlaceholder: t('form.selector.assetSearchPlaceholder'),
+        customRightLabel,
       }}
       getInputRef={inputRef}
       inputWrapperStyle={inputWrapperStyle}

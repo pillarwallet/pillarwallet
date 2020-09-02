@@ -26,7 +26,7 @@ import PercentsInputAccessory from './PercentsInputAccessory';
 type State = {
   isVisible: boolean,
   isActive: boolean,
-  handleUsePercentCallback: (number) => void,
+  handleUsePercentCallback: (number) => any,
 };
 
 export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID';
@@ -34,7 +34,7 @@ export const INPUT_ACCESSORY_NATIVE_ID = 'INPUT_ACCESSORY_NATIVE_ID';
 class PercentsInputAccessoryHolder extends React.Component<{}, State> {
   static instances: Object[] = [];
 
-  static addAccessory = (handleUsePercentCallback: (number) => void) => {
+  static addAccessory = (handleUsePercentCallback: (number) => any) => {
     const instance = this.instances[this.instances.length - 1];
     if (instance) {
       instance.handleAddAccessory(handleUsePercentCallback);
@@ -66,7 +66,7 @@ class PercentsInputAccessoryHolder extends React.Component<{}, State> {
     PercentsInputAccessoryHolder.instances.splice(PercentsInputAccessoryHolder.instances.length - 1);
   }
 
-  handleAddAccessory = (handleUsePercentCallback: (number) => void) => {
+  handleAddAccessory = (handleUsePercentCallback: (number) => any) => {
     this.setState({
       isActive: true,
       handleUsePercentCallback,
