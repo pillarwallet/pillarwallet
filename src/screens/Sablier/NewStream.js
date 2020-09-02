@@ -328,6 +328,7 @@ class NewStream extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{ centerItems: [{ title: t('sablierContent.title.newStreamScreen') }] }}
         putContentInScrollView
+        keyboardShouldPersistTaps="always"
       >
         <Selector
           label={t('label.to')}

@@ -26,10 +26,10 @@ import { Container, Wrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Loader from 'components/Loader';
 import Button from 'components/Button';
-import { REGISTRATION_FAILED, USERNAME_EXISTS } from 'constants/walletConstants';
+import { USERNAME_FAILED, REGISTRATION_FAILED } from 'constants/walletConstants';
 import { APP_FLOW } from 'constants/navigationConstants';
 
-const API_FAILURES = [USERNAME_EXISTS, REGISTRATION_FAILED];
+const API_FAILURES = [USERNAME_FAILED, REGISTRATION_FAILED];
 
 type Props = {
   navigation: NavigationScreenProp<*>,

@@ -25,7 +25,7 @@ import { getEnv } from 'configs/envConfig';
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 
 // utils
-import { getEthereumProvider, parseTokenBigNumberAmount, reportLog } from 'utils/common';
+import { getEthereumProvider, isCaseInsensitiveMatch, parseTokenBigNumberAmount, reportLog } from 'utils/common';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -347,7 +347,20 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
         data[HOT] = { ...data[HOLO] };
         delete data[HOLO];
       }
-      return data;
+      /**
+       * sometimes symbols have different symbol case and mismatch
+       * between our back-end and crypto compare returned result
+       */
+      return Object.keys(data).reduce((mappedData, returnedSymbol) => {
+        const walletSupportedSymbol = assets.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
+        if (walletSupportedSymbol && !mappedData[walletSupportedSymbol]) {
+          mappedData = {
+            ...mappedData,
+            [walletSupportedSymbol]: data[returnedSymbol],
+          };
+        }
+        return mappedData;
+      }, {});
     }).catch(() => ({}));
 }
 

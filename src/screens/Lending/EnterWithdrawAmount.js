@@ -184,7 +184,7 @@ const EnterWithdrawAmount = ({
           )}
         </FooterInner>
       )}
-      minAvoidHeight={200}
+      minAvoidHeight={600}
     >
       <ValueSelectorCard
         preselectedAsset={preselectedAssetSymbol}

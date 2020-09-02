@@ -23,19 +23,19 @@ import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
 import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // constants
 import {
   GENERATING,
   UPDATE_WALLET_STATE,
   REGISTERING,
-  USERNAME_EXISTS,
   USERNAME_OK,
   CHECKING_USERNAME,
   SET_API_USER,
-  INAPPROPRIATE_USERNAME,
-  INVALID_USERNAME,
+  USERNAME_FAILED,
   DECRYPTED,
+  SET_USERNAME_CHECK_ERROR_MESSAGE,
 } from 'constants/walletConstants';
 import {
   APP_FLOW,
@@ -57,9 +57,12 @@ import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 
+// components
+import Toast from 'components/Toast';
+
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { delay } from 'utils/common';
+import { delay, isCaseInsensitiveMatch } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 
 // services
@@ -226,10 +229,14 @@ export const navigateToAppFlow = (showIncomingReward?: boolean) => {
 
 export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const mnemonic = getState()?.wallet?.onboarding?.mnemonic;
+    // in case mnemonic is null (new user) then it will generate new, otherwise will take imported from state
+    const mnemonicPhrase = mnemonic?.original || generateMnemonicPhrase();
+    if (!mnemonic) dispatch(generateWalletMnemonicAction(mnemonicPhrase));
+
     const currentState = getState();
     const {
       onboarding: {
-        mnemonic: { original: mnemonicPhrase },
         pin,
         importedWallet,
         apiUser,
@@ -306,7 +313,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       payload: REGISTERING,
     });
 
-    const user = apiUser.username ? { username: apiUser.username } : {};
+    const user = apiUser?.username ? { username: apiUser.username } : {};
     dispatch(saveDbAction('user', { user }));
 
     api.init();
@@ -364,13 +371,14 @@ export const registerOnBackendAction = () => {
         },
       },
     } = getState();
+
     const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
     dispatch({
       type: UPDATE_WALLET_STATE,
       payload: REGISTERING,
     });
     let { user = {} } = await storage.get('user');
-    if (apiUser.username) {
+    if (apiUser?.username) {
       user = { ...apiUser };
     }
     await delay(1000);
@@ -399,35 +407,52 @@ export const registerOnBackendAction = () => {
   };
 };
 
-export const validateUserDetailsAction = ({ username }: Object) => {
+export const checkUsernameAvailabilityAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const currentState = getState();
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: CHECKING_USERNAME,
-    });
-    const { mnemonic } = currentState.wallet.onboarding;
-    const mnemonicPhrase = generateMnemonicPhrase(mnemonic.original);
-    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
-    await delay(200);
+    let newWalletState;
 
-    api.init();
-    // TODO: add back-end authenticated user model (not people related ApiUser)
-    const apiUser: Object = await api.usernameSearch(username);
-    const usernameExists = apiUser.username === username;
-    const inappropriateUsername = apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME;
-    let usernameStatus = usernameExists ? USERNAME_EXISTS : USERNAME_OK;
-    if (apiUser.status === 400 && apiUser.message === INAPPROPRIATE_USERNAME) {
-      usernameStatus = INVALID_USERNAME;
+    // if user is offline then proceed with local registration
+    if (!getState()?.session?.data?.isOnline) {
+      Toast.show({
+        message: t('auth:toast.userIsOffline'),
+        emoji: 'satellite_antenna',
+      });
+      dispatch({
+        type: SET_API_USER,
+        payload: { username },
+      });
+      dispatch({ type: UPDATE_WALLET_STATE, payload: USERNAME_OK });
+      return;
     }
 
-    dispatch({
-      type: SET_API_USER,
-      payload: usernameExists || inappropriateUsername ? apiUser : { username },
-    });
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: usernameStatus,
-    });
+    dispatch({ type: UPDATE_WALLET_STATE, payload: CHECKING_USERNAME });
+    dispatch({ type: SET_USERNAME_CHECK_ERROR_MESSAGE, payload: null });
+
+    api.init();
+
+    const result: {
+      status?: number,
+      username?: string,
+      message?: string,
+    } = await api.usernameSearch(username);
+
+    const usernameTaken = isCaseInsensitiveMatch(result?.username, username);
+
+    if (result?.status === 400 || usernameTaken) {
+      const errorMessage = result?.message || t('auth:error.invalidUsername.default');
+      dispatch({
+        type: SET_USERNAME_CHECK_ERROR_MESSAGE,
+        payload: usernameTaken ? t('auth:error.invalidUsername.taken') : errorMessage,
+      });
+      newWalletState = USERNAME_FAILED;
+    } else {
+      dispatch({
+        type: SET_API_USER,
+        payload: { username },
+      });
+      newWalletState = USERNAME_OK;
+    }
+
+    dispatch({ type: UPDATE_WALLET_STATE, payload: newWalletState });
   };
 };
