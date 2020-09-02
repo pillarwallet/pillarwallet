@@ -20,6 +20,8 @@
 import { Wallet } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+import { BigNumber } from 'bignumber.js';
+import { formatEther } from 'ethers/lib/utils';
 
 // components
 import Toast from 'components/Toast';
@@ -48,8 +50,9 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
-import { getGasPriceWei, reportLog } from 'utils/common';
+import { formatFullAmount, getGasPriceWei, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
 // services
 import { calculateGasEstimate, fetchTransactionInfo, transferSigned } from 'services/assets';
@@ -157,7 +160,7 @@ export const removeKeyBasedAssetToTransferAction = (assetData: AssetData) => {
 export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer } } = getState();
-    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, amount });
+    const updatedKeyBasedAssetsToTransfer = keyBasedAssetsToTransfer.concat({ assetData, draftAmount: amount });
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: updatedKeyBasedAssetsToTransfer });
   };
 };
@@ -213,8 +216,8 @@ export const fetchAvailableCollectiblesToTransferAction = () => {
 
 export const setAndStoreKeyBasedAssetsToTransferAction = (keyBasedAssetsToTransfer: KeyBasedAssetTransfer[]) => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('keyBasedAssetTransfer', { keyBasedAssetsToTransfer }, true));
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransfer });
+    dispatch(saveDbAction('keyBasedAssetTransfer', { keyBasedAssetsToTransfer }, true));
   };
 };
 
@@ -223,7 +226,7 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     const {
       wallet: { data: { address: keyBasedWalletAddress } },
       accounts: { data: accounts },
-      keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer, isCalculatingGas },
+      keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer, isCalculatingGas, availableBalances },
     } = getState();
 
     const firstSmartAccount = findFirstSmartAccount(accounts);
@@ -239,18 +242,69 @@ export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
     const { history: { gasInfo } } = getState();
     const gasPrice = getGasPriceWei(gasInfo);
 
-    const keyBasedAssetsToTransferUpdated = await Promise.all(
+    let keyBasedAssetsToTransferUpdated = await Promise.all(
       keyBasedAssetsToTransfer.map(async (keyBasedAssetToTransfer) => {
-        const { assetData, amount } = keyBasedAssetToTransfer;
+        const { assetData, draftAmount } = keyBasedAssetToTransfer;
         const estimateTransaction = buildAssetTransferTransaction(assetData, {
-          amount,
+          amount: draftAmount,
           from: keyBasedWalletAddress,
           to: getAccountAddress(firstSmartAccount),
         });
         const gasLimit = await calculateGasEstimate(estimateTransaction);
-        return { ...keyBasedAssetToTransfer, gasPrice, calculatedGasLimit: gasLimit };
+        return {
+          ...keyBasedAssetToTransfer,
+          calculatedGasLimit: gasLimit,
+          amount: draftAmount,
+          gasPrice,
+        };
       }),
     );
+
+    /**
+     * ETH transfer amount adjustment below covers case if ETH is being transferred and sum of ETH amount
+     * that is being sent plus calculated ETH fees for token transfer is more than ETH balance that is left
+     * after ETH and token transfer, i.e. all ETH balance is sent and 0 left which is nt enough for other transfers
+     *
+     * in these case we want to subtract all transfer fees in ETH from ETH amount that is being sent that
+     * sum of ETH balance that is left after transfer plus ETH that is being transferred is lower than ETH fees
+     * needed to cover all transfer transactions
+     */
+
+    // check if ETH is being transferred and adjust transfer amount if needed
+    const ethTransfer = keyBasedAssetsToTransferUpdated.find(({ assetData }) => assetData?.token === ETH);
+    if (ethTransfer) {
+      const ethTransferAmountBN = new BigNumber(ethTransfer.draftAmount);
+      const totalTransferFeeWeiBN: BigNumber = keyBasedAssetsToTransferUpdated.reduce(
+        (a: BigNumber, b: any) => a.plus(new BigNumber(b.gasPrice.toString()).multipliedBy(b.calculatedGasLimit)),
+        new BigNumber(0),
+      );
+      const totalTransferFeeEthBN = new BigNumber(formatEther(totalTransferFeeWeiBN.toFixed()));
+      const adjustedEthTransferAmountBN = calculateETHTransactionAmountAfterFee(
+        ethTransferAmountBN,
+        availableBalances,
+        totalTransferFeeEthBN,
+      );
+
+      // check if adjusted amount is enough to cover fees, otherwise it's not enough ETH in general
+      if (adjustedEthTransferAmountBN.isPositive()) {
+        const adjustedEthTransferAmount = formatFullAmount(adjustedEthTransferAmountBN.toString());
+        const estimateTransaction = buildAssetTransferTransaction(ethTransfer.assetData, {
+          amount: adjustedEthTransferAmount,
+          from: keyBasedWalletAddress,
+          to: getAccountAddress(firstSmartAccount),
+        });
+        const gasLimit = await calculateGasEstimate(estimateTransaction);
+        const adjustedEthTransfer = {
+          ...ethTransfer,
+          amount: adjustedEthTransferAmount,
+          calculatedGasLimit: gasLimit,
+          gasPrice,
+        };
+        keyBasedAssetsToTransferUpdated = keyBasedAssetsToTransferUpdated
+          .filter(({ assetData }) => assetData.token !== ETH)
+          .concat(adjustedEthTransfer);
+      }
+    }
 
     dispatch({ type: SET_KEY_BASED_ASSETS_TO_TRANSFER, payload: keyBasedAssetsToTransferUpdated });
     dispatch({ type: SET_CALCULATING_KEY_BASED_ASSETS_TO_TRANSFER_GAS, payload: false });
