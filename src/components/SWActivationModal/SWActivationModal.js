@@ -117,7 +117,7 @@ const SWActivationModal = ({
     submitButtonTitle = t('label.gettingFee');
   } else if (!isEnoughETH) {
     submitButtonTitle = t('label.notEnoughToken', { token: ETH });
-  } else sif (!isOnline) {
+  } else if (!isOnline) {
     submitButtonTitle = t('label.cannotProceedOffline');
   }
 
