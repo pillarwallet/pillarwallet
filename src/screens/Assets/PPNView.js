@@ -204,7 +204,7 @@ class PPNView extends React.Component<Props, State> {
     if (smartWalletAccount && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
       const smartWalletAccountId = getAccountId(smartWalletAccount);
       const accountBalances: Balances = balances[smartWalletAccountId];
-      const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0; // eslint-disable-line i18next/no-literal-string, max-len
+      const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
 
       if (!availableStake) {
         const insightProps = {};

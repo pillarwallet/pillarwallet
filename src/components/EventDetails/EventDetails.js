@@ -632,8 +632,8 @@ export class EventDetail extends React.Component<Props, State> {
     const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
     const amountText = getFormattedValue(formattedAmount, symbol, { isPositive, noSymbol: !formattedAmount });
     const ticketsText = `(${t('ticketAmount', { count: formattedAmount })})`;
-    const amountTextColor = event.tag ===
-    POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text'; // eslint-disable-line i18next/no-literal-string
+    // eslint-disable-next-line i18next/no-literal-string
+    const amountTextColor = event.tag === POOLTOGETHER_WITHDRAW_TRANSACTION ? 'positive' : 'text';
     const title = event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION ? t('label.purchase') : t('label.withdraw');
 
     return (

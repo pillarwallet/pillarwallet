@@ -22,12 +22,13 @@ import { reportLog } from 'utils/common';
 
 
 export const callSubgraph = (subgraphName: string, query: string) => {
-  const url = `https://api.thegraph.com/subgraphs/name/${subgraphName}`; // eslint-disable-line i18next/no-literal-string, max-len
+  // eslint-disable-next-line i18next/no-literal-string
+  const url = `https://api.thegraph.com/subgraphs/name/${subgraphName}`;
   return axios
     .post(url, { query }, { timeout: 5000 })
     .then(({ data: response }) => response.data)
     .catch((error) => {
-      reportLog(`The Graph subgraph "${subgraphName}" API call failed`, { error, query }); // eslint-disable-line i18next/no-literal-string, max-len
+      reportLog(`The Graph subgraph "${subgraphName}" API call failed`, { error, query });
       return null;
     });
 };

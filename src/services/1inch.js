@@ -72,7 +72,9 @@ export const get1inchOffer = async (
 
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
 
-  const url = `${EXCHANGE_URL}/quote?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}&amount=${amount}`; // eslint-disable-line i18next/no-literal-string, max-len
+  const url =
+    // eslint-disable-next-line i18next/no-literal-string
+    `${EXCHANGE_URL}/quote?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}&amount=${amount}`;
 
   const response = await getResponseData(url);
   if (!response) return null;

@@ -214,7 +214,7 @@ class AssetScreen extends React.Component<Props, State> {
     fetchReferralRewardsIssuerAddresses();
     if (resetHideRemoval) resetHideRemoval();
     if (isEmpty(exchangeSupportedAssets)) getExchangeSupportedAssets();
-    logScreenView('View asset', 'Asset', `asset-${token}`); // eslint-disable-line i18next/no-literal-string
+    logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {

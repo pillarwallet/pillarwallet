@@ -45,8 +45,7 @@ export const getOfferProviderLogo = (provider?: string, theme: Theme, type: stri
   const providerInfo = getProviderInfo(provider);
   const themeName = getThemeName(theme);
   if (providerInfo) {
-    const providerIconName =
-      get(providerInfo, `img.${type}.${themeName}`, ''); // eslint-disable-line i18next/no-literal-string
+    const providerIconName = get(providerInfo, `img.${type}.${themeName}`, '');
     const image = staticImages[providerIconName] || '';
     return image;
   }

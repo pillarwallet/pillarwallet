@@ -21,5 +21,5 @@ import axios from 'axios';
 import { getEnv } from 'configs/envConfig';
 
 export const subscribeToNewsletter = (email: string) => {
-  return axios.post(`${getEnv().NEWSLETTER_SUBSCRIBE_URL}&EMAIL=${email}`); // eslint-disable-line i18next/no-literal-string, max-len
+  return axios.post(`${getEnv().NEWSLETTER_SUBSCRIBE_URL}&EMAIL=${email}`);
 };

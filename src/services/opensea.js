@@ -36,13 +36,13 @@ const requestConfig = {
 export const getLimitedData =
   (url: string, data: Array<Object>, limit: number, offset: number,
     responseDataKey: string, resolve: Function, reject: Function) => {
-    axios.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig) // eslint-disable-line i18next/no-literal-string, max-len
+    axios.get(`${url}&limit=${limit}&offset=${offset}`, requestConfig)
       .then(({ data: responseData }: AxiosResponse) => {
         const retrievedData = data.concat(responseData[responseDataKey]);
         const newOffset = offset + limit;
         if (responseData[responseDataKey].length === limit) {
           setTimeout(() => {
-            getLimitedData(`${url}&limit=${limit}&offset=${newOffset}`, // eslint-disable-line i18next/no-literal-string, max-len
+            getLimitedData(`${url}&limit=${limit}&offset=${newOffset}`,
               retrievedData, limit, newOffset, responseDataKey, resolve, reject);
           }, 1000);
         } else {

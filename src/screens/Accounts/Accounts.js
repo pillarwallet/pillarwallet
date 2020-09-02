@@ -191,7 +191,7 @@ const AccountsScreen = ({
         walletBalance = formatFiat(thisAccountBalance, baseFiatCurrency);
       }
       return {
-        id: `ACCOUNT_${id}`, // eslint-disable-line i18next/no-literal-string
+        id: `ACCOUNT_${id}`,
         type: ITEM_TYPE.ACCOUNT,
         title: getAccountName(type),
         balance: walletBalance,
@@ -216,7 +216,7 @@ const AccountsScreen = ({
     const { isActive } = ppnNetwork;
     const availableStakeFormattedAmount = formatMoney(availableStake);
     networksToShow.push({
-      id: `NETWORK_${ppnNetwork.id}`, // eslint-disable-line i18next/no-literal-string
+      id: `NETWORK_${ppnNetwork.id}`,
       type: ITEM_TYPE.NETWORK,
       title: t('pillarNetwork'),
       balance: userHasSmartWallet(accounts)

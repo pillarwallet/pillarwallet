@@ -381,7 +381,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         headerProps={{
           centerItems: [{
             title: t([
-              `walletConnectContent.title.requestType.${type}`, // eslint-disable-line i18next/no-literal-string
+              `walletConnectContent.title.requestType.${type}`,
               'walletConnectContent.title.requestType.default',
             ]),
           }],
@@ -398,7 +398,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
               regularText
               title={
                 t([
-                  `walletConnectContent.button.approveType.${type}`, // eslint-disable-line i18next/no-literal-string
+                  `walletConnectContent.button.approveType.${type}`,
                   'walletConnectContent.button.approveType.default',
                 ])
               }

@@ -461,8 +461,8 @@ class SDKWrapper {
   /* eslint-enable i18next/no-literal-string */
 
   fetchCollectiblesTransactionHistory(walletAddress: string) {
-    const url =
-      `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`; // eslint-disable-line i18next/no-literal-string, max-len
+    // eslint-disable-next-line i18next/no-literal-string, max-len
+    const url = `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
     return Promise.resolve()
       .then(() => axios.get(url, {
         ...defaultAxiosRequestConfig,
@@ -704,7 +704,8 @@ class SDKWrapper {
 
   getAddressErc20TokensInfo(walletAddress: string) {
     if (getEnv().NETWORK_PROVIDER !== 'homestead') {
-      const url = `https://blockchainparser.appspot.com/${getEnv().NETWORK_PROVIDER}/${walletAddress}/`; // eslint-disable-line i18next/no-literal-string, max-len
+      // eslint-disable-next-line i18next/no-literal-string
+      const url = `https://blockchainparser.appspot.com/${getEnv().NETWORK_PROVIDER}/${walletAddress}/`;
       return Promise.resolve()
         .then(() => axios.get(url, defaultAxiosRequestConfig))
         .then(({ data }: AxiosResponse) => data)

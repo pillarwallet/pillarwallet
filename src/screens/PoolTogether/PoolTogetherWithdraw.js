@@ -393,7 +393,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                     fiatValue: withdrawPayload.feeInFiat,
                   })}
                   {withdrawPayload.isDisabled &&
-                  `\n${t('error.notEnoughTokenForFee', { token: withdrawPayload.feeSymbol })}` // eslint-disable-line i18next/no-literal-string, max-len
+                  // eslint-disable-next-line i18next/no-literal-string
+                  `\n${t('error.notEnoughTokenForFee', { token: withdrawPayload.feeSymbol })}`
                   }
                 </Text>
               }

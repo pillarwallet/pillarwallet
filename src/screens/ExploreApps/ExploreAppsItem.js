@@ -62,7 +62,7 @@ const TitleWrapper = styled.View`
 const ExploreAppsItem = (props: Props) => {
   const { item } = props;
 
-  const handleAppUrl = () => { Linking.openURL(`https://${item.url}`); }; // eslint-disable-line i18next/no-literal-string, max-len
+  const handleAppUrl = () => { Linking.openURL(`https://${item.url}`); };
 
   return (
     <AppItemWrapper >
@@ -86,7 +86,7 @@ const ExploreAppsItem = (props: Props) => {
       </AppItemRowWrapper>
       <AppText>
         {t([
-          `walletConnectContent.appDescription.${item.translationKey}`, // eslint-disable-line i18next/no-literal-string, max-len
+          `walletConnectContent.appDescription.${item.translationKey}`,
           'walletConnectContent.appDescription.default',
         ])}
       </AppText>

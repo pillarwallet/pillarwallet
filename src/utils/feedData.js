@@ -94,7 +94,7 @@ export function mapTransactionsHistory(
             accountType: getAccountTypeByAddress(toAddress, accounts),
             isReceived: true,
             betweenAccTrxDuplicate: true,
-            _id: `${historyItem._id}_duplicate`, // eslint-disable-line i18next/no-literal-string
+            _id: `${historyItem._id}_duplicate`,
             createdAt: historyItem.createdAt + 1,
           }];
         }
@@ -105,7 +105,7 @@ export function mapTransactionsHistory(
           const duplicate = {
             ...historyItem,
             smartWalletEvent: true,
-            _id: `${historyItem._id}_duplicate`, // eslint-disable-line i18next/no-literal-string
+            _id: `${historyItem._id}_duplicate`,
             createdAt: historyItem.createdAt - 1,
           };
           return [...alteredHistory, duplicate, historyItem];

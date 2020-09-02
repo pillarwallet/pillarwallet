@@ -34,7 +34,7 @@ function PouchDBStorage(name: string, opts: ?Object = {}) {
 PouchDBStorage.prototype.connect = function () {
   this.needToReconnect = false;
   this.connection = new PouchDB(this.name, this.opts);
-  printLog(`Connected to the database ${this.name}`); // eslint-disable-line i18next/no-literal-string
+  printLog(`Connected to the database ${this.name}`);
 };
 
 PouchDBStorage.prototype.db = function () {

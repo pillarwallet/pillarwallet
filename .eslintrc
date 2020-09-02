@@ -69,6 +69,7 @@
         "center",
         "color:",
         "column",
+        "Content-Type",
         "dashed",
         "deg",
         "elevation",
@@ -200,6 +201,7 @@
         "key",
         "keyboardShouldPersistTaps",
         "keyboardType",
+        "keyExtractor",
         "leftIconName",
         "listKey",
         "margin",
@@ -223,6 +225,7 @@
         "viewBox"
       ],
       "ignoreProperty": [
+        "_id",
         "Accept",
         "Authorization",
         "WETH",
@@ -246,6 +249,7 @@
         "iconBackgroundColor",
         "iconColor",
         "iconName",
+        "iconUrl",
         "id",
         "importantForAutofill",
         "inputType",

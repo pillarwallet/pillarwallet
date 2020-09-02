@@ -62,9 +62,8 @@ import { isProdEnv, isTest } from './environment';
 
 
 const WWW_URL_PATTERN = /^www\./i;
-const supportedAddressPrefixes = new RegExp(
-  `^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi', // eslint-disable-line i18next/no-literal-string
-);
+// eslint-disable-next-line i18next/no-literal-string
+const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
   if ((isProdEnv && !__DEV__) || isTest) return;
@@ -366,7 +365,7 @@ export const modalTransition = {
 
 export const handleUrlPress = (url: string) => {
   if (WWW_URL_PATTERN.test(url)) {
-    handleUrlPress(`http://${url}`); // eslint-disable-line i18next/no-literal-string
+    handleUrlPress(`http://${url}`);
   } else {
     Linking.canOpenURL(url)
       .then(supported => {

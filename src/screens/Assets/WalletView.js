@@ -134,7 +134,7 @@ class WalletView extends React.Component<Props, State> {
   setActiveTab = (activeTab) => {
     const { logScreenView } = this.props;
     this.setState({ activeTab });
-    logScreenView(`View tab Assets.${activeTab}`, 'Assets'); // eslint-disable-line i18next/no-literal-string
+    logScreenView(`View tab Assets.${activeTab}`, 'Assets');
   };
 
   shouldBlockAssetsView = () => {
