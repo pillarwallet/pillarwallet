@@ -26368,7 +26368,7 @@ Array [
     swipeDirection="down"
     swipeThreshold={100}
     transparent={true}
-    visible={false}
+    visible={true}
   >
     <View
       accessible={true}
@@ -26426,7 +26426,7 @@ Array [
           "top": 0,
           "transform": Array [
             Object {
-              "translateY": 0,
+              "translateY": 1334,
             },
           ],
           "zIndex": 10,

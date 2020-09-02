@@ -448,7 +448,7 @@ export const approveSessionAction = (peerId: string) => {
           message: t('toast.walletConnectSmartWalletNotActive'),
           emoji: 'point_up',
           link: t('label.activateSmartWallet'),
-          onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })),
+          onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })), // contains sw activation card
           autoClose: false,
         });
         return;

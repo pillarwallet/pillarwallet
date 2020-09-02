@@ -90,14 +90,15 @@ const SWActivationCard = ({
 
   return (
     <React.Fragment>
-      {deploymentData.error ? (
+      {!!deploymentData.error && (
         <InsightWithButton
           title={deploymentErrorMessage.title}
           description={deploymentErrorMessage.message}
           buttonTitle={t('button.retry')}
           onButtonPress={showActivationModal}
         />
-      ) : (
+      )}
+      {!deploymentData.error && (
         <InsightWithButton
           title={title}
           description={showMessage}
