@@ -259,7 +259,7 @@ class SmartWallet {
   async deployAccount(
     estimate?: sdkInterfaces.IEstimatedAccountDeployment,
   ): Promise<{ error?: string, deployTxHash?: string }> {
-    const deployEstimate = estimate || await this.getSdk().estimateAccountDeployment().catch(this.handleError);
+    const deployEstimate = estimate || await this.estimateAccountDeployment().catch(this.handleError);
     if (!deployEstimate) return { error: 'reverted' };
 
     return this.getSdk().deployAccount(deployEstimate, false)
