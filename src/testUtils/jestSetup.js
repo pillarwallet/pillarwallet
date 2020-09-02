@@ -87,6 +87,7 @@ jest.mock('@react-native-firebase/app', () => ({
       setDefaults: () => Promise.resolve(),
       fetch: () => Promise.resolve(),
       getAll: () => Promise.resolve({}),
+      getBoolean: jest.fn(),
     }),
     messaging: () => ({
       registerForRemoteNotifications: () => Promise.resolve(),
