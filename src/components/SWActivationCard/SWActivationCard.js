@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import t from 'translations/translate';
@@ -28,9 +29,6 @@ import SWActivationModal from 'components/SWActivationModal';
 
 // constants
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-
-// actions
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // utils
 import {
@@ -53,83 +51,69 @@ type Props = {
   buttonTitle: string,
   accounts: Accounts,
   smartWalletState: Object,
-  onButtonPress?: () => void,
   title?: string,
-  deploySmartWallet: () => void,
   theme: Theme,
 };
 
-type State = {
-  isModalVisible: boolean,
-};
+const SWActivationCard = ({
+  title,
+  buttonTitle = t('smartWalletContent.activationCard.button.activate'),
+  message = t('smartWalletContent.activationCard.description.default'),
+  accounts,
+  smartWalletState,
+  navigation,
+}: Props) => {
+  const [activationModalVisible, setActivationModalVisible] = useState(true);
 
-class SWActivationCard extends React.Component<Props, State> {
-  state = {
-    isModalVisible: false,
-  };
+  const closeActivationModal = () => setActivationModalVisible(false);
+  const showActivationModal = () => setActivationModalVisible(true);
 
-  closeActivationModal = () => {
-    this.setState({ isModalVisible: false });
-  };
+  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
-  render() {
-    const {
-      title,
-      buttonTitle = t('smartWalletContent.activationCard.button.activate'),
-      message = t('smartWalletContent.activationCard.description.default'),
-      accounts,
-      smartWalletState,
-      onButtonPress,
-      deploySmartWallet,
-      navigation,
-    } = this.props;
-    const { isModalVisible } = this.state;
+  if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) return null;
+  const { upgrade: { deploymentStarted } } = smartWalletState;
 
-    const { upgrade: { deploymentStarted } } = smartWalletState;
+  const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
 
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
+  const deploymentData = getDeploymentData(smartWalletState);
 
-    const deploymentData = getDeploymentData(smartWalletState);
+  const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
+  const deploymentErrorMessage = deploymentData.error ?
+    getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
 
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const deploymentErrorMessage = deploymentData.error ?
-      getDeployErrorMessage(deploymentData.error) : sendingBlockedMessage;
-
-    let showMessage = message;
-    if (deploymentStarted) {
-      showMessage = t('smartWalletContent.activationCard.description.activating');
-    }
-
-    return (
-      <React.Fragment>
-        {deploymentData.error ? (
-          <InsightWithButton
-            title={deploymentErrorMessage.title}
-            description={deploymentErrorMessage.message}
-            buttonTitle={t('button.retry')}
-            onButtonPress={deploySmartWallet}
-          />
-        ) : (
-          <InsightWithButton
-            title={title}
-            description={showMessage}
-            buttonTitle={buttonTitle}
-            onButtonPress={onButtonPress || (() => this.setState({ isModalVisible: true }))}
-            spinner={isDeploying}
-          />
-        )}
-        <SWActivationModal
-          isVisible={isModalVisible}
-          onClose={this.closeActivationModal}
-          navigation={navigation}
-        />
-      </React.Fragment>
-    );
+  let showMessage = message;
+  if (deploymentStarted) {
+    showMessage = t('smartWalletContent.activationCard.description.activating');
   }
-}
+
+  return (
+    <React.Fragment>
+      {!!deploymentData.error && (
+        <InsightWithButton
+          title={deploymentErrorMessage.title}
+          description={deploymentErrorMessage.message}
+          buttonTitle={t('button.retry')}
+          onButtonPress={showActivationModal}
+        />
+      )}
+      {!deploymentData.error && (
+        <InsightWithButton
+          title={title}
+          description={showMessage}
+          buttonTitle={buttonTitle}
+          onButtonPress={showActivationModal}
+          spinner={isDeploying}
+        />
+      )}
+      <SWActivationModal
+        isVisible={activationModalVisible}
+        onClose={closeActivationModal}
+        navigation={navigation}
+      />
+    </React.Fragment>
+  );
+};
 
 const mapStateToProps = ({
   accounts: { data: accounts },
@@ -139,8 +123,4 @@ const mapStateToProps = ({
   smartWalletState,
 });
 
-const mapDispatchToProps = (dispatch: Function) => ({
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
-});
-
-export default withNavigation(connect(mapStateToProps, mapDispatchToProps)(SWActivationCard));
+export default withNavigation(connect(mapStateToProps)(SWActivationCard));
