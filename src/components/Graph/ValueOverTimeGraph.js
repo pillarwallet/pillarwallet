@@ -89,7 +89,7 @@ const ValueOverTimeGraph = ({ data, baseFiatCurrency, theme }: Props) => {
     [WEEK]: {
       label: t('graph.timeRangeButtons.week'),
       getTimeRangeStart: () => subWeeks(timeRangeEnd, 1),
-      xAxisValuesCount: 7,
+      xAxisValuesCount: 8,
       xAxisDateFormat: 'ddd',
       tooltipDateFormat: 'D MMM',
     },

@@ -39218,7 +39218,7 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                       "textAlignVertical": "center",
                     },
                     Object {
-                      "left": 52.5,
+                      "left": 43.92857142857143,
                       "position": "absolute",
                       "width": 55,
                     },
@@ -39242,7 +39242,31 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                       "textAlignVertical": "center",
                     },
                     Object {
-                      "left": 112.5,
+                      "left": 95.35714285714286,
+                      "position": "absolute",
+                      "width": 55,
+                    },
+                  ]
+                }
+                tiny={true}
+              >
+                Fri
+              </Text>
+              <Text
+                center={true}
+                secondary={true}
+                style={
+                  Array [
+                    Object {
+                      "color": "#8B939E",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 10,
+                      "lineHeight": 14,
+                      "textAlign": "center",
+                      "textAlignVertical": "center",
+                    },
+                    Object {
+                      "left": 146.78571428571428,
                       "position": "absolute",
                       "width": 55,
                     },
@@ -39266,7 +39290,7 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                       "textAlignVertical": "center",
                     },
                     Object {
-                      "left": 172.5,
+                      "left": 198.21428571428572,
                       "position": "absolute",
                       "width": 55,
                     },
@@ -39290,7 +39314,7 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                       "textAlignVertical": "center",
                     },
                     Object {
-                      "left": 232.5,
+                      "left": 249.64285714285717,
                       "position": "absolute",
                       "width": 55,
                     },
@@ -39314,7 +39338,7 @@ exports[`Storyshots ValueOverTimeGraph default 1`] = `
                       "textAlignVertical": "center",
                     },
                     Object {
-                      "left": 292.5,
+                      "left": 301.07142857142856,
                       "position": "absolute",
                       "width": 55,
                     },
