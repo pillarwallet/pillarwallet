@@ -18,19 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useState } from 'react';
-import { connect } from 'react-redux';
 import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { subWeeks, subMonths, subYears, subDays, isBefore, format, getTime } from 'date-fns';
 import t from 'translations/translate';
 import { BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import {
   formatFiat,
 } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
-import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import Graph from './Graph';
 
