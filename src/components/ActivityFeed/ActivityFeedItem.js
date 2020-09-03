@@ -584,7 +584,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
           itemValue: getFormattedValue(formattedVal, symbol, { isPositive, noSymbol: !amount }),
           itemImageRoundedSquare: true,
-          valueColor: isPositive ? 'positive' : 'text', // eslint-disable-line i18next/no-literal-string
+          valueColor: isPositive ? 'positive' : 'text',
         };
         break;
       }
@@ -734,8 +734,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               noSymbol: !formattedFullValue,
             }),
             itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
-            valueColor: isReceived &&
-            !this.isZeroValue(value) ? 'positive' : 'text', // eslint-disable-line i18next/no-literal-string
+            valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
             ...additionalInfo,
             isReceived,
           };

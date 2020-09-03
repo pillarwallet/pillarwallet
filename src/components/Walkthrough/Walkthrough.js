@@ -237,7 +237,7 @@ class Walkthrough extends React.Component<Props, State> {
           {!waitingForStepId &&
           <KeyboardAvoidWrapper
             enabled
-            behavior={Platform.OS === 'ios' ? 'height' : null} /* eslint-disable-line i18next/no-literal-string */
+            behavior={Platform.OS === 'ios' ? 'height' : null}
           >
             <SafeAreaView>
               <ShadeContent>

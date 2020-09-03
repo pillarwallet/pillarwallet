@@ -767,7 +767,6 @@ class SDKWrapper {
       });
   }
 
-  /* eslint-disable i18next/no-literal-string */
   getSendwyreCountrySupport(walletId: string): Promise<boolean | null> {
     // NOTE: this request should always return an error from the server.
     // Because testing whether the user location is within a country supported
@@ -794,9 +793,7 @@ class SDKWrapper {
         return null;
       });
   }
-  /* eslint-enable i18next/no-literal-string */
 
-  /* eslint-disable i18next/no-literal-string */
   getSendwyreWidgetURL({ address, ...params }: SendwyreTrxParams): Promise<string | null> {
     return this.makeDirectSdkRequest({
       path: '/partners/wyre/generate-order-reservation',
@@ -813,7 +810,6 @@ class SDKWrapper {
         return null;
       });
   }
-  /* eslint-enable i18next/no-literal-string */
 }
 
 export default SDKWrapper;

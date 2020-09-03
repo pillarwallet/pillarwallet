@@ -380,13 +380,13 @@ class ImportWallet extends React.Component<Props, State> {
     const tabsInfo = {
       TWORDSPHRASE: {
         inputLabel: t('auth:label.backupPhrase'),
-        changeName: 'currentBPWord', // eslint-disable-line i18next/no-literal-string
+        changeName: 'currentBPWord',
         value: currentBPWord,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
       DEV: {
         inputLabel: t('auth:label.backupPhrase'),
-        changeName: 'tWordsPhrase', // eslint-disable-line i18next/no-literal-string
+        changeName: 'tWordsPhrase',
         value: tWordsPhrase,
         errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },

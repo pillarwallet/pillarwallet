@@ -17,8 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
-
 
 // This script runs at the beginning of all unit tests
 import Enzyme from 'enzyme';

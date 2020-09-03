@@ -44,5 +44,5 @@ export const openInAppBrowser = async (url: string, options?: InAppBrowserOption
   }
 
   reportOrWarn('InAppBrowser.isAvailable() returned false', null, 'warning');
-  throw new Error('InAppBrowser.isAvailable() returned false'); // eslint-disable-line i18next/no-literal-string
+  throw new Error('InAppBrowser.isAvailable() returned false');
 };

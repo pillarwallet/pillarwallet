@@ -334,10 +334,8 @@ export const fetchReferralRewardAction = () => {
     const referralCampaignsInfo = await api.getReferralCampaignsInfo(walletId, referralToken);
     const referralRewards: RewardsByCompany = Object.keys(referralCampaignsInfo)
       .reduce((rewardsByCampaign, campaignName) => {
-        /* eslint-disable i18next/no-literal-string */
         const isCampaignActive = get(referralCampaignsInfo, `[${campaignName}].isActive`);
         const campaignRewards = get(referralCampaignsInfo, `[${campaignName}].rewards`);
-        /* eslint-enable i18next/no-literal-string */
 
         if (campaignRewards && isCampaignActive) rewardsByCampaign[campaignName] = campaignRewards;
         return rewardsByCampaign;

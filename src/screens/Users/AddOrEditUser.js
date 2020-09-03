@@ -195,10 +195,10 @@ const ProfileFormTemplate = (locals: Object) => {
     selector: { ...selector },
   } : undefined;
   const inputProps = {
-    autoCapitalize: locals.autoCapitalize || 'words', // eslint-disable-line i18next/no-literal-string
+    autoCapitalize: locals.autoCapitalize || 'words',
     onChange: locals.onChange,
     value: locals.value,
-    keyboardType: locals.keyboardType || 'default', // eslint-disable-line i18next/no-literal-string
+    keyboardType: locals.keyboardType || 'default',
     placeholder: config.placeholder || '',
     fieldName,
     selectorValue,
