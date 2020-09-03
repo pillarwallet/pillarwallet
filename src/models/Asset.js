@@ -94,6 +94,7 @@ export type DepositedAsset = Asset & {
 export type KeyBasedAssetTransfer = {|
   transactionHash?: string,
   assetData: AssetData,
+  draftAmount?: number,
   amount?: number,
   calculatedGasLimit?: number,
   gasPrice?: number,

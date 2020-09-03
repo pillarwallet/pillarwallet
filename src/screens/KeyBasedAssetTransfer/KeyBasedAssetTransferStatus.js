@@ -43,21 +43,15 @@ import Animation from 'components/Animation';
 import { MediumText, Paragraph } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
-// constants
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-
 // utils
-import { mapTransactionsHistory } from 'utils/feedData';
 import { buildHistoryTransaction } from 'utils/history';
 import { parseTokenBigNumberAmount } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import t from 'translations/translate';
-import { isNotKeyBasedType } from 'utils/accounts';
 
 // types
 import type { KeyBasedAssetTransfer } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Accounts } from 'models/Account';
 
 
 type Props = {
@@ -65,9 +59,7 @@ type Props = {
   resetKeyBasedAssetsTransfer: () => void,
   checkKeyBasedAssetTransferTransactions: () => void,
   keyBasedAssetsTransfer: KeyBasedAssetTransfer[],
-  accounts: Accounts,
   creatingTransactions: boolean,
-  keyBasedWalletAddress: string,
 };
 
 const Title = styled(MediumText)`
@@ -89,23 +81,10 @@ const KeyBasedAssetTransferStatus = ({
   navigation,
   checkKeyBasedAssetTransferTransactions,
   keyBasedAssetsTransfer,
-  accounts,
   resetKeyBasedAssetsTransfer,
   creatingTransactions,
-  keyBasedWalletAddress,
 }: Props) => {
   useEffect(() => { checkKeyBasedAssetTransferTransactions(); }, []);
-
-  // mock only
-  const accountsWithKeyBased = [
-    {
-      id: keyBasedWalletAddress,
-      type: ACCOUNT_TYPES.KEY_BASED,
-      isActive: false,
-      walletId: '',
-    },
-    ...accounts.filter(isNotKeyBasedType),
-  ];
 
   const assetTransferTransactions = keyBasedAssetsTransfer.map(({
     signedTransaction,
@@ -120,28 +99,14 @@ const KeyBasedAssetTransferStatus = ({
       hash: transactionHash || '',
       status,
       value: amount && parseTokenBigNumberAmount(amount, assetData?.decimals),
-      type: assetData?.tokenType === COLLECTIBLES ? COLLECTIBLE_TRANSACTION : '',
+      type: assetData?.tokenType === COLLECTIBLES ? COLLECTIBLE_TRANSACTION : TRANSACTION_EVENT,
       asset: assetData?.token,
     }),
     assetData,
     icon: assetData?.icon,
     name: assetData?.name,
+    _id: transactionHash || assetData?.name,
   }));
-
-  const assetTransferTransactionsHistory = [
-    ...mapTransactionsHistory(
-      assetTransferTransactions.filter(({ assetData }) => assetData?.tokenType !== COLLECTIBLES),
-      accountsWithKeyBased,
-      TRANSACTION_EVENT,
-      true,
-    ),
-    ...mapTransactionsHistory(
-      assetTransferTransactions.filter(({ assetData }) => assetData?.tokenType === COLLECTIBLES),
-      accountsWithKeyBased,
-      COLLECTIBLE_TRANSACTION,
-      true,
-    ),
-  ];
 
   const transferComplete = isEmpty(keyBasedAssetsTransfer);
 
@@ -151,10 +116,10 @@ const KeyBasedAssetTransferStatus = ({
       footer={!transferComplete && !creatingTransactions && (
         <Footer>
           <Button
-            title={t('transactions.title.button.cancelUnsent')}
+            title={t('transactions.button.cancelUnsent')}
             onPress={() => {
-              navigation.goBack();
               resetKeyBasedAssetsTransfer();
+              navigation.goBack();
             }}
           />
         </Footer>
@@ -164,7 +129,7 @@ const KeyBasedAssetTransferStatus = ({
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <Wrapper flex={1} center regularPadding>
             <Animation source={animationSuccess} />
-            <Title center>{t('transactions.title.keyWalletAssetsMigrationDone')}</Title>
+            <Title center>{t('transactions.title.keyBasedAssetsMigrationComplete')}</Title>
             <Button
               block
               title={t('button.magic')}
@@ -177,7 +142,7 @@ const KeyBasedAssetTransferStatus = ({
       {creatingTransactions && (
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <LoadingWrapper>
-            <Paragraph center>{t('transactions.label.creatingTransactions')}</Paragraph>
+            <Paragraph center>{t('transactions.title.creatingTransactions')}</Paragraph>
             <Spinner style={{ marginTop: spacing.small }} width={25} height={25} />
           </LoadingWrapper>
         </ScrollWrapper>
@@ -186,7 +151,7 @@ const KeyBasedAssetTransferStatus = ({
         <ActivityFeed
           navigation={navigation}
           noBorder
-          feedData={assetTransferTransactionsHistory}
+          feedData={assetTransferTransactions}
           hideInviteToPillar
           isAssetView
         />
@@ -196,14 +161,10 @@ const KeyBasedAssetTransferStatus = ({
 };
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
   keyBasedAssetTransfer: { data: keyBasedAssetsTransfer, creatingTransactions },
-  wallet: { data: { address: keyBasedWalletAddress } },
 }: RootReducerState): $Shape<Props> => ({
   keyBasedAssetsTransfer,
-  accounts,
   creatingTransactions,
-  keyBasedWalletAddress,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

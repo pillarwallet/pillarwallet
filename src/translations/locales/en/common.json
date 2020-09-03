@@ -197,7 +197,8 @@
     "pinChanged": "Pin changed",
     "device": "Device {{address}}",
     "popular": "Popular",
-    "set": "Set"
+    "set": "Set",
+    "cannotProceedOffline": "Cannot proceed offline"
   },
 
   "button": {
@@ -1185,7 +1186,8 @@
       "transferAssetsToSmartWalletScreen": "Choose assets to transfer",
       "amountEditScreen": "Edit amount",
       "assetsTransferToSmartWalletStatusScreen": "Key based assets migration",
-      "keyWalletAssetsMigrationDone": "Key based assets migration complete"
+      "creatingTransactions": "Creating transactions",
+      "keyBasedAssetsMigrationComplete": "Key based assets migration complete"
     },
     "button": {
       "payFeeWithPillar": "Pay fees with PLR",
@@ -1210,7 +1212,6 @@
       "tokensToTransfer": "Tokens to transfer",
       "collectiblesToTransfer": "Collectibles to transfer",
       "speed": "Speed",
-      "creatingTransactions": "Creating transactions",
       "data": "Data",
       "message": "Message",
       "address": "Address"
@@ -1305,8 +1306,6 @@
     "notEnoughForTransactionFee": "Not enough {{feeSymbol}} to pay for transaction fee.",
     "languageChanged": "Language changed.",
     "languageChangeFailed": "Can't change language. Please try again.",
-    "sablierAllowanceEnabled": "{{assetName}} ({{assetSymbol}}) enabled.",
-    "sablierAllowanceFailed": "Can't enable {{assetName}} ({{assetSymbol}}). Please try again.",
     "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) withdrawn.",
     "sablierCancelStream": "Stream cancelled.",
     "smartWalletDeviceAdded": "New linked device added",

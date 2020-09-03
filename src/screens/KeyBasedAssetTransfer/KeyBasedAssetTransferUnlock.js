@@ -17,9 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Wallet } from 'ethers';
+import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // actions
@@ -39,27 +40,44 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   createKeyBasedAssetsToTransferTransactions: (wallet: Wallet) => void,
   useBiometrics: boolean,
+  creatingTransactions: boolean,
 };
 
 const KeyBasedAssetTransferUnlock = ({
   createKeyBasedAssetsToTransferTransactions,
   navigation,
   useBiometrics,
-}: Props) => (
-  <CheckAuth
-    onPinValid={(pin: string, wallet: Object) => {
-      createKeyBasedAssetsToTransferTransactions(wallet);
+  creatingTransactions,
+}: Props) => {
+  const [isPinValid, setIsPinValid] = useState(false);
+
+  // will fire when creatingTransactions reset to false after pin was set as valid
+  useEffect(() => {
+    if (!creatingTransactions && isPinValid) {
       navigation.navigate(SEND_TOKEN_TRANSACTION, { isSuccess: true, transactionPayload: {} });
-    }}
-    headerProps={{ onBack: () => navigation.goBack() }}
-    enforcePin={!useBiometrics}
-  />
-);
+    }
+  }, [creatingTransactions]);
+
+  return (
+    <CheckAuth
+      onPinValid={(pin: string, wallet: Object) => {
+        setIsPinValid(true);
+        createKeyBasedAssetsToTransferTransactions(wallet);
+      }}
+      isChecking={creatingTransactions}
+      customCheckingMessage={t('transactions.title.creatingTransactions')}
+      headerProps={{ onBack: () => navigation.goBack() }}
+      enforcePin={!useBiometrics}
+    />
+  );
+};
 
 const mapStateToProps = ({
   appSettings: { data: { useBiometrics } },
+  keyBasedAssetTransfer: { creatingTransactions },
 }: RootReducerState): $Shape<Props> => ({
   useBiometrics,
+  creatingTransactions,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

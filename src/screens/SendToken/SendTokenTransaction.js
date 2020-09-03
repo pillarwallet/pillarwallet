@@ -43,7 +43,6 @@ import { formatUnits } from 'utils/common';
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 import { setDismissApproveAction, setExecutingApproveAction } from 'actions/poolTogetherActions';
-import { setExecutingSablierApproveAction, setDismissSablierApproveAction } from 'actions/sablierActions';
 
 // constants
 import {
@@ -65,9 +64,6 @@ type Props = {
   setDismissPoolTogetherApprove: Function,
   setExecutingPoolTogetherApprove: Function,
   poolApproveExecuting: { [string]: boolean | string },
-  setDismissSablierApprove: Function,
-  sablierApproveExecuting: { [string]: string | boolean },
-  setExecutingSablierApprove: Function,
 };
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -141,9 +137,6 @@ class SendTokenTransaction extends React.Component<Props> {
       setDismissPoolTogetherApprove,
       setExecutingPoolTogetherApprove,
       poolApproveExecuting,
-      sablierApproveExecuting,
-      setExecutingSablierApprove,
-      setDismissSablierApprove,
     } = this.props;
     if (executingExchangeTransaction) {
       setDismissExchangeTransaction();
@@ -157,15 +150,6 @@ class SendTokenTransaction extends React.Component<Props> {
         setExecutingPoolTogetherApprove(poolToken, txHash);
       } else {
         setDismissPoolTogetherApprove(poolToken);
-      }
-    }
-
-    const sablierAsset = transactionPayload?.extra?.sablierApproval?.symbol;
-    if (sablierAsset && !sablierApproveExecuting[sablierAsset]) {
-      if (isSuccess && txHash) {
-        setExecutingSablierApprove(sablierAsset, txHash);
-      } else {
-        setDismissSablierApprove(sablierAsset);
       }
     }
 
@@ -289,11 +273,9 @@ class SendTokenTransaction extends React.Component<Props> {
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
   poolTogether: { poolApproveExecuting },
-  sablier: { sablierApproveExecuting },
 }: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
   poolApproveExecuting,
-  sablierApproveExecuting,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -301,9 +283,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissPoolTogetherApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
   setExecutingPoolTogetherApprove:
     (symbol: string, txHash: string) => dispatch(setExecutingApproveAction(symbol, txHash)),
-  setExecutingSablierApprove:
-    (symbol: string, txHash: string) => dispatch(setExecutingSablierApproveAction(symbol, txHash)),
-  setDismissSablierApprove: (symbol: string) => dispatch(setDismissSablierApproveAction(symbol)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);

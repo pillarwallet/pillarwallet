@@ -31,12 +31,12 @@ import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
-import t from 'translations/translate';
 
 import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
@@ -258,9 +258,11 @@ class SmartWallet {
       .catch(e => this.reportError('Unable to sync smart wallets', { e }));
   }
 
-  async deployAccount(): Promise<{ error?: string, deployTxHash?: string }> {
-    const deployEstimate = await this.getSdk().estimateAccountDeployment().catch(this.handleError);
-    if (!deployEstimate) return { error: t('error.reverted') };
+  async deployAccount(
+    estimate?: sdkInterfaces.IEstimatedAccountDeployment,
+  ): Promise<{ error?: string, deployTxHash?: string }> {
+    const deployEstimate = estimate || await this.estimateAccountDeployment().catch(this.handleError);
+    if (!deployEstimate) return { error: SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED };
 
     return this.getSdk().deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
@@ -537,6 +539,10 @@ class SmartWallet {
       .catch(() => ({}));
 
     return formatEstimated(estimated);
+  }
+
+  estimateAccountDeployment() {
+    return this.getSdk().estimateAccountDeployment();
   }
 
   getTransactionInfo(hash: string) {

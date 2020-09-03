@@ -193,7 +193,7 @@ const KeyBasedAssetTransferChoose = ({
     const checkedAsset = keyBasedAssetsToTransfer.find(
       (assetToTransfer) => isMatchingAssetToTransfer(assetToTransfer, item),
     );
-    const assetAmount = checkedAsset?.amount || assetBalance;
+    const assetAmount = checkedAsset?.draftAmount || assetBalance;
     const formattedAmount = formatFullAmount(assetAmount);
     const onCheck = () => onAssetSelect(item, assetAmount);
     return (
