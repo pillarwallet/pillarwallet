@@ -128,12 +128,15 @@ const ValueOverTimeGraph = ({ data, baseFiatCurrency, theme }: Props) => {
   const filteredData = data
     .filter(({ date }) => !isBefore(date, timeRangeStart));
 
-  const maxY = Math.max(...filteredData.map(p => p.value));
+  const values = filteredData.map(p => p.value);
+  const maxY = Math.max(...values);
+  const minY = Math.min(...values);
   const maxX = Date.now();
   const minX = timeRangeStart.getTime();
 
-  const processedData =
-    filteredData.map(({ value, date }) => ({ x: (date.getTime() - minX) / (maxX - minX), y: value / maxY }));
+  const processedData = filteredData.map(
+    ({ value, date }) => ({ x: (date.getTime() - minX) / (maxX - minX), y: (value - minY) / (maxY - minY) }),
+  );
 
   const getTooltipContents = (activeDataPoint: number) => {
     const { date, value } = filteredData[activeDataPoint];
@@ -142,7 +145,7 @@ const ValueOverTimeGraph = ({ data, baseFiatCurrency, theme }: Props) => {
   };
 
   const getYAxisValue = (y: number) => {
-    const amountInFiat = maxY * y;
+    const amountInFiat = ((maxY - minY) * y) + minY;
     return (+amountInFiat.toPrecision(2)).toFixed(2);
   };
 
