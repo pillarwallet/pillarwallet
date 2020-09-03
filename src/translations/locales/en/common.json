@@ -1401,5 +1401,16 @@
     "newBadgeReceived": "New badge received!",
     "receivedCollectible": "You received a collectible",
     "collectibleSentAndReceived": "Your collectible has been received"
+  },
+
+  "graph": {
+    "timeRangeButtons": {
+      "day": "1 D",
+      "week": "7 D",
+      "month": "30 D",
+      "halfYear": "6 M",
+      "year": "1 Y",
+      "all": "ALL "
+    }
   }
 }

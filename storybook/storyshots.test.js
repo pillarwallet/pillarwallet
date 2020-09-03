@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import initStoryshots from '@storybook/addon-storyshots';
+import { advanceTo } from 'jest-date-mock';
 
 jest.mock('global', () => global);
 jest.mock('react-navigation', () => {
@@ -43,5 +44,7 @@ jest.mock('react-navigation', () => {
 jest.mock('react-navigation-redux-helpers', () => ({
   createReactNavigationReduxMiddleware: () => () => () => () => {},
 }));
+
+advanceTo(new Date('2020-09-02T15:29:27.010Z'));
 
 initStoryshots({ /* configuration options */ });
