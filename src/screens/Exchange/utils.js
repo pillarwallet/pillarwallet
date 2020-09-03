@@ -211,7 +211,7 @@ export const getErrorMessage = (
   const isValid = isValidNumber(amount);
   if (!isValid) {
     return t('error.exchange.incorrectNumber');
-  } else if (!isEnoughAssetBalance(assetBalance, amount)) {
+  } else if (asset.symbol !== BTC && !isEnoughAssetBalance(assetBalance, amount)) {
     return t('error.exchange.amountTooBig', { assetBalance, symbol });
   }
   return '';
@@ -231,3 +231,6 @@ export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accou
     && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
     && !deploymentData.error;
 };
+
+export const getToOption =
+  (symbol: string, options: ExchangeOptions): ?Option => options.toOptions.find(a => a.value === symbol);

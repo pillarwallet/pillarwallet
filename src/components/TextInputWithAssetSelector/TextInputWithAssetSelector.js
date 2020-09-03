@@ -33,7 +33,7 @@ type Props = {
   onAssetPress: ?(() => void),
   labelText?: string,
   onLabelPress?: () => void,
-  onChange?: (val: string) => void,
+  onChange?: (val: string) => (void | Promise<void>),
   value: ?string,
   leftSideText: string,
   onLeftSideTextPress: () => void,

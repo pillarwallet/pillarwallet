@@ -38,6 +38,7 @@ import {
   resetOffersAction,
   markNotificationAsSeenAction,
   getExchangeSupportedAssetsAction,
+  getWbtcFeesAction,
 } from 'actions/exchangeActions';
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
@@ -49,9 +50,10 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { spacing } from 'utils/variables';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
-import type { ExchangeOptions } from 'utils/exchange';
+import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
 import { formatAmount, formatFiat } from 'utils/common';
 import { getBalanceInFiat } from 'utils/assets';
+import { gatherWBTCFeeData } from 'services/wbtcCafe';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -66,7 +68,7 @@ import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Option } from 'models/Selector';
-import type { WBTCFeesRaw } from 'models/WBTC';
+import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
 
 import t from 'translations/translate';
 
@@ -83,6 +85,7 @@ import {
   getErrorMessage,
   shouldTriggerSearch,
   shouldBlockView,
+  getToOption,
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
 import WBTCCafeInfo from './WBTCCafeInfo';
@@ -111,6 +114,7 @@ type Props = {
   isActiveAccountSmartWallet: boolean,
   offers: Offer[],
   wbtcFees: WBTCFeesRaw,
+  getWbtcFees: () => void,
 };
 
 type State = {
@@ -125,6 +129,7 @@ type State = {
   showBuyOptions: boolean,
   displayFiatFromAmount: boolean,
   displayFiatToAmount: boolean,
+  wbtcData: ?WBTCFeesWithRate,
 };
 
 
@@ -158,14 +163,16 @@ class ExchangeScreen extends React.Component<Props, State> {
       displayFiatToAmount: false,
       isSubmitted: false,
       showEmptyMessage: false,
+      wbtcData: null,
     };
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
 
   componentDidMount() {
-    const { navigation, getExchangeSupportedAssets } = this.props;
+    const { navigation, getExchangeSupportedAssets, getWbtcFees } = this.props;
     const { fromAsset, toAsset } = this.state;
     this._isMounted = true;
+    getWbtcFees();
     getExchangeSupportedAssets(() => {
       // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
       if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());
@@ -187,6 +194,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       assets,
       exchangeSupportedAssets,
       oAuthAccessToken,
+      getWbtcFees,
     } = this.props;
     const {
       fromAsset, toAsset, fromAmount, errorMessage,
@@ -199,6 +207,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
       || fromAsset !== prevFromAsset || toAsset !== prevToAsset) {
       this.options = this.provideOptions();
+      if (!isWbtcCafe(prevFromAsset, prevToAsset) && isWbtcCafe(fromAsset, toAsset)) {
+        getWbtcFees();
+      }
     }
 
     if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
@@ -227,7 +238,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
     return {
       fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode),
-      toAsset: this.getToOption(toAssetCode),
+      toAsset: getToOption(toAssetCode, this.options),
     };
   }
 
@@ -245,21 +256,27 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   setErrorMessage = (errorMessage: string) => this.setState({ errorMessage });
 
-  handleFromInputChange = (input: string) => {
-    const { fromAsset, displayFiatFromAmount } = this.state;
-    const { baseFiatCurrency, rates } = this.props;
+  handleFromInputChange = async (input: string) => {
+    const { fromAsset, displayFiatFromAmount, toAsset } = this.state;
+    const { baseFiatCurrency, rates, wbtcFees } = this.props;
     const { symbol = '' } = fromAsset;
     const val = input.replace(/,/g, '.');
-    this.setState(displayFiatFromAmount
-      ? {
-        fromAmountInFiat: val,
-        fromAmount: String(getAssetBalanceFromFiat(baseFiatCurrency, val, rates, symbol)),
-      }
-      : {
-        fromAmount: val,
-        fromAmountInFiat: String(getBalanceInFiat(baseFiatCurrency, val, rates, symbol)),
-      },
-    );
+    if (isWbtcCafe(fromAsset, toAsset)) {
+      this.setState({ fromAmount: val, fromAmountInFiat: '' }); // we can't calculate fiat for BTC and WBTC atm
+      const wbtcData = await gatherWBTCFeeData(Number(val), wbtcFees, symbol);
+      if (wbtcData) this.setState({ wbtcData });
+    } else {
+      this.setState(displayFiatFromAmount
+        ? {
+          fromAmountInFiat: val,
+          fromAmount: String(getAssetBalanceFromFiat(baseFiatCurrency, val, rates, symbol)),
+        }
+        : {
+          fromAmount: val,
+          fromAmountInFiat: String(getBalanceInFiat(baseFiatCurrency, val, rates, symbol)),
+        },
+      );
+    }
     this.setErrorMessage(getErrorMessage(val, fromAsset));
   };
 
@@ -296,13 +313,21 @@ class ExchangeScreen extends React.Component<Props, State> {
   getToInput = () => {
     const { baseFiatCurrency, offers, rates } = this.props;
     const {
-      displayFiatToAmount, toAsset, fromAmount, fromAsset,
+      displayFiatToAmount, toAsset, fromAmount, fromAsset, wbtcData,
     } = this.state;
 
     let value;
     let toAmount;
     let toAmountInFiat;
-    if (offers?.length && fromAmount) {
+    if (isWbtcCafe(fromAsset, toAsset) && wbtcData) {
+      toAmount = String(wbtcData.estimate);
+      if (toAmount) {
+        toAmountInFiat = fromAsset.symbol === BTC ?
+          formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2) :
+          ''; // TODO do we want to calculate btc fiat?
+        value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount || '', 6);
+      }
+    } else if (offers?.length && fromAmount) {
       toAmount = getBestAmountToBuy(offers, fromAmount);
       if (toAmount) {
         toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2);
@@ -390,12 +415,15 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   handleSelectorOptionSelect = (option: Option) => {
-    const { showSellOptions, fromAmount, toAsset } = this.state;
+    const {
+      showSellOptions, fromAmount, toAsset, showBuyOptions,
+    } = this.state;
     const shouldEnforceToWbtc = showSellOptions && option.symbol === BTC;
+    const toAssetToSet = showBuyOptions ? option : toAsset;
     const optionsStateChanges = {
       showSellOptions: false,
       showBuyOptions: false,
-      toAsset: shouldEnforceToWbtc ? this.getToOption(WBTC) || toAsset : toAsset,
+      toAsset: shouldEnforceToWbtc ? getToOption(WBTC, this.options) || toAsset : toAssetToSet,
     };
     this.setState(showSellOptions
       ? { fromAsset: option, ...optionsStateChanges }
@@ -403,8 +431,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     () => this.setErrorMessage(getErrorMessage(fromAmount, this.state.fromAsset)),
     );
   };
-
-  getToOption = (symbol: string): ?Option => this.options.toOptions.find(a => a.value === symbol);
 
   render() {
     const {
@@ -425,8 +451,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       showSellOptions,
       showBuyOptions,
       errorMessage,
-      toAsset,
       fromAsset,
+      toAsset,
+      wbtcData,
     } = this.state;
 
     const { fromOptions, toOptions, horizontalOptions } = this.options;
@@ -434,10 +461,8 @@ class ExchangeScreen extends React.Component<Props, State> {
     const rightItems = getHeaderRightItems(
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
     );
-
     const deploymentData = getDeploymentData(smartWalletState);
     const blockView = shouldBlockView(smartWalletState, accounts);
-    const isWbtcCafe = fromAsset.symbol === BTC || (fromAsset.symbol === WBTC && toAsset.symbol === BTC);
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
 
     return (
@@ -478,8 +503,7 @@ class ExchangeScreen extends React.Component<Props, State> {
               setFromAmount={val => this.setState({ fromAmount: val })}
               navigation={navigation}
             />}
-            {isWbtcCafe &&
-            <WBTCCafeInfo />}
+            <WBTCCafeInfo wbtcData={wbtcData} fromAsset={fromAsset} toAsset={toAsset} />
           </ScrollView>}
         </ContainerWithHeader>
         <SelectorOptions
@@ -546,6 +570,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   markNotificationAsSeen: () => dispatch(markNotificationAsSeenAction()),
   getExchangeSupportedAssets: (callback) => dispatch(getExchangeSupportedAssetsAction(callback)),
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
+  getWbtcFees: () => dispatch(getWbtcFeesAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));

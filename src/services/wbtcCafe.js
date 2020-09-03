@@ -24,7 +24,7 @@ import { Contract } from 'ethers';
 import { isProdEnv } from 'utils/environment';
 import { WBTC, BTC } from 'constants/assetsConstants';
 
-import { CURVE_ABI } from 'abi/WBTCCurve.json';
+import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
 
 import type { WBTCFeesWithRate, WBTCFeesRaw } from 'models/WBTC';
@@ -89,11 +89,12 @@ import type { WBTCFeesWithRate, WBTCFeesRaw } from 'models/WBTC';
 const CURVE_MAIN = '0x93054188d876f558f4a66B2EF1d97d16eDf0895B';
 const CURVE_TEST = '0x62869F49ea8b6c3EEdEcA8b8b1c6731090aD7A3D';
 
-export const gatherFeeData = async (
+export const gatherWBTCFeeData = async (
   amount: number,
   fees: WBTCFeesRaw,
   fromAssetCode: string,
 ): Promise<?WBTCFeesWithRate> => {
+  if (!amount || !fees || !fromAssetCode) return null;
   const isSellingWbtc = fromAssetCode === WBTC;
   const fixedFeeKey = isSellingWbtc ? 'release' : 'lock';
   const dynamicFeeKey = isSellingWbtc ? 'burn' : 'mint';
@@ -103,22 +104,20 @@ export const gatherFeeData = async (
     fees[BTC.toLowerCase()].ethereum[dynamicFeeKey] / 10000,
   );
 
-  if (!amount || !fees) return null;
-
   try {
     let exchangeRate;
     let renVMFee;
     let total;
     const amountInSats = Math.round(amount * 100000000);
+
     const curve = new Contract(
       isProdEnv ? CURVE_MAIN : CURVE_TEST,
       CURVE_ABI,
       getEthereumProvider(isProdEnv ? 'homestead' : 'kovan'),
     );
-
     if (isSellingWbtc) {
-      const res = await curve.methods.get_dy(0, 1, amountInSats).call();
-      const swapResult = res / 100000000; // res / 10 ** 8
+      const dy = await curve.get_dy(0, 1, amountInSats);
+      const swapResult = dy / 100000000; // res / 10 ** 8
       exchangeRate = Number(swapResult / amount);
       renVMFee = Number(swapResult) * dynamicFeeRate;
       total =
@@ -134,8 +133,8 @@ export const gatherFeeData = async (
       const amountAfterMintInSats = Math.round(amountAfterMint * 100000000);
 
       if (amountAfterMintInSats) {
-        const res = await curve.methods.get_dy(0, 1, amountAfterMintInSats).call();
-        const swapResult = res / 100000000; // res / 10 ** 8
+        const dy = await curve.get_dy(0, 1, amountAfterMintInSats);
+        const swapResult = dy / 100000000; // res / 10 ** 8
         exchangeRate = Number(swapResult / amountAfterMint);
         total = Number(swapResult);
       } else {

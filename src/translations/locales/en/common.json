@@ -681,7 +681,7 @@
     "rate": "Exchange rate",
     "renFee": "RenVM fee",
     "btcFee": "Bitcoin fee",
-    "slippage": "Mac. price slippage"
+    "slippage": "Max. price slippage"
   },
 
   "referralsContent": {

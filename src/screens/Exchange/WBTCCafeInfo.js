@@ -24,15 +24,17 @@ import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
-
-// import { getBTCDepositMint } from 'services/wbtcCafe';
+import type { WBTCFeesWithRate } from 'models/WBTC';
+import { BTC, WBTC } from 'constants/assetsConstants';
+import type { Option } from 'models/Selector';
+import { isWbtcCafe } from 'utils/exchange';
 
 import t from 'translations/translate';
 
 type Props = {
-  rate?: number | String,
-  renFee?: number,
-  btcFee?: number,
+  wbtcData: ?WBTCFeesWithRate,
+  fromAsset: Option,
+  toAsset: Option,
 }
 
 type State = {
@@ -82,26 +84,30 @@ class WBTCCafeInfo extends React.Component<Props, State> {
   }
 
   handleNextPress = () => {
-    // const mint = getBTCDepositMint('', 0.00001);
+    //
   }
 
   render() {
-    const { rate, renFee, btcFee } = this.props;
+    const { wbtcData, fromAsset, toAsset } = this.props;
+    if (!isWbtcCafe(fromAsset, toAsset)) return null;
     const { maxSlippage } = this.state;
+    const rate = wbtcData?.exchangeRate;
+    const { symbol } = fromAsset;
+    const rateString = rate && symbol ? `1 ${symbol} = ${rate.toFixed(4)} ${symbol === BTC ? WBTC : BTC}` : '-';
     return (
       <Container>
         <InfoWrapper>
           <Row disabled>
             <Label>{t('wbtcCafe.rate')}</Label>
-            <Label textColor={themedColors.text}>{rate || '-'}</Label>
+            <Label textColor={themedColors.text}>{rateString}</Label>
           </Row>
           <Row disabled>
             <Label>{t('wbtcCafe.renFee')}</Label>
-            <Label>{renFee || '-'}</Label>
+            <Label>{wbtcData ? wbtcData.renVMFee.toFixed(8) : '-'}</Label>
           </Row>
           <Row disabled>
             <Label>{t('wbtcCafe.btcFee')}</Label>
-            <Label>{btcFee || '-'}</Label>
+            <Label>{wbtcData ? wbtcData.networkFee.toFixed(8) : '-'}</Label>
           </Row>
           <Row onPress={this.handleSlippagePress} noBorder>
             <Label textColor={themedColors.link}>{t('wbtcCafe.slippage')}</Label>

@@ -25,7 +25,7 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
-import { ETH } from 'constants/assetsConstants';
+import { ETH, BTC, WBTC } from 'constants/assetsConstants';
 import type { Option, HorizontalOption } from 'models/Selector';
 import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { getThemeName } from './themes';
@@ -95,3 +95,6 @@ export const parseOffer = (
 export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
   return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
 };
+
+export const isWbtcCafe = (fromAsset: Option, toAsset: Option): boolean =>
+  fromAsset.symbol === BTC || (fromAsset.symbol === WBTC && toAsset.symbol === BTC);
