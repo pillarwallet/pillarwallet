@@ -31,7 +31,7 @@ import { BaseText } from 'components/Typography';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
-
+// x,y are in range [0,1]
 type DataPoint = {
   x: number,
   y: number,
@@ -80,7 +80,7 @@ const Graph = ({
     const linesCount = 4;
 
     return (
-      range(linesCount).map((_, i) => {
+      range(linesCount).map((i) => {
         const y = getScreenY(i / (linesCount - 1));
         return (
           <Line
@@ -180,7 +180,11 @@ const Graph = ({
           x={tooltipX - (tooltipWidth / 2)}
           y={tooltipY - tooltipHeight - tipHeight}
           width={tooltipWidth}
-          key={`${content}${extra || ''}`} // https://github.com/react-native-community/react-native-svg/issues/1357
+          // https://github.com/react-native-community/react-native-svg/issues/1357
+          // the key here is a workaround for the above bug
+          // if you don't set it, then the values on the x-axis (yes, x-axis!)
+          // will be disappearing on iOS when switching between time ranges
+          key={`${content}${extra || ''}`}
         >
           <View style={{ width: tooltipWidth, height: tooltipHeight, justifyContent: 'center' }}>
             <BaseText center small color={colors.card}>{content}</BaseText>
