@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
+import { USD } from 'constants/assetsConstants';
 import ValueOverTimeGraph from './ValueOverTimeGraph';
 
 
@@ -75,7 +76,7 @@ const Container = styled.View`
 storiesOf('ValueOverTimeGraph', module).add('default', () => {
   return (
     <Container>
-      <ValueOverTimeGraph data={data} />
+      <ValueOverTimeGraph data={data} fiatCurrency={USD} />
     </Container>
   );
 });

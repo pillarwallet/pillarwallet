@@ -44,8 +44,8 @@ type DataPoints = DataPoint[];
 
 type Props = {
   data: DataPoints,
-  baseFiatCurrency: ?string,
   theme: Theme,
+  fiatCurrency: string,
 };
 
 const DateButton = styled.TouchableOpacity`
@@ -71,7 +71,7 @@ const HALF_YEAR = 'HALF_YEAR';
 const YEAR = 'YEAR';
 const ALL = 'ALL';
 
-const ValueOverTimeGraph = ({ data, baseFiatCurrency, theme }: Props) => {
+const ValueOverTimeGraph = ({ data, fiatCurrency, theme }: Props) => {
   const [activeTimeRange, setActiveTimeRange] = useState(WEEK);
 
   const timeRangeEnd = new Date();
@@ -140,7 +140,6 @@ const ValueOverTimeGraph = ({ data, baseFiatCurrency, theme }: Props) => {
 
   const getTooltipContents = (activeDataPoint: number) => {
     const { date, value } = filteredData[activeDataPoint];
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return `${format(date, timeRanges[activeTimeRange].tooltipDateFormat)}\n${formatFiat(value, fiatCurrency)}`;
   };
 
@@ -185,10 +184,4 @@ const ValueOverTimeGraph = ({ data, baseFiatCurrency, theme }: Props) => {
   );
 };
 
-const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
-}: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
-});
-
-export default withTheme(connect(mapStateToProps)(ValueOverTimeGraph));
+export default withTheme(ValueOverTimeGraph);
