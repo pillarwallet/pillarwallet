@@ -66,6 +66,7 @@ import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Option } from 'models/Selector';
+import type { WBTCFeesRaw } from 'models/WBTC';
 
 import t from 'translations/translate';
 
@@ -109,6 +110,7 @@ type Props = {
   theme: Theme,
   isActiveAccountSmartWallet: boolean,
   offers: Offer[],
+  wbtcFees: WBTCFeesRaw,
 };
 
 type State = {
@@ -504,6 +506,7 @@ const mapStateToProps = ({
       hasNotification: hasUnreadExchangeNotification,
       offers,
     },
+    wbtcFees,
     exchangeSupportedAssets,
   },
   rates: { data: rates },
@@ -521,6 +524,7 @@ const mapStateToProps = ({
   exchangeSupportedAssets,
   hasSeenExchangeIntro,
   offers,
+  wbtcFees,
 });
 
 const structuredSelector = createStructuredSelector({

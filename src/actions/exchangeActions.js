@@ -39,6 +39,7 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
+  SET_WBTC_FEES,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -341,5 +342,29 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
     });
     if (callback) callback();
     dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
+  };
+};
+
+export const getWbtcFeesAction = () => {
+  return (dispatch: Dispatch) => {
+    fetch('https://lightnode-mainnet.herokuapp.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        id: 67,
+        jsonrpc: '2.0',
+        method: 'ren_queryFees',
+        params: {},
+      }),
+    })
+      .then(res => res.json())
+      .then(res => {
+        dispatch({
+          type: SET_WBTC_FEES,
+          payload: res.result,
+        });
+        dispatch(saveDbAction('wbtcFees', { wbtcFees: res.result }, true));
+      })
+      .catch(e => reportLog('Failed to fetch WBTC fees', e));
   };
 };

@@ -35,6 +35,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
 import { saveDbAction } from './dbActions';
+import { getWbtcFeesAction } from './exchangeActions';
 
 
 export const setRatesAction = (newRates: Rates) => {
@@ -44,6 +45,7 @@ export const setRatesAction = (newRates: Rates) => {
     const rates = { ...currentRates, ...newRates };
     dispatch(saveDbAction('rates', { rates }, true));
     dispatch({ type: UPDATE_RATES, payload: rates });
+    dispatch(getWbtcFeesAction());
   };
 };
 

@@ -30,7 +30,7 @@ type Props = {
   onBlur?: () => void,
   errorMessage?: string,
   asset: Option,
-  onAssetPress: () => void,
+  onAssetPress: ?(() => void),
   labelText?: string,
   onLabelPress?: () => void,
   onChange?: (val: string) => void,
