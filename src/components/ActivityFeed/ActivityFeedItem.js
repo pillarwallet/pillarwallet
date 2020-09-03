@@ -711,8 +711,8 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           if (!isTrxBetweenAccounts) {
             additionalInfo.iconName = directionIcon;
-            additionalInfo.iconColor =
-              isReceived ? 'transactionReceivedIcon' : 'negative'; // eslint-disable-line i18next/no-literal-string
+            // eslint-disable-next-line i18next/no-literal-string
+            additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
           }
 
           if (isReferralRewardTransaction) {

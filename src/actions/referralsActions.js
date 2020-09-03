@@ -336,7 +336,6 @@ export const fetchReferralRewardAction = () => {
       .reduce((rewardsByCampaign, campaignName) => {
         const isCampaignActive = get(referralCampaignsInfo, `[${campaignName}].isActive`);
         const campaignRewards = get(referralCampaignsInfo, `[${campaignName}].rewards`);
-
         if (campaignRewards && isCampaignActive) rewardsByCampaign[campaignName] = campaignRewards;
         return rewardsByCampaign;
       },
