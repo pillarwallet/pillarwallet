@@ -26,7 +26,6 @@ import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
 import { GasPriceOracle } from 'gas-price-oracle';
 import https from 'https';
-import t from 'translations/translate';
 
 // constants
 import { REGISTRATION_FAILED, USERNAME_FAILED } from 'constants/walletConstants';
@@ -60,6 +59,7 @@ import { getLimitedData } from './opensea';
 
 
 const ERROR = 'error';
+const LOCATION_NOT_SUPPORTED = 'Location not supported';
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
@@ -786,7 +786,7 @@ class SDKWrapper {
         const { response: { status, data } } = error;
 
         if (status === 400) return true;
-        if (status === 403 && data.message === t('error.locationNotSupported')) return false;
+        if (status === 403 && data.message === LOCATION_NOT_SUPPORTED) return false;
 
         // Any other type of error is unexpected and will be reported as usual.
         reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);

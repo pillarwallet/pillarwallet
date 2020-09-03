@@ -491,8 +491,7 @@
       "invalidSession": "Invalid Wallet Connect session",
       "alreadyPending": "A connection is already waiting"
     },
-    "reverted": "reverted",
-    "locationNotSupported": "Location not supported"
+    "reverted": "reverted"
   },
 
   "badgeText": {
