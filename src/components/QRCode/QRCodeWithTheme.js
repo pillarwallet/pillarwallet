@@ -45,7 +45,7 @@ const QRCodeWithTheme = (props: Props) => {
       getRef={getRef}
       value={value}
       size={size}
-      color={themeType === DARK_THEME ? '#FFFFFF' : colors.text} // eslint-disable-line i18next/no-literal-string
+      color={themeType === DARK_THEME ? '#FFFFFF' : colors.text}
       backgroundColor={colors.card}
     />
   );

@@ -61,7 +61,7 @@ const viewMinScanY = (screenHeight - rectangleSize) / 2;
 
 export default class QRCodeScanner extends React.Component<Props, State> {
   static defaultProps = {
-    rectangleColor: '#FFFFFF', // eslint-disable-line i18next/no-literal-string
+    rectangleColor: '#FFFFFF',
     onRead: noop,
     validator: () => true,
     dataFormatter: (x: any) => x,

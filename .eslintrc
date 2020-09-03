@@ -55,6 +55,7 @@
     "react/no-did-mount-set-state": ["off"],
     "i18next/no-literal-string": ["error", {
       "ignore": [
+        "^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$",
         "t=",
         "absolute",
         "align-self:",
@@ -288,7 +289,7 @@
         "*Constants.js",
         "__mocks__/*.js",
         "babel.config.js",
-        "./src/testUtils/*.js",
+        "./src/testUtils/*.js"
       ],
       "rules": {
         "i18next/no-literal-string": "off"
