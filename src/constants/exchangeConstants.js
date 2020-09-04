@@ -42,3 +42,6 @@ export const FAST = 'max';
 
 // mainnet only
 export const UNISWAP_SUBGRAPH_NAME = 'uniswap/uniswap-v2';
+
+export const WBTC_CURVE_MAIN = '0x93054188d876f558f4a66B2EF1d97d16eDf0895B';
+export const WBTC_CURVE_TEST = '0x62869F49ea8b6c3EEdEcA8b8b1c6731090aD7A3D';

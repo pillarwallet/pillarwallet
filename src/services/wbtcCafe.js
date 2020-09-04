@@ -18,76 +18,16 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// import { utils } from 'ethers';
 import { Contract } from 'ethers';
 
 import { isProdEnv } from 'utils/environment';
 import { WBTC, BTC } from 'constants/assetsConstants';
+import { WBTC_CURVE_MAIN, WBTC_CURVE_TEST } from 'constants/exchangeConstants';
 
 import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
 
 import type { WBTCFeesWithRate, WBTCFeesRaw } from 'models/WBTC';
-
-// TODO check me
-// const renJS = new RenJS(isProdEnv ? 'mainnet' : 'testnet');
-// const provider = getEthereumProvider(isProdEnv ? 'homestead' : 'kovan');
-
-// const renContractAddress = isProdEnv ? // TODO fix me
-//   '0x9fe350DfA5F66bC086243F21A8F0932514316627' :
-//   '0x9fe350DfA5F66bC086243F21A8F0932514316627';
-
-
-// export const getBTCDepositMint = (contractAddress: string, amount: string | number) => renJS.lockAndMint({
-//   // Send BTC from the Bitcoin blockchain to the Ethereum blockchain.
-//   sendToken: RenJS.Tokens.BTC.Btc2Eth,
-
-//   // The contract we want to interact with
-//   sendTo: renContractAddress,
-
-//   // The name of the function we want to call
-//   contractFn: 'deposit', // todo should be mintThenSwap ?
-
-//   nonce: renJS.utils.randomNonce(),
-
-//   // Arguments expected for calling `deposit`
-//   contractParams: [ // todo change if we wanna call mintThenSwap
-//     {
-//       name: '_msg',
-//       type: 'bytes',
-//       value: web3.utils.fromAscii(`Depositing ${amount} BTC`),
-//     },
-//   ],
-
-//   // Web3 provider for submitting mint to Ethereum
-//   web3Provider: web3.currentProvider,
-// });
-
-// export const getMintGatewayAddress = (mint: any): Promise<string> => mint
-//   .gatewayAddress()
-//   .then(address => address)
-//   .catch(() => {}); // todo
-
-// export const waitForMintConfirmationAndGetDeposit = (mint: any) => mint
-//   .wait(0)
-//   .then(deposit => deposit)
-//   .catch(() => {}); // todo
-
-// export const submitDepositAndGetSignature = (deposit: any) => deposit
-//   .submit()
-//   .then(signature => signature)
-//   .catch(() => {}); // todo
-
-// export const submitSignature = async (signature: any) => {
-//   try {
-//     await signature.submitToEthereum(provider);
-//   } catch (e) {
-//     // todo
-//   }
-// };
-
-const CURVE_MAIN = '0x93054188d876f558f4a66B2EF1d97d16eDf0895B';
-const CURVE_TEST = '0x62869F49ea8b6c3EEdEcA8b8b1c6731090aD7A3D';
 
 export const gatherWBTCFeeData = async (
   amount: number,
@@ -111,7 +51,7 @@ export const gatherWBTCFeeData = async (
     const amountInSats = Math.round(amount * 100000000);
 
     const curve = new Contract(
-      isProdEnv ? CURVE_MAIN : CURVE_TEST,
+      isProdEnv ? WBTC_CURVE_MAIN : WBTC_CURVE_TEST,
       CURVE_ABI,
       getEthereumProvider(isProdEnv ? 'homestead' : 'kovan'),
     );
