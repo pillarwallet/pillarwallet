@@ -72,6 +72,7 @@ type Props = {
   headerProps?: HeaderProps,
   errorMessage?: string,
   hideLoader?: boolean,
+  customCheckingMessage?: string,
 };
 
 type State = {
@@ -275,14 +276,20 @@ class CheckAuth extends React.Component<Props, State> {
 
   render() {
     const {
-      wallet: { walletState }, isChecking, enforcePin, modalProps, headerProps, hideLoader,
+      wallet: { walletState },
+      isChecking,
+      enforcePin,
+      modalProps,
+      headerProps,
+      hideLoader,
+      customCheckingMessage,
     } = this.props;
     const { showPin } = this.state;
 
     if (!hideLoader && (walletState === DECRYPTING || isChecking)) {
       return (
         <Container style={{ flex: 1, width: '100%' }} center>
-          <Loader messages={[t('auth:checking', { capitalize: true })]} />
+          <Loader messages={[customCheckingMessage || t('auth:checking', { capitalize: true })]} />
         </Container>
       );
     }

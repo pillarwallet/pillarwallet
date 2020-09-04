@@ -3,6 +3,8 @@ import * as React from 'react';
 import { Dimensions, Platform } from 'react-native';
 import styled from 'styled-components/native';
 import ExtraDimensions from 'react-native-extra-dimensions-android';
+import t from 'translations/translate';
+
 import Button from 'components/Button';
 import { Paragraph, MediumText } from 'components/Typography';
 import { spacing, fontStyles } from 'utils/variables';
@@ -10,6 +12,7 @@ import { getiOSNavbarHeight } from 'utils/common';
 import { themedColors } from 'utils/themes';
 import { hexToRgba } from 'utils/ui';
 import type { Measurements } from 'reducers/walkthroughsReducer';
+
 
 type Props = {
   buttonText?: string,
@@ -149,7 +152,7 @@ export const WalkthroughTooltip = (props: Props) => {
         {!!title && <TooltipTitle>{title}</TooltipTitle>}
         {!!body && <TooltipParagraph>{body}</TooltipParagraph>}
         {onTooltipButtonPress && <Button
-          title={buttonText || 'Next'}
+          title={buttonText || t('button.next')}
           onPress={onTooltipButtonPress}
           small
           style={{ marginTop: spacing.mediumLarge }}

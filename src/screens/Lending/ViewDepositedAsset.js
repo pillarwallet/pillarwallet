@@ -21,10 +21,10 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
-import { SDK_PROVIDER } from 'react-native-dotenv';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
@@ -198,7 +198,7 @@ const ViewDepositedAsset = ({
           />
           <CachedImage
             style={{ width: 48, height: 48 }}
-            source={{ uri: iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '' }}
+            source={{ uri: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '' }}
             resizeMode="contain"
           />
         </ImagesWrapper>
@@ -222,7 +222,7 @@ const ViewDepositedAsset = ({
             </BaseText>
             <MediumText positive fontSize={fontSizes.medium}>
               {t('positiveValue', {
-                value: t('tokenaValue', {
+                value: t('tokenValue', {
                   value: formatAmountDisplay(earnedAmount),
                   token: assetSymbol,
                 }),

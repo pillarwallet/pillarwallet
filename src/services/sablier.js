@@ -19,9 +19,9 @@
 */
 
 import { utils, Contract, BigNumber as EthersBigNumber } from 'ethers';
-import { SABLIER_CONTRACT_ADDRESS, SABLIER_SUBGRAPH_NAME, NETWORK_PROVIDER } from 'react-native-dotenv';
 import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -29,11 +29,10 @@ import {
   SABLIER_CREATE_STREAM,
   SABLIER_WITHDRAW,
   SABLIER_CANCEL_STREAM,
-  SABLIER_ALLOWANCE,
 } from 'constants/sablierConstants';
 
 // services
-import { encodeContractMethod, getContract } from 'services/assets';
+import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
 import { callSubgraph } from 'services/theGraph';
 
@@ -67,8 +66,8 @@ export const buildCreateStreamTransaction = (
 };
 
 export const fetchStreamBalance = (streamId: string, address: string): Promise<EthersBigNumber> => {
-  const provider = getEthereumProvider(NETWORK_PROVIDER);
-  const contract = new Contract(SABLIER_CONTRACT_ADDRESS, SABLIER_ABI, provider);
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+  const contract = new Contract(getEnv().SABLIER_CONTRACT_ADDRESS, SABLIER_ABI, provider);
   return contract.balanceOf(streamId, address).catch((e) => {
     reportLog('Error getting sablier stream balance', {
       message: e.message,
@@ -89,7 +88,7 @@ export const getSablierWithdrawTransaction = (
   ]);
   return {
     from: sender,
-    to: SABLIER_CONTRACT_ADDRESS,
+    to: getEnv().SABLIER_CONTRACT_ADDRESS,
     data: transactionData,
     amount: 0,
     symbol: ETH,
@@ -183,13 +182,13 @@ export const fetchUserStreams = async (accountAddress: string) => {
       }
     }
   `;
-  return callSubgraph(SABLIER_SUBGRAPH_NAME, query);
+  return callSubgraph(getEnv().SABLIER_SUBGRAPH_NAME, query);
 };
 
 export const checkSablierAllowance = async (tokenAddress: string, sender: string): Promise<EthersBigNumber> => {
   const erc20Contract = getContract(tokenAddress, ERC20_CONTRACT_ABI);
   const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(sender, SABLIER_CONTRACT_ADDRESS)
+    ? await erc20Contract.allowance(sender, getEnv().SABLIER_CONTRACT_ADDRESS)
     : EthersBigNumber.from(0);
   return approvedAmountBN;
 };
@@ -240,37 +239,13 @@ const getTxFeeAndTransactionPayload = async (_transactionPayload, useGasToken): 
   };
 };
 
-export const getApproveFeeAndTransaction = (assetData: Asset, useGasToken: boolean): Promise<Object> => {
-  const { symbol, decimals, address: tokenAddress } = assetData;
-  const rawValue = 1000000000;
-  const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
-
-  const data = encodeContractMethod(ERC20_CONTRACT_ABI, 'approve', [SABLIER_CONTRACT_ADDRESS, valueToApprove]);
-
-  const transactionPayload = {
-    amount: 0,
-    to: tokenAddress,
-    symbol,
-    contractAddress: tokenAddress,
-    decimals,
-    data,
-    extra: {
-      sablierApproval: {
-        symbol,
-      },
-    },
-    tag: SABLIER_ALLOWANCE,
-  };
-
-  return getTxFeeAndTransactionPayload(transactionPayload, useGasToken);
-};
 
 export const getCancellationFeeAndTransaction = (stream: Stream, useGasToken: boolean): Promise<Object> => {
   const transactionData = encodeContractMethod(SABLIER_ABI, 'cancelStream', [
     stream.id,
   ]);
   const transactionPayload = {
-    to: SABLIER_CONTRACT_ADDRESS,
+    to: getEnv().SABLIER_CONTRACT_ADDRESS,
     data: transactionData,
     amount: 0,
     symbol: ETH,
@@ -286,31 +261,53 @@ export const getCancellationFeeAndTransaction = (stream: Stream, useGasToken: bo
   return getTxFeeAndTransactionPayload(transactionPayload, useGasToken);
 };
 
-export const getCreateStreamFeeAndTransaction = (
+export const getCreateStreamFeeAndTransaction = async (
   sender: string,
   receiver: string,
   amount: EthersBigNumber,
-  tokenAddress: string,
+  asset: Asset,
   startTimestamp: number,
   endTimestamp: number,
   useGasToken: boolean,
 ): Promise<Object> => {
   const createStreamTransactionData =
-    buildCreateStreamTransaction(receiver, amount, tokenAddress, startTimestamp, endTimestamp);
+    buildCreateStreamTransaction(receiver, amount, asset.address, startTimestamp, endTimestamp);
 
-  const transactionPayload = {
+  const approvedAmountBN = await checkSablierAllowance(asset.address, sender);
+
+  let sablierCreateStreamTransaction = {
     from: sender,
-    to: SABLIER_CONTRACT_ADDRESS,
+    to: getEnv().SABLIER_CONTRACT_ADDRESS,
     data: createStreamTransactionData,
     amount: 0,
     symbol: ETH,
+  };
+
+  if (!approvedAmountBN || amount.gt(approvedAmountBN)) {
+    const rawValue = 1000000000;
+    const valueToApprove = utils.parseUnits(rawValue.toString(), asset.decimals);
+    const approveTransactionData = buildERC20ApproveTransactionData(
+      getEnv().SABLIER_CONTRACT_ADDRESS, valueToApprove, asset.decimals);
+
+    sablierCreateStreamTransaction = {
+      from: sender,
+      to: asset.address,
+      data: approveTransactionData,
+      amount: 0,
+      symbol: ETH,
+      sequentialSmartWalletTransactions: [sablierCreateStreamTransaction],
+    };
+  }
+
+  sablierCreateStreamTransaction = {
+    ...sablierCreateStreamTransaction,
     extra: {
-      assetAddress: tokenAddress,
+      assetAddress: asset.address,
       amount,
       contactAddress: receiver,
     },
     tag: SABLIER_CREATE_STREAM,
   };
 
-  return getTxFeeAndTransactionPayload(transactionPayload, useGasToken);
+  return getTxFeeAndTransactionPayload(sablierCreateStreamTransaction, useGasToken);
 };

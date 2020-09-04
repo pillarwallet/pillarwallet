@@ -18,9 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { NavigationActions } from 'react-navigation';
-import { NETWORK_PROVIDER } from 'react-native-dotenv';
 import get from 'lodash.get';
 import t from 'translations/translate';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import {
@@ -77,7 +77,6 @@ import {
   walletConnectSessionsRemovedAction,
 } from 'actions/walletConnectSessionsActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { deploySmartWalletAction } from 'actions/smartWalletActions';
 
 // components
 import Toast from 'components/Toast';
@@ -449,10 +448,7 @@ export const approveSessionAction = (peerId: string) => {
           message: t('toast.walletConnectSmartWalletNotActive'),
           emoji: 'point_up',
           link: t('label.activateSmartWallet'),
-          onLinkPress: () => {
-            dispatch(deploySmartWalletAction());
-            navigate(NavigationActions.navigate({ routeName: ASSETS }));
-          },
+          onLinkPress: () => navigate(NavigationActions.navigate({ routeName: ASSETS })), // contains sw activation card
           autoClose: false,
         });
         return;
@@ -460,7 +456,7 @@ export const approveSessionAction = (peerId: string) => {
       const smartAccAddress = getAccountAddress(account);
       await connector.approveSession({
         accounts: [smartAccAddress],
-        chainId: NETWORK_PROVIDER === 'ropsten' ? 3 : 1,
+        chainId: getEnv().NETWORK_PROVIDER === 'kovan' ? 42 : 1,
       });
     } catch (e) {
       dispatch(walletConnectError(SESSION_APPROVAL_ERROR, e.toString()));

@@ -23,6 +23,8 @@ import styled from 'styled-components/native';
 import { fontStyles } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import { themedColors } from 'utils/themes';
+import t from 'translations/translate';
+
 
 const Status = styled.View`
   flex-direction: row;
@@ -51,11 +53,11 @@ const AnimatedStatus = Animated.createAnimatedComponent(Status);
 type State = {
   indicatorFadeValue: Animated.Value,
   statusFadeValue: Animated.Value,
-}
+};
 
 type Props = {
   isVisible: boolean,
-}
+};
 
 class ExchangeStatus extends React.Component<Props, State> {
   constructor(props: Props) {
@@ -119,7 +121,7 @@ class ExchangeStatus extends React.Component<Props, State> {
 
     return (
       <AnimatedStatus style={{ opacity: statusFadeValue }}>
-        <StatusText>Updated in realtime</StatusText>
+        <StatusText>{t('exchangeContent.label.updatedRealTime')}</StatusText>
         <AnimatedStatusIcon style={{ opacity: indicatorFadeValue }} />
       </AnimatedStatus>
     );

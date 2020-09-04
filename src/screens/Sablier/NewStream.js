@@ -24,10 +24,9 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { addHours, addDays, addMinutes } from 'date-fns';
 import DatePicker from 'react-native-date-picker';
-import { utils, BigNumber as EthersBigNumber } from 'ethers';
-import { SDK_PROVIDER } from 'react-native-dotenv';
-import t from 'translations/translate';
+import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -42,37 +41,31 @@ import SlideModal from 'components/Modals/SlideModal';
 // utils
 import { getThemeColors, getThemeType } from 'utils/themes';
 import { countDownDHMS } from 'utils/common';
-import { getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
 
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
-import { SABLIER_NEW_STREAM_REVIEW, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { SABLIER_NEW_STREAM_REVIEW } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // services
-import { checkSablierAllowance, getApproveFeeAndTransaction } from 'services/sablier';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector, visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
-import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
-import type { Balances, Asset, Assets } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
 import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
-import type { GasToken } from 'models/Transaction';
 import type { Contact } from 'models/Contact';
-import type { AllowData } from './SablierAllowanceModal';
-
-// partials
-import SablierAllowanceModal from './SablierAllowanceModal';
 
 
 type Props = {
@@ -80,11 +73,8 @@ type Props = {
   activeAccountAddress: string,
   assets: Assets,
   assetsWithBalance: Option[],
-  balances: Balances,
-  useGasToken: boolean,
   theme: Theme,
   navigation: NavigationScreenProp<*>,
-  sablierApproveExecuting: { [string]: string | boolean },
 };
 
 type State = {
@@ -95,12 +85,6 @@ type State = {
   assetValue: number,
   assetSymbol: ?string,
   selectedContact: ?Contact,
-  isAllowanceModalVisible: boolean,
-  txFeeInWei: number,
-  isCheckingAllowance: boolean,
-  allowPayload: ?Object,
-  gasToken: ?GasToken,
-  allowance: ?EthersBigNumber,
 };
 
 const Row = styled.View`
@@ -130,34 +114,14 @@ class NewStream extends React.Component<Props, State> {
       assetValue: 0,
       assetSymbol: null,
       selectedContact: null,
-      isAllowanceModalVisible: false,
-      txFeeInWei: 0,
-      isCheckingAllowance: false,
-      allowPayload: null,
-      gasToken: null,
-      allowance: null,
     };
   }
 
-  componentDidUpdate(prevProps) {
-    const { assetSymbol } = this.state;
-    if (!assetSymbol) {
-      return;
-    }
-    if (prevProps.sablierApproveExecuting[assetSymbol] && !this.props.sablierApproveExecuting[assetSymbol]) {
-      this.updateAllowance(assetSymbol);
-    }
+  getMinimalDate = () => {
+    // default to 5 minutes
+    const delayInMinutes = firebaseRemoteConfig.getNumber(FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE) || 5;
+    return addMinutes(new Date(), delayInMinutes);
   }
-
-  updateAllowance = async (assetSymbol: string) => {
-    const { assets, supportedAssets, activeAccountAddress } = this.props;
-    const assetData = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
-    this.setState({ isCheckingAllowance: true });
-    const allowance = await checkSablierAllowance(assetData?.address, activeAccountAddress);
-    this.setState({ allowance, isCheckingAllowance: false });
-  }
-
-  getMinimalDate = () => addMinutes(new Date(), 5);
 
   getFormValue = (value) => {
     const { input = '0' } = value || {};
@@ -166,7 +130,6 @@ class NewStream extends React.Component<Props, State> {
       assetValue: newValue,
       assetSymbol: value?.selector?.symbol,
     });
-    this.updateAllowance(value?.selector?.symbol);
   }
 
   handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
@@ -200,12 +163,9 @@ class NewStream extends React.Component<Props, State> {
   }
 
   onSubmit = async () => {
-    const { useGasToken } = this.props;
     const {
-      startDate, endDate, assetValue, assetSymbol, selectedContact, allowance,
+      startDate, endDate, assetValue, assetSymbol, selectedContact,
     } = this.state;
-
-    this.setState({ isCheckingAllowance: true });
 
     const assetData = this.getAssetData();
     if (!assetData) return;
@@ -216,28 +176,13 @@ class NewStream extends React.Component<Props, State> {
     const assetValueInWei = utils.parseUnits(assetValue.toString(), assetData.decimals);
     const roundedAssetValue = assetValueInWei.sub(assetValueInWei.mod(timeDelta));
 
-    if (!allowance || allowance.lt(roundedAssetValue)) {
-      const {
-        txFeeInWei,
-        gasToken,
-        transactionPayload,
-      } = await getApproveFeeAndTransaction(assetData, useGasToken);
-      this.setState({
-        isAllowanceModalVisible: true,
-        gasToken,
-        allowPayload: transactionPayload,
-        txFeeInWei,
-      });
-    } else {
-      this.props.navigation.navigate(SABLIER_NEW_STREAM_REVIEW, {
-        startDate,
-        endDate,
-        assetValue: roundedAssetValue,
-        assetSymbol,
-        receiverAddress: selectedContact?.ethAddress,
-      });
-    }
-    this.setState({ isCheckingAllowance: false });
+    this.props.navigation.navigate(SABLIER_NEW_STREAM_REVIEW, {
+      startDate,
+      endDate,
+      assetValue: roundedAssetValue,
+      assetSymbol,
+      receiverAddress: selectedContact?.ethAddress,
+    });
   }
 
   openDatePicker = (picker: string, date: ?Date) => {
@@ -294,7 +239,7 @@ class NewStream extends React.Component<Props, State> {
       </Row>
     );
 
-    const minimumDate = picker === START_TIME ? this.getMinimalDate() : startDate;
+    const minimumDate = picker === START_TIME ? this.getMinimalDate() : addMinutes(startDate, 1);
     const maximumDate = picker === START_TIME ? endDate : null;
 
     return (
@@ -336,42 +281,12 @@ class NewStream extends React.Component<Props, State> {
     return assetValue && startDate && endDate && assetSymbol && selectedContact;
   }
 
-  isApprovalExecuting = () => {
-    const { sablierApproveExecuting } = this.props;
-    const { assetSymbol } = this.state;
-    return assetSymbol && !!sablierApproveExecuting[assetSymbol];
-  }
-
   renderStreamSummary = () => {
     const {
-      assetValue, assetSymbol, startDate, endDate, allowance,
+      assetValue, assetSymbol, startDate, endDate,
     } = this.state;
 
-    if (!assetValue || !assetSymbol) {
-      return null;
-    }
-
-    const isApprovalExecuting = this.isApprovalExecuting();
-    const assetValueInWei = utils.parseUnits(assetValue.toString(), this.getAssetData()?.decimals);
-    const hasAllowance = allowance && allowance.gte(assetValueInWei);
-
-    if (!isApprovalExecuting && !hasAllowance) {
-      return (
-        <BaseText regular secondary>
-          {t('sablierContent.paragraph.allowanceMissing', { asset: assetSymbol })}
-        </BaseText>
-      );
-    }
-
-    if (isApprovalExecuting) {
-      return (
-        <BaseText regular secondary>
-          {t('sablierContent.paragraph.allowancePending')}
-        </BaseText>
-      );
-    }
-
-    if (!startDate || !endDate) {
+    if (!assetValue || !assetSymbol || !startDate || !endDate) {
       return null;
     }
 
@@ -397,51 +312,15 @@ class NewStream extends React.Component<Props, State> {
     );
   }
 
-  hideAllowanceModal = () => {
-    this.setState({ isAllowanceModalVisible: false });
-  }
-
-  onAllowConfirm = () => {
-    const { navigation } = this.props;
-    const { allowPayload } = this.state;
-    this.hideAllowanceModal();
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload: allowPayload,
-      goBackDismiss: true,
-    });
-  }
-
   render() {
-    const { balances, assetsWithBalance } = this.props;
+    const { assetsWithBalance } = this.props;
     const {
       startDate,
       endDate,
       selectedContact,
-      isAllowanceModalVisible,
-      assetSymbol,
-      isCheckingAllowance,
-      gasToken,
-      txFeeInWei,
-      allowPayload,
     } = this.state;
 
     const formValid = this.isFormValid();
-
-    let allowData: ?AllowData = null;
-    const assetData = this.getAssetData();
-    if (allowPayload && assetData) {
-      const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
-      const assetIcon = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
-
-      allowData = {
-        assetSymbol,
-        txFeeInWei,
-        isDisabled,
-        gasToken,
-        assetIcon,
-      };
-    }
-
     const assetsOptions = assetsWithBalance.filter(asset => asset.symbol !== ETH);
 
     return (
@@ -449,6 +328,7 @@ class NewStream extends React.Component<Props, State> {
         inset={{ bottom: 'never' }}
         headerProps={{ centerItems: [{ title: t('sablierContent.title.newStreamScreen') }] }}
         putContentInScrollView
+        keyboardShouldPersistTaps="always"
       >
         <Selector
           label={t('label.to')}
@@ -506,7 +386,6 @@ class NewStream extends React.Component<Props, State> {
           <Button
             title={t('button.next')}
             disabled={!formValid}
-            isLoading={isCheckingAllowance || this.isApprovalExecuting()}
             onPress={this.onSubmit}
           />
           <Spacing h={19} />
@@ -514,14 +393,6 @@ class NewStream extends React.Component<Props, State> {
         </ContentWrapper>
         {this.renderDatePicker(START_TIME)}
         {this.renderDatePicker(END_TIME)}
-        {allowData && (
-          <SablierAllowanceModal
-            isVisible={isAllowanceModalVisible}
-            allowData={allowData}
-            onModalHide={this.hideAllowanceModal}
-            onAllow={this.onAllowConfirm}
-          />
-        )}
       </ContainerWithHeader>
     );
   }
@@ -529,18 +400,14 @@ class NewStream extends React.Component<Props, State> {
 
 const mapStateToProps = ({
   assets: { supportedAssets },
-  sablier: { sablierApproveExecuting },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
-  sablierApproveExecuting,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
-  balances: accountBalancesSelector,
-  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

@@ -25,13 +25,15 @@ import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText } from 'components/Typography';
-
 import Spinner from 'components/Spinner';
+import PercentsInputAccessoryHolder, {
+  INPUT_ACCESSORY_NATIVE_ID,
+} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
 
 import type { Balances, Rates } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -75,6 +77,7 @@ export type ExternalProps = {
   customBalances?: Balances,
   activeTokenType?: string,
   showAllAssetTypes?: boolean,
+  calculateBalancePercentTxFee?: (symbol: string, percentageModifier: number) => Promise<void>,
 };
 
 type Props = ExternalProps & {
@@ -86,6 +89,8 @@ type Props = ExternalProps & {
   showSyntheticOptions?: boolean,
   customError?: string,
   syntheticAssets?: Option[],
+  gettingFee?: boolean,
+  hideMaxSend?: boolean,
 };
 
 type FormValue = {
@@ -128,7 +133,7 @@ const formatOptions = (options: Object[], balances: Balances, rates: Rates, base
     const { iconUrl, symbol, address } = option;
     const assetBalance = getBalance(balances, symbol);
     const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-    const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+    const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return {
       imageUrl,
       formattedBalanceInFiat,
@@ -174,7 +179,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               customInputHeight: 56,
               selectorModalTitle: t('title.select'),
               inputHeaderStyle: { marginBottom: 16, alignItems: 'center' },
-              onPressRightLabel: this.handleUseMax,
+              onPressRightLabel: () => this.handleUsePercent(100),
               activeTabOnItemClick: COLLECTIBLES,
               activeTabOnOptionOpenClick: TOKENS,
             },
@@ -182,6 +187,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               parse: inputParser,
               format: inputFormatter,
             },
+            onFocus: this.showPercentAccessory,
+            onBlur: this.hidePercentAccessory,
           },
         },
       },
@@ -191,31 +198,40 @@ export class ValueSelectorCard extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.handleCustomInfo();
+    this.handleCustomInfo(true);
   }
 
   componentDidUpdate(prevProps: Props) {
-    const { preselectedAsset, preselectedCollectible, isLoading } = this.props;
+    const {
+      preselectedAsset,
+      preselectedCollectible,
+      isLoading,
+      gettingFee,
+      hideMaxSend,
+    } = this.props;
     const { value } = this.state;
     const selectedAsset = get(value, 'formSelector.selector.symbol');
     const preselectedAssetChanged = !selectedAsset && ((!prevProps.preselectedAsset && preselectedAsset)
       || (!prevProps.preselectedCollectible && preselectedCollectible));
     const finishedLoading = prevProps.isLoading && !isLoading;
-    if (preselectedAssetChanged || finishedLoading) {
+    if (preselectedAssetChanged
+      || finishedLoading
+      || prevProps.gettingFee !== gettingFee
+      || prevProps.hideMaxSend !== hideMaxSend) {
       this.handleCustomInfo();
     }
   }
 
-  handleCustomInfo = () => {
+  handleCustomInfo = (isInitial?: boolean) => {
     const { value } = this.state;
     const { activeTokenType, preselectedCollectible } = this.props;
     const selectedTokenType = preselectedCollectible || activeTokenType === COLLECTIBLES
       ? COLLECTIBLES
       : TOKENS;
-    this.manageFormType(selectedTokenType, value, this.addCustomFormInfo);
+    this.manageFormType(selectedTokenType, value, () => this.addCustomFormInfo(isInitial));
   };
 
-  addCustomFormInfo = () => {
+  addCustomFormInfo = (isInitial?: boolean) => {
     const {
       assets,
       syntheticAssets,
@@ -232,6 +248,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       preselectedAsset,
       preselectedCollectible,
       preselectedValue,
+      hideMaxSend,
+      gettingFee,
+      getFormValue,
     } = this.props;
     const { formOptions, value } = this.state;
 
@@ -274,6 +293,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     if (preselectedValue) {
       newValue.formSelector.input = preselectedValue.toString();
     }
+
     const { symbol } = pickedAsset;
     const label = maxLabel || t('button.max');
 
@@ -283,17 +303,30 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             options: { $set: options },
             optionTabs: { $set: optionTabs },
-            rightLabel: { $set: !isEmpty(pickedAsset) ? label : '' },
+            rightLabel: { $set: !isEmpty(pickedAsset) && !hideMaxSend ? label : '' },
             customLabel: { $set: this.renderCustomLabel(symbol) },
             optionsOpenText: { $set: t('button.sendTokenInstead') },
             selectorModalTitle: { $set: selectorModalTitle || t('title.select') },
             renderOption: { $set: renderOption },
+            customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
+            inputAccessoryViewID: { $set: !isEmpty(pickedAsset) && !hideMaxSend ? INPUT_ACCESSORY_NATIVE_ID : null },
           },
         },
       },
     });
 
     this.setState({ formOptions: newOptions, value: newValue });
+    if (!isEmpty(pickedAsset)) {
+      this.showPercentAccessory();
+    }
+
+    /**
+     * initially if there's no asset data from navigation we add option manually in code above,
+     * that's why we want it to trigger the getFormValue prop as well
+     */
+    if (getFormValue && isInitial) {
+      getFormValue(newValue.formSelector);
+    }
   };
 
   renderCustomLabel = (symbol?: string) => {
@@ -351,8 +384,11 @@ export class ValueSelectorCard extends React.Component<Props, State> {
         updatedValue.formSelector.input = '0';
         updatedValue.formSelector.dontCheckBalance = false;
       }
-      this.setState({ formOptions: newOptions, tokenType: newTokenType, value: updatedValue },
-        () => callback(updatedValue));
+      this.setState({
+        formOptions: newOptions,
+        tokenType: newTokenType,
+        value: updatedValue,
+      }, () => callback(updatedValue));
     } else {
       callback(value);
     }
@@ -365,6 +401,8 @@ export class ValueSelectorCard extends React.Component<Props, State> {
       rates,
       maxLabel,
       getError,
+      hideMaxSend,
+      gettingFee,
     } = this.props;
 
     const { formSelector } = value;
@@ -398,7 +436,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
           config: {
             inputAddonText: { $set: valueInFiat },
             customLabel: { $set: this.renderCustomLabel(formSelector?.selector?.symbol) },
-            rightLabel: { $set: formSelector ? label : '' },
+            inputAccessoryViewID: { $set: formSelector && !hideMaxSend ? INPUT_ACCESSORY_NATIVE_ID : null },
+            rightLabel: { $set: formSelector && !hideMaxSend ? label : '' },
+            customRightLabel: { $set: gettingFee ? <Spinner width={20} height={20} /> : null },
           },
         },
       },
@@ -408,6 +448,9 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     this.setState({ ...stateUpdates });
     if (isEmpty(currentErrorMessage)) {
       getFormValue(value?.formSelector);
+    }
+    if (formSelector) {
+      this.showPercentAccessory();
     }
   };
 
@@ -431,27 +474,40 @@ export class ValueSelectorCard extends React.Component<Props, State> {
     if (showSyntheticOptions) {
       const syntheticAsset = syntheticAssets.find(({ symbol: _symbol }) => _symbol === selectedAssetSymbol);
       rawSelectedAssetBalance = get(syntheticAsset, 'availableBalance', 0);
-      selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
     } else {
       rawSelectedAssetBalance = getBalance(balances, selectedAssetSymbol);
-      selectedAssetBalance = forSending
-        ? calculateMaxAmount(selectedAssetSymbol, rawSelectedAssetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken)
-        : formatAmount(rawSelectedAssetBalance);
+      if (forSending) {
+        selectedAssetBalance = formatAmount(calculateMaxAmount(
+          selectedAssetSymbol,
+          rawSelectedAssetBalance,
+          txFeeInfo?.fee,
+          txFeeInfo?.gasToken,
+        ));
+      }
     }
+    if (!selectedAssetBalance) selectedAssetBalance = formatAmount(rawSelectedAssetBalance);
     const totalInFiat = parseFloat(rawSelectedAssetBalance) * getRate(rates, selectedAssetSymbol, fiatCurrency);
     const amountValueInFiat = formatFiat(totalInFiat, baseFiatCurrency);
 
     return { selectedAssetBalance, amountValueInFiat, selectedAssetSymbol };
   };
 
-  handleUseMax = () => {
+  handleUsePercent = async (percent: number) => {
     const { value, formOptions } = this.state;
-    const { getFormValue } = this.props;
+    const { getFormValue, calculateBalancePercentTxFee } = this.props;
+    const selectedAssetSymbol = get(value, 'formSelector.selector.symbol');
+    const balancePercentageModifier = (percent / 100);
+
+    // calculate fee for max balance so it can be applied to calculation below
+    if (calculateBalancePercentTxFee) {
+      await calculateBalancePercentTxFee(selectedAssetSymbol, balancePercentageModifier);
+    }
 
     const { selectedAssetBalance, amountValueInFiat } = this.getMaxBalanceOfSelectedAsset(true);
     if (!selectedAssetBalance) return;
+
     const newValue = { ...value };
-    newValue.formSelector.input = selectedAssetBalance.toString();
+    newValue.formSelector.input = formatAmount(parseFloat(selectedAssetBalance) * balancePercentageModifier);
 
     const newOptions = tForm.update(formOptions, {
       fields: {
@@ -465,7 +521,18 @@ export class ValueSelectorCard extends React.Component<Props, State> {
 
     this.setState({ value: newValue, formOptions: newOptions });
     getFormValue(newValue?.formSelector);
-  };
+  }
+
+  showPercentAccessory = () => {
+    const { hideMaxSend } = this.props;
+    if (!hideMaxSend) {
+      PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
+    }
+  }
+
+  hidePercentAccessory = () => {
+    PercentsInputAccessoryHolder.removeAccessory();
+  }
 
   render() {
     const { value, formOptions, errorMessage } = this.state;

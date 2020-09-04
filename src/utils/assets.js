@@ -21,7 +21,7 @@ import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import get from 'lodash.get';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 
 // constants
 import { COLLECTIBLES, ETH, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
@@ -293,7 +293,7 @@ export const mapAssetToAssetData = ({
   name,
   decimals,
   tokenType: TOKENS,
-  icon: iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '',
+  icon: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '',
 });
 
 export const mapCollectibleToAssetData = ({
@@ -342,7 +342,7 @@ export const generateAssetSelectorOption = (
   const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
   const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
-  const imageUrl = iconUrl ? `${SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
   return ({
     key: symbol,

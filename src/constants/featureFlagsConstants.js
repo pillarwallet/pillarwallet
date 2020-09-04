@@ -28,8 +28,10 @@ export const FEATURE_FLAGS = {
   PEER_TO_PEER: 'feature_services_peer_to_peer',
   KEY_BASED_ASSETS_MIGRATION: 'app_assets_show_kw_migration',
   SABLIER: 'feature_services_sablier',
+  SABLIER_TIME_START_TOLERANCE: 'feature_services_sablier_time_start_tolerance',
   ALTALIX: 'feature_services_altalix',
   WBTC_CAFE: 'feature_services_wbtc_cafe',
+  SMART_WALLET_ACTIVATION_PAID_BY_PILLAR: 'app_smart_wallet_paid_for_by_pillar',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -43,4 +45,6 @@ export const INITIAL_FEATURE_FLAGS = {
   [FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION]: true,
   [FEATURE_FLAGS.ALTALIX]: true,
   [FEATURE_FLAGS.WBTC_CAFE]: true,
+  [FEATURE_FLAGS.SABLIER]: true,
+  [FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE]: 5,
 };

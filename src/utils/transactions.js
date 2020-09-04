@@ -20,8 +20,17 @@
 
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+
+// utils
+import { getBalance } from 'utils/assets';
+
+// types
 import type { FeeInfo } from 'models/PaymentNetwork';
 import type { GasToken } from 'models/Transaction';
+import type { Balances } from 'models/Asset';
 
 
 export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumber | number => {
@@ -32,4 +41,23 @@ export const getTxFeeInWei = (useGasToken: boolean, feeInfo: ?FeeInfo): BigNumbe
 
 export const getGasToken = (useGasToken: boolean, feeInfo: ?FeeInfo): ?GasToken => {
   return useGasToken ? get(feeInfo, 'gasToken', null) : null;
+};
+
+// note: returns negative if total balance is lower
+export const calculateETHTransactionAmountAfterFee = (
+  ethAmount: BigNumber,
+  balances: Balances,
+  totalFeeInEth: BigNumber,
+): BigNumber => {
+  const ethBalance = new BigNumber(getBalance(balances, ETH));
+  const ethBalanceLeftAfterTransaction = ethBalance
+    .minus(totalFeeInEth)
+    .minus(ethAmount);
+
+  // check if not enough ETH left to cover fees and adjust ETH amount by calculating max available after fees
+  if (!ethBalanceLeftAfterTransaction.isPositive()) {
+    return ethBalance.minus(totalFeeInEth);
+  }
+
+  return ethAmount;
 };

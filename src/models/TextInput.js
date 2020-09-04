@@ -36,6 +36,7 @@ export type InputPropsType = {
   placeholder?: string,
   onChange: (Value | SelectorValueType) => void,
   onBlur?: (Value | SelectorValueType) => void,
+  onFocus?: () => void,
   onSubmit?: () => void,
   value: Value,
   selectorValue: SelectorValueType,
@@ -49,6 +50,8 @@ export type InputPropsType = {
   inputHeaderStyle?: Object,
   customLabel?: React.Node,
   editable?: boolean,
+  inputAccessoryViewID?: string,
+  customRightLabel?: React.Node,
 };
 
 export type SelectorOptions = {

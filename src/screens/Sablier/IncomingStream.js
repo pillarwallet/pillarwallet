@@ -23,9 +23,8 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { SDK_PROVIDER } from 'react-native-dotenv';
+import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
-
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
@@ -100,7 +99,7 @@ class IncomingStream extends React.Component<Props> {
     const totalWithdrawnAmount = getTotalWithdrawn(stream);
     const formattedWithdrawnAmount = formatAmount(formatUnits(totalWithdrawnAmount, assetData.decimals), decimalPlaces);
     const formattedDeposit = formatAmount(formatUnits(stream.deposit, assetData.decimals), decimalPlaces);
-    const assetIcon = `${SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
+    const assetIcon = `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`;
 
     const transactionsOnMainnet = mapTransactionsHistory(
       history,

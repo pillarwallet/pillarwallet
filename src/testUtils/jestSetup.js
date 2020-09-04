@@ -32,7 +32,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 // mocks
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
-
+import envConfigMock from './envConfigMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -87,6 +87,7 @@ jest.mock('@react-native-firebase/app', () => ({
       setDefaults: () => Promise.resolve(),
       fetch: () => Promise.resolve(),
       getAll: () => Promise.resolve({}),
+      getBoolean: jest.fn(),
     }),
     messaging: () => ({
       registerForRemoteNotifications: () => Promise.resolve(),
@@ -144,6 +145,8 @@ jest.setMock('ethers', {
     parseUnits: utils.parseUnits,
     HDNode: utils.HDNode,
     formatEther: utils.formatEther,
+    randomBytes: utils.randomBytes,
+    entropyToMnemonic: utils.entropyToMnemonic,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -276,7 +279,7 @@ jest.setMock('@smartwallet/sdk', {
   },
   SdkEnvironmentNames: {
     Rinkeby: 'Rinkeby',
-    Ropsten: 'Ropsten',
+    Kovan: 'Kovan',
   },
   getSdkEnvironment: () => mockArchanovaSdkInstance,
   createSdk: () => ({
@@ -329,4 +332,6 @@ jest.setMock('react-native-notifications');
 jest.setMock('@react-native-community/netinfo');
 
 jest.setMock('react-native-appearance', {});
+
+jest.setMock('configs/envConfig', envConfigMock);
 

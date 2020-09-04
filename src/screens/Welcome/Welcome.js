@@ -18,36 +18,41 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
+import { switchEnvironments } from 'configs/envConfig';
+import type { NavigationScreenProp } from 'react-navigation';
 
+// actions
+import { navigateToNewWalletPageAction } from 'actions/walletActions';
+
+// components
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
+// utils
 import { fontSizes, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
+// constants
 import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
-import { navigateToNewWalletPageAction } from 'actions/walletActions';
-import type { Theme } from 'models/Theme';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { LIGHT_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
+
+// types
+import type { Theme } from 'models/Theme';
+import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  navigateToNewWalletPage: Function,
+  navigateToNewWalletPage: () => void,
   theme: Theme,
-};
-
-type State = {
-  translateY: Animated.Value,
 };
 
 const LOGO_HEIGHT = 56;
@@ -79,7 +84,7 @@ const LogoWrapper = styled.View`
   margin-top: -${INITIAL_TOP_MARGIN}px;
 `;
 
-const Spacer = styled.View`
+const Spacer = styled.TouchableOpacity`
   flex: 2.5;
   width: 100%;
   align-items: center;
@@ -97,84 +102,70 @@ const ButtonsWrapper = styled.View`
 
 const AnimatedLogoWrapper = Animated.createAnimatedComponent(LogoWrapper);
 
-class Welcome extends React.Component<Props, State> {
-  state = {
-    translateY: new Animated.Value(0),
-  };
+const translateY = new Animated.Value(0);
 
-  loginAction = () => {
-    this.props.navigateToNewWalletPage();
-  };
-
-  animatePositioning = () => {
-    Animated.timing(
-      this.state.translateY,
-      {
-        toValue: -20,
-        easing: Easing.elastic(1),
-        duration: 2000,
-        userNativeDriver: true,
-      },
-    ).start();
-  };
-
-  componentDidMount() {
-    this.animatePositioning();
+let clickCount = 0;
+const handleSecretClick = () => {
+  clickCount++;
+  if (clickCount === 16) { // on the 16th click switch network and reset.
+    clickCount = 0;
+    switchEnvironments();
   }
+};
 
-  navigateToWalletImportPage = () => {
-    const { navigation } = this.props;
-    navigation.navigate(IMPORT_WALLET_LEGALS);
-  };
+const Welcome = ({
+  navigation,
+  navigateToNewWalletPage,
+  theme,
+}: Props) => {
+  useEffect(() => {
+    Animated.timing(translateY, {
+      toValue: -20,
+      easing: Easing.elastic(1),
+      duration: 2000,
+      userNativeDriver: true,
+    }).start();
+  }, []);
 
-  render() {
-    const { theme } = this.props;
-    const { translateY } = this.state;
-    const { pillarLogo, landingPattern } = images(theme);
+  const { pillarLogo, landingPattern } = images(theme);
 
-    return (
-      <Background>
-        <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
-          <PillarLogo source={pillarLogo} />
-        </AnimatedLogoWrapper>
-        <Pattern source={landingPattern} />
-        <ContainerWithHeader
-          backgroundColor="transparent"
-          statusbarColor={{
-            [LIGHT_THEME]: LIGHT_CONTENT,
-          }}
-        >
-          <Wrapper fullScreen>
-            <Spacer />
-            <ButtonsWrapper>
-              <Button
-                roundedCorners
-                marginBottom={spacing.mediumLarge}
-                onPress={this.loginAction}
-                title={t('auth:button.createAccount')}
-                style={{ backgroundColor: '#00ff24' }}
-                textStyle={{ color: '#000000' }}
-                block
-              />
-              <ButtonText
-                buttonText={t('auth:button.recoverWallet')}
-                onPress={this.navigateToWalletImportPage}
-                fontSize={fontSizes.big}
-                textStyle={{ color: '#fcfdff' }}
-              />
-            </ButtonsWrapper>
-          </Wrapper>
-        </ContainerWithHeader>
-      </Background>
-    );
-  }
-}
+  return (
+    <Background>
+      <AnimatedLogoWrapper style={{ transform: [{ translateY }] }}>
+        <PillarLogo source={pillarLogo} />
+      </AnimatedLogoWrapper>
+      <Pattern source={landingPattern} />
+      <ContainerWithHeader
+        backgroundColor="transparent"
+        statusbarColor={{ [LIGHT_THEME]: LIGHT_CONTENT }}
+      >
+        <Wrapper fullScreen>
+          <Spacer onPress={handleSecretClick} />
+          <ButtonsWrapper>
+            <Button
+              roundedCorners
+              marginBottom={spacing.mediumLarge}
+              onPress={navigateToNewWalletPage}
+              title={t('auth:button.createAccount')}
+              style={{ backgroundColor: '#00ff24' }}
+              textStyle={{ color: '#000000' }}
+              block
+            />
+            <ButtonText
+              buttonText={t('auth:button.recoverWallet')}
+              onPress={() => navigation.navigate(IMPORT_WALLET_LEGALS)}
+              fontSize={fontSizes.big}
+              textStyle={{ color: '#fcfdff' }}
+            />
+          </ButtonsWrapper>
+        </Wrapper>
+      </ContainerWithHeader>
+    </Background>
+  );
+};
 
-
-const mapDispatchToProps = (dispatch: Function) => ({
-  navigateToNewWalletPage: () => {
-    dispatch(navigateToNewWalletPageAction());
-  },
+const mapDispatchToProps = (dispatch: Dispatch) => ({
+  navigateToNewWalletPage: () => dispatch(navigateToNewWalletPageAction()),
 });
 
 export default withTheme(connect(null, mapDispatchToProps)(Welcome));

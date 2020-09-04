@@ -26,6 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import BigNumber from 'bignumber.js';
 import isEqual from 'lodash.isequal';
 import get from 'lodash.get';
+import t from 'translations/translate';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -54,7 +55,7 @@ import {
   formatAmount,
   formatAmountDisplay,
   formatTransactionFee,
-  getCurrencySymbol,
+  formatFiat,
 } from 'utils/common';
 import {
   isEnoughBalanceForTransactionFee,
@@ -296,7 +297,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       return {
         id: speedTitle,
         label: speedTitle,
-        valueToShow: `${feeInEth} ETH (${getCurrencySymbol(fiatCurrency)}${feeInFiat.toFixed(2)})`,
+        valueToShow: t('tokenFiatValue', {
+          tokenValue: t('tokenValue', { value: feeInEth, token: ETH }),
+          fiatValue: feeInFiat.toFixed(2),
+        }),
         value: txSpeed,
       };
     });
@@ -422,18 +426,20 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       });
     }
 
-    const errorMessage = !isEnoughForFee && `Not enough ${feeSymbol} for transaction fee
-    Current balance: ${getBalance(balances, feeSymbol)} ${feeSymbol}`;
+    const errorMessage = !isEnoughForFee && t('error.transactionFailed.notEnoughForGasWithBalance', {
+      token: feeSymbol,
+      balance: getBalance(balances, feeSymbol),
+    });
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
     const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
-    const confirmButtonTitleDefault = setTokenAllowance ? 'Enable Asset' : 'Confirm';
-    const confirmButtonTitle = gettingFee ? 'Getting the fee..' : confirmButtonTitleDefault;
+    const confirmButtonTitleDefault = setTokenAllowance ? t('exchangeContent.button.enable') : t('button.confirm');
+    const confirmButtonTitle = gettingFee ? t('label.gettingFee') : confirmButtonTitleDefault;
 
     return (
       <ContainerWithHeader
         headerProps={{
-          centerItems: [{ title: 'Details' }],
+          centerItems: [{ title: t('exchangeContent.title.confirmScreen') }],
           customOnBack: this.handleBack,
         }}
       >
@@ -451,10 +457,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             {!!setTokenAllowance &&
               <AllowanceWrapper>
                 <Paragraph small style={{ marginVertical: spacing.medium }}>
-                  Review the details and enable asset as well as confirm the cost of data transaction.
+                  {t('exchangeContent.paragraph.tokenAllowanceInReviewScreen')}
                 </Paragraph>
                 <LabeledRow>
-                  <BaseText medium secondary>Asset to enable</BaseText>
+                  <BaseText medium secondary>{t('exchangeContent.label.assetToEnable')}</BaseText>
                   <MediumText big>{fromAssetCode}</MediumText>
                 </LabeledRow>
 
@@ -463,7 +469,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             <SettingsWrapper>
               {!gettingFee &&
                 <BaseText secondary regular center style={{ marginBottom: 4 }}>
-                  Transaction fee {feeDisplayValue} ({getCurrencySymbol(fiatCurrency)}{feeInFiat.toFixed(2)})
+                  {t('label.feeTokenFiat', {
+                    tokenValue: feeDisplayValue,
+                    fiatValue: formatFiat(feeInFiat, fiatCurrency),
+                  })}
                 </BaseText>
               }
               {!!gettingFee && <Spinner style={{ marginTop: 5, alignSelf: 'center' }} width={20} height={20} />}
@@ -474,7 +483,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               }
               {!gettingFee && !isSmartAccount &&
                 <ButtonText
-                  buttonText="Speed settings"
+                  buttonText={t('transactions.button.speedSettings')}
                   leftIconProps={{ name: 'options', style: { fontSize: 16 } }}
                   onPress={() => this.setState({ showFeeModal: true })}
                 />
@@ -485,13 +494,13 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             {!setTokenAllowance &&
             <React.Fragment>
               <BaseText small center style={{ maxWidth: 242 }}>
-                Final rate may be slightly higher or lower at the end of the transaction.
+                {t('transactions.paragraph.finalFeeInformation')}
               </BaseText>
               <HyperLink
                 style={{ fontSize: fontSizes.small }}
                 url="https://help.pillarproject.io/en/articles/3487702-why-did-i-receive-less-tokens"
               >
-                Read more
+                {t('button.readMore')}
               </HyperLink>
             </React.Fragment>}
           </FooterWrapper>
@@ -512,7 +521,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           hideHeader
         >
           <SliderContentWrapper>
-            <TitleWithIcon iconName="lightning" title="Speed" />
+            <TitleWithIcon iconName="lightning" title={t('transactions.label.speed')} />
             {this.renderTxSpeedButtons()}
           </SliderContentWrapper>
         </SlideModal>

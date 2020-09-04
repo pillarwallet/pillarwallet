@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
 
 // actions
 import {
@@ -115,11 +116,11 @@ const KeyBasedAssetTransferEditAmount = ({
 
     let errorMessage;
     if (!isValidNumber(text.toString())) {
-      errorMessage = 'Incorrect number entered';
+      errorMessage = t('error.amount.invalidNumber');
     } else if (amount > balance) {
-      errorMessage = 'Amount should not exceed total balance';
+      errorMessage = t('error.amount.exceedBalance');
     } else if (!isValidNumberDecimals(amount, decimals)) {
-      errorMessage = 'Amount should not contain decimal places';
+      errorMessage = t('error.amount.shouldNotHaveDecimals');
     }
 
     // resets or sets new
@@ -130,7 +131,7 @@ const KeyBasedAssetTransferEditAmount = ({
   };
 
   const renderAsset = ({ item }) => {
-    const { assetData: { token: symbol, name, icon }, amount } = item;
+    const { assetData: { token: symbol, name, icon }, draftAmount: amount } = item;
     const assetBalance = getBalance(availableBalances, symbol);
     const formattedAssetBalance = formatFullAmount(assetBalance);
     const displayAmount = updatedValues[symbol]?.amount || '';
@@ -181,13 +182,13 @@ const KeyBasedAssetTransferEditAmount = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: 'Edit amount' }],
+        centerItems: [{ title: t('transactions.title.amountEditScreen') }],
         rightItems: [!isEmpty(updatedValues) ? { link: 'Save', onPress: onNextPress } : {}],
       }}
     >
       <ScrollView scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
         <SearchBlock
-          searchInputPlaceholder="Search asset"
+          searchInputPlaceholder={t('label.searchAsset')}
           onSearchChange={(query) => setSearchQuery(query)}
           itemSearchState={searchQuery.length >= 2}
           navigation={navigation}
@@ -212,8 +213,8 @@ const KeyBasedAssetTransferEditAmount = ({
               }}
             >
               <EmptyStateParagraph
-                title="No assets found"
-                bodyText="Check if the name was entered correctly"
+                title={t('transactions.emptyState.assetsList.title')}
+                bodyText={t('transactions.emptyState.assetsList.paragraph')}
               />
             </Wrapper>
           )}

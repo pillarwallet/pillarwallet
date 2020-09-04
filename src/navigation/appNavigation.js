@@ -268,7 +268,6 @@ import {
   SABLIER_WITHDRAW,
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
-  WBTC_CAFE,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 
