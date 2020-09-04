@@ -184,7 +184,7 @@
     "sell": "Sell",
     "unknown": "Unknown",
     "pending": "Pending",
-    "notAvailableIYourCountry": "Not available in Your country",
+    "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline"
   },
 
@@ -1152,6 +1152,7 @@
     },
     "label": {
       "amount": "Amount",
+      "receiver": "Receiver",
       "recipient": "Recipient",
       "recipientEnsName": "Recipient ENS name",
       "recipientAddress": "Recipient Address",
