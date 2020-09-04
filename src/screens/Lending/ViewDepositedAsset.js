@@ -222,7 +222,7 @@ const ViewDepositedAsset = ({
             </BaseText>
             <MediumText positive fontSize={fontSizes.medium}>
               {t('positiveValue', {
-                value: t('tokenaValue', {
+                value: t('tokenValue', {
                   value: formatAmountDisplay(earnedAmount),
                   token: assetSymbol,
                 }),
