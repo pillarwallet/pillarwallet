@@ -135,7 +135,7 @@
     "react-native-shadow": "^1.2.2",
     "react-native-share": "^1.1.1",
     "react-native-splash-screen": "^3.2.0",
-    "react-native-svg": "^9.3.7",
+    "react-native-svg": "^12.1.0",
     "react-native-svg-animations": "^0.1.9",
     "react-native-swipeout": "^2.3.6",
     "react-native-swiper": "^1.6.0",
@@ -205,6 +205,7 @@
     "flow-bin": "^0.105.0",
     "invariant": "^2.2.4",
     "jest": "^25.1.0",
+    "jest-date-mock": "^1.0.8",
     "jest-html-reporter": "2.0.0",
     "jest-react-native": "^18.0.0",
     "jest-styled-components": "^5.0.1",
@@ -244,7 +245,8 @@
       "./src/testUtils/jestSetup.js"
     ],
     "setupFiles": [
-      "./node_modules/react-native-gesture-handler/jestSetup.js"
+      "./node_modules/react-native-gesture-handler/jestSetup.js",
+      "jest-date-mock"
     ],
     "transformIgnorePatterns": [
       "node_modules/(?!(react-[a-z, -]*|react-native-[a-z, -]*|native-base-[a-z, -]*|react-native|native-base|pouchdb-react-native|@react-navigation|pouchdb-adapter-asyncstorage|tcomb-form-native|concat-color-matrices|rn-color-matrices|@react-native-firebase|@expo/react-native-action-sheet)/)"
