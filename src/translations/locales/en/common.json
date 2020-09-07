@@ -818,7 +818,10 @@
     "rate": "Exchange rate",
     "renFee": "RenVM fee",
     "btcFee": "Bitcoin fee",
-    "slippage": "Max. price slippage"
+    "slippage": "Max. price slippage",
+    "sendBtc": "To receive WBTC in Pillar, send {{amount}} BTC to this address.",
+    "copy": "Copy address",
+    "useOnce": "Address can be used only once."
   },
 
   "referralsContent": {

@@ -207,12 +207,12 @@ export const getErrorMessage = (
   amount: string,
   asset: Option,
 ): string => {
-  const { assetBalance = '', symbol = '' } = asset;
+  const { assetBalance: balance = '', symbol: token = '' } = asset;
   const isValid = isValidNumber(amount);
   if (!isValid) {
-    return t('error.exchange.incorrectNumber');
-  } else if (asset.symbol !== BTC && !isEnoughAssetBalance(assetBalance, amount)) {
-    return t('error.exchange.amountTooBig', { assetBalance, symbol });
+    return t('error.amount.invalidNumber');
+  } else if (token !== BTC && !isEnoughAssetBalance(balance, amount)) {
+    return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance, token });
   }
   return '';
 };

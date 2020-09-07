@@ -55,6 +55,7 @@ export const gatherWBTCFeeData = async (
       CURVE_ABI,
       getEthereumProvider(isProdEnv ? 'homestead' : 'kovan'),
     );
+    // WBTC => BTC
     if (isSellingWbtc) {
       const dy = await curve.get_dy(0, 1, amountInSats);
       const swapResult = dy / 100000000; // res / 10 ** 8
@@ -64,6 +65,7 @@ export const gatherWBTCFeeData = async (
         Number(swapResult - renVMFee - fixedFee) > 0
           ? Number(swapResult - renVMFee - fixedFee)
           : 0.000000;
+    // BTC => WBTC
     } else {
       renVMFee = Number(amount) * dynamicFeeRate;
       const amountAfterMint =

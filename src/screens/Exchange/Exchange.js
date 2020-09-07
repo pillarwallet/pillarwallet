@@ -91,6 +91,7 @@ import {
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
 import WBTCCafeInfo from './WBTCCafeInfo';
+import WBTCCafeAddress from './WBTCCafeAddress';
 
 type Props = {
   rates: Rates,
@@ -291,29 +292,32 @@ class ExchangeScreen extends React.Component<Props, State> {
     const value = displayFiatFromAmount ? fromAmountInFiat : fromAmount;
 
     return (
-      <TextInput
-        getInputRef={ref => { this.fromInputRef = ref; }}
-        onChange={this.handleFromInputChange}
-        value={value}
-        onFocus={this.onFocusInput}
-        onBlur={this.blurFromInput}
-        errorMessage={errorMessage}
-        asset={fromAsset}
-        onAssetPress={() => this.setState({ showSellOptions: true })}
-        labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        onLabelPress={() => this.handleUsePercent(100)}
-        leftSideText={displayFiatFromAmount
-          ? t('tokenValue', {
-            value: formatAmount(fromAmount || '0', 2) || '0',
-            token: fromAsset.symbol || '',
-          })
-          : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
-        }
-        leftSideSymbol="-"
-        onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
-        rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
-        inputAccessoryViewID={INPUT_ACCESSORY_NATIVE_ID}
-      />
+      <>
+        <TextInput
+          getInputRef={ref => { this.fromInputRef = ref; }}
+          onChange={this.handleFromInputChange}
+          value={value}
+          onFocus={this.onFocusInput}
+          onBlur={this.blurFromInput}
+          errorMessage={errorMessage}
+          asset={fromAsset}
+          onAssetPress={() => this.setState({ showSellOptions: true })}
+          labelText={assetBalance && getFormattedSellMax(fromAsset)}
+          onLabelPress={() => this.handleUsePercent(100)}
+          leftSideText={displayFiatFromAmount
+            ? t('tokenValue', {
+              value: formatAmount(fromAmount || '0', 2) || '0',
+              token: fromAsset.symbol || '',
+            })
+            : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
+          }
+          leftSideSymbol="-"
+          onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
+          rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
+          inputAccessoryViewID={INPUT_ACCESSORY_NATIVE_ID}
+        />
+        {symbol === BTC && <WBTCCafeAddress amount={fromAmount} />}
+      </>
     );
   };
 
