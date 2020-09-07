@@ -648,3 +648,17 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   if (!addressMixedCase) return null;
   return ensRegistry[addressMixedCase];
 };
+
+export const hitslop10 = {
+  top: 10,
+  bottom: 10,
+  left: 10,
+  right: 10,
+};
+
+export const hitslopFull = {
+  top: getDeviceHeight(),
+  bottom: getDeviceHeight(),
+  left: getDeviceWidth(),
+  right: getDeviceWidth(),
+};
