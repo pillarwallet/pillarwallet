@@ -19,7 +19,6 @@
 */
 
 import { Alert } from 'react-native';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
@@ -58,7 +57,7 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
     // NOTE: actions (hosts) are parsed in lowercase
     switch (action) {
       case 'referral':
-        const referralCode = get(query, 'code');
+        const referralCode = query?.code;
         if (referralCode) {
           updateNavigationLastScreenState({
             lastActiveScreen: CONFIRM_CLAIM,
@@ -69,9 +68,9 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
         }
         break;
       case 'wc':
-        let walletConnectUrl = get(query, 'url');
+        let walletConnectUrl = query?.url || query?.uri;
         if (walletConnectUrl) {
-          const key = get(query, 'key');
+          const key = query?.key;
           if (key) walletConnectUrl += `&key=${key}`;
           dispatch(requestSessionAction(walletConnectUrl));
         }
