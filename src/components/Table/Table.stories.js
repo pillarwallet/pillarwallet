@@ -40,6 +40,10 @@ storiesOf('Table', module).add('default', () => (
         <BaseText big positive>Some weird component</BaseText>
       </TableRow>
       <BaseText large negative>Even weirder component</BaseText>
+      <TableRow>
+        <TableLabel>Four</TableLabel>
+        <TableAmount amount="12,320.56" />
+      </TableRow>
     </Table>
   </Wrapper>
 ));

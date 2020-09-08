@@ -34206,6 +34206,84 @@ exports[`Storyshots Table default 1`] = `
     >
       Even weirder component
     </Text>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        Four
+      </Text>
+      <View
+        style={
+          Array [
+            Object {
+              "flexDirection": "row",
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          12,320.56
+        </Text>
+      </View>
+    </View>
   </View>
 </View>
 `;

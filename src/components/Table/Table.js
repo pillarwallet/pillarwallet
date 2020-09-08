@@ -27,7 +27,7 @@ import { Spacing } from 'components/Layout';
 
 type TableAmountProps = {
   amount: string,
-  fiatAmount: string,
+  fiatAmount?: string,
 };
 
 type TableProps = {
@@ -66,8 +66,12 @@ export const TableAmount = ({ amount, fiatAmount }: TableAmountProps) => {
   return (
     <AmountContainer>
       <BaseText regular>{amount}</BaseText>
-      <Spacing w={4} />
-      <BaseText regular secondary>{fiatAmount}</BaseText>
+      {fiatAmount && (
+        <>
+          <Spacing w={4} />
+          <BaseText regular secondary>{fiatAmount}</BaseText>
+        </>
+      )}
     </AmountContainer>
   );
 };
