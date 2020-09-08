@@ -23,7 +23,6 @@ import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 import { requestSessionAction } from 'actions/walletConnectActions';
-import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
 
 // constants
 import { CONFIRM_CLAIM } from 'constants/navigationConstants';
@@ -38,13 +37,8 @@ import { validateDeepLink } from 'utils/deepLink';
 import type { Dispatch } from 'reducers/rootReducer';
 
 
-export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) => {
+export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
-    // make sure a deeplink is only handled once
-    if (onAppLaunch) {
-      dispatch(initialDeeplinkExecuted());
-    }
-
     const validatedDeepLink = validateDeepLink(deepLink);
     if (isEmpty(validatedDeepLink)) return;
     const { action, query, protocol } = validatedDeepLink;

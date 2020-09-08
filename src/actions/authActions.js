@@ -86,7 +86,7 @@ import {
   updatePinAttemptsAction,
 } from './walletActions';
 import { fetchSmartWalletTransactionsAction } from './historyActions';
-import { setAppThemeAction } from './appSettingsActions';
+import { setAppThemeAction, initialDeeplinkExecutedAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
@@ -318,10 +318,11 @@ export const loginAction = (
 
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()
-          .then(url => setTimeout(() => {
-            if (url) dispatch(executeDeepLinkAction(url, true));
-          }, 500))
+          .then(url => {
+            if (url) dispatch(executeDeepLinkAction(url));
+          })
           .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e));
+        dispatch(initialDeeplinkExecutedAction());
       }
       navigate(navigateToAppAction);
     } catch (e) {
