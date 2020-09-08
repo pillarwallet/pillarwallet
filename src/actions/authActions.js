@@ -318,9 +318,9 @@ export const loginAction = (
 
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()
-          .then(url => {
+          .then(url => setTimeout(() => {
             if (url) dispatch(executeDeepLinkAction(url, true));
-          })
+          }, 500))
           .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e));
       }
       navigate(navigateToAppAction);
