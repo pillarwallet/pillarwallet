@@ -33985,6 +33985,231 @@ exports[`Storyshots Selector with horizontal options 1`] = `
 </View>
 `;
 
+exports[`Storyshots Table default 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "justifyContent": "center",
+        "paddingBottom": 30,
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "paddingTop": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "borderColor": "#EBF0F6",
+          "borderRadius": 4,
+          "borderWidth": 1,
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        One
+      </Text>
+      <View
+        style={
+          Array [
+            Object {
+              "flexDirection": "row",
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          regular={true}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          12,320.56 PLR
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "height": 0,
+                "width": 4,
+              },
+              undefined,
+            ]
+          }
+          w={4}
+        />
+        <Text
+          regular={true}
+          secondary={true}
+          style={
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          $262.45
+        </Text>
+      </View>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        Two
+      </Text>
+      <Text
+        big={true}
+        positive={true}
+        style={
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 18,
+              "lineHeight": 28,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+      >
+        Some weird component
+      </Text>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      large={true}
+      negative={true}
+      style={
+        Array [
+          Object {
+            "color": "#BD573A",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Even weirder component
+    </Text>
+  </View>
+</View>
+`;
+
 exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
 <View
   style={
