@@ -24,14 +24,15 @@ import { getEnv } from 'configs/envConfig';
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
-export function rampWidgetUrl(address: string, email?: string) {
+export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean) {
   const params = {
-    swapAsset: 'PLR', // This turns on the ability to purchase PLR
+    swapAsset: plrMode ? 'PLR' : null, // This turns on the ability to purchase PLR
     hostApiKey: getEnv().RAMPNETWORK_API_KEY,
     userAddress: address,
     ...(email ? { userEmailAddress: email } : {}),
   };
 
+  console.log('Launching:', `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`);
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 
