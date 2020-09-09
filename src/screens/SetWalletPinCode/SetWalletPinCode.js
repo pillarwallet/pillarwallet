@@ -103,7 +103,7 @@ class SetWalletPinCode extends React.Component<Props, State> {
     const { navigation, importedWallet } = this.props;
     const username = navigation.getParam('username', '');
     let welcomeText = t('auth:title.welcomeToPillar');
-    if (username) welcomeText += `,\n${username}`;
+    if (username) welcomeText = t('auth:title.welcomeToPillarUser', { user: username });
 
     return (
       <ContainerWithHeader

@@ -28,7 +28,7 @@ const STORAGE_SETTINGS_KEY = 'storageSettings';
 
 function Storage(name: string) {
   this.name = name;
-  this.prefix = `wallet-storage:${this.name}:`;
+  this.prefix = `wallet-storage:${this.name}:`; // eslint-disable-line i18next/no-literal-string
   this.activeDocs = {};
 }
 

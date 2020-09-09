@@ -227,6 +227,7 @@ class AaveService {
   }
 
   fetchAccountDepositAndWithdrawTransactions(accountAddress: string): Promise<Object> {
+    /* eslint-disable i18next/no-literal-string */
     const query = `
       {
         deposits (orderBy: timestamp, orderDirection: desc, where: {
@@ -251,6 +252,7 @@ class AaveService {
         }
       }
     `;
+    /* eslint-enable i18next/no-literal-string */
     return callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query);
   }
 

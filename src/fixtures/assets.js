@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
+
 export const initialAssets = [
   {
     address: '0x1585936b53834b021f68CC13eEeFdEc2EfC8e724',

@@ -50,3 +50,14 @@ export const SESSION_APPROVAL_ERROR = 'SESSION_APPROVAL_ERROR';
 export const SESSION_REJECTION_ERROR = 'SESSION_REJECTION_ERROR';
 export const WALLETCONNECT_INIT_ERROR = 'WALLETCONNECT_INIT_ERROR';
 export const TOGGLE_WALLET_CONNECT_PROMO_CARD = 'TOGGLE_WALLET_CONNECT_PROMO_CARD';
+
+export const PERSONAL_SIGN = 'personal_sign';
+export const ETH_SEND_TX = 'eth_sendTransaction';
+export const ETH_SIGN_TX = 'eth_signTransaction';
+
+export const REQUEST_TYPE = {
+  CALL: 'call',
+  MESSAGE: 'message',
+  TRANSACTION: 'transaction',
+  UNSUPPORTED: 'unsupported',
+};

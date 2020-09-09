@@ -73,7 +73,7 @@ class SendTokenConfirm extends React.Component<Props> {
       gasToken,
     } = navigation.getParam('transactionPayload', {});
 
-    const feeDisplayValue = txFeeInWei === 0 ? 'free' : formatTransactionFee(txFeeInWei, gasToken);
+    const feeDisplayValue = txFeeInWei === 0 ? t('label.fee') : formatTransactionFee(txFeeInWei, gasToken);
 
     const reviewData = [
       {

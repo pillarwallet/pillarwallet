@@ -221,8 +221,8 @@ class AssetSearch extends React.Component<Props, State> {
     });
 
     const sections = [];
-    if (addedAssets.length) sections.push({ title: 'ADDED TOKENS', data: addedAssets, extraData: assets });
-    if (foundAssets.length) sections.push({ title: 'FOUND TOKENS', data: foundAssets, extraData: assets });
+    if (addedAssets.length) sections.push({ data: addedAssets, extraData: assets });
+    if (foundAssets.length) sections.push({ data: foundAssets, extraData: assets });
 
     const renderItem = ({ item: asset }) => {
       const {

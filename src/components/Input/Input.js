@@ -25,6 +25,7 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // $FlowFixMe
 const Input = React.forwardRef(({ theme, ...props }, ref) => {
+  // eslint-disable-next-line i18next/no-literal-string
   const keyboardAppearance = theme.current === DARK_THEME ? 'dark' : 'light';
   return <RNInput ref={ref} keyboardAppearance={keyboardAppearance} {...props} />;
 });

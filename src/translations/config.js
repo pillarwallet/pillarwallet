@@ -20,6 +20,7 @@
 
 export const DEFAULT_LANGUAGE = 'en';
 export const SUPPORTED_LANGUAGES = ['en'];
+export const DEV_LANG = 'dev';
 
 export const DEFAULT_NAMESPACE = 'common';
 export const NAMESPACES = ['common', 'auth'];

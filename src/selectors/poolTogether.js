@@ -21,6 +21,8 @@
 import { getWinChance } from 'utils/poolTogether';
 import { formatAmount, countDownDHMS } from 'utils/common';
 import { createSelector } from 'reselect';
+import t from 'translations/translate';
+
 import { poolTogetherStatsSelector } from './selectors';
 
 export const poolTogetherUserStatsSelector = createSelector(
@@ -39,9 +41,9 @@ export const poolTogetherUserStatsSelector = createSelector(
 
       let remainingTime;
       if (days === 0 && hours === 0 && minutes === 0) {
-        remainingTime = 'Ending soon';
+        remainingTime = t('label.endingSoon');
       } else {
-        remainingTime = `In ${days}d ${hours}h ${minutes}m`;
+        remainingTime = t('inTimeDaysHoursMinutes', { days, hours, minutes });
       }
 
       let userTickets = 0;
@@ -49,7 +51,7 @@ export const poolTogetherUserStatsSelector = createSelector(
         userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
       }
       const winChanceRaw = getWinChance(userTickets, totalPoolTicketsCount);
-      const winChance = `${formatAmount(winChanceRaw, 6)} %`;
+      const winChance = t('percentValue', { value: formatAmount(winChanceRaw, 6) });
 
       return {
         symbol,

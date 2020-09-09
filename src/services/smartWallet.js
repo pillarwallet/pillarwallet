@@ -31,10 +31,12 @@ import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
+
 import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 
 // utils
 import { addressesEqual } from 'utils/assets';
@@ -260,7 +262,7 @@ class SmartWallet {
     estimate?: sdkInterfaces.IEstimatedAccountDeployment,
   ): Promise<{ error?: string, deployTxHash?: string }> {
     const deployEstimate = estimate || await this.estimateAccountDeployment().catch(this.handleError);
-    if (!deployEstimate) return { error: 'reverted' };
+    if (!deployEstimate) return { error: SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED };
 
     return this.getSdk().deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))

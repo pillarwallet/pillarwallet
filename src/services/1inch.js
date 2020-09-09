@@ -73,6 +73,7 @@ export const get1inchOffer = async (
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
 
   const url =
+    // eslint-disable-next-line i18next/no-literal-string
     `${EXCHANGE_URL}/quote?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}&amount=${amount}`;
 
   const response = await getResponseData(url);
@@ -103,9 +104,11 @@ export const create1inchOrder = async (
 ): Promise<Object> => {
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
 
+  /* eslint-disable i18next/no-literal-string */
   const url =
     `${EXCHANGE_URL}/swap?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}` +
     `&amount=${amount}&disableEstimate=true&slippage=3&fromAddress=${clientSendAddress}`;
+  /* eslint-enable i18next/no-literal-string */
 
   const response = await getResponseData(url);
   if (!response) return null;
@@ -134,6 +137,7 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     return null;
   }
 
+  /* eslint-disable i18next/no-literal-string */
   const abiFunction = [{
     name: 'approve',
     outputs: [{ type: 'bool', name: 'out' }],
@@ -143,6 +147,7 @@ export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAdd
     type: 'function',
     gas: 38769,
   }];
+  /* eslint-enable i18next/no-literal-string */
 
   const encodedContractFunction = encodeContractMethod(
     abiFunction,

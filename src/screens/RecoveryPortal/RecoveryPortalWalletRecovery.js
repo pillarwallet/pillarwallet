@@ -51,12 +51,14 @@ const RecoveryPortalWalletRecovery = ({
 
   const onWebViewMessage = (message) => {
     if (!webViewRef || message?.nativeEvent?.data !== 'getRecoveryDeviceAddress' || !temporaryWallet) return;
+    /* eslint-disable i18next/no-literal-string */
     webViewRef.injectJavaScript(`
       var event = new CustomEvent("recoveryDeviceAddressAdded", {
         detail: { address: "${temporaryWallet.address}" }
       });
       document.dispatchEvent(event);
     `);
+    /* eslint-enable i18next/no-literal-string */
   };
 
   return (

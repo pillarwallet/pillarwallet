@@ -326,7 +326,7 @@ export const loginAction = (
       }
       navigate(navigateToAppAction);
     } catch (e) {
-      reportLog(`An error occured whilst trying to complete auth actions: ${e.errorMessage}`, e);
+      reportLog(`An error occurred whilst trying to complete auth actions: ${e.errorMessage}`, e);
 
       dispatch(updatePinAttemptsAction(true));
       dispatch({

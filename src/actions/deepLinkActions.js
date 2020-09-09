@@ -65,7 +65,7 @@ export const executeDeepLinkAction = (deepLink: string) => {
         let walletConnectUrl = query?.url || query?.uri;
         if (walletConnectUrl) {
           const key = query?.key;
-          if (key) walletConnectUrl += `&key=${key}`;
+          if (key) walletConnectUrl += `&key=${key}`; // eslint-disable-line i18next/no-literal-string
           dispatch(requestSessionAction(walletConnectUrl));
         }
         break;
