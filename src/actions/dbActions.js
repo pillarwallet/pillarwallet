@@ -30,7 +30,7 @@ export const saveDbAction = (
   forceRewrite: boolean = false,
 ): DbAction => ({
   type: UPDATE_DB,
-  queue: 'db',
+  queue: 'db', // eslint-disable-line i18next/no-literal-string
   callback: (next: () => void) => {
     storage.save(key, data, forceRewrite)
       .then(() => next()) // eslint-disable-line

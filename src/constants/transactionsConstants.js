@@ -17,18 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import axios from 'axios';
-import { reportLog } from 'utils/common';
 
-
-export const callSubgraph = (subgraphName: string, query: string) => {
-  // eslint-disable-next-line i18next/no-literal-string
-  const url = `https://api.thegraph.com/subgraphs/name/${subgraphName}`;
-  return axios
-    .post(url, { query }, { timeout: 5000 })
-    .then(({ data: response }) => response.data)
-    .catch((error) => {
-      reportLog(`The Graph subgraph "${subgraphName}" API call failed`, { error, query });
-      return null;
-    });
+export const ERROR_TYPE = {
+  CANT_BE_TRANSFERRED: 'can not be transferred',
+  NOT_OWNED: 'is not owned',
+  TRANSACTION_UNDERPRISED: 'transaction underpriced',
+  REPLACEMENT_TRANSACTION_UNDERPRISED: 'replacement transaction underpriced',
 };

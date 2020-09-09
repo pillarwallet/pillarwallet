@@ -11,6 +11,7 @@ export async function migrate(collection: string, storageData: Object, dispatch:
   let key = collection;
   let data;
 
+  /* eslint-disable i18next/no-literal-string */
   switch (collection) {
     case 'app_settings':
       data = await loadAndMigrateAppSettings(storageData, dispatch);
@@ -43,6 +44,7 @@ export async function migrate(collection: string, storageData: Object, dispatch:
 
     default: break;
   }
+  /* eslint-enable i18next/no-literal-string */
 
   return {
     ...storageData,

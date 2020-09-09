@@ -37,7 +37,9 @@ const SeparatorValue = styled(Paragraph)`
   padding: 0px 8px;
 `;
 
-const ArrowSymbol = () => <SeparatorValue light>&nbsp;&rarr;&nbsp;</SeparatorValue>;
+const ArrowSymbol = () => {
+  return <SeparatorValue light>&nbsp;&rarr;&nbsp;</SeparatorValue>; // eslint-disable-line i18next/no-literal-string
+};
 
 class ExchangeReceiveExplained extends React.Component<Props> {
   assetSymbol: string;

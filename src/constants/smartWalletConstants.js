@@ -39,6 +39,7 @@ export const SMART_WALLET_UPGRADE_STATUSES = {
 export const SMART_WALLET_DEPLOYMENT_ERRORS = {
   SDK_ERROR: 'SDK_ERROR',
   INSUFFICIENT_FUNDS: 'INSUFFICIENT_FUNDS',
+  REVERTED: 'reverted',
 };
 export const PAYMENT_COMPLETED = get(sdkConstants, 'AccountPaymentStates.Completed', '');
 export const PAYMENT_PROCESSED = get(sdkConstants, 'AccountPaymentStates.Processed', '');

@@ -20,10 +20,11 @@
 import WalletConnect from '@walletconnect/react-native';
 import type { IWalletConnectOptions } from '@walletconnect/react-native';
 
+/* eslint-disable i18next/no-literal-string */
 const getNativeOptions = () => {
   const nativeOptions = {
     clientMeta: {
-      name: 'Pillar Wallet ',
+      name: 'Pillar Wallet',
       description: 'Social. Secure. Intuitive.',
       url: 'https://pillarproject.io/wallet',
       icons: [
@@ -34,6 +35,7 @@ const getNativeOptions = () => {
 
   return nativeOptions;
 };
+/* eslint-enable i18next/no-literal-string */
 
 export const createConnector = (options: IWalletConnectOptions): WalletConnect => {
   const nativeOptions = getNativeOptions();

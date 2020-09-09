@@ -58,6 +58,8 @@ import EthplorerSdk from './EthplorerSdk';
 import { getLimitedData } from './opensea';
 
 
+const ERROR = 'error';
+const LOCATION_NOT_SUPPORTED = 'Location not supported';
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
@@ -303,14 +305,14 @@ class SDKWrapper {
         walletId,
       }))
       .then(({ data }) => data)
-      .catch(() => ({ result: 'error' }));
+      .catch(() => ({ result: ERROR }));
   }
 
   sendReferralInvitation(params: SendReferralInvitationParams) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', error }));
+      .catch((error) => ({ result: ERROR, error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -445,6 +447,7 @@ class SDKWrapper {
       .catch(() => []);
   }
 
+  /* eslint-disable i18next/no-literal-string */
   fetchCollectibles(walletAddress: string) {
     if (!walletAddress) return Promise.resolve({ assets: [] });
     const url = `${getEnv().OPEN_SEA_API}/assets/?owner=${walletAddress}` +
@@ -455,10 +458,11 @@ class SDKWrapper {
       .then(response => ({ assets: response }))
       .catch(() => ({ error: true }));
   }
+  /* eslint-enable i18next/no-literal-string */
 
   fetchCollectiblesTransactionHistory(walletAddress: string) {
-    const url =
-      `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+    // eslint-disable-next-line i18next/no-literal-string, max-len
+    const url = `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
     return Promise.resolve()
       .then(() => axios.get(url, {
         ...defaultAxiosRequestConfig,
@@ -700,6 +704,7 @@ class SDKWrapper {
 
   getAddressErc20TokensInfo(walletAddress: string) {
     if (getEnv().NETWORK_PROVIDER !== 'homestead') {
+      // eslint-disable-next-line i18next/no-literal-string
       const url = `https://blockchainparser.appspot.com/${getEnv().NETWORK_PROVIDER}/${walletAddress}/`;
       return Promise.resolve()
         .then(() => axios.get(url, defaultAxiosRequestConfig))
@@ -781,7 +786,7 @@ class SDKWrapper {
         const { response: { status, data } } = error;
 
         if (status === 400) return true;
-        if (status === 403 && data.message === 'Location not supported') return false;
+        if (status === 403 && data.message === LOCATION_NOT_SUPPORTED) return false;
 
         // Any other type of error is unexpected and will be reported as usual.
         reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);

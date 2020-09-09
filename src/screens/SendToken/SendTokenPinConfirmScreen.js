@@ -56,7 +56,7 @@ class SendTokenPinConfirmScreen extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     const { navigation } = props;
-    const transactionPayload = navigation.getParam('transactionPayload', {});
+    const transactionPayload = navigation.getParam('transactionPayload', { });
     this.source = navigation.getParam('source', '');
     this.goBackDismiss = navigation.getParam('goBackDismiss', false);
     this.state = {

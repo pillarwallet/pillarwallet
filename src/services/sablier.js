@@ -104,6 +104,7 @@ export const getSablierWithdrawTransaction = (
 };
 
 export const fetchUserStreams = async (accountAddress: string) => {
+  /* eslint-disable i18next/no-literal-string */
   const query = `
     {
       outgoingStreams: streams(where: {
@@ -182,6 +183,8 @@ export const fetchUserStreams = async (accountAddress: string) => {
       }
     }
   `;
+  /* eslint-enable i18next/no-literal-string */
+
   return callSubgraph(getEnv().SABLIER_SUBGRAPH_NAME, query);
 };
 

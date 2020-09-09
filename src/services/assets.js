@@ -23,6 +23,7 @@ import { getEnv } from 'configs/envConfig';
 
 // constants
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ERROR_TYPE } from 'constants/transactionsConstants';
 
 // utils
 import { getEthereumProvider, isCaseInsensitiveMatch, parseTokenBigNumberAmount, reportLog } from 'utils/common';
@@ -133,6 +134,7 @@ export async function transferERC20(options: ERC20TransferOptions) {
   return { signedHash, value: contractAmount };
 }
 
+/* eslint-disable i18next/no-literal-string */
 export function getERC721ContractTransferMethod(code: any, isReceiverContractAddress: boolean): string {
   /**
    * sending to contract with "safeTransferFrom" will fail if contract doesn't have
@@ -161,6 +163,7 @@ export function getERC721ContractTransferMethod(code: any, isReceiverContractAdd
   }
   return '';
 }
+/* eslint-enable i18next/no-literal-string */
 
 export const getContractMethodAbi = (
   contractAbi: Object[],
@@ -241,7 +244,7 @@ export async function transferERC721(options: ERC721TransferOptions) {
     contractAddress,
     tokenId,
   });
-  return { error: 'can not be transferred', noRetry: true };
+  return { error: ERROR_TYPE.CANT_BE_TRANSFERRED, noRetry: true };
 }
 
 export async function transferETH(options: ETHTransferOptions) {

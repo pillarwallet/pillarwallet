@@ -181,7 +181,7 @@ const WithdrawTransactionConfirm = ({
           source={aaveImage}
           resizeMode="contain"
         />
-        <BaseText fontSize={15}>Aave Deposit</BaseText>
+        <BaseText fontSize={15}>{t('aaveDeposit')}</BaseText>
         <CachedImage
           style={{ width: 17, height: 41, marginTop: spacing.small }}
           source={arrowDownGrey}

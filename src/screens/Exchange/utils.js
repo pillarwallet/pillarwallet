@@ -78,19 +78,22 @@ export const getFormattedBalanceInFiat = (
 
 export const getAvailable = (_min: string, _max: string, rate: string) => {
   if (!_min && !_max) {
-    return 'N/A';
+    return t('label.notApplicable');
   }
   let min = (new BigNumber(rate)).multipliedBy(_min);
   let max = (new BigNumber(rate)).multipliedBy(_max);
   if ((min.gte(0) && min.lt(0.01)) || (max.gte(0) && max.lt(0.01))) {
-    if (max.isZero()) return '>0.01';
+    if (max.isZero()) return t('moreThanSignValue', { value: '0.01' });
     const maxAvailable = max.lt(0.01)
-      ? '<0.01'
+      ? t('lessThanSignValue', { value: '0.01' })
       : formatMoney(max.toNumber(), 2);
     return min.eq(max) || min.isZero()
       // max available displayed if equal to min or min is zero
       ? maxAvailable
-      : '<0.01 - <0.01';
+      : t('rangeValues', {
+        fromValue: t('lessThanSignValue', { value: '0.01' }),
+        toValue: t('lessThanSignValue', { value: '0.01' }),
+      });
   }
   min = min.toNumber();
   max = max.toNumber();
@@ -194,7 +197,7 @@ const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPU
 const generateHorizontalOptions = (assetsOptionsBuying: Option[]): HorizontalOption[] => {
   const popularOptions = generatePopularOptions(assetsOptionsBuying);
   return [{
-    title: 'Popular',
+    title: t('label.popular'),
     data: popularOptions,
   }];
 };
@@ -234,7 +237,7 @@ export const getHeaderRightItems = (
   navigation: NavigationScreenProp<*>,
   markNotificationAsSeen: () => void,
 ): Object[] => {
-  const rightItems = [{ label: 'Support', onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
+  const rightItems = [{ label: t('button.support'), onPress: () => Intercom.displayMessenger(), key: 'getHelp' }];
   if (!isEmpty(exchangeAllowances)
     && !rightItems.find(({ key }) => key === 'exchangeSettings')) {
     rightItems.push({

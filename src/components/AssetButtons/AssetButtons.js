@@ -43,6 +43,7 @@ const AssetButtonsWrapper = styled.View`
 `;
 
 const AssetButtons = (props: Props) => {
+  // eslint-disable-next-line i18next/no-literal-string
   const showButtons = props.showButtons || ['send', 'receive', 'exchange'];
   const showSend = showButtons.includes('send');
   const showReceive = showButtons.includes('receive');

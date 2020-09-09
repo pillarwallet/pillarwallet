@@ -312,10 +312,12 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     );
 
     if (this.isKovanNetwork) {
+      /* eslint-disable i18next/no-literal-string */
       reviewData.push({
         label: 'Balance in Rinkeby ETH (visible in dev and staging while on Kovan)',
         value: `${rinkebyETH} ETH`,
       });
+      /* eslint-enable i18next/no-literal-string */
     }
 
     return (

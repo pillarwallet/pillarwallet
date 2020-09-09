@@ -20,10 +20,7 @@
 import urlTools from 'url';
 import isEmpty from 'lodash.isempty';
 
-const allowedDeepLinkProtocols = [
-  'pillarwallet:',
-  'wc:',
-];
+const allowedDeepLinkProtocols = ['pillarwallet:', 'wc:']; // eslint-disable-line i18next/no-literal-string
 
 type ParsedDeepLink = {
   action?: string,

@@ -165,7 +165,7 @@ const SearchInput = (props: SearchInputProps) => {
   const { icon, style: iconStyle = {}, onPress } = iconProps;
   const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
   const onIconPress = onPress || defaultOnIconPress;
-  const iconName = icon || 'search';
+  const iconName = icon || 'search'; // eslint-disable-line i18next/no-literal-string
 
   return (
     <InputWrapper

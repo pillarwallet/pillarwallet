@@ -49,10 +49,7 @@ const statusText = (props: Props) => {
 
   const destination = user[field];
   if (isEmpty(destination)) {
-    return t([
-      `error.noField.${field}`,
-      'error.noField.default',
-    ]);
+    return t([`error.noField.${field}`, 'error.noField.default']);
   }
 
   if (sendingOneTimePassword) {

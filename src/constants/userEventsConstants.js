@@ -26,3 +26,9 @@ export const PPN_INIT_EVENT = 'PPN_INIT_EVENT';
 export const WALLET_CREATE_EVENT = 'WALLET_CREATE_EVENT';
 export const WALLET_IMPORT_EVENT = 'WALLET_IMPORT_EVENT';
 export const WALLET_BACKUP_EVENT = 'WALLET_BACKUP_EVENT';
+
+export const WALLET_CREATED = 'Wallet created';
+export const KEY_WALLET = 'Key wallet';
+export const PILLAR_NETWORK = 'Pillar Network';
+export const SMART_WALLET_CREATED = 'Smart Wallet created';
+export const UNKNOWN_EVENT = 'Unknown event';

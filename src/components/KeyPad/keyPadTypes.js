@@ -49,7 +49,7 @@ const getPincode = (props: Object): KeyPadButton[] => {
     } : { label: '', value: '' },
     { label: '0', value: '0' },
     {
-      label: '⌫',
+      label: '⌫', // eslint-disable-line i18next/no-literal-string
       value: KEYPAD_BUTTON_DELETE,
       type: 'image',
       image: backspaceIMG,
@@ -65,7 +65,7 @@ const getNumeric = (): KeyPadButton[] => {
     { label: '.', value: KEYPAD_BUTTON_DOT },
     { label: '0', value: '0' },
     {
-      label: '⌫',
+      label: '⌫', // eslint-disable-line i18next/no-literal-string
       value: KEYPAD_BUTTON_DELETE,
       type: 'image',
       image: backspaceIMG,

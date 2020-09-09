@@ -337,7 +337,7 @@ export const deploySmartWalletAction = () => {
 
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
-      if (error && error === 'reverted') {
+      if (error && error === SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED) {
         Toast.show({
           message: t('toast.smartWalletActivationUnavailable'),
           emoji: 'hushed',
@@ -578,9 +578,11 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     const transactionTypes = get(sdkConstants, 'AccountTransactionTypes', {});
 
     if (!ACCOUNT_DEVICE_UPDATED || !ACCOUNT_TRANSACTION_UPDATED || !TRANSACTION_COMPLETED) {
+      /* eslint-disable i18next/no-literal-string */
       let path = 'sdkModules.Api.EventNames.AccountDeviceUpdated';
       if (!ACCOUNT_TRANSACTION_UPDATED) path = 'sdkModules.Api.EventNames.AccountTransactionUpdated';
       if (!TRANSACTION_COMPLETED) path = 'sdkConstants.AccountTransactionStates.Completed';
+      /* eslint-enable i18next/no-literal-string */
       reportLog('Missing Smart Wallet SDK constant', { path });
     }
 
@@ -680,7 +682,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
           const aaveTokenAddresses = await aaveService.getAaveTokenAddresses();
 
           let notificationMessage;
-          let toastEmoji = 'ok_hand';
+          let toastEmoji = 'ok_hand'; // eslint-disable-line i18next/no-literal-string
 
           if ([transactionTypes.TopUp, transactionTypes.Withdrawal].includes(txType)) {
             const tokenValue = get(event, 'payload.tokenValue');
@@ -722,7 +724,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               notificationMessage = t('toast.sablierWithdraw', { assetName: assetData.name, assetSymbol: symbol });
             } else if (txFromHistory?.tag === SABLIER_CANCEL_STREAM) {
               notificationMessage = t('toast.sablierCancelStream');
-              toastEmoji = 'x';
+              toastEmoji = 'x'; // eslint-disable-line i18next/no-literal-string
             }
             dispatch(fetchUserStreamsAction());
           } else if (addressesEqual(activeAccountAddress, txSenderAddress)) {

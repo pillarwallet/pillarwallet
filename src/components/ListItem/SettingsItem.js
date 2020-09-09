@@ -22,6 +22,8 @@ import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { Badge as NBBadge } from 'native-base';
+import t from 'translations/translate';
+
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import NativeTouchable from 'components/NativeTouchable';
@@ -218,7 +220,7 @@ class SettingsListItem extends React.Component<Props> {
       if (value) {
         processedValue = value;
       } else if (value === '' || value === null) {
-        processedValue = 'Set';
+        processedValue = t('label.set');
       } else {
         processedValue = '';
       }
