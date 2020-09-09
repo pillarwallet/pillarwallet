@@ -160,7 +160,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: 'Review' }] }}
+        headerProps={{ centerItems: [{ title: t('poolTogetherContent.title.purchaseConfirmScreen') }] }}
       >
         <ScrollWrapper
           refreshControl={
@@ -178,7 +178,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               fromValue={tokenValue}
               fromAssetCode={poolToken}
               toValue={tokenValue}
-              toAssetCode={tokenValue === 1 ? 'ticket' : 'tickets'}
+              toAssetCode={t('ticket', { count: tokenValue })}
               imageSource={poolTogetherLogo}
             />
             <ContentRow>

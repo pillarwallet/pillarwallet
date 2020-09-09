@@ -26,12 +26,13 @@ import {
   REMOVE_FROM_QUEUE,
   OFFLINE_API_CALL,
   START_OFFLINE_QUEUE,
+  OFFLINE_QUEUE,
 } from 'constants/offlineQueueConstants';
 import { makeApiCall } from 'actions/offlineApiActions';
 import { saveDbAction } from 'actions/dbActions';
 
 const middlewareConfig = {
-  stateName: 'offlineQueue',
+  stateName: OFFLINE_QUEUE,
   additionalTriggers: [START_OFFLINE_QUEUE],
 };
 
@@ -50,7 +51,7 @@ function fireQueuedActions(queue, dispatch, getState) {
         .then(() => {
           dispatch({ type: REMOVE_FROM_QUEUE, payload: actionInQueue });
           const currentQueue = get(getState(), [stateName, 'queue'], []);
-          dispatch(saveDbAction('offlineQueue', { offlineQueue: currentQueue }, true));
+          dispatch(saveDbAction(OFFLINE_QUEUE, { offlineQueue: currentQueue }, true));
         })
         .catch(() => null);
     }
@@ -114,7 +115,7 @@ export default function offlineMiddleware({ getState, dispatch }: Object): any {
     dispatch(actionToQueue);
 
     const { queue } = get(getState(), stateName);
-    dispatch(saveDbAction('offlineQueue', { offlineQueue: queue }, true));
+    dispatch(saveDbAction(OFFLINE_QUEUE, { offlineQueue: queue }, true));
 
     return next(action);
   };

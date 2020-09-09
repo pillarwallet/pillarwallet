@@ -64,7 +64,7 @@ export async function getSaltedPin(pin: string, dispatch: Function): Promise<str
 
 export function normalizeWalletAddress(walletAddress: string): string {
   if (walletAddress.indexOf('0x') !== 0) {
-    walletAddress = `0x${walletAddress}`;
+    walletAddress = `0x${walletAddress}`; // eslint-disable-line i18next/no-literal-string
   }
   return walletAddress;
 }

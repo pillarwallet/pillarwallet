@@ -28,6 +28,7 @@ import { BigNumber } from 'bignumber.js';
 import ROUTER_ABI from 'abi/uniswapRouter.json';
 import { isProdEnv } from 'utils/environment';
 import { encodeContractMethod } from 'services/assets';
+import { ETH } from 'constants/assetsConstants';
 
 import type { Asset } from 'models/Asset';
 
@@ -66,7 +67,7 @@ export const getAskRate = (trade: Trade): string => {
 
 export const parseAssets = (assets: Asset[]) => {
   assets.forEach(asset => {
-    asset.address = toChecksumAddress(asset.symbol === 'ETH' ? WETH[chainId]?.address : asset.address);
+    asset.address = toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address);
     asset.code = asset.symbol;
   });
 };
@@ -92,10 +93,10 @@ export const swapExactTokensToTokens = (
   toAssetAddress: string,
   deadline: string,
 ): string => {
-  const functionName = 'swapExactTokensForTokensSupportingFeeOnTransferTokens';
+  const FUNCTION_NAME = 'swapExactTokensForTokensSupportingFeeOnTransferTokens';
   const encodedContractFunction = encodeContractMethod(
     ROUTER_ABI,
-    functionName,
+    FUNCTION_NAME,
     [
       quantityIn,
       outputMin,
@@ -114,10 +115,10 @@ export const swapExactTokensToEth = (
   toAssetAddress: string,
   deadline: string,
 ): string => {
-  const functionName = 'swapExactTokensForETHSupportingFeeOnTransferTokens';
+  const FUNCTION_NAME = 'swapExactTokensForETHSupportingFeeOnTransferTokens';
   const encodedContractFunction = encodeContractMethod(
     ROUTER_ABI,
-    functionName,
+    FUNCTION_NAME,
     [
       quantityIn,
       outputMin,
@@ -135,10 +136,10 @@ export const swapExactEthToTokens = (
   toAssetAddress: string,
   deadline: string,
 ): string => {
-  const functionName = 'swapExactETHForTokensSupportingFeeOnTransferTokens';
+  const FUNCTION_NAME = 'swapExactETHForTokensSupportingFeeOnTransferTokens';
   const encodedContractFunction = encodeContractMethod(
     ROUTER_ABI,
-    functionName,
+    FUNCTION_NAME,
     [
       outputMin,
       exchangePath,

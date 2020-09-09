@@ -372,7 +372,7 @@ class ImportWallet extends React.Component<Props, State> {
     if (__DEV__) {
       restoreWalletTabs.push({
         id: DEV,
-        name: 'Dev\'s phrase',
+        name: 'Dev\'s phrase', // eslint-disable-line i18next/no-literal-string
         onPress: () => this.setActiveTab(DEV),
       });
     }

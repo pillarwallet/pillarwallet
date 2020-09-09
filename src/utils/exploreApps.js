@@ -1,4 +1,3 @@
-/* eslint-disable quotes */
 // @flow
 /*
     Pillar Wallet: the personal data locker

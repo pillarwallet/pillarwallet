@@ -115,7 +115,7 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
         />
         <ContentContainer>
           <BaseText center regular secondary>
-            Swap tokens on decentralized exchanges, lend &amp; borrow crypto, play games and more
+            {t('walletConnectContent.banner.promoExtended.paragraph')}
           </BaseText>
           <ButtonsContainer>
             {/* <Button small secondary title="Learn more" />

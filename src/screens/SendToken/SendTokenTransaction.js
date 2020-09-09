@@ -55,6 +55,7 @@ import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
+import { ERROR_TYPE } from 'constants/transactionsConstants';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -71,10 +72,10 @@ const animationFailure = require('assets/animations/transactionFailureAnimation.
 
 const getTransactionErrorMessage = (error: string): string => {
   const TRANSACTION_ERRORS = {
-    'transaction underpriced': t('error.transactionFailed.notEnoughGas'),
-    'replacement transaction underpriced': t('error.transactionFailed.notEnoughGas'),
-    'is not owned': t('error.transactionFailed.notOwnedCollectible'),
-    'can not be transferred': t('error.transactionFailed.collectibleCantBeTransferred'),
+    [ERROR_TYPE.TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
+    [ERROR_TYPE.REPLACEMENT_TRANSACTION_UNDERPRISED]: t('error.transactionFailed.notEnoughGas'),
+    [ERROR_TYPE.NOT_OWNED]: t('error.transactionFailed.notOwnedCollectible'),
+    [ERROR_TYPE.CANT_BE_TRANSFERRED]: t('error.transactionFailed.collectibleCantBeTransferred'),
   };
   const transactionFailureText = t('error.transactionFailed.default');
   return TRANSACTION_ERRORS[error] || transactionFailureText;
@@ -198,7 +199,9 @@ class SendTokenTransaction extends React.Component<Props> {
 
   renderSuccessButton = () => {
     const { transactionType } = this.props.navigation.state.params;
-    const successButtonText = transactionType === EXCHANGE ? 'Finish' : 'Magic!';
+    const successButtonText = transactionType === EXCHANGE
+      ? t('button.finish')
+      : t('button.magic', { exclamation: true });
     return (
       <ButtonWrapper>
         <Button onPress={this.handleDismissal} title={successButtonText} />
@@ -212,11 +215,11 @@ class SendTokenTransaction extends React.Component<Props> {
       <FailureButtonsWrapper>
         {!noRetry && (
           <ButtonWrapper>
-            <Button onPress={this.handleNavigationBack} title="Retry" />
+            <Button onPress={this.handleNavigationBack} title={t('button.retry')} />
           </ButtonWrapper>
         )}
         <TouchableOpacity onPress={this.handleDismissal}>
-          <CancelText>Cancel</CancelText>
+          <CancelText>{t('button.cancel')}</CancelText>
         </TouchableOpacity>
       </FailureButtonsWrapper>
     );

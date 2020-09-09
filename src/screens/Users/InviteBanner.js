@@ -91,7 +91,7 @@ const InviteBanner = (props: Props) => {
         <BodyWrapper>
           {!!isReferralActive &&
           <BodyText>
-            Refer friends and earn rewards, free PLR and more.
+            {t('referralsContent.label.referAndGetRewards')}
           </BodyText>}
           <Button
             title={t('button.inviteFriends')}

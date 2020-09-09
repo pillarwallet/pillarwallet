@@ -66,8 +66,7 @@ export const commitSyntheticsTransaction = (transactionId: string, paymentHash: 
     syntheticsService
       .commitTransaction(transactionId, paymentHash)
       .catch(() => {
-        const message = 'Failed to complete synthetic asset transaction';
-        reportLog(message, { transactionId, paymentHash });
+        reportLog('Failed to complete synthetic asset transaction', { transactionId, paymentHash });
         Toast.show({
           message: t('toast.backendProblem'),
           emoji: 'hushed',

@@ -80,7 +80,7 @@ const DirectionIcon = styled(Icon)`
   color: ${({ color }) => color};
   text-align: center;
   font-size: 30px;
-  margin: ${Platform.OS === 'ios' ? '-15px -7px' : '0 0'};
+  margin: ${Platform.OS === 'ios' ? '-15px -7px' : '0'};
 `;
 
 const DirectionIconWrapper = styled.View`
@@ -143,7 +143,7 @@ class SablierStream extends React.Component<Props> {
 
     const isOutgoing = this.isOutgoingStream();
     const progressBarColor = isOutgoing ? colors.negative : colors.positive;
-    const directionIconName = isOutgoing ? 'sent' : 'received';
+    const directionIconName = isOutgoing ? 'sent' : 'received'; // eslint-disable-line i18next/no-literal-string
 
     let streamStatus = '';
     if (streamCanceled) {

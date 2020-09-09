@@ -121,6 +121,8 @@ const FooterWrapper = styled.View`
   background-color: ${themedColors.surface};
 `;
 
+const DEBUG_SKIP = 'debugskip';
+
 class BackupPhraseValidate extends React.Component<Props, State> {
   state = {
     enteredWords: [],
@@ -249,7 +251,7 @@ class BackupPhraseValidate extends React.Component<Props, State> {
                   key="automagical"
                   onPress={this.handlePassedValidation}
                 >
-                  <MnemonicPhraseWordText>debugskip</MnemonicPhraseWordText>
+                  <MnemonicPhraseWordText>{DEBUG_SKIP}</MnemonicPhraseWordText>
                 </MnemonicPhraseWord>
               )}
             </ShuffledWordWrapper>

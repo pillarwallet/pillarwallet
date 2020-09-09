@@ -70,6 +70,7 @@ const TooltipArrow = styled.View`
   ${({ top }) => top || top === 0 ? 'top: 6px;' : ''};
   left: 4px;
 `;
+/* eslint-enable i18next/no-literal-string */
 
 const TooltipBalloon = styled.View`
   background-color: ${({ theme }) => hexToRgba(theme.colors.text, 0.8)};

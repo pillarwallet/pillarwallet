@@ -90,7 +90,7 @@ class SablierStreams extends React.Component<Props, State> {
   renderEmptyState = () => {
     return (
       <EmptyStateContainer>
-        <MediumText center large>Start your first stream</MediumText>
+        <MediumText center large>{t('sablierContent.title.startFirstStream')}</MediumText>
         <Spacing h={40} />
         <Insight
           isVisible
