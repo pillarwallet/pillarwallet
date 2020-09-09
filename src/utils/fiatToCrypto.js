@@ -32,7 +32,6 @@ export function rampWidgetUrl(address: string, email?: string, plrMode?: boolean
     ...(email ? { userEmailAddress: email } : {}),
   };
 
-  console.log('Launching:', `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`);
   return `${getEnv().RAMPNETWORK_WIDGET_URL}?${querystring.stringify(params)}`;
 }
 

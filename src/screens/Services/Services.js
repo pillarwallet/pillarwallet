@@ -220,7 +220,7 @@ class ServicesScreen extends React.Component<Props, State> {
             [
               {
                 text: t('servicesContent.ramp.assetDecisionAlert.actionNonPlr'),
-                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, false)),
+                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email)),
               },
               {
                 text: t('servicesContent.ramp.assetDecisionAlert.actionPlr'),
