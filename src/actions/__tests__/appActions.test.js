@@ -22,17 +22,68 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
+import { CACHE_STATUS } from 'constants/cacheConstants';
+
 import Storage from 'services/storage';
-import { initAppAndRedirectAction } from '../appActions';
+import { initAppAndRedirectAction } from 'actions/appActions';
+import localeConfig from 'configs/localeConfig';
+import { getDefaultLanguage } from 'translations/setup';
 
 const storage = Storage.getInstance('db');
+
+const initialAppSettingsState = {
+  data: {
+    lastTxSyncDatetimes: {},
+    appearanceSettings: {
+      assetsLayout: SIMPLIFIED,
+    },
+    blockchainNetwork: null,
+    baseFiatCurrency: null,
+    transactionSpeed: null,
+    themeType: '',
+    isManualThemeSelection: false,
+    useBiometrics: false,
+    hasSeenExchangeIntro: false,
+    hideBalance: false,
+    hasDismissedConnectAppsIntro: false,
+    hideBadges: false,
+    hidePoolTogether: false,
+    hideSablier: false,
+    preferredGasToken: null,
+    initialDeeplinkExecuted: false,
+    hasSeenRecoveryPortalIntro: false,
+    hideLendingDeposits: false,
+    omitPinOnLogin: false,
+    localisation: null,
+  },
+  isFetched: false,
+};
+
+const initialSessionState = {
+  data: {
+    isOnline: true,
+    fcmToken: '',
+    areTranslationsInitialised: false,
+  },
+};
+
+const initialCacheState = {
+  cacheMap: {},
+};
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {
   let store;
   beforeEach(() => {
-    store = mockStore({});
+    store = mockStore({ appSettings: initialAppSettingsState, session: initialSessionState, cache: initialCacheState });
   });
+
+  const defaultLanguage = getDefaultLanguage();
+  const authTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/auth.json`;
+  const commonTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/common.json`;
+
 
   it(`initAppAndRedirectAction - should trigger the app settings updated 
   with any redirection due to the empty storage`, async () => {
@@ -40,6 +91,11 @@ describe('App actions', () => {
     const expectedActions = [
       { type: RESET_APP_LOADED },
       { type: UPDATE_APP_SETTINGS, payload: {} },
+      { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
+      { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
+      { type: CACHE_STATUS.FAILED, payload: { url: commonTranslationsUrl } },
+      { type: CACHE_STATUS.FAILED, payload: { url: authTranslationsUrl } },
+      { type: UPDATE_SESSION, payload: { areTranslationsInitialised: true } },
     ];
 
     return store.dispatch(initAppAndRedirectAction())

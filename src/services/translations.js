@@ -17,14 +17,4 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_SESSION } from 'constants/sessionConstants';
 
-export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
-  type: UPDATE_SESSION,
-  payload: { isOnline },
-});
-
-export const setSessionTranslationBundleInitialisedAction = () => ({
-  type: UPDATE_SESSION,
-  payload: { areTranslationsInitialised: true },
-});

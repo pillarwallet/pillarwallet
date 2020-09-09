@@ -19,9 +19,9 @@
 */
 import 'utils/setup';
 import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
-import * as React from 'react';
+import React, { Suspense } from 'react';
 import Intercom from 'react-native-intercom';
-import { StatusBar, Platform, Linking } from 'react-native';
+import { StatusBar, Platform, Linking, View } from 'react-native';
 import remoteConfig from '@react-native-firebase/remote-config';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
@@ -46,6 +46,7 @@ import {
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { changeLanguageAction } from 'actions/localisationActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -67,7 +68,6 @@ import { log } from 'utils/logger';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
-import changeLanguage from 'translations/changeLanguage';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -104,6 +104,8 @@ type Props = {
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
+  changeLanguage: (language: string, showToast?: boolean) => void,
+  areTranslationsInitialised: boolean,
 }
 
 
@@ -247,12 +249,14 @@ class App extends React.Component<Props, *> {
       themeType,
       setAppTheme,
       activeWalkthroughSteps,
-      i18n,
+      i18n: i18next,
+      changeLanguage,
+      areTranslationsInitialised,
     } = this.props;
     const theme = getThemeByType(themeType);
     const { current } = theme;
 
-    if (!isFetched) return null;
+    if (!isFetched || !areTranslationsInitialised) return null;
 
     return (
       <AppearanceProvider>
@@ -265,7 +269,7 @@ class App extends React.Component<Props, *> {
                   setTopLevelNavigator(node);
                 }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'}
-                language={i18n.language}
+                language={i18next.language}
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
@@ -276,8 +280,8 @@ class App extends React.Component<Props, *> {
                 }}
               />}
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
-                title={`Change lang (current: ${i18n.language})`}
-                onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
+                title={`Change lang (current: ${i18next.language})`}
+                onPress={() => changeLanguage(i18next.language === 'lt' ? 'en' : 'lt', true)}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&
@@ -304,11 +308,13 @@ class App extends React.Component<Props, *> {
 const mapStateToProps = ({
   appSettings: { isFetched, data: { themeType, isManualThemeSelection } },
   walkthroughs: { steps: activeWalkthroughSteps },
+  session: { data: { areTranslationsInitialised } },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   isManualThemeSelection,
   activeWalkthroughSteps,
+  areTranslationsInitialised,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -322,16 +328,22 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  changeLanguage: (language, showToast) => dispatch(changeLanguageAction(language, showToast)),
 });
 
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));
 
 const AppRoot = () => (
-  <Provider store={store}>
-    <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
-    </PersistGate>
-  </Provider>
+  <Suspense fallback={<View />}>
+    <Provider store={store}>
+      <PersistGate
+        loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
+        persistor={persistor}
+      >
+        {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+      </PersistGate>
+    </Provider>
+  </Suspense>
 );
 
 export default AppRoot;

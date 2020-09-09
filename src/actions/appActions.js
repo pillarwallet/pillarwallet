@@ -70,6 +70,9 @@ import { SET_CONTACTS } from 'constants/contactsConstants';
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 
+// actions
+import { getTranslationsResourcesAndSetLanguageOnAppOpen } from 'actions/localisationActions';
+
 
 const storage = Storage.getInstance('db');
 
@@ -222,6 +225,8 @@ export const initAppAndRedirectAction = () => {
     } else {
       navAction = { routeName: ONBOARDING_FLOW };
     }
+
+    await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpen());
 
     navigate(NavigationActions.navigate(navAction));
 

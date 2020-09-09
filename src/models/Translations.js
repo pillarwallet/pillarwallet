@@ -39,5 +39,14 @@ export type TranslationResource = {
   [key: string]: string,
 };
 
+export type TranslationResourcesOfLanguage = {
+  [ns: string]: TranslationResource,
+}
+
+export type TranslationData = {|
+  ns: string,
+  url: string,
+|};
+
 
 export type TranslatedString = string | Trans | BaseText;

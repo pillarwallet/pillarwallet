@@ -35,6 +35,7 @@ export const initialState = {
   data: {
     isOnline: true,
     fcmToken: '',
+    areTranslationsInitialised: false,
   },
 };
 

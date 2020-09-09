@@ -21,6 +21,11 @@ import merge from 'lodash.merge';
 import { UPDATE_APP_SETTINGS, RESET_APP_SETTINGS, RESET_APP_LOADED } from 'constants/appSettingsConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 
+type LocalisationOptions = {
+  activeLngCode: ?string,
+  translationVersion: ?string,
+};
+
 export type AppSettingsReducerState = {
   data: {
     lastTxSyncDatetimes: Object,
@@ -45,6 +50,7 @@ export type AppSettingsReducerState = {
     hasSeenRecoveryPortalIntro?: boolean,
     hideLendingDeposits?: boolean,
     omitPinOnLogin: boolean,
+    localisation: ?LocalisationOptions,
   },
   isFetched: boolean,
 };
@@ -77,6 +83,7 @@ export const initialState: AppSettingsReducerState = {
     hasSeenRecoveryPortalIntro: false,
     hideLendingDeposits: false,
     omitPinOnLogin: false,
+    localisation: null,
   },
   isFetched: false,
 };

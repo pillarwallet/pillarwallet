@@ -17,14 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { UPDATE_SESSION } from 'constants/sessionConstants';
 
-export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
-  type: UPDATE_SESSION,
-  payload: { isOnline },
-});
+import RNFetchBlob from 'rn-fetch-blob';
 
-export const setSessionTranslationBundleInitialisedAction = () => ({
-  type: UPDATE_SESSION,
-  payload: { areTranslationsInitialised: true },
-});
+export const getCachedJSONFile = async (localPath: string) => {
+  return new Promise(resolve => {
+    let data = '';
+    RNFetchBlob.fs.readStream(
+      localPath,
+      'utf8',
+    )
+      .then((stream) => {
+        stream.open();
+        stream.onData((chunk) => {
+          data += chunk;
+        });
+        stream.onError(() => resolve({}));
+        stream.onEnd(() => {
+          const jsonData = JSON.parse(data);
+          resolve(jsonData);
+        });
+      })
+      .catch(() => resolve({}));
+  });
+};

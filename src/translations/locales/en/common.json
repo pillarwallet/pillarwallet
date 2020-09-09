@@ -1266,7 +1266,8 @@
     "contactUpdated": "Contact updated",
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
-    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later"
+    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
+    "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing"
   },
 
   "exchangeContent": {

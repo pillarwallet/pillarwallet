@@ -18,34 +18,15 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { TranslationResource } from 'models/Translations';
+const EN_COMMON = require('../translations/locales/en/common.json');
+const EN_AUTH = require('../translations/locales/en/auth.json');
 
-
-// en
-const COMMON_EN = require('./locales/en/common.json');
-const AUTH_EN = require('./locales/en/auth.json');
-
-
-const sources = {
-  en: {
-    common: () => COMMON_EN,
-    auth: () => AUTH_EN,
+export default {
+  baseUrl: 'http://pillar-stories.dev.imas.lt/locales/', // todo: change into real one;
+  localTranslations: {
+    en: {
+      common: EN_COMMON,
+      auth: EN_AUTH,
+    },
   },
 };
-
-const translationLoader = {
-  type: 'backend',
-  init: () => {},
-  read: (language: string, namespace: string, callback: (error: ?Error, resource: ?TranslationResource) => void) => {
-    let resource;
-    let error;
-    try {
-      resource = sources[language][namespace]();
-    } catch (_error) {
-      error = _error;
-    }
-    callback(error, resource);
-  },
-};
-
-export default translationLoader;

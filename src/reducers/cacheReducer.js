@@ -28,7 +28,6 @@ export type CacheAction = {
 
 export const initialState = {
   cacheMap: {},
-  isChanging: false,
 };
 
 const setCacheStatus = (
