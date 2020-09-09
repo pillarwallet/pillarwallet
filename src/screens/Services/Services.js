@@ -215,15 +215,15 @@ class ServicesScreen extends React.Component<Props, State> {
           if (address === null) return;
 
           Alert.alert(
-            'Please choose',
-            'Would you like to buy PLR tokens, or other tokens?',
+            t('servicesContent.ramp.assetDecisionAlert.title'),
+            t('servicesContent.ramp.assetDecisionAlert.description'),
             [
               {
-                text: 'Other tokens',
+                text: t('servicesContent.ramp.assetDecisionAlert.actionNonPlr'),
                 onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, false)),
               },
               {
-                text: 'PLR Tokens',
+                text: t('servicesContent.ramp.assetDecisionAlert.actionPlr'),
                 onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, true)),
               },
             ],
