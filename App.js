@@ -46,7 +46,7 @@ import {
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
-import { changeLanguageAction } from 'actions/localisationActions';
+import { changeLanguageAction, updateTranslationResourceOnNetworkChangeAction } from 'actions/localisationActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -106,6 +106,7 @@ type Props = {
   i18n: I18n,
   changeLanguage: (language: string, showToast?: boolean) => void,
   areTranslationsInitialised: boolean,
+  updateTranslationResourceOnNetworkChange: () => void,
 }
 
 
@@ -223,6 +224,7 @@ class App extends React.Component<Props, *> {
   };
 
   handleConnectivityChange = (state: NetInfoState) => {
+    const { updateTranslationResourceOnNetworkChange } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
@@ -233,6 +235,7 @@ class App extends React.Component<Props, *> {
       });
     } else {
       Toast.close();
+      updateTranslationResourceOnNetworkChange();
     }
   };
 
@@ -329,6 +332,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   changeLanguage: (language, showToast) => dispatch(changeLanguageAction(language, showToast)),
+  updateTranslationResourceOnNetworkChange: () => dispatch(updateTranslationResourceOnNetworkChangeAction()),
 });
 
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));

@@ -180,3 +180,25 @@ export const changeLanguageAction = (language: string, showToast?: boolean) => {
     await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
   };
 };
+
+export const updateTranslationResourceOnNetworkChangeAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { localisation } },
+      session: { data: { isOnline } },
+    } = getState();
+    const { translationVersion, activeLngCode } = localisation || {};
+    const language = activeLngCode || getDefaultLanguage();
+
+    if (isOnline && translationVersion === LOCAL && !!language) {
+      // retry fetching translations to change local ones into newest possible
+      const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+
+      const onLanguageChangeSuccess = () => {
+        dispatch(setAppLanguageAction(language, version));
+      };
+
+      await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
+    }
+  };
+};
