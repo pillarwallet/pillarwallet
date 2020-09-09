@@ -104,6 +104,7 @@ type Props = {
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
+  initialDeeplinkExecuted: boolean,
 }
 
 
@@ -234,11 +235,14 @@ class App extends React.Component<Props, *> {
     }
   };
 
-  handleDeepLinkEvent = event => {
-    const { executeDeepLink } = this.props;
-    const { url: deepLink } = event;
-    if (deepLink === undefined) return;
-    executeDeepLink(deepLink);
+  handleDeepLinkEvent = (event: { url: string }) => {
+    // prevents invoking upon app launch, before login
+    if (this.props.initialDeeplinkExecuted) {
+      const { executeDeepLink } = this.props;
+      const { url: deepLink } = event;
+      if (deepLink === undefined) return;
+      executeDeepLink(deepLink);
+    }
   };
 
   render() {
@@ -302,13 +306,14 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, isManualThemeSelection } },
+  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   isManualThemeSelection,
   activeWalkthroughSteps,
+  initialDeeplinkExecuted,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
