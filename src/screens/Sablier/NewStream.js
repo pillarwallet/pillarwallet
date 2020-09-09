@@ -213,6 +213,9 @@ class NewStream extends React.Component<Props, State> {
     const { theme } = this.props;
     const colors = getThemeColors(theme);
 
+    const minimumDate = picker === START_TIME ? this.getMinimalDate() : addMinutes(startDate, 1);
+    const maximumDate = picker === START_TIME ? endDate : null;
+
     const header = picker === START_TIME ? (
       <Row>
         <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
@@ -224,23 +227,20 @@ class NewStream extends React.Component<Props, State> {
       <Row>
         <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
         <Row>
-          <TextLink onPress={() => this.setState({ modalDate: addHours(modalDate, 1) })}>
+          <TextLink onPress={() => this.setState({ modalDate: addHours(modalDate || minimumDate, 1) })}>
             {t('sablierContent.button.plusHour')}
           </TextLink>
           <Spacing w={10} />
-          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate, 1) })}>
+          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate || minimumDate, 1) })}>
             {t('sablierContent.button.plusDay')}
           </TextLink>
           <Spacing w={10} />
-          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate, 30) })}>
+          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate || minimumDate, 30) })}>
             {t('sablierContent.button.plus30Days')}
           </TextLink>
         </Row>
       </Row>
     );
-
-    const minimumDate = picker === START_TIME ? this.getMinimalDate() : addMinutes(startDate, 1);
-    const maximumDate = picker === START_TIME ? endDate : null;
 
     return (
       <SlideModal
@@ -268,6 +268,7 @@ class NewStream extends React.Component<Props, State> {
           <Button
             title={t('button.next')}
             onPress={this.handleDateModalConfirm}
+            disabled={!modalDate}
           />
         </PickerWrapper>
       </SlideModal>
@@ -322,6 +323,7 @@ class NewStream extends React.Component<Props, State> {
 
     const formValid = this.isFormValid();
     const assetsOptions = assetsWithBalance.filter(asset => asset.symbol !== ETH);
+    const minimumEndingDate = addMinutes(startDate, 1);
 
     return (
       <ContainerWithHeader
@@ -366,15 +368,15 @@ class NewStream extends React.Component<Props, State> {
           <Row>
             <MediumText regular>{t('sablierContent.label.end')}</MediumText>
             <Row>
-              <TextLink onPress={() => this.setState({ endDate: addHours(endDate, 1) })}>
+              <TextLink onPress={() => this.setState({ endDate: addHours(endDate || minimumEndingDate, 1) })}>
                 {t('sablierContent.button.plusHour')}
               </TextLink>
               <Spacing w={10} />
-              <TextLink onPress={() => this.setState({ endDate: addDays(endDate, 1) })}>
+              <TextLink onPress={() => this.setState({ endDate: addDays(endDate || minimumEndingDate, 1) })}>
                 {t('sablierContent.button.plusDay')}
               </TextLink>
               <Spacing w={10} />
-              <TextLink onPress={() => this.setState({ endDate: addDays(endDate, 30) })}>
+              <TextLink onPress={() => this.setState({ endDate: addDays(endDate || minimumEndingDate, 30) })}>
                 {t('sablierContent.button.plus30Days')}
               </TextLink>
             </Row>
