@@ -192,12 +192,12 @@
     "sell": "Sell",
     "unknown": "Unknown",
     "pending": "Pending",
-    "notAvailableIYourCountry": "Not available in Your country",
     "fromPillarTank": "From Pillar Tank",
     "pinChanged": "Pin changed",
     "device": "Device {{address}}",
     "popular": "Popular",
     "set": "Set",
+    "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline"
   },
 
@@ -1197,6 +1197,7 @@
     },
     "label": {
       "amount": "Amount",
+      "receiver": "Receiver",
       "recipient": "Recipient",
       "recipientEnsName": "Recipient ENS name",
       "recipientAddress": "Recipient Address",
