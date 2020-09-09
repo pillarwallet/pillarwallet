@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { FlatList } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
@@ -213,7 +213,22 @@ class ServicesScreen extends React.Component<Props, State> {
           const { user: { email } } = this.props;
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
-          this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email));
+
+          Alert.alert(
+            t('servicesContent.ramp.assetDecisionAlert.title'),
+            t('servicesContent.ramp.assetDecisionAlert.description'),
+            [
+              {
+                text: t('servicesContent.ramp.assetDecisionAlert.actionNonPlr'),
+                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email)),
+              },
+              {
+                text: t('servicesContent.ramp.assetDecisionAlert.actionPlr'),
+                onPress: () => this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email, true)),
+              },
+            ],
+            { cancelable: true },
+          );
         },
       });
     }

@@ -1154,6 +1154,12 @@
       "description": "Swap tokens directly with others. Safe, secure, anonymous"
     },
     "ramp": {
+      "assetDecisionAlert": {
+        "title": "Please choose...",
+        "description": "Would you like to buy PLR tokens, or other tokens?",
+        "actionNonPlr": "Other tokens",
+        "actionPlr": "PLR tokens"
+      },
       "title": "Buy with Ramp.Network (EU)",
       "description": "Buy Now"
     },
