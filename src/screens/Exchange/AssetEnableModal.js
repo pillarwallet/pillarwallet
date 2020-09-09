@@ -128,7 +128,7 @@ const AssetEnableModal = (props: Props) => {
           disabled={isDisabled}
         />
         <BaseText secondary>
-          {t('feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
+          {t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
         </BaseText>
       </ContentWrapper>
     </SlideModal>
