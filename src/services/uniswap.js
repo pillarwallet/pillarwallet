@@ -344,3 +344,29 @@ export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[])
   }
   return results;
 };
+
+export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
+  const query = `
+    {
+      pair(
+        id: "${poolAddress}"
+      ) {
+        id 
+        token0 {
+          id
+          name
+          symbol
+        }
+        token1 {
+          id
+          name
+          symbol
+        }
+        token0Price
+        token1Price
+        volumeUSD
+      }
+    }
+  `;
+  return callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
+};
