@@ -19,12 +19,10 @@
 */
 
 import { Alert } from 'react-native';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 import { requestSessionAction } from 'actions/walletConnectActions';
-import { initialDeeplinkExecuted } from 'actions/appSettingsActions';
 
 // constants
 import { CONFIRM_CLAIM } from 'constants/navigationConstants';
@@ -39,13 +37,8 @@ import { validateDeepLink } from 'utils/deepLink';
 import type { Dispatch } from 'reducers/rootReducer';
 
 
-export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) => {
+export const executeDeepLinkAction = (deepLink: string) => {
   return async (dispatch: Dispatch) => {
-    // make sure a deeplink is only handled once
-    if (onAppLaunch) {
-      dispatch(initialDeeplinkExecuted());
-    }
-
     const validatedDeepLink = validateDeepLink(deepLink);
     if (isEmpty(validatedDeepLink)) return;
     const { action, query, protocol } = validatedDeepLink;
@@ -58,7 +51,7 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
     // NOTE: actions (hosts) are parsed in lowercase
     switch (action) {
       case 'referral':
-        const referralCode = get(query, 'code');
+        const referralCode = query?.code;
         if (referralCode) {
           updateNavigationLastScreenState({
             lastActiveScreen: CONFIRM_CLAIM,
@@ -69,10 +62,10 @@ export const executeDeepLinkAction = (deepLink: string, onAppLaunch?: boolean) =
         }
         break;
       case 'wc':
-        let walletConnectUrl = get(query, 'url');
+        let walletConnectUrl = query?.url || query?.uri;
         if (walletConnectUrl) {
-          const key = get(query, 'key');
-          if (key) walletConnectUrl += `&key=${key}`;
+          const key = query?.key;
+          if (key) walletConnectUrl += `&key=${key}`; // eslint-disable-line i18next/no-literal-string
           dispatch(requestSessionAction(walletConnectUrl));
         }
         break;

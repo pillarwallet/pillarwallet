@@ -152,12 +152,12 @@ const collectibleTransaction = (event) => {
     hash: trxHash,
     createdAt: (new Date(timestamp).getTime()) / 1000,
     _id: transaction.id,
-    protocol: 'Ethereum',
+    protocol: 'Ethereum', // eslint-disable-line i18next/no-literal-string
     asset: collectibleName,
     contractAddress,
     value: 1,
     blockNumber,
-    status: 'confirmed',
+    status: 'confirmed', // eslint-disable-line i18next/no-literal-string
     type: COLLECTIBLE_TRANSACTION,
     icon,
     assetData,

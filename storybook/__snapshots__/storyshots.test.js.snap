@@ -3409,7 +3409,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -3911,7 +3911,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -4176,7 +4176,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -4678,7 +4678,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -7603,7 +7603,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -8105,7 +8105,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -8370,7 +8370,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -8872,7 +8872,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
               }
               type="ACTION"
             >
-              0x2222…222222
+              ellipsedMiddleString
             </Text>
           </View>
         </View>
@@ -15213,7 +15213,7 @@ Array [
         }
         synthetic={true}
       >
-        From Pillar Tank
+        label.fromPillarTank
       </Text>
       <View>
         <View
@@ -15331,7 +15331,7 @@ Array [
         }
         synthetic={true}
       >
-        From Pillar Tank
+        label.fromPillarTank
       </Text>
       <View>
         <View
@@ -34068,7 +34068,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                             ]
                           }
                         >
-                          select
+                          form.selector.placeholder
                         </Text>
                       </View>
                       <View
@@ -34108,7 +34108,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       onPressRightLabel={[Function]}
                       onSubmitEditing={[Function]}
                       placeholder="0"
-                      placeholderSelector="select"
+                      placeholderSelector="form.selector.placeholder"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
                       rightLabel=""
@@ -35830,7 +35830,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       onPressRightLabel={[Function]}
                       onSubmitEditing={[Function]}
                       placeholder="0"
-                      placeholderSelector="select"
+                      placeholderSelector="form.selector.placeholder"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
                       rightLabel="button.max"
@@ -37416,7 +37416,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                             ]
                           }
                         >
-                          select
+                          form.selector.placeholder
                         </Text>
                       </View>
                       <View
@@ -37456,7 +37456,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       onPressRightLabel={[Function]}
                       onSubmitEditing={[Function]}
                       placeholder="0"
-                      placeholderSelector="select"
+                      placeholderSelector="form.selector.placeholder"
                       placeholderTextColor="#818EB3"
                       rejectResponderTermination={true}
                       rightLabel=""

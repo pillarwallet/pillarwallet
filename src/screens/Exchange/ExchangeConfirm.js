@@ -484,7 +484,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               {!gettingFee && !isSmartAccount &&
                 <ButtonText
                   buttonText={t('transactions.button.speedSettings')}
-                  leftIconProps={{ name: 'options', style: { fontSize: 16 } }}
+                  leftIconProps={{
+                    name: 'options', // eslint-disable-line i18next/no-literal-string
+                    style: { fontSize: 16 },
+                  }}
                   onPress={() => this.setState({ showFeeModal: true })}
                 />
               }

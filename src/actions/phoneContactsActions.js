@@ -20,6 +20,7 @@
 import { Platform, PermissionsAndroid } from 'react-native';
 import Contacts from 'react-native-contacts';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 // constants
 import {
@@ -145,9 +146,9 @@ const askPermission = () => {
   }
 
   return PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.READ_CONTACTS, {
-    title: 'Contacts',
-    message: 'This app would like to view your contacts.',
-    buttonPositive: 'Allow',
+    title: t('alert.contactsPermission.title'),
+    message: t('alert.contactsPermission.message'),
+    buttonPositive: t('alert.contactsPermission.button.ok'),
   });
 };
 

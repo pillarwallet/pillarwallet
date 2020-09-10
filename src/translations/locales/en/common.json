@@ -1,5 +1,5 @@
 {
-  "aaveDeposit": "Aave deposit",
+  "aaveDeposit": "Aave Deposit",
   "ensName": "ENS name",
   "ethereum": "Ethereum",
   "facebook": "Facebook",
@@ -13,9 +13,12 @@
   "twitter": "Twitter",
   "youtube": "Youtube",
   "ellipsedString": "{{string}}...",
+  "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
 
   "ticketAmount": "{{count}} ticket",
   "ticketAmount_plural": "{{count}} tickets",
+  "ticket": "ticket",
+  "ticket_plural": "tickets",
 
   "positiveValue": "+ {{value}}",
   "negativeValue": "- {{value}}",
@@ -27,14 +30,19 @@
   "percentValue": "{{value}} %",
   "availableValue": "Available: {{value}}",
   "ofValue": "of {{value}}",
+  "valueOfValue": "{{partOfValue}} of {{allValue}}",
   "ofTotalTokenValue": "of {{value}} {{token}} total",
   "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
   "maxTokenValue": "Max {{value}} {{token}}",
   "minTokenValue": "Min {{value}} {{token}}",
+  "lessThanSignValue": "<{{value}}",
+  "moreThanSignValue": ">{{value}}",
+  "rangeValues": "{{fromValue}} - {{toValue}}",
 
   "timeDaysHours": "{{days}}d {{hours}}h",
   "timeHoursMinutes": "{{hours}}h {{minutes}}m",
   "timeDaysHoursMinutes":"{{days}}d {{hours}}h {{minutes}}m",
+  "inTimeDaysHoursMinutes":"In {{days}}d {{hours}}h {{minutes}}m",
   "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
   "day": "{{count}} day",
   "day_plural": "{{count}} days",
@@ -184,6 +192,11 @@
     "sell": "Sell",
     "unknown": "Unknown",
     "pending": "Pending",
+    "fromPillarTank": "From Pillar Tank",
+    "pinChanged": "Pin changed",
+    "device": "Device {{address}}",
+    "popular": "Popular",
+    "set": "Set",
     "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline"
   },
@@ -277,7 +290,8 @@
     "open": "Open",
     "proceed": "Proceed",
     "readMore": "Read more",
-    "activateSmartWallet": "Activate Smart Wallet"
+    "activateSmartWallet": "Activate Smart Wallet",
+    "finish": "Finish"
   },
 
   "paragraph": {
@@ -410,6 +424,7 @@
       "placeholder": "Your e-mail"
     },
     "selector": {
+      "placeholder": "Select",
       "searchPlaceholder": "Search",
       "assetSearchPlaceholder": "Asset search"
     }
@@ -424,7 +439,8 @@
       "notOwnedCollectible": "You no longer own this collectible",
       "collectibleCantBeTransferred": "This collectible can't be transferred",
       "notEnoughStake": "Not enough PLR in tank",
-      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}"
+      "notEnoughForGasWithBalance": "`Not enough {{token}} for transaction fee. Current balance: {{balance}} {{token}}",
+      "cantCalculateFee": "Unable to calculate transaction fee"
     },
     "emptyAddress": "Address cannot be empty",
     "contactWithAddressExist": "Contact with this address already exist",
@@ -462,7 +478,21 @@
     },
     "synthetics": {
       "failedToCalculate": "Failed to calculate synthetics exchange"
-    }
+    },
+    "exchange": {
+      "incorrectNumber": "Incorrect number entered",
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+    },
+    "walletConnect": {
+      "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
+      "unsupportedAction": "We are sorry, but we do not support this action yet",
+      "noMatchingWallet": "No Matching Wallet Connect Connectors Found",
+      "requestNotFound": "Request not found",
+      "requestRejected": "Call Request Rejected",
+      "invalidSession": "Invalid Wallet Connect session",
+      "alreadyPending": "A connection is already waiting"
+    },
+    "reverted": "reverted"
   },
 
   "badgeText": {
@@ -494,7 +524,8 @@
       "settleTransactionsScreen": "Settle transactions",
       "fundTankScreen": "Fund PLR tank",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",
-      "unsettledAssetsScreen": "Unsettled Assets"
+      "unsettledAssetsScreen": "Unsettled Assets",
+      "withdrawFromTankScreen": "Withdraw from PLR tank"
     },
     "button": {
       "fundTank": "Fund Pillar Tank",
@@ -506,7 +537,8 @@
     },
     "label": {
       "availableBalance": "Available Balance",
-      "paidByPillar": "No fees - paid by Pillar"
+      "paidByPillar": "No fees - paid by Pillar",
+      "transactionsAvailableToSettle": "Transactions available to settle"
     },
     "paragraph": {
       "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
@@ -664,6 +696,9 @@
           "paragraph": "You do not have badges yet"
         }
       }
+    },
+    "title": {
+      "unknownBadge": "Unknown badge"
     }
   },
 
@@ -943,7 +978,8 @@
       "ticketPurchaseScreen": "Purchase Tickets",
       "withdrawScreen": "Withdraw",
       "withdrawConfirmScreen": "Review",
-      "authorizePoolTogether": "Authorize Pool Together"
+      "authorizePoolTogether": "Authorize Pool Together",
+      "purchaseConfirmScreen": "Review"
     },
     "button": {
       "joinPool": "Join Pool",
@@ -978,13 +1014,15 @@
       "cancelStreamScreen": "Cancel stream",
       "userStreamsScreen": "Your streams",
       "withdrawScreen": "Withdraw",
-      "withdrawReviewScreen": "Review"
+      "withdrawReviewScreen": "Review",
+      "startFirstStream": "Start your first stream"
     },
     "label": {
       "streamed": "Streamed",
       "withdrawn": "withdrawn",
       "start": "Start",
-      "end": "End"
+      "end": "End",
+      "ofTokenValueStream": "of {{value}} {{token}} stream"
     },
     "button": {
       "startImmediately": "Start immediately",
@@ -1034,11 +1072,15 @@
       "unknownRequestName": "Unknown",
       "requestDescription": "Description",
       "requestLink": "Url",
-      "upcomingApp": "Coming soon"
+      "upcomingApp": "Coming soon",
+      "name": "Name"
     },
     "banner": {
       "promo": {
         "paragraph": "A collection of dapps to use with Pillar"
+      },
+      "promoExtended": {
+        "paragraph": "Swap tokens on decentralized exchanges, lend & borrow crypto, play games and more"
       }
     },
     "button": {
@@ -1077,6 +1119,9 @@
           "title": "No Pending Requests"
         }
       }
+    },
+    "paragraph": {
+      "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
     }
   },
 
@@ -1109,6 +1154,12 @@
       "description": "Swap tokens directly with others. Safe, secure, anonymous"
     },
     "ramp": {
+      "assetDecisionAlert": {
+        "title": "Please choose...",
+        "description": "Would you like to buy PLR tokens, or other tokens?",
+        "actionNonPlr": "Other tokens",
+        "actionPlr": "PLR tokens"
+      },
       "title": "Buy with Ramp.Network (EU)",
       "description": "Buy Now"
     },
@@ -1167,7 +1218,10 @@
       "toSmartWallet": "To Smart Wallet",
       "tokensToTransfer": "Tokens to transfer",
       "collectiblesToTransfer": "Collectibles to transfer",
-      "speed": "Speed"
+      "speed": "Speed",
+      "data": "Data",
+      "message": "Message",
+      "address": "Address"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
@@ -1389,6 +1443,13 @@
       "button": {
         "cancel": "Cancel",
         "ok": "Confirm remove"
+      }
+    },
+    "contactsPermission": {
+      "title": "Contacts",
+      "message": "This app would like to view your contacts.",
+      "button": {
+        "ok": "Allow"
       }
     }
   },

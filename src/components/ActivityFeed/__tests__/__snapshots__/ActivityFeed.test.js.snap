@@ -326,7 +326,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                         }
                         type="ACTION"
                       >
-                        0x0000…000000
+                        ellipsedMiddleString
                       </Text>
                     </View>
                   </View>
@@ -743,7 +743,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                         }
                         type="ACTION"
                       >
-                        0x0000…000000
+                        ellipsedMiddleString
                       </Text>
                     </View>
                   </View>

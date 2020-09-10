@@ -19,7 +19,6 @@
 */
 export type BlockchainNetwork = {|
   id: string,
-  title: string,
   isActive: boolean,
   translationKey: string,
 |};

@@ -44,6 +44,7 @@ import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
+import { ERROR_TYPE } from 'constants/transactionsConstants';
 
 import Toast from 'components/Toast';
 
@@ -149,7 +150,7 @@ export const sendAssetAction = (
       const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
       if (!collectibleInfo) {
         tokenTx = {
-          error: 'is not owned',
+          error: ERROR_TYPE.NOT_OWNED,
           hash: null,
           noRetry: true,
         };

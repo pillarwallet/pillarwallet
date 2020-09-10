@@ -268,7 +268,7 @@ class SlideModal extends React.Component<Props, *> {
             noHorizonatalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? null : 4}
             noBack
-            forceInsetTop={insetTop ? 'always' : 'never'}
+            forceInsetTop={insetTop ? 'always' : 'never'} // eslint-disable-line i18next/no-literal-string
             {...headerProps}
           />
         }

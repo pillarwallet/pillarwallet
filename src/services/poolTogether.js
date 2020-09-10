@@ -82,6 +82,7 @@ const fetchPoolTogetherGraph = async (
   contractAddress: string,
   accountAddress: string,
   openDrawId: string): Promise<Object> => {
+  /* eslint-disable i18next/no-literal-string */
   const query = `
     {
         poolContract(id: "${contractAddress.toLowerCase()}") {
@@ -104,12 +105,14 @@ const fetchPoolTogetherGraph = async (
         },
     }
   `;
+  /* eslint-enable i18next/no-literal-string */
   return callSubgraph(getEnv().POOLTOGETHER_SUBGRAPH_NAME, query);
 };
 
 const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress: string): Promise<Object> => {
   const poolAddress = contractAddress.toLowerCase();
   const sender = accountAddress.toLowerCase();
+  /* eslint-disable i18next/no-literal-string */
   const query = `
     {
       deposits(where: {sender: "${sender}", contractAddress: "${poolAddress}"}) {
@@ -126,6 +129,7 @@ const fetchPoolTogetherHistory = async (contractAddress: string, accountAddress:
       },
     }
   `;
+  /* eslint-enable i18next/no-literal-string */
   return callSubgraph(getEnv().POOLTOGETHER_SUBGRAPH_NAME, query);
 };
 

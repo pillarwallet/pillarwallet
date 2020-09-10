@@ -6694,6 +6694,13 @@ eslint-plugin-flowtype@2.50.3, eslint-plugin-flowtype@^2.46.1:
   dependencies:
     lodash "^4.17.10"
 
+eslint-plugin-i18next@^5.0.0-0:
+  version "5.0.0-0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-i18next/-/eslint-plugin-i18next-5.0.0-0.tgz#2dbbc72c0e19b1165ce13560dbe9c49e4e64b684"
+  integrity sha1-LbvHLA4ZsRZc4TVg2+nEnk5ktoQ=
+  dependencies:
+    requireindex "~1.1.0"
+
 eslint-plugin-import@^2.10.0:
   version "2.20.2"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/eslint-plugin-import/-/eslint-plugin-import-2.20.2.tgz#91fc3807ce08be4837141272c8b99073906e588d"
@@ -15093,6 +15100,11 @@ require-object-coercible-x@^1.4.1, require-object-coercible-x@^1.4.3:
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/require-object-coercible-x/-/require-object-coercible-x-1.4.3.tgz#783719a23a5c0ce24e845fcc50cd55b6421ea4bb"
   dependencies:
     is-nil-x "^1.4.2"
+
+requireindex@~1.1.0:
+  version "1.1.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/requireindex/-/requireindex-1.1.0.tgz#e5404b81557ef75db6e49c5a72004893fe03e162"
+  integrity sha1-5UBLgVV+91225JxacgBIk/4D4WI=
 
 requires-port@1.0.x, requires-port@^1.0.0:
   version "1.0.0"

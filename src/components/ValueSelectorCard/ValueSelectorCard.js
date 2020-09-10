@@ -173,7 +173,7 @@ export class ValueSelectorCard extends React.Component<Props, State> {
               hasInput: true,
               noErrorText: true,
               options: [],
-              placeholderSelector: 'select',
+              placeholderSelector: t('form.selector.placeholder'),
               placeholderInput: '0',
               inputWrapperStyle: { width: '100%', paddingTop: 4, paddingBottom: 0 },
               rightLabel: '',

@@ -49,6 +49,7 @@ import smartWalletService from 'services/smartWallet';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
+import { PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TX, REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // types
 import type { Asset, Assets, Balances } from 'models/Asset';
@@ -146,7 +147,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const requestMethod = get(this.request, 'method');
-    if (['eth_sendTransaction', 'eth_signTransaction'].includes(requestMethod)) {
+    if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
   }
@@ -228,7 +229,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       params = [],
     } = request || {};
 
-    let type = 'call';
+    let type = REQUEST_TYPE.CALL;
     let body = null;
     let address = '';
     let message = '';
@@ -239,9 +240,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     const txFeeInWei = txFeeInfo?.fee || new BigNumber(0);
 
     switch (method) {
-      case 'eth_sendTransaction':
-      case 'eth_signTransaction':
-        type = 'transaction';
+      case ETH_SEND_TX:
+      case ETH_SIGN_TX:
+        type = REQUEST_TYPE.TRANSACTION;
 
         const estimatePart = {
           txFeeInWei,
@@ -259,7 +260,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         } = transactionPayload;
 
         if (this.unsupportedTransaction) {
-          errorMessage = 'This data transaction or token is not supported in Pillar Wallet yet';
+          errorMessage = t('error.walletConnect.assetNotSupported');
         } else {
           const txFeeInWeiBN = EthersBigNumber.from(txFeeInWei.toString()); // BN compatibility
           if (!isEnoughBalanceForTransactionFee(balances, {
@@ -270,10 +271,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             gasToken,
           })) {
             const feeSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
-            errorMessage = `Not enough ${feeSymbol} for transaction fee`;
+            errorMessage = t('error.notEnoughTokenForFee', { token: feeSymbol });
           }
           if (!gettingFee && txFeeInWeiBN.eq(0)) {
-            errorMessage = 'Unable to calculate transaction fee';
+            errorMessage = t('error.transactionFailed.cantCalculateFee');
           }
         }
 
@@ -284,7 +285,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
-              <Label>Request From</Label>
+              <Label>{t('walletConnectContent.label.requestFrom')}</Label>
               <Value>{name}</Value>
             </LabeledRow>
             {!!icon && (
@@ -302,20 +303,19 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             )}
             {!this.unsupportedTransaction &&
               <LabeledRow>
-                <Label>Amount</Label>
-                <Value>{amount} {symbol}</Value>
+                <Label>{t('transactions.label.amount')}</Label>
+                <Value>{t('tokenValue', { value: amount, token: symbol })}</Value>
               </LabeledRow>
             }
             <LabeledRow>
-              <Label>Recipient Address</Label>
+              <Label>{t('transactions.label.recipientAddress')}</Label>
               <Value>{to}</Value>
             </LabeledRow>
             {!this.unsupportedTransaction &&
               <LabeledRow>
-                <Label>Est. Network Fee</Label>
+                <Label>{t('transactions.label.transactionFee')}</Label>
                 <LabelSub>
-                  Note: a fee below might be shown as higher than provided on the connected platform,
-                  however, normally it will be less
+                  {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
                 </LabelSub>
                 {!!gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
                 {!gettingFee && <Value>{feeDisplayValue}</Value>}
@@ -323,7 +323,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             }
             {data.toLowerCase() !== '0x' && (
               <LabeledRow>
-                <Label>Data</Label>
+                <Label>{t('transactions.label.data')}</Label>
                 <Value>{data}</Value>
               </LabeledRow>
             )}
@@ -331,25 +331,25 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         );
         break;
       case 'eth_sign':
-        type = 'message';
+        type = REQUEST_TYPE.MESSAGE;
 
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
-              <Label>Address</Label>
+              <Label>{t('transactions.label.address')}</Label>
               <Value>{address}</Value>
             </LabeledRow>
             <LabeledRow>
-              <Label>Message</Label>
+              <Label>{t('transactions.label.message')}</Label>
               <Value>{message}</Value>
             </LabeledRow>
           </ScrollWrapper>
         );
         break;
-      case 'personal_sign':
-        type = 'message';
+      case PERSONAL_SIGN:
+        type = REQUEST_TYPE.MESSAGE;
 
         address = params[1]; // eslint-disable-line
         try {
@@ -360,19 +360,19 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
-              <Label>Address</Label>
+              <Label>{t('transactions.label.address')}</Label>
               <Value>{address}</Value>
             </LabeledRow>
             <LabeledRow>
-              <Label>Message</Label>
+              <Label>{t('transactions.label.message')}</Label>
               <Value>{message}</Value>
             </LabeledRow>
           </ScrollWrapper>
         );
         break;
       default:
-        type = 'unsupported';
-        errorMessage = 'We are sorry, but we do not support this action yet.';
+        type = REQUEST_TYPE.UNSUPPORTED;
+        errorMessage = t('error.walletConnect.unsupportedAction');
         break;
     }
 
@@ -394,7 +394,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             <OptionButton
               primaryInverted
               onPress={() => this.handleFormSubmit(this.request, transactionPayload)}
-              disabled={!!errorMessage || (type === 'transaction' && gettingFee)}
+              disabled={!!errorMessage || (type === REQUEST_TYPE.TRANSACTION && gettingFee)}
               regularText
               title={
                 t([

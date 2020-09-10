@@ -28,6 +28,7 @@ import { constructWalletFromPrivateKey, constructWalletFromMnemonic } from 'util
 import { STAGING } from 'constants/envConstants';
 
 const KEYCHAIN_SERVICE = `com.pillarproject.wallet${getEnv().BUILD_TYPE === STAGING ? '.staging' : ''}`;
+
 const KEYCHAIN_DATA_KEY = 'data';
 
 export type KeyChainData = {
