@@ -18,8 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { utils, Contract, BigNumber as EthersBigNumber } from 'ethers';
-import { BigNumber } from 'bignumber.js';
+import { Contract, BigNumber as EthersBigNumber } from 'ethers';
 import * as Sentry from '@sentry/react-native';
 import { getEnv } from 'configs/envConfig';
 
@@ -32,17 +31,15 @@ import {
 } from 'constants/sablierConstants';
 
 // services
-import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
-import smartWalletService from 'services/smartWallet';
+import { encodeContractMethod } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 
 // utils
 import { reportLog, getEthereumProvider } from 'utils/common';
-import { buildTxFeeInfo } from 'utils/smartWallet';
+import { getTxFeeAndTransactionPayload, addAllowanceTransaction } from 'utils/smartWallet';
 
 // abi
 import SABLIER_ABI from 'abi/sablier.json';
-import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -185,61 +182,6 @@ export const fetchUserStreams = async (accountAddress: string) => {
   return callSubgraph(getEnv().SABLIER_SUBGRAPH_NAME, query);
 };
 
-export const checkSablierAllowance = async (tokenAddress: string, sender: string): Promise<EthersBigNumber> => {
-  const erc20Contract = getContract(tokenAddress, ERC20_CONTRACT_ABI);
-  const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(sender, getEnv().SABLIER_CONTRACT_ADDRESS)
-    : EthersBigNumber.from(0);
-  return approvedAmountBN;
-};
-
-export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<Object> => {
-  const defaultResponse = { fee: new BigNumber('0'), error: true };
-  const estimateTransaction = {
-    data: transaction.data,
-    recipient: transaction.to,
-    value: transaction.amount,
-  };
-
-  const estimated = await smartWalletService
-    .estimateAccountTransaction(estimateTransaction)
-    .then(result => buildTxFeeInfo(result, useGasToken))
-    .catch((e) => {
-      reportLog('Error getting sablier fee for transaction', {
-        ...transaction,
-        message: e.message,
-      }, Sentry.Severity.Error);
-      return null;
-    });
-
-  if (!estimated) {
-    return defaultResponse;
-  }
-
-  return estimated;
-};
-
-const getTxFeeAndTransactionPayload = async (_transactionPayload, useGasToken): Promise<Object> => {
-  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(_transactionPayload, useGasToken);
-  let transactionPayload = _transactionPayload;
-  if (gasToken) {
-    transactionPayload = { ...transactionPayload, gasToken };
-  }
-
-  transactionPayload = { ...transactionPayload, txFeeInWei };
-
-  if (error) {
-    return null;
-  }
-
-  return {
-    gasToken,
-    txFeeInWei,
-    transactionPayload,
-  };
-};
-
-
 export const getCancellationFeeAndTransaction = (stream: Stream, useGasToken: boolean): Promise<Object> => {
   const transactionData = encodeContractMethod(SABLIER_ABI, 'cancelStream', [
     stream.id,
@@ -273,8 +215,6 @@ export const getCreateStreamFeeAndTransaction = async (
   const createStreamTransactionData =
     buildCreateStreamTransaction(receiver, amount, asset.address, startTimestamp, endTimestamp);
 
-  const approvedAmountBN = await checkSablierAllowance(asset.address, sender);
-
   let sablierCreateStreamTransaction = {
     from: sender,
     to: getEnv().SABLIER_CONTRACT_ADDRESS,
@@ -283,21 +223,8 @@ export const getCreateStreamFeeAndTransaction = async (
     symbol: ETH,
   };
 
-  if (!approvedAmountBN || amount.gt(approvedAmountBN)) {
-    const rawValue = 1000000000;
-    const valueToApprove = utils.parseUnits(rawValue.toString(), asset.decimals);
-    const approveTransactionData = buildERC20ApproveTransactionData(
-      getEnv().SABLIER_CONTRACT_ADDRESS, valueToApprove, asset.decimals);
-
-    sablierCreateStreamTransaction = {
-      from: sender,
-      to: asset.address,
-      data: approveTransactionData,
-      amount: 0,
-      symbol: ETH,
-      sequentialSmartWalletTransactions: [sablierCreateStreamTransaction],
-    };
-  }
+  sablierCreateStreamTransaction = await addAllowanceTransaction(
+    sablierCreateStreamTransaction, sender, getEnv().SABLIER_CONTRACT_ADDRESS, asset, amount);
 
   sablierCreateStreamTransaction = {
     ...sablierCreateStreamTransaction,

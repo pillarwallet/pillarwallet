@@ -27,7 +27,7 @@ import {
   TradeType,
   WETH,
 } from '@uniswap/sdk';
-import { ethers } from 'ethers';
+import { ethers, utils } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
@@ -48,6 +48,7 @@ import {
   generateTxObject,
 } from 'utils/uniswap';
 import { parseOffer } from 'utils/exchange';
+import { getTxFeeAndTransactionPayload, addAllowanceTransaction } from 'utils/smartWallet';
 
 // services
 import { encodeContractMethod } from 'services/assets';
@@ -63,6 +64,7 @@ import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import UNISWAP_ROUTER_ABI from 'abi/uniswapRouter.json';
 
 const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
@@ -370,3 +372,67 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
   `;
   return callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
 };
+
+export const getAddLiquidityTransaction = async (
+  sender: string,
+  tokenAmount: number,
+  tokenAsset: Asset,
+  ethAmount: number,
+  useGasToken: boolean,
+) => {
+  const deadline = getDeadline();
+
+  const addLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'addLiquidityETH', [
+    tokenAsset.address,
+    tokenAmount,
+    0,
+    0,
+    sender,
+    deadline,
+  ]);
+
+  let addLiquidityTransaction = {
+    from: sender,
+    to: ADDRESSES.router,
+    data: addLiquidityTransactionData,
+    amount: utils.formatUnits(ethAmount, 18),
+    symbol: ETH,
+  };
+
+  addLiquidityTransaction = await addAllowanceTransaction(
+    addLiquidityTransaction, sender, ADDRESSES.router, tokenAsset, tokenAmount);
+
+  return getTxFeeAndTransactionPayload(addLiquidityTransaction, useGasToken);
+};
+
+export const getWithdrawLiquidityTransaction = async (
+  sender: string,
+  tokenAsset: Asset,
+  liquidityTokenAmount: number,
+  liquidityTokenAsset: Asset,
+  useGasToken: boolean,
+) => {
+  const deadline = getDeadline();
+  const withdrawLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidityETH', [
+    tokenAsset.address,
+    liquidityTokenAmount,
+    0,
+    0,
+    sender,
+    deadline,
+  ]);
+
+  let withdrawLiquidityTransaction = {
+    from: sender,
+    to: ADDRESSES.router,
+    data: withdrawLiquidityTransactionData,
+    amount: 0,
+    symbol: ETH,
+  };
+
+  withdrawLiquidityTransaction = await addAllowanceTransaction(
+    withdrawLiquidityTransaction, sender, ADDRESSES.router, liquidityTokenAsset, liquidityTokenAmount);
+
+  return getTxFeeAndTransactionPayload(withdrawLiquidityTransaction, useGasToken);
+};
+

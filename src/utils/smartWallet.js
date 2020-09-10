@@ -21,6 +21,8 @@ import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import { sdkConstants, sdkInterfaces } from '@smartwallet/sdk';
 import BigNumber from 'bignumber.js';
+import * as Sentry from '@sentry/react-native';
+import { BigNumber as EthersBigNumber, utils } from 'ethers';
 import t from 'translations/translate';
 
 // constants
@@ -48,7 +50,8 @@ import {
 import { ETH } from 'constants/assetsConstants';
 
 // services
-import { parseEstimatePayload } from 'services/smartWallet';
+import smartWalletService, { parseEstimatePayload } from 'services/smartWallet';
+import { getContract, buildERC20ApproveTransactionData } from 'services/assets';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -65,10 +68,12 @@ import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { EstimatePayload } from 'services/smartWallet';
 import type { TranslatedString } from 'models/Translations';
 
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
 // utils
 import { getActiveAccount } from './accounts';
 import { addressesEqual, getAssetDataByAddress, getAssetSymbolByAddress } from './assets';
-import { isCaseInsensitiveMatch } from './common';
+import { isCaseInsensitiveMatch, reportLog } from './common';
 import { buildHistoryTransaction, parseFeeWithGasToken } from './history';
 
 
@@ -394,4 +399,83 @@ export const buildTxFeeInfo = (estimated: ?EstimatedTransactionFee, useGasToken:
     fee: gasTokenCost,
     gasToken,
   };
+};
+
+
+export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<Object> => {
+  const defaultResponse = { fee: new BigNumber('0'), error: true };
+  const estimateTransaction = {
+    data: transaction.data,
+    recipient: transaction.to,
+    value: transaction.amount,
+  };
+
+  const estimated = await smartWalletService
+    .estimateAccountTransaction(estimateTransaction)
+    .then(result => buildTxFeeInfo(result, useGasToken))
+    .catch((e) => {
+      reportLog('Error getting fee for transaction', {
+        ...transaction,
+        message: e.message,
+      }, Sentry.Severity.Error);
+      return null;
+    });
+
+  if (!estimated) {
+    return defaultResponse;
+  }
+
+  return estimated;
+};
+
+export const getTxFeeAndTransactionPayload = async (
+  _transactionPayload: Object, useGasToken: boolean,
+): Promise<Object> => {
+  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(_transactionPayload, useGasToken);
+  let transactionPayload = _transactionPayload;
+  if (gasToken) {
+    transactionPayload = { ...transactionPayload, gasToken };
+  }
+
+  transactionPayload = { ...transactionPayload, txFeeInWei };
+
+  if (error) {
+    return null;
+  }
+
+  return {
+    gasToken,
+    txFeeInWei,
+    transactionPayload,
+  };
+};
+
+export const checkAllowance = async (sender: string, tokenAddress: string, allowedAddress: string) => {
+  const erc20Contract = getContract(tokenAddress, ERC20_CONTRACT_ABI);
+  const approvedAmountBN = erc20Contract
+    ? await erc20Contract.allowance(sender, allowedAddress)
+    : EthersBigNumber.from(0);
+  return approvedAmountBN;
+};
+
+export const addAllowanceTransaction = async (
+  transaction: Object, sender: string, allowedAddress: string, token: Asset, tokenAmount: EthersBigNumber,
+): Promise<Object> => {
+  const approvedAmountBN = await checkAllowance(sender, token.address, allowedAddress);
+
+  if (!approvedAmountBN || tokenAmount.gt(approvedAmountBN)) {
+    const rawValue = 1000000000;
+    const valueToApprove = utils.parseUnits(rawValue.toString(), token.decimals);
+    const approveTransactionData = buildERC20ApproveTransactionData(allowedAddress, valueToApprove, token.decimals);
+
+    return {
+      from: sender,
+      to: token.address,
+      data: approveTransactionData,
+      amount: 0,
+      symbol: ETH,
+      sequentialSmartWalletTransactions: [transaction],
+    };
+  }
+  return transaction;
 };
