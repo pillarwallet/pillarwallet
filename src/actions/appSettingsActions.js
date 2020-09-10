@@ -267,7 +267,7 @@ export const toggleSablierAction = () => {
   };
 };
 
-export const setAppLanguageAction = (language: string, version: string) => {
+export const setAppLanguageAction = (language: string, version: ?string) => {
   return (dispatch: Dispatch) => {
     const localisationSettings = {
       localisation:
