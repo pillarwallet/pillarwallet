@@ -94,8 +94,8 @@ describe('App actions', () => {
       { type: SET_CACHE_MAP, payload: {} },
       { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
       { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
-      { type: CACHE_STATUS.FAILED, payload: { url: authTranslationsUrl } },
-      { type: CACHE_STATUS.FAILED, payload: { url: commonTranslationsUrl } },
+      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localUrl: 'localString' } },
+      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localUrl: 'localString' } },
       { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
       { type: UPDATE_SESSION, payload: { areTranslationsInitialised: true } },
     ];
