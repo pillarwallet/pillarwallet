@@ -31,7 +31,7 @@ import {
   isLanguageSupported,
 } from 'services/translations/translations';
 
-import { cacheUrlAction } from 'actions/cacheActions';
+import { cacheUrlAction, removeUrlCacheAction } from 'actions/cacheActions';
 import { setSessionTranslationBundleInitialisedAction, setFallbackLanguageVersionAction } from 'actions/sessionActions';
 import { setAppLanguageAction } from 'actions/appSettingsActions';
 
@@ -57,22 +57,27 @@ const getTranslationData = (lng: string) => {
   return localeConfig.namespaces.map((ns) => ({ ns, url: `${localeConfig.baseUrl}${lng}/${ns}.json` }));
 };
 
-const getCachedTranslationResources = async (translationsData: TranslationData[], cacheMap: CacheMap) => {
-  const cachedTranslations = await Promise.all(translationsData.map(async ({ ns, url }) => {
-    const { localUrl } = cacheMap?.[url] || {};
+const getCachedTranslationResources =
+  async (translationsData: TranslationData[], cacheMap: CacheMap, dispatch: Dispatch) => {
+    const cachedTranslations = await Promise.all(translationsData.map(async ({ ns, url }) => {
+      const { localUrl } = cacheMap?.[url] || {};
+      if (!localUrl) return { ns, translations: {} };
 
-    if (!localUrl) return { ns, translations: {} };
+      const translations = await getCachedJSONFile(localUrl);
+      if (!translations) {
+        // cached files no longer exist - remove it from map
+        dispatch(removeUrlCacheAction(url));
+        return { ns, translations: {} };
+      }
+      return { ns, translations };
+    }));
 
-    const translations = await getCachedJSONFile(localUrl);
-    return { ns, translations };
-  }));
-
-  return cachedTranslations.reduce((formattedResources, translation) => {
-    const { ns, translations } = translation;
-    if (ns && translations) formattedResources[ns] = translations;
-    return formattedResources;
-  }, {});
-};
+    return cachedTranslations.reduce((formattedResources, translation) => {
+      const { ns, translations } = translation;
+      if (ns && translations) formattedResources[ns] = translations;
+      return formattedResources;
+    }, {});
+  };
 
 const getTranslationsResources = async (props) => {
   const {
@@ -97,7 +102,7 @@ const getTranslationsResources = async (props) => {
 
   // get newest cached translations
   const { cache: { cacheMap } } = getState();
-  resources = await getCachedTranslationResources(translationsData, cacheMap);
+  resources = await getCachedTranslationResources(translationsData, cacheMap, dispatch);
 
   // check missing namespaces
   const existingNameSpaces = Object.keys(resources).filter(ns => !isEmpty(resources[ns]));

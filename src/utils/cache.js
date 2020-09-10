@@ -38,6 +38,6 @@ export const getCachedJSONFile = async (localPath: string) => {
           resolve(jsonData);
         });
       })
-      .catch(() => resolve({}));
+      .catch(() => resolve(null));
   });
 };

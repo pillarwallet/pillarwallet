@@ -26,3 +26,4 @@ export const CACHE_STATUS = {
 };
 
 export const SET_CACHE_MAP = 'SET_CACHE_MAP';
+export const REMOVE_URL_CACHE = 'REMOVE_URL_CACHE';

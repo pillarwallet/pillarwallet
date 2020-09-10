@@ -22,7 +22,7 @@ import RNFetchBlob from 'rn-fetch-blob';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { CacheMap } from 'reducers/cacheReducer';
-import { CACHE_STATUS } from 'constants/cacheConstants';
+import { CACHE_STATUS, REMOVE_URL_CACHE } from 'constants/cacheConstants';
 import { saveDbAction } from './dbActions';
 
 // TODO: should prevent status === CACHE_STATUS.DONE ?
@@ -56,7 +56,6 @@ const finishCachingAction = (url: string, path: string) => {
   };
 };
 
-// TODO: call on registration to store cache from onboarding!
 export const cacheUrlAction = (url: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { cache: { cacheMap } } = getState();
@@ -79,5 +78,21 @@ export const cacheUrlAction = (url: string) => {
           dispatch({ type: CACHE_STATUS.FAILED, payload: { url } });
         });
     }
+  };
+};
+
+export const removeUrlCacheAction = (url: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { cache: { cacheMap } } = getState();
+
+    const updatedCacheMap = Object.keys(cacheMap).reduce((caches, mapKey) => {
+      if (url !== mapKey) {
+        caches[mapKey] = cacheMap[mapKey];
+      }
+      return caches;
+    }, {});
+
+    await dispatch(saveDbAction('cacheMap', { cacheMap: updatedCacheMap }, true));
+    dispatch({ type: REMOVE_URL_CACHE, payload: url });
   };
 };
