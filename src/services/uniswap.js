@@ -367,6 +367,9 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
         token0Price
         token1Price
         volumeUSD
+        reserve0
+        reserve1
+        totalSupply
       }
     }
   `;

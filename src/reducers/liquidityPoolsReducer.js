@@ -18,9 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_POOL_DATA, SET_FETCHING_POOL_DATA } from 'constants/liquidityPoolsConstants';
+import type { PoolData } from 'models/LiquidityPools';
+
 
 export type LiquidityPoolsReducerState = {
-  poolsData: Object, // TODO: type that
+  poolsData: {[address: string]: PoolData},
   isFetchingPoolData: boolean,
 };
 
@@ -40,7 +42,7 @@ const liquidityPoolsReducer = (
 ): LiquidityPoolsReducerState => {
   switch (action.type) {
     case SET_FETCHING_POOL_DATA:
-      return { ...state, isFetchingPoolData: true };
+      return { ...state, isFetchingPoolData: action.payload };
     case UPDATE_POOL_DATA:
       const { poolAddress, poolData } = action.payload;
       return { ...state, poolsData: { ...state.poolsData, [poolAddress]: poolData }, isFetchingPoolData: false };

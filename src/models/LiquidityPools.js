@@ -17,18 +17,21 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { fetchPoolData } from 'services/uniswap';
-import { UPDATE_POOL_DATA, SET_FETCHING_POOL_DATA } from 'constants/liquidityPoolsConstants';
-import type { Dispatch } from 'reducers/rootReducer';
 
-export const fetchPoolDataAction = (poolAddress: string) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_FETCHING_POOL_DATA, payload: true });
-    const poolData = await fetchPoolData(poolAddress);
-    if (poolData?.pair) {
-      dispatch({ type: UPDATE_POOL_DATA, payload: { poolAddress, poolData } });
-    } else {
-      dispatch({ type: SET_FETCHING_POOL_DATA, payload: false });
-    }
-  };
+type Token = {
+  id: string,
+  name: string,
+  symbol: string,
+};
+
+export type PoolData = {
+  id: string,
+  token0: Token,
+  token1: Token,
+  token0Price: string,
+  token1Price: string,
+  volumeUSD: string,
+  reserve0: string,
+  reserve1: string,
+  totalSupply: string,
 };
