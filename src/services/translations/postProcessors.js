@@ -21,7 +21,11 @@
 import i18n from 'i18next';
 import { capitalize } from 'utils/strings';
 import type { TranslationOptions } from 'models/Translations';
-import { CAPITALIZATION_POSTPROCESSOR, PUNCTUATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR } from './config';
+import {
+  CAPITALIZATION_POSTPROCESSOR,
+  PUNCTUATION_POSTPROCESSOR,
+  SUFFIX_PREFIX_POSTPROCESSOR,
+} from 'constants/localesConstants';
 
 
 export const PunctuationPostProcessor = {

@@ -19,25 +19,14 @@
 */
 
 import i18n from 'i18next';
-import t from 'translations/translate';
-import Toast from 'components/Toast';
+import { initReactI18next } from 'react-i18next';
+import localeConfig from 'configs/localeConfig';
 
+i18n
+  .use(initReactI18next)
+  .init({
+    ns: localeConfig.defaultNameSpace,
+    defaultNS: localeConfig.namespaces,
+  });
 
-const changeLanguage = (code: string) => {
-  i18n.changeLanguage(code)
-    .then(() => {
-      Toast.show({
-        message: t('toast.languageChanged'),
-        emoji: 'ok_hand',
-      });
-    })
-    .catch(() => {
-      Toast.show({
-        message: t('toast.languageChangeFailed'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
-    });
-};
-
-export default changeLanguage;
+export default i18n;

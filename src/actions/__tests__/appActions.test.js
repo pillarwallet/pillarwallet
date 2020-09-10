@@ -29,7 +29,7 @@ import { CACHE_STATUS, SET_CACHE_MAP } from 'constants/cacheConstants';
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import localeConfig from 'configs/localeConfig';
-import { getDefaultLanguage } from 'translations/setup';
+import { getDefaultSupportedUserLanguage } from 'services/translations/translations';
 
 const storage = Storage.getInstance('db');
 
@@ -80,7 +80,7 @@ describe('App actions', () => {
     store = mockStore({ appSettings: initialAppSettingsState, session: initialSessionState, cache: initialCacheState });
   });
 
-  const defaultLanguage = getDefaultLanguage();
+  const defaultLanguage = getDefaultSupportedUserLanguage();
   const authTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/auth.json`;
   const commonTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/common.json`;
 
@@ -92,10 +92,11 @@ describe('App actions', () => {
       { type: RESET_APP_LOADED },
       { type: UPDATE_APP_SETTINGS, payload: {} },
       { type: SET_CACHE_MAP, payload: {} },
-      { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
       { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
-      { type: CACHE_STATUS.FAILED, payload: { url: commonTranslationsUrl } },
+      { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
       { type: CACHE_STATUS.FAILED, payload: { url: authTranslationsUrl } },
+      { type: CACHE_STATUS.FAILED, payload: { url: commonTranslationsUrl } },
+      { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
       { type: UPDATE_SESSION, payload: { areTranslationsInitialised: true } },
     ];
 

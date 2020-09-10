@@ -18,11 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-const EN_COMMON = require('../translations/locales/en/common.json');
-const EN_AUTH = require('../translations/locales/en/auth.json');
+import {
+  CAPITALIZATION_POSTPROCESSOR,
+  PUNCTUATION_POSTPROCESSOR,
+  SUFFIX_PREFIX_POSTPROCESSOR,
+} from 'constants/localesConstants';
+
+const EN_COMMON = require('../locales/en/common.json');
+const EN_AUTH = require('../locales/en/auth.json');
+
+const DEFAULT_LANGUAGE = 'en';
+const DEFAULT_NAMESPACE = 'common';
 
 export default {
   baseUrl: 'http://pillar-stories.dev.imas.lt/locales/', // todo: change into real one;
+  defaultLanguage: DEFAULT_LANGUAGE,
+  supportedLanguages: [DEFAULT_LANGUAGE],
+  defaultNameSpace: DEFAULT_NAMESPACE,
+  namespaces: ['auth', DEFAULT_NAMESPACE],
+  postProcessors: [PUNCTUATION_POSTPROCESSOR, CAPITALIZATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR],
   localTranslations: {
     en: {
       common: EN_COMMON,

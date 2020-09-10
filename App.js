@@ -33,7 +33,7 @@ import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 
-import 'translations/setup';
+import 'services/translations/translations';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';

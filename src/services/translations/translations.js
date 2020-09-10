@@ -19,28 +19,28 @@
 */
 
 import i18n from 'i18next';
+import * as RNLocalize from 'react-native-localize';
 import { initReactI18next } from 'react-i18next';
+
+import localeConfig from 'configs/localeConfig';
 
 import type { TranslationResourcesOfLanguage } from 'models/Translations';
 
-import languageDetector from './deviceLanguageDetector';
-import { DEFAULT_NAMESPACE, NAMESPACES, POST_PROCESSORS, SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
 import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
 
 i18n
   .use(initReactI18next)
-  .use(languageDetector)
   .use(PunctuationPostProcessor)
   .use(SuffixPrefixPostProcessor)
   .use(CapitalizationPostProcessor)
   .init({
     interpolation: { escapeValue: false },
     transSupportBasicHtmlNodes: false,
-    ns: NAMESPACES,
-    defaultNS: DEFAULT_NAMESPACE,
-    postProcess: POST_PROCESSORS,
-    fallbackLng: DEFAULT_LANGUAGE,
-    supportedLngs: __DEV__ ? [...SUPPORTED_LANGUAGES, 'fr'] : SUPPORTED_LANGUAGES,
+    ns: localeConfig.namespaces,
+    defaultNS: localeConfig.defaultNameSpace,
+    postProcess: localeConfig.postProcessors,
+    fallbackLng: localeConfig.defaultLanguage,
+    supportedLngs: __DEV__ ? [...localeConfig.supportedLanguages, 'fr'] : localeConfig.supportedLanguages,
     debug: !!__DEV__,
     react: {
       wait: true,
@@ -74,9 +74,18 @@ export const setLanguage = async (lng: string) => {
   });
 };
 
-export const getDefaultLanguage = () => {
-  // todo: get lang from user device?
-  return DEFAULT_LANGUAGE;
+export const getDefaultSupportedUserLanguage = () => {
+  const userPreferredLocales = RNLocalize.getLocales();
+  const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
+
+  const userPreferredSupportedLanguage = userPreferredLanguages
+    .find((languageCode) => localeConfig.supportedLanguages.includes(languageCode));
+
+  return userPreferredSupportedLanguage || localeConfig.defaultLanguage;
+};
+
+export const isLanguageSupported = (language: string) => {
+  return localeConfig.supportedLanguages.includes(language);
 };
 
 export default i18n;

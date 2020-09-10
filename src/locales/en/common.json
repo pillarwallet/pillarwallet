@@ -1267,7 +1267,9 @@
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
-    "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing"
+    "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing",
+    "languageIsNoLongerSupported": "Your selected language is no longer supported. It's been changed to default language.",
+    "languageIsNotSupported": "This language is not supported"
   },
 
   "exchangeContent": {

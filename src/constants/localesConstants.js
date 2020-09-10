@@ -18,27 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as RNLocalize from 'react-native-localize';
-import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
-
-
-const userPreferredLocales = RNLocalize.getLocales();
-const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
-
-const getSupportedLanguage = () => {
-  const language = userPreferredLanguages.find((languageCode) => SUPPORTED_LANGUAGES.includes(languageCode));
-  return language || DEFAULT_LANGUAGE;
-};
-
-const languageDetector = {
-  type: 'languageDetector',
-  async: true,
-  detect: (callback: (lang: string) => void) => {
-    callback(getSupportedLanguage());
-  },
-  init: () => {},
-  cacheUserLanguage: () => {},
-};
-
-export default languageDetector;
-
+export const CAPITALIZATION_POSTPROCESSOR = 'capitalization';
+export const PUNCTUATION_POSTPROCESSOR = 'punctuation';
+export const SUFFIX_PREFIX_POSTPROCESSOR = 'suffixPrefix';
