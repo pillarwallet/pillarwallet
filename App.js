@@ -34,6 +34,7 @@ import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 
 import 'services/translations/translations';
+import localeConfig from 'configs/localeConfig';
 
 // actions
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -224,7 +225,7 @@ class App extends React.Component<Props, *> {
   };
 
   handleConnectivityChange = (state: NetInfoState) => {
-    const { updateTranslationResourceOnNetworkChange } = this.props;
+    const { updateTranslationResourceOnNetworkChange, areTranslationsInitialised } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
@@ -235,7 +236,9 @@ class App extends React.Component<Props, *> {
       });
     } else {
       Toast.close();
-      updateTranslationResourceOnNetworkChange();
+      if (areTranslationsInitialised) {
+        updateTranslationResourceOnNetworkChange();
+      }
     }
   };
 
@@ -259,7 +262,7 @@ class App extends React.Component<Props, *> {
     const theme = getThemeByType(themeType);
     const { current } = theme;
 
-    if (!isFetched || !areTranslationsInitialised) return null;
+    if (!isFetched || (localeConfig.isEnabled && localeConfig.baseUrl && !areTranslationsInitialised)) return null;
 
     return (
       <AppearanceProvider>

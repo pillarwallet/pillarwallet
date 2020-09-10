@@ -178,35 +178,50 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
       appSettings: { data: { localisation } },
     } = getState();
 
-    // might be first open, hence - no localisation info is present;
-    const { activeLngCode } = localisation || {};
-    let language = activeLngCode || getDefaultSupportedUserLanguage();
+    // check if translations are supported. If not - use local default lang translations
+    if (!localeConfig.isEnabled || !localeConfig.baseUrl) {
+      const localDefaultTranslations = localeConfig.localTranslations[localeConfig.defaultLanguage];
+      const localDefaultTranslationResources = localeConfig.namespaces.reduce((allResources, ns) => {
+        const relatedTranslations = localDefaultTranslations[ns];
+        if (relatedTranslations) allResources[ns] = relatedTranslations;
+        return allResources;
+      }, {});
 
-    if (!!activeLngCode && !isLanguageSupported(activeLngCode)) {
-      // previously selected language is no longer supported - fallback to default supported device language;
-      language = getDefaultSupportedUserLanguage();
-      if (!localeConfig.supportedLanguages.includes(activeLngCode)) {
-        Toast.show({
-          message: t('toast.languageIsNoLongerSupported'),
-          emoji: 'hushed',
-          autoClose: true,
-        });
-      }
-    }
-
-    const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
-
-    await setLanguageAndTranslationBundles({ resources, language });
-
-    // get fallback language translations if selected language is not fallback
-    if (language !== localeConfig.defaultLanguage) {
-      await dispatch(getAndSetFallbackLanguageResources());
+      await setLanguageAndTranslationBundles({
+        resources: localDefaultTranslationResources,
+        language: localeConfig.defaultLanguage,
+      });
     } else {
-      // if is changing to fallback language - update fallbackLanguageVersion
-      dispatch(setFallbackLanguageVersionAction(version));
-    }
+      // might be first open, hence - no localisation info is present;
+      const { activeLngCode } = localisation || {};
+      let language = activeLngCode || getDefaultSupportedUserLanguage();
 
-    dispatch(setSessionTranslationBundleInitialisedAction());
+      if (!!activeLngCode && !isLanguageSupported(activeLngCode)) {
+        // previously selected language is no longer supported - fallback to default supported device language;
+        language = getDefaultSupportedUserLanguage();
+        if (!localeConfig.supportedLanguages.includes(activeLngCode)) {
+          Toast.show({
+            message: t('toast.languageIsNoLongerSupported'),
+            emoji: 'hushed',
+            autoClose: true,
+          });
+        }
+      }
+
+      const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+
+      await setLanguageAndTranslationBundles({ resources, language });
+
+      // get fallback language translations if selected language is not fallback
+      if (language !== localeConfig.defaultLanguage) {
+        await dispatch(getAndSetFallbackLanguageResources());
+      } else {
+        // if is changing to fallback language - update fallbackLanguageVersion
+        dispatch(setFallbackLanguageVersionAction(version));
+      }
+
+      dispatch(setSessionTranslationBundleInitialisedAction());
+    }
   };
 };
 
@@ -216,6 +231,10 @@ export const changeLanguageAction = (language: string, showToast?: boolean) => {
       session: { data: { fallbackLanguageVersion } },
     } = getState();
     const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
+
+    if (!localeConfig.isEnabled || !localeConfig.baseUrl) {
+      return;
+    }
 
     if (isLanguageSupported(language)) {
       const onLanguageChangeSuccess = () => {
