@@ -66,6 +66,7 @@ import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
+import { SET_CACHE_MAP } from 'constants/cacheConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -225,6 +226,9 @@ export const initAppAndRedirectAction = () => {
     } else {
       navAction = { routeName: ONBOARDING_FLOW };
     }
+
+    const { cacheMap = {} } = get(storageData, 'cacheMap', {});
+    dispatch({ type: SET_CACHE_MAP, payload: cacheMap });
 
     await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpen());
 

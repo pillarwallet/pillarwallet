@@ -19,22 +19,27 @@
 */
 
 import isEmpty from 'lodash.isempty';
+import * as Sentry from '@sentry/react-native';
 
-import type { Dispatch, GetState } from 'reducers/rootReducer';
 import localeConfig from 'configs/localeConfig';
 import t from 'translations/translate';
 
 import { addResourceBundles, getDefaultLanguage, setLanguage } from 'translations/setup';
-import { NAMESPACES } from 'translations/config';
-import { getCachedJSONFile } from 'utils/cache';
-import type { CacheMap } from 'reducers/cacheReducer';
+import { DEFAULT_LANGUAGE, NAMESPACES } from 'translations/config';
 
 import { cacheUrlAction } from 'actions/cacheActions';
-import { setSessionTranslationBundleInitialisedAction } from 'actions/sessionActions';
+import { setSessionTranslationBundleInitialisedAction, setFallbackLanguageVersionAction } from 'actions/sessionActions';
 import { setAppLanguageAction } from 'actions/appSettingsActions';
 
 import Toast from 'components/Toast';
+
 import type { TranslationData, TranslationResourcesOfLanguage } from 'models/Translations';
+import type { CacheMap } from 'reducers/cacheReducer';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+
+import { reportLog } from 'utils/common';
+import { getCachedJSONFile } from 'utils/cache';
+
 
 const LOCAL = 'LOCAL';
 
@@ -136,6 +141,33 @@ const setLanguageAndTranslationBundles = async ({ language, resources, onSuccess
   }
 };
 
+export const getAndSetFallbackLanguageResources = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const language = DEFAULT_LANGUAGE;
+    const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+
+    const fallbackTranslations = Object.values(resources).filter((translations) => !isEmpty(translations));
+    const hasFallbackTranslations = !!fallbackTranslations.length;
+
+    const missingNameSpaces = NAMESPACES.filter(ns => !Object.keys(resources).includes(ns));
+
+    if (missingNameSpaces.length || !hasFallbackTranslations) {
+      const LANGUAGE_ERROR = missingNameSpaces.length
+        ? 'Fallback language misses namespaces'
+        : 'Fallback languages has no resources';
+      const extra = missingNameSpaces.length ? { missingNameSpaces } : null;
+      reportLog(LANGUAGE_ERROR, extra, Sentry.Severity.Error);
+    }
+
+    if (hasFallbackTranslations) {
+      await addResourceBundles(language, NAMESPACES, resources);
+      dispatch(setFallbackLanguageVersionAction(version));
+    } else {
+      dispatch(setFallbackLanguageVersionAction(LOCAL));
+    }
+  };
+};
+
 export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -145,17 +177,30 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
     // might be first open, hence - no localisation info is present;
     const { activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultLanguage();
-    const { resources } = await getTranslationsResources({ language, dispatch, getState });
+
+    // todo: check if supported language
+    const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
 
     await setLanguageAndTranslationBundles({ resources, language });
+
+    // get fallback language translations if selected language is not fallback
+    if (language !== DEFAULT_LANGUAGE) {
+      await dispatch(getAndSetFallbackLanguageResources());
+    } else {
+      // if is changing to fallback language - update fallbackLanguageVersion
+      dispatch(setFallbackLanguageVersionAction(version));
+    }
+
     dispatch(setSessionTranslationBundleInitialisedAction());
   };
 };
 
 export const changeLanguageAction = (language: string, showToast?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const resourcesProps = { language, dispatch, getState };
-    const { resources, missingNsArray, version } = await getTranslationsResources(resourcesProps);
+    const {
+      session: { data: { fallbackLanguageVersion } },
+    } = getState();
+    const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
 
     const onLanguageChangeSuccess = () => {
       dispatch(setAppLanguageAction(language, version));
@@ -178,6 +223,14 @@ export const changeLanguageAction = (language: string, showToast?: boolean) => {
     };
 
     await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
+
+    // if is changing to fallback language - update fallbackLanguageVersion
+    if (language === DEFAULT_LANGUAGE) {
+      dispatch(setFallbackLanguageVersionAction(version));
+    } else if (!fallbackLanguageVersion || fallbackLanguageVersion === LOCAL) {
+      // fallback language is needed to be updated on language change
+      await getAndSetFallbackLanguageResources();
+    }
   };
 };
 
@@ -185,20 +238,26 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { localisation } },
-      session: { data: { isOnline } },
+      session: { data: { isOnline, fallbackLanguageVersion } },
     } = getState();
     const { translationVersion, activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultLanguage();
 
-    if (isOnline && translationVersion === LOCAL && !!language) {
-      // retry fetching translations to change local ones into newest possible
-      const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+    if (isOnline) {
+      // update fallback language translations if using local
+      if (fallbackLanguageVersion === LOCAL && language !== DEFAULT_LANGUAGE) {
+        await dispatch(getAndSetFallbackLanguageResources());
+      }
+      if (translationVersion === LOCAL && !!language) {
+        // retry fetching translations to change local ones into newest possible
+        const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
 
-      const onLanguageChangeSuccess = () => {
-        dispatch(setAppLanguageAction(language, version));
-      };
+        const onLanguageChangeSuccess = () => {
+          dispatch(setAppLanguageAction(language, version));
+        };
 
-      await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
+        await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
+      }
     }
   };
 };

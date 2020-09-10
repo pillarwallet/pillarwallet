@@ -24,7 +24,7 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
-import { CACHE_STATUS } from 'constants/cacheConstants';
+import { CACHE_STATUS, SET_CACHE_MAP } from 'constants/cacheConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -91,6 +91,7 @@ describe('App actions', () => {
     const expectedActions = [
       { type: RESET_APP_LOADED },
       { type: UPDATE_APP_SETTINGS, payload: {} },
+      { type: SET_CACHE_MAP, payload: {} },
       { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
       { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
       { type: CACHE_STATUS.FAILED, payload: { url: commonTranslationsUrl } },

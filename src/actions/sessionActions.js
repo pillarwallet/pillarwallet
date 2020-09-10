@@ -28,3 +28,8 @@ export const setSessionTranslationBundleInitialisedAction = () => ({
   type: UPDATE_SESSION,
   payload: { areTranslationsInitialised: true },
 });
+
+export const setFallbackLanguageVersionAction = (version: string) => ({
+  type: UPDATE_SESSION,
+  payload: { fallbackLanguageVersion: version },
+});
