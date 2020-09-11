@@ -96,7 +96,7 @@ class ConfirmNewPin extends React.Component<Props, State> {
     if (walletState === CREATED) {
       return (
         <Container center>
-          <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
+          <BaseText style={{ marginBottom: 20 }}>{t('label.pinChanged', { exclamation: true })}</BaseText>
           <Button title={t('button.continue')} onPress={() => this.props.navigation.navigate(MENU)} />
         </Container>
       );

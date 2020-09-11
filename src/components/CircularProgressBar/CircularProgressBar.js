@@ -79,10 +79,12 @@ const CircularProgressBar = ({
 
   const circleRadius = (size - circleWidth) / 2;
 
+  /* eslint-disable i18next/no-literal-string */
   const path = `
     M ${size / 2} ${circleWidth / 2}
     A ${circleRadius} ${circleRadius} 0 1 1 ${(size / 2) - 0.0001} ${circleWidth / 2}
   `;
+  /* eslint-enable i18next/no-literal-string */
 
   const circumference = 2 * Math.PI * circleRadius;
 

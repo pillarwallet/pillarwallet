@@ -101,14 +101,14 @@ const ManageConnectedDevices = ({
         iconImageSize={48}
         customLabel={(
           <HorizontalView style={{ flex: 0.8 }}>
-            <ItemTitle>Device {humanizeHexString(deviceAddress)}</ItemTitle>
+            <ItemTitle>{t('label.device', { address: humanizeHexString(deviceAddress) })}</ItemTitle>
           </HorizontalView>
         )}
       >
         {isCurrentDevice && <MediumText secondary>{t('label.thisDevice')}</MediumText>}
         {thisDeviceBeingRemoved &&
           <HorizontalView>
-            <BaseText secondary>Removing</BaseText>
+            <BaseText secondary>{t('label.removing')}</BaseText>
             <Spinner style={{ marginLeft: 7 }} width={20} height={20} />
           </HorizontalView>
         }

@@ -34,10 +34,13 @@ export const isColorDark = (color: string) => {
     const rgbColours = colorArray.shift();
     [r, g, b] = rgbColours;
   } else {
+    /* eslint-disable i18next/no-literal-string */
     let updColor = `0x${color.replace('#', '')}`;
     if (color.length < 5) {
       updColor = `0x${color.replace('#', '').replace(/./g, '$&$&')}`;
     }
+    /* eslint-enable i18next/no-literal-string */
+
     /* eslint-disable */
     const colorBitwise = +(updColor);
     r = colorBitwise >> 16;

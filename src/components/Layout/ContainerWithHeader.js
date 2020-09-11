@@ -192,8 +192,8 @@ class ContainerWithHeader extends React.Component<Props, State> {
 
     const colors = getThemeColors(theme);
 
-    const topInset = headerProps.floating ? 'always' : 'never';
-    const bottomInset = footer ? 'never' : 'always';
+    const topInset = headerProps.floating ? 'always' : 'never'; // eslint-disable-line i18next/no-literal-string
+    const bottomInset = footer ? 'never' : 'always'; // eslint-disable-line i18next/no-literal-string
     const androidStatusBarSpacing = headerProps.floating ? StatusBar.currentHeight : 0;
     const isScreenBigEnoughToAvoidKeyboard = screenHeight > minAvoidHeight;
     const shouldRenderKbAvoidingFooter = isScreenBigEnoughToAvoidKeyboard && shouldFooterAvoidKeyboard;

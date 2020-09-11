@@ -32,6 +32,8 @@ type AddressValidator = {
   message: string,
 };
 
+const ETH_DOMAIN = 'eth';
+
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
     return t('auth:error.invalidPin.tooLong', { requiredLength: 6 });
@@ -47,7 +49,7 @@ export const isEnsName = (input: string): boolean => {
   if (!input.toString().includes('.')) return false;
 
   const domain = input.split('.').pop().toLowerCase();
-  const supportedDomains = ['eth'];
+  const supportedDomains = [ETH_DOMAIN];
 
   if (supportedDomains.includes(domain)) {
     return true;
@@ -100,8 +102,7 @@ export const addressValidator = (token: string): AddressValidator => {
 };
 
 export function hasAllValues(object: ?Object) {
-  // No param reassign makes eslint sad
-  object = object || {}; // eslint-disable-line
+  object = object || {};
   const keys = Object.keys(object);
   const values = Object.values(object).filter((value) => value !== undefined && value !== '');
   return keys.length === values.length;

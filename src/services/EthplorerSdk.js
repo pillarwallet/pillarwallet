@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
+
 import { BigNumber } from 'bignumber.js';
 import axios, { AxiosResponse } from 'axios';
 
@@ -55,9 +57,10 @@ export function parseEthValue(value: number): string {
   return new BigNumber(Math.floor(+parsed.toString())).toString();
 }
 
+const BASE_URL = 'https://api.ethplorer.io/';
 class EthplorerSdk {
   apiKey: string;
-  baseURL = 'https://api.ethplorer.io/';
+  baseURL = BASE_URL;
 
   constructor(apiKey: string) {
     this.apiKey = apiKey;

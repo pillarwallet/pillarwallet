@@ -225,7 +225,7 @@ export const setPreferredGasTokenAction = (preferredGasToken: string) => {
   };
 };
 
-export const initialDeeplinkExecuted = () => {
+export const initialDeeplinkExecutedAction = () => {
   return (dispatch: Dispatch) => {
     dispatch({
       type: UPDATE_APP_SETTINGS,

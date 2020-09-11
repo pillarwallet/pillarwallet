@@ -107,7 +107,8 @@ const PoolTickets = (props: Props) => {
   };
 
   const nextDate = new Date(Date.now() + remainingTimeMs);
-  const eligibleDate = format(nextDate, 'MMMM D, YYYY');
+  // TODO: localize dates
+  const eligibleDate = format(nextDate, 'MMMM D, YYYY'); // eslint-disable-line i18next/no-literal-string
 
   return (
     <PoolTicketsWrapper

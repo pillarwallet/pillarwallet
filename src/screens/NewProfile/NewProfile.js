@@ -109,7 +109,7 @@ const MODAL = {
   PRIVACY_POLICY: 'PRIVACY_POLICY',
 };
 
-const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan';
+const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan'; // eslint-disable-line i18next/no-literal-string
 
 const NewProfile = ({
   apiUser,
@@ -153,6 +153,7 @@ const NewProfile = ({
     return onValidUsername.cancel;
   }, [onValidUsername, usernameValue]);
 
+
   useEffect(() => {
     if (walletState !== CHECKING_USERNAME && isCheckingUsername) setIsCheckingUsername(false);
   }, [walletState]);
@@ -181,10 +182,10 @@ const NewProfile = ({
 
     if (isUsernameInputDirty && !isCheckingUsername) {
       if (usernameValidationErrorMessage || usernameCheckErrorMessage) {
-        statusIcon = 'close';
+        statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
         iconColor = colors.negative;
       } else if (walletState === USERNAME_OK) {
-        statusIcon = 'check';
+        statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
         iconColor = colors.positive;
       }
     }

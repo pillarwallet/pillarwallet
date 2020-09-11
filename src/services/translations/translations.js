@@ -28,6 +28,7 @@ import type { TranslationResourcesOfLanguage } from 'models/Translations';
 
 import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
 
+/* eslint-disable i18next/no-literal-string */
 i18n
   .use(initReactI18next)
   .use(PunctuationPostProcessor)
@@ -50,6 +51,7 @@ i18n
     },
   }, () => {},
   );
+/* eslint-enable i18next/no-literal-string */
 
 /**
  * Adds complete bundle.

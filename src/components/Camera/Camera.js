@@ -355,14 +355,18 @@ class Camera extends React.Component<Props, State> {
     const cutOutD = screenWidth - 40;
     const cutOutR = cutOutD / 2;
     const centerYpos = screenHeight / 2;
+
+    /* eslint-disable i18next/no-literal-string */
     const overlayPath = `
     M 0 0 h${screenWidth} v${screenHeight} h-${screenWidth}Z
     M 20,${centerYpos} m 0,0
     a ${cutOutR},${cutOutR} 0 1,0 ${cutOutD},0
     a ${cutOutR},${cutOutR} 0 1,0 -${cutOutD},0
     `;
+    /* eslint-enable i18next/no-literal-string */
+
     const overlayColor = isFlashOn && cameraType === FRONT ? FRONT_FLASH_COLOR : '#000000';
-    const flashIcon = isFlashOn ? 'flash-on' : 'flash-off';
+    const flashIcon = isFlashOn ? 'flash-on' : 'flash-off'; // eslint-disable-line i18next/no-literal-string
     return (
       <React.Fragment>
         {!!isVisible &&

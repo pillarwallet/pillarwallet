@@ -2,7 +2,8 @@
   "extends": [
     "airbnb",
     "plugin:flowtype/recommended",
-    "plugin:promise/recommended"
+    "plugin:promise/recommended",
+    "./.eslintTranslations"
   ],
   "parser": "@babel/eslint-parser",
   "plugins": [

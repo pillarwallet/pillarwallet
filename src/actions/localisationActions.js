@@ -54,7 +54,10 @@ type SetLngAndBundle = {
 }
 
 const getTranslationData = (lng: string) => {
-  return localeConfig.namespaces.map((ns) => ({ ns, url: `${localeConfig.baseUrl}${lng}/${ns}.json` }));
+  return localeConfig.namespaces.map((ns) => ({
+    ns,
+    url: `${localeConfig.baseUrl}${lng}/${ns}.json`, // eslint-disable-line i18next/no-literal-string
+  }));
 };
 
 const getCachedTranslationResources =

@@ -122,7 +122,7 @@ export const createOneTimePasswordAction = (
       if (callback) callback();
     } else {
       dispatch(resetOneTimePasswordAction());
-      const fieldName = field.smsNotification ? 'phone' : 'email';
+      const fieldName = field.smsNotification ? 'phone' : 'email'; // eslint-disable-line i18next/no-literal-string
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {

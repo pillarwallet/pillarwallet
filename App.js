@@ -108,6 +108,7 @@ type Props = {
   changeLanguage: (language: string, showToast?: boolean) => void,
   areTranslationsInitialised: boolean,
   updateTranslationResourceOnNetworkChange: () => void,
+  initialDeeplinkExecuted: boolean,
 }
 
 
@@ -242,11 +243,14 @@ class App extends React.Component<Props, *> {
     }
   };
 
-  handleDeepLinkEvent = event => {
-    const { executeDeepLink } = this.props;
-    const { url: deepLink } = event;
-    if (deepLink === undefined) return;
-    executeDeepLink(deepLink);
+  handleDeepLinkEvent = (event: { url: string }) => {
+    // prevents invoking upon app launch, before login
+    if (this.props.initialDeeplinkExecuted) {
+      const { executeDeepLink } = this.props;
+      const { url: deepLink } = event;
+      if (deepLink === undefined) return;
+      executeDeepLink(deepLink);
+    }
   };
 
   render() {
@@ -274,25 +278,26 @@ class App extends React.Component<Props, *> {
                   if (!node) return;
                   setTopLevelNavigator(node);
                 }}
-                theme={current === LIGHT_THEME ? 'light' : 'dark'}
+                theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18next.language}
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
-                title={`THEME: ${current}`}
+                title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
                 onPress={() => {
                   const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
                   setAppTheme(themeToChangeTo);
                 }}
               />}
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
-                title={`Change lang (current: ${i18next.language})`}
-                onPress={() => changeLanguage(i18next.language === 'lt' ? 'en' : 'lt', true)}
+                title={`Change lang (current: ${i18next.language})`} // eslint-disable-line i18next/no-literal-string
+                // eslint-disable-next-line i18next/no-literal-string
+                onPress={() => changeLanguage(i18next.language === 'fr' ? localeConfig.defaultLanguage : 'fr')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&
                 <Button
-                  title={`Environment: ${this.state.env}`}
+                  title={`Environment: ${this.state.env}`} // eslint-disable-line i18next/no-literal-string
                   onPress={() => switchEnvironments()}
                 />
               }
@@ -312,7 +317,7 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, isManualThemeSelection } },
+  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
   session: { data: { areTranslationsInitialised } },
 }: RootReducerState): $Shape<Props> => ({
@@ -321,6 +326,7 @@ const mapStateToProps = ({
   isManualThemeSelection,
   activeWalkthroughSteps,
   areTranslationsInitialised,
+  initialDeeplinkExecuted,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
