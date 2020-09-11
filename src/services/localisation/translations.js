@@ -41,13 +41,17 @@ i18n
     defaultNS: localeConfig.defaultNameSpace,
     postProcess: localeConfig.postProcessors,
     fallbackLng: localeConfig.defaultLanguage,
-    supportedLngs: __DEV__ ? [...localeConfig.supportedLanguages, 'fr'] : localeConfig.supportedLanguages,
+    supportedLngs: localeConfig.supportedLanguages,
     debug: !!__DEV__,
     react: {
       wait: true,
       bindI18n: 'languageChanged loaded added',
       bindStore: 'added removed',
       nsMode: 'common',
+    },
+    lng: localeConfig.defaultLanguage,
+    resources: {
+      [localeConfig.defaultLanguage]: {},
     },
   }, () => {},
   );

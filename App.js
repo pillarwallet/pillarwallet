@@ -290,7 +290,7 @@ class App extends React.Component<Props, *> {
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
                 title={`Change lang (current: ${i18next.language})`} // eslint-disable-line i18next/no-literal-string
                 // eslint-disable-next-line i18next/no-literal-string
-                onPress={() => changeLanguage(i18next.language === 'fr' ? localeConfig.defaultLanguage : 'fr')}
+                onPress={() => changeLanguage(i18next.language === 'lt' ? localeConfig.defaultLanguage : 'lt')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&

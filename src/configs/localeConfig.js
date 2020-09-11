@@ -32,10 +32,10 @@ const DEFAULT_LANGUAGE = 'en';
 const DEFAULT_NAMESPACE = 'common';
 
 export default {
-  isEnabled: false,
+  isEnabled: true,
   baseUrl: 'http://pillar-stories.dev.imas.lt/locales/', // todo: change into real one;
   defaultLanguage: DEFAULT_LANGUAGE,
-  supportedLanguages: [DEFAULT_LANGUAGE],
+  supportedLanguages: [DEFAULT_LANGUAGE, 'lt'],
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
   postProcessors: [PUNCTUATION_POSTPROCESSOR, CAPITALIZATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR],
