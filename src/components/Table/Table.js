@@ -66,7 +66,7 @@ export const TableAmount = ({ amount, fiatAmount }: TableAmountProps) => {
   return (
     <AmountContainer>
       <BaseText regular>{amount}</BaseText>
-      {fiatAmount && (
+      {!!fiatAmount && (
         <>
           <Spacing w={4} />
           <BaseText regular secondary>{fiatAmount}</BaseText>
