@@ -62,8 +62,8 @@ const ToastsWrapper = styled(SafeAreaView)`
   top: 0;
   width: 100%;
   z-index: 1000;
-  margin-top: ${({ statusBarHeight = 0 }) => statusBarHeight}px;
-  padding: 40px 20px;
+  margin-top: ${({ statusBarHeight = 0 }) => statusBarHeight + 40}px;
+  padding: 0px 20px;
 `;
 
 const toastInstances: Instance[] = [];

@@ -1782,11 +1782,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             style={
               Object {
                 "left": 0,
-                "marginTop": 42,
-                "paddingBottom": 40,
+                "marginTop": 82,
+                "paddingBottom": 0,
                 "paddingLeft": 20,
                 "paddingRight": 20,
-                "paddingTop": 40,
+                "paddingTop": 20,
                 "position": "absolute",
                 "top": 0,
                 "width": "100%",
@@ -2562,11 +2562,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             style={
               Object {
                 "left": 0,
-                "marginTop": 42,
-                "paddingBottom": 40,
+                "marginTop": 82,
+                "paddingBottom": 0,
                 "paddingLeft": 20,
                 "paddingRight": 20,
-                "paddingTop": 40,
+                "paddingTop": 20,
                 "position": "absolute",
                 "top": 0,
                 "width": "100%",
@@ -3045,11 +3045,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             style={
               Object {
                 "left": 0,
-                "marginTop": 42,
-                "paddingBottom": 40,
+                "marginTop": 82,
+                "paddingBottom": 0,
                 "paddingLeft": 20,
                 "paddingRight": 20,
-                "paddingTop": 40,
+                "paddingTop": 20,
                 "position": "absolute",
                 "top": 0,
                 "width": "100%",
