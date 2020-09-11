@@ -18,12 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-// NOTE: This component is written with toasts in mind, and becauso of this:
+// NOTE: This component is written with toasts in mind, and because of this:
 // - it's not optimized for lists with large number of items;
 // - while toasts have variable height depending on content, they're meant to
 //   be small, so for the sake of simplicity the initial offset (above the top
 //   of the screen) is hardcoded;
-// - the choosen enter animation assumes new elements are always added to the
+// - the chosen enter animation assumes new elements are always added to the
 //   top of the list.
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
