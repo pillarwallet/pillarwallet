@@ -17,10 +17,24 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { userHasSmartWallet } from 'utils/smartWallet';
+import { BigNumber } from 'bignumber.js';
+import { userHasSmartWallet, addAllowanceTransaction, getTxFeeAndTransactionPayload } from 'utils/smartWallet';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-
+import * as assetServices from 'services/assets';
+import * as smartWalletService from 'services/smartWallet';
 import type { Accounts } from 'models/Account';
+
+
+const token = {
+  address: '0x2222',
+  decimals: 18,
+  description: '',
+  iconMonoUrl: '',
+  iconUrl: '',
+  name: '',
+  symbol: '',
+  wallpaperUrl: '',
+};
 
 describe('Smartwallet utils', () => {
   describe('userHasSmartWallet', () => {
@@ -54,6 +68,129 @@ describe('Smartwallet utils', () => {
       ];
 
       expect(userHasSmartWallet(accounts)).toBe(true);
+    });
+  });
+
+  describe('getTxFeeAndTransactionPayload', () => {
+    it('returns a proper tx fee and transaction payload', async () => {
+      const transaction = {
+        from: '0x0000',
+        to: '0x1111',
+      };
+
+      const txCost = new BigNumber(100);
+
+      (smartWalletService: any).default.estimateAccountTransaction = jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          ethCost: txCost,
+        }),
+      );
+
+      const result = await getTxFeeAndTransactionPayload(transaction, false);
+      expect(result).toMatchObject({
+        gasToken: undefined,
+        transactionPayload: {
+          from: '0x0000',
+          to: '0x1111',
+          txFeeInWei: txCost,
+        },
+        txFeeInWei: txCost,
+      });
+    });
+    it('returns a proper tx fee and transaction payload when using gas token', async () => {
+      const transaction = {
+        from: '0x0000',
+        to: '0x1111',
+      };
+
+      const txCost = new BigNumber(100);
+      const txTokenCost = new BigNumber(200);
+      const gasToken = {
+        symbol: 'TEST',
+      };
+
+      (smartWalletService: any).default.estimateAccountTransaction = jest.fn().mockImplementation(() =>
+        Promise.resolve({
+          ethCost: txCost,
+          gasTokenCost: txTokenCost,
+          gasToken,
+        }),
+      );
+
+      const result = await getTxFeeAndTransactionPayload(transaction, true);
+      expect(result).toEqual({
+        gasToken,
+        transactionPayload: {
+          from: '0x0000',
+          to: '0x1111',
+          txFeeInWei: txTokenCost,
+          gasToken,
+        },
+        txFeeInWei: txTokenCost,
+      });
+    });
+    it('returns null on error', async () => {
+      const transaction = {
+        from: '0x0000',
+        to: '0x1111',
+      };
+
+      (smartWalletService: any).default.estimateAccountTransaction = jest.fn().mockImplementation(() =>
+        Promise.reject(new Error('test')),
+      );
+
+      const result = await getTxFeeAndTransactionPayload(transaction, false);
+      expect(result).toEqual(null);
+    });
+  });
+
+  describe('addAllowanceTransaction', () => {
+    it('adds an allowance tx if necessary', async () => {
+      const fromAddress = '0x0000';
+      const toAddress = '0x1111';
+
+      const transaction = {
+        from: fromAddress,
+        to: toAddress,
+      };
+
+      (assetServices: any).getContract = jest.fn().mockImplementation(() => ({
+        allowance: () => 0,
+      }));
+      (assetServices: any).buildERC20ApproveTransactionData =
+        jest.fn().mockImplementation(() => 'approve transaction data');
+
+      const txWithAllowance = await addAllowanceTransaction(
+        transaction, fromAddress, toAddress, token, new BigNumber(1000),
+      );
+      expect(txWithAllowance).toEqual({
+        from: fromAddress,
+        to: token.address,
+        data: 'approve transaction data',
+        amount: 0,
+        symbol: 'ETH',
+        sequentialSmartWalletTransactions: [transaction],
+      });
+    });
+    it('doesn\'t add an allowance tx if not necessary', async () => {
+      const fromAddress = '0x0000';
+      const toAddress = '0x1111';
+
+      const transaction = {
+        from: fromAddress,
+        to: toAddress,
+      };
+
+      (assetServices: any).getContract = jest.fn().mockImplementation(() => ({
+        allowance: () => 10000,
+      }));
+      (assetServices: any).buildERC20ApproveTransactionData =
+        jest.fn().mockImplementation(() => 'approve transaction data');
+
+      const txWithAllowance = await addAllowanceTransaction(
+        transaction, fromAddress, toAddress, token, new BigNumber(1000),
+      );
+      expect(txWithAllowance).toEqual(transaction);
     });
   });
 });
