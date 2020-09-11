@@ -29,7 +29,11 @@ export const setSessionTranslationBundleInitialisedAction = () => ({
   payload: { areTranslationsInitialised: true },
 });
 
-export const setFallbackLanguageVersionAction = (version: string) => ({
-  type: UPDATE_SESSION,
-  payload: { fallbackLanguageVersion: version },
-});
+export const setFallbackLanguageVersionAction = (version: string) => {
+  // TODO: pass in real version when it will be set
+  //  ('1' is passed to prevent unnecessary fallback language resources' updates on network status change)
+  return {
+    type: UPDATE_SESSION,
+    payload: { fallbackLanguageVersion: version === 'LOCAL' ? version : '1' },
+  };
+};

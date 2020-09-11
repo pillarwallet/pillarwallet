@@ -29,7 +29,7 @@ import {
   getDefaultSupportedUserLanguage,
   setLanguage,
   isLanguageSupported,
-} from 'services/translations/translations';
+} from 'services/localisation/translations';
 
 import { cacheUrlAction, removeUrlCacheAction } from 'actions/cacheActions';
 import { setSessionTranslationBundleInitialisedAction, setFallbackLanguageVersionAction } from 'actions/sessionActions';
@@ -46,6 +46,10 @@ import { getCachedJSONFile } from 'utils/cache';
 
 
 const LOCAL = 'LOCAL';
+const LANGUAGE_ERROR = {
+  MISSES_NAMESPACES: 'Fallback language misses namespaces',
+  NO_TRANSLATIONS: 'Fallback languages has no resources',
+};
 
 type SetLngAndBundle = {
   language: string,
@@ -68,7 +72,7 @@ const getCachedTranslationResources =
 
       const translations = await getCachedJSONFile(localUrl);
       if (!translations) {
-        // cached files no longer exist - remove it from map
+        // cached file no longer exists - remove it from map
         dispatch(removeUrlCacheAction(url));
         return { ns, translations: {} };
       }
@@ -149,6 +153,10 @@ const setLanguageAndTranslationBundles = async ({ language, resources, onSuccess
       .then(() => { if (onSuccess) onSuccess(); })
       .catch(() => { onLanguageChangeError(); });
   } else {
+    // report to sentry if fallback language misses translations
+    if (language === localeConfig.defaultLanguage) {
+      reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, null, Sentry.Severity.Error);
+    }
     onLanguageChangeError();
   }
 };
@@ -164,11 +172,9 @@ export const getAndSetFallbackLanguageResources = () => {
     const missingNameSpaces = localeConfig.namespaces.filter(ns => !Object.keys(resources).includes(ns));
 
     if (missingNameSpaces.length || !hasFallbackTranslations) {
-      const LANGUAGE_ERROR = missingNameSpaces.length
-        ? 'Fallback language misses namespaces'
-        : 'Fallback languages has no resources';
+      const ERROR = missingNameSpaces.length ? LANGUAGE_ERROR.MISSES_NAMESPACES : LANGUAGE_ERROR.NO_TRANSLATIONS;
       const extra = missingNameSpaces.length ? { missingNameSpaces } : null;
-      reportLog(LANGUAGE_ERROR, extra, Sentry.Severity.Error);
+      reportLog(ERROR, extra, Sentry.Severity.Error);
     }
 
     if (hasFallbackTranslations) {
@@ -216,7 +222,16 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
         }
       }
 
-      const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
+      const {
+        resources,
+        version,
+        missingNsArray,
+      } = await getTranslationsResources({ language, dispatch, getState });
+
+      // log to Sentry if any default language name spaces are missing
+      if (language === localeConfig.defaultLanguage) {
+        reportLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray }, Sentry.Severity.Error);
+      }
 
       await setLanguageAndTranslationBundles({ resources, language });
 
@@ -233,7 +248,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
   };
 };
 
-export const changeLanguageAction = (language: string, showToast?: boolean) => {
+export const changeLanguageAction = (language: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       session: { data: { fallbackLanguageVersion } },
@@ -247,21 +262,21 @@ export const changeLanguageAction = (language: string, showToast?: boolean) => {
     if (isLanguageSupported(language)) {
       const onLanguageChangeSuccess = () => {
         dispatch(setAppLanguageAction(language, version));
-
-        if (showToast) {
-          if (missingNsArray?.length) {
-            Toast.show({
-              message: t('toast.languageChangedWithSomeTranslationsMissing'),
-              emoji: 'hushed',
-              autoClose: true,
-            });
-          } else {
-            Toast.show({
-              message: t('toast.languageChanged'),
-              emoji: 'ok_hand',
-              autoClose: true,
-            });
+        if (missingNsArray?.length) {
+          Toast.show({
+            message: t('toast.languageChangedWithSomeTranslationsMissing'),
+            emoji: 'hushed',
+            autoClose: true,
+          });
+          if (language === localeConfig.defaultLanguage) {
+            reportLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray }, Sentry.Severity.Error);
           }
+        } else {
+          Toast.show({
+            message: t('toast.languageChanged'),
+            emoji: 'ok_hand',
+            autoClose: true,
+          });
         }
       };
 
@@ -288,8 +303,11 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { localisation } },
-      session: { data: { isOnline, fallbackLanguageVersion } },
+      session: { data: { isOnline, fallbackLanguageVersion, areTranslationsInitialised } },
     } = getState();
+
+    if (!areTranslationsInitialised) return;
+
     const { translationVersion, activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultSupportedUserLanguage();
 

@@ -250,8 +250,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     } = currentState.wallet;
 
     // get language setting and cached urls from storage
-    const lacalisationSettings = getState()?.appSettings?.data?.localisation;
-    const cacheMap = getState()?.cache?.cacheMap;
+    const { appSettings: { data: { localisation } }, cache: { cacheMap } } = currentState;
 
     // STEP 0: Clear local storage and reset app state
     // Exceptions:
@@ -277,8 +276,8 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     if (themeToStore) dispatch(setAppThemeAction(themeToStore));
 
     // manage language settings (from onboarding) as those are overwritten
-    if (lacalisationSettings) {
-      const { activeLngCode, translationVersion } = lacalisationSettings;
+    if (localisation) {
+      const { activeLngCode, translationVersion } = localisation;
       if (activeLngCode) dispatch(setAppLanguageAction(activeLngCode, translationVersion));
     }
 

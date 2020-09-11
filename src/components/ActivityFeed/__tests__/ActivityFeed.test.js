@@ -26,7 +26,7 @@ import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from 'utils/themes';
 import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
 import { I18nextProvider } from 'react-i18next';
-import i18n from 'services/translations/testing';
+import i18n from 'services/localisation/testing';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 import { initialState as historyState } from 'reducers/historyReducer';

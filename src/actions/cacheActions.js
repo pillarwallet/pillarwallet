@@ -67,9 +67,9 @@ export const cacheUrlAction = (url: string) => {
           appendExt: 'json',
         })
         .fetch('GET', url)
-        .then((res) => {
+        .then(async (res) => {
           if (res?.respInfo?.status === 200) {
-            dispatch(finishCachingAction(url, res.path()));
+            await dispatch(finishCachingAction(url, res.path()));
           } else {
             dispatch({ type: CACHE_STATUS.FAILED, payload: { url } });
           }

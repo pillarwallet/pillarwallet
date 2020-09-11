@@ -33,7 +33,7 @@ import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 
-import 'services/translations/translations';
+import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
 
 // actions
@@ -105,7 +105,7 @@ type Props = {
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
-  changeLanguage: (language: string, showToast?: boolean) => void,
+  changeLanguage: (language: string) => void,
   areTranslationsInitialised: boolean,
   updateTranslationResourceOnNetworkChange: () => void,
   initialDeeplinkExecuted: boolean,
@@ -226,7 +226,7 @@ class App extends React.Component<Props, *> {
   };
 
   handleConnectivityChange = (state: NetInfoState) => {
-    const { updateTranslationResourceOnNetworkChange, areTranslationsInitialised } = this.props;
+    const { updateTranslationResourceOnNetworkChange } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
     if (!isOnline) {
@@ -237,9 +237,7 @@ class App extends React.Component<Props, *> {
       });
     } else {
       Toast.close();
-      if (areTranslationsInitialised) {
-        updateTranslationResourceOnNetworkChange();
-      }
+      updateTranslationResourceOnNetworkChange();
     }
   };
 
@@ -340,7 +338,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   executeDeepLink: (deepLink: string) => dispatch(executeDeepLinkAction(deepLink)),
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
-  changeLanguage: (language, showToast) => dispatch(changeLanguageAction(language, showToast)),
+  changeLanguage: (language) => dispatch(changeLanguageAction(language)),
   updateTranslationResourceOnNetworkChange: () => dispatch(updateTranslationResourceOnNetworkChangeAction()),
 });
 

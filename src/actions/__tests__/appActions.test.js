@@ -23,48 +23,24 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { SIMPLIFIED } from 'constants/assetsLayoutConstants';
 import { CACHE_STATUS, SET_CACHE_MAP } from 'constants/cacheConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import localeConfig from 'configs/localeConfig';
-import { getDefaultSupportedUserLanguage } from 'services/translations/translations';
+import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
 
 const storage = Storage.getInstance('db');
 
 const initialAppSettingsState = {
   data: {
-    lastTxSyncDatetimes: {},
-    appearanceSettings: {
-      assetsLayout: SIMPLIFIED,
-    },
-    blockchainNetwork: null,
-    baseFiatCurrency: null,
-    transactionSpeed: null,
-    themeType: '',
-    isManualThemeSelection: false,
-    useBiometrics: false,
-    hasSeenExchangeIntro: false,
-    hideBalance: false,
-    hasDismissedConnectAppsIntro: false,
-    hideBadges: false,
-    hidePoolTogether: false,
-    hideSablier: false,
-    preferredGasToken: null,
-    initialDeeplinkExecuted: false,
-    hasSeenRecoveryPortalIntro: false,
-    hideLendingDeposits: false,
-    omitPinOnLogin: false,
     localisation: null,
   },
-  isFetched: false,
 };
 
 const initialSessionState = {
   data: {
     isOnline: true,
-    fcmToken: '',
     areTranslationsInitialised: false,
   },
 };
@@ -72,6 +48,7 @@ const initialSessionState = {
 const initialCacheState = {
   cacheMap: {},
 };
+
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {

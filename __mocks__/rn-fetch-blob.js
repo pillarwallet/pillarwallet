@@ -14,11 +14,6 @@ const Config: Function = jest.fn(() => {
 
 export default {
   DocumentDir: () => {},
-  ImageCache: {
-    get: {
-      clear: () => {},
-    },
-  },
   fs: {
     dirs: {
       MainBundleDir: () => {},
