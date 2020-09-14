@@ -46,6 +46,7 @@ import Button from 'components/Button';
 import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
+import Toast from 'components/Toast';
 
 // utils
 import { spacing, appFont, fontSizes, lineHeights } from 'utils/variables';
@@ -54,7 +55,7 @@ import { themedColors, getThemeColors } from 'utils/themes';
 import { getEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
-import { printLog } from 'utils/common';
+import { reportLog } from 'utils/common';
 
 // actions
 import { updateUserAction, deleteUserAvatarAction, updateUserAvatarAction } from 'actions/userActions';
@@ -531,9 +532,14 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         handleImagePick(false);
         this.setImage(image.path);
       })
-      .catch((err) => {
+      .catch((error) => {
         handleImagePick(false);
-        printLog(err);
+        reportLog('Failed to get image from the gallery', { error });
+        Toast.show({
+          message: t('toast.failedToUploadImage'),
+          emoji: 'hushed',
+          autoClose: true,
+        });
       });
   };
 

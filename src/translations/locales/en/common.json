@@ -1338,7 +1338,8 @@
     "contactUpdated": "Contact updated",
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
-    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later"
+    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
+    "failedToUploadImage": "Failed to get image from the gallery. Please try again."
   },
 
   "exchangeContent": {
