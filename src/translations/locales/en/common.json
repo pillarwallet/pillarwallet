@@ -1339,7 +1339,8 @@
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
-    "failedToUploadImage": "Failed to get image from the gallery. Please try again."
+    "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
+    "failedToDeleteAvatar": "Failed to delete avatar. Please try again."
   },
 
   "exchangeContent": {

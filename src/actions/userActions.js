@@ -273,6 +273,15 @@ export const deleteUserAvatarAction = () => {
         type: SET_USER,
         payload: { user: updatedUser, state: REGISTERED },
       });
+    } else {
+      dispatch({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: t('toast.failedToDeleteAvatar'),
+          emoji: 'hushed',
+          messageType: 'warning',
+        },
+      });
     }
   };
 };
