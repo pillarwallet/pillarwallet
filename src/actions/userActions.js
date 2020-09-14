@@ -263,7 +263,7 @@ export const deleteUserAvatarAction = () => {
 
     if (success) {
       const updatedUser = {
-        ...omit(user, 'profileImage'),
+        ...omit(user, 'profileImage'), // eslint-disable-line i18next/no-literal-string
         lastUpdateTime: +new Date(),
       };
 

@@ -845,6 +845,23 @@
           "phone": "Enter verification code (SMS)"
         },
         "error": "That didn't work, please try again"
+      },
+      "profileImage": {
+        "button": {
+          "takeSelfie": "Take selfie",
+          "uploadPicture": "Upload picture",
+          "deleteAvatar": "Delete avatar"
+        }
+      },
+      "deleteAvatar": {
+        "title": "Delete avatar",
+        "paragraph": {
+          "areYouSure": "Are you sure you would like to delete your avatar?"
+        },
+        "button": {
+          "delete": "Yes, delete",
+          "cancel": "Cancel"
+        }
       }
     }
   },
