@@ -48,5 +48,9 @@ export type TranslationData = {|
   url: string,
 |};
 
+export type LocalisationOptions = {
+  activeLngCode: ?string,
+  translationVersion: ?string,
+};
 
 export type TranslatedString = string | Trans | BaseText;

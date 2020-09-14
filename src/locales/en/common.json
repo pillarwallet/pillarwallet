@@ -810,6 +810,10 @@
       },
       "addressBook": {
         "title": "Address book"
+      },
+      "language": {
+        "title": "Language",
+        "screenTitle": "Select preferred language"
       }
     },
     "button": {

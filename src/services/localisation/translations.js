@@ -41,12 +41,11 @@ i18n
     defaultNS: localeConfig.defaultNameSpace,
     postProcess: localeConfig.postProcessors,
     fallbackLng: localeConfig.defaultLanguage,
-    supportedLngs: localeConfig.supportedLanguages,
+    supportedLngs: Object.keys(localeConfig.supportedLanguages),
     debug: !!__DEV__,
     react: {
       wait: true,
-      bindI18n: 'languageChanged loaded added',
-      bindStore: 'added removed',
+      bindI18n: 'languageChanged',
       nsMode: 'common',
     },
     lng: localeConfig.defaultLanguage,
@@ -85,13 +84,17 @@ export const getDefaultSupportedUserLanguage = () => {
   const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
 
   const userPreferredSupportedLanguage = userPreferredLanguages
-    .find((languageCode) => localeConfig.supportedLanguages.includes(languageCode));
+    .find((languageCode) => Object.keys(localeConfig.supportedLanguages).includes(languageCode));
 
   return userPreferredSupportedLanguage || localeConfig.defaultLanguage;
 };
 
 export const isLanguageSupported = (language: string) => {
-  return localeConfig.supportedLanguages.includes(language);
+  return Object.keys(localeConfig.supportedLanguages).includes(language);
+};
+
+export const getLanguageFullName = (languageCode: string) => {
+  return localeConfig.supportedLanguages?.[languageCode];
 };
 
 export default i18n;

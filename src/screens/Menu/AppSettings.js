@@ -35,16 +35,24 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import Checkbox from 'components/Checkbox';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
+
 import {
   saveBaseFiatCurrencyAction,
   setAppThemeAction,
   saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
+import { getDefaultSupportedUserLanguage, getLanguageFullName } from 'services/localisation/translations';
+import { changeLanguageAction } from 'actions/localisationActions';
+
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import localeConfig from 'configs/localeConfig';
+
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
+import type { LocalisationOptions } from 'models/Translations';
+
 import {
   isGasTokenSupportedSelector,
   isActiveAccountSmartWalletSelector,
@@ -68,6 +76,8 @@ type Props = {
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
+  changeLanguage: (languageCode: string) => void,
+  localisation: ?LocalisationOptions,
 };
 
 type State = {
@@ -97,11 +107,15 @@ const CheckboxText = styled(BaseText)`
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
 const CURRENCY = 'currency';
+const LANGUAGE = 'language';
 const MODAL = {
   SYSTEM_INFO: 'systemInfo',
   BASE_CURRENCY: 'baseCurrency',
   ANALYTICS: 'analytics',
+  LANGUAGES: 'languages',
 };
+const languages = Object.keys(localeConfig.supportedLanguages)
+  .map(languageCode => ({ name: localeConfig.supportedLanguages[languageCode], value: languageCode }));
 
 class AppSettings extends React.Component<Props, State> {
   state = {
@@ -120,13 +134,19 @@ class AppSettings extends React.Component<Props, State> {
       key={value}
       label={name}
       isSelected={value === currentValue}
-      onPress={() => onSelect({ [field]: value })}
+      onPress={() => onSelect(value)}
     />
   );
 
-  handleCurrencyUpdate = ({ currency }: Object) => {
+  handleCurrencyUpdate = (value: string) => {
     const { saveBaseFiatCurrency } = this.props;
-    saveBaseFiatCurrency(currency);
+    saveBaseFiatCurrency(value);
+    this.setState({ visibleModal: null });
+  };
+
+  handleLanguageUpdate = (value: string) => {
+    const { changeLanguage } = this.props;
+    changeLanguage(value);
     this.setState({ visibleModal: null });
   };
 
@@ -144,11 +164,21 @@ class AppSettings extends React.Component<Props, State> {
       isGasTokenSupported,
       setPreferredGasToken,
       isSmartAccount,
+      localisation,
     } = this.props;
 
     const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
 
     return [
+      {
+        key: 'language',
+        title: t('settingsContent.settingsItem.language.title'),
+        onPress: () => this.setState({ visibleModal: MODAL.LANGUAGES }),
+        value: getLanguageFullName(localisation?.activeLngCode || localeConfig.defaultLanguage),
+        hidden: !localeConfig.isEnabled
+          || !localeConfig.baseUrl
+          || Object.keys(localeConfig.supportedLanguages).length <= 1,
+      },
       {
         key: 'localFiatCurrency',
         title: t('settingsContent.settingsItem.fiatCurrency.title'),
@@ -189,9 +219,17 @@ class AppSettings extends React.Component<Props, State> {
     ].filter(Boolean);
   };
 
-  renderCurrencyListItem = (item) => {
-    const { baseFiatCurrency } = this.props;
-    return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
+  handleOptionListItemRender = (item, type) => {
+    const { baseFiatCurrency, localisation } = this.props;
+    switch (type) {
+      case CURRENCY:
+        return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
+      case LANGUAGE:
+        const currentLanguage = localisation?.activeLngCode || getDefaultSupportedUserLanguage();
+        return this.renderListItem(LANGUAGE, this.handleLanguageUpdate, currentLanguage)(item);
+      default:
+        return null;
+    }
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -242,7 +280,7 @@ class AppSettings extends React.Component<Props, State> {
         >
           <FlatList
             data={currencies}
-            renderItem={this.renderCurrencyListItem}
+            renderItem={(item) => this.handleOptionListItemRender(item, CURRENCY)}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -297,6 +335,22 @@ class AppSettings extends React.Component<Props, State> {
           />
         }
 
+        {/* LANGUAGES */}
+        <SlideModal
+          isVisible={visibleModal === MODAL.LANGUAGES}
+          fullScreen
+          showHeader
+          onModalHide={() => this.setState({ visibleModal: null })}
+          title={t('settingsContent.settingsItem.language.screenTitle')}
+          insetTop
+        >
+          <FlatList
+            data={languages}
+            renderItem={(item) => this.handleOptionListItemRender(item, LANGUAGE)}
+            keyExtractor={({ name }) => name}
+          />
+        </SlideModal>
+
       </ContainerWithHeader>
     );
   }
@@ -308,12 +362,14 @@ const mapStateToProps = ({
       baseFiatCurrency,
       themeType,
       optOutTracking = false,
+      localisation,
     },
   },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
   optOutTracking,
+  localisation,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -336,6 +392,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
+  changeLanguage: (languageCode: string) => dispatch(changeLanguageAction(languageCode)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AppSettings);

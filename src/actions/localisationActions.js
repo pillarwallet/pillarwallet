@@ -213,7 +213,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
       if (!!activeLngCode && !isLanguageSupported(activeLngCode)) {
         // previously selected language is no longer supported - fallback to default supported device language;
         language = getDefaultSupportedUserLanguage();
-        if (!localeConfig.supportedLanguages.includes(activeLngCode)) {
+        if (!Object.keys(localeConfig.supportedLanguages).includes(activeLngCode)) {
           Toast.show({
             message: t('toast.languageIsNoLongerSupported'),
             emoji: 'hushed',
