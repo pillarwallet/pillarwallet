@@ -45,7 +45,6 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 // constants
 import {
   WALLET_SETTINGS,
-  RECOVERY_SETTINGS,
   APP_SETTINGS,
   COMMUNITY_SETTINGS,
   ADD_EDIT_USER,
@@ -180,17 +179,6 @@ const Menu = ({
       action: () => navigation.navigate(APP_SETTINGS),
     },
     {
-      key: 'recoverySettings',
-      title: t('settingsContent.settingsItem.recoverySettings.title'),
-      labelBadge: !isBackedUp && {
-        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
-        color: colors.negative,
-      },
-      emoji: 'mage',
-      card: true,
-      action: () => navigation.navigate(RECOVERY_SETTINGS),
-    },
-    {
       key: 'userProfile',
       title: t('settingsContent.settingsItem.userProfile.title'),
       emoji: 'male-singer',
@@ -210,6 +198,10 @@ const Menu = ({
       emoji: 'moneybag',
       card: true,
       action: () => navigation.navigate(WALLET_SETTINGS),
+      labelBadge: !isBackedUp && {
+        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
+        color: colors.negative,
+      },
     },
     {
       key: 'referFriends',

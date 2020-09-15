@@ -82,7 +82,6 @@ import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
 import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
-import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
@@ -210,7 +209,6 @@ import {
   SERVICES,
   STORYBOOK,
   WALLET_SETTINGS,
-  RECOVERY_SETTINGS,
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
@@ -333,7 +331,6 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [EXCHANGE]: ExchangeScreen,
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-    [RECOVERY_SETTINGS]: RecoverySettingsScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
     [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
@@ -398,7 +395,7 @@ const homeFlow = createStackNavigator({
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
-  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [WALLET_SETTINGS]: WalletSettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
@@ -631,7 +628,6 @@ tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 const menuFlow = createStackNavigator({
   [MENU]: MenuScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
-  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
   [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
   [APP_SETTINGS]: AppSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
