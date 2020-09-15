@@ -178,7 +178,7 @@ class ExchangeInfo extends React.Component<Props, State> {
       <ContainerWithHeader
         headerProps={{
           centerItems: [{ title: t('exchangeContent.title.settingsScreen') }],
-          rightItems: [{ link: t('label.support'), onPress: () => Intercom.displayMessenger() }],
+          rightItems: [{ link: t('button.support'), onPress: () => Intercom.displayMessenger() }],
           sideFlex: 2,
         }}
         inset={{ bottom: 'never' }}
