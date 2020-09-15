@@ -303,10 +303,10 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { localisation } },
-      session: { data: { isOnline, fallbackLanguageVersion, areTranslationsInitialised } },
+      session: { data: { isOnline, fallbackLanguageVersion, translationsInitialised } },
     } = getState();
 
-    if (!areTranslationsInitialised) return;
+    if (!translationsInitialised) return;
 
     const { translationVersion, activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultSupportedUserLanguage();

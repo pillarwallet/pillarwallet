@@ -447,8 +447,8 @@ export const logoutAction = () => {
     // is cleaned up so we would not blind users after they delete wallet :)
 
     // leave translation initialisated flag in place
-    const areTranslationsInitialised = get(getState(), 'session.data.areTranslationsInitialised', false);
-    if (areTranslationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
+    const translationsInitialised = get(getState(), 'session.data.translationsInitialised', false);
+    if (translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

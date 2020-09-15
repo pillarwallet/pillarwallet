@@ -41,7 +41,7 @@ const initialAppSettingsState = {
 const initialSessionState = {
   data: {
     isOnline: true,
-    areTranslationsInitialised: false,
+    translationsInitialised: false,
   },
 };
 
@@ -74,7 +74,7 @@ describe('App actions', () => {
       { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localUrl: 'localString' } },
       { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localUrl: 'localString' } },
       { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
-      { type: UPDATE_SESSION, payload: { areTranslationsInitialised: true } },
+      { type: UPDATE_SESSION, payload: { translationsInitialised: true } },
     ];
 
     return store.dispatch(initAppAndRedirectAction())
