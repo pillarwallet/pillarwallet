@@ -345,7 +345,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));
 
 const AppRoot = () => (
-  <Suspense fallback={<View />}>
+  <Suspense fallback={<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Spinner /></View>}>
     <Provider store={store}>
       <PersistGate
         loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
