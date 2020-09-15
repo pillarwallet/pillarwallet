@@ -433,7 +433,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
     const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
-    const confirmButtonTitleDefault = setTokenAllowance ? t('exchangeContent.button.enable') : t('button.confirm');
+    const confirmButtonTitleDefault = setTokenAllowance ? t('exchangeContent.button.enableAsset') : t('button.confirm');
     const confirmButtonTitle = gettingFee ? t('label.gettingFee') : confirmButtonTitleDefault;
 
     return (
