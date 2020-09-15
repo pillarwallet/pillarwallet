@@ -96,7 +96,7 @@ export const getStakedAmount = async (address: string): Promise<EthersBigNumber>
     reportLog('Error getting unipool balance', {
       message: e.message,
     }, Sentry.Severity.Error);
-    return 0;
+    return EthersBigNumber.from(0);
   });
 };
 
@@ -107,6 +107,6 @@ export const getEarnedAmount = async (address: string): Promise<EthersBigNumber>
     reportLog('Error getting unipool earned amount', {
       message: e.message,
     }, Sentry.Severity.Error);
-    return 0;
+    return EthersBigNumber.from(0);
   });
 };
