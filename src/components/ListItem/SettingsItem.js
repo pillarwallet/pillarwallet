@@ -29,7 +29,10 @@ import Icon from 'components/Icon';
 import NativeTouchable from 'components/NativeTouchable';
 import Switcher from 'components/Switcher';
 import { LabelBadge } from 'components/LabelBadge';
+import { LabelBulleted } from 'components/LabelBulleted';
+
 import { themedColors } from 'utils/themes';
+
 
 type Props = {
   label: string,
@@ -48,7 +51,11 @@ type Props = {
   labelBadge?: {
     label: string,
     color?: string,
-  }
+  },
+  bulletedLabel?: {
+    label: string,
+    color: string,
+  },
 }
 
 const MainWrapper = styled.View`
@@ -100,10 +107,9 @@ const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
   color: ${themedColors.secondaryText};
   flex-wrap: wrap;
-  text-align: center;
+  text-align: right;
   margin-left: ${spacing.medium}px
   min-width: 70px;
-  align-items: center;
 `;
 
 const WarningIcon = styled(Icon)`
@@ -114,7 +120,7 @@ const WarningIcon = styled(Icon)`
 
 const ListAddon = styled.View`
   flex-direction: row;
-  justify-content: center;
+  justify-content: flex-end;
   align-items: center;
   margin-left: ${spacing.medium}px;
   margin-top: 2px;
@@ -160,6 +166,7 @@ class SettingsListItem extends React.Component<Props> {
       labelBadge,
       rightLabel,
       description,
+      bulletedLabel,
     } = this.props;
 
     if (!toggle) {
@@ -175,6 +182,12 @@ class SettingsListItem extends React.Component<Props> {
                   label={labelBadge.label}
                   labelStyle={{ fontSize: fontSizes.regular }}
                   color={labelBadge.color}
+                />
+              )}
+              {!!bulletedLabel && (
+                <LabelBulleted
+                  label={bulletedLabel.label}
+                  color={bulletedLabel.color}
                 />
               )}
               {!!processedValue && <ItemValue>{processedValue}</ItemValue>}

@@ -56,7 +56,7 @@ import {
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS, RECOVERY_SETTINGS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
@@ -229,7 +229,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: t('insight.keyWalletIntro.description.enableBiometrics'),
         status: useBiometrics,
         onPress: !useBiometrics
-          ? () => navigation.navigate(SECURITY_SETTINGS)
+          ? () => navigation.navigate(WALLET_SETTINGS)
           : null,
       };
       return [...keyWalletInsights, biometricsInsight];

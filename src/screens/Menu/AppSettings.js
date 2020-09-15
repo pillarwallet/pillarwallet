@@ -46,12 +46,17 @@ import { getDefaultSupportedUserLanguage, getLanguageFullName } from 'services/l
 import { changeLanguageAction } from 'actions/localisationActions';
 
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
+
 import localeConfig from 'configs/localeConfig';
+import { addressesEqual } from 'utils/assets';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
 import type { LocalisationOptions } from 'models/Translations';
+import type { NavigationScreenProp } from 'react-navigation';
+import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 import {
   isGasTokenSupportedSelector,
@@ -78,6 +83,9 @@ type Props = {
   setPreferredGasToken: (token: string) => void,
   changeLanguage: (languageCode: string) => void,
   localisation: ?LocalisationOptions,
+  navigation: NavigationScreenProp<*>,
+  devices: ConnectedDevice[],
+  activeDeviceAddress: string,
 };
 
 type State = {
@@ -165,9 +173,15 @@ class AppSettings extends React.Component<Props, State> {
       setPreferredGasToken,
       isSmartAccount,
       localisation,
+      navigation,
+      devices,
+      activeDeviceAddress,
     } = this.props;
 
     const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
+
+    const hasOtherDevicesLinked = !!devices.length
+      && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
 
     return [
       {
@@ -205,6 +219,15 @@ class AppSettings extends React.Component<Props, State> {
         toggle: true,
         value: themeType === DARK_THEME,
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
+      },
+      {
+        key: 'linkedDevices',
+        title: t('settingsContent.settingsItem.linkedDevices.title'),
+        subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
+        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
+        bulletedLabel: !hasOtherDevicesLinked && {
+          label: 'Not set',
+        },
       },
       {
         key: MODAL.ANALYTICS,
@@ -365,11 +388,15 @@ const mapStateToProps = ({
       localisation,
     },
   },
+  smartWallet: { connectedAccount: { activeDeviceAddress } },
+  connectedDevices: { data: devices },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
   optOutTracking,
   localisation,
+  activeDeviceAddress,
+  devices,
 });
 
 const structuredSelector = createStructuredSelector({

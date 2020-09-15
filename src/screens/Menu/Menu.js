@@ -44,7 +44,7 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
 // constants
 import {
-  SECURITY_SETTINGS,
+  WALLET_SETTINGS,
   RECOVERY_SETTINGS,
   APP_SETTINGS,
   COMMUNITY_SETTINGS,
@@ -173,11 +173,11 @@ const Menu = ({
 
   const menuItems = [
     {
-      key: 'securitySettings',
-      title: t('settingsContent.settingsItem.securitySettings.title'),
-      emoji: 'rotating_light',
+      key: 'appSettings',
+      title: t('settingsContent.settingsItem.appSettings.title'),
+      emoji: 'gear',
       card: true,
-      action: () => navigation.navigate(SECURITY_SETTINGS),
+      action: () => navigation.navigate(APP_SETTINGS),
     },
     {
       key: 'recoverySettings',
@@ -198,18 +198,18 @@ const Menu = ({
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
-      key: 'appSettings',
-      title: t('settingsContent.settingsItem.appSettings.title'),
-      emoji: 'gear',
-      card: true,
-      action: () => navigation.navigate(APP_SETTINGS),
-    },
-    {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
       card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
+    },
+    {
+      key: 'walletSettings',
+      title: t('settingsContent.settingsItem.walletSettings.title'),
+      emoji: 'moneybag',
+      card: true,
+      action: () => navigation.navigate(WALLET_SETTINGS),
     },
     {
       key: 'referFriends',
