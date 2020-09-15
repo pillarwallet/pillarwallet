@@ -66,7 +66,6 @@ const showFaceIDFailedMessage = () => {
   Toast.show({
     message: t('toast.failedToGetFaceIDPermission'),
     emoji: 'pensive',
-    supportLink: true,
     link: t('label.faceIDSettings'),
     onLinkPress: () => Linking.openURL('app-settings:'),
     autoClose: true,
