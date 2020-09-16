@@ -206,7 +206,6 @@ const SendEthereumTokens = ({
         message: t('toast.transactionFeeEstimationFailed'),
         emoji: 'woman-shrugging',
         supportLink: true,
-        type: 'warning',
       });
       setGettingFee(false);
       setTxFeeInfo(null);

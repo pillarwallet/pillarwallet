@@ -154,7 +154,7 @@ class IncomingStream extends React.Component<Props> {
                   </MediumText>
                 </MediumText>
                 <BaseText regular>{formattedWithdrawnAmount}
-                  <BaseText secondary> {assetData.symbol} {t('withdrawn')}</BaseText>
+                  <BaseText secondary> {assetData.symbol} {t('sablierContent.label.withdrawn')}</BaseText>
                 </BaseText>
               </Column>
             </Row>

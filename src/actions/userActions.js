@@ -126,7 +126,7 @@ export const createOneTimePasswordAction = (
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.title.default']),
+          message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.default']),
           emoji: 'hushed',
           messageType: 'warning',
         },

@@ -1357,7 +1357,7 @@
     },
     "title": {
       "confirmScreen": "Details",
-      "settingsScreens": "Settings",
+      "settingsScreen": "Settings",
       "activateSmartWalletScreen": "Activate Smart Wallet",
       "buyWithWyreScreen": "Buy with Wyre"
     },
