@@ -158,7 +158,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
-        headerProps={{ centerItems: [{ title: t('walletConnectContent.title.withdrawConfirmScreen') }] }}
+        headerProps={{ centerItems: [{ title: t('poolTogetherContent.title.withdrawConfirmScreen') }] }}
       >
         <ScrollWrapper
           refreshControl={
