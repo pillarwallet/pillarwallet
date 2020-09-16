@@ -123,7 +123,7 @@ const Withdraw = (props: Props) => {
   };
 
   const onValueChanged = (value: Object) => {
-    if (!value) {
+    if (!value?.input) {
       setWithdrawAmount(0);
       return;
     }
