@@ -45,8 +45,8 @@ i18n
     debug: !!__DEV__,
     react: {
       wait: true,
-      bindI18n: 'languageChanged',
       nsMode: 'common',
+      useSuspense: true,
     },
     lng: localeConfig.defaultLanguage,
     resources: {
