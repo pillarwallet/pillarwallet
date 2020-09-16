@@ -748,7 +748,11 @@ class SDKWrapper {
     })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog('generateAltalixTransactionUrl: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'generateAltalixTransactionUrl: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return null;
       });
   }
@@ -760,7 +764,11 @@ class SDKWrapper {
     })
       .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
       .catch(error => {
-        reportLog('fetchAltalixAvailability: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'fetchAltalixAvailability: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return false;
       });
   }
@@ -772,7 +780,11 @@ class SDKWrapper {
     })
       .then(response => response.data.exchangeRates)
       .catch(error => {
-        reportLog('getSendwyreRates: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'getSendwyreRates: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return {};
       });
   }
@@ -793,13 +805,17 @@ class SDKWrapper {
     })
       .then(() => true)
       .catch(error => {
-        const { response: { status, data } } = error;
+        const { response: { status, data } = {} } = error;
 
         if (status === 400) return true;
         if (status === 403 && data.message === LOCATION_NOT_SUPPORTED) return false;
 
         // Any other type of error is unexpected and will be reported as usual.
-        reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);
+        reportLog(
+          'getSendwyreCountrySupport: SDK request error',
+          data ?? { error },
+          Sentry.Severity.Error,
+        );
         return null;
       });
   }
@@ -816,7 +832,11 @@ class SDKWrapper {
     })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog('getSendwyreWidgetURL: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'getSendwyreWidgetURL: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return null;
       });
   }

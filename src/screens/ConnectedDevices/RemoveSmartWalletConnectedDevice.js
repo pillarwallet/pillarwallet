@@ -191,7 +191,7 @@ class RemoveSmartWalletConnectedDevice extends React.PureComponent<Props, State>
           <DetailsValue>{deviceAddress}</DetailsValue>
         </DetailsLine>
         <DetailsLine>
-          <DetailsTitle>{t('transactions.label.estFee')}</DetailsTitle>
+          <DetailsTitle>{t('transactions.transactionFee.estFee')}</DetailsTitle>
           {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
           {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>

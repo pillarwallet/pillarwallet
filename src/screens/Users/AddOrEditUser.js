@@ -384,7 +384,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             fieldDisplayName: t('form.email.label'),
             descriptionEmpty: t('form.email.description.empty'),
             descriptionAdded: t('form.email.description.added'),
-            descriptionVerified: t('form.email.description.verified'),
+            descriptionVerified: t('form.email.description.confirmed'),
             icon: roundedEmailIcon,
             onPressVerify: this.verifyField,
             isFormFocused: !!focusedField,

@@ -187,7 +187,9 @@ const Withdraw = (props: Props) => {
         getFormValue={onValueChanged}
         isLoading={isFetchingMaxWithdraw}
       />
-      <BaseText regular secondary center>{t('receiveOnWithdrawal', { token: assetData.symbol })}</BaseText>
+      <BaseText regular secondary center>
+        {t('sablierContent.paragraph.receiveOnWithdrawal', { token: assetData.symbol })}
+      </BaseText>
     </ContainerWithHeader>
   );
 };
