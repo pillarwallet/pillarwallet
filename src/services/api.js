@@ -379,6 +379,16 @@ class SDKWrapper {
       .catch(() => null);
   }
 
+  deleteUserAvatar(walletId: string): Promise<boolean> {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.deleteProfileImage({ walletId }))
+      .then(response => response.status === 204)
+      .catch((error) => {
+        reportLog('Failed to delete user avatar', { error }, Sentry.Severity.Error);
+        return false;
+      });
+  }
+
   userInfo(walletId: string): Promise<Object> {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.info({ walletId }))

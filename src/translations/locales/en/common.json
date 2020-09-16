@@ -845,6 +845,23 @@
           "phone": "Enter verification code (SMS)"
         },
         "error": "That didn't work, please try again"
+      },
+      "profileImage": {
+        "button": {
+          "takeSelfie": "Take selfie",
+          "uploadPicture": "Upload picture",
+          "deleteAvatar": "Delete avatar"
+        }
+      },
+      "deleteAvatar": {
+        "title": "Delete avatar",
+        "paragraph": {
+          "areYouSure": "Are you sure you would like to delete your avatar?"
+        },
+        "button": {
+          "delete": "Yes, delete",
+          "cancel": "Cancel"
+        }
       }
     }
   },
@@ -1321,7 +1338,9 @@
     "contactUpdated": "Contact updated",
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
-    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later"
+    "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
+    "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
+    "failedToDeleteAvatar": "Failed to delete avatar. Please try again."
   },
 
   "exchangeContent": {
