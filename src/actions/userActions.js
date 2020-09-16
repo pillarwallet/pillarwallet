@@ -59,11 +59,9 @@ const verificationFailedAction = () => ({
 
 const verificationSucceededAction = (message: string) => ({
   type: ADD_NOTIFICATION,
-  payload: {
+  notification: {
     message,
     emoji: 'ok_hand',
-    messageType: 'success',
-    autoClose: false,
   },
 });
 
@@ -83,9 +81,8 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
     if (responseStatus !== 200) {
       dispatch({
         type: ADD_NOTIFICATION,
-        payload: {
+        notification: {
           message: message || t('toast.cantUpdateUser'),
-          messageType: 'warning',
           emoji: 'hushed',
         },
       });
@@ -127,10 +124,9 @@ export const createOneTimePasswordAction = (
       const fieldName = field.smsNotification ? 'phone' : 'email'; // eslint-disable-line i18next/no-literal-string
       dispatch({
         type: ADD_NOTIFICATION,
-        payload: {
+        notification: {
           message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.default']),
           emoji: 'hushed',
-          messageType: 'warning',
         },
       });
     }
@@ -276,10 +272,9 @@ export const deleteUserAvatarAction = () => {
     } else {
       dispatch({
         type: ADD_NOTIFICATION,
-        payload: {
+        notification: {
           message: t('toast.failedToDeleteAvatar'),
           emoji: 'hushed',
-          messageType: 'warning',
         },
       });
     }

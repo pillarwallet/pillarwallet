@@ -35,7 +35,8 @@ import { fetchBadgesAction } from 'actions/badgesActions';
 import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-  SET_UNREAD_NOTIFICATIONS_STATUS,
+  SHOW_HOME_UPDATE_INDICATOR,
+  CLEAR_HOME_UPDATE_INDICATOR,
   BCX,
   COLLECTIBLE,
   BADGE,
@@ -94,7 +95,7 @@ export const startListeningIntercomNotificationsAction = () => {
     Intercom.setUserHash(supportHmac);
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-      payload: count,
+      count,
     });
     Intercom.getUnreadConversationCount()
       .then(count => ({ count }))
@@ -112,11 +113,8 @@ export const stopListeningIntercomNotificationsAction = () => {
   };
 };
 
-export const setUnreadNotificationsStatusAction = (status: boolean) => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: status });
-  };
-};
+export const showHomeUpdateIndicatorAction = () => ({ type: SHOW_HOME_UPDATE_INDICATOR });
+export const clearHomeIndicatorAction = () => ({ type: CLEAR_HOME_UPDATE_INDICATOR });
 
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
@@ -156,12 +154,12 @@ export const subscribeToSocketEventsAction = () => {
         data.type === BCX ||
         data.type === BADGE
       ) {
-        const payload = {
+        const notification = {
           title: response.notification.title,
           message: response.notification.body,
         };
-        dispatch({ type: ADD_NOTIFICATION, payload });
-        dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
+        dispatch({ type: ADD_NOTIFICATION, notification });
+        dispatch(showHomeUpdateIndicatorAction());
       }
     });
   };
@@ -205,8 +203,8 @@ export const subscribeToPushNotificationsAction = () => {
       if (notification.type === BADGE) {
         dispatch(fetchBadgesAction());
       }
-      dispatch({ type: ADD_NOTIFICATION, payload: notification });
-      dispatch({ type: SET_UNREAD_NOTIFICATIONS_STATUS, payload: true });
+      dispatch({ type: ADD_NOTIFICATION, notification });
+      dispatch(showHomeUpdateIndicatorAction());
     }, 500));
   };
 };

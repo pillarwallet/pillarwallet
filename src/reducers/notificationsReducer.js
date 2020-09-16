@@ -20,27 +20,45 @@
 import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-  SET_UNREAD_NOTIFICATIONS_STATUS,
+  SHOW_HOME_UPDATE_INDICATOR,
+  CLEAR_HOME_UPDATE_INDICATOR,
 } from 'constants/notificationConstants';
 import type { Notification } from 'models/Notification';
 
 export type NotificationsReducerState = {
   data: Notification[],
   intercomNotificationsCount: number,
-  homeNotifications: [],
-  hasUnreadNotifications: boolean,
+  showHomeUpdateIndicator: boolean,
 }
 
-type NotificationsReducerAction = {
-  type: string,
-  payload: Notification,
-}
+type UpdateIntercomNotificationsCountAction = {
+  type: typeof UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
+  count: number,
+};
+
+type AddNotificationAction = {
+  type: typeof ADD_NOTIFICATION,
+  notification: Notification,
+};
+
+type ShowHomeIndicatorAction = {
+  type: typeof SHOW_HOME_UPDATE_INDICATOR,
+};
+
+type ClearHomeIndicatorAction = {
+  type: typeof CLEAR_HOME_UPDATE_INDICATOR,
+};
+
+type NotificationsReducerAction =
+  | UpdateIntercomNotificationsCountAction
+  | AddNotificationAction
+  | ShowHomeIndicatorAction
+  | ClearHomeIndicatorAction;
 
 const initialState = {
   data: [],
   intercomNotificationsCount: 0,
-  homeNotifications: [],
-  hasUnreadNotifications: false,
+  showHomeUpdateIndicator: false,
 };
 
 export default function notificationsReducer(
@@ -49,11 +67,13 @@ export default function notificationsReducer(
 ) {
   switch (action.type) {
     case UPDATE_INTERCOM_NOTIFICATIONS_COUNT:
-      return { ...state, intercomNotificationsCount: action.payload };
+      return { ...state, intercomNotificationsCount: action.count };
     case ADD_NOTIFICATION:
-      return { ...state, data: [...state.data, action.payload] };
-    case SET_UNREAD_NOTIFICATIONS_STATUS:
-      return { ...state, hasUnreadNotifications: action.payload };
+      return { ...state, data: [...state.data, action.notification] };
+    case SHOW_HOME_UPDATE_INDICATOR:
+      return { ...state, showHomeUpdateIndicator: true };
+    case CLEAR_HOME_UPDATE_INDICATOR:
+      return { ...state, showHomeUpdateIndicator: false };
     default:
       return state;
   }
