@@ -15,6 +15,7 @@ Translations feature is intended to be initialised in this way:
 4. Fallback language resources (if needed, see [Translation fallbacks](#translation-fallbacks)) are fetched / loaded.
 5. Resources are set as `i18next`'s bundles. (see [Library methods](#library-methods))
 6. `areTranslationsInitialised` in session reducer is set to `true` to allow app view rendering in `App.js`.
+7. `sessionLanguageCode` is set to force rerender of components that utilise `shouldComponentUpdate`. 
 
 
 ### Preferred and Default languages

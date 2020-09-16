@@ -32,7 +32,11 @@ import {
 } from 'services/localisation/translations';
 
 import { cacheUrlAction, removeUrlCacheAction } from 'actions/cacheActions';
-import { setSessionTranslationBundleInitialisedAction, setFallbackLanguageVersionAction } from 'actions/sessionActions';
+import {
+  setSessionTranslationBundleInitialisedAction,
+  setFallbackLanguageVersionAction,
+  setSessionLanguageAction,
+} from 'actions/sessionActions';
 import { setAppLanguageAction } from 'actions/appSettingsActions';
 
 import Toast from 'components/Toast';
@@ -100,37 +104,50 @@ const getTranslationsResources = async (props) => {
 
   const { session: { data: { isOnline } } } = getState();
 
-  // If network is available - fetch and cache newest translations
-  // TODO: decide on how frequent to update translations - now its fetching newest all the time
-  if (isOnline) {
-    // fetches to storage and set local path to cacheMap
-    await Promise.all(translationsData.map(({ url }) => dispatch(cacheUrlAction(url))));
-  }
+  const relatedLocalTranslationData = localeConfig.localTranslations[language];
 
-  // get newest cached translations
-  const { cache: { cacheMap } } = getState();
-  resources = await getCachedTranslationResources(translationsData, cacheMap, dispatch);
-
-  // check missing namespaces
-  const existingNameSpaces = Object.keys(resources).filter(ns => !isEmpty(resources[ns]));
-  const missingNameSpaces = localeConfig.namespaces.filter(ns => !existingNameSpaces.includes(ns));
-
-  if (missingNameSpaces.length) {
-    // found missing name spaces - add locally stored ones (if any)
-    const relatedLocalTranslationData = localeConfig.localTranslations[language];
-    if (relatedLocalTranslationData) {
-      version = LOCAL;
-      const missingTranslationResources = missingNameSpaces.reduce((allResources, ns) => {
-        const relatedTranslations = relatedLocalTranslationData[ns];
-        if (relatedTranslations) {
-          allResources[ns] = relatedTranslations;
-        } else {
-          missingNsArray.push(ns);
-        }
-        return allResources;
-      }, {});
-      resources = { ...resources, ...missingTranslationResources };
+  // if translations' baseUrl is provided - use external translations. If not - local.
+  if (localeConfig.baseUrl) {
+    // If network is available - fetch and cache newest translations
+    // TODO: decide on how frequent to update translations - now its fetching newest all the time
+    if (isOnline) {
+      // fetches to storage and set local path to cacheMap
+      await Promise.all(translationsData.map(({ url }) => dispatch(cacheUrlAction(url))));
     }
+
+    // get newest cached translations
+    const { cache: { cacheMap } } = getState();
+    resources = await getCachedTranslationResources(translationsData, cacheMap, dispatch);
+
+    // check missing namespaces
+    const existingNameSpaces = Object.keys(resources).filter(ns => !isEmpty(resources[ns]));
+    const missingNameSpaces = localeConfig.namespaces.filter(ns => !existingNameSpaces.includes(ns));
+    if (missingNameSpaces.length) {
+      // found missing name spaces - add locally stored ones (if any)
+      // const relatedLocalTranslationData = localeConfig.localTranslations[language];
+      if (relatedLocalTranslationData) {
+        version = LOCAL;
+        const missingTranslationResources = missingNameSpaces.reduce((allResources, ns) => {
+          const relatedTranslations = relatedLocalTranslationData[ns];
+          if (relatedTranslations) {
+            allResources[ns] = relatedTranslations;
+          } else {
+            missingNsArray.push(ns);
+          }
+          return allResources;
+        }, {});
+        resources = { ...resources, ...missingTranslationResources };
+      }
+    }
+  } else {
+    resources = localeConfig.namespaces.reduce((mappedResources, ns) => {
+      const localTranslations = relatedLocalTranslationData[ns];
+      if (localTranslations) {
+        mappedResources[ns] = localTranslations;
+      }
+      return mappedResources;
+    }, {});
+    version = LOCAL;
   }
 
   return { resources, missingNsArray, version };
@@ -192,8 +209,12 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
       appSettings: { data: { localisation } },
     } = getState();
 
+    // might be first open, hence - no localisation info is present;
+    const { activeLngCode } = localisation || {};
+    let language = activeLngCode || getDefaultSupportedUserLanguage();
+
     // check if translations are supported. If not - use local default lang translations
-    if (!localeConfig.isEnabled || !localeConfig.baseUrl) {
+    if (!localeConfig.isEnabled) {
       const localDefaultTranslations = localeConfig.localTranslations[localeConfig.defaultLanguage];
       const localDefaultTranslationResources = localeConfig.namespaces.reduce((allResources, ns) => {
         const relatedTranslations = localDefaultTranslations[ns];
@@ -206,10 +227,6 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
         language: localeConfig.defaultLanguage,
       });
     } else {
-      // might be first open, hence - no localisation info is present;
-      const { activeLngCode } = localisation || {};
-      let language = activeLngCode || getDefaultSupportedUserLanguage();
-
       if (!!activeLngCode && !isLanguageSupported(activeLngCode)) {
         // previously selected language is no longer supported - fallback to default supported device language;
         language = getDefaultSupportedUserLanguage();
@@ -244,6 +261,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
       }
 
       dispatch(setSessionTranslationBundleInitialisedAction());
+      dispatch(setSessionLanguageAction(language));
     }
   };
 };
@@ -253,11 +271,10 @@ export const changeLanguageAction = (language: string) => {
     const {
       session: { data: { fallbackLanguageVersion } },
     } = getState();
-    const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
 
-    if (!localeConfig.isEnabled || !localeConfig.baseUrl) {
-      return;
-    }
+    if (!localeConfig.isEnabled) return;
+
+    const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
 
     if (isLanguageSupported(language)) {
       const onLanguageChangeSuccess = () => {
@@ -289,6 +306,7 @@ export const changeLanguageAction = (language: string) => {
         // fallback language is needed to be updated on language change
         await getAndSetFallbackLanguageResources();
       }
+      dispatch(setSessionLanguageAction(language));
     } else {
       Toast.show({
         message: t('toast.languageIsNotSupported'),
@@ -306,7 +324,7 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
       session: { data: { isOnline, fallbackLanguageVersion, areTranslationsInitialised } },
     } = getState();
 
-    if (!areTranslationsInitialised) return;
+    if (!areTranslationsInitialised || !localeConfig.isEnabled || !localeConfig.baseUrl) return;
 
     const { translationVersion, activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultSupportedUserLanguage();

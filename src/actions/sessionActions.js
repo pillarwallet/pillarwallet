@@ -37,3 +37,10 @@ export const setFallbackLanguageVersionAction = (version: string) => {
     payload: { fallbackLanguageVersion: version === 'LOCAL' ? version : '1' },
   };
 };
+
+export const setSessionLanguageAction = (languageCode: string) => {
+  return {
+    type: UPDATE_SESSION,
+    payload: { sessionLanguageCode: languageCode },
+  };
+};

@@ -75,6 +75,7 @@ describe('App actions', () => {
       { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localUrl: 'localString' } },
       { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
       { type: UPDATE_SESSION, payload: { areTranslationsInitialised: true } },
+      { type: UPDATE_SESSION, payload: { sessionLanguageCode: localeConfig.defaultLanguage } },
     ];
 
     return store.dispatch(initAppAndRedirectAction())
