@@ -189,9 +189,7 @@ class AppSettings extends React.Component<Props, State> {
         title: t('settingsContent.settingsItem.language.title'),
         onPress: () => this.setState({ visibleModal: MODAL.LANGUAGES }),
         value: getLanguageFullName(localisation?.activeLngCode || localeConfig.defaultLanguage),
-        hidden: !localeConfig.isEnabled
-          || !localeConfig.baseUrl
-          || Object.keys(localeConfig.supportedLanguages).length <= 1,
+        hidden: !localeConfig.isEnabled && Object.keys(localeConfig.supportedLanguages).length <= 1,
       },
       {
         key: 'localFiatCurrency',
