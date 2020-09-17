@@ -177,7 +177,7 @@ const themeColors = (theme: Theme) => {
       text: colors.secondaryText,
     },
     secondaryDanger: {
-      surface: 'transparent',
+      surface: colors.buttonSecondaryBackground,
       text: colors.negative,
     },
     danger: {
