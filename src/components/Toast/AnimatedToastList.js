@@ -93,8 +93,8 @@ const isSwipeGesture = ({ vx, dx }) =>
 const defaultSwipeResponderOptions = {
   onStartShouldSetPanResponder: () => false,
   onStartShouldSetPanResponderCapture: () => false,
-  onMoveShouldSetPanResponder: () => true,
-  onMoveShouldSetPanResponderCapture: () => true,
+  onMoveShouldSetPanResponder: (_, { dx }) => Math.abs(dx) > 5,
+  onMoveShouldSetPanResponderCapture: () => false,
   onPanResponderMove: noop,
   onPanResponderTerminationRequest: () => true,
   onPanResponderRelease: noop,
