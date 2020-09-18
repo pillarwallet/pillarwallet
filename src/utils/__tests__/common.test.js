@@ -272,7 +272,7 @@ describe('Common utils', () => {
 
   describe('getFormattedTransactionFeeValue', () => {
     it('should parse from BigNumber', () => {
-      const txWeeInWei = new BigNumber(1234500000000000000);
+      const txFeeInWei = new BigNumber(1234500000000000000);
       const formattedEth = getFormattedTransactionFeeValue(txWeeInWei);
       const formattedGasToken = getFormattedTransactionFeeValue(txWeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
