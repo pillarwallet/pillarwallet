@@ -33355,6 +33355,477 @@ exports[`Storyshots ToastCard long text 1`] = `
 </View>
 `;
 
+exports[`Storyshots Tooltip big 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "paddingBottom": 20,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 20,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    onLayout={[Function]}
+  >
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "#007AFF",
+          "borderColor": "#007AFF",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "elevation": 1,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "shadowColor": "rgba(0,0,0,.12)",
+          "shadowOffset": Object {
+            "height": 2,
+            "width": 0,
+          },
+          "shadowOpacity": 1,
+          "shadowRadius": 7,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": true,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Medium",
+                "fontSize": 12,
+                "lineHeight": 18,
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#FCFDFF",
+                  "fontSize": 18,
+                  "lineHeight": 18,
+                  "marginBottom": 0,
+                  "marginTop": 3.2399999999999998,
+                },
+                undefined,
+              ],
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#007AFF",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#007AFF",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        Press me!
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots Tooltip short 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "paddingBottom": 20,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 20,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    onLayout={[Function]}
+  >
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "#007AFF",
+          "borderColor": "#007AFF",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "elevation": 1,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "shadowColor": "rgba(0,0,0,.12)",
+          "shadowOffset": Object {
+            "height": 2,
+            "width": 0,
+          },
+          "shadowOpacity": 1,
+          "shadowRadius": 7,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": true,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Medium",
+                "fontSize": 12,
+                "lineHeight": 18,
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#FCFDFF",
+                  "fontSize": 18,
+                  "lineHeight": 18,
+                  "marginBottom": 0,
+                  "marginTop": 3.2399999999999998,
+                },
+                undefined,
+              ],
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#007AFF",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#007AFF",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        Press me!
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots Tooltip top 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "paddingBottom": 20,
+        "paddingLeft": 20,
+        "paddingRight": 20,
+        "paddingTop": 20,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    onLayout={[Function]}
+  >
+    <View
+      accessible={true}
+      focusable={true}
+      isTVSelectable={true}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      style={
+        Object {
+          "alignItems": "center",
+          "alignSelf": "auto",
+          "backgroundColor": "#007AFF",
+          "borderColor": "#007AFF",
+          "borderRadius": 6,
+          "borderStyle": "solid",
+          "borderWidth": 0,
+          "elevation": 1,
+          "flexDirection": "row",
+          "height": 48,
+          "justifyContent": "center",
+          "marginBottom": 0,
+          "marginLeft": 0,
+          "marginRight": 0,
+          "marginTop": 0,
+          "opacity": 1,
+          "paddingBottom": 0,
+          "paddingLeft": 19,
+          "paddingRight": 19,
+          "paddingTop": 0,
+          "shadowColor": "rgba(0,0,0,.12)",
+          "shadowOffset": Object {
+            "height": 2,
+            "width": 0,
+          },
+          "shadowOpacity": 1,
+          "shadowRadius": 7,
+          "width": "auto",
+        }
+      }
+    >
+      <Text
+        customTheme={
+          Object {
+            "borderWidth": 0,
+            "shadow": true,
+          }
+        }
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 12,
+              "lineHeight": 18,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Medium",
+                "fontSize": 12,
+                "lineHeight": 18,
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#FCFDFF",
+                  "fontSize": 18,
+                  "lineHeight": 18,
+                  "marginBottom": 0,
+                  "marginTop": 3.2399999999999998,
+                },
+                undefined,
+              ],
+            ],
+          ]
+        }
+        theme={
+          Object {
+            "colors": Object {
+              "PPNSurface": "#0a0c78",
+              "PPNText": "#f33726",
+              "accent": "#818EB3",
+              "activeTabBarIcon": "#007AFF",
+              "avatarPlaceholderBackground": "#e0eeff",
+              "avatarPlaceholderText": "#6690eb",
+              "border": "#007AFF",
+              "buttonSecondaryBackground": "#e6f1f9",
+              "card": "#FFFFFF",
+              "control": "#FCFDFF",
+              "danger": "#ff0005",
+              "helpIcon": "#f7931a",
+              "iconBackground": "#ebf0f5",
+              "inactiveTabBarIcon": "#D4D9DB",
+              "indicator": "#F8E71C",
+              "labelTertiary": "#818eb3",
+              "legacyWallet": "#FA574F",
+              "link": "#007aff",
+              "negative": "#BD573A",
+              "notice": "#ea480e",
+              "orange": "#f57c00",
+              "poolTogetherPink": "#e51fff",
+              "positive": "#2AA057",
+              "primary": "#007AFF",
+              "progressBarEnd": "#f04cfa",
+              "progressBarStart": "#ca17e1",
+              "secondaryAccent": "#EBF0F5",
+              "secondaryText": "#8B939E",
+              "smartWallet": "#3C71FE",
+              "smartWalletSurface": "#f3f7ff",
+              "smartWalletText": "#1D24D8",
+              "surface": "#007AFF",
+              "synthetic": "#2329d6",
+              "tertiary": "#EBF0F6",
+              "text": "#FCFDFF",
+              "toastCloseIcon": "#ededed",
+              "transactionReceivedIcon": "#497391",
+              "userAvatar": "#d1d9e4",
+              "warning": "#ECA93A",
+            },
+            "current": "lightTheme",
+          }
+        }
+      >
+        Press me!
+      </Text>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
 <View
   style={
