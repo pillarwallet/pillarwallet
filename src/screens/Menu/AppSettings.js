@@ -25,26 +25,33 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import SlideModal from 'components/Modals/SlideModal';
-import { spacing, fontStyles, fontTrackings } from 'utils/variables';
-import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
-import { BaseText } from 'components/Typography';
-import SettingsListItem from 'components/ListItem/SettingsItem';
-import Checkbox from 'components/Checkbox';
-import SystemInfoModal from 'components/SystemInfoModal';
-import RelayerMigrationModal from 'components/RelayerMigrationModal';
+// actions
 import {
   saveBaseFiatCurrencyAction,
   setAppThemeAction,
   saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
+
+// components
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import { ScrollWrapper, Wrapper } from 'components/Layout';
+import SlideModal from 'components/Modals/SlideModal';
+
+// constants
+import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Transaction } from 'models/Transaction';
-import type { Assets } from 'models/Asset';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+
+// utils
+import { spacing, fontStyles, fontTrackings } from 'utils/variables';
+import { BaseText } from 'components/Typography';
+import SettingsListItem from 'components/ListItem/SettingsItem';
+import Checkbox from 'components/Checkbox';
+import SystemInfoModal from 'components/SystemInfoModal';
+import RelayerMigrationModal from 'components/RelayerMigrationModal';
+
+// selectors
 import {
   isGasTokenSupportedSelector,
   isActiveAccountSmartWalletSelector,
@@ -52,8 +59,17 @@ import {
 } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-import { SettingsSection } from './SettingsSection';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Transaction } from 'models/Transaction';
+import type { Assets } from 'models/Asset';
+
+// local
+import { SettingsSection } from './SettingsSection';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -148,6 +164,8 @@ class AppSettings extends React.Component<Props, State> {
 
     const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
 
+    const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR);
+
     return [
       {
         key: 'localFiatCurrency',
@@ -155,8 +173,7 @@ class AppSettings extends React.Component<Props, State> {
         onPress: () => this.setState({ visibleModal: MODAL.BASE_CURRENCY }),
         value: baseFiatCurrency || defaultFiatCurrency,
       },
-      isSmartAccount &&
-      {
+      showGasTokenOption && {
         key: 'preferredGasToken',
         title: t('settingsContent.settingsItem.payFeeWithPillar.title'),
         toggle: true,
