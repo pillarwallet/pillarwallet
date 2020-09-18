@@ -19,12 +19,23 @@
 */
 
 import { createSelector } from 'reselect';
-import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
-import { checkIfSmartWalletAccount } from 'utils/accounts';
+
+// constants
 import { ETH } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+
+// utils
+import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
+import { checkIfSmartWalletAccount } from 'utils/accounts';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
+// selectors
 import { activeAccountSelector } from 'selectors';
 
+// types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 
@@ -43,6 +54,7 @@ export const isGasTokenSupportedSelector = ({ smartWallet: { connectedAccount } 
 };
 
 export const preferredGasTokenSelector = ({ appSettings: { data: { preferredGasToken } } }: RootReducerState) => {
+  if (!firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR)) return ETH;
   return preferredGasToken || ETH;
 };
 

@@ -49,6 +49,7 @@ import { isEnsName } from 'utils/validators';
 // services
 import { buildERC721TransactionData } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
 import { isGasTokenSupportedSelector, useGasTokenSelector } from 'selectors/smartWallet';
@@ -68,6 +69,7 @@ import type { Contact } from 'models/Contact';
 // constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
 import { addContactAction } from 'actions/contactsActions';
@@ -393,7 +395,9 @@ const SendEthereumTokens = ({
   const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
   const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
 
-  const showRelayerMigration = showFee && !isGasTokenSupported;
+  const showRelayerMigration = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR)
+    && showFee
+    && !isGasTokenSupported;
 
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)
