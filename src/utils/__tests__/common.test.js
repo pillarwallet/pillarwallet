@@ -273,30 +273,30 @@ describe('Common utils', () => {
   describe('getFormattedTransactionFeeValue', () => {
     it('should parse from BigNumber', () => {
       const txFeeInWei = new BigNumber(1234500000000000000);
-      const formattedEth = getFormattedTransactionFeeValue(txWeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txWeeInWei, gasToken);
+      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
     });
     it('should parse from BigNumber that has exponential value', () => {
-      const txWeeInWei = new BigNumber(0x41d1d9bfc6ee79e9e9); // parses from hex
-      const formattedEth = getFormattedTransactionFeeValue(txWeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txWeeInWei, gasToken);
-      expect(txWeeInWei.toString()).toBe('1.2141596928761193e+21'); // exponential
+      const txFeeInWei = new BigNumber(0x41d1d9bfc6ee79e9e9); // parses from hex
+      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
+      expect(txFeeInWei.toString()).toBe('1.2141596928761193e+21'); // exponential
       expect(formattedEth).toBe('1214.159692');
       expect(formattedGasToken).toBe('1214.15'); // method has 2 decimals precision for gasToken
     });
     it('should parse from numeric', () => {
-      const txWeeInWei = 1234500000000000000;
-      const formattedEth = getFormattedTransactionFeeValue(txWeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txWeeInWei, gasToken);
+      const txFeeInWei = 1234500000000000000;
+      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
     });
     it('should parse from string', () => {
-      const txWeeInWei = '1234500000000000000';
-      const formattedEth = getFormattedTransactionFeeValue(txWeeInWei);
-      const formattedGasToken = getFormattedTransactionFeeValue(txWeeInWei, gasToken);
+      const txFeeInWei = '1234500000000000000';
+      const formattedEth = getFormattedTransactionFeeValue(txFeeInWei);
+      const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
     });
