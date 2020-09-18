@@ -594,7 +594,7 @@ export const getDeviceWidth = () => {
 export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
   // fixes exponential values with BigNumber.toPrecision()
   // TODO: fix with BigNumber.toFixed() when updating BigNumber lib
-  const parsedFeeInWei = BigNumber.isBigNumber(feeInWei)
+  const parsedFeeInWei = typeof feeInWei === 'object' && BigNumber.isBigNumber(feeInWei)
     ? feeInWei.toPrecision()
     : feeInWei.toString();
 
