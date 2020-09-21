@@ -17,14 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import type { NavigationScreenProp } from 'react-navigation';
 
-import { ENCRYPTING, CREATED } from 'constants/walletConstants';
-import { MENU } from 'constants/navigationConstants';
+// actios
 import { changePinAction, resetIncorrectPasswordAction } from 'actions/authActions';
+
+// constants
+import { MENU } from 'constants/navigationConstants';
+
+// components
 import { Container } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import ErrorMessage from 'components/ErrorMessage';
@@ -32,105 +36,100 @@ import PinCode from 'components/PinCode';
 import Button from 'components/Button';
 import Header from 'components/Header';
 import Loader from 'components/Loader';
+
+// utils
 import { validatePin } from 'utils/validators';
+
+// types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
   changePin: (newPin: string, currentPin: string) => void,
-  walletState: ?string,
+  isChangingPin: boolean,
   navigation: NavigationScreenProp<*>,
   resetIncorrectPassword: () => void,
 };
 
-type State = {
-  pinError: string,
-};
+const ConfirmNewPin = ({
+  resetIncorrectPassword,
+  navigation,
+  isChangingPin,
+  changePin,
+}: Props) => {
+  const [pinError, setPinError] = useState(null);
+  const [pinSuccessfullyChanged, setPinSuccessfullyChanged] = useState(false);
+  const [newPinSubmitted, setNewPinSubmitted] = useState(false);
 
-class ConfirmNewPin extends React.Component<Props, State> {
-  state = {
-    pinError: '',
-  };
+  useEffect(() => {
+    // on isChangingPin change to false when pin was set
+    if (!isChangingPin && newPinSubmitted && !pinSuccessfullyChanged) {
+      setPinSuccessfullyChanged(true);
+    }
+  }, [isChangingPin]);
 
-  handlePinSubmit = (enteredPin: string) => {
-    const { navigation, changePin } = this.props;
+  const handlePinSubmit = (enteredPin: string) => {
     const currentPin = navigation.getParam('currentPin');
     const newPin = navigation.getParam('newPin');
     const validationError = validatePin(enteredPin, newPin);
 
     if (validationError) {
-      this.setState({
-        pinError: validationError,
-      });
+      setPinError(validationError);
       return;
     }
 
     changePin(enteredPin, currentPin);
+    setNewPinSubmitted(true);
   };
 
-  handlePinChange = () => {
-    this.setState({
-      pinError: '',
-    });
+  const handleScreenDismissal = () => {
+    resetIncorrectPassword();
+    navigation.dismiss();
   };
 
-  handleScreenDismissal = () => {
-    this.props.resetIncorrectPassword();
-    this.props.navigation.dismiss();
-  };
-
-  render() {
-    const { walletState } = this.props;
-    const { pinError } = this.state;
-
-    const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
-
-    if (walletState === ENCRYPTING) {
-      return (
-        <Container center>
-          <Loader />
-        </Container>
-      );
-    }
-
-    if (walletState === CREATED) {
-      return (
-        <Container center>
-          <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
-          <Button title={t('button.continue')} onPress={() => this.props.navigation.navigate(MENU)} />
-        </Container>
-      );
-    }
-
+  if (isChangingPin) {
     return (
-      <Container>
-        <Header
-          title={t('title.confirmNewPin')}
-          centerTitle
-          onClose={this.handleScreenDismissal}
-        />
-        {showError}
-        <PinCode
-          onPinEntered={this.handlePinSubmit}
-          onPinChanged={this.handlePinChange}
-          showForgotButton={false}
-          pinError={!!pinError}
-        />
+      <Container center>
+        <Loader />
       </Container>
     );
   }
-}
+
+  if (pinSuccessfullyChanged) {
+    return (
+      <Container center>
+        <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
+        <Button title={t('button.continue')} onPress={() => navigation.navigate(MENU)} />
+      </Container>
+    );
+  }
+
+  return (
+    <Container>
+      <Header
+        title={t('title.confirmNewPin')}
+        centerTitle
+        onClose={handleScreenDismissal}
+      />
+      {!!pinError && <ErrorMessage>{pinError}</ErrorMessage>}
+      <PinCode
+        onPinEntered={handlePinSubmit}
+        onPinChanged={() => setPinError(null)}
+        showForgotButton={false}
+        pinError={!!pinError}
+      />
+    </Container>
+  );
+};
 
 const mapStateToProps = ({
-  wallet: { walletState },
+  wallet: { isChangingPin },
 }: RootReducerState): $Shape<Props> => ({
-  walletState,
+  isChangingPin,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  changePin: (newPin: string, currentPin: string) => {
-    dispatch(changePinAction(newPin, currentPin));
-  },
+  changePin: (newPin: string, currentPin: string) => dispatch(changePinAction(newPin, currentPin)),
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 

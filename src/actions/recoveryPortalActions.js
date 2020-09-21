@@ -41,8 +41,7 @@ import {
 } from 'constants/recoveryPortalConstants';
 import {
   REGISTERING,
-  SET_WALLET_RECOVERY_COMPLETE,
-  SET_WALLET_RECOVERY_PENDING,
+  UPDATE_WALLET_BACKUP_STATUS,
   UPDATE_WALLET_STATE,
 } from 'constants/walletConstants';
 
@@ -147,7 +146,7 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
     dispatch(getWalletsCreationEventsAction());
 
     // all done
-    dispatch({ type: SET_WALLET_RECOVERY_COMPLETE });
+    dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: false } });
     dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
     dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     Toast.show({
@@ -178,9 +177,9 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
         if (!isEmpty(accounts)) {
           await smartWalletService.connectAccount(accounts[0].address);
           // we can add wallet to onboarding reducer and move with PIN screen to encrypt it
-          dispatch(generateWalletMnemonicAction(temporaryWallet.mnemonic));
+          // dispatch(generateWalletMnemonicAction(temporaryWallet.mnemonic));
           // set recovery pending state, will be saved once PIN is set along with encrypted wallet
-          dispatch({ type: SET_WALLET_RECOVERY_PENDING });
+          dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: true } });
           // move to pin screen to encrypt wallet while recovery pending
           navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE, params: { noBack: true } }));
         }

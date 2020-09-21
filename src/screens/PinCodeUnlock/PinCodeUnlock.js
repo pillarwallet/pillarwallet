@@ -26,7 +26,6 @@ import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { initSmartWalletSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
@@ -252,20 +251,19 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   render() {
-    const { walletState } = this.props.wallet;
+    const { errorMessage: walletErrorMessage, isDecrypting } = this.props.wallet;
     const { waitingTime, showPin } = this.state;
-    const pinError = walletState === INVALID_PASSWORD
-      ? t('auth:error.invalidPin.default')
-      : (this.errorMessage || null);
+    const pinError = walletErrorMessage || this.errorMessage || null;
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING) {
+    if (isDecrypting) {
       return (
         <Container center>
           <Loader />
         </Container>
       );
     }
+
     if (showPin) {
       return (
         <Container>

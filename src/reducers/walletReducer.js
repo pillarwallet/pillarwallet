@@ -17,39 +17,22 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import merge from 'lodash.merge';
 import {
-  GENERATE_ENCRYPTED_WALLET,
-  UPDATE_WALLET_STATE,
-  DECRYPT_WALLET,
-  CREATED,
-  DECRYPTED,
   SET_WALLET_ERROR,
   RESET_WALLET_ERROR,
-  WALLET_ERROR,
-  IMPORT_WALLET,
-  UPDATE_WALLET_MNEMONIC,
-  NEW_WALLET_SET_PIN,
-  NEW_WALLET_CONFIRM_PIN,
-  PIN_SET,
-  PIN_CONFIRMED,
-  SET_API_USER,
-  RESET_WALLET_IMPORT,
-  UPDATE_WALLET_IMPORT_STATE,
-  BACKUP_WALLET,
-  REMOVE_PRIVATE_KEY,
+  REMOVE_WALLET_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
-  IMPORTED,
-  SET_WALLET_RECOVERY_PENDING,
-  SET_WALLET_RECOVERY_COMPLETE,
-  SET_USERNAME_CHECK_ERROR_MESSAGE,
+  SET_WALLET,
+  UPDATE_WALLET_BACKUP_STATUS,
+  SET_WALLET_IS_DECRYPTING,
+  SET_WALLET_IS_ENCRYPTING,
+  SET_WALLET_IS_CHANGING_PIN,
 } from 'constants/walletConstants';
-import { utils } from 'ethers';
 
 
 export type Wallet = {|
-  address: string,
-  privateKey: string
+  address: ?string,
+  privateKey: ?string,
 |};
 
 export type BackupStatus = {|
@@ -58,21 +41,15 @@ export type BackupStatus = {|
   isRecoveryPending: boolean,
 |};
 
-export type ImportedWallet = {
-  signingKey: utils.SigningKey
-};
-
 export type WalletReducerState = {|
-  data: Wallet,
-  walletState: ?string,
-  onboarding: Object,
-  error: ?{
-    code: string,
-    message: string,
-  },
+  data: ?Wallet,
   backupStatus: BackupStatus,
   pinAttemptsCount: number,
   lastPinAttempt: number,
+  isDecrypting: boolean,
+  isEncrypting: boolean,
+  isChangingPin: boolean,
+  errorMessage: ?string,
 |};
 
 export type WalletReducerAction = {|
@@ -81,31 +58,18 @@ export type WalletReducerAction = {|
 |};
 
 const initialState = {
-  data: {
-    address: '',
-    privateKey: '',
-  },
-  onboarding: {
-    mnemonic: {
-      original: '',
-      shuffled: '',
-      wordsToValidate: [],
-    },
-    pin: '',
-    confirmedPin: '',
-    importedWallet: null,
-    apiUser: null,
-    usernameCheckErrorMessage: null,
-  },
-  walletState: null,
-  pinAttemptsCount: 0,
-  lastPinAttempt: 0,
+  data: null,
   backupStatus: {
     isImported: false,
     isBackedUp: false,
     isRecoveryPending: false,
   },
-  error: null,
+  pinAttemptsCount: 0,
+  lastPinAttempt: 0,
+  isDecrypting: false,
+  isEncrypting: false,
+  isChangingPin: false,
+  errorMessage: null,
 };
 
 const walletReducer = (
@@ -113,67 +77,22 @@ const walletReducer = (
   action: WalletReducerAction,
 ): WalletReducerState => {
   switch (action.type) {
-    case GENERATE_ENCRYPTED_WALLET:
-      return merge({}, state, { data: action.payload, walletState: CREATED });
-    case UPDATE_WALLET_STATE:
-      return merge({}, state, { walletState: action.payload });
-    case UPDATE_WALLET_MNEMONIC:
-      return merge({}, state, { onboarding: { mnemonic: action.payload } });
-    case SET_WALLET_ERROR:
-      return merge({}, state, { error: action.payload, walletState: WALLET_ERROR });
-    case RESET_WALLET_ERROR:
-      return merge({}, state, { error: null, walletState: null });
-    case DECRYPT_WALLET:
-      return merge({}, state, { data: action.payload, walletState: DECRYPTED });
-    case NEW_WALLET_SET_PIN:
-      return merge(
-        {},
-        state,
-        { onboarding: { pin: action.payload, confirmedPin: '' }, walletState: PIN_SET },
-      );
-    case NEW_WALLET_CONFIRM_PIN:
-      return merge(
-        {},
-        state, { onboarding: { confirmedPin: action.payload }, walletState: PIN_CONFIRMED },
-      );
-    case IMPORT_WALLET:
-      const { importedWallet, apiUser } = action.payload;
+    case UPDATE_WALLET_BACKUP_STATUS:
       return {
         ...state,
-        onboarding: { ...state.onboarding, importedWallet, apiUser },
-        backupStatus: { ...state.backupStatus, isImported: true },
-        walletState: IMPORTED,
+        backupStatus: { ...state.backupStatus, ...action.payload },
       };
-    case RESET_WALLET_IMPORT:
+    case SET_WALLET:
       return {
         ...state,
-        onboarding: { ...state.onboarding, importedWallet: null, apiUser: null },
+        data: action.payload,
+        isDecrypting: false,
+        isEncrypting: false,
       };
-    case SET_API_USER:
+    case REMOVE_WALLET_PRIVATE_KEY:
       return {
         ...state,
-        onboarding: { ...state.onboarding, apiUser: action.payload },
-      };
-    case SET_USERNAME_CHECK_ERROR_MESSAGE:
-      return {
-        ...state,
-        onboarding: { ...state.onboarding, usernameCheckErrorMessage: action.payload },
-      };
-    case UPDATE_WALLET_IMPORT_STATE:
-      return merge(
-        {},
-        state, { backupStatus: { ...state.backupStatus, ...action.payload } },
-      );
-    case BACKUP_WALLET:
-      return merge(
-        {},
-        state,
-        { backupStatus: { ...state.backupStatus, isBackedUp: true } },
-      );
-    case REMOVE_PRIVATE_KEY:
-      return {
-        ...state,
-        data: { ...state.data, privateKey: '' },
+        data: { ...state.data, privateKey: null },
       };
     case UPDATE_PIN_ATTEMPTS:
       const { pinAttemptsCount, lastPinAttempt } = action.payload;
@@ -182,15 +101,36 @@ const walletReducer = (
         pinAttemptsCount,
         lastPinAttempt,
       };
-    case SET_WALLET_RECOVERY_PENDING:
+    case SET_WALLET_IS_ENCRYPTING:
       return {
         ...state,
-        backupStatus: { ...state.backupStatus, isRecoveryPending: true },
+        isEncrypting: action.payload !== undefined ? action.payload : true,
       };
-    case SET_WALLET_RECOVERY_COMPLETE:
+    case SET_WALLET_IS_DECRYPTING:
       return {
         ...state,
-        backupStatus: { ...state.backupStatus, isRecoveryPending: false },
+        isDecrypting: action.payload !== undefined ? action.payload : true,
+      };
+    case SET_WALLET_IS_CHANGING_PIN:
+      return {
+        ...state,
+        isChangingPin: action.payload !== undefined ? action.payload : true,
+      };
+    case SET_WALLET_ERROR:
+      return {
+        ...state,
+        errorMessage: action.payload,
+        isEncrypting: false,
+        isDecrypting: false,
+        isChangingPin: false,
+      };
+    case RESET_WALLET_ERROR:
+      return {
+        ...state,
+        errorMessage: null,
+        isDecrypting: false,
+        isEncrypting: false,
+        isChangingPin: false,
       };
     default:
       return state;

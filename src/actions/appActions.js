@@ -32,7 +32,7 @@ import { migrate } from 'services/dataMigration';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
-import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
+import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
@@ -203,7 +203,7 @@ export const initAppAndRedirectAction = () => {
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
-      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
+      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });

@@ -279,6 +279,7 @@ import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes'
 
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
+import type { User } from 'models/User';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -766,8 +767,7 @@ const AppFlowNavigation = createStackNavigator(
 );
 
 type Props = {
-  userState: ?string,
-  profileImage: ?string,
+  user: ?User,
   fetchAppSettingsAndRedirect: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
@@ -836,13 +836,14 @@ class AppFlow extends React.Component<Props, State> {
   componentDidUpdate(prevProps: Props) {
     const {
       notifications,
-      userState,
+      user,
       wallet,
       removePrivateKeyFromMemory,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
-    if (userState === REGISTERED && wallet.privateKey) {
+    if (user?.walletId && wallet.privateKey) {
+      console.log('removing!')
       removePrivateKeyFromMemory();
     }
 
@@ -899,8 +900,7 @@ class AppFlow extends React.Component<Props, State> {
 
   render() {
     const {
-      userState,
-      profileImage,
+      user,
       hasUnreadNotifications,
       intercomNotificationsCount,
       navigation,
@@ -911,9 +911,8 @@ class AppFlow extends React.Component<Props, State> {
 
 
     // wallet might be created, but recovery is pending and no user assigned yet
-    if (!backupStatus.isRecoveryPending) {
-      if (!userState) return null;
-      if (userState === PENDING) return <RetryApiRegistration />;
+    if (!backupStatus.isRecoveryPending && !user?.walletId) {
+      return <RetryApiRegistration />;
     }
 
     const { isImported, isBackedUp } = backupStatus;
@@ -922,7 +921,7 @@ class AppFlow extends React.Component<Props, State> {
     return (
       <AppFlowNavigation
         screenProps={{
-          profileImage,
+          profileImage: user?.profileImage,
           hasUnreadNotifications,
           intercomNotificationsCount,
           isWalletBackedUp,
@@ -936,7 +935,7 @@ class AppFlow extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  user: { data: { profileImage }, userState },
+  user: { data: user },
   notifications: {
     data: notifications,
     intercomNotificationsCount,
@@ -946,8 +945,7 @@ const mapStateToProps = ({
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   session: { data: { isOnline } },
 }) => ({
-  profileImage,
-  userState,
+  user,
   notifications,
   hasUnreadNotifications,
   wallet,

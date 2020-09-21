@@ -22,13 +22,9 @@ import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { connect } from 'react-redux';
 import t from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 import type { NavigationScreenProp } from 'react-navigation';
-
-// actions
-import { navigateToNewWalletPageAction } from 'actions/walletActions';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -41,17 +37,15 @@ import { fontSizes, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
 // constants
-import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS, NEW_PROFILE } from 'constants/navigationConstants';
 import { LIGHT_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // types
 import type { Theme } from 'models/Theme';
-import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  navigateToNewWalletPage: () => void,
   theme: Theme,
 };
 
@@ -115,7 +109,6 @@ const handleSecretClick = () => {
 
 const Welcome = ({
   navigation,
-  navigateToNewWalletPage,
   theme,
 }: Props) => {
   useEffect(() => {
@@ -145,7 +138,7 @@ const Welcome = ({
             <Button
               roundedCorners
               marginBottom={spacing.mediumLarge}
-              onPress={navigateToNewWalletPage}
+              onPress={() => navigation.navigate(NEW_PROFILE)}
               title={t('auth:button.createAccount')}
               style={{ backgroundColor: '#00ff24' }}
               textStyle={{ color: '#000000' }}
@@ -164,8 +157,4 @@ const Welcome = ({
   );
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  navigateToNewWalletPage: () => dispatch(navigateToNewWalletPageAction()),
-});
-
-export default withTheme(connect(null, mapDispatchToProps)(Welcome));
+export default withTheme(Welcome);

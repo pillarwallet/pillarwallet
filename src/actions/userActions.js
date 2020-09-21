@@ -96,7 +96,7 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
     dispatch(saveDbAction('user', { user: updatedUser }, true));
     dispatch({
       type: UPDATE_USER,
-      payload: { user: updatedUser, state: REGISTERED },
+      payload: updatedUser,
     });
 
     dispatch(logEventAction('user_profile_updated'));
@@ -247,7 +247,7 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
 
     dispatch({
       type: UPDATE_USER,
-      payload: { user: updatedUser, state: REGISTERED },
+      payload: updatedUser,
     });
 
     dispatch(logEventAction('avatar_updated'));

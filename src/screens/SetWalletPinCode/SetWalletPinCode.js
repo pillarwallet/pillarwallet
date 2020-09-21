@@ -17,29 +17,32 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
-import { BackHandler, Platform } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
-
-// actions
-import { setPinForNewWalletAction } from 'actions/walletActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import PinCode from 'components/PinCode';
 import { MediumText, Paragraph } from 'components/Typography';
 
+// constants
+import { PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+
 // utils
 import { validatePin } from 'utils/validators';
 import { fontStyles, spacing } from 'utils/variables';
 
 // types
-import type { ImportedWallet } from 'reducers/walletReducer';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { NavigationScreenProp } from 'react-navigation';
 
+
+type Props = {
+  navigation: NavigationScreenProp<*>,
+  wallet: ?Object,
+};
 
 const ContentWrapper = styled.ScrollView`
   flex: 1;
@@ -52,97 +55,51 @@ const HeaderText = styled(MediumText)`
   margin-bottom: 9px;
 `;
 
-type Props = {
-  setPinForNewWallet: (pin: string) => void,
-  navigation: NavigationScreenProp<*>,
-  importedWallet: ImportedWallet,
-};
+const SetWalletPinCode = ({
+  navigation,
+  wallet,
+}: Props) => {
+  const [pinCode, setPinCode] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
-type State = {
-  error: string,
-};
+  useEffect(() => {
+    if (errorMessage) setErrorMessage(null);
+  }, [pinCode]);
 
-class SetWalletPinCode extends React.Component<Props, State> {
-  noBack: boolean;
-  state = {
-    error: '',
-  };
-
-  constructor(props: Props) {
-    super(props);
-    this.noBack = props.navigation.getParam('noBack', false);
-  }
-
-  componentDidMount() {
-    if (Platform.OS !== 'android' && !this.noBack) return;
-    BackHandler.addEventListener('hardwareBackPress', this.handleNavigationBack);
-  }
-
-  componentWillUnmount() {
-    if (Platform.OS !== 'android' && !this.noBack) return;
-    BackHandler.removeEventListener('hardwareBackPress', this.handleNavigationBack);
-  }
-
-  handleNavigationBack = () => false;
-
-  handlePinSubmit = (pin: string) => {
-    const validationError = validatePin(pin);
+  const handlePinSubmit = (submittedPinCode: string) => {
+    const validationError = validatePin(submittedPinCode);
     if (validationError) {
-      this.setState({ error: validationError });
+      setErrorMessage(validationError);
       return;
     }
-    this.props.setPinForNewWallet(pin);
+    navigation.navigate(PIN_CODE_CONFIRMATION, { pinCode: submittedPinCode });
   };
 
-  handlePinChange = () => {
-    this.setState({ error: '' });
-  };
+  const username = navigation.getParam('username');
+  let welcomeText = t('auth:title.welcomeToPillar');
+  if (username) welcomeText += `,\n${username}`;
 
-  render() {
-    const { error } = this.state;
-    const { navigation, importedWallet } = this.props;
-    const username = navigation.getParam('username', '');
-    let welcomeText = t('auth:title.welcomeToPillar');
-    if (username) welcomeText += `,\n${username}`;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{ title: t('auth:title.createPin') }],
-          noBack: this.noBack,
-        }}
-      >
-        <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-          {!importedWallet &&
-          <HeaderText>
-            {`${welcomeText}!`}
-          </HeaderText>}
-          <Paragraph center>
-            {t('auth:paragraph.createPin')}
-          </Paragraph>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            onPinChanged={this.handlePinChange}
-            showForgotButton={false}
-            pinError={!!error}
-            flex={false}
-          />
-        </ContentWrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
+  return (
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.createPin') }] }}>
+      <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
+        {!wallet && <HeaderText>{welcomeText}</HeaderText>}
+        <Paragraph center>{t('auth:paragraph.createPin')}</Paragraph>
+        <PinCode
+          onPinEntered={handlePinSubmit}
+          onPinChanged={setPinCode}
+          showForgotButton={false}
+          pinError={!!errorMessage}
+          flex={false}
+        />
+      </ContentWrapper>
+    </ContainerWithHeader>
+  );
+};
 
 const mapStateToProps = ({
-  wallet: { onboarding: { importedWallet } },
+  onboarding: { wallet },
 }: RootReducerState): $Shape<Props> => ({
-  importedWallet,
+  wallet,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  setPinForNewWallet: (pin: string) => {
-    dispatch(setPinForNewWalletAction(pin));
-  },
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(SetWalletPinCode);
+export default connect(mapStateToProps)(SetWalletPinCode);

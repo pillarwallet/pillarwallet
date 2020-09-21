@@ -24,15 +24,16 @@ import merge from 'lodash.merge';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import Intercom from 'react-native-intercom';
+import { ImageCacheManager } from 'react-native-cached-image';
+import t from 'translations/translate';
 
 // constants
 import {
-  DECRYPT_WALLET,
-  UPDATE_WALLET_STATE,
-  DECRYPTING,
-  INVALID_PASSWORD,
-  ENCRYPTING,
-  DECRYPTED,
+  SET_WALLET,
+  SET_WALLET_ERROR,
+  SET_WALLET_IS_DECRYPTING,
+  RESET_WALLET_ERROR,
+  SET_WALLET_IS_CHANGING_PIN,
 } from 'constants/walletConstants';
 import {
   APP_FLOW,
@@ -43,9 +44,9 @@ import {
   LOGOUT_PENDING,
   RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
 } from 'constants/navigationConstants';
-import { SET_USERNAME, UPDATE_USER, PENDING, REGISTERED } from 'constants/userConstants';
-import { LOG_OUT } from 'constants/authConstants';
-import { DARK_THEME, RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { SET_USERNAME, UPDATE_USER } from 'constants/userConstants';
+import { RESET_APP_STATE } from 'constants/authConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalConstants';
@@ -145,10 +146,7 @@ export const loginAction = (
       accounts: { data: accounts },
     } = getState();
 
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: DECRYPTING,
-    });
+    dispatch({ type: SET_WALLET_IS_DECRYPTING });
 
     try {
       let wallet;
@@ -177,7 +175,6 @@ export const loginAction = (
       }
 
       let { user = {} } = await storage.get('user');
-      const userState = user.walletId ? REGISTERED : PENDING;
 
       const decryptedPrivateKey = wallet?.privateKey;
       if (!decryptedPrivateKey) {
@@ -186,11 +183,11 @@ export const loginAction = (
       }
 
 
-      if (user.username) {
+      if (user?.username) {
         dispatch({ type: SET_USERNAME, payload: user.username });
       }
 
-      if (userState === REGISTERED) {
+      if (user?.walletId) {
         // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch);
 
@@ -224,6 +221,7 @@ export const loginAction = (
           // save updated user, just in case userInfo endpoint failed check if result is empty
           if (!isEmpty(userInfo)) {
             user = merge({}, user, userInfo);
+            dispatch({ type: UPDATE_USER, payload: user });
             dispatch(saveDbAction('user', { user }, true));
           }
 
@@ -254,24 +252,20 @@ export const loginAction = (
         if (revertToDefaultNetwork || !blockchainNetwork) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
+
+        firebaseCrashlytics.setUserId(user.username);
       } else {
         api.init();
       }
 
       dispatch(updatePinAttemptsAction(false));
 
-      firebaseCrashlytics.setUserId(user.username);
-      dispatch({
-        type: UPDATE_USER,
-        payload: { user, state: userState },
-      });
-
       const { address } = wallet;
       dispatch({
-        type: DECRYPT_WALLET,
+        type: SET_WALLET,
         payload: {
           address,
-          privateKey: userState === PENDING ? decryptedPrivateKey : undefined,
+          privateKey: !user?.walletId ? decryptedPrivateKey : undefined,
         },
       });
 
@@ -326,11 +320,10 @@ export const loginAction = (
       navigate(navigateToAppAction);
     } catch (e) {
       reportLog(`An error occured whilst trying to complete auth actions: ${e.errorMessage}`, e);
-
       dispatch(updatePinAttemptsAction(true));
       dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: INVALID_PASSWORD,
+        type: SET_WALLET_ERROR,
+        payload: t('auth:error.invalidPin.default'),
       });
     }
   };
@@ -344,10 +337,7 @@ export const checkAuthAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { appSettings: { data: { useBiometrics } } } = getState();
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: DECRYPTING,
-    });
+    dispatch({ type: SET_WALLET_IS_DECRYPTING });
     try {
       let wallet;
       // fallback if biometrics check fails, or is rejected by user
@@ -363,10 +353,8 @@ export const checkAuthAction = (
       }
       if (wallet) {
         dispatch({
-          type: DECRYPT_WALLET,
-          payload: {
-            address: wallet.address,
-          },
+          type: SET_WALLET,
+          payload: { address: wallet.address },
         });
         if (onValidPin) {
           onValidPin(pin, wallet);
@@ -377,35 +365,35 @@ export const checkAuthAction = (
       reportOrWarn('Error constructing the wallet object', e, 'error');
     }
     dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: INVALID_PASSWORD,
+      type: SET_WALLET_ERROR,
+      payload: t('auth:error.invalidPin.default'),
     });
   };
 };
 
 export const changePinAction = (newPin: string, currentPin: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_WALLET_IS_CHANGING_PIN, payload: true });
+
     const { wallet: encryptedWallet } = await storage.get('wallet');
     const { appSettings: { data: { useBiometrics } } } = getState();
     const backupStatus = get(encryptedWallet, 'backupStatus', {});
 
-    dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
-    await delay(50);
+
+    dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: true });
+
     const currentSaltedPin = await getSaltedPin(currentPin, dispatch);
     const wallet = await decryptWallet(encryptedWallet, currentSaltedPin);
 
+    dispatch({ type: SET_WALLET_IS_DECRYPTING, payload: false });
+
     await dispatch(encryptAndSaveWalletAction(newPin, wallet, backupStatus, useBiometrics));
+
+    dispatch({ type: SET_WALLET_IS_CHANGING_PIN, payload: false });
   };
 };
 
-export const resetIncorrectPasswordAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: DECRYPTED,
-    });
-  };
-};
+export const resetIncorrectPasswordAction = () => ({ type: RESET_WALLET_ERROR });
 
 export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: string) => {
   return () => {
@@ -424,24 +412,59 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
   };
 };
 
-export const resetAppState = async () => {
-  Intercom.logout();
-  await firebaseIid.delete()
-    .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
-  await storage.removeAll();
-  await smartWalletService.reset();
-  clearWebViewCookies();
+export const resetAppStateAction = (stateAfterReset: Object = {}) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const savedThemeType = getState().appSettings?.data?.themeType;
+
+    dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
+
+    // persist saved theme after reset
+    if (savedThemeType === DARK_THEME) {
+      dispatch(setAppThemeAction(DARK_THEME));
+    }
+  };
+};
+
+export const resetAppServicesAction = () => {
+  return async () => {
+    // reset intercom user
+    Intercom.logout();
+
+    // reset firebase fcm
+    await firebaseIid
+      .delete()
+      .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+
+    // reset storage, but restore previously set env
+    const env = await storage.get('environment');
+    await storage.removeAll();
+    if (env) await storage.save('environment', env, true);
+
+    // reset smart wallet service
+    await smartWalletService.reset();
+
+    // reset data stored in keychain
+    await resetKeychainDataObject();
+
+    // clear images cache
+    ImageCacheManager().clearCache().catch(() => null);
+
+    // reset app webview's cookies
+    clearWebViewCookies();
+  };
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return async (dispatch: Dispatch) => {
+    // show logout pending screen
     navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
-    const themeType = get(getState(), 'appSettings.data.themeType', '');
-    await resetAppState();
-    await dispatch({ type: LOG_OUT });
-    await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
-    await resetKeychainDataObject();
-    if (themeType === DARK_THEME) await dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
+
+    // reset services
+    await dispatch(resetAppServicesAction());
+
+    // reset reducer state
+    dispatch(resetAppStateAction());
+
     // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };

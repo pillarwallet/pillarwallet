@@ -30,29 +30,16 @@ import Toast from 'components/Toast';
 // constants
 import {
   UPDATE_WALLET_MNEMONIC,
-  IMPORT_ERROR,
-  IMPORT_WALLET,
-  SET_WALLET_ERROR,
-  RESET_WALLET_ERROR,
-  NEW_WALLET_SET_PIN,
-  NEW_WALLET_CONFIRM_PIN,
-  IMPORT_WALLET_PRIVATE_KEY,
-  IMPORT_WALLET_TWORDS_PHRASE,
-  RESET_WALLET_IMPORT,
-  BACKUP_WALLET,
-  REMOVE_PRIVATE_KEY,
+  REMOVE_WALLET_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
-  UPDATE_WALLET_STATE,
-  IMPORTING,
-  ENCRYPTING,
-  GENERATE_ENCRYPTED_WALLET,
+  UPDATE_WALLET_BACKUP_STATUS,
+  SET_WALLET_IS_ENCRYPTING,
 } from 'constants/walletConstants';
-import { PIN_CODE_CONFIRMATION, NEW_PROFILE, RECOVERY_SETTINGS } from 'constants/navigationConstants';
+import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
-import { delay } from 'utils/common';
 import { setKeychainDataObject } from 'utils/keychain';
 
 // services
@@ -60,7 +47,6 @@ import { navigate } from 'services/navigation';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type SDKWrapper from 'services/api';
 import type { KeyChainData } from 'utils/keychain';
 import type { BackupStatus } from 'reducers/walletReducer';
 
@@ -68,105 +54,9 @@ import type { BackupStatus } from 'reducers/walletReducer';
 import { logEventAction } from './analyticsActions';
 import { saveDbAction } from './dbActions';
 import { selfAwardBadgeAction } from './badgesActions';
-import { registerWalletAction } from './onboardingActions';
 import { addWalletBackupEventAction } from './userEventsActions';
 import { changeUseBiometricsAction } from './appSettingsActions';
 
-
-export const importWalletFromTWordsPhraseAction = (tWordsPhrase: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: IMPORTING,
-    });
-
-    try {
-      const importedWallet = ethers.Wallet.fromMnemonic(tWordsPhrase);
-
-      api.init();
-      let apiUser = {};
-      const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      if (addressValidationResponse.walletId) {
-        apiUser = {
-          id: addressValidationResponse.id,
-          walletId: addressValidationResponse.walletId,
-          username: addressValidationResponse.username,
-          profileLargeImage: addressValidationResponse.profileImage,
-        };
-      }
-
-      const payload = { importedWallet, apiUser };
-      dispatch({ type: IMPORT_WALLET, payload });
-
-      dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
-
-      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
-    } catch (e) {
-      dispatch({
-        type: SET_WALLET_ERROR,
-        payload: {
-          code: IMPORT_ERROR,
-          message: e.toString(),
-          field: IMPORT_WALLET_TWORDS_PHRASE,
-        },
-      });
-    }
-  };
-};
-
-export const importWalletFromPrivateKeyAction = (privateKey: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: IMPORTING,
-    });
-
-    const walletPrivateKey = privateKey.substr(0, 2) === '0x' ? privateKey : `0x${privateKey}`;
-    try {
-      const importedWallet = new ethers.Wallet(walletPrivateKey);
-
-      api.init();
-      let apiUser = {};
-      const addressValidationResponse = await api.validateAddress(importedWallet.address);
-      if (addressValidationResponse.walletId) {
-        apiUser = {
-          id: addressValidationResponse.id,
-          walletId: addressValidationResponse.walletId,
-          username: addressValidationResponse.username,
-          profileLargeImage: addressValidationResponse.profileImage,
-        };
-      }
-
-      const payload = { importedWallet, apiUser };
-      dispatch({ type: IMPORT_WALLET, payload });
-
-      dispatch(logEventAction('wallet_imported', { method: 'Private key' }));
-
-      navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
-    } catch (e) {
-      dispatch({
-        type: SET_WALLET_ERROR,
-        payload: {
-          code: IMPORT_ERROR,
-          message: e.reason.toString(),
-          field: IMPORT_WALLET_PRIVATE_KEY,
-        },
-      });
-    }
-  };
-};
-
-export const navigateToNewWalletPageAction = () => {
-  return (dispatch: Dispatch) => {
-    dispatch({ type: RESET_WALLET_IMPORT });
-    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
-  };
-};
-
-export const resetWalletErrorAction = () => ({
-  type: RESET_WALLET_ERROR,
-  payload: { },
-});
 
 const NUM_WORDS_TO_CHECK = 3;
 
@@ -194,36 +84,11 @@ export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
   };
 };
 
-export const setPinForNewWalletAction = (pin: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch({
-      type: NEW_WALLET_SET_PIN,
-      payload: pin,
-    });
-    navigate(NavigationActions.navigate({ routeName: PIN_CODE_CONFIRMATION }));
-  };
-};
-
-export const confirmPinForNewWalletAction = (pin: string, shouldRegisterWallet?: boolean) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { appSettings: { data: { themeType } } } = getState();
-    dispatch({
-      type: NEW_WALLET_CONFIRM_PIN,
-      payload: pin,
-    });
-
-    if (shouldRegisterWallet) dispatch(registerWalletAction(false, themeType));
-  };
-};
-
 export const backupWalletAction = () => {
   return (dispatch: Dispatch) => {
-    dispatch(saveDbAction('wallet', {
-      wallet: {
-        backupStatus: { isBackedUp: true },
-      },
-    }));
-    dispatch({ type: BACKUP_WALLET });
+    dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isBackedUp: true } });
+    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isBackedUp: true } } }));
+
     dispatch(selfAwardBadgeAction('wallet-backed-up'));
     dispatch(addWalletBackupEventAction());
 
@@ -231,7 +96,7 @@ export const backupWalletAction = () => {
   };
 };
 
-export const removePrivateKeyFromMemoryAction = () => ({ type: REMOVE_PRIVATE_KEY });
+export const removePrivateKeyFromMemoryAction = () => ({ type: REMOVE_WALLET_PRIVATE_KEY });
 
 export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -260,16 +125,11 @@ export const encryptAndSaveWalletAction = (
   backupStatus: BackupStatus,
   enableBiometrics: boolean = false,
 ) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const { wallet: { walletState } } = getState();
+  return async (dispatch: Dispatch) => {
     const { isImported, isBackedUp, isRecoveryPending } = backupStatus;
 
-    // might be already in ENCRYPTING state, i.e. on pin change
-    if (walletState !== ENCRYPTING) {
-      dispatch({ type: UPDATE_WALLET_STATE, payload: ENCRYPTING });
-    }
+    dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
 
-    await delay(50);
     const saltedPin = await getSaltedPin(pin, dispatch);
     const encryptedWallet = await wallet.encrypt(saltedPin, { scrypt: { N: 16384 } })
       .then(JSON.parse)
@@ -282,11 +142,6 @@ export const encryptAndSaveWalletAction = (
       },
     }));
 
-    dispatch({
-      type: GENERATE_ENCRYPTED_WALLET,
-      payload: { address: wallet.address },
-    });
-
     // save data to keychain
     const { mnemonic, privateKey } = wallet;
     const keychainData: KeyChainData = { mnemonic: mnemonic?.phrase || '', privateKey, pin };
@@ -295,6 +150,8 @@ export const encryptAndSaveWalletAction = (
     } else {
       await setKeychainDataObject(keychainData);
     }
+
+    dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: false });
   };
 };
 

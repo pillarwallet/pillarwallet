@@ -25,7 +25,6 @@ import get from 'lodash.get';
 import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { checkAuthAction } from 'actions/authActions';
 import { Container, Wrapper } from 'components/Layout';
 import Loader from 'components/Loader';
@@ -207,15 +206,6 @@ class CheckAuth extends React.Component<Props, State> {
     if (this._isMounted) this.setState({ showPin: false });
   };
 
-  getPinError = (walletState: string) => {
-    switch (walletState) {
-      case INVALID_PASSWORD:
-        return t('auth:error.invalidPin.default');
-      default:
-        return null;
-    }
-  };
-
   renderSlideModalWithPin = () => {
     const { modalProps } = this.props;
     if (!modalProps) return null;
@@ -247,28 +237,27 @@ class CheckAuth extends React.Component<Props, State> {
   };
 
   renderWrappedPin = () => {
-    const { headerProps, errorMessage } = this.props;
+    const { headerProps, errorMessage: additionalErrorMessage } = this.props;
     if (!headerProps) return null;
     const { title = t('auth:enterPincode'), centerTitle = true } = headerProps;
     return (
       <Container>
         <Header {...headerProps} title={title} centerTitle={centerTitle} />
-        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {!!additionalErrorMessage && <ErrorMessage>{additionalErrorMessage}</ErrorMessage>}
         {this.renderPinCode()}
       </Container>
     );
   };
 
   renderPinCode = () => {
-    const { wallet: { walletState } } = this.props;
-    const pinError = this.getPinError(walletState);
+    const { wallet: { errorMessage } } = this.props;
     return (
       <CheckAuthWrapper>
-        {!!pinError && <ErrorMessage>{pinError}</ErrorMessage>}
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         <PinCode
           onPinEntered={this.handlePinSubmit}
           showForgotButton={false}
-          pinError={!!pinError}
+          pinError={!!errorMessage}
         />
       </CheckAuthWrapper>
     );
@@ -276,7 +265,7 @@ class CheckAuth extends React.Component<Props, State> {
 
   render() {
     const {
-      wallet: { walletState },
+      wallet: { isDecrypting, isEncrypting },
       isChecking,
       enforcePin,
       modalProps,
@@ -286,7 +275,7 @@ class CheckAuth extends React.Component<Props, State> {
     } = this.props;
     const { showPin } = this.state;
 
-    if (!hideLoader && (walletState === DECRYPTING || isChecking)) {
+    if (!hideLoader && (isDecrypting || isEncrypting || isChecking)) {
       return (
         <Container style={{ flex: 1, width: '100%' }} center>
           <Loader messages={[customCheckingMessage || t('auth:checking', { capitalize: true })]} />

@@ -20,7 +20,7 @@
 import { combineReducers } from 'redux';
 
 // constants
-import { LOG_OUT } from 'constants/authConstants';
+import { RESET_APP_STATE } from 'constants/authConstants';
 import type { DbAction } from 'models/DbAction';
 
 import { defaultTheme } from 'utils/themes';
@@ -63,6 +63,7 @@ import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
 import contactsReducer from './contactsReducer';
 import sablierReducer from './sablierReducer';
 import fiatToCryptoReducer from './fiatToCryptoReducer';
+import onboardingReducer from './onboardingReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -108,6 +109,7 @@ import type {
 import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 import type { SablierReducerAction, SablierReducerState } from './sablierReducer';
 import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiatToCryptoReducer.js';
+import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -147,6 +149,7 @@ export type RootReducerState = {|
   contacts: ContactsReducerState,
   sablier: SablierReducerState,
   fiatToCrypto: FiatToCryptoReducerState,
+  onboarding: OnboardingReducerState,
 |};
 
 type RootReducerAction =
@@ -178,7 +181,8 @@ type RootReducerAction =
   | KeyBasedAssetTransferReducerAction
   | ContactsReducerAction
   | SablierReducerAction
-  | FiatToCryptoReducerAction;
+  | FiatToCryptoReducerAction
+  | OnboardingReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -228,13 +232,15 @@ const appReducer = combineReducers({
   contacts: contactsReducer,
   sablier: sablierReducer,
   fiatToCrypto: fiatToCryptoReducer,
+  onboarding: onboardingReducer,
 });
 
 export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
-  if (action.type === LOG_OUT) {
-    return appReducer({ appSettings: { isFetched: true, data: { theme: defaultTheme } } }, {});
+  if (action.type === RESET_APP_STATE) {
+    // resets reducer state, ref – https://stackoverflow.com/a/35641992
+    state = action.payload; // keep passed state or reset completely
   }
   return appReducer(state, action);
 };

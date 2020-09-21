@@ -422,7 +422,10 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.validate({ blockchainAddress }))
       .then(({ data }) => data)
-      .catch(() => ({ error: true }));
+      .catch((error) => {
+        reportLog('validateAddress failed', { error });
+        return null;
+      });
   }
 
   fetchSupportedAssets(walletId: string) {
