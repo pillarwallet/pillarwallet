@@ -18,27 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-import NewProfile from 'screens/NewProfile';
-import { registerOnBackendAction } from 'actions/onboardingActions';
+// actions
+import { retryOnboardingAction } from 'actions/onboardingActions';
+
+// components
 import { Container } from 'components/Layout';
 import Button from 'components/Button';
 import Loader from 'components/Loader';
 import { MediumText } from 'components/Typography';
-import { REGISTRATION_FAILED, USERNAME_OK, CHECKING_USERNAME, USERNAME_FAILED } from 'constants/walletConstants';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
+// utils
 import { fontStyles } from 'utils/variables';
+
+// types
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
-  wallet: Object,
-  registerOnBackend: () => void,
+  isRegisteringUser: boolean,
+  retryOnboarding: () => void,
 };
-
 
 const Text = styled(MediumText)`
   ${fontStyles.big};
@@ -48,40 +52,29 @@ const Text = styled(MediumText)`
   margin-bottom: 20px;
 `;
 
+const RetryApiRegistration = ({
+  isRegisteringUser,
+  retryOnboarding,
+}: Props) => (
+  <Container center>
+    {!!isRegisteringUser && <Loader messages={[t('auth:loadingMessage.registering')]} />}
+    {!isRegisteringUser && (
+      <>
+        <Text>Registration failed</Text>
+        <Button title={t('auth:button.tryAgain')} onPress={retryOnboarding} />
+      </>
+    )}
+  </Container>
+);
 
-const USERNAME_STATUS = [USERNAME_FAILED, CHECKING_USERNAME, USERNAME_OK];
-
-class RetryApiRegistration extends React.Component<Props> {
-  componentDidMount() {
-    const { registerOnBackend } = this.props;
-    registerOnBackend();
-  }
-
-  render() {
-    const { registerOnBackend, wallet: { walletState } } = this.props;
-    if (USERNAME_STATUS.includes(walletState)) {
-      return <NewProfile retry />;
-    }
-    return (
-      <Container center>
-        {walletState !== REGISTRATION_FAILED && (
-          <Loader messages={[t('auth:loadingMessage.registering')]} />
-        )}
-        {walletState === REGISTRATION_FAILED && (
-          <>
-            <Text>Registration failed</Text>
-            <Button title={t('auth:button.tryAgain')} onPress={registerOnBackend} />
-          </>
-        )}
-      </Container>
-    );
-  }
-}
-
-const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
+const mapStateToProps = ({
+  onboarding: { isRegisteringUser },
+}: RootReducerState): $Shape<Props> => ({
+  isRegisteringUser,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  registerOnBackend: () => dispatch(registerOnBackendAction()),
+  retryOnboarding: () => dispatch(retryOnboardingAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RetryApiRegistration);

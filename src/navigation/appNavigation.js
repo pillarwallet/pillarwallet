@@ -907,11 +907,12 @@ class AppFlow extends React.Component<Props, State> {
       backupStatus,
       theme,
       i18n,
+      isOnline,
     } = this.props;
 
 
     // wallet might be created, but recovery is pending and no user assigned yet
-    if (!backupStatus.isRecoveryPending && !user?.walletId) {
+    if (!backupStatus.isRecoveryPending && !user?.walletId && isOnline) {
       return <RetryApiRegistration />;
     }
 

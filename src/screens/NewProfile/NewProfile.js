@@ -92,10 +92,8 @@ const PROFILE_IMAGE_WIDTH = 144;
 type Props = {
   navigation: NavigationScreenProp<*>,
   checkUsernameAvailability: (username: string) => void,
-  retrySetup: () => void,
   resetUsernameCheck: () => void,
   user: ?Object,
-  retry?: boolean,
   theme: Theme,
   errorMessage: ?string,
 };
@@ -109,12 +107,10 @@ const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan';
 
 const NewProfile = ({
   user,
-  retry,
   checkUsernameAvailability,
   navigation,
   theme,
   errorMessage,
-  retrySetup,
   resetUsernameCheck,
 }: Props) => {
   useEffect(() => {
@@ -164,10 +160,6 @@ const NewProfile = ({
 
   const proceedToNextScreen = () => {
     Keyboard.dismiss();
-    if (retry) {
-      retrySetup();
-      return;
-    }
     const navProps = usernameValue ? { username: usernameValue } : null;
     if (Platform.OS === 'android') {
       navigation.navigate(PERMISSIONS, navProps);
@@ -246,7 +238,6 @@ const NewProfile = ({
 
   return (
     <ContainerWithHeader
-      noBack={!!retry}
       headerProps={headerProps}
       putContentInScrollView={!existingUser}
       keyboardShouldPersistTaps="always"
@@ -319,7 +310,6 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   checkUsernameAvailability: (username: string) => dispatch(checkUsernameAvailabilityAction(username)),
   resetUsernameCheck: () => dispatch(resetUsernameCheckAction()),
-  retrySetup: () => {}, // TODO: dispatch retry
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));

@@ -20,16 +20,11 @@
 import React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import t from 'translations/translate';
 
 // components
-import { Container, Wrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
+import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
-import Button from 'components/Button';
-
-// constants
-import { APP_FLOW } from 'constants/navigationConstants';
+import RetryApiRegistration from 'components/RetryApiRegistration';
 
 
 type Props = {
@@ -37,20 +32,10 @@ type Props = {
   errorMessage: ?string,
 };
 
-const NewWallet = ({
-  errorMessage,
-  navigation,
-}: Props) => (
+const NewWallet = ({ errorMessage }: Props) => (
   <Container center={!!errorMessage}>
     {!errorMessage && <Loader />}
-    {!!errorMessage && (
-      <Wrapper fullScreen center flex={1}>
-        <BaseText style={{ marginBottom: 20 }} bigText={!errorMessage}>
-          Registration failed
-        </BaseText>
-        <Button title={t('auth:button.tryAgain')} onPress={() => navigation.navigate(APP_FLOW)} />
-      </Wrapper>
-    )}
+    {!!errorMessage && <RetryApiRegistration />}
   </Container>
 );
 

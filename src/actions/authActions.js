@@ -187,7 +187,7 @@ export const loginAction = (
         dispatch({ type: SET_USERNAME, payload: user.username });
       }
 
-      if (user?.walletId) {
+      if (wallet) {
         // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch);
 
@@ -228,20 +228,24 @@ export const loginAction = (
           // to get exchange supported assets in order to show only supported assets on exchange selectors
           // and show exchange button on supported asset screen only
           dispatch(getExchangeSupportedAssetsAction());
-        }
 
-        // init smart wallet
-        await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
+          // init smart wallet
+          await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
 
-        // key based wallet migration – switch to smart wallet if key based was active
-        if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET) {
           const smartWalletAccount = findFirstSmartAccount(accounts);
-          if (smartWalletAccount) {
+
+          // key based wallet migration – switch to smart wallet if key based was active
+          if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
             await dispatch(setActiveAccountAction(smartWalletAccount.id));
-          } else {
-            // very old user that doesn't have any smart wallet, let's create one and migrate safe
+          }
+
+          // offline onboarded or very old user that doesn't have any smart wallet, let's create one and migrate safe
+          if (!smartWalletAccount) {
+            // this will import and set Smart Wallet as current active account
             await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
           }
+
+          firebaseCrashlytics.setUserId(user.username);
         }
 
         /**
@@ -252,8 +256,6 @@ export const loginAction = (
         if (revertToDefaultNetwork || !blockchainNetwork) {
           dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
-
-        firebaseCrashlytics.setUserId(user.username);
       } else {
         api.init();
       }
@@ -261,13 +263,14 @@ export const loginAction = (
       dispatch(updatePinAttemptsAction(false));
 
       const { address } = wallet;
-      dispatch({
-        type: SET_WALLET,
-        payload: {
-          address,
-          privateKey: !user?.walletId ? decryptedPrivateKey : undefined,
-        },
-      });
+      let userWallet = { address };
+
+      // if user isn't completely registered then put private key into state to complete registration
+      if (!user?.walletId) {
+        userWallet = { ...userWallet, privateKey: decryptedPrivateKey };
+      }
+
+      dispatch({ type: SET_WALLET, payload: userWallet });
 
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
@@ -286,10 +289,6 @@ export const loginAction = (
         return;
       }
 
-      dispatch(fetchSmartWalletTransactionsAction());
-      dispatch(fetchReferralRewardAction());
-      dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-
       const pathAndParams = getNavigationPathAndParamsState();
       if (!pathAndParams) return;
 
@@ -306,9 +305,15 @@ export const loginAction = (
         action: navigateToLastActiveScreen,
       });
 
+      if (isOnline) {
+        dispatch(fetchSmartWalletTransactionsAction());
+        dispatch(fetchReferralRewardAction());
+        dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+        dispatch(checkKeyBasedAssetTransferTransactionsAction());
+      }
+
       dispatch(checkForWalletBackupToastAction());
       dispatch(getWalletsCreationEventsAction());
-      dispatch(checkKeyBasedAssetTransferTransactionsAction());
 
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()

@@ -39,6 +39,7 @@ import {
   SET_ONBOARDING_PIN_CODE,
   SET_ONBOARDING_USER,
   SET_ONBOARDING_WALLET,
+  SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
 
 // components
@@ -46,7 +47,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { isCaseInsensitiveMatch, reportLog } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 
 // services
@@ -72,62 +73,75 @@ import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedA
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
+const navigateAfterOnboadingCompleteAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    // check if user was referred to install the app and navigate accordingly
+    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
+    navigate(NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName }),
+    }));
+  };
+};
 
-export const setupUserAction = () => {
+export const setupUserAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    dispatch({ type: SET_REGISTERING_USER, payload: true });
+
     const {
       wallet: { data: wallet },
-      onboarding: { user },
+      session: { data: { isOnline } },
     } = getState();
 
-    api.init();
+    // save for future onboarding retry in case anything fails or is offline
+    let userInfo = { username };
+    dispatch(saveDbAction('user', { user: userInfo }, true));
 
-    // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
-    await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
-    await firebaseMessaging.requestPermission().catch(() => {});
-    const fcmToken = await firebaseMessaging.getToken().catch(() => null);
+    if (isOnline) {
+      api.init();
+      // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
+      await firebaseMessaging.registerForRemoteNotifications().catch(() => null);
+      await firebaseMessaging.requestPermission().catch(() => null);
+      const fcmToken = await firebaseMessaging.getToken().catch(() => null);
 
-    if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+      if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
 
-    // const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, user?.username, recover);
-    const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, user?.username);
+      // TODO: web portal recovery refactor?s
+      // const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, user?.username, recover);
+      const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, username);
 
-    let userInfo;
-    const registrationSucceed = !sdkWallet?.error && sdkWallet?.walletId;
-    if (!registrationSucceed) {
-      dispatch({ type: SET_ONBOARDING_ERROR, payload: sdkWallet.reason });
-      // will store onboarding username for registration retries
-      const { username } = user;
-      userInfo = { username };
-    } else {
+      if (!!sdkWallet?.error || !sdkWallet?.walletId) {
+        const error = sdkWallet?.reason || 'default'; // TODO: default error message?
+        reportLog('setupUserAction user registration failed', { error });
+        dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
+        return;
+      }
+
       userInfo = await api.userInfo(sdkWallet.walletId);
+
+      // save updated
+      dispatch(saveDbAction('user', { user: userInfo }, true));
+
+      api.setUsername(userInfo.username);
+
+      const oAuthTokens = {
+        refreshToken: sdkWallet.refreshToken,
+        accessToken: sdkWallet.accessToken,
+      };
+
+      const updateOAuth = updateOAuthTokensCB(dispatch);
+      api.init(updateOAuth, oAuthTokens);
+      await updateOAuth(oAuthTokens);
+
+      dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+
+      dispatch(logEventAction('wallet_created'));
     }
 
     dispatch({ type: SET_USER, payload: userInfo });
 
-    dispatch(saveDbAction('user', { user: userInfo }, true));
-
-    api.setUsername(userInfo.username);
-
-    const oAuthTokens = {
-      refreshToken: sdkWallet.refreshToken,
-      accessToken: sdkWallet.accessToken,
-    };
-
-    const updateOAuth = updateOAuthTokensCB(dispatch);
-    api.init(updateOAuth, oAuthTokens);
-    await updateOAuth(oAuthTokens);
-
-    dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-
-    if (registrationSucceed) {
-      dispatch(logEventAction('wallet_created'));
-    } else {
-      dispatch({
-        type: SET_ONBOARDING_ERROR,
-        payload: sdkWallet.reason,
-      });
-    }
+    dispatch({ type: SET_REGISTERING_USER, payload: false });
   };
 };
 
@@ -198,9 +212,17 @@ export const setupAppServicesAction = () => {
 
 export const completeOnboardingAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // pass current onboarding state to keep after redux state reset
-    const { onboarding } = getState();
-    dispatch(resetAppStateAction({ onboarding }));
+    // pass current onboarding, referrals and session network state to keep after redux state reset
+    const {
+      onboarding,
+      referrals,
+      session: { data: { isOnline } },
+    } = getState();
+    dispatch(resetAppStateAction({
+      onboarding,
+      referrals,
+      session: { data: { isOnline } },
+    }));
 
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
 
@@ -219,26 +241,29 @@ export const completeOnboardingAction = (enableBiometrics?: boolean) => {
     //   return;
     // }
 
-    await dispatch(setupUserAction());
+    await dispatch(setupUserAction(onboarding.user.username));
     await dispatch(setupAppServicesAction());
+    // save user for later registration
 
-    // check if user was referred to install the app and navigate accordingly
-    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
-    navigate(NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName }),
-    }));
+    dispatch(navigateAfterOnboadingCompleteAction());
   };
 };
 
-export const retryUserSetupAction = async () => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+export const retryOnboardingAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_ONBOARDING_ERROR, payload: null }); // reset
+
     const {
+      onboarding: { user: onboardingUser },
       user: { data: user },
     } = getState();
 
-    await dispatch(setupUserAction());
+    // either retry during onboarding or previously stored username suering onboarding
+    if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user.username));
+
+    await dispatch(setupAppServicesAction());
+
+    dispatch(navigateAfterOnboadingCompleteAction());
   };
 };
 
