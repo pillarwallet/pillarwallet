@@ -41,3 +41,11 @@ export type ApiNotification = {
   type: string,
   createdAt: number,
 };
+
+export type FirebaseMessage = {
+  data?: Object,
+  notification?: {
+    title?: string,
+    body?: string,
+  },
+};

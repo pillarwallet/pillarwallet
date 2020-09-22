@@ -24,6 +24,7 @@ import { NavigationActions } from 'react-navigation';
 import { Alert } from 'react-native';
 import get from 'lodash.get';
 import { Notifications } from 'react-native-notifications';
+import messaging from '@react-native-firebase/messaging';
 
 // actions
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
@@ -40,6 +41,7 @@ import {
   BCX,
   COLLECTIBLE,
   BADGE,
+  FCM_DATA_TYPE,
 } from 'constants/notificationConstants';
 import { HOME, AUTH_FLOW, APP_FLOW } from 'constants/navigationConstants';
 import {
@@ -54,18 +56,22 @@ import { SOCKET } from 'services/sockets';
 import { firebaseMessaging } from 'services/firebase';
 
 // utils
-import { processNotification, resetAppNotificationsBadgeNumber } from 'utils/notifications';
+import {
+  processNotification,
+  resetAppNotificationsBadgeNumber,
+  getToastNotification,
+} from 'utils/notifications';
 import { reportLog } from 'utils/common';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-
+import type { FirebaseMessage } from 'models/Notification';
 
 const storage = Storage.getInstance('db');
 
 let notificationsListener = null;
-let disabledPushNotificationsListener;
+let disabledPushNotificationsListener = null;
 let notificationsOpenerListener = null;
 let intercomNotificationsListener = null;
 
@@ -165,47 +171,56 @@ export const subscribeToSocketEventsAction = () => {
   };
 };
 
-export const subscribeToPushNotificationsAction = () => {
+const onFirebaseMessageAction = (message: FirebaseMessage) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      wallet: { data: wallet },
-    } = getState();
+    if (checkForSupportAlert(message.data)) return;
+    const type = message?.data?.type;
 
-    const firebaseNotificationsEnabled = await firebaseMessaging.hasPermission();
-    if (!firebaseNotificationsEnabled) {
-      try {
-        await firebaseMessaging.requestPermission();
-        await firebaseMessaging.getToken();
-        dispatch(fetchAllNotificationsAction());
-        disabledPushNotificationsListener = setInterval(() => {
-          dispatch(fetchAllNotificationsAction());
-        }, 30000);
-        return;
-      } catch (err) {
-        //
-      }
+    if ([
+      FCM_DATA_TYPE.BCX,
+      FCM_DATA_TYPE.PPN,
+      FCM_DATA_TYPE.SMART_WALLET,
+    ].includes(type)) {
+      dispatch(fetchAllNotificationsAction());
     }
 
-    if (notificationsListener) return;
-    notificationsListener = firebaseMessaging.onMessage(debounce(message => {
-      const messageData = get(message, 'data');
-      if (isEmpty(messageData) || checkForSupportAlert(messageData)) return;
-      const notification = processNotification(messageData, wallet.address.toUpperCase());
+    if (type === FCM_DATA_TYPE.COLLECTIBLE) {
+      dispatch(fetchAllCollectiblesDataAction());
+    }
+
+    if (message.notification) {
+      const { wallet: { data: wallet } } = getState();
+      const notification = message.data && getToastNotification(message.data, wallet.address);
       if (!notification) return;
-      if (notification.type === BCX) {
-        dispatch(checkForMissedAssetsAction());
-        dispatch(fetchSmartWalletTransactionsAction());
-        dispatch(fetchAssetsBalancesAction());
-      }
-      if (notification.type === COLLECTIBLE) {
-        dispatch(fetchAllCollectiblesDataAction());
-      }
-      if (notification.type === BADGE) {
-        dispatch(fetchBadgesAction());
-      }
+
       dispatch({ type: ADD_NOTIFICATION, notification });
       dispatch(showHomeUpdateIndicatorAction());
-    }, 500));
+    }
+  };
+};
+
+const hasFCMPermission = async () => {
+  const status = await firebaseMessaging.requestPermission();
+  return [
+    messaging.AuthorizationStatus.AUTHORIZED,
+    messaging.AuthorizationStatus.PROVISIONAL,
+  ].includes(status);
+};
+
+export const subscribeToPushNotificationsAction = () => {
+  return async (dispatch: Dispatch) => {
+    if (await hasFCMPermission()) {
+      if (notificationsListener !== null) return;
+      notificationsListener = firebaseMessaging.onMessage(debounce(message => {
+        dispatch(onFirebaseMessageAction(message));
+      }, 500));
+    } else {
+      dispatch(fetchAllNotificationsAction());
+      if (disabledPushNotificationsListener !== null) return;
+      disabledPushNotificationsListener = setInterval(() => {
+        dispatch(fetchAllNotificationsAction());
+      }, 30000);
+    }
   };
 };
 
@@ -218,10 +233,15 @@ export const startListeningNotificationsAction = () => {
 
 export const stopListeningNotificationsAction = () => {
   return async () => {
-    if (disabledPushNotificationsListener) clearInterval(disabledPushNotificationsListener);
-    if (!notificationsListener) return;
-    notificationsListener();
-    notificationsListener = null;
+    if (disabledPushNotificationsListener !== null) {
+      clearInterval(disabledPushNotificationsListener);
+      disabledPushNotificationsListener = null;
+    }
+
+    if (notificationsListener !== null) {
+      notificationsListener();
+      notificationsListener = null;
+    }
   };
 };
 
@@ -297,4 +317,3 @@ export const stopListeningOnOpenNotificationAction = () => {
     Notifications.events().registerNotificationOpened(null);
   };
 };
-

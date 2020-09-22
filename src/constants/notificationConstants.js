@@ -27,3 +27,10 @@ export const COLLECTIBLE = 'COLLECTIBLE';
 export const CONNECTION = 'CONNECTION';
 export const BCX = 'BCX';
 export const BADGE = 'badge';
+
+export const FCM_DATA_TYPE = {
+  BCX: 'BCX',
+  COLLECTIBLE: 'collectible',
+  PPN: 'ppn',
+  SMART_WALLET: 'smartWallet',
+};
