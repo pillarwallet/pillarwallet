@@ -412,13 +412,13 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
   };
 };
 
-export const resetAppStateAction = (stateAfterReset: Object = {}) => {
+export const resetAppStateAction = (stateAfterReset: Object) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const savedThemeType = getState().appSettings?.data?.themeType;
 
     dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
 
-    // persist saved theme after reset
+    // set and store theme after reset
     if (savedThemeType === DARK_THEME) {
       dispatch(setAppThemeAction(DARK_THEME));
     }

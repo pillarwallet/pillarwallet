@@ -198,13 +198,13 @@ export const setupAppServicesAction = () => {
 
 export const completeOnboardingAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    // pass current onboarding state to keep after redux state reset
+    const { onboarding } = getState();
+    dispatch(resetAppStateAction({ onboarding }));
+
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
 
     await dispatch(resetAppServicesAction());
-
-    const { onboarding } = getState();
-
-    dispatch(resetAppStateAction({ onboarding })); // keep onboarding state after reset
 
     await dispatch(setupWalletAction(enableBiometrics));
 
@@ -222,7 +222,7 @@ export const completeOnboardingAction = (enableBiometrics?: boolean) => {
     await dispatch(setupUserAction());
     await dispatch(setupAppServicesAction());
 
-    // check if user was referred to install the app and navigate accoprdingly
+    // check if user was referred to install the app and navigate accordingly
     const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
     navigate(NavigationActions.navigate({
       routeName: APP_FLOW,
@@ -242,13 +242,13 @@ export const retryUserSetupAction = async () => {
   };
 };
 
-export const importWalletFromMnemonicAction = (mnemonic: string) => {
+export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch({ type: SET_IMPORTING_WALLET });
 
     let importedWallet;
     try {
-      importedWallet = ethers.Wallet.fromMnemonic(mnemonic);
+      importedWallet = ethers.Wallet.fromMnemonic(mnemonicInput);
     } catch (e) {
       // keep error unsent in case it contains mnemonic phrase
     }
@@ -259,7 +259,7 @@ export const importWalletFromMnemonicAction = (mnemonic: string) => {
     }
 
     api.init();
-    const registeredWalletUser = await api.validateAddress(importedWallet.address).catch();
+    const registeredWalletUser = await api.validateAddress(importedWallet.address);
     if (registeredWalletUser?.walletId) {
       const {
         walletId,
@@ -269,7 +269,8 @@ export const importWalletFromMnemonicAction = (mnemonic: string) => {
       dispatch({ type: SET_ONBOARDING_USER, payload: { walletId, username, profileImage } });
     }
 
-    dispatch({ type: SET_ONBOARDING_WALLET, payload: importedWallet });
+    const { mnemonic: { phrase: mnemonic } } = importedWallet;
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: { mnemonic } });
 
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
 

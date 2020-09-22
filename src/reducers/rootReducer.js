@@ -239,8 +239,13 @@ export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
   if (action.type === RESET_APP_STATE) {
-    // resets reducer state, ref – https://stackoverflow.com/a/35641992
-    state = action.payload; // keep passed state or reset completely
+    /**
+     * resets reducer state, ref – https://stackoverflow.com/a/35641992
+     *
+     * keep passed state (action.payload) or reset completely,
+     * undefined will reset everything
+     */
+    state = action.payload;
   }
   return appReducer(state, action);
 };

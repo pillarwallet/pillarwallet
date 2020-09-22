@@ -117,7 +117,10 @@ const NewProfile = ({
   retrySetup,
   resetUsernameCheck,
 }: Props) => {
-  useEffect(() => { resetUsernameCheck(); }, []);
+  useEffect(() => {
+    // prepare for username check if no user set
+    if (!user) resetUsernameCheck();
+  }, []);
 
   const [usernameValue, setUsernameValue] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
