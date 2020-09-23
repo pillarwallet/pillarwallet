@@ -22,6 +22,7 @@ import axios from 'axios';
 
 import type { Asset } from 'models/Asset';
 
+import Toast from 'components/Toast';
 import { convertToBaseUnits, reportLog } from 'utils/common';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
@@ -56,17 +57,25 @@ export const get1inchCommonUrlParams = (
   return { amount, safeToAddress, safeFromAddress };
 };
 
-export const getResponseData = async (url: string): Object | null => {
+const handle1inchError = (e: ?Object, errorMessage: string, toastMessage?: string): void => {
+  if (toastMessage) {
+    Toast.show({
+      message: toastMessage,
+      emoji: 'hushed',
+    });
+  }
+  reportLog(errorMessage, e || null, 'warning');
+};
+
+export const getResponseData = async (url: string, errorMessage: string, toastMessage?: string): Object | null => {
   let response;
   try {
     response = await axios.get(url);
   } catch (e) {
-    reportLog('Unable to fetch offers', e, 'warning');
-    return null;
+    return handle1inchError(e, errorMessage, toastMessage);
   }
   if (!response || !response.data) {
-    reportLog('Unable to fetch offers', null, 'warning');
-    return null;
+    return handle1inchError(null, errorMessage, toastMessage);
   }
   return response.data;
 };
