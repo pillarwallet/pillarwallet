@@ -77,6 +77,14 @@ class ModalProvider extends React.Component<{}, ProviderState> {
     }
   }
 
+  closeCallbacks: (() => void)[] = [];
+  closeAll = () => {
+    while (this.closeCallbacks.length > 0) {
+      const callback = this.closeCallbacks.pop();
+      callback();
+    }
+  }
+
   componentDidMount() {
     ModalProvider._instances.push(this);
   }

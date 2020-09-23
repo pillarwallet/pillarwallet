@@ -21,6 +21,7 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import { Keyboard } from 'react-native';
 import RNModal from 'react-native-modal';
+import pull from 'lodash/pull';
 
 import Toast from 'components/Toast';
 import ModalProvider, { ModalStack, ModalCloseContext } from './ModalProvider';
@@ -84,6 +85,11 @@ class Modal extends React.Component<Props, State> {
     if (instance) instance.open({ render });
   }
 
+  static closeAll() {
+    const instance = ModalProvider.getTopInstance();
+    if (instance) instance.closeAll();
+  }
+
   static contextType = ModalCloseContext;
 
   // alias for readability
@@ -91,6 +97,16 @@ class Modal extends React.Component<Props, State> {
 
   state = {
     isVisible: true,
+  }
+
+  componentDidMount() {
+    const instance = ModalProvider.getTopInstance();
+    if (instance) instance.closeCallbacks.push(this.close);
+  }
+
+  componentWillUnmount() {
+    const instance = ModalProvider.getTopInstance();
+    if (instance) pull(instance.closeCallbacks, this.close);
   }
 
   close = () => {
@@ -113,6 +129,7 @@ class Modal extends React.Component<Props, State> {
     return (
       <RNModal
         isVisible={this.state.isVisible}
+        propagateSwipe
         swipeDirection={swipeDirection ?? 'down'}
         onSwipeComplete={this.close}
         onBackdropPress={this.close}
