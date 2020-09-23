@@ -74,7 +74,7 @@ export const getResponseData = async (url: string, errorMessage: string, toastMe
   } catch (e) {
     return handle1inchError(e, errorMessage, toastMessage);
   }
-  if (!response || !response.data) {
+  if (!response?.data) {
     return handle1inchError(null, errorMessage, toastMessage);
   }
   return response.data;
