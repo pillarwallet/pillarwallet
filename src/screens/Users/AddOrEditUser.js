@@ -29,6 +29,7 @@ import { CachedImage } from 'react-native-cached-image';
 import tForm from 'tcomb-form-native';
 import get from 'lodash.get';
 import t from 'translations/translate';
+import querystring from 'querystring';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -47,6 +48,7 @@ import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // utils
 import { spacing, appFont, fontSizes, lineHeights } from 'utils/variables';
@@ -80,6 +82,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   oneTimePasswordSent: boolean,
   user: User,
+  profileImage: string | null,
   updateUser: (walletId: string, field: Object) => void,
   accounts: Accounts,
   theme: Theme,
@@ -103,7 +106,6 @@ type State = {
   cautionModalField: ?string,
   verifiedModalField: ?string,
   showProfileImageModal: boolean,
-  showDeleteAvatarModal: boolean,
 };
 
 
@@ -137,7 +139,7 @@ const ProfileImagePlaceholder = styled.View`
 `;
 
 const CountryWrapper = styled.TouchableOpacity`
-  padding: 20px;  
+  padding: 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -358,7 +360,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       cautionModalField: null,
       verifiedModalField: null,
       showProfileImageModal: false,
-      showDeleteAvatarModal: false,
     };
   }
 
@@ -555,7 +556,17 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onDeleteAvatarPress = () => {
     // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
     this.setState({ showProfileImageModal: false },
-      () => setTimeout(() => this.setState({ showDeleteAvatarModal: true }), 500),
+      () => setTimeout(() => {
+        const { user: { username = '' }, profileImage } = this.props;
+
+        Modal.open(() => (
+          <DeleteAvatarModal
+            profileImageUri={profileImage}
+            username={username}
+            deleteAvatar={this.deleteAvatar}
+          />
+        ));
+      }, 500),
     );
   }
 
@@ -594,7 +605,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   deleteAvatar = () => {
-    this.setState({ showDeleteAvatarModal: false });
     this.props.deleteUserAvatar();
   }
 
@@ -654,24 +664,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       cautionModalField,
       verifiedModalField,
       showProfileImageModal,
-      showDeleteAvatarModal,
     } = this.state;
     const {
-      user, navigation, theme, accounts, goToInvitationFlow,
-    } = this.props;
-
-    const {
+      user: { username = '' },
+      navigation,
+      theme,
+      accounts,
+      goToInvitationFlow,
       profileImage,
-      lastUpdateTime = 0,
-      username = '',
-    } = user;
-
+    } = this.props;
 
     const colors = getThemeColors(theme);
 
     const ensName = getEnsName(accounts);
-
-    const updatedProfileImage = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
     return (
       <ContainerWithHeader
@@ -688,17 +693,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
-                    {!!profileImage && <ProfileImage
-                      uri={updatedProfileImage}
-                      userName={username}
-                      diameter={96}
-                      borderWidth={0}
-                      noShadow
-                    />}
-                    {!profileImage &&
-                    <ProfileImagePlaceholder>
-                      <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
-                    </ProfileImagePlaceholder>}
+                    {profileImage ? (
+                      <ProfileImage
+                        uri={profileImage}
+                        userName={username}
+                        diameter={96}
+                        borderWidth={0}
+                        noShadow
+                      />
+                    ) : (
+                      <ProfileImagePlaceholder>
+                        <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
+                      </ProfileImagePlaceholder>
+                    )}
                   </ImageWrapper>
                 </TouchableOpacity>
                 <Spacing h={20} />
@@ -748,22 +755,20 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           onModalHide={() => this.setState({ showProfileImageModal: false })}
           ensName={ensName}
           username={username}
-          profileImageUri={updatedProfileImage}
+          profileImageUri={profileImage}
           onTakeSelfiePress={this.onTakeSelfiePress}
           onUploadPicturePress={this.onUploadPicturePress}
           onDeleteAvatarPress={this.onDeleteAvatarPress}
-        />
-        <DeleteAvatarModal
-          isVisible={!!showDeleteAvatarModal}
-          onModalHide={() => this.setState({ showDeleteAvatarModal: false })}
-          profileImageUri={updatedProfileImage}
-          username={username}
-          deleteAvatar={this.deleteAvatar}
         />
       </ContainerWithHeader>
     );
   }
 }
+
+const getUpdatedProfileImage = ({ profileImage, lastUpdateTime = 0 }: User) =>
+  profileImage
+    ? `${profileImage}?${querystring.stringify({ t: lastUpdateTime })}`
+    : null;
 
 const mapStateToProps = ({
   user: {
@@ -775,6 +780,7 @@ const mapStateToProps = ({
   referrals: { isPillarRewardCampaignActive },
 }: RootReducerState): $Shape<Props> => ({
   user,
+  profileImage: getUpdatedProfileImage(user),
   oneTimePasswordSent,
   accounts,
   privacyInsightDismissed,

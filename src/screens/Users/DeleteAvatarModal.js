@@ -18,22 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import React, { useRef, useCallback } from 'react';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import { MediumText, BaseText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 
-type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
+type Props = {|
   profileImageUri: ?string,
   username: string,
   deleteAvatar: () => void,
-};
+|};
 
 const Wrapper = styled.View`
   align-items: center;
@@ -41,16 +39,19 @@ const Wrapper = styled.View`
 `;
 
 const DeleteAvatarModal = ({
-  isVisible,
-  onModalHide,
   profileImageUri,
   username,
   deleteAvatar,
 }: Props) => {
+  const modalRef = useRef();
+
+  const close = useCallback(() => {
+    if (modalRef.current) modalRef.current.close();
+  }, []);
+
   return (
     <SlideModal
-      isVisible={isVisible}
-      onModalHide={onModalHide}
+      ref={modalRef}
       hideHeader
       noPadding
     >
@@ -73,14 +74,17 @@ const DeleteAvatarModal = ({
           negative
           block
           title={t('profileContent.modal.deleteAvatar.button.delete')}
-          onPress={deleteAvatar}
+          onPress={() => {
+            close();
+            deleteAvatar();
+          }}
         />
         <Spacing h={8} />
         <Button
           squarePrimary
           block
           title={t('profileContent.modal.deleteAvatar.button.cancel')}
-          onPress={onModalHide}
+          onPress={close}
         />
       </Wrapper>
     </SlideModal>
