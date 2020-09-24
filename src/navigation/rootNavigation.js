@@ -39,6 +39,7 @@ import RecoveryPortalWalletRecoveryIntroScreen from 'screens/RecoveryPortal/Reco
 import RecoveryPortalWalletRecoveryScreen from 'screens/RecoveryPortal/RecoveryPortalWalletRecovery';
 
 import { modalTransition } from 'utils/common';
+import { ModalProvider } from 'components/Modal';
 
 import {
   APP_FLOW,
@@ -114,7 +115,12 @@ class WrappedRootSwitch extends React.Component<Props> {
   static router = RootSwitch.router;
   render() {
     const { language } = this.props;
-    return <RootSwitch screenProps={{ language }} {...this.props} />;
+    return (
+      <>
+        <ModalProvider />
+        <RootSwitch screenProps={{ language }} {...this.props} />
+      </>
+    );
   }
 }
 
