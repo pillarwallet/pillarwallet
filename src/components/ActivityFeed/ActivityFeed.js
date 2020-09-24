@@ -25,9 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import memoize from 'memoize-one';
 
 // types
-import type { Transaction } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { EventData } from 'components/ActivityFeed/ActivityFeedItem';
 
 // components
 import Title from 'components/Title';
@@ -36,6 +34,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
 import EventDetails from 'components/EventDetails';
+import Modal from 'components/Modal';
 
 // utils
 import { groupAndSortByDate } from 'utils/common';
@@ -140,12 +139,6 @@ type Props = {
   cardHeaderTitle?: string,
 };
 
-type State = {|
-  showModal: boolean,
-  selectedEventData: ?Object | ?Transaction,
-  selectedEventItemData: ?EventData,
-|};
-
 const ITEM_TYPE = {
   HEADER: 'HEADER',
   TABS: 'TABS',
@@ -155,15 +148,9 @@ const ITEM_TYPE = {
   CARD_HEADER: 'CARD_HEADER',
 };
 
-class ActivityFeed extends React.Component<Props, State> {
+class ActivityFeed extends React.Component<Props> {
   static defaultProps = {
     initialNumToRender: 7,
-  };
-
-  state = {
-    showModal: false,
-    selectedEventData: null,
-    selectedEventItemData: null,
   };
 
   generateFeedSections = memoize(
@@ -214,17 +201,19 @@ class ActivityFeed extends React.Component<Props, State> {
     return emptyStateData;
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
-    return !isEq;
+  shouldComponentUpdate(nextProps: Props) {
+    return !isEqual(this.props, nextProps);
   }
 
   selectEvent = (eventData: Object, itemData: Object) => {
-    this.setState({
-      selectedEventData: eventData,
-      selectedEventItemData: itemData,
-      showModal: true,
-    });
+    Modal.open(() => (
+      <EventDetails
+        event={eventData}
+        itemData={itemData}
+        navigation={this.props.navigation}
+        isForAllAccounts={this.props.isForAllAccounts}
+      />
+    ));
   };
 
   shouldRenderActivityItem = (item: Object) => {
@@ -282,17 +271,6 @@ class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
-  handleClose = (callback) => {
-    this.setState({ showModal: false }, () => {
-      if (callback) {
-        const timer = setTimeout(() => {
-          callback();
-          clearTimeout(timer);
-        }, 500);
-      }
-    });
-  };
-
   getActivityFeedListKeyExtractor = (item: Object = {}) => {
     switch (item.type) {
       case ITEM_TYPE.HEADER:
@@ -311,7 +289,6 @@ class ActivityFeed extends React.Component<Props, State> {
   render() {
     const {
       feedTitle,
-      navigation,
       wrapperStyle,
       noBorder,
       contentContainerStyle,
@@ -324,15 +301,8 @@ class ActivityFeed extends React.Component<Props, State> {
       headerComponent,
       tabsComponent,
       flatListProps,
-      isForAllAccounts,
       card,
     } = this.props;
-
-    const {
-      showModal,
-      selectedEventData,
-      selectedEventItemData,
-    } = this.state;
 
     const formattedFeedData = this.generateFeedSections(
       tabs, activeTab, feedData, headerComponent, tabsComponent, card,
@@ -370,16 +340,6 @@ class ActivityFeed extends React.Component<Props, State> {
           stickyHeaderIndices={[1]}
           {...flatListProps}
         />
-        {!!selectedEventData &&
-          <EventDetails
-            isVisible={showModal}
-            event={selectedEventData}
-            itemData={selectedEventItemData}
-            navigation={navigation}
-            onClose={this.handleClose}
-            isForAllAccounts={isForAllAccounts}
-          />
-        }
       </ActivityFeedWrapper>
     );
   }

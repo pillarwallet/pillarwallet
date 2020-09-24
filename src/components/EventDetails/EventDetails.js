@@ -35,7 +35,7 @@ import t from 'translations/translate';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
@@ -158,20 +158,28 @@ import type { Stream } from 'models/Sablier';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { Selector } from 'selectors';
 
-
-type Props = {
-  theme: Theme,
-  navigation: NavigationScreenProp<*>,
-  event: Object,
-  isVisible: boolean,
-  onClose: (?(() => void)) => void,
+type StateProps = {|
   rates: Rates,
   baseFiatCurrency: ?string,
   user: Object,
   accounts: Accounts,
   ensRegistry: EnsRegistry,
   supportedAssets: Asset[],
+  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
+  updatingTransaction: string,
+  updatingCollectibleTransaction: string,
+  isPillarRewardCampaignActive: boolean,
+  depositedAssets: DepositedAsset[],
+  poolStats: PoolPrizeInfo,
+  keyBasedWalletAddress: ?string,
+  incomingStreams: Stream[],
+  outgoingStreams: Stream[],
+  history: TransactionsStore,
+|};
+
+type SelectorProps = {|
   PPNTransactions: Transaction[],
   mergedPPNTransactions: Transaction[],
   isSmartWalletActivated: boolean,
@@ -179,27 +187,33 @@ type Props = {
   activeAccountAddress: string,
   accountAssets: Assets,
   activeBlockchainNetwork: string,
-  goToInvitationFlow: () => void,
   isPPNActivated: boolean,
+  collectiblesHistory: CollectibleTrx[],
+  isSmartAccount: boolean,
+|};
+
+type DispatchProps = {|
+  goToInvitationFlow: () => void,
   updateTransactionStatus: (hash: string) => void,
+  updateCollectibleTransaction: (hash: string) => void,
   lookupAddress: (address: string) => void,
+|};
+
+type OwnProps = {|
+  navigation: NavigationScreenProp<*>,
+  event: Object,
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
   storybook?: boolean,
-  history: TransactionsStore,
-  referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
-  isPillarRewardCampaignActive: boolean,
-  collectiblesHistory: CollectibleTrx[],
-  updateCollectibleTransaction: (hash: string) => void,
-  updatingTransaction: string,
-  updatingCollectibleTransaction: string,
-  isSmartAccount: boolean,
-  depositedAssets: DepositedAsset[],
-  poolStats: PoolPrizeInfo,
-  keyBasedWalletAddress: ?string,
-  incomingStreams: Stream[],
-  outgoingStreams: Stream[],
-};
+|};
+
+type Props = {|
+  ...StateProps,
+  ...SelectorProps,
+  ...DispatchProps,
+  ...OwnProps,
+  theme: Theme,
+|};
 
 type EventData = {
   date?: number,
@@ -338,21 +352,12 @@ export class EventDetail extends React.Component<Props> {
     this.syncTxStatus(txInfo);
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { event, isVisible } = this.props;
+  componentDidUpdate() {
+    const { event } = this.props;
     const { type } = event;
     if (!(type === TRANSACTION_EVENT || type === COLLECTIBLE_TRANSACTION)) return;
     const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
     const trxStatus = txInfo?.status;
-    if (!prevProps.isVisible && isVisible) {
-      if (txInfo) {
-        this.syncEnsRegistry(txInfo);
-        this.syncTxStatus(txInfo);
-      }
-    }
-    if (prevProps.isVisible && !isVisible) {
-      this.cleanup();
-    }
     if (trxStatus !== TX_PENDING_STATUS && this.timer) {
       clearInterval(this.timer);
       this.timer = null;
@@ -459,7 +464,6 @@ export class EventDetail extends React.Component<Props> {
         ensName: ensRegistry[address],
       },
     });
-    this.props.onClose();
   };
 
   viewOnTheBlockchain = () => {
@@ -489,76 +493,63 @@ export class EventDetail extends React.Component<Props> {
   };
 
   viewBadge = () => {
-    const { navigation, event, onClose } = this.props;
+    const { navigation, event } = this.props;
     const { badgeId } = event;
-    onClose();
     navigation.navigate(BADGE, { badgeId });
   };
 
-  showReceiveModal = (receiveWalletAddress: string) => {
-    this.props.onClose(() =>
-      Modal.open(() => <ReceiveModal address={receiveWalletAddress} />),
-    );
+  openReceiveModal = (receiveWalletAddress: string) => {
+    Modal.open(() => <ReceiveModal address={receiveWalletAddress} />);
   };
 
   topUpSW = () => {
     const { accounts } = this.props;
     const smartWalletAddress = getSmartWalletAddress(accounts);
     if (!smartWalletAddress) return;
-    this.showReceiveModal(smartWalletAddress);
+    this.openReceiveModal(smartWalletAddress);
   };
 
   referFriends = () => {
-    const { onClose, goToInvitationFlow } = this.props;
-    onClose();
+    const { goToInvitationFlow } = this.props;
     goToInvitationFlow();
   };
 
   activateSW = () => {
-    this.props.onClose(() => {
-      Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
-    });
+    Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
   };
 
   topUpPillarNetwork = () => {
-    const { onClose, navigation } = this.props;
-    onClose();
+    const { navigation } = this.props;
     navigation.navigate(TANK_FUND_FLOW);
   };
 
   onAaveViewDeposit = (depositedAsset: ?DepositedAsset) => {
-    const { onClose, navigation } = this.props;
-    onClose();
+    const { navigation } = this.props;
     navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset });
   };
 
   onAaveDepositMore = () => {
-    const { onClose, navigation, event } = this.props;
-    onClose();
+    const { navigation, event } = this.props;
     navigation.navigate(LENDING_ENTER_DEPOSIT_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
   onAaveWithdrawMore = () => {
-    const { onClose, navigation, event } = this.props;
-    onClose();
+    const { navigation, event } = this.props;
     navigation.navigate(LENDING_ENTER_WITHDRAW_AMOUNT, { symbol: event?.extra?.symbol });
   };
 
   PPNWithdraw = () => {
-    const { onClose, navigation } = this.props;
-    onClose();
+    const { navigation } = this.props;
     navigation.navigate(TANK_WITHDRAWAL_FLOW);
   };
 
   send = () => {
-    const { onClose, navigation } = this.props;
-    onClose();
+    const { navigation } = this.props;
     navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW);
   };
 
   sendSynthetic = (relatedAddress: string) => {
-    const { onClose, navigation, ensRegistry } = this.props;
-    onClose();
+    const { navigation, ensRegistry } = this.props;
     const contactFromAddress = relatedAddress
       && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
     const contact = contactFromAddress;
@@ -566,21 +557,18 @@ export class EventDetail extends React.Component<Props> {
   };
 
   settle = () => {
-    const { onClose, navigation } = this.props;
-    onClose();
+    const { navigation } = this.props;
     navigation.navigate(SETTLE_BALANCE);
   };
 
   goToPoolTogetherPurcharse = (symbol: string) => {
-    const { onClose, navigation, poolStats = {} } = this.props;
+    const { navigation, poolStats = {} } = this.props;
     const { totalPoolTicketsCount, userInfo } = poolStats[symbol];
 
     let userTickets = 0;
     if (userInfo) {
       userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
     }
-
-    onClose();
 
     navigation.navigate(POOLTOGETHER_PURCHASE, {
       poolToken: symbol,
@@ -591,15 +579,13 @@ export class EventDetail extends React.Component<Props> {
   };
 
   goToPoolTogetherWithdraw = (symbol: string) => {
-    const { onClose, navigation, poolStats = {} } = this.props;
+    const { navigation, poolStats = {} } = this.props;
     const { totalPoolTicketsCount, userInfo } = poolStats[symbol];
 
     let userTickets = 0;
     if (userInfo) {
       userTickets = Math.floor(parseFloat(userInfo.ticketBalance));
     }
-
-    onClose();
 
     navigation.navigate(POOLTOGETHER_WITHDRAW, {
       poolToken: symbol,
@@ -610,28 +596,24 @@ export class EventDetail extends React.Component<Props> {
   };
 
   goToPoolTogetherPool = (symbol: string) => {
-    const { onClose, navigation } = this.props;
-    onClose();
+    const { navigation } = this.props;
     navigation.navigate(POOLTOGETHER_DASHBOARD, { symbol });
   };
 
   goToIncomingStream = (streamId: string) => {
-    const { onClose, navigation, incomingStreams } = this.props;
-    onClose();
+    const { navigation, incomingStreams } = this.props;
     const stream = incomingStreams.find(({ id }) => id === streamId);
     navigation.navigate(SABLIER_INCOMING_STREAM, { stream });
   }
 
   goToOutgoingStream = (streamId: string) => {
-    const { onClose, navigation, outgoingStreams } = this.props;
-    onClose();
+    const { navigation, outgoingStreams } = this.props;
     const stream = outgoingStreams.find(({ id }) => id === streamId);
     navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
   }
 
   goToStreamWithdraw = (streamId: string) => {
-    const { onClose, navigation, incomingStreams } = this.props;
-    onClose();
+    const { navigation, incomingStreams } = this.props;
     const stream = incomingStreams.find(({ id }) => id === streamId);
     navigation.navigate(SABLIER_WITHDRAW, { stream });
   }
@@ -1451,9 +1433,7 @@ export class EventDetail extends React.Component<Props> {
   };
 
   render() {
-    const {
-      isVisible, onClose, storybook,
-    } = this.props;
+    const { storybook } = this.props;
 
     let { event } = this.props;
 
@@ -1505,16 +1485,12 @@ export class EventDetail extends React.Component<Props> {
     }
 
     return (
-      <React.Fragment>
-        <SlideModal
-          isVisible={isVisible}
-          onModalHide={onClose}
-          noClose
-          hideHeader
-        >
-          {this.renderContent(event, eventData)}
-        </SlideModal>
-      </React.Fragment>
+      <SlideModal
+        noClose
+        hideHeader
+      >
+        {this.renderContent(event, eventData)}
+      </SlideModal>
     );
   }
 }
@@ -1533,7 +1509,7 @@ const mapStateToProps = ({
   poolTogether: { poolStats },
   wallet: { data: walletData },
   sablier: { incomingStreams, outgoingStreams },
-}: RootReducerState): $Shape<Props> => ({
+}: RootReducerState): StateProps => ({
   rates,
   baseFiatCurrency,
   user,
@@ -1552,7 +1528,7 @@ const mapStateToProps = ({
   outgoingStreams,
 });
 
-const structuredSelector = createStructuredSelector({
+const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   mergedPPNTransactions: combinedPPNTransactionsSelector,
   isSmartWalletActivated: isSmartWalletActivatedSelector,
@@ -1565,16 +1541,17 @@ const structuredSelector = createStructuredSelector({
   isSmartAccount: isActiveAccountSmartWalletSelector,
 });
 
-const combinedMapStateToProps = (state: RootReducerState, props: Props): $Shape<Props> => ({
+const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({
   ...structuredSelector(state, props),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
   updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
   updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail));
+type ExportedComponent = React.AbstractComponent<OwnProps>;
+export default (withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(EventDetail)): ExportedComponent);
