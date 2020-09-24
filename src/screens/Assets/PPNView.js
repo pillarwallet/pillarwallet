@@ -41,6 +41,7 @@ import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
 import SWActivationModal from 'components/SWActivationModal';
+import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
@@ -110,7 +111,6 @@ type Props = {
 
 type State = {
   activeTab: string,
-  isInitSmartWalletModalVisible: boolean,
 };
 
 const AssetButtonsWrapper = styled.View`
@@ -155,7 +155,6 @@ const SETTLED = 'SETTLED';
 class PPNView extends React.Component<Props, State> {
   state = {
     activeTab: INCOMING,
-    isInitSmartWalletModalVisible: false,
   };
 
   setActiveTab = (activeTab) => {
@@ -241,7 +240,7 @@ class PPNView extends React.Component<Props, State> {
             t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.instantTransactions'),
             t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.singleTokenExperience')]}
           buttonTitle={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.button.activatePPN')}
-          onButtonPress={() => this.setState({ isInitSmartWalletModalVisible: true })}
+          onButtonPress={this.openSmartWalletModal}
         />
       );
     }
@@ -249,12 +248,12 @@ class PPNView extends React.Component<Props, State> {
     return null;
   };
 
-  closeSmartWalletModal = () => {
-    this.setState({ isInitSmartWalletModalVisible: false });
+  openSmartWalletModal = () => {
+    Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
   };
 
   render() {
-    const { activeTab, isInitSmartWalletModalVisible } = this.state;
+    const { activeTab } = this.state;
     const {
       availableStake,
       assetsOnNetwork,
@@ -460,11 +459,6 @@ class PPNView extends React.Component<Props, State> {
             />
           </FloatingButtonView>
         }
-        <SWActivationModal
-          navigation={navigation}
-          isVisible={isInitSmartWalletModalVisible}
-          onClose={this.closeSmartWalletModal}
-        />
       </View>
     );
   }
