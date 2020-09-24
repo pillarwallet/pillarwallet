@@ -20,9 +20,11 @@
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+
+import SlideModal from 'components/Modals/SlideModal';
 import { BaseText, MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+
 import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 
@@ -36,13 +38,10 @@ type ItemType = {
   hide?: boolean,
 }
 
-type Props = {
-  onModalClose: (Function) => void,
-  isVisible: boolean,
+type Props = {|
   items: ItemType[],
-  doNotCloseOnPress?: boolean,
   title?: string,
-};
+|};
 
 const MainContainer = styled(SafeAreaView)`
   padding: 24px 0 40px;
@@ -50,7 +49,6 @@ const MainContainer = styled(SafeAreaView)`
 
 class ActionOptionsModal extends React.Component<Props> {
   renderItem = (item: ItemType) => {
-    const { onModalClose, doNotCloseOnPress } = this.props;
     const {
       label,
       onPress,
@@ -58,6 +56,7 @@ class ActionOptionsModal extends React.Component<Props> {
       iconName,
       key,
     } = item;
+
     return (
       <ListItemWithImage
         key={key}
@@ -65,7 +64,7 @@ class ActionOptionsModal extends React.Component<Props> {
           <BaseText medium>{label}</BaseText>
         )}
         disabled={isDisabled}
-        onPress={() => doNotCloseOnPress ? onPress() : onModalClose(onPress)}
+        onPress={onPress}
         diameter={48}
         iconName={iconName}
         iconColor={themedColors.link}
@@ -76,16 +75,12 @@ class ActionOptionsModal extends React.Component<Props> {
   };
 
   render() {
-    const {
-      onModalClose, isVisible, items, title,
-    } = this.props;
+    const { items, title } = this.props;
 
     return (
       <SlideModal
-        isVisible={isVisible}
         noClose
         hideHeader
-        onModalHide={onModalClose}
       >
         <MainContainer>
           {!!title &&
