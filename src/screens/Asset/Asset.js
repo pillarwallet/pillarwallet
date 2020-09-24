@@ -32,7 +32,7 @@ import t from 'translations/translate';
 // components
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
@@ -48,7 +48,7 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SERVICES } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
@@ -105,11 +105,6 @@ type Props = {
   fetchReferralRewardsIssuerAddresses: () => void,
   goToInvitationFlow: () => void,
   rewardActive?: boolean,
-};
-
-type State = {
-  showDescriptionModal: boolean,
-  visibleActionOptionsModal: boolean,
 };
 
 const AssetCardWrapper = styled.View`
@@ -173,13 +168,8 @@ const SyntheticAssetIcon = styled(CachedImage)`
 
 const lightningIcon = require('assets/icons/icon_lightning.png');
 
-class AssetScreen extends React.Component<Props, State> {
+class AssetScreen extends React.Component<Props> {
   forceRender = false;
-
-  state = {
-    showDescriptionModal: false,
-    visibleActionOptionsModal: false,
-  };
 
   componentDidMount() {
     const {
@@ -196,8 +186,8 @@ class AssetScreen extends React.Component<Props, State> {
     logScreenView('View asset', 'Asset', `asset-${token}`);
   }
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+  shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqual(this.props, nextProps);
     const isFocused = this.props.navigation.isFocused();
 
     if (!isFocused) {
@@ -233,14 +223,12 @@ class AssetScreen extends React.Component<Props, State> {
   getModalActionOptions = () => {
     const {
       navigation,
-      baseFiatCurrency,
       rewardActive,
       goToInvitationFlow,
       balances,
       exchangeSupportedAssets,
     } = this.props;
     const { assetData } = navigation.state.params;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const { token } = assetData;
     const balance = getBalance(balances, token);
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
@@ -249,7 +237,7 @@ class AssetScreen extends React.Component<Props, State> {
         key: 'buy',
         label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
         iconName: 'wallet',
-        onPress: () => this.goToExchangeFlow(fiatCurrency, token),
+        onPress: () => navigation.navigate(SERVICES),
       },
       {
         key: 'receive',
@@ -274,16 +262,26 @@ class AssetScreen extends React.Component<Props, State> {
     ];
   };
 
-  closeActionOptionsModal = (callback: () => void) => {
-    this.setState({ visibleActionOptionsModal: false }, () => {
-      if (callback) {
-        const timer = setTimeout(() => {
-          callback();
-          clearTimeout(timer);
-        }, 500);
-      }
-    });
-  };
+  openAddFundsModal = () => {
+    const options = this.getModalActionOptions();
+
+    Modal.open(() => (
+      <ActionOptionsModal
+        items={options}
+        title={t('title.addFundsToWallet')}
+      />
+    ));
+  }
+
+  openDescriptionModal = () => {
+    const { assetData } = this.props.navigation.state.params;
+
+    Modal.open(() => (
+      <SlideModal title={assetData.name}>
+        <Description small light>{assetData.description}</Description>
+      </SlideModal>
+    ));
+  }
 
   render() {
     const {
@@ -300,7 +298,6 @@ class AssetScreen extends React.Component<Props, State> {
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
     } = this.props;
-    const { showDescriptionModal, visibleActionOptionsModal } = this.state;
     const { assetData } = this.props.navigation.state.params;
     const { token, isSynthetic = false } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -353,8 +350,6 @@ class AssetScreen extends React.Component<Props, State> {
     const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
-    const modalActionOptions = this.getModalActionOptions();
-
     return (
       <ContainerWithHeader
         navigation={navigation}
@@ -363,7 +358,7 @@ class AssetScreen extends React.Component<Props, State> {
           rightItems: [
             {
               icon: 'info-circle-inverse',
-              onPress: () => { this.setState({ showDescriptionModal: true }); },
+              onPress: this.openDescriptionModal,
             },
           ],
           rightIconsSize: fontSizes.large,
@@ -410,7 +405,7 @@ class AssetScreen extends React.Component<Props, State> {
           </DataWrapper>
           <AssetCardWrapper>
             <AssetButtons
-              onPressReceive={() => this.setState({ visibleActionOptionsModal: true })}
+              onPressReceive={this.openAddFundsModal}
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
@@ -429,19 +424,6 @@ class AssetScreen extends React.Component<Props, State> {
             isAssetView
           />}
         </ScrollWrapper>
-        <ActionOptionsModal
-          onModalClose={this.closeActionOptionsModal}
-          isVisible={!!visibleActionOptionsModal}
-          items={modalActionOptions}
-          title={t('title.addFundsToWallet')}
-        />
-        <SlideModal
-          title={assetData.name}
-          isVisible={showDescriptionModal}
-          onModalHide={() => this.setState({ showDescriptionModal: false })}
-        >
-          <Description small light>{assetData.description}</Description>
-        </SlideModal>
       </ContainerWithHeader>
     );
   }
