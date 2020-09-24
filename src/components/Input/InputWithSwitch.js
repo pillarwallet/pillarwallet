@@ -26,7 +26,7 @@ import type { Event } from 'react-native';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Switcher from 'components/Switcher';
 import LabeledWrapper from 'components/Input/LabeledWrapper';
 import VerifyView from 'components/Input/VerifyView';

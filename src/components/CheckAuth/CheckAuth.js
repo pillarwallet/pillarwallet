@@ -34,7 +34,7 @@ import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject } from 'utils/keychain';
 import { constructWalletFromMnemonic } from 'utils/wallet';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Header from 'components/Header';
 import type { EthereumWallet } from 'models/Wallet';
 

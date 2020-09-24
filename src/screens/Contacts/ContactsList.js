@@ -37,7 +37,7 @@ import ContactDetailsModal from 'components/ContactDetailsModal';
 import SwipeoutButton from 'components/SwipeoutButton';
 import ProfileImage from 'components/ProfileImage';
 import { Spacing } from 'components/Layout';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Button from 'components/Button';
 import { BaseText, MediumText } from 'components/Typography';
 

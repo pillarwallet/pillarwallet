@@ -27,7 +27,7 @@ import { defaultTheme } from 'utils/themes';
 import { fontSizes } from 'utils/variables';
 import { delay } from 'utils/common';
 import configureStore from '../../../../configureStore';
-import SlideModal from '../SlideModal';
+import SlideModal from '../SlideModal-old';
 
 const { store } = configureStore();
 

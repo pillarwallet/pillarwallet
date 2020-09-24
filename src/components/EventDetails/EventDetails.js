@@ -36,7 +36,7 @@ import t from 'translations/translate';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';

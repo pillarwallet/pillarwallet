@@ -21,7 +21,7 @@
 import React from 'react';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import { MediumText } from 'components/Typography';

@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Icon from 'components/Icon';
 import { Spacing } from 'components/Layout';
 import { themedColors } from 'utils/themes';

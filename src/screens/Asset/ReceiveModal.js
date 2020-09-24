@@ -27,7 +27,7 @@ import t from 'translations/translate';
 
 // components
 import { BaseText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';

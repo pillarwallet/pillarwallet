@@ -17,18 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useRef, useImperativeHandle } from 'react';
+import * as React from 'react';
+import Modal from 'react-native-modal';
 import styled, { withTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
-
-import Modal from 'components/Modal';
+import Root from 'components/Root';
+import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
 import HeaderBlock from 'components/HeaderBlock';
-
 import { spacing } from 'utils/variables';
+import { Keyboard } from 'react-native';
 import { getThemeColors, themedColors } from 'utils/themes';
-
-import type { Node as ReactNode, AbstractComponent } from 'react';
 import type { Theme } from 'models/Theme';
 import type { Props as HeaderProps } from 'components/HeaderBlock';
 
@@ -38,48 +37,45 @@ export type ScrollToProps = {
   animated: boolean,
 }
 
-type Props = {|
+type Props = {
   title?: string,
   fullWidthTitle?: boolean,
   noBlueDotOnTitle?: boolean,
   dotColor?: string,
-  children?: ReactNode,
+  children?: React.Node,
   subtitle?: string,
-  fullScreenComponent?: ReactNode,
+  fullScreenComponent?: ?React.Node,
   onModalHide?: Function,
   onModalHidden?: Function,
   onModalShow?: Function,
   noClose?: boolean,
   fullScreen?: boolean,
+  isVisible: boolean,
   showHeader?: boolean,
   hideHeader?: boolean,
   centerTitle?: boolean,
-  centerFloatingItem?: ReactNode,
+  centerFloatingItem?: React.Node,
   noWrapTitle?: boolean,
   backgroundColor?: string,
   avoidKeyboard?: boolean,
   eventDetail?: boolean,
   eventType?: string,
   eventData?: ?Object,
-  scrollOffset?: number,
+  scrollOffset?: ?number,
   subtitleStyles?: ?Object,
   titleStyles?: ?Object,
   noSwipeToDismiss?: boolean,
-  scrollOffsetMax?: number,
+  scrollOffsetMax?: ?number,
   handleScrollTo?: (ScrollToProps) => void,
   onSwipeComplete?: () => void,
+  theme: Theme,
   noPadding?: boolean,
   headerLeftItems?: Object[],
   sideMargins?: number,
   noTopPadding?: boolean,
   headerProps?: HeaderProps,
   insetTop?: boolean,
-|};
-
-type PropsWithTheme = {|
-  ...Props,
-  theme: Theme,
-|};
+};
 
 const themes = {
   default: {
@@ -101,7 +97,7 @@ const themes = {
   },
 };
 
-const getTheme = (props: PropsWithTheme) => {
+const getTheme = (props: Props) => {
   if (props.fullScreen) {
     return themes.fullScreen;
   }
@@ -165,29 +161,41 @@ const ModalOverflow = styled.View`
   background-color: ${themedColors.card};
 `;
 
-class SlideModal extends React.Component<PropsWithTheme, { contentHeight: number }> {
+class SlideModal extends React.Component<Props, *> {
   static defaultProps = {
     fullScreenComponent: null,
     subtitleStyles: {},
     titleStyles: {},
   };
 
-  _modalRef: { current: null | Modal };
-
-  constructor(props: PropsWithTheme) {
+  constructor(props) {
     super(props);
-    this._modalRef = React.createRef();
     this.state = {
       contentHeight: 0,
     };
   }
 
-  close: () => void = () => {
-    if (this._modalRef.current) this._modalRef.current.close();
-  }
+  hideModal = () => {
+    const { onSwipeComplete } = this.props;
+    Keyboard.dismiss();
+    const TIMEOUT = Toast.isVisible() ? 150 : 0;
+    if (Toast.isVisible()) {
+      Toast.closeAll();
+    }
+    const timer = setTimeout(() => {
+      if (this.props.onModalHide) {
+        this.props.onModalHide();
+      }
+      clearTimeout(timer);
+    }, TIMEOUT);
+    if (onSwipeComplete) onSwipeComplete();
+  };
 
   handleScroll = (p: ScrollToProps) => {
     const { handleScrollTo } = this.props;
+    if (Toast.isVisible()) {
+      Toast.closeAll();
+    }
     if (handleScrollTo) handleScrollTo(p);
   };
 
@@ -209,6 +217,7 @@ class SlideModal extends React.Component<PropsWithTheme, { contentHeight: number
       onModalShow,
       noClose,
       fullScreen,
+      isVisible,
       showHeader,
       hideHeader,
       centerTitle,
@@ -254,7 +263,7 @@ class SlideModal extends React.Component<PropsWithTheme, { contentHeight: number
             rightItems={rightItems}
             noBottomBorder
             noPaddingTop
-            onClose={this.close}
+            onClose={this.hideModal}
             wrapperStyle={{ backgroundColor: 'transparent' }}
             noHorizonatalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? null : 4}
@@ -301,16 +310,21 @@ class SlideModal extends React.Component<PropsWithTheme, { contentHeight: number
     const animationTiming = 400;
     return (
       <Modal
-        ref={this._modalRef}
+        isVisible={isVisible}
         scrollTo={this.handleScroll}
+        onSwipeComplete={this.hideModal}
         onModalHide={onModalHidden}
         onModalShow={onModalShow}
+        onBackdropPress={this.hideModal}
         backdropOpacity={fullScreen ? 1 : 0.7}
         backdropColor={fullScreen ? backgroundColor : '#000000'}
+        onBackButtonPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}
         scrollOffset={scrollOffset}
-        swipeDirection={!noSwipeToDismiss ? 'down' : undefined}
+        animationIn="slideInUp"
+        animationOut="slideOutDown"
+        swipeDirection={!noSwipeToDismiss ? 'down' : null}
         avoidKeyboard={avoidKeyboard}
         scrollOffsetMax={scrollOffsetMax}
         style={{
@@ -319,12 +333,13 @@ class SlideModal extends React.Component<PropsWithTheme, { contentHeight: number
           zIndex: 10,
         }}
       >
-        {!fullScreenComponent && (
+        {!fullScreenComponent &&
+        <Root>
           <ContentWrapper fullScreen={fullScreen} bgColor={backgroundColor} noTopPadding={noTopPadding}>
             {!fullScreen &&
-            <Backdrop onPress={this.close}>
-              <ContentWrapper />
-            </Backdrop>
+              <Backdrop onPress={this.hideModal}>
+                <ContentWrapper />
+              </Backdrop>
             }
             {!!centerFloatingItem &&
               <Wrapper
@@ -340,36 +355,14 @@ class SlideModal extends React.Component<PropsWithTheme, { contentHeight: number
             }
             {modalContent()}
           </ContentWrapper>
-        )}
-        {!!fullScreenComponent && fullScreenComponent}
+        </Root>}
+        {!!fullScreenComponent &&
+        <Root>
+          {fullScreenComponent}
+        </Root>}
       </Modal>
     );
   }
 }
 
-// Types used to keep proper validation for SlideModal, working around the fact
-// that withTheme:
-// - does not forward refs until v4: https://styled-components.com/docs/api#deprecated-innerref-prop
-// - is implicitly typed as any;
-type Ref<T> = ((null | T) => mixed) | { current: null | T };
-type ThemedProps = {| ...Props, innerRef: Ref<SlideModal> |};
-type ThemedComponent = AbstractComponent<ThemedProps, SlideModal>;
-const ThemedSlideModal: ThemedComponent = withTheme(SlideModal);
-
-export type Instance = { close: () => void, };
-
-const FWDSlideModal = React.forwardRef<Props, Instance>((props, ref) => {
-  const innerRef = useRef<SlideModal | null>(null);
-
-  useImperativeHandle(ref, () => ({
-    close: () => {
-      if (innerRef.current) innerRef.current.close();
-    },
-  }), []);
-
-  return (
-    <ThemedSlideModal {...props} innerRef={innerRef} />
-  );
-});
-
-export default FWDSlideModal;
+export default withTheme(SlideModal);

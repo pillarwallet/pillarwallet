@@ -37,7 +37,7 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import CollectibleImage from 'components/CollectibleImage';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { spacing } from 'utils/variables';

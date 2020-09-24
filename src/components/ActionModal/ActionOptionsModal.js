@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { SafeAreaView } from 'react-navigation';
 import styled from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import { BaseText, MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { themedColors } from 'utils/themes';

@@ -21,7 +21,7 @@ import * as React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';

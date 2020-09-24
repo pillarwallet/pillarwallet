@@ -24,7 +24,7 @@ import { connect } from 'react-redux';
 import t from 'translations/translate';
 
 import styled, { withTheme } from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';

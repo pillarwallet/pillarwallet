@@ -33,7 +33,7 @@ import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { MediumText, Paragraph, BaseText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import ButtonText from 'components/ButtonText';
 import HyperLink from 'components/HyperLink';
 import SelectorList from 'components/SelectorList';

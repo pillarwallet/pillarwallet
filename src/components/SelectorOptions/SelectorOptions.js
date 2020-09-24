@@ -31,7 +31,7 @@ import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage';
