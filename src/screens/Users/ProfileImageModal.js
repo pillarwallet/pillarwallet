@@ -21,23 +21,21 @@
 import React from 'react';
 import t from 'translations/translate';
 import styled from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 
 
-type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
+type Props = {|
   ensName: string,
   profileImageUri: ?string,
   username: string,
   onTakeSelfiePress: () => void,
   onUploadPicturePress: () => void,
   onDeleteAvatarPress: () => void,
-};
+|};
 
 const Wrapper = styled.View`
   align-items: center;
@@ -45,8 +43,6 @@ const Wrapper = styled.View`
 `;
 
 const ProfileImageModal = ({
-  isVisible,
-  onModalHide,
   ensName,
   profileImageUri,
   username,
@@ -56,8 +52,6 @@ const ProfileImageModal = ({
 }: Props) => {
   return (
     <SlideModal
-      isVisible={isVisible}
-      onModalHide={onModalHide}
       hideHeader
       noPadding
     >

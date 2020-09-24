@@ -98,12 +98,10 @@ type Props = {
 };
 
 type State = {
-  permissionsGranted: boolean,
   verifyingField: ?string,
   focusedField: ?string,
   value: Object,
   cautionModalField: ?string,
-  showProfileImageModal: boolean,
 };
 
 
@@ -351,11 +349,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     this.state = {
       verifyingField: null,
-      permissionsGranted: false,
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
-      showProfileImageModal: false,
     };
   }
 
@@ -496,28 +492,36 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       android: PERMISSIONS.ANDROID.CAMERA,
       ios: PERMISSIONS.IOS.CAMERA,
     }));
-    this.setState({
-      permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
-    }, () => {
-      const { permissionsGranted } = this.state;
-      const { navigation } = this.props;
 
-      Modal.open(() => (
-        <Camera
-          permissionsGranted={permissionsGranted}
-          navigation={navigation}
-        />
-      ));
-    });
+    const permissionsGranted = statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED;
+    const { navigation } = this.props;
+
+    Modal.open(() => (
+      <Camera
+        permissionsGranted={permissionsGranted}
+        navigation={navigation}
+      />
+    ));
   };
 
   openProfileImageModal = () => {
-    this.setState({ showProfileImageModal: true });
+    const { user: { username = '' }, profileImage, accounts } = this.props;
+    const ensName = getEnsName(accounts);
+
+    Modal.open(() => (
+      <ProfileImageModal
+        ensName={ensName}
+        username={username}
+        profileImageUri={profileImage}
+        onTakeSelfiePress={this.onTakeSelfiePress}
+        onUploadPicturePress={this.onUploadPicturePress}
+        onDeleteAvatarPress={this.onDeleteAvatarPress}
+      />
+    ));
   }
 
   onTakeSelfiePress = () => {
-    // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
-    this.setState({ showProfileImageModal: false }, () => setTimeout(this.openCamera, 500));
+    this.openCamera();
   }
 
   onUploadPicturePress = () => {
@@ -551,24 +555,18 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     formData.append('walletId', user.walletId);
     formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
     updateUserAvatar(user.walletId, formData);
-    this.setState({ showProfileImageModal: false });
   };
 
   onDeleteAvatarPress = () => {
-    // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
-    this.setState({ showProfileImageModal: false },
-      () => setTimeout(() => {
-        const { user: { username = '' }, profileImage } = this.props;
+    const { user: { username = '' }, profileImage } = this.props;
 
-        Modal.open(() => (
-          <DeleteAvatarModal
-            profileImageUri={profileImage}
-            username={username}
-            deleteAvatar={this.deleteAvatar}
-          />
-        ));
-      }, 500),
-    );
+    Modal.open(() => (
+      <DeleteAvatarModal
+        profileImageUri={profileImage}
+        username={username}
+        deleteAvatar={this.deleteAvatar}
+      />
+    ));
   }
 
   verifyField = (verifyingField) => {
@@ -666,7 +664,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       value,
       focusedField,
       cautionModalField,
-      showProfileImageModal,
     } = this.state;
     const {
       user: { username = '' },
@@ -737,16 +734,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           onModalHide={this.onDismissCautionModal}
           onButtonPress={this.changeField}
           focusedField={cautionModalField}
-        />
-        <ProfileImageModal
-          isVisible={!!showProfileImageModal}
-          onModalHide={() => this.setState({ showProfileImageModal: false })}
-          ensName={ensName}
-          username={username}
-          profileImageUri={profileImage}
-          onTakeSelfiePress={this.onTakeSelfiePress}
-          onUploadPicturePress={this.onUploadPicturePress}
-          onDeleteAvatarPress={this.onDeleteAvatarPress}
         />
       </ContainerWithHeader>
     );
