@@ -19,11 +19,12 @@
 */
 
 import React, { useEffect } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 
@@ -31,7 +32,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { deploySmartWalletAction, estimateSmartWalletDeploymentAction } from 'actions/smartWalletActions';
 
 // components
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -57,21 +58,24 @@ import { accountBalancesSelector } from 'selectors/balances';
 import type { Theme } from 'models/Theme';
 import type { Balances } from 'models/Asset';
 import type { EstimatedTransactionFee } from 'models/Transaction';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 
-
-type Props = {
-  theme: Theme,
-  isVisible: Boolean,
-  onClose: () => void,
-  navigation: NavigationScreenProp<*>,
+type StateProps = {|
   deploymentEstimate: ?{ raw: Object, formatted: EstimatedTransactionFee },
   gettingDeploymentEstimate: boolean,
-  balances: Balances,
   isOnline: boolean,
-  deploySmartWallet: () => void,
-  estimateSmartWalletDeployment: () => void,
-};
+  balances: Balances,
+|};
+
+type OwnProps = {|
+  navigation: NavigationScreenProp<*>,
+|};
+
+type Props = {|
+  ...StateProps,
+  ...OwnProps,
+  theme: Theme,
+|};
 
 const ModalContainer = styled.View`
   padding: 20px 0 40px;
@@ -83,23 +87,20 @@ const Centered = styled.View`
 
 const SWActivationModal = ({
   theme,
-  isVisible,
-  onClose,
   navigation,
   deploymentEstimate,
   gettingDeploymentEstimate,
   balances,
   isOnline,
-  deploySmartWallet,
-  estimateSmartWalletDeployment,
 }: Props) => {
   const paidByPillar = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SMART_WALLET_ACTIVATION_PAID_BY_PILLAR);
+  const dispatch = useDispatch();
 
   useEffect(() => {
-    if (!paidByPillar && isVisible) {
-      estimateSmartWalletDeployment();
+    if (!paidByPillar) {
+      dispatch(estimateSmartWalletDeploymentAction());
     }
-  }, [isVisible]);
+  }, [paidByPillar, dispatch]);
 
   const { smartWalletIcon } = images(theme);
 
@@ -123,17 +124,12 @@ const SWActivationModal = ({
 
   const onSubmitPress = () => {
     if (submitButtonDisabled) return;
-    deploySmartWallet();
+    dispatch(deploySmartWalletAction());
     navigation.navigate(ASSETS);
-    if (onClose) onClose();
   };
 
   return (
-    <SlideModal
-      isVisible={isVisible}
-      onModalHide={onClose}
-      hideHeader
-    >
+    <SlideModal hideHeader>
       <SafeAreaView>
         <ModalContainer>
           <MediumText center medium>{t('smartWalletContent.activationModal.title')}</MediumText>
@@ -175,7 +171,7 @@ const SWActivationModal = ({
 const mapStateToProps = ({
   smartWallet: { upgrade: { gettingDeploymentEstimate, deploymentEstimate } },
   session: { data: { isOnline } },
-}: RootReducerState): $Shape<Props> => ({
+}: RootReducerState): $Diff<StateProps, { balances: any }> => ({
   deploymentEstimate,
   gettingDeploymentEstimate,
   isOnline,
@@ -185,14 +181,10 @@ const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
 });
 
-const combinedMapStateToProps = (state) => ({
+const combinedMapStateToProps = (state: RootReducerState): StateProps => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  deploySmartWallet: () => dispatch(deploySmartWalletAction()),
-  estimateSmartWalletDeployment: () => dispatch(estimateSmartWalletDeploymentAction()),
-});
-
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(SWActivationModal));
+type ExportedComponent = AbstractComponent<OwnProps>;
+export default (withTheme(connect(combinedMapStateToProps)(SWActivationModal)): ExportedComponent);

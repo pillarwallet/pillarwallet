@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import t from 'translations/translate';
@@ -26,6 +26,7 @@ import t from 'translations/translate';
 // components
 import InsightWithButton from 'components/InsightWithButton';
 import SWActivationModal from 'components/SWActivationModal';
+import Modal from 'components/Modal';
 
 // constants
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -63,10 +64,7 @@ const SWActivationCard = ({
   smartWalletState,
   navigation,
 }: Props) => {
-  const [activationModalVisible, setActivationModalVisible] = useState(true);
-
-  const closeActivationModal = () => setActivationModalVisible(false);
-  const showActivationModal = () => setActivationModalVisible(true);
+  const openActivationModal = () => Modal.open(() => <SWActivationModal navigation={navigation} />);
 
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -94,7 +92,7 @@ const SWActivationCard = ({
           title={deploymentErrorMessage.title}
           description={deploymentErrorMessage.message}
           buttonTitle={t('button.retry')}
-          onButtonPress={showActivationModal}
+          onButtonPress={openActivationModal}
         />
       )}
       {!deploymentData.error && (
@@ -102,15 +100,10 @@ const SWActivationCard = ({
           title={title}
           description={showMessage}
           buttonTitle={buttonTitle}
-          onButtonPress={showActivationModal}
+          onButtonPress={openActivationModal}
           spinner={isDeploying}
         />
       )}
-      <SWActivationModal
-        isVisible={activationModalVisible}
-        onClose={closeActivationModal}
-        navigation={navigation}
-      />
     </React.Fragment>
   );
 };

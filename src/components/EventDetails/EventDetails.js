@@ -201,10 +201,6 @@ type Props = {
   outgoingStreams: Stream[],
 };
 
-type State = {
-  SWActivationModalVisible: boolean,
-};
-
 type EventData = {
   date?: number,
   name?: string,
@@ -328,13 +324,9 @@ const CornerIcon = styled(CachedImage)`
   right: 0;
 `;
 
-export class EventDetail extends React.Component<Props, State> {
+export class EventDetail extends React.Component<Props> {
   timer: ?IntervalID;
   timeout: ?TimeoutID;
-
-  state = {
-    SWActivationModalVisible: false,
-  };
 
   componentDidMount() {
     const { event } = this.props;
@@ -523,7 +515,9 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   activateSW = () => {
-    this.props.onClose(() => this.setState({ SWActivationModalVisible: true }));
+    this.props.onClose(() => {
+      Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
+    });
   };
 
   topUpPillarNetwork = () => {
@@ -1458,9 +1452,8 @@ export class EventDetail extends React.Component<Props, State> {
 
   render() {
     const {
-      isVisible, onClose, navigation, storybook,
+      isVisible, onClose, storybook,
     } = this.props;
-    const { SWActivationModalVisible } = this.state;
 
     let { event } = this.props;
 
@@ -1521,11 +1514,6 @@ export class EventDetail extends React.Component<Props, State> {
         >
           {this.renderContent(event, eventData)}
         </SlideModal>
-        <SWActivationModal
-          isVisible={SWActivationModalVisible}
-          onClose={() => this.setState({ SWActivationModalVisible: false })}
-          navigation={navigation}
-        />
       </React.Fragment>
     );
   }
