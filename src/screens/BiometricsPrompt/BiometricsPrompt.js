@@ -28,7 +28,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { completeOnboardingAction } from 'actions/onboardingActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -48,7 +48,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  completeOnboarding: (enableBiometrics: boolean) => void,
+  beginOnboarding: (enableBiometrics: boolean) => void,
 };
 
 const touchIdImageSource = require('assets/images/touchId.png');
@@ -103,8 +103,8 @@ const showFaceIDFailed = () => {
 };
 
 class BiometricsPrompt extends React.Component<Props> {
-  proceedToCompleteOnboarding = (setBiometrics: boolean) => {
-    const { completeOnboarding, navigation } = this.props;
+  proceedTobeginOnboarding = (setBiometrics: boolean) => {
+    const { beginOnboarding, navigation } = this.props;
 
     /**
      * as for permission if it's iOS FaceID, otherwise – no permission needed,
@@ -119,12 +119,12 @@ class BiometricsPrompt extends React.Component<Props> {
       && Platform.OS === 'ios'
       && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
-        .then((status) => completeOnboarding(status === RESULTS.GRANTED))
+        .then((status) => beginOnboarding(status === RESULTS.GRANTED))
         .catch(showFaceIDFailed);
       return;
     }
 
-    completeOnboarding(setBiometrics);
+    beginOnboarding(setBiometrics);
   };
 
   render() {
@@ -139,12 +139,12 @@ class BiometricsPrompt extends React.Component<Props> {
           <ContentInnerWrapper>
             <TouchIdImage source={imageSource} />
             <ButtonsWrapper>
-              <Button title={t('auth:button.yesPlease')} onPress={() => this.proceedToCompleteOnboarding(true)} />
+              <Button title={t('auth:button.yesPlease')} onPress={() => this.proceedTobeginOnboarding(true)} />
               <ButtonText
                 buttonText={t('auth:button.okToUsePinCodeOnly')}
-                onPress={() => this.proceedToCompleteOnboarding(false)}
+                onPress={() => this.proceedTobeginOnboarding(false)}
                 fontSize={fontSizes.medium}
-                wrapperStyle={{ marginTop: spacing.large }}
+                wrapperStyle={{ padding: spacing.large }} // leave padding for better clickable area
               />
             </ButtonsWrapper>
           </ContentInnerWrapper>
@@ -155,7 +155,7 @@ class BiometricsPrompt extends React.Component<Props> {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  completeOnboarding: (enableBiometrics) => dispatch(completeOnboardingAction(enableBiometrics)),
+  beginOnboarding: (enableBiometrics) => dispatch(beginOnboardingAction(enableBiometrics)),
 });
 
 export default connect(null, mapDispatchToProps)(BiometricsPrompt);

@@ -24,7 +24,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { completeOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
+import { beginOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -45,7 +45,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
-  completeOnboarding: () => void,
+  beginOnboarding: () => void,
   setOnboardingPinCode: (pinCode: string) => void,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
@@ -63,7 +63,7 @@ const HeaderText = styled(MediumText)`
 
 const PinCodeConfirmation = ({
   setOnboardingPinCode,
-  completeOnboarding,
+  beginOnboarding,
   navigation,
 }) => {
   const [errorMessage, setErrorMessage] = useState(null);
@@ -83,7 +83,7 @@ const PinCodeConfirmation = ({
       if (biometryType) {
         navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
       } else {
-        completeOnboarding();
+        beginOnboarding();
       }
     });
   };
@@ -115,7 +115,7 @@ const PinCodeConfirmation = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setOnboardingPinCode: (pinCode: string) => dispatch(setOnboardingPinCodeAction(pinCode)),
-  completeOnboarding: () => dispatch(completeOnboardingAction()),
+  beginOnboarding: () => dispatch(beginOnboardingAction()),
 });
 
 export default connect(null, mapDispatchToProps)(PinCodeConfirmation);

@@ -75,12 +75,20 @@ const SetWalletPinCode = ({
     navigation.navigate(PIN_CODE_CONFIRMATION, { pinCode: submittedPinCode });
   };
 
+  // used to block navigation back in web recovery portal flow
+  const noBack = navigation.getParam('noBack');
+
   const username = navigation.getParam('username');
   let welcomeText = t('auth:title.welcomeToPillar');
   if (username) welcomeText += `,\n${username}`;
 
   return (
-    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.createPin') }] }}>
+    <ContainerWithHeader
+      headerProps={{
+        centerItems: [{ title: t('auth:title.createPin') }],
+        noBack: !!noBack,
+      }}
+    >
       <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
         {!wallet && <HeaderText>{welcomeText}</HeaderText>}
         <Paragraph center>{t('auth:paragraph.createPin')}</Paragraph>

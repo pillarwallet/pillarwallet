@@ -23,17 +23,19 @@ import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
 // constants
-import { SET_WALLET } from 'constants/walletConstants';
+import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import {
   APP_FLOW,
   NEW_WALLET,
   HOME,
   REFERRAL_INCOMING_REWARD,
   NEW_PROFILE,
+  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
+  RESET_ONBOARDING,
   SET_IMPORTING_WALLET,
   SET_ONBOARDING_ERROR,
   SET_ONBOARDING_PIN_CODE,
@@ -68,24 +70,14 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
+import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
-const navigateAfterOnboadingCompleteAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    // check if user was referred to install the app and navigate accordingly
-    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
-    navigate(NavigationActions.navigate({
-      routeName: APP_FLOW,
-      params: {},
-      action: NavigationActions.navigate({ routeName }),
-    }));
-  };
-};
 
-export const setupUserAction = (username: string) => {
+export const setupUserAction = (username: string, recoveryData?: Object) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch({ type: SET_REGISTERING_USER, payload: true });
 
@@ -96,7 +88,7 @@ export const setupUserAction = (username: string) => {
 
     // save for future onboarding retry in case anything fails or is offline
     let userInfo = { username };
-    dispatch(saveDbAction('user', { user: userInfo }, true));
+    await dispatch(saveDbAction('user', { user: userInfo }, true));
 
     if (isOnline) {
       api.init();
@@ -107,9 +99,7 @@ export const setupUserAction = (username: string) => {
 
       if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
 
-      // TODO: web portal recovery refactor?s
-      // const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, user?.username, recover);
-      const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, username);
+      const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, username, recoveryData);
 
       if (!!sdkWallet?.error || !sdkWallet?.walletId) {
         const error = sdkWallet?.reason || 'default'; // TODO: default error message?
@@ -151,8 +141,8 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
       onboarding: {
         pinCode,
         wallet: importedWallet, // wallet was already added in import step
+        isPortalRecovery,
       },
-      wallet: { backupStatus: { isRecoveryPending } },
     } = getState();
     const isImported = !!importedWallet;
 
@@ -162,13 +152,19 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
     // create wallet object
     const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-    const { address, privateKey } = ethersWallet;
     // raw private key will be removed from reducer once registration finishes
+    const { address, privateKey } = ethersWallet;
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
 
-    // encrypt and store
+    const isRecoveryPending = !!isPortalRecovery;
     const backupStatus = { isImported, isBackedUp: !isImported, isRecoveryPending };
+
+    // dispatch to reducer only, will be stored with encryptAndSaveWalletAction
+    dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: backupStatus });
+
+    // encrypt and store
     await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
+
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
   };
 };
@@ -178,39 +174,77 @@ export const setupAppServicesAction = () => {
     const {
       wallet: { backupStatus, data: { privateKey } },
       user: { data: { walletId } },
+      session: { data: { isOnline } },
     } = getState();
 
-    const initialAssets = await api.fetchInitialAssets(walletId);
-    const rates = await getExchangeRates(Object.keys(initialAssets));
-    dispatch(setRatesAction(rates));
+    if (isOnline) {
+      dispatch(loadFeatureFlagsAction());
 
-    // create smart wallet account only for new wallets
-    await dispatch(importSmartWalletAccountsAction(privateKey));
+      // user might not be registered at this point
+      if (walletId) {
+        const initialAssets = await api.fetchInitialAssets(walletId);
+        const rates = await getExchangeRates(Object.keys(initialAssets));
+        dispatch(setRatesAction(rates));
+        dispatch(fetchBadgesAction(false));
+        dispatch(fetchReferralRewardAction());
+      }
 
-    dispatch(fetchBadgesAction(false));
+      // create smart wallet account only for new wallets
+      await dispatch(importSmartWalletAccountsAction(privateKey));
+      await dispatch(fetchSmartWalletTransactionsAction());
+      dispatch(managePPNInitFlagAction());
 
-    dispatch(loadFeatureFlagsAction());
+      // if wallet was imported let's check its balance for key based assets migration
+      if (backupStatus.isImported) {
+        dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+      }
+    }
 
-    await dispatch(fetchSmartWalletTransactionsAction());
-
-    dispatch(managePPNInitFlagAction());
-
-    dispatch(fetchReferralRewardAction());
-
-    // STEP 6: add wallet created / imported events
+    // add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
 
-    // STEP 7: check if user ir referred to install the app
-
-    // STEP 8: check if wallet backup warning toast needed
+    // check if wallet backup warning toast needed
     dispatch(checkForWalletBackupToastAction());
-
-    // if wallet was imported let's check its balance for key based assets migration
-    if (backupStatus.isImported) dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
   };
 };
 
-export const completeOnboardingAction = (enableBiometrics?: boolean) => {
+export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // reset on retry
+    if (retry) {
+      dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
+    }
+
+    const {
+      onboarding: { user: onboardingUser },
+      user: { data: user },
+      wallet: { backupStatus: { isRecoveryPending } },
+    } = getState();
+
+    // either retry during onboarding or previously stored username during onboarding
+    if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user.username, recoveryData));
+
+    await dispatch(setupAppServicesAction());
+
+    dispatch({ type: RESET_ONBOARDING });
+
+    // reset if recovery was pending as it's successful recover by this step
+    if (isRecoveryPending) {
+      dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: false } });
+      dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
+    }
+
+    // check if user was referred to install the app and navigate accordingly
+    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
+    navigate(NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName }),
+    }));
+  };
+};
+
+export const beginOnboardingAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // pass current onboarding, referrals and session network state to keep after redux state reset
     const {
@@ -218,6 +252,7 @@ export const completeOnboardingAction = (enableBiometrics?: boolean) => {
       referrals,
       session: { data: { isOnline } },
     } = getState();
+
     dispatch(resetAppStateAction({
       onboarding,
       referrals,
@@ -231,39 +266,17 @@ export const completeOnboardingAction = (enableBiometrics?: boolean) => {
     await dispatch(setupWalletAction(enableBiometrics));
 
     // checks if wallet import is pending and in this state we don't want to auth any users yet
-    // if (isRecoveryPending) {
-    //   navigate(NavigationActions.navigate({
-    //     routeName: APP_FLOW,
-    //     params: {},
-    //     action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
-    //   }));
-    //   dispatch(checkIfRecoveredSmartWalletFinishedAction(ethersWallet));
-    //   return;
-    // }
+    if (onboarding.isPortalRecovery) {
+      navigate(NavigationActions.navigate({
+        routeName: APP_FLOW,
+        params: {},
+        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
+      }));
+      dispatch(checkAndFinishSmartWalletRecoveryAction());
+      return;
+    }
 
-    await dispatch(setupUserAction(onboarding.user.username));
-    await dispatch(setupAppServicesAction());
-    // save user for later registration
-
-    dispatch(navigateAfterOnboadingCompleteAction());
-  };
-};
-
-export const retryOnboardingAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_ONBOARDING_ERROR, payload: null }); // reset
-
-    const {
-      onboarding: { user: onboardingUser },
-      user: { data: user },
-    } = getState();
-
-    // either retry during onboarding or previously stored username suering onboarding
-    if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user.username));
-
-    await dispatch(setupAppServicesAction());
-
-    dispatch(navigateAfterOnboadingCompleteAction());
+    dispatch(finishOnboardingAction());
   };
 };
 
@@ -294,8 +307,12 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
       dispatch({ type: SET_ONBOARDING_USER, payload: { walletId, username, profileImage } });
     }
 
-    const { mnemonic: { phrase: mnemonic } } = importedWallet;
-    dispatch({ type: SET_ONBOARDING_WALLET, payload: { mnemonic } });
+    const {
+      mnemonic: { phrase: mnemonic },
+      address,
+      privateKey,
+    } = importedWallet;
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: { mnemonic, address, privateKey } });
 
     dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
 
@@ -303,11 +320,19 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   };
 };
 
-
 export const resetUsernameCheckAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch({ type: SET_ONBOARDING_USER, payload: null });
     dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
+  };
+};
+
+export const resetOnboardingAction = () => ({ type: RESET_ONBOARDING });
+
+export const resetOnboardingAndNavigateAction = (routeName: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(resetOnboardingAction());
+    navigate(NavigationActions.navigate({ routeName }));
   };
 };
 

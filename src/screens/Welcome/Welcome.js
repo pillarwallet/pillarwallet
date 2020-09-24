@@ -25,6 +25,10 @@ import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
+
+// actions
+import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -42,11 +46,13 @@ import { LIGHT_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // types
 import type { Theme } from 'models/Theme';
+import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   theme: Theme,
+  resetOnboardingAndNavigate: (routeName: string) => void,
 };
 
 const LOGO_HEIGHT = 56;
@@ -108,8 +114,8 @@ const handleSecretClick = () => {
 };
 
 const Welcome = ({
-  navigation,
   theme,
+  resetOnboardingAndNavigate,
 }: Props) => {
   useEffect(() => {
     Animated.timing(translateY, {
@@ -138,7 +144,7 @@ const Welcome = ({
             <Button
               roundedCorners
               marginBottom={spacing.mediumLarge}
-              onPress={() => navigation.navigate(NEW_PROFILE)}
+              onPress={() => resetOnboardingAndNavigate(NEW_PROFILE)}
               title={t('auth:button.createAccount')}
               style={{ backgroundColor: '#00ff24' }}
               textStyle={{ color: '#000000' }}
@@ -146,7 +152,7 @@ const Welcome = ({
             />
             <ButtonText
               buttonText={t('auth:button.recoverWallet')}
-              onPress={() => navigation.navigate(IMPORT_WALLET_LEGALS)}
+              onPress={() => resetOnboardingAndNavigate(IMPORT_WALLET_LEGALS)}
               fontSize={fontSizes.big}
               textStyle={{ color: '#fcfdff' }}
             />
@@ -157,4 +163,8 @@ const Welcome = ({
   );
 };
 
-export default withTheme(Welcome);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  resetOnboardingAndNavigate: (routeName: string) => dispatch(resetOnboardingAndNavigateAction(routeName)),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(Welcome));

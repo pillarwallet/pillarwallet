@@ -24,3 +24,9 @@ export type EthereumWallet = {
   path: string,
   privateKey: string,
 };
+
+export type OnboardingEthereumWallet = {
+  mnemonic: string,
+  address?: string,
+  privateKey?: string,
+};

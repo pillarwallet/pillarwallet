@@ -26,20 +26,18 @@ import RecoveryPortalWebView from 'components/RecoveryPortalWebView';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { EthereumWallet } from 'models/Wallet';
+import type { OnboardingEthereumWallet } from 'models/Wallet';
 
 
 type Props = {
   navigation: NavigationScreenProp,
-  temporaryWallet: ?EthereumWallet,
-  isRecoveryPending: boolean,
+  wallet: ?OnboardingEthereumWallet,
   initRecoveryPortalWalletRecover: () => void,
 };
 
 const RecoveryPortalWalletRecovery = ({
   navigation,
-  temporaryWallet,
-  isRecoveryPending,
+  wallet,
   initRecoveryPortalWalletRecover,
 }: Props) => {
   useEffect(() => {
@@ -47,13 +45,12 @@ const RecoveryPortalWalletRecovery = ({
   }, []);
 
   let webViewRef;
-  const showWebView = !!temporaryWallet || isRecoveryPending;
 
   const onWebViewMessage = (message) => {
-    if (!webViewRef || message?.nativeEvent?.data !== 'getRecoveryDeviceAddress' || !temporaryWallet) return;
+    if (!webViewRef || message?.nativeEvent?.data !== 'getRecoveryDeviceAddress' || !wallet) return;
     webViewRef.injectJavaScript(`
       var event = new CustomEvent("recoveryDeviceAddressAdded", {
-        detail: { address: "${temporaryWallet.address}" }
+        detail: { address: "${wallet.address}" }
       });
       document.dispatchEvent(event);
     `);
@@ -62,7 +59,7 @@ const RecoveryPortalWalletRecovery = ({
   return (
     <RecoveryPortalWebView
       onRef={(ref) => { webViewRef = ref; }}
-      isVisible={showWebView}
+      isVisible={!!wallet}
       onWebViewMessage={onWebViewMessage}
       navigation={navigation}
     />
@@ -70,11 +67,9 @@ const RecoveryPortalWalletRecovery = ({
 };
 
 const mapStateToProps = ({
-  wallet: { backupStatus: { isRecoveryPending } },
-  recoveryPortal: { temporaryWallet },
+  onboarding: { wallet },
 }: RootReducerState): $Shape<Props> => ({
-  temporaryWallet,
-  isRecoveryPending,
+  wallet,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

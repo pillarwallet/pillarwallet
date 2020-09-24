@@ -24,7 +24,7 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // actions
-import { retryOnboardingAction } from 'actions/onboardingActions';
+import { finishOnboardingAction } from 'actions/onboardingActions';
 
 // components
 import { Container } from 'components/Layout';
@@ -41,7 +41,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   isRegisteringUser: boolean,
-  retryOnboarding: () => void,
+  finishOnboarding: () => void,
 };
 
 const Text = styled(MediumText)`
@@ -54,14 +54,14 @@ const Text = styled(MediumText)`
 
 const RetryApiRegistration = ({
   isRegisteringUser,
-  retryOnboarding,
+  finishOnboarding,
 }: Props) => (
   <Container center>
     {!!isRegisteringUser && <Loader messages={[t('auth:loadingMessage.registering')]} />}
     {!isRegisteringUser && (
       <>
         <Text>Registration failed</Text>
-        <Button title={t('auth:button.tryAgain')} onPress={retryOnboarding} />
+        <Button title={t('auth:button.tryAgain')} onPress={finishOnboarding} />
       </>
     )}
   </Container>
@@ -74,7 +74,7 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  retryOnboarding: () => dispatch(retryOnboardingAction()),
+  finishOnboarding: () => dispatch(finishOnboardingAction(true)), // true for retry
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(RetryApiRegistration);

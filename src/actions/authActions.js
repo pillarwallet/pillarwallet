@@ -49,7 +49,6 @@ import { RESET_APP_STATE } from 'constants/authConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { SET_RECOVERY_PORTAL_TEMPORARY_WALLET } from 'constants/recoveryPortalConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
@@ -94,7 +93,7 @@ import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
 import {
-  checkIfRecoveredSmartWalletFinishedAction,
+  checkAndFinishSmartWalletRecoveryAction,
   checkRecoveredSmartWalletStateAction,
 } from './recoveryPortalActions';
 import { importSmartWalletAccountsAction } from './smartWalletActions';
@@ -146,10 +145,12 @@ export const loginAction = (
       accounts: { data: accounts },
     } = getState();
 
-    dispatch({ type: SET_WALLET_IS_DECRYPTING });
+    dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: true } });
 
     try {
       let wallet;
+
+      dispatch({ type: SET_WALLET_IS_DECRYPTING });
 
       const keychainLogin = await canLoginWithPkFromPin(!!biometricsSetting);
       if (pin && keychainLogin) {
@@ -182,12 +183,86 @@ export const loginAction = (
         throw new Error();
       }
 
-
+      // set username regardless user completed reg or not
       if (user?.username) {
         dispatch({ type: SET_USERNAME, payload: user.username });
       }
 
-      if (wallet) {
+      const { address } = wallet;
+      let unlockedWallet = { address };
+
+      /**
+       * if user isn't completely registered then put private key into state to complete registration,
+       * this can happen due offline or web recovery portal onboarding
+       */
+      if (!user?.walletId) {
+        unlockedWallet = { ...unlockedWallet, privateKey: decryptedPrivateKey };
+      }
+
+      // web recovery portal recovery pending, let's navigate accordingly
+      if (getState().wallet.backupStatus.isRecoveryPending) {
+        dispatch({ type: SET_WALLET, payload: unlockedWallet });
+        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+        await smartWalletService.init(
+          decryptedPrivateKey,
+          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
+        );
+        dispatch(checkAndFinishSmartWalletRecoveryAction());
+        return;
+      }
+
+      // execute login success callback
+      if (onLoginSuccess) {
+        const rawPrivateKey = decryptedPrivateKey.indexOf('0x') === 0
+          ? decryptedPrivateKey.slice(2)
+          : decryptedPrivateKey;
+        await onLoginSuccess(rawPrivateKey);
+      }
+
+      dispatch({ type: SET_WALLET, payload: unlockedWallet });
+
+      // init smart wallet
+      await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
+
+      const smartWalletAccount = findFirstSmartAccount(accounts);
+
+      // key based wallet migration – switch to smart wallet if key based was active
+      if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
+        await dispatch(setActiveAccountAction(smartWalletAccount.id));
+      }
+
+      /**
+       * set Ethereum network as active if we disable feature flag
+       * or end beta testing program while user has set BTC as active network
+       */
+      const revertToDefaultNetwork = !isSupportedBlockchain(blockchainNetwork);
+      if (revertToDefaultNetwork || !blockchainNetwork) {
+        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
+      }
+
+      if (isOnline) {
+        // Dispatch action to try and get the latest remote config values...
+        dispatch(loadFeatureFlagsAction());
+
+        // to get exchange supported assets in order to show only supported assets on exchange selectors
+        // and show exchange button on supported asset screen only
+        dispatch(getExchangeSupportedAssetsAction());
+
+        // offline onboarded or very old user that doesn't have any smart wallet, let's create one and migrate safe
+        if (!smartWalletAccount) {
+          // this will import and set Smart Wallet as current active account
+          await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
+        }
+
+        dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+        dispatch(checkKeyBasedAssetTransferTransactionsAction());
+      }
+
+      dispatch(checkForWalletBackupToastAction());
+      dispatch(getWalletsCreationEventsAction());
+
+      // user is registered
+      if (user?.walletId) {
         // oauth fallback method for expired access token
         const updateOAuth = updateOAuthTokensCB(dispatch);
 
@@ -197,23 +272,12 @@ export const loginAction = (
         // init API
         api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
 
-        // execute login success callback
-        if (onLoginSuccess) {
-          const rawPrivateKey = decryptedPrivateKey.indexOf('0x') === 0
-            ? decryptedPrivateKey.slice(2)
-            : decryptedPrivateKey;
-          await onLoginSuccess(rawPrivateKey);
-        }
-
         // set API username (local method)
         api.setUsername(user.username);
 
         if (isOnline) {
           // make first api call which can also trigger OAuth fallback methods
           const userInfo = await api.userInfo(user.walletId);
-
-          // Dispatch ation to try and get the latest remote config values...
-          dispatch(loadFeatureFlagsAction());
 
           // update FCM
           dispatch(updateFcmTokenAction(user.walletId));
@@ -225,36 +289,10 @@ export const loginAction = (
             dispatch(saveDbAction('user', { user }, true));
           }
 
-          // to get exchange supported assets in order to show only supported assets on exchange selectors
-          // and show exchange button on supported asset screen only
-          dispatch(getExchangeSupportedAssetsAction());
-
-          // init smart wallet
-          await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
-
-          const smartWalletAccount = findFirstSmartAccount(accounts);
-
-          // key based wallet migration – switch to smart wallet if key based was active
-          if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
-            await dispatch(setActiveAccountAction(smartWalletAccount.id));
-          }
-
-          // offline onboarded or very old user that doesn't have any smart wallet, let's create one and migrate safe
-          if (!smartWalletAccount) {
-            // this will import and set Smart Wallet as current active account
-            await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
-          }
+          dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchReferralRewardAction());
 
           firebaseCrashlytics.setUserId(user.username);
-        }
-
-        /**
-         * set Ethereum network as active if we disable feature flag
-         * or end beta testing program while user has set BTC as active network
-         */
-        const revertToDefaultNetwork = !isSupportedBlockchain(blockchainNetwork);
-        if (revertToDefaultNetwork || !blockchainNetwork) {
-          dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
         }
       } else {
         api.init();
@@ -262,31 +300,8 @@ export const loginAction = (
 
       dispatch(updatePinAttemptsAction(false));
 
-      const { address } = wallet;
-      let userWallet = { address };
-
-      // if user isn't completely registered then put private key into state to complete registration
-      if (!user?.walletId) {
-        userWallet = { ...userWallet, privateKey: decryptedPrivateKey };
-      }
-
-      dispatch({ type: SET_WALLET, payload: userWallet });
-
       if (!__DEV__) {
         dispatch(setupSentryAction(user, wallet));
-      }
-
-      const isWalletRecoveryPending = get(getState(), 'wallet.backupStatus.isRecoveryPending');
-      if (isWalletRecoveryPending) {
-        dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
-        api.init();
-        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(
-          decryptedPrivateKey,
-          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
-        );
-        dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
-        return;
       }
 
       const pathAndParams = getNavigationPathAndParamsState();
@@ -305,16 +320,6 @@ export const loginAction = (
         action: navigateToLastActiveScreen,
       });
 
-      if (isOnline) {
-        dispatch(fetchSmartWalletTransactionsAction());
-        dispatch(fetchReferralRewardAction());
-        dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-        dispatch(checkKeyBasedAssetTransferTransactionsAction());
-      }
-
-      dispatch(checkForWalletBackupToastAction());
-      dispatch(getWalletsCreationEventsAction());
-
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()
           .then(url => {
@@ -322,6 +327,7 @@ export const loginAction = (
           })
           .catch(e => reportLog(`Could not get initial deeplink URL: ${e.message}`, e));
       }
+
       navigate(navigateToAppAction);
     } catch (e) {
       reportLog(`An error occured whilst trying to complete auth actions: ${e.errorMessage}`, e);
@@ -331,6 +337,8 @@ export const loginAction = (
         payload: t('auth:error.invalidPin.default'),
       });
     }
+
+    dispatch({ type: UPDATE_SESSION, payload: { isAuthorizing: false } });
   };
 };
 
@@ -431,7 +439,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 };
 
 export const resetAppServicesAction = () => {
-  return async () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     // reset intercom user
     Intercom.logout();
 
@@ -445,8 +453,13 @@ export const resetAppServicesAction = () => {
     await storage.removeAll();
     if (env) await storage.save('environment', env, true);
 
-    // reset smart wallet service
-    await smartWalletService.reset();
+    /**
+     *  reset smart wallet service if it's not smart wallet recovery through web portal,
+     *  portal recovery initially resets smart wallet instance in order to create it's own
+     */
+    if (!getState().onboarding.isPortalRecovery) {
+      await smartWalletService.reset();
+    }
 
     // reset data stored in keychain
     await resetKeychainDataObject();

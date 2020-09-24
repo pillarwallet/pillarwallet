@@ -843,7 +843,6 @@ class AppFlow extends React.Component<Props, State> {
     const { notifications: prevNotifications } = prevProps;
 
     if (user?.walletId && wallet.privateKey) {
-      console.log('removing!')
       removePrivateKeyFromMemory();
     }
 
@@ -912,6 +911,7 @@ class AppFlow extends React.Component<Props, State> {
 
 
     // wallet might be created, but recovery is pending and no user assigned yet
+
     if (!backupStatus.isRecoveryPending && !user?.walletId && isOnline) {
       return <RetryApiRegistration />;
     }

@@ -56,7 +56,6 @@ import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
-import recoveryPortalReducer from './recoveryPortalReducer';
 import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
@@ -99,7 +98,6 @@ import type { InsightsReducerAction, InsightsReducerState } from './insightsRedu
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
-import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
 import type { PoolTogetherReducerState } from './poolTogetherReducer';
 import type {
@@ -142,7 +140,6 @@ export type RootReducerState = {|
   insights: InsightsReducerState,
   phoneContacts: PhoneContactsReducerState,
   connectedDevices: ConnectedDevicesReducerState,
-  recoveryPortal: RecoveryPortalReducerState,
   lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
@@ -176,7 +173,6 @@ type RootReducerAction =
   | ReferralsReducerAction
   | PhoneContactsReducerAction
   | ConnectedDevicesReducerAction
-  | RecoveryPortalReducerAction
   | LendingReducerAction
   | KeyBasedAssetTransferReducerAction
   | ContactsReducerAction
@@ -225,7 +221,6 @@ const appReducer = combineReducers({
   referrals: referralsReducer,
   phoneContacts: phoneContactsReducer,
   connectedDevices: connectedDevicesReducer,
-  recoveryPortal: recoveryPortalReducer,
   lending: lendingReducer,
   poolTogether: poolTogetherReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,

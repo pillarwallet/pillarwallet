@@ -126,8 +126,6 @@ export const encryptAndSaveWalletAction = (
   enableBiometrics: boolean = false,
 ) => {
   return async (dispatch: Dispatch) => {
-    const { isImported, isBackedUp, isRecoveryPending } = backupStatus;
-
     dispatch({ type: SET_WALLET_IS_ENCRYPTING, payload: true });
 
     const saltedPin = await getSaltedPin(pin, dispatch);
@@ -138,7 +136,7 @@ export const encryptAndSaveWalletAction = (
     dispatch(saveDbAction('wallet', {
       wallet: {
         ...encryptedWallet,
-        backupStatus: { isImported, isBackedUp, isRecoveryPending },
+        backupStatus,
       },
     }));
 

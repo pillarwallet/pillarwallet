@@ -26,24 +26,12 @@ import t from 'translations/translate';
 
 // actions
 import { addConnectedDeviceAction } from 'actions/connectedDevicesActions';
-import { generateWalletMnemonicAction } from 'actions/walletActions';
-import { finishRegistration, getTokenWalletAndRegister, navigateToAppFlow } from 'actions/onboardingActions';
-import { logEventAction } from 'actions/analyticsActions';
-import { saveDbAction } from 'actions/dbActions';
-import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
+import { finishOnboardingAction } from 'actions/onboardingActions';
 
 // constants
 import { RECOVERY_PORTAL_SETUP_COMPLETE, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
-import {
-  RESET_RECOVERY_PORTAL_TEMPORARY_WALLET,
-  SET_RECOVERY_PORTAL_TEMPORARY_WALLET,
-} from 'constants/recoveryPortalConstants';
-import {
-  REGISTERING,
-  UPDATE_WALLET_BACKUP_STATUS,
-  UPDATE_WALLET_STATE,
-} from 'constants/walletConstants';
+import { SET_IS_PORTAL_RECOVERY, SET_ONBOARDING_WALLET } from 'constants/onboardingConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -51,7 +39,6 @@ import Toast from 'components/Toast';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { updateOAuthTokensCB } from 'utils/oAuth';
 
 // services
 import { navigate } from 'services/navigation';
@@ -59,8 +46,7 @@ import smartWalletService from 'services/smartWallet';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { EthereumWallet } from 'models/Wallet';
-import type SDKWrapper from 'services/api';
+import type { OnboardingEthereumWallet } from 'models/Wallet';
 
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
@@ -77,12 +63,10 @@ export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasT
   };
 };
 
-export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+export const checkAndFinishSmartWalletRecoveryAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     // in case deployment was faster than user encrypted the wallet (set pin flow)
-    const encryptedWalletAddress = get(getState(), 'wallet.data.address');
-
-    if (!encryptedWalletAddress) return;
+    if (!getState()?.wallet?.data?.address) return;
 
     const connectedAccount = get(smartWalletService, 'sdk.state.account');
     if (isEmpty(connectedAccount)) {
@@ -90,78 +74,45 @@ export const checkIfRecoveredSmartWalletFinishedAction = (wallet: EthereumWallet
       if (isEmpty(accounts)) return;
       await smartWalletService.connectAccount(accounts[0].address);
     }
+
     const {
       devices = [],
       activeDeviceAddress,
       address: connectedAccountAddress,
     } = await smartWalletService.fetchConnectedAccount() || {};
+
     if (!activeDeviceAddress) return;
 
     const thisDevice = devices.find(({ device: { address } }) => addressesEqual(activeDeviceAddress, address));
+
     if (!thisDevice || thisDevice.state !== sdkConstants.AccountDeviceStates.Deployed) return;
 
-    const recover = {
+    // device is deployed, proceed to register
+    const recoveryData = {
       deviceAddress: activeDeviceAddress,
       accountAddress: connectedAccountAddress,
     };
 
-    /**
-     * on this API part we only need to retrieve a user,
-     * insert key based wallet creation date (it's not imported)
-     */
+    await dispatch(finishOnboardingAction(false, recoveryData));
 
-    // recover user
-    dispatch({ type: UPDATE_WALLET_STATE, payload: REGISTERING });
-    api.init();
-    const {
-      userInfo,
-      registrationSucceed,
-      oAuthTokens,
-    } = await getTokenWalletAndRegister(
-      wallet.privateKey,
-      api,
-      {},
-      dispatch,
-      recover,
-    );
-
-    if (!registrationSucceed) return;
-
-    dispatch(logEventAction('user_created'));
-
-    // reinit oauth
-    const updateOAuth = updateOAuthTokensCB(dispatch);
-    api.init(updateOAuth, oAuthTokens);
-
-    // finish reg
-    const { privateKey } = wallet;
-    await finishRegistration({
-      api,
-      dispatch,
-      userInfo,
-      privateKey,
-    });
-
-    // technically key based wallet is not imported
-    dispatch(getWalletsCreationEventsAction());
-
-    // all done
-    dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: false } });
-    dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
-    dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
     Toast.show({
       message: t('toast.walletRecovered'),
       emoji: 'tada',
     });
-
-    navigateToAppFlow(false);
   };
 };
 
 export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEvent) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { recoveryPortal: { temporaryWallet } } = getState();
-    if (!temporaryWallet) return;
+    const {
+      wallet: { data: storedWallet },
+      onboarding: { wallet: onboardingWallet },
+    } = getState();
+
+    // depending on recovery state it can either be saved or onboading
+    const wallet = storedWallet || onboardingWallet;
+
+    if (!wallet) return;
 
     const eventName = get(event, 'name');
     const transactionType = get(event, 'payload.state');
@@ -176,17 +127,13 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
         // if account is attached to current instance then this means that new device has been connected
         if (!isEmpty(accounts)) {
           await smartWalletService.connectAccount(accounts[0].address);
-          // we can add wallet to onboarding reducer and move with PIN screen to encrypt it
-          // dispatch(generateWalletMnemonicAction(temporaryWallet.mnemonic));
-          // set recovery pending state, will be saved once PIN is set along with encrypted wallet
-          dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: true } });
           // move to pin screen to encrypt wallet while recovery pending
           navigate(NavigationActions.navigate({ routeName: SET_WALLET_PIN_CODE, params: { noBack: true } }));
         }
         return;
       }
       if (transactionType === sdkConstants.AccountTransactionStates.Completed) {
-        dispatch(checkIfRecoveredSmartWalletFinishedAction(temporaryWallet));
+        dispatch(checkAndFinishSmartWalletRecoveryAction());
       }
     }
   };
@@ -194,22 +141,23 @@ export const checkRecoveredSmartWalletStateAction = (event: sdkModules.Api.IEven
 
 export const initRecoveryPortalWalletRecoverAction = () => {
   return async (dispatch: Dispatch) => {
-    // make sure everything is reset
-    dispatch({ type: RESET_RECOVERY_PORTAL_TEMPORARY_WALLET });
+    // make sure everything onboarding wallet and smart wallet service are reset
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: null });
     await smartWalletService.reset();
 
-    // let's create new temporary wallet
+    dispatch({ type: SET_IS_PORTAL_RECOVERY });
+
+    // let's create new onboading wallet
     const mnemonic = generateMnemonicPhrase();
-    const { address, privateKey, path } = ethers.Wallet.fromMnemonic(mnemonic);
-    const wallet: EthereumWallet = {
+    const { address, privateKey } = ethers.Wallet.fromMnemonic(mnemonic);
+    const wallet: OnboardingEthereumWallet = {
       address,
       privateKey,
       mnemonic,
-      path,
     };
 
     // set temporary smart wallet and subscribe for events
     await smartWalletService.init(wallet.privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
-    dispatch({ type: SET_RECOVERY_PORTAL_TEMPORARY_WALLET, payload: wallet });
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: wallet });
   };
 };
