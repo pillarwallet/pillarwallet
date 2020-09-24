@@ -30,6 +30,7 @@ import t from 'translations/translate';
 import styled from 'styled-components/native';
 import CircleButton from 'components/CircleButton';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import Modal from 'components/Modal';
 import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 
 // constants
@@ -92,7 +93,6 @@ const ActionButtons = ({
   accounts,
   smartWalletState,
 }: Props) => {
-  const [receiveAddress, setReceiveAddress] = useState('');
   const [visibleAddFundsModal, setVisibleAddFundsModal] = useState(false);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -108,7 +108,7 @@ const ActionButtons = ({
       key: 'receive',
       label: t('button.sendFromAnotherWallet'),
       iconName: 'qrDetailed',
-      onPress: () => setReceiveAddress(activeAccountAddress),
+      onPress: () => Modal.open(() => <ReceiveModal address={activeAccountAddress} />),
     },
     {
       key: 'exchange',
@@ -167,11 +167,6 @@ const ActionButtons = ({
         isVisible={visibleAddFundsModal}
         items={addFundsModalOptions}
         title={t('title.addFundsToWallet')}
-      />
-      <ReceiveModal
-        isVisible={!isEmpty(receiveAddress)}
-        address={receiveAddress}
-        onModalHide={() => setReceiveAddress('')}
       />
     </React.Fragment>
   );

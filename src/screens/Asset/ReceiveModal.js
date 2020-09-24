@@ -27,7 +27,7 @@ import t from 'translations/translate';
 
 // components
 import { BaseText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import WarningBanner from 'components/WarningBanner';
 import QRCodeWithTheme from 'components/QRCode';
@@ -53,17 +53,23 @@ const ContentWrapper = styled(SafeAreaView)`
   align-items: center;
 `;
 
-type Props = {
-  address: string,
+type StateProps = {|
+  user: User,
   accounts: Accounts,
-  onModalHide: () => void,
-  isVisible: boolean,
+|};
+
+type OwnProps = {|
+  address: string,
   handleBuyTokens?: Function,
-  onModalHidden?: Function,
+  onModalHide?: Function,
   showBuyTokensButton?: boolean,
   showErc20Note?: boolean,
-  user: User,
-};
+|};
+
+type Props = {|
+  ...StateProps,
+  ...OwnProps,
+|};
 
 const QRCodeWrapper = styled.View`
   align-items: center;
@@ -115,7 +121,7 @@ const getButtonWidth = () => {
 const visaIcon = require('assets/icons/visa.png');
 const mastercardIcon = require('assets/icons/mastercard.png');
 
-class ReceiveModal extends React.Component<Props, *> {
+class ReceiveModal extends React.Component<Props> {
   handleAddressShare = () => {
     const { address } = this.props;
 
@@ -130,11 +136,9 @@ class ReceiveModal extends React.Component<Props, *> {
 
   render() {
     const {
-      isVisible,
       address,
-      onModalHide,
       handleBuyTokens,
-      onModalHidden,
+      onModalHide,
       showBuyTokensButton = false,
       showErc20Note,
       accounts,
@@ -150,12 +154,10 @@ class ReceiveModal extends React.Component<Props, *> {
 
     return (
       <SlideModal
-        isVisible={isVisible}
         onModalHide={onModalHide}
-        onModalHidden={onModalHidden}
         noPadding
         noClose
-        headerLeftItems={!!showErc20Note && [{
+        headerLeftItems={showErc20Note ? [{
           custom: (
             <LabelBadge
               label={t('label.erc20TokensOnly')}
@@ -164,7 +166,7 @@ class ReceiveModal extends React.Component<Props, *> {
               containerStyle={{ marginLeft: 8 }}
             />
           ),
-        }]}
+        }] : undefined}
         centerFloatingItem={
           <ImageWrapper style={{ position: 'absolute', marginTop: -24 }}>
             <ProfileImage
@@ -237,9 +239,9 @@ class ReceiveModal extends React.Component<Props, *> {
 const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
-}: RootReducerState): $Shape<Props> => ({
+}: RootReducerState): StateProps => ({
   user,
   accounts,
 });
 
-export default connect(mapStateToProps)(ReceiveModal);
+export default (connect(mapStateToProps)(ReceiveModal): React.AbstractComponent<OwnProps>);

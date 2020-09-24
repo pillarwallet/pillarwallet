@@ -44,6 +44,7 @@ import CollectibleImage from 'components/CollectibleImage';
 import Spinner from 'components/Spinner';
 import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -201,9 +202,7 @@ type Props = {
 };
 
 type State = {
-  isReceiveModalVisible: boolean,
   SWActivationModalVisible: boolean,
-  receiveWalletAddress: string,
 };
 
 type EventData = {
@@ -334,9 +333,7 @@ export class EventDetail extends React.Component<Props, State> {
   timeout: ?TimeoutID;
 
   state = {
-    isReceiveModalVisible: false,
     SWActivationModalVisible: false,
-    receiveWalletAddress: '',
   };
 
   componentDidMount() {
@@ -507,7 +504,9 @@ export class EventDetail extends React.Component<Props, State> {
   };
 
   showReceiveModal = (receiveWalletAddress: string) => {
-    this.props.onClose(() => this.setState({ isReceiveModalVisible: true, receiveWalletAddress }));
+    this.props.onClose(() =>
+      Modal.open(() => <ReceiveModal address={receiveWalletAddress} />),
+    );
   };
 
   topUpSW = () => {
@@ -1461,11 +1460,7 @@ export class EventDetail extends React.Component<Props, State> {
     const {
       isVisible, onClose, navigation, storybook,
     } = this.props;
-    const {
-      isReceiveModalVisible,
-      SWActivationModalVisible,
-      receiveWalletAddress,
-    } = this.state;
+    const { SWActivationModalVisible } = this.state;
 
     let { event } = this.props;
 
@@ -1526,11 +1521,6 @@ export class EventDetail extends React.Component<Props, State> {
         >
           {this.renderContent(event, eventData)}
         </SlideModal>
-        <ReceiveModal
-          isVisible={isReceiveModalVisible}
-          address={receiveWalletAddress}
-          onModalHide={() => this.setState({ isReceiveModalVisible: false })}
-        />
         <SWActivationModal
           isVisible={SWActivationModalVisible}
           onClose={() => this.setState({ SWActivationModalVisible: false })}

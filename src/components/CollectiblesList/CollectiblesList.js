@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
@@ -32,6 +32,7 @@ import Button from 'components/Button';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import { Spacing } from 'components/Layout';
+import Modal from 'components/Modal';
 
 // utils
 import { smallScreen, getDeviceWidth } from 'utils/common';
@@ -94,7 +95,9 @@ const viewConfig = {
 const CollectiblesList = ({
   collectibles, onCollectiblePress, isSearching, theme, activeAccountAddress,
 }: Props) => {
-  const [isReceiveModalVisible, setIsReceiveModalVisible] = useState<boolean>(false);
+  const openReceiveModal = () => Modal.open(() => (
+    <ReceiveModal address={activeAccountAddress} />
+  ));
 
   const renderCollectible = ({ item }: CollectibleItem) => {
     const { name, image: icon } = item;
@@ -152,18 +155,13 @@ const CollectiblesList = ({
               marginTop={40}
               secondary
               regularText
-              onPress={() => setIsReceiveModalVisible(true)}
+              onPress={openReceiveModal}
             />
           </EmptyStateWrapper>
         }
         removeClippedSubviews
         viewabilityConfig={viewConfig}
         keyboardShouldPersistTaps="always"
-      />
-      <ReceiveModal
-        address={activeAccountAddress}
-        onModalHide={() => setIsReceiveModalVisible(false)}
-        isVisible={isReceiveModalVisible}
       />
     </>
   );

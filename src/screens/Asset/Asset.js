@@ -39,6 +39,7 @@ import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
 import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
+import Modal from 'components/Modal';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -47,7 +48,7 @@ import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SERVICES } from 'constants/navigationConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
@@ -84,17 +85,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // local components
 import ReceiveModal from './ReceiveModal';
 
-const RECEIVE = 'RECEIVE';
-
-const activeModalResetState = {
-  type: null,
-  opts: {
-    address: '',
-    token: '',
-    tokenName: '',
-  },
-};
-
 type Props = {
   fetchAssetsBalances: () => void,
   assets: Assets,
@@ -118,15 +108,6 @@ type Props = {
 };
 
 type State = {
-  activeModal: {
-    type: string | null,
-    opts: {
-      address?: string,
-      token?: string,
-      tokenName?: string,
-      formValues?: Object,
-    },
-  },
   showDescriptionModal: boolean,
   visibleActionOptionsModal: boolean,
 };
@@ -194,10 +175,8 @@ const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props, State> {
   forceRender = false;
-  isNavigatingToServices = false;
 
   state = {
-    activeModal: activeModalResetState,
     showDescriptionModal: false,
     visibleActionOptionsModal: false,
   };
@@ -243,26 +222,12 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   openReceiveTokenModal = assetData => {
-    this.setState({
-      activeModal: {
-        type: RECEIVE,
-        opts: { address: assetData.address },
-      },
-    });
-  };
-
-  handleBuyTokens = () => {
-    // wait for the modal to be completely hidden and then navigate to exchange
-    // navigating while the modal is hiding leads to keyboard flickering etc.
-    this.isNavigatingToServices = true;
-    this.setState({ activeModal: activeModalResetState });
-  };
-
-  handleModalHidden = () => {
-    if (this.isNavigatingToServices) {
-      this.isNavigatingToServices = false;
-      this.props.navigation.navigate(SERVICES);
-    }
+    Modal.open(() => (
+      <ReceiveModal
+        address={assetData.address}
+        showErc20Note={assetData.token !== ETH}
+      />
+    ));
   };
 
   getModalActionOptions = () => {
@@ -469,15 +434,6 @@ class AssetScreen extends React.Component<Props, State> {
           isVisible={!!visibleActionOptionsModal}
           items={modalActionOptions}
           title={t('title.addFundsToWallet')}
-        />
-        <ReceiveModal
-          isVisible={this.state.activeModal.type === RECEIVE}
-          onModalHide={() => this.setState({ activeModal: activeModalResetState })}
-          address={assetData.address}
-          token={assetData.token}
-          tokenName={assetData.name}
-          onModalHidden={this.handleModalHidden}
-          showErc20Note={assetData.token !== ETH}
         />
         <SlideModal
           title={assetData.name}
