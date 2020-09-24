@@ -1,0 +1,13 @@
+diff --git a/node_modules/@ethersproject/providers/lib/websocket-provider.js b/node_modules/@ethersproject/providers/lib/websocket-provider.js
+index 3bfab31..100bf5e 100644
+--- a/node_modules/@ethersproject/providers/lib/websocket-provider.js
++++ b/node_modules/@ethersproject/providers/lib/websocket-provider.js
+@@ -52,7 +52,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
+     return (mod && mod.__esModule) ? mod : { "default": mod };
+ };
+ Object.defineProperty(exports, "__esModule", { value: true });
+-var ws_1 = __importDefault(require("ws"));
++var ws_1 = require("./browser-ws");
+ var bignumber_1 = require("@ethersproject/bignumber");
+ var properties_1 = require("@ethersproject/properties");
+ var json_rpc_provider_1 = require("./json-rpc-provider");
