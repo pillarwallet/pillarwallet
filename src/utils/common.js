@@ -56,6 +56,7 @@ import * as NAVSCREENS from 'constants/navigationConstants';
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 
 // local
 import { isProdEnv, isTest } from './environment';
@@ -662,3 +663,5 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   if (!addressMixedCase) return null;
   return ensRegistry[addressMixedCase];
 };
+
+export type StructuredSelector<Result, OwnProps = void> = (state: RootReducerState, props: OwnProps) => Result;
