@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';

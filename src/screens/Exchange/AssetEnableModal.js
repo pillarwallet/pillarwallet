@@ -29,7 +29,7 @@ import t from 'translations/translate';
 import { ETH } from 'constants/assetsConstants';
 
 // components
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Button from 'components/Button';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';

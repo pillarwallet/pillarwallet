@@ -32,7 +32,7 @@ import t from 'translations/translate';
 // components
 import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';

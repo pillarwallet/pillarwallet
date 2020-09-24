@@ -31,7 +31,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { deploySmartWalletAction, estimateSmartWalletDeploymentAction } from 'actions/smartWalletActions';
 
 // components
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Button from 'components/Button';
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';

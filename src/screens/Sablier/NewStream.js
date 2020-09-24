@@ -36,7 +36,7 @@ import { MediumText, TextLink, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Selector from 'components/Selector';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import ArrowIcon from 'components/ArrowIcon';
 
 // utils

@@ -13,7 +13,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
   scrollHorizontal={false}
   scrollOffset={0}
   scrollOffsetMax={0}
-  scrollTo={[Function]}
+  scrollTo={null}
   supportedOrientations={
     Array [
       "portrait",
@@ -50,59 +50,85 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
     }
   />
   <View
-    hideModalContentWhileAnimating={false}
-    onModalHide={[Function]}
-    onModalWillHide={[Function]}
-    onModalWillShow={[Function]}
-    onMoveShouldSetResponder={[Function]}
-    onMoveShouldSetResponderCapture={[Function]}
-    onResponderEnd={[Function]}
-    onResponderGrant={[Function]}
-    onResponderMove={[Function]}
-    onResponderReject={[Function]}
-    onResponderRelease={[Function]}
-    onResponderStart={[Function]}
-    onResponderTerminate={[Function]}
-    onResponderTerminationRequest={[Function]}
-    onStartShouldSetResponder={[Function]}
-    onStartShouldSetResponderCapture={[Function]}
-    onSwipeComplete={[Function]}
+    onLayout={[Function]}
     pointerEvents="box-none"
-    scrollHorizontal={false}
-    scrollOffset={0}
-    scrollOffsetMax={0}
-    scrollTo={[Function]}
     style={
-      Object {
-        "flex": 1,
-        "justifyContent": "center",
-        "left": 0,
-        "margin": 0,
-        "position": "relative",
-        "top": 0,
-        "transform": Array [
+      Array [
+        Array [
           Object {
-            "translateY": 1334,
+            "margin": 37.5,
+            "transform": Array [
+              Object {
+                "translateY": 0,
+              },
+            ],
+          },
+          Object {
+            "flex": 1,
+            "justifyContent": "center",
+          },
+          Object {
+            "margin": 0,
+            "position": "relative",
+            "zIndex": 10,
+          },
+          Object {
+            "margin": 0,
           },
         ],
-        "zIndex": 10,
-      }
-    }
-    supportedOrientations={
-      Array [
-        "portrait",
-        "landscape",
+        Object {
+          "paddingBottom": 0,
+        },
       ]
     }
-    swipeDirection="down"
-    swipeThreshold={100}
   >
     <View
+      hideModalContentWhileAnimating={false}
+      onModalHide={[Function]}
+      onModalWillHide={[Function]}
+      onModalWillShow={[Function]}
+      onMoveShouldSetResponder={[Function]}
+      onMoveShouldSetResponderCapture={[Function]}
+      onResponderEnd={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderReject={[Function]}
+      onResponderRelease={[Function]}
+      onResponderStart={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      onStartShouldSetResponderCapture={[Function]}
+      onSwipeComplete={[Function]}
+      pointerEvents="box-none"
+      scrollHorizontal={false}
+      scrollOffset={0}
+      scrollOffsetMax={0}
+      scrollTo={null}
       style={
         Object {
           "flex": 1,
+          "justifyContent": "center",
+          "left": 0,
+          "margin": 0,
+          "position": "relative",
+          "top": 0,
+          "transform": Array [
+            Object {
+              "translateY": 1334,
+            },
+          ],
+          "zIndex": 10,
         }
       }
+      supportedOrientations={
+        Array [
+          "portrait",
+          "landscape",
+        ]
+      }
+      swipeDirection="down"
+      swipeThreshold={100}
     >
       <View
         bgColor="#FAFAFA"
@@ -402,95 +428,6 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
           }
         />
       </View>
-      <Modal
-        animationType="fade"
-        hardwareAccelerated={false}
-        onRequestClose={[Function]}
-        transparent={true}
-        visible={false}
-      >
-        <View
-          accessible={true}
-          focusable={true}
-          isTVSelectable={true}
-          onClick={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
-          style={
-            Object {
-              "backgroundColor": "rgba(0,0,0,0.4)",
-              "flex": 1,
-              "justifyContent": "flex-end",
-              "opacity": 1,
-            }
-          }
-        >
-          <View
-            accessible={true}
-            focusable={false}
-            isTVSelectable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
-              Object {
-                "backgroundColor": "#fff",
-                "elevation": 4,
-                "maxHeight": 667,
-                "minHeight": 56,
-                "opacity": 1,
-                "padding": 15,
-              }
-            }
-          >
-            <RCTScrollView
-              data={Array []}
-              disableVirtualization={false}
-              getItem={[Function]}
-              getItemCount={[Function]}
-              horizontal={false}
-              initialNumToRender={10}
-              keyExtractor={[Function]}
-              maxToRenderPerBatch={10}
-              numColumns={1}
-              onContentSizeChange={[Function]}
-              onEndReachedThreshold={2}
-              onLayout={[Function]}
-              onMomentumScrollEnd={[Function]}
-              onScroll={[Function]}
-              onScrollBeginDrag={[Function]}
-              onScrollEndDrag={[Function]}
-              removeClippedSubviews={false}
-              renderItem={[Function]}
-              scrollEventThrottle={50}
-              stickyHeaderIndices={Array []}
-              style={
-                Array [
-                  Object {
-                    "marginHorizontal": -15,
-                  },
-                  Object {
-                    "marginTop": 0,
-                  },
-                ]
-              }
-              updateCellsBatchingPeriod={50}
-              viewabilityConfigCallbackPairs={Array []}
-              windowSize={21}
-            >
-              <View />
-            </RCTScrollView>
-          </View>
-        </View>
-      </Modal>
     </View>
   </View>
 </Modal>

@@ -38,7 +38,7 @@ import { changeLanguageAction } from 'actions/localisationActions';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 
 // constants
 import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
