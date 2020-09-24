@@ -926,7 +926,7 @@
       "allowedInviteViaEmail": "You are now able to invite friends via email.",
       "allowedInviteViaPhone": "You are now able to invite friends via text message.",
       "emailVerified": "Your email has been verified",
-      "phoneVerified": "Your email has been verified"
+      "phoneVerified": "Your phone has been verified"
     },
     "label": {
       "invitesCount": "Your invites ({{amountText}} available today)",
