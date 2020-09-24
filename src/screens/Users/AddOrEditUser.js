@@ -99,7 +99,6 @@ type Props = {
 
 type State = {
   permissionsGranted: boolean,
-  showCamera: boolean,
   verifyingField: ?string,
   focusedField: ?string,
   value: Object,
@@ -354,7 +353,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.state = {
       verifyingField: null,
       permissionsGranted: false,
-      showCamera: false,
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
@@ -502,12 +500,17 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     }));
     this.setState({
       permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
-      showCamera: true,
-    });
-  };
+    }, () => {
+      const { permissionsGranted } = this.state;
+      const { navigation } = this.props;
 
-  closeCamera = () => {
-    this.setState({ showCamera: false });
+      Modal.open(() => (
+        <Camera
+          permissionsGranted={permissionsGranted}
+          navigation={navigation}
+        />
+      ));
+    });
   };
 
   openProfileImageModal = () => {
@@ -656,8 +659,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      permissionsGranted,
-      showCamera,
       verifyingField,
       value,
       focusedField,
@@ -667,7 +668,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     } = this.state;
     const {
       user: { username = '' },
-      navigation,
       theme,
       accounts,
       goToInvitationFlow,
@@ -726,13 +726,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           {this.renderInsight()}
           <Spacing h={75} />
         </ScrollWrapper>
-
-        <Camera
-          isVisible={showCamera}
-          modalHide={this.closeCamera}
-          permissionsGranted={permissionsGranted}
-          navigation={navigation}
-        />
 
         {!!verifyingField && <VerifyOTPModal
           verifyingField={verifyingField}
