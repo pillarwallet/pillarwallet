@@ -25,7 +25,7 @@ import t from 'translations/translate';
 
 import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/Icon';
 import { Spacing } from 'components/Layout';
 import { themedColors } from 'utils/themes';
@@ -33,15 +33,20 @@ import { getCampaignRewardText } from 'utils/referrals';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { RewardsByCompany } from 'reducers/referralsReducer';
 
-
-type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
-  verifiedField: ?string,
-  onButtonPress: () => void,
+type StateProps = {|
   isPillarRewardCampaignActive: boolean,
   rewardsByCampaign: RewardsByCompany,
-};
+|};
+
+type OwnProps = {|
+  verifiedField: ?string,
+  onButtonPress: () => void,
+|};
+
+type Props = {|
+  ...StateProps,
+  ...OwnProps,
+|};
 
 const Wrapper = styled.View`
   flex: 1;
@@ -57,7 +62,10 @@ const LikeIcon = styled(Icon)`
 
 const VerifiedModal = (props: Props) => {
   const {
-    isVisible, onModalHide, verifiedField, onButtonPress, isPillarRewardCampaignActive, rewardsByCampaign,
+    verifiedField,
+    onButtonPress,
+    isPillarRewardCampaignActive,
+    rewardsByCampaign,
   } = props;
   const rewardText = getCampaignRewardText(rewardsByCampaign.pillar);
   const allowedReferralMethodText = verifiedField === 'phone'
@@ -76,8 +84,6 @@ const VerifiedModal = (props: Props) => {
       fullScreen
       showHeader
       insetTop
-      isVisible={isVisible}
-      onModalHide={onModalHide}
     >
       <Wrapper>
         <LikeIcon name="like" />
@@ -94,9 +100,9 @@ const VerifiedModal = (props: Props) => {
 
 const mapStateToProps = ({
   referrals: { isPillarRewardCampaignActive, rewardsByCampaign },
-}: RootReducerState): $Shape<Props> => ({
+}: RootReducerState): StateProps => ({
   isPillarRewardCampaignActive,
   rewardsByCampaign,
 });
 
-export default connect(mapStateToProps)(VerifiedModal);
+export default (connect(mapStateToProps)(VerifiedModal): React.AbstractComponent<OwnProps>);

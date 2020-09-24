@@ -99,7 +99,6 @@ type State = {
   focusedField: ?string,
   value: Object,
   cautionModalField: ?string,
-  verifiedModalField: ?string,
   showProfileImageModal: boolean,
   showDeleteAvatarModal: boolean,
 };
@@ -354,7 +353,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
-      verifiedModalField: null,
       showProfileImageModal: false,
       showDeleteAvatarModal: false,
     };
@@ -570,10 +568,15 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   onCloseVerification = () => {
     const { verifyingField } = this.state;
-    const { isPhoneVerified, isEmailVerified } = this.props.user;
+    const { user: { isPhoneVerified, isEmailVerified }, goToInvitationFlow } = this.props;
     if ((verifyingField === FIELD_NAME.PHONE && isPhoneVerified)
       || (verifyingField === FIELD_NAME.EMAIL && isEmailVerified)) {
-      this.setState({ verifiedModalField: verifyingField });
+      Modal.open(() => (
+        <VerifiedModal
+          onButtonPress={goToInvitationFlow}
+          verifiedField={verifyingField}
+        />
+      ));
     }
     this.setState({ verifyingField: null });
   };
@@ -658,12 +661,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       value,
       focusedField,
       cautionModalField,
-      verifiedModalField,
       showProfileImageModal,
       showDeleteAvatarModal,
     } = this.state;
     const {
-      user, theme, accounts, goToInvitationFlow,
+      user, theme, accounts,
     } = this.props;
 
     const {
@@ -738,12 +740,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           onModalHide={this.onDismissCautionModal}
           onButtonPress={this.changeField}
           focusedField={cautionModalField}
-        />
-        <VerifiedModal
-          isVisible={!!verifiedModalField}
-          onModalHide={() => this.setState({ verifiedModalField: null })}
-          onButtonPress={goToInvitationFlow}
-          verifiedField={verifiedModalField}
         />
         <ProfileImageModal
           isVisible={!!showProfileImageModal}
