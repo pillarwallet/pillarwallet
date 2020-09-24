@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { Platform, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import ImagePicker from 'react-native-image-crop-picker';
@@ -47,6 +46,7 @@ import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // utils
 import { spacing, appFont, fontSizes, lineHeights } from 'utils/variables';
@@ -77,7 +77,6 @@ import DeleteAvatarModal from './DeleteAvatarModal';
 
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   oneTimePasswordSent: boolean,
   user: User,
   updateUser: (walletId: string, field: Object) => void,
@@ -96,7 +95,6 @@ type Props = {
 
 type State = {
   permissionsGranted: boolean,
-  showCamera: boolean,
   verifyingField: ?string,
   focusedField: ?string,
   value: Object,
@@ -137,7 +135,7 @@ const ProfileImagePlaceholder = styled.View`
 `;
 
 const CountryWrapper = styled.TouchableOpacity`
-  padding: 20px;  
+  padding: 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -353,7 +351,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.state = {
       verifyingField: null,
       permissionsGranted: false,
-      showCamera: false,
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
@@ -504,12 +501,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     }));
     this.setState({
       permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
-      showCamera: true,
-    });
-  };
+    }, () => {
+      const { permissionsGranted } = this.state;
 
-  closeCamera = () => {
-    this.setState({ showCamera: false });
+      Modal.open(() => (
+        <Camera permissionsGranted={permissionsGranted} />
+      ));
+    });
   };
 
   openProfileImageModal = () => {
@@ -656,8 +654,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      permissionsGranted,
-      showCamera,
       verifyingField,
       value,
       focusedField,
@@ -667,7 +663,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       showDeleteAvatarModal,
     } = this.state;
     const {
-      user, navigation, theme, accounts, goToInvitationFlow,
+      user, theme, accounts, goToInvitationFlow,
     } = this.props;
 
     const {
@@ -732,13 +728,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           {this.renderInsight()}
           <Spacing h={75} />
         </ScrollWrapper>
-
-        <Camera
-          isVisible={showCamera}
-          modalHide={this.closeCamera}
-          permissionsGranted={permissionsGranted}
-          navigation={navigation}
-        />
 
         {!!verifyingField && <VerifyOTPModal
           verifyingField={verifyingField}
