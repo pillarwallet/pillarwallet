@@ -71,11 +71,14 @@ const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
 
+jest.setMock('@react-native-firebase/auth');
 jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
 jest.mock('@react-native-firebase/app', () => ({
   firebase: {
     iid: () => {},
+    auth: () => {},
+    database: () => {},
     analytics: () => ({
       logEvent: () => {},
     }),
