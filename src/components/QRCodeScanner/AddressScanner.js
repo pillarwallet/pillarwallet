@@ -22,22 +22,18 @@ import QRCodeScanner from 'components/QRCodeScanner';
 import { supportedAddressValidator } from 'utils/validators';
 import { decodeSupportedAddress } from 'utils/common';
 
-type Props = {
-  onRead: (code: string) => void,
-  onCancel: () => void,
-  isActive: boolean,
-  onModalHidden?: () => void,
-};
+type Props = {|
+  onRead?: (code: string) => void,
+  onCancel?: () => void,
+|};
 
 const AddressScanner = (props: Props) => {
   return (
     <QRCodeScanner
       validator={supportedAddressValidator}
       dataFormatter={decodeSupportedAddress}
-      isActive={props.isActive}
       onCancel={props.onCancel}
       onRead={props.onRead}
-      onModalHidden={props.onModalHidden}
     />
   );
 };
