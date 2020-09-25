@@ -30,11 +30,12 @@ import t from 'translations/translate';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
-import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
+import SelectorOptions from 'components/SelectorOptions';
 import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
+import Modal from 'components/Modal';
 
 // actions
 import {
@@ -120,12 +121,12 @@ type State = {
   fromAsset: Option,
   toAsset: Option,
   errorMessage: string,
-  showSellOptions: boolean,
-  showBuyOptions: boolean,
   displayFiatFromAmount: boolean,
   displayFiatToAmount: boolean,
 };
 
+const SELL: 'sell' = 'sell';
+const BUY: 'buy' = 'buy';
 
 const FormWrapper = styled.View`
   padding: ${spacing.large}px 40px 60px;
@@ -151,8 +152,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset,
       toAsset,
       errorMessage: '',
-      showSellOptions: false,
-      showBuyOptions: false,
       displayFiatFromAmount: false,
       displayFiatToAmount: false,
       isSubmitted: false,
@@ -262,6 +261,34 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.setErrorMessage(getErrorMessage(val, fromAsset));
   };
 
+  showAssetOptions = (type: 'sell' | 'buy') => {
+    const { fromOptions, toOptions, horizontalOptions } = this.options;
+
+    const handleSelectorOptionSelect = (option: Option) => {
+      const { fromAmount, fromAsset } = this.state;
+      const update = type === SELL
+        ? { fromAsset: option }
+        : { toAsset: option };
+
+      this.setState(update, () => this.setErrorMessage(getErrorMessage(fromAmount, fromAsset)));
+    };
+
+    const options = type === SELL ? fromOptions : toOptions;
+
+    Modal.open(() => (
+      <SelectorOptions
+        title={t(`label.${type}`)}
+        options={options}
+        searchPlaceholder={t('form.selector.searchPlaceholder')}
+        onOptionSelect={handleSelectorOptionSelect}
+        horizontalOptionsData={horizontalOptions}
+      />
+    ));
+  }
+
+  showSellOptions = () => this.showAssetOptions(SELL)
+  showBuyOptions = () => this.showAssetOptions(BUY)
+
   getFromInput = () => {
     const { baseFiatCurrency } = this.props;
     const {
@@ -279,7 +306,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         onBlur={this.blurFromInput}
         errorMessage={errorMessage}
         asset={fromAsset}
-        onAssetPress={() => this.setState({ showSellOptions: true })}
+        onAssetPress={this.showSellOptions}
         labelText={assetBalance && getFormattedSellMax(fromAsset)}
         onLabelPress={() => this.handleUsePercent(100)}
         leftSideText={displayFiatFromAmount
@@ -321,7 +348,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         value={value}
         onBlur={this.blurFromInput}
         asset={toAsset}
-        onAssetPress={() => this.setState({ showBuyOptions: true })}
+        onAssetPress={this.showBuyOptions}
         leftSideText={displayFiatToAmount
           ? t('tokenValue', { value: formatAmount(toAmount || '0', 2), token: toAsset.symbol || '' })
           : formatFiat(toAmountInFiat || '0', fiatCurrency).replace(/ /g, '')
@@ -398,16 +425,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 
-  handleSelectorOptionSelect = (option: Option) => {
-    const { showSellOptions, fromAmount } = this.state;
-    const optionsStateChanges = { showSellOptions: false, showBuyOptions: false };
-    this.setState(showSellOptions
-      ? { fromAsset: option, ...optionsStateChanges }
-      : { toAsset: option, ...optionsStateChanges },
-    () => this.setErrorMessage(getErrorMessage(fromAmount, this.state.fromAsset)),
-    );
-  }
-
   render() {
     const {
       navigation,
@@ -424,12 +441,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAmount,
       isSubmitted,
       showEmptyMessage,
-      showSellOptions,
-      showBuyOptions,
       errorMessage,
     } = this.state;
 
-    const { fromOptions, toOptions, horizontalOptions } = this.options;
+    const { fromOptions, toOptions } = this.options;
     const assetsLoaded = !!fromOptions.length && !!toOptions.length;
     const rightItems = getHeaderRightItems(
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
@@ -480,15 +495,6 @@ class ExchangeScreen extends React.Component<Props, State> {
             />}
           </ScrollView>}
         </ContainerWithHeader>
-        <SelectorOptions
-          isVisible={showBuyOptions || showSellOptions}
-          onHide={() => this.setState({ showBuyOptions: false, showSellOptions: false })}
-          title={t(`label.${showSellOptions ? 'sell' : 'buy'}`)}
-          options={showSellOptions ? fromOptions : toOptions}
-          searchPlaceholder={t('form.selector.searchPlaceholder')}
-          onOptionSelect={this.handleSelectorOptionSelect}
-          horizontalOptionsData={horizontalOptions}
-        />
       </>
     );
   }
