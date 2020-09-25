@@ -2139,6 +2139,11 @@
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
+"@react-native-firebase/auth@^9.2.3":
+  version "9.2.3"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/auth/-/auth-9.2.3.tgz#a5501def2855297e113c8dc6ccdba18f8f17480b"
+  integrity sha512-dJqdNleh0k+7kHoXfFBfMW0vWrzztkejjzFV7YrPD+UQisIHXKQWr27TxyX5+dTga0GTgfqJGkdi5yky22Q/uA==
+
 "@react-native-firebase/crashlytics@^8.4.5":
   version "8.4.5"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/crashlytics/-/crashlytics-8.4.5.tgz#4908e7aebb78cc7f02d882f6908a95371df047d4"

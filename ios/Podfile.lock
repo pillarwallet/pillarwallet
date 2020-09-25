@@ -16,6 +16,9 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.61.5)
   - Firebase/Analytics (6.30.0):
     - Firebase/Core
+  - Firebase/Auth (6.30.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (~> 6.8.0)
   - Firebase/Core (6.30.0):
     - Firebase/CoreOnly
     - FirebaseAnalytics (= 6.7.2)
@@ -47,6 +50,11 @@ PODS:
     - GoogleUtilities/Network (~> 6.7)
     - "GoogleUtilities/NSData+zlib (~> 6.7)"
     - nanopb (~> 1.30905.0)
+  - FirebaseAuth (6.8.0):
+    - FirebaseCore (~> 6.10)
+    - GoogleUtilities/AppDelegateSwizzler (~> 6.7)
+    - GoogleUtilities/Environment (~> 6.7)
+    - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseCore (6.10.0):
     - FirebaseCoreDiagnostics (~> 1.3)
     - GoogleUtilities/Environment (~> 6.7)
@@ -431,6 +439,10 @@ PODS:
   - RNFBApp (8.4.3):
     - Firebase/CoreOnly (~> 6.30.0)
     - React-Core
+  - RNFBAuth (9.2.3):
+    - Firebase/Auth (~> 6.30.0)
+    - React-Core
+    - RNFBApp
   - RNFBCrashlytics (8.4.5):
     - Firebase/Crashlytics (~> 6.30.0)
     - React-Core
@@ -558,6 +570,7 @@ DEPENDENCIES:
   - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
+  - "RNFBAuth (from `../node_modules/@react-native-firebase/auth`)"
   - "RNFBCrashlytics (from `../node_modules/@react-native-firebase/crashlytics`)"
   - "RNFBDatabase (from `../node_modules/@react-native-firebase/database`)"
   - "RNFBIid (from `../node_modules/@react-native-firebase/iid`)"
@@ -588,6 +601,7 @@ SPEC REPOS:
     - Firebase
     - FirebaseABTesting
     - FirebaseAnalytics
+    - FirebaseAuth
     - FirebaseCore
     - FirebaseCoreDiagnostics
     - FirebaseCrashlytics
@@ -722,6 +736,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
     :path: "../node_modules/@react-native-firebase/app"
+  RNFBAuth:
+    :path: "../node_modules/@react-native-firebase/auth"
   RNFBCrashlytics:
     :path: "../node_modules/@react-native-firebase/crashlytics"
   RNFBDatabase:
@@ -775,6 +791,7 @@ SPEC CHECKSUMS:
   Firebase: 210f41ca352067d83b1ba4fd2e7fb49a0c017397
   FirebaseABTesting: 8a9d8df3acc2b43f4a22014ddf9f601bca6af699
   FirebaseAnalytics: a299a86ef70fcc6aa011418bc65a7e101fb9636c
+  FirebaseAuth: 300433de340c1b058dbb8aec224a3f1bcfda5184
   FirebaseCore: 9a41e2de78fef10f63cee30ab10e2945266bc1fc
   FirebaseCoreDiagnostics: 7535fe695737f8c5b350584292a70b7f8ff0357b
   FirebaseCrashlytics: 859918905322e8816d2b5ab7fe54bf5a0c84d21c
@@ -845,6 +862,7 @@ SPEC CHECKSUMS:
   RNFastImage: 35ae972d6727c84ee3f5c6897e07f84d0a3445e9
   RNFBAnalytics: 66f1008f38c9ed5f3953a7224b82246ef2a88403
   RNFBApp: a74d8259d827c8bf55100e759cffa2e50ba6fe30
+  RNFBAuth: ccae9605207f4a3bc6e03cd0adb5433872ef4418
   RNFBCrashlytics: 4039c6b27a35dd6cbbb0c111d4f668ce513a2881
   RNFBDatabase: c82e5e9d842f4f40c5bfaa2bb67c5af5f52a45b1
   RNFBIid: 6d2f7bb1d8068d47c1c692210ee7b27a2d71d7f2

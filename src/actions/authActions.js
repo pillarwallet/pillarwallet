@@ -69,7 +69,7 @@ import { findFirstSmartAccount, getActiveAccountType } from 'utils/accounts';
 import Storage from 'services/storage';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
-import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
+import { firebaseIid, firebaseCrashlytics, firebaseMessaging, firebaseAuth } from 'services/firebase';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -316,6 +316,9 @@ export const loginAction = (
       dispatch(getWalletsCreationEventsAction());
       dispatch(checkKeyBasedAssetTransferTransactionsAction());
 
+      // This is required to authorize FB Realtime Database
+      firebaseAuth.signInAnonymously();
+
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()
           .then(url => {
@@ -429,6 +432,8 @@ export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete()
     .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
+  await firebaseAuth.signout()
+    .catch(e => reportLog(`Could not sign out with Firebase when resetting app state: ${e.message}`, e));
   await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();

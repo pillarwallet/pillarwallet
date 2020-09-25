@@ -23,8 +23,13 @@ import merge from 'lodash.merge';
 import * as Sentry from '@sentry/react-native';
 import { printLog, reportLog } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
+import { firebaseAuth, firebaseDb } from './firebase';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
+
+const userUID = firebaseAuth.currentUser.uid;
+
+export const db = firebaseDb.ref(`/users/${userUID}`); // eslint-disable-line i18next/no-literal-string
 
 function Storage(name: string) {
   this.name = name;
