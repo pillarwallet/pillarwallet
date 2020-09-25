@@ -22,9 +22,11 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
+
 import CircleButton from 'components/CircleButton';
 import Toast from 'components/Toast';
 import QRCodeScanner from 'components/QRCodeScanner';
+import Modal from 'components/Modal';
 
 import { fontSizes } from 'utils/variables';
 import {
@@ -41,21 +43,13 @@ type Props = {
   cancelWaitingRequest: () => void,
 };
 
-type State = {
-  isScanning: boolean,
-};
-
 const Container = styled.View`
   align-items: center;
   margin-top: 12px;
   margin-bottom: 36px;
 `;
 
-class QRCodeScanButton extends React.Component<Props, State> {
-  state = {
-    isScanning: false,
-  };
-
+class QRCodeScanButton extends React.Component<Props> {
   openQRScanner = () => {
     const { isOnline } = this.props;
     if (!isOnline) {
@@ -65,12 +59,13 @@ class QRCodeScanButton extends React.Component<Props, State> {
       });
       return;
     }
-    this.setState({ isScanning: true });
+    Modal.open(() => (
+      <QRCodeScanner
+        validator={this.validateQRCode}
+        onRead={this.handleQRRead}
+      />
+    ));
   };
-
-  closeQRScanner = () => this.setState({
-    isScanning: false,
-  });
 
   validateQRCode = (uri: string): boolean => {
     return uri.startsWith('wc:') || uri.startsWith('pillarwallet:');
@@ -81,8 +76,6 @@ class QRCodeScanButton extends React.Component<Props, State> {
       requestWalletConnectSession,
       executeDeepLink,
     } = this.props;
-
-    this.closeQRScanner();
 
     if (uri.startsWith('wc:')) {
       requestWalletConnectSession(uri);
@@ -96,7 +89,6 @@ class QRCodeScanButton extends React.Component<Props, State> {
   };
 
   render() {
-    const { isScanning } = this.state;
     return (
       <Container>
         <CircleButton
@@ -104,12 +96,6 @@ class QRCodeScanButton extends React.Component<Props, State> {
           fontIconStyle={{ fontSize: fontSizes.large }}
           label={t('button.connect')}
           onPress={this.openQRScanner}
-        />
-        <QRCodeScanner
-          validator={this.validateQRCode}
-          isActive={isScanning}
-          onCancel={this.closeQRScanner}
-          onRead={this.handleQRRead}
         />
       </Container>
     );

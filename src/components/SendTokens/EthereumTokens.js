@@ -158,8 +158,6 @@ const SendEthereumTokens = ({
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
   const [contactToAdd, setContactToAdd] = useState(null);
   const hideAddContactModal = () => setContactToAdd(null);
-  const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
-  const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
@@ -422,7 +420,6 @@ const SendEthereumTokens = ({
   const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
     option,
     setContactToAdd,
-    () => setForceHideSelectorModals(true),
   );
   const customOptionButtonOnPress = !resolvingContactEnsName
     ? addContactButtonPress
@@ -439,14 +436,6 @@ const SendEthereumTokens = ({
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress,
-        resetOptionsModalOnHiddenOptionAdded: true,
-        hideModals: forceHideSelectorModals,
-        onModalsHidden: () => {
-          // force hide selector modals to show contact add modal
-          if (contactToAdd) {
-            setSelectorModalsHidden(true);
-          }
-        },
       }}
       customValueSelectorProps={{
         getFormValue: handleAmountChange,
@@ -484,7 +473,7 @@ const SendEthereumTokens = ({
       }
       <ContactDetailsModal
         title={t('title.addNewContact')}
-        isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
+        isVisible={!isEmpty(contactToAdd)}
         contact={contactToAdd}
         onSavePress={(contact: Contact) => {
           hideAddContactModal();
@@ -492,10 +481,6 @@ const SendEthereumTokens = ({
           handleReceiverSelect({ ...contact, value: contact.ethAddress });
         }}
         onModalHide={hideAddContactModal}
-        onModalHidden={() => {
-          setSelectorModalsHidden(false);
-          setForceHideSelectorModals(false);
-        }}
         contacts={contacts}
         isDefaultNameEns
       />

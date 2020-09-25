@@ -23,7 +23,7 @@ import QRCodeScanner from '../QRCodeScanner';
 
 describe('QR code scanner', () => {
   xit('should ask for permissions on component mount', () => {
-    const wrapper = shallow(<QRCodeScanner isActive onRead={(() => { })} onCancel={(() => { })} />);
+    const wrapper = shallow(<QRCodeScanner />);
     const spy = jest.spyOn(wrapper.instance(), 'askPermissions');
     expect(spy).toBeCalled();
   });

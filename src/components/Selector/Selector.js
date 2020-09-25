@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useEffect, useState } from 'react';
+import React, { useRef } from 'react';
 import { Keyboard } from 'react-native';
 import styled from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
@@ -29,8 +29,9 @@ import t from 'translations/translate';
 // components
 import { MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
+import SelectorOptions from 'components/SelectorOptions';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
+import Modal from 'components/Modal';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -38,14 +39,15 @@ import { activeAccountAddressSelector } from 'selectors';
 // utils
 import { spacing } from 'utils/variables';
 import { isValidAddress } from 'utils/validators';
+import { noop } from 'utils/common';
 
 // types
 import type { HorizontalOption, Option } from 'models/Selector';
 
 
-export type Props = {
+export type Props = {|
   selectedOption?: ?Option,
-  onOptionSelect?: (option: Option, onSuccess?: () => void) => void | Promise<void>,
+  onOptionSelect?: (option: Option) => void | Promise<void>,
   onOptionImagePress?: (option: Option) => void,
   label?: string,
   placeholder?: string,
@@ -63,10 +65,7 @@ export type Props = {
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
   onCustomOptionSet?: (option: Option) => void,
-  onModalsHidden?: () => void,
-  hideModals?: boolean,
-  resetOptionsModalOnHiddenOptionAdded?: boolean,
-};
+|};
 
 const Wrapper = styled.View`
   width: 100%;
@@ -81,10 +80,10 @@ const SelectedOption = styled.TouchableOpacity`
 `;
 
 const Selector = ({
-  onOptionSelect,
+  onOptionSelect = noop,
   disableSelfSelect,
   activeAccountAddress,
-  onOptionImagePress,
+  onOptionImagePress = noop,
   label = t('label.select'),
   placeholder = t('label.choseOption'),
   optionsTitle,
@@ -100,26 +99,8 @@ const Selector = ({
   customOptionButtonLabel,
   customOptionButtonOnPress,
   onCustomOptionSet,
-  onModalsHidden,
-  hideModals,
-  resetOptionsModalOnHiddenOptionAdded,
 }: Props) => {
-  const [changingModals, setChangingModals] = useState(false);
-  const [isOptionsVisible, setIsOptionsVisible] = useState(false);
-  const [isScannerVisible, setIsScannerVisible] = useState(false);
-
-  /**
-   * reset options modal if set by resetOptionsModalOnHiddenOptionAdded prop:
-   * options modal was force hidden when option value was set
-   */
-  useEffect(() => {
-    if (resetOptionsModalOnHiddenOptionAdded
-      && hideModals
-      && isOptionsVisible
-      && !isEmpty(selectedOption)) {
-      setIsOptionsVisible(false);
-    }
-  }, [selectedOption]);
+  const optionsRef = useRef();
 
   const handleScannerReadResult = (address: string) => {
     if (isValidAddress(address)) {
@@ -128,17 +109,18 @@ const Selector = ({
         ethAddress: address,
         name: address,
       };
-      if (onOptionSelect) onOptionSelect(option);
-      setIsOptionsVisible(false);
+      onOptionSelect(option);
+      if (optionsRef.current) {
+        optionsRef.current.close();
+      }
     }
-    setIsScannerVisible(false);
   };
 
   const handleScannerOpen = () => {
     Keyboard.dismiss();
-    setIsOptionsVisible(false);
-    setChangingModals(true);
-    setIsScannerVisible(true);
+    Modal.open(() => (
+      <AddressScanner onRead={handleScannerReadResult} />
+    ));
   };
 
   const handleSearchValidation = (searchQuery: string): ?string => {
@@ -146,66 +128,10 @@ const Selector = ({
     return null;
   };
 
-  const renderOption = (option: ?Option, disabled: boolean) => {
-    if (!option) return null;
-    const {
-      name,
-      imageUrl,
-      lastUpdateTime,
-      imageSource,
-    } = option;
-
-    const onItemPress = (itemImagePress: boolean = false) => {
-      if (itemImagePress && onOptionImagePress) {
-        onOptionImagePress(option);
-        return;
-      }
-      if (onOptionSelect) onOptionSelect(option);
-      setIsOptionsVisible(false);
-    };
-
-    return (
-      <ListItemWithImage
-        label={name}
-        disabled={disabled}
-        onPress={() => !disabled && setIsOptionsVisible(true)}
-        avatarUrl={imageUrl}
-        navigateToProfile={() => onItemPress(true)}
-        imageUpdateTimeStamp={lastUpdateTime}
-        itemImageSource={imageSource}
-        padding="0 14px"
-      />
-    );
-  };
-
-  const hasValue = !isEmpty(selectedOption);
-  const hasOptions = !!options?.length;
-  const disabled = !hasOptions && !allowEnteringCustomAddress;
-  const placeholderText = !disabled
-    ? t('ellipsedString', { string: placeholder })
-    : t('label.noOptionsToSelect');
-
-  const onModalHidden = () => {
-    setChangingModals(false);
-    if (onModalsHidden) onModalsHidden();
-  };
-
-  return (
-    <>
-      <Wrapper style={wrapperStyle}>
-        <MediumText regular accent>{label}: </MediumText>
-        <SelectedOption disabled={disabled} onPress={() => setIsOptionsVisible(true)}>
-          {hasValue && renderOption(selectedOption, disabled)}
-          {!hasValue && (
-            <MediumText style={{ paddingHorizontal: spacing.layoutSides }} big>
-              {placeholderText}
-            </MediumText>
-          )}
-        </SelectedOption>
-      </Wrapper>
+  const openOptions = () => {
+    Modal.open(() => (
       <SelectorOptions
-        isVisible={!hideModals && !changingModals && isOptionsVisible}
-        onHide={() => setIsOptionsVisible(false)}
+        ref={optionsRef}
         title={optionsTitle || placeholder}
         options={options}
         searchPlaceholder={searchPlaceholder}
@@ -223,18 +149,61 @@ const Selector = ({
         onCustomOptionSet={onCustomOptionSet}
         customOptionButtonLabel={customOptionButtonLabel}
         customOptionButtonOnPress={customOptionButtonOnPress}
-        onHidden={onModalHidden}
       />
-      <AddressScanner
-        isActive={!hideModals && !changingModals && isScannerVisible}
-        onCancel={() => {
-          setIsScannerVisible(false);
-          setChangingModals(true);
-          setIsOptionsVisible(true);
-        }}
-        onModalHidden={onModalHidden}
-        onRead={handleScannerReadResult}
+    ));
+  };
+
+  const renderOption = (option: ?Option, disabled: boolean) => {
+    if (!option) return null;
+    const {
+      name,
+      imageUrl,
+      lastUpdateTime,
+      imageSource,
+    } = option;
+
+    const onItemPress = (itemImagePress: boolean = false) => {
+      if (itemImagePress) {
+        onOptionImagePress(option);
+        return;
+      }
+      onOptionSelect(option);
+    };
+
+    return (
+      <ListItemWithImage
+        label={name}
+        disabled={disabled}
+        onPress={() => !disabled && openOptions()}
+        avatarUrl={imageUrl}
+        navigateToProfile={() => onItemPress(true)}
+        imageUpdateTimeStamp={lastUpdateTime}
+        itemImageSource={imageSource}
+        padding="0 14px"
       />
+    );
+  };
+
+  const hasValue = !isEmpty(selectedOption);
+  const hasOptions = !!options?.length;
+  const disabled = !hasOptions && !allowEnteringCustomAddress;
+  const placeholderText = !disabled
+    ? t('ellipsedString', { string: placeholder })
+    : t('label.noOptionsToSelect');
+
+  return (
+    <>
+      <Wrapper style={wrapperStyle}>
+        <MediumText regular accent>{label}: </MediumText>
+        <SelectedOption disabled={disabled} onPress={() => openOptions()}>
+          {hasValue && renderOption(selectedOption, disabled)}
+          {!hasValue && (
+            <MediumText style={{ paddingHorizontal: spacing.layoutSides }} big>
+              {placeholderText}
+            </MediumText>
+          )}
+        </SelectedOption>
+      </Wrapper>
       {children}
     </>
   );

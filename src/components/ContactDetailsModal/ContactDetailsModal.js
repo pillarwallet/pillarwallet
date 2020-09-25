@@ -33,6 +33,7 @@ import TextInput from 'components/TextInput';
 import Spinner from 'components/Spinner';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import Icon from 'components/Icon';
+import Modal from 'components/Modal';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -143,7 +144,6 @@ const ContactDetailsModal = ({
   const [nameValue, setNameValue] = useState('');
   const [dirtyInputs, setDirtyInputs] = useState(false);
   const [resolvingEns, setResolvingEns] = useState(false);
-  const [isScannerVisible, setIsScannerVisible] = useState(false);
   const [ensUnresolved, setEnsUnresolved] = useState(false);
   const { walletIcon, personIcon } = images(theme);
 
@@ -222,13 +222,16 @@ const ContactDetailsModal = ({
     && onSavePress({ ...contact, name: nameValue, ethAddress: addressValue });
 
   const handleScannerReadResult = (address: string) => {
-    setIsScannerVisible(false);
     if (isEnsName(address)) {
       setAddressValue('');
       setNameValue(address);
     } else {
       setAddressValue(address);
     }
+  };
+
+  const openScanner = () => {
+    Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
   };
 
   return (
@@ -250,7 +253,7 @@ const ContactDetailsModal = ({
             />
           )}
           {showQRScanner && (
-            <QRCodeButton onPress={() => setIsScannerVisible(true)}>
+            <QRCodeButton onPress={openScanner}>
               <QRCodeIcon name="qrcode" color={colors.link} />
             </QRCodeButton>
           )}
@@ -266,13 +269,6 @@ const ContactDetailsModal = ({
           onPress={onButtonPress}
           title={buttonTitle}
         />
-        {showQRScanner && (
-          <AddressScanner
-            isActive={isScannerVisible}
-            onCancel={() => setIsScannerVisible(false)}
-            onRead={handleScannerReadResult}
-          />
-        )}
       </View>
     </ModalBox>
   );
