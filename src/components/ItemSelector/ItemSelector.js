@@ -26,7 +26,8 @@ import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import ButtonText from 'components/ButtonText';
-import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
+import SelectorOptions from 'components/SelectorOptions';
+import Modal from 'components/Modal';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
@@ -37,23 +38,19 @@ import { resolveAssetSource } from 'utils/textInput';
 import type { Theme } from 'models/Theme';
 import type { SelectorOptions as SelectorOptionsType } from 'models/TextInput';
 import type { ItemSelectorType } from 'models/ItemSelector';
+import type { Option } from 'models/Selector';
 
 type Props = {
   errorMessage?: string,
   inputProps: ItemSelectorType,
   theme: Theme,
   selectorOptions?: SelectorOptionsType,
-  renderOption?: (item: Object, selectOption: () => void) => React.Node,
+  renderOption?: (item: Object, selectOption: (option: Option) => void) => React.Node,
   renderSelector?: (selector: Object) => React.Node,
   optionKeyExtractor?: (item: Object) => string,
   hasError?: boolean,
   activeTabOnItemClick?: string,
   activeTabOnOptionOpenClick?: string,
-};
-
-type State = {
-  showOptionsSelector: boolean,
-  forceTab: ?string,
 };
 
 const ErrorMessage = styled(BaseText)`
@@ -103,32 +100,40 @@ const InputLabel = styled(MediumText)`
   color: ${themedColors.secondaryText};
 `;
 
-class ItemSelector extends React.Component<Props, State> {
-  state = {
-    showOptionsSelector: false,
-    forceTab: '',
-  };
-
+class ItemSelector extends React.Component<Props> {
   openSelector = (forceTab: ?string) => {
-    this.setState({ forceTab, showOptionsSelector: true });
-    const { inputProps } = this.props;
-    const { onSelectorOpen } = inputProps;
-    if (onSelectorOpen) onSelectorOpen();
-  };
+    const {
+      selectorOptions: {
+        options = [],
+        optionTabs,
+        selectorModalTitle,
+        optionsSearchPlaceholder,
+        horizontalOptions,
+      } = {},
+      renderOption,
+    } = this.props;
 
-  closeSelector = () => {
-    this.setState({ showOptionsSelector: false });
-    const { inputProps } = this.props;
-    const { onSelectorClose } = inputProps;
-    if (onSelectorClose) onSelectorClose();
-  };
+    Modal.open(() => (
+      <SelectorOptions
+        onHidden={this.props.inputProps.onSelectorClose}
+        title={selectorModalTitle}
+        options={options}
+        optionTabs={optionTabs}
+        searchPlaceholder={optionsSearchPlaceholder}
+        optionKeyExtractor={this.optionKeyExtractor}
+        onOptionSelect={this.selectValue}
+        renderOption={renderOption}
+        horizontalOptionsData={horizontalOptions}
+        forceTab={forceTab ?? undefined}
+        onOpen={this.props.inputProps.onSelectorOpen}
+      />
+    ));
+  }
 
-  selectValue = (selectedValue: Object, onSuccess: () => void) => {
+  selectValue = (selectedValue: Object) => {
     const { inputProps: { onChange, selectorValue } } = this.props;
     const { input } = selectorValue;
     if (onChange) onChange({ selector: selectedValue, input });
-    this.setState({ showOptionsSelector: false });
-    if (onSuccess) onSuccess();
   };
 
   renderSelector = () => {
@@ -191,19 +196,15 @@ class ItemSelector extends React.Component<Props, State> {
   };
 
   render() {
-    const { showOptionsSelector, forceTab } = this.state;
     const {
       errorMessage,
       selectorOptions = {},
-      renderOption,
       activeTabOnItemClick,
     } = this.props;
 
     const {
       options = [],
       optionTabs,
-      selectorModalTitle,
-      optionsSearchPlaceholder,
       horizontalOptions,
     } = selectorOptions;
 
@@ -232,19 +233,6 @@ class ItemSelector extends React.Component<Props, State> {
         <InputFooter>
           <ErrorMessage>{errorMessage}</ErrorMessage>
         </InputFooter>}
-        <SelectorOptions
-          isVisible={showOptionsSelector}
-          onHide={this.closeSelector}
-          title={selectorModalTitle}
-          options={options}
-          optionTabs={optionTabs}
-          searchPlaceholder={optionsSearchPlaceholder}
-          optionKeyExtractor={this.optionKeyExtractor}
-          onOptionSelect={this.selectValue}
-          renderOption={renderOption}
-          horizontalOptionsData={horizontalOptions}
-          forceTab={forceTab}
-        />
       </View>
     );
   }
