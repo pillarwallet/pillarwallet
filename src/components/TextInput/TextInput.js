@@ -40,8 +40,9 @@ import Icon from 'components/Icon';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
-import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
+import SelectorOptions from 'components/SelectorOptions';
 import Tooltip from 'components/Tooltip';
+import Modal from 'components/Modal';
 
 import { fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -53,7 +54,7 @@ import type { Theme } from 'models/Theme';
 import type { Props as ButtonProps } from 'components/Button';
 import type { Props as IconButtonProps } from 'components/IconButton';
 import type { InputPropsType, SelectorOptions as SelectorOptionsType } from 'models/TextInput';
-
+import type { Option } from 'models/Selector';
 
 type Props = {
   errorMessage?: string,
@@ -77,7 +78,7 @@ type Props = {
   inputWrapperStyle?: Object,
   rightPlaceholder?: string,
   fallbackToGenericToken?: boolean,
-  renderOption?: (item: Object, selectOption: () => void) => React.Node,
+  renderOption?: (item: Option, selectOption: (option: Option) => void) => React.Node,
   renderSelector?: (selector: Object) => React.Node,
   optionKeyExtractor?: (item: Object) => string,
   hasError?: boolean,
@@ -89,7 +90,6 @@ type Props = {
 
 type State = {
   isFocused: boolean,
-  showOptionsSelector: boolean,
 };
 
 type EventLike = {
@@ -233,7 +233,6 @@ class TextInput extends React.Component<Props, State> {
     super(props);
     this.state = {
       isFocused: false,
-      showOptionsSelector: false,
     };
   }
 
@@ -309,26 +308,40 @@ class TextInput extends React.Component<Props, State> {
   };
 
   openSelector = () => {
+    const {
+      selectorOptions = {},
+      renderOption,
+    } = this.props;
+
+    const {
+      options = [],
+      optionTabs,
+      selectorModalTitle,
+      optionsSearchPlaceholder,
+      horizontalOptions,
+    } = selectorOptions;
+
     Keyboard.dismiss();
-    this.setState({ showOptionsSelector: true });
-    const { inputProps } = this.props;
-    const { onSelectorOpen } = inputProps;
-    if (onSelectorOpen) onSelectorOpen();
+    Modal.open(() => (
+      <SelectorOptions
+        onHide={this.props.inputProps.onSelectorClose}
+        title={selectorModalTitle}
+        options={options}
+        optionTabs={optionTabs}
+        searchPlaceholder={optionsSearchPlaceholder}
+        optionKeyExtractor={this.optionKeyExtractor}
+        onOptionSelect={this.selectValue}
+        renderOption={renderOption}
+        horizontalOptionsData={horizontalOptions}
+        onOpen={this.props.inputProps.onSelectorOpen}
+      />
+    ));
   };
 
-  closeSelector = () => {
-    this.setState({ showOptionsSelector: false });
-    const { inputProps } = this.props;
-    const { onSelectorClose } = inputProps;
-    if (onSelectorClose) onSelectorClose();
-  };
-
-  selectValue = (selectedValue: Object, onSuccess: () => void) => {
+  selectValue = (selectedValue: Option) => {
     const { inputProps: { onChange, selectorValue } } = this.props;
     const { input } = selectorValue;
-    if (onChange) onChange({ selector: selectedValue, input });
-    this.setState({ showOptionsSelector: false });
-    if (onSuccess) onSuccess();
+    if (onChange) onChange({ selector: (selectedValue: $FlowFixMe), input });
   };
 
   focusInput = () => {
@@ -451,7 +464,7 @@ class TextInput extends React.Component<Props, State> {
   }
 
   render() {
-    const { isFocused, showOptionsSelector } = this.state;
+    const { isFocused } = this.state;
     const {
       inputProps,
       errorMessage,
@@ -471,7 +484,6 @@ class TextInput extends React.Component<Props, State> {
       selectorOptions = {},
       customInputHeight,
       inputWrapperStyle = {},
-      renderOption,
       itemHolderStyle,
       leftSideSymbol,
       onRightAddonPress,
@@ -498,14 +510,7 @@ class TextInput extends React.Component<Props, State> {
 
     const customStyle = multiline ? { paddingTop: 10 } : {};
 
-    const {
-      options = [],
-      optionTabs,
-      fullWidth: fullWidthSelector,
-      selectorModalTitle,
-      optionsSearchPlaceholder,
-      horizontalOptions,
-    } = selectorOptions;
+    const { fullWidth: fullWidthSelector } = selectorOptions;
 
     const showLeftAddon = (innerImageURI || fallbackSource) || !!leftSideText || !!leftSideSymbol;
     const showRightAddon = !!iconProps || loading || rightPlaceholder;
@@ -610,18 +615,6 @@ class TextInput extends React.Component<Props, State> {
             />}
           </ItemHolder>
         </InputBorder>
-        <SelectorOptions
-          isVisible={showOptionsSelector}
-          onHide={this.closeSelector}
-          title={selectorModalTitle}
-          options={options}
-          optionTabs={optionTabs}
-          searchPlaceholder={optionsSearchPlaceholder}
-          optionKeyExtractor={this.optionKeyExtractor}
-          onOptionSelect={this.selectValue}
-          renderOption={renderOption}
-          horizontalOptionsData={horizontalOptions}
-        />
       </View>
     );
   }
