@@ -26,7 +26,7 @@ import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import ButtonText from 'components/ButtonText';
-import SelectorOptions from 'components/SelectorOptions';
+import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';

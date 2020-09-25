@@ -40,7 +40,7 @@ import Icon from 'components/Icon';
 import Button from 'components/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
-import SelectorOptions from 'components/SelectorOptions';
+import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
 
 import { fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';

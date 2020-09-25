@@ -30,7 +30,7 @@ import t from 'translations/translate';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
-import SelectorOptions from 'components/SelectorOptions';
+import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
 import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,

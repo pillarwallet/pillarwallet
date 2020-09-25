@@ -29,7 +29,7 @@ import t from 'translations/translate';
 // components
 import { MediumText } from 'components/Typography';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
-import SelectorOptions from 'components/SelectorOptions';
+import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 
 // selectors
