@@ -27,7 +27,7 @@ import TextInput from 'components/TextInput';
 import PercentsInputAccessoryHolder, {
   INPUT_ACCESSORY_NATIVE_ID,
 } from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import SelectorOptions from 'components/SelectorOptions';
+import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
 import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';

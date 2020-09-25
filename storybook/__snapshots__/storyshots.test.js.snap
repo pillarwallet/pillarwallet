@@ -29546,13 +29546,13 @@ exports[`Storyshots Selector no options 1`] = `
                     Array [
                       Object {
                         "component": <React.Fragment>
-                          <SelectorOptions__EmptyStateWrapper
+                          <SelectorOptions-old__EmptyStateWrapper
                             fullScreen={true}
                           >
                             <EmptyStateParagraph
                               title="label.nothingFound"
                             />
-                          </SelectorOptions__EmptyStateWrapper>
+                          </SelectorOptions-old__EmptyStateWrapper>
                         </React.Fragment>,
                         "value": "extendedHeaderItems",
                       },
@@ -32485,7 +32485,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                     Array [
                       Object {
                         "component": <React.Fragment>
-                          <SelectorOptions__HorizontalOptions>
+                          <SelectorOptions-old__HorizontalOptions>
                             <FlatList
                               ItemSeparatorComponent={[Function]}
                               contentContainerStyle={
@@ -32524,7 +32524,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                               updateCellsBatchingPeriod={50}
                               windowSize={21}
                             />
-                          </SelectorOptions__HorizontalOptions>
+                          </SelectorOptions-old__HorizontalOptions>
                         </React.Fragment>,
                         "value": "extendedHeaderItems",
                       },
@@ -35710,13 +35710,13 @@ exports[`Storyshots Value Input default 1`] = `
                       Array [
                         Object {
                           "component": <React.Fragment>
-                            <SelectorOptions__EmptyStateWrapper
+                            <SelectorOptions-old__EmptyStateWrapper
                               fullScreen={true}
                             >
                               <EmptyStateParagraph
                                 title="label.nothingFound"
                               />
-                            </SelectorOptions__EmptyStateWrapper>
+                            </SelectorOptions-old__EmptyStateWrapper>
                           </React.Fragment>,
                           "value": "extendedHeaderItems",
                         },

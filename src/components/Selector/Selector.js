@@ -28,7 +28,7 @@ import t from 'translations/translate';
 
 // components
 import { MediumText, BaseText } from 'components/Typography';
-import SelectorOptions from 'components/SelectorOptions';
+import SelectorOptions from 'components/SelectorOptions/SelectorOptions-old';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
 import ProfileImage from 'components/ProfileImage';
 import { Spacing } from 'components/Layout';

@@ -31,7 +31,7 @@ import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
-import SlideModal from 'components/Modals/SlideModal';
+import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage';
@@ -47,43 +47,41 @@ import { isValidAddress } from 'utils/validators';
 
 import type { Theme } from 'models/Theme';
 import type { HorizontalOption, Option, OptionTabs } from 'models/Selector';
-import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
-type OwnProps = {|
+
+type Props = {
   horizontalOptionsData?: HorizontalOption[],
   showOptionsTitles?: boolean,
-  renderOption?: (option: Option, onSelect: (option: Option) => void) => React.Node,
-  onOptionSelect?: (option: Option) => mixed,
+  renderOption?: (option: Option, onSelect: (option: Option) => void) => void,
+  onHide?: () => void,
+  onOptionSelect?: (option: Option, onSuccess: () => void) => void,
   optionKeyExtractor?: (item: Object) => string,
-  title?: string,
+  isVisible: boolean,
+  title: string,
   options?: Option[],
   optionTabs?: OptionTabs[],
   optionsTitle?: string,
   searchPlaceholder?: string,
+  theme: Theme,
   noImageFallback?: boolean,
   inputIconName?: string,
   iconProps?: Object,
-  onHide?: () => void,
-  validator?: (value: string) => ?string,
+  activeAccountAddress: string,
+  onHidden: () => void,
+  validator?: (value: string) => string,
   allowEnteringCustomAddress?: boolean,
   forceTab?: string,
   customOptionButtonLabel?: string,
-  customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
+  customOptionButtonOnPress?: (option: Option) => void,
   onCustomOptionSet?: (option: Option) => void,
-  onOpen?: () => void,
-|};
+};
 
-type Props = {|
-  ...OwnProps,
-  theme: Theme,
-|};
-
-type State = {|
+type State = {
   query: ?string,
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
   activeTab: ?string,
-|};
+};
 
 
 const DIAMETER = 64;
@@ -152,9 +150,8 @@ const MIN_QUERY_LENGTH = 2;
 
 class SelectorOptions extends React.Component<Props, State> {
   searchInput: TextInput;
-  modalRef = React.createRef<SlideModalInstance>();
 
-  constructor(props: Props) {
+  constructor(props) {
     super(props);
     this.state = {
       query: null,
@@ -205,7 +202,7 @@ class SelectorOptions extends React.Component<Props, State> {
     if (address) this.addCustomOption(address);
   };
 
-  addCustomOption = (address: string) => {
+  addCustomOption = (address) => {
     let option = {
       value: address,
       name: address,
@@ -224,11 +221,11 @@ class SelectorOptions extends React.Component<Props, State> {
     });
   };
 
-  renderHorizontalOptions = (horizontalOptionsData: HorizontalOption[]) => {
+  renderHorizontalOptions = (horizontalOptionsData) => {
     const { showOptionsTitles } = this.props;
     if (!horizontalOptionsData) return null;
 
-    return horizontalOptionsData.map<React.Node>((optionsInfo: HorizontalOption, index) => {
+    return horizontalOptionsData.map((optionsInfo: HorizontalOption, index) => {
       const { title, data } = optionsInfo;
       if (!data?.length) return null;
       return (
@@ -248,7 +245,7 @@ class SelectorOptions extends React.Component<Props, State> {
     });
   };
 
-  renderHorizontalOption = ({ item }: { item: Option }) => {
+  renderHorizontalOption = ({ item }) => {
     const { theme } = this.props;
     const {
       value,
@@ -319,18 +316,27 @@ class SelectorOptions extends React.Component<Props, State> {
     );
   };
 
-  close = () => {
-    Keyboard.dismiss();
-    if (this.modalRef.current) this.modalRef.current.close();
+  resetOptions = () => {
+    const { onHidden } = this.props;
+    this.setState({ query: null }, () => {
+      if (onHidden) onHidden();
+    });
   };
 
-  selectValue = (selectedValue: Option) => {
-    this.close();
+  closeOptions = () => {
+    const { onHide } = this.props;
+    this.setState({ query: null }, () => {
+      Keyboard.dismiss();
+      if (onHide) onHide();
+    });
+  };
+
+  selectValue = (selectedValue) => {
     const { onOptionSelect } = this.props;
-    if (onOptionSelect) onOptionSelect(selectedValue);
+    if (onOptionSelect) onOptionSelect(selectedValue, this.closeOptions);
   };
 
-  optionKeyExtractor = (option: Option) => {
+  optionKeyExtractor = (option) => {
     const { optionKeyExtractor } = this.props;
     if (optionKeyExtractor) {
       return optionKeyExtractor(option);
@@ -352,19 +358,19 @@ class SelectorOptions extends React.Component<Props, State> {
     return null;
   };
 
-  setActiveTab = (tabId: string) => {
+  setActiveTab = (tabId) => {
     this.setState({ activeTab: tabId });
   };
 
   handleOptionsOpen = () => {
-    const { forceTab, onOpen } = this.props;
+    const { forceTab } = this.props;
     this.focusInput();
     if (forceTab) this.setState({ activeTab: forceTab });
-    if (onOpen) onOpen();
   };
 
   render() {
     const {
+      isVisible,
       theme,
       title,
       options = [],
@@ -432,10 +438,10 @@ class SelectorOptions extends React.Component<Props, State> {
 
     return (
       <SlideModal
-        ref={this.modalRef}
+        isVisible={isVisible}
         fullScreen
         onModalShow={this.handleOptionsOpen}
-        onModalHide={this.props.onHide}
+        onModalHidden={this.resetOptions}
         noSwipeToDismiss
         noClose
         backgroundColor={colors.card}
@@ -443,7 +449,7 @@ class SelectorOptions extends React.Component<Props, State> {
         <ContainerWithHeader
           headerProps={{
             noPaddingTop: true,
-            customOnBack: this.close,
+            customOnBack: this.closeOptions,
             centerItems: [{ title }],
           }}
         >
@@ -494,11 +500,4 @@ class SelectorOptions extends React.Component<Props, State> {
   }
 }
 
-const ThemedSelectorOptions = (withTheme(SelectorOptions): React.AbstractComponent<{|
-    ...OwnProps,
-    innerRef: { current: null | SelectorOptions } | (null | SelectorOptions) => mixed,
-|}>);
-
-export default React.forwardRef<OwnProps, SelectorOptions>((props, ref) => {
-  return <ThemedSelectorOptions {...props} innerRef={ref} />;
-});
+export default withTheme(SelectorOptions);
