@@ -27,7 +27,6 @@ import t from 'translations/translate';
 
 // actions
 import {
-  saveBaseFiatCurrencyAction,
   setAppThemeAction,
   saveOptOutTrackingAction,
   setPreferredGasTokenAction,
@@ -42,7 +41,7 @@ import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Modal from 'components/Modal';
 
 // constants
-import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
@@ -79,12 +78,12 @@ import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // local
 import { SettingsSection } from './SettingsSection';
+import BaseFiatCurrencyModal from './BaseFiatCurrencyModal';
 
 type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
   optOutTracking: boolean,
-  saveBaseFiatCurrency: (currency: string) => void,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   saveOptOutTracking: (status: boolean) => void,
   preferredGasToken: ?string,
@@ -125,13 +124,9 @@ const CheckboxText = styled(BaseText)`
   margin-bottom: ${spacing.medium}px;
 `;
 
-
-const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
-const CURRENCY = 'currency';
 const LANGUAGE = 'language';
 const MODAL = {
   SYSTEM_INFO: 'systemInfo',
-  BASE_CURRENCY: 'baseCurrency',
   ANALYTICS: 'analytics',
   LANGUAGES: 'languages',
 };
@@ -158,12 +153,6 @@ class AppSettings extends React.Component<Props, State> {
       onPress={() => onSelect(value)}
     />
   );
-
-  handleCurrencyUpdate = (value: string) => {
-    const { saveBaseFiatCurrency } = this.props;
-    saveBaseFiatCurrency(value);
-    this.setState({ visibleModal: null });
-  };
 
   handleLanguageUpdate = (value: string) => {
     const { changeLanguage } = this.props;
@@ -209,7 +198,7 @@ class AppSettings extends React.Component<Props, State> {
       {
         key: 'localFiatCurrency',
         title: t('settingsContent.settingsItem.fiatCurrency.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.BASE_CURRENCY }),
+        onPress: this.openBaseFiatCurrencyModal,
         value: baseFiatCurrency || defaultFiatCurrency,
       },
       showGasTokenOption && {
@@ -255,10 +244,8 @@ class AppSettings extends React.Component<Props, State> {
   };
 
   handleOptionListItemRender = (item, type) => {
-    const { baseFiatCurrency, localisation } = this.props;
+    const { localisation } = this.props;
     switch (type) {
-      case CURRENCY:
-        return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
       case LANGUAGE:
         const currentLanguage = localisation?.activeLngCode || getDefaultSupportedUserLanguage();
         return this.renderListItem(LANGUAGE, this.handleLanguageUpdate, currentLanguage)(item);
@@ -266,6 +253,8 @@ class AppSettings extends React.Component<Props, State> {
         return null;
     }
   };
+
+  openBaseFiatCurrencyModal = () => Modal.open(() => <BaseFiatCurrencyModal />)
 
   openRelayerMigrationModal = () => {
     const { accountAssets, accountHistory } = this.props;
@@ -308,22 +297,6 @@ class AppSettings extends React.Component<Props, State> {
             sectionItems={this.getItems()}
           />
         </ScrollWrapper>
-
-        {/* BASE CURRENCY */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.BASE_CURRENCY}
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-          title={t('settingsContent.settingsItem.fiatCurrency.screenTitle')}
-          insetTop
-        >
-          <FlatList
-            data={currencies}
-            renderItem={(item) => this.handleOptionListItemRender(item, CURRENCY)}
-            keyExtractor={({ name }) => name}
-          />
-        </SlideModal>
 
         {/* ANALYTICS */}
         <SlideModal
@@ -421,7 +394,6 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => dispatch(
     setAppThemeAction(themeType, isManualThemeSelection),
   ),
