@@ -48,6 +48,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ValueSelectorCard } from 'components/ValueSelectorCard';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
+import Modal from 'components/Modal';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -123,7 +124,6 @@ type State = {
   tokenValue: number,
   userTickets: number,
   totalPoolTicketsCount: number,
-  isAllowModalVisible: boolean,
   allowPayload: Object,
   gasToken: Object,
   txFeeInWei: number,
@@ -147,7 +147,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       tokenValue: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible: false,
       allowPayload: null,
       gasToken: null,
       txFeeInWei: 0,
@@ -234,17 +233,54 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     });
   }
 
-  hideAllowAssetModal = () => {
-    const { setDismissApprove } = this.props;
-    const { poolToken } = this.state;
-    setDismissApprove(poolToken);
-    this.setState({ isAllowModalVisible: false });
-  };
+  openAllowAssetModal = () => {
+    const {
+      balances,
+      baseFiatCurrency,
+      rates,
+    } = this.props;
+
+    const {
+      poolToken,
+      gasToken,
+      txFeeInWei,
+      allowPayload,
+    } = this.state;
+
+    if (!allowPayload) return;
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const feeSymbol = get(gasToken, 'symbol', ETH);
+    const feeDecimals = get(gasToken, 'decimals', 'ether');
+    const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+    const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+    const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
+
+    const allowData = {
+      assetSymbol: poolToken,
+      feeDisplayValue,
+      feeInFiat,
+      isDisabled,
+      feeToken: feeSymbol,
+    };
+
+    Modal.open(() => (
+      <PoolTokenAllowModal
+        onModalHidden={() => {
+          const { setDismissApprove } = this.props;
+          setDismissApprove(this.state.poolToken);
+        }}
+        onAllow={this.allowPoolAsset}
+        allowData={allowData}
+      />
+    ));
+  }
 
   allowPoolAsset = () => {
     const { navigation } = this.props;
     const { allowPayload } = this.state;
-    this.hideAllowAssetModal();
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: allowPayload,
       goBackDismiss: true,
@@ -271,9 +307,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       tokenValue,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible,
-      gasToken,
-      txFeeInWei,
       allowPayload,
       purchasePayload,
     } = this.state;
@@ -287,25 +320,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const isLoading = (!allowPayload && !hasAllowance) || (!purchasePayload && hasAllowance) || isApprovalExecuting;
 
     const purchaseDisabled = hasAllowance && (tokenValue === 0 || (purchasePayload && purchasePayload.isDisabled));
-
-    let allowData;
-    if (allowPayload) {
-      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-      const feeSymbol = get(gasToken, 'symbol', ETH);
-      const feeDecimals = get(gasToken, 'decimals', 'ether');
-      const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-      const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-      const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-      const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
-
-      allowData = {
-        assetSymbol: poolToken,
-        feeDisplayValue,
-        feeInFiat,
-        isDisabled,
-        feeToken: feeSymbol,
-      };
-    }
 
     let nextNavigationFunction;
     if (purchasePayload) {
@@ -392,7 +406,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   title={t('button.next')}
                   onPress={() => {
                     if (!hasAllowance && !isApprovalExecuting) {
-                      this.setState({ isAllowModalVisible: true });
+                      this.openAllowAssetModal();
                     }
                     return nextNavigationFunction && nextNavigationFunction();
                   }}
@@ -411,12 +425,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
-        <PoolTokenAllowModal
-          isVisible={!!isAllowModalVisible}
-          onModalHide={this.hideAllowAssetModal}
-          onAllow={this.allowPoolAsset}
-          allowData={allowData}
-        />
       </ContainerWithHeader>
     );
   }
