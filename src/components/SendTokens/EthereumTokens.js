@@ -37,6 +37,7 @@ import { Spacing } from 'components/Layout';
 import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 import ContactDetailsModal from 'components/ContactDetailsModal';
+import Modal from 'components/Modal';
 
 // utils
 import { isValidNumber, getEthereumProvider } from 'utils/common';
@@ -137,15 +138,6 @@ const SendEthereumTokens = ({
   addContact,
   defaultContact,
 }: Props) => {
-  const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
-  const hideRelayerMigrationModal = () => setShowRelayerMigrationModal(false);
-
-  useEffect(() => {
-    if (isGasTokenSupported && showRelayerMigrationModal) {
-      hideRelayerMigrationModal(); // hide on update
-    }
-  }, [isGasTokenSupported]);
-
   const defaultAssetData = navigation.getParam('assetData');
   const [assetData, setAssetData] = useState(defaultAssetData);
 
@@ -345,40 +337,6 @@ const SendEthereumTokens = ({
     }
   };
 
-  const renderRelayerMigrationButton = () => (
-    <Button
-      title={t('transactions.button.payFeeWithPillar')}
-      onPress={() => setShowRelayerMigrationModal(true)}
-      secondary
-      small
-    />
-  );
-
-  const renderFee = (props: FooterProps) => {
-    const {
-      showRelayerMigration,
-      showFee,
-      isLoading,
-      feeError,
-    } = props;
-
-    if (isLoading) {
-      return <Spinner width={20} height={20} />;
-    }
-
-    return (
-      <>
-        {renderFeeToggle(txFeeInfo, showFee, feeError)}
-        {showRelayerMigration && (
-          <>
-            <Spacing h={spacing.medium} />
-            {renderRelayerMigrationButton()}
-          </>
-        )}
-      </>
-    );
-  };
-
   const token = get(assetData, 'token');
   const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
@@ -397,6 +355,16 @@ const SendEthereumTokens = ({
     && showFee
     && !isGasTokenSupported;
 
+  const openRelayerMigrationModal = useCallback(() => {
+    if (!showRelayerMigration) return;
+    Modal.open(() => (
+      <RelayerMigrationModal
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+      />
+    ));
+  }, [showRelayerMigration, accountAssets, accountHistory]);
+
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)
     : (!inputHasError && !!selectedContact && !!currentValue);
@@ -411,6 +379,33 @@ const SendEthereumTokens = ({
       symbol: token,
     });
   }
+
+  const renderRelayerMigrationButton = () => (
+    <Button
+      title={t('transactions.button.payFeeWithPillar')}
+      onPress={openRelayerMigrationModal}
+      secondary
+      small
+    />
+  );
+
+  const renderFee = (props: FooterProps) => {
+    if (props.isLoading) {
+      return <Spinner width={20} height={20} />;
+    }
+
+    return (
+      <>
+        {renderFeeToggle(txFeeInfo, props.showFee, props.feeError)}
+        {props.showRelayerMigration && (
+          <>
+            <Spacing h={spacing.medium} />
+            {renderRelayerMigrationButton()}
+          </>
+        )}
+      </>
+    );
+  };
 
   const showNextButton = !gettingFee && hasAllData && !feeError;
 
@@ -463,14 +458,6 @@ const SendEthereumTokens = ({
         }),
       }}
     >
-      {showRelayerMigration &&
-        <RelayerMigrationModal
-          isVisible={showRelayerMigrationModal}
-          onModalHide={hideRelayerMigrationModal}
-          accountAssets={accountAssets}
-          accountHistory={accountHistory}
-        />
-      }
       <ContactDetailsModal
         title={t('title.addNewContact')}
         isVisible={!isEmpty(contactToAdd)}
