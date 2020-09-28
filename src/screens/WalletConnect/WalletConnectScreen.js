@@ -20,6 +20,8 @@
 
 import * as React from 'react';
 import { ScrollView } from 'react-native';
+import { connect } from 'react-redux';
+import type { RootReducerState } from 'reducers/rootReducer';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -27,8 +29,7 @@ import PromoCard from './PromoCard';
 import QRCodeScanButton from './QRCodeScanButton';
 import ActiveConnections from './ActiveConnections';
 import Requests from './Requests';
-import { connect } from 'react-redux';
-import type { RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   sessionLanguageCode: ?string, // important for re-rendering on language change
