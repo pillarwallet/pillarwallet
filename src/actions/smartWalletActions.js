@@ -284,7 +284,7 @@ export const connectSmartWalletAccountAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
-    let { smartWallet: { connectedAccount } } = getState();
+    let { smartWallet: { connectedAccount, upgrade } } = getState();
 
     if (isEmpty(connectedAccount)) {
       connectedAccount = await smartWalletService.connectAccount(accountId);
@@ -301,6 +301,13 @@ export const connectSmartWalletAccountAction = (
     }
 
     if (setAccountActive) dispatch(setActiveAccountAction(accountId));
+
+    // sync deployed account state
+    const connectedAccountState = connectedAccount?.state;
+    if (upgrade?.status !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
+      && connectedAccountState === sdkConstants.AccountStates.Deployed) {
+      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+    }
   };
 };
 
