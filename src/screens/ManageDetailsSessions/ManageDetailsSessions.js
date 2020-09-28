@@ -77,22 +77,22 @@ class ManageDetailsSessions extends React.Component<Props, State> {
   };
 
   getRequestLabel = (payload: CallRequest) => {
-    let label = t('walletConnectContent.requestType.transaction');
+    let label = t('walletConnectContent.title.requestType.transaction');
 
     switch (payload.method) {
       case 'eth_sendTransaction':
       case 'eth_signTransaction':
-        label = t('walletConnectContent.requestType.transaction');
+        label = t('walletConnectContent.title.requestType.transaction');
         break;
       case 'eth_sign':
       case 'eth_signTypedData':
       case 'eth_signTypedData_v1':
       case 'eth_signTypedData_v3':
       case 'personal_sign':
-        label = t('walletConnectContent.requestType.message');
+        label = t('walletConnectContent.title.requestType.message');
         break;
       default:
-        label = t('walletConnectContent.requestType.call');
+        label = t('walletConnectContent.title.requestType.call');
         break;
     }
     return label;
@@ -188,12 +188,12 @@ class ManageDetailsSessions extends React.Component<Props, State> {
     const sessionTabs = [
       {
         id: ACTIVE,
-        name: t('tabs.active.title'),
+        name: t('walletConnectContent.tabs.active.title'),
         onPress: () => this.setActiveTab(ACTIVE),
       },
       {
         id: REQUESTS,
-        name: t('tabs.requests.title'),
+        name: t('walletConnectContent.tabs.requests.title'),
         onPress: () => this.setActiveTab(REQUESTS),
       },
     ];

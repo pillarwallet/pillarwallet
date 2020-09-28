@@ -845,6 +845,23 @@
           "phone": "Enter verification code (SMS)"
         },
         "error": "That didn't work, please try again"
+      },
+      "profileImage": {
+        "button": {
+          "takeSelfie": "Take selfie",
+          "uploadPicture": "Upload picture",
+          "deleteAvatar": "Delete avatar"
+        }
+      },
+      "deleteAvatar": {
+        "title": "Delete avatar",
+        "paragraph": {
+          "areYouSure": "Are you sure you would like to delete your avatar?"
+        },
+        "button": {
+          "delete": "Yes, delete",
+          "cancel": "Cancel"
+        }
       }
     }
   },
@@ -1324,7 +1341,9 @@
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
     "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing",
     "languageIsNoLongerSupported": "Your selected language is no longer supported. It's been changed to default language.",
-    "languageIsNotSupported": "This language is not supported"
+    "languageIsNotSupported": "This language is not supported",
+    "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
+    "failedToDeleteAvatar": "Failed to delete avatar. Please try again."
   },
 
   "exchangeContent": {
@@ -1360,7 +1379,7 @@
     },
     "title": {
       "confirmScreen": "Details",
-      "settingsScreens": "Settings",
+      "settingsScreen": "Settings",
       "activateSmartWalletScreen": "Activate Smart Wallet",
       "buyWithWyreScreen": "Buy with Wyre"
     },
