@@ -32,7 +32,6 @@ import {
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Modal from 'components/Modal';
 
 // constants
@@ -80,17 +79,11 @@ type Props = {
 };
 
 type State = {
-  visibleModal: ?string,
   isAfterRelayerMigration: boolean,
-};
-
-const MODAL = {
-  SYSTEM_INFO: 'systemInfo',
 };
 
 class AppSettings extends React.Component<Props, State> {
   state = {
-    visibleModal: null,
     isAfterRelayerMigration: false,
   };
 
@@ -142,9 +135,9 @@ class AppSettings extends React.Component<Props, State> {
         onPress: this.openAnalyticsModal,
       },
       {
-        key: MODAL.SYSTEM_INFO,
+        key: 'systemInfo',
         title: t('settingsContent.settingsItem.systemInfo.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.SYSTEM_INFO }),
+        onPress: this.openSystemInfoModal,
       },
     ].filter(Boolean);
   };
@@ -165,6 +158,8 @@ class AppSettings extends React.Component<Props, State> {
 
   openAnalyticsModal = () => Modal.open(() => <AnalyticsModal />)
 
+  openSystemInfoModal = () => Modal.open(() => <SystemInfoModal />);
+
   componentDidUpdate(prevProps: Props) {
     const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
     const gasTokenBecameSupported = prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported;
@@ -177,8 +172,6 @@ class AppSettings extends React.Component<Props, State> {
   }
 
   render() {
-    const { visibleModal } = this.state;
-
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.appSettings.title') }] }}
@@ -193,18 +186,6 @@ class AppSettings extends React.Component<Props, State> {
             sectionItems={this.getItems()}
           />
         </ScrollWrapper>
-
-        {/* SYSTEM INFO MODAL */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.SYSTEM_INFO}
-          fullScreen
-          showHeader
-          title={t('settingsContent.settingsItem.systemInfo.title')}
-          onModalHide={() => this.setState({ visibleModal: null })}
-          insetTop
-        >
-          <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
-        </SlideModal>
       </ContainerWithHeader>
     );
   }

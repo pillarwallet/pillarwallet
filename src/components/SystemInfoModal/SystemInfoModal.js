@@ -21,6 +21,9 @@
 
 import React from 'react';
 import styled from 'styled-components/native';
+import t from 'translations/translate';
+
+import SlideModal from 'components/Modals/SlideModal';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
@@ -52,36 +55,43 @@ const SystemInfoModal = () => {
     BUILD_NUMBER,
   } = getEnv();
   return (
-    <Wrapper regularPadding>
-      <LabeledRow>
-        <Label>BUILD_NUMBER</Label>
-        <Value>{BUILD_NUMBER}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>SDK_PROVIDER</Label>
-        <Value>{SDK_PROVIDER}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>TX_DETAILS_URL</Label>
-        <Value>{TX_DETAILS_URL}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>NETWORK_PROVIDER</Label>
-        <Value>{NETWORK_PROVIDER}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>COLLECTIBLES_NETWORK</Label>
-        <Value>{COLLECTIBLES_NETWORK}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>NOTIFICATIONS_URL</Label>
-        <Value>{NOTIFICATIONS_URL}</Value>
-      </LabeledRow>
-      <LabeledRow>
-        <Label>OPEN_SEA_API</Label>
-        <Value>{OPEN_SEA_API}</Value>
-      </LabeledRow>
-    </Wrapper>
+    <SlideModal
+      fullScreen
+      showHeader
+      title={t('settingsContent.settingsItem.systemInfo.title')}
+      insetTop
+    >
+      <Wrapper regularPadding>
+        <LabeledRow>
+          <Label>BUILD_NUMBER</Label>
+          <Value>{BUILD_NUMBER}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>SDK_PROVIDER</Label>
+          <Value>{SDK_PROVIDER}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>TX_DETAILS_URL</Label>
+          <Value>{TX_DETAILS_URL}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>NETWORK_PROVIDER</Label>
+          <Value>{NETWORK_PROVIDER}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>COLLECTIBLES_NETWORK</Label>
+          <Value>{COLLECTIBLES_NETWORK}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>NOTIFICATIONS_URL</Label>
+          <Value>{NOTIFICATIONS_URL}</Value>
+        </LabeledRow>
+        <LabeledRow>
+          <Label>OPEN_SEA_API</Label>
+          <Value>{OPEN_SEA_API}</Value>
+        </LabeledRow>
+      </Wrapper>
+    </SlideModal>
   );
 };
 
