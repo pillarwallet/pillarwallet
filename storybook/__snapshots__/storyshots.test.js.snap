@@ -26851,188 +26851,12 @@ Array [
           </View>
         </View>
         <View
-          androidStatusbarHeight={42}
-          opacity={0}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "left": 0,
-                "marginTop": 42,
-                "opacity": 0,
-                "paddingBottom": 40,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 40,
-                "position": "absolute",
-                "top": 0,
-                "width": "100%",
-                "zIndex": 1000,
-              },
-              Object {
-                "transform": Array [
-                  Object {
-                    "translateY": -260,
-                  },
-                ],
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
+            Object {
+              "height": 0,
             }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+          }
+        />
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
@@ -28171,188 +27995,12 @@ exports[`Storyshots Selector default 1`] = `
           </View>
         </View>
         <View
-          androidStatusbarHeight={42}
-          opacity={0}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "left": 0,
-                "marginTop": 42,
-                "opacity": 0,
-                "paddingBottom": 40,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 40,
-                "position": "absolute",
-                "top": 0,
-                "width": "100%",
-                "zIndex": 1000,
-              },
-              Object {
-                "transform": Array [
-                  Object {
-                    "translateY": -260,
-                  },
-                ],
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
+            Object {
+              "height": 0,
             }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+          }
+        />
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
@@ -29164,188 +28812,12 @@ exports[`Storyshots Selector no options 1`] = `
           </View>
         </View>
         <View
-          androidStatusbarHeight={42}
-          opacity={0}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "left": 0,
-                "marginTop": 42,
-                "opacity": 0,
-                "paddingBottom": 40,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 40,
-                "position": "absolute",
-                "top": 0,
-                "width": "100%",
-                "zIndex": 1000,
-              },
-              Object {
-                "transform": Array [
-                  Object {
-                    "translateY": -260,
-                  },
-                ],
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
+            Object {
+              "height": 0,
             }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+          }
+        />
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
@@ -30653,188 +30125,12 @@ exports[`Storyshots Selector selected option 1`] = `
           </View>
         </View>
         <View
-          androidStatusbarHeight={42}
-          opacity={0}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "left": 0,
-                "marginTop": 42,
-                "opacity": 0,
-                "paddingBottom": 40,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 40,
-                "position": "absolute",
-                "top": 0,
-                "width": "100%",
-                "zIndex": 1000,
-              },
-              Object {
-                "transform": Array [
-                  Object {
-                    "translateY": -260,
-                  },
-                ],
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
+            Object {
+              "height": 0,
             }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+          }
+        />
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
@@ -31973,188 +31269,12 @@ exports[`Storyshots Selector with custom wording 1`] = `
           </View>
         </View>
         <View
-          androidStatusbarHeight={42}
-          opacity={0}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "left": 0,
-                "marginTop": 42,
-                "opacity": 0,
-                "paddingBottom": 40,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 40,
-                "position": "absolute",
-                "top": 0,
-                "width": "100%",
-                "zIndex": 1000,
-              },
-              Object {
-                "transform": Array [
-                  Object {
-                    "translateY": -260,
-                  },
-                ],
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
+            Object {
+              "height": 0,
             }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+          }
+        />
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
@@ -33572,188 +32692,12 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           </View>
         </View>
         <View
-          androidStatusbarHeight={42}
-          opacity={0}
           style={
-            Array [
-              Object {
-                "alignItems": "center",
-                "justifyContent": "center",
-                "left": 0,
-                "marginTop": 42,
-                "opacity": 0,
-                "paddingBottom": 40,
-                "paddingLeft": 20,
-                "paddingRight": 20,
-                "paddingTop": 40,
-                "position": "absolute",
-                "top": 0,
-                "width": "100%",
-                "zIndex": 1000,
-              },
-              Object {
-                "transform": Array [
-                  Object {
-                    "translateY": -260,
-                  },
-                ],
-              },
-            ]
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
+            Object {
+              "height": 0,
             }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+          }
+        />
         <Modal
           animationType="fade"
           hardwareAccelerated={false}
@@ -33846,6 +32790,568 @@ exports[`Storyshots Selector with horizontal options 1`] = `
       </View>
     </View>
   </Modal>
+</View>
+`;
+
+exports[`Storyshots ToastCard default 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "marginBottom": 20,
+        "marginLeft": 20,
+        "marginRight": 20,
+        "marginTop": 20,
+      },
+      Array [
+        Object {
+          "alignItems": "stretch",
+        },
+        undefined,
+      ],
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "opacity": 1,
+          "position": "relative",
+        },
+        Object {
+          "transform": Array [
+            Object {
+              "scaleY": 1,
+            },
+          ],
+        },
+      ]
+    }
+  >
+    <View
+      accessible={true}
+      borderRadius={20}
+      focusable={false}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      opacity={1}
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "flexDirection": "column",
+            "justifyContent": "flex-start",
+            "opacity": 1,
+            "width": "100%",
+          },
+          Object {},
+        ]
+      }
+    >
+      <View
+        onLayout={[Function]}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexDirection": "row",
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 55,
+                "paddingTop": 14,
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Object {
+                "color": "#000",
+                "fontSize": 16,
+              }
+            }
+          >
+            #️⃣
+          </Text>
+          <View
+            style={
+              Array [
+                Object {
+                  "height": 0,
+                  "width": 18,
+                },
+                undefined,
+              ]
+            }
+            w={18}
+          />
+          <Text
+            regular={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  Object {
+                    "flex": 1,
+                  },
+                ],
+              ]
+            }
+          >
+            Magna culpa aliquip nisi in eu
+          </Text>
+        </View>
+        <View
+          accessible={true}
+          focusable={false}
+          isTVSelectable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+              "paddingBottom": 10,
+              "paddingLeft": 10,
+              "paddingRight": 10,
+              "paddingTop": 10,
+              "position": "absolute",
+              "right": 8,
+              "top": 7,
+            }
+          }
+        >
+          <View
+            name="rounded-close"
+            style={
+              Array [
+                Object {
+                  "color": "#ededed",
+                  "fontSize": 16,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ToastCard link 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "marginBottom": 20,
+        "marginLeft": 20,
+        "marginRight": 20,
+        "marginTop": 20,
+      },
+      Array [
+        Object {
+          "alignItems": "stretch",
+        },
+        undefined,
+      ],
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "opacity": 1,
+          "position": "relative",
+        },
+        Object {
+          "transform": Array [
+            Object {
+              "scaleY": 1,
+            },
+          ],
+        },
+      ]
+    }
+  >
+    <View
+      accessible={true}
+      borderRadius={20}
+      focusable={false}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      opacity={1}
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "flexDirection": "column",
+            "justifyContent": "flex-start",
+            "opacity": 1,
+            "width": "100%",
+          },
+          Object {},
+        ]
+      }
+    >
+      <View
+        onLayout={[Function]}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexDirection": "row",
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 55,
+                "paddingTop": 14,
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Object {
+                "color": "#000",
+                "fontSize": 16,
+              }
+            }
+          >
+            #️⃣
+          </Text>
+          <View
+            style={
+              Array [
+                Object {
+                  "height": 0,
+                  "width": 18,
+                },
+                undefined,
+              ]
+            }
+            w={18}
+          />
+          <Text
+            regular={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  Object {
+                    "flex": 1,
+                  },
+                ],
+              ]
+            }
+          >
+            Magna culpa aliquip nisi in eu
+            <Text
+              regular={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#007aff",
+                      "fontSize": 14,
+                      "lineHeight": 22,
+                    },
+                    undefined,
+                  ],
+                ]
+              }
+            >
+               
+              toast link
+            </Text>
+          </Text>
+        </View>
+        <View
+          accessible={true}
+          focusable={false}
+          isTVSelectable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+              "paddingBottom": 10,
+              "paddingLeft": 10,
+              "paddingRight": 10,
+              "paddingTop": 10,
+              "position": "absolute",
+              "right": 8,
+              "top": 7,
+            }
+          }
+        >
+          <View
+            name="rounded-close"
+            style={
+              Array [
+                Object {
+                  "color": "#ededed",
+                  "fontSize": 16,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ToastCard long text 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "marginBottom": 20,
+        "marginLeft": 20,
+        "marginRight": 20,
+        "marginTop": 20,
+      },
+      Array [
+        Object {
+          "alignItems": "stretch",
+        },
+        undefined,
+      ],
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "opacity": 1,
+          "position": "relative",
+        },
+        Object {
+          "transform": Array [
+            Object {
+              "scaleY": 1,
+            },
+          ],
+        },
+      ]
+    }
+  >
+    <View
+      accessible={true}
+      borderRadius={20}
+      focusable={false}
+      onClick={[Function]}
+      onResponderGrant={[Function]}
+      onResponderMove={[Function]}
+      onResponderRelease={[Function]}
+      onResponderTerminate={[Function]}
+      onResponderTerminationRequest={[Function]}
+      onStartShouldSetResponder={[Function]}
+      opacity={1}
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#FFFFFF",
+            "borderRadius": 20,
+            "flexDirection": "column",
+            "justifyContent": "flex-start",
+            "opacity": 1,
+            "width": "100%",
+          },
+          Object {},
+        ]
+      }
+    >
+      <View
+        onLayout={[Function]}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "flex-start",
+                "flexDirection": "row",
+                "paddingBottom": 14,
+                "paddingLeft": 20,
+                "paddingRight": 55,
+                "paddingTop": 14,
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Object {
+                "color": "#000",
+                "fontSize": 16,
+              }
+            }
+          >
+            #️⃣
+          </Text>
+          <View
+            style={
+              Array [
+                Object {
+                  "height": 0,
+                  "width": 18,
+                },
+                undefined,
+              ]
+            }
+            w={18}
+          />
+          <Text
+            regular={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  Object {
+                    "flex": 1,
+                  },
+                ],
+              ]
+            }
+          >
+            Magna culpa aliquip nisi in eu Lorem reprehenderit laborum duis. In exercitation exercitation ex irure. Lorem non nostrud laboris consectetur culpa aliquip sunt pariatur velit cillum magna dolor.
+          </Text>
+        </View>
+        <View
+          accessible={true}
+          focusable={false}
+          isTVSelectable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "opacity": 1,
+              "paddingBottom": 10,
+              "paddingLeft": 10,
+              "paddingRight": 10,
+              "paddingTop": 10,
+              "position": "absolute",
+              "right": 8,
+              "top": 7,
+            }
+          }
+        >
+          <View
+            name="rounded-close"
+            style={
+              Array [
+                Object {
+                  "color": "#ededed",
+                  "fontSize": 16,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+      </View>
+    </View>
+  </View>
 </View>
 `;
 
@@ -35170,188 +34676,12 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                       </View>
                     </View>
                     <View
-                      androidStatusbarHeight={42}
-                      opacity={0}
                       style={
-                        Array [
-                          Object {
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                            "left": 0,
-                            "marginTop": 42,
-                            "opacity": 0,
-                            "paddingBottom": 40,
-                            "paddingLeft": 20,
-                            "paddingRight": 20,
-                            "paddingTop": 40,
-                            "position": "absolute",
-                            "top": 0,
-                            "width": "100%",
-                            "zIndex": 1000,
-                          },
-                          Object {
-                            "transform": Array [
-                              Object {
-                                "translateY": -260,
-                              },
-                            ],
-                          },
-                        ]
-                      }
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "opacity": 1,
-                              "position": "relative",
-                            },
-                            Object {
-                              "transform": Array [
-                                Object {
-                                  "scaleY": 1,
-                                },
-                              ],
-                            },
-                          ]
+                        Object {
+                          "height": 0,
                         }
-                      >
-                        <View
-                          accessible={true}
-                          borderRadius={20}
-                          focusable={false}
-                          onClick={[Function]}
-                          onResponderGrant={[Function]}
-                          onResponderMove={[Function]}
-                          onResponderRelease={[Function]}
-                          onResponderTerminate={[Function]}
-                          onResponderTerminationRequest={[Function]}
-                          onStartShouldSetResponder={[Function]}
-                          opacity={1}
-                          style={
-                            Array [
-                              Object {
-                                "backgroundColor": "#FFFFFF",
-                                "borderRadius": 20,
-                                "flexDirection": "column",
-                                "justifyContent": "flex-start",
-                                "opacity": 1,
-                                "width": "100%",
-                              },
-                              Object {},
-                            ]
-                          }
-                        >
-                          <View
-                            onLayout={[Function]}
-                          >
-                            <View
-                              style={
-                                Array [
-                                  Object {
-                                    "alignItems": "flex-start",
-                                    "flexDirection": "row",
-                                    "paddingBottom": 14,
-                                    "paddingLeft": 20,
-                                    "paddingRight": 55,
-                                    "paddingTop": 14,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                            >
-                              <Text
-                                style={
-                                  Object {
-                                    "color": "#000",
-                                    "fontSize": 16,
-                                  }
-                                }
-                              >
-                                👌
-                              </Text>
-                              <View
-                                style={
-                                  Array [
-                                    Object {
-                                      "height": 0,
-                                      "width": 18,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                                w={18}
-                              />
-                              <Text
-                                regular={true}
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#0A1427",
-                                      "fontFamily": "EuclidCircularB-Regular",
-                                      "fontSize": 14,
-                                      "lineHeight": 22,
-                                      "textAlignVertical": "center",
-                                    },
-                                    Array [
-                                      Object {
-                                        "color": "#0A1427",
-                                        "fontFamily": "EuclidCircularB-Medium",
-                                        "fontSize": 14,
-                                        "lineHeight": 22,
-                                        "textAlignVertical": "center",
-                                      },
-                                      Object {
-                                        "flex": 1,
-                                      },
-                                    ],
-                                  ]
-                                }
-                              >
-                                
-                              </Text>
-                            </View>
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "opacity": 1,
-                                  "paddingBottom": 10,
-                                  "paddingLeft": 10,
-                                  "paddingRight": 10,
-                                  "paddingTop": 10,
-                                  "position": "absolute",
-                                  "right": 8,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="rounded-close"
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#ededed",
-                                      "fontSize": 16,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
+                      }
+                    />
                     <Modal
                       animationType="fade"
                       hardwareAccelerated={false}
@@ -36914,188 +36244,12 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                       </View>
                     </View>
                     <View
-                      androidStatusbarHeight={42}
-                      opacity={0}
                       style={
-                        Array [
-                          Object {
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                            "left": 0,
-                            "marginTop": 42,
-                            "opacity": 0,
-                            "paddingBottom": 40,
-                            "paddingLeft": 20,
-                            "paddingRight": 20,
-                            "paddingTop": 40,
-                            "position": "absolute",
-                            "top": 0,
-                            "width": "100%",
-                            "zIndex": 1000,
-                          },
-                          Object {
-                            "transform": Array [
-                              Object {
-                                "translateY": -260,
-                              },
-                            ],
-                          },
-                        ]
-                      }
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "opacity": 1,
-                              "position": "relative",
-                            },
-                            Object {
-                              "transform": Array [
-                                Object {
-                                  "scaleY": 1,
-                                },
-                              ],
-                            },
-                          ]
+                        Object {
+                          "height": 0,
                         }
-                      >
-                        <View
-                          accessible={true}
-                          borderRadius={20}
-                          focusable={false}
-                          onClick={[Function]}
-                          onResponderGrant={[Function]}
-                          onResponderMove={[Function]}
-                          onResponderRelease={[Function]}
-                          onResponderTerminate={[Function]}
-                          onResponderTerminationRequest={[Function]}
-                          onStartShouldSetResponder={[Function]}
-                          opacity={1}
-                          style={
-                            Array [
-                              Object {
-                                "backgroundColor": "#FFFFFF",
-                                "borderRadius": 20,
-                                "flexDirection": "column",
-                                "justifyContent": "flex-start",
-                                "opacity": 1,
-                                "width": "100%",
-                              },
-                              Object {},
-                            ]
-                          }
-                        >
-                          <View
-                            onLayout={[Function]}
-                          >
-                            <View
-                              style={
-                                Array [
-                                  Object {
-                                    "alignItems": "flex-start",
-                                    "flexDirection": "row",
-                                    "paddingBottom": 14,
-                                    "paddingLeft": 20,
-                                    "paddingRight": 55,
-                                    "paddingTop": 14,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                            >
-                              <Text
-                                style={
-                                  Object {
-                                    "color": "#000",
-                                    "fontSize": 16,
-                                  }
-                                }
-                              >
-                                👌
-                              </Text>
-                              <View
-                                style={
-                                  Array [
-                                    Object {
-                                      "height": 0,
-                                      "width": 18,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                                w={18}
-                              />
-                              <Text
-                                regular={true}
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#0A1427",
-                                      "fontFamily": "EuclidCircularB-Regular",
-                                      "fontSize": 14,
-                                      "lineHeight": 22,
-                                      "textAlignVertical": "center",
-                                    },
-                                    Array [
-                                      Object {
-                                        "color": "#0A1427",
-                                        "fontFamily": "EuclidCircularB-Medium",
-                                        "fontSize": 14,
-                                        "lineHeight": 22,
-                                        "textAlignVertical": "center",
-                                      },
-                                      Object {
-                                        "flex": 1,
-                                      },
-                                    ],
-                                  ]
-                                }
-                              >
-                                
-                              </Text>
-                            </View>
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "opacity": 1,
-                                  "paddingBottom": 10,
-                                  "paddingLeft": 10,
-                                  "paddingRight": 10,
-                                  "paddingTop": 10,
-                                  "position": "absolute",
-                                  "right": 8,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="rounded-close"
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#ededed",
-                                      "fontSize": 16,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
+                      }
+                    />
                     <Modal
                       animationType="fade"
                       hardwareAccelerated={false}
@@ -38518,188 +37672,12 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                       </View>
                     </View>
                     <View
-                      androidStatusbarHeight={42}
-                      opacity={0}
                       style={
-                        Array [
-                          Object {
-                            "alignItems": "center",
-                            "justifyContent": "center",
-                            "left": 0,
-                            "marginTop": 42,
-                            "opacity": 0,
-                            "paddingBottom": 40,
-                            "paddingLeft": 20,
-                            "paddingRight": 20,
-                            "paddingTop": 40,
-                            "position": "absolute",
-                            "top": 0,
-                            "width": "100%",
-                            "zIndex": 1000,
-                          },
-                          Object {
-                            "transform": Array [
-                              Object {
-                                "translateY": -260,
-                              },
-                            ],
-                          },
-                        ]
-                      }
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "opacity": 1,
-                              "position": "relative",
-                            },
-                            Object {
-                              "transform": Array [
-                                Object {
-                                  "scaleY": 1,
-                                },
-                              ],
-                            },
-                          ]
+                        Object {
+                          "height": 0,
                         }
-                      >
-                        <View
-                          accessible={true}
-                          borderRadius={20}
-                          focusable={false}
-                          onClick={[Function]}
-                          onResponderGrant={[Function]}
-                          onResponderMove={[Function]}
-                          onResponderRelease={[Function]}
-                          onResponderTerminate={[Function]}
-                          onResponderTerminationRequest={[Function]}
-                          onStartShouldSetResponder={[Function]}
-                          opacity={1}
-                          style={
-                            Array [
-                              Object {
-                                "backgroundColor": "#FFFFFF",
-                                "borderRadius": 20,
-                                "flexDirection": "column",
-                                "justifyContent": "flex-start",
-                                "opacity": 1,
-                                "width": "100%",
-                              },
-                              Object {},
-                            ]
-                          }
-                        >
-                          <View
-                            onLayout={[Function]}
-                          >
-                            <View
-                              style={
-                                Array [
-                                  Object {
-                                    "alignItems": "flex-start",
-                                    "flexDirection": "row",
-                                    "paddingBottom": 14,
-                                    "paddingLeft": 20,
-                                    "paddingRight": 55,
-                                    "paddingTop": 14,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                            >
-                              <Text
-                                style={
-                                  Object {
-                                    "color": "#000",
-                                    "fontSize": 16,
-                                  }
-                                }
-                              >
-                                👌
-                              </Text>
-                              <View
-                                style={
-                                  Array [
-                                    Object {
-                                      "height": 0,
-                                      "width": 18,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                                w={18}
-                              />
-                              <Text
-                                regular={true}
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#0A1427",
-                                      "fontFamily": "EuclidCircularB-Regular",
-                                      "fontSize": 14,
-                                      "lineHeight": 22,
-                                      "textAlignVertical": "center",
-                                    },
-                                    Array [
-                                      Object {
-                                        "color": "#0A1427",
-                                        "fontFamily": "EuclidCircularB-Medium",
-                                        "fontSize": 14,
-                                        "lineHeight": 22,
-                                        "textAlignVertical": "center",
-                                      },
-                                      Object {
-                                        "flex": 1,
-                                      },
-                                    ],
-                                  ]
-                                }
-                              >
-                                
-                              </Text>
-                            </View>
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "opacity": 1,
-                                  "paddingBottom": 10,
-                                  "paddingLeft": 10,
-                                  "paddingRight": 10,
-                                  "paddingTop": 10,
-                                  "position": "absolute",
-                                  "right": 8,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="rounded-close"
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#ededed",
-                                      "fontSize": 16,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
+                      }
+                    />
                     <Modal
                       animationType="fade"
                       hardwareAccelerated={false}

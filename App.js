@@ -114,6 +114,7 @@ type Props = {
 
 class App extends React.Component<Props, *> {
   removeNetInfoEventListener: NetInfoSubscription;
+  offlineToastId: null | string = null;
 
   constructor(props: Props) {
     super(props);
@@ -229,14 +230,18 @@ class App extends React.Component<Props, *> {
     const { updateTranslationResourceOnNetworkChange } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
+
     if (!isOnline) {
-      Toast.show({
-        message: t('toast.userIsOffline'),
-        emoji: 'satellite_antenna',
-        autoClose: false,
-      });
+      if (this.offlineToastId === null) {
+        this.offlineToastId = Toast.show({
+          message: t('toast.userIsOffline'),
+          emoji: 'satellite_antenna',
+          autoClose: false,
+          onClose: () => { this.offlineToastId = null; },
+        });
+      }
     } else {
-      Toast.close();
+      if (this.offlineToastId !== null) Toast.close(this.offlineToastId);
       updateTranslationResourceOnNetworkChange();
     }
   };

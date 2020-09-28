@@ -406,6 +406,8 @@ const homeFlow = createStackNavigator({
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
+  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -374,201 +374,31 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
         </View>
       </View>
       <View
-        androidStatusbarHeight={42}
-        opacity={0}
+        onLayout={[Function]}
+        pointerEvents="box-none"
+        statusBarHeight={42}
         style={
-          Array [
-            Object {
-              "alignItems": "center",
-              "justifyContent": "center",
-              "left": 0,
-              "marginTop": 42,
-              "opacity": 0,
-              "paddingBottom": 40,
-              "paddingLeft": 20,
-              "paddingRight": 20,
-              "paddingTop": 40,
-              "position": "absolute",
-              "top": 0,
-              "width": "100%",
-              "zIndex": 1000,
-            },
-            Object {
-              "transform": Array [
-                Object {
-                  "translateY": -260,
-                },
-              ],
-            },
-          ]
+          Object {
+            "left": 0,
+            "marginTop": 82,
+            "paddingBottom": 0,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 20,
+            "position": "absolute",
+            "top": 0,
+            "width": "100%",
+            "zIndex": 1000,
+          }
         }
       >
         <View
-          onLayout={[Function]}
-          pointerEvents="box-none"
           style={
             Object {
-              "paddingBottom": 0,
-              "paddingLeft": 0,
-              "paddingRight": 0,
-              "paddingTop": 20,
-              "width": "100%",
+              "height": 0,
             }
           }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "opacity": 1,
-                  "position": "relative",
-                },
-                Object {
-                  "transform": Array [
-                    Object {
-                      "scaleY": 1,
-                    },
-                  ],
-                },
-              ]
-            }
-          >
-            <View
-              accessible={true}
-              borderRadius={20}
-              focusable={false}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              opacity={1}
-              style={
-                Array [
-                  Object {
-                    "backgroundColor": "#FFFFFF",
-                    "borderRadius": 20,
-                    "flexDirection": "column",
-                    "justifyContent": "flex-start",
-                    "opacity": 1,
-                    "width": "100%",
-                  },
-                  Object {},
-                ]
-              }
-            >
-              <View
-                onLayout={[Function]}
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "flex-start",
-                        "flexDirection": "row",
-                        "paddingBottom": 14,
-                        "paddingLeft": 20,
-                        "paddingRight": 55,
-                        "paddingTop": 14,
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    style={
-                      Object {
-                        "color": "#000",
-                        "fontSize": 16,
-                      }
-                    }
-                  >
-                    👌
-                  </Text>
-                  <View
-                    style={
-                      Array [
-                        Object {
-                          "height": 0,
-                          "width": 18,
-                        },
-                        undefined,
-                      ]
-                    }
-                    w={18}
-                  />
-                  <Text
-                    regular={true}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "fontSize": 14,
-                          "lineHeight": 22,
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "fontSize": 14,
-                            "lineHeight": 22,
-                            "textAlignVertical": "center",
-                          },
-                          Object {
-                            "flex": 1,
-                          },
-                        ],
-                      ]
-                    }
-                  >
-                    
-                  </Text>
-                </View>
-                <View
-                  accessible={true}
-                  focusable={true}
-                  isTVSelectable={true}
-                  onClick={[Function]}
-                  onResponderGrant={[Function]}
-                  onResponderMove={[Function]}
-                  onResponderRelease={[Function]}
-                  onResponderTerminate={[Function]}
-                  onResponderTerminationRequest={[Function]}
-                  onStartShouldSetResponder={[Function]}
-                  style={
-                    Object {
-                      "opacity": 1,
-                      "paddingBottom": 10,
-                      "paddingLeft": 10,
-                      "paddingRight": 10,
-                      "paddingTop": 10,
-                      "position": "absolute",
-                      "right": 8,
-                      "top": 7,
-                    }
-                  }
-                >
-                  <View
-                    name="rounded-close"
-                    style={
-                      Array [
-                        Object {
-                          "color": "#ededed",
-                          "fontSize": 16,
-                        },
-                        undefined,
-                      ]
-                    }
-                  />
-                </View>
-              </View>
-            </View>
-          </View>
-        </View>
+        />
       </View>
       <Modal
         animationType="fade"

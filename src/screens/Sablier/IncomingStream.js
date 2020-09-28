@@ -148,13 +148,13 @@ class IncomingStream extends React.Component<Props> {
               <TokenIcon source={{ uri: assetIcon }} />
               <Spacing w={12} />
               <Column>
-                <MediumText fontSize={20} lineHeight={20}>{formattedStreamedAmount}
+                <MediumText fontSize={20} lineHeight={20}>{formattedStreamedAmount}{' '}
                   <MediumText regular secondary>
                     {assetData.symbol} {t('ofValue', { value: formattedDeposit })}
                   </MediumText>
                 </MediumText>
                 <BaseText regular>{formattedWithdrawnAmount}
-                  <BaseText secondary> {assetData.symbol} {t('withdrawn')}</BaseText>
+                  <BaseText secondary> {assetData.symbol} {t('sablierContent.label.withdrawn')}</BaseText>
                 </BaseText>
               </Column>
             </Row>

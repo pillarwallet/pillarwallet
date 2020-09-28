@@ -123,7 +123,7 @@ const Withdraw = (props: Props) => {
   };
 
   const onValueChanged = (value: Object) => {
-    if (!value) {
+    if (!value?.input) {
       setWithdrawAmount(0);
       return;
     }
@@ -187,7 +187,9 @@ const Withdraw = (props: Props) => {
         getFormValue={onValueChanged}
         isLoading={isFetchingMaxWithdraw}
       />
-      <BaseText regular secondary center>{t('receiveOnWithdrawal', { token: assetData.symbol })}</BaseText>
+      <BaseText regular secondary center>
+        {t('sablierContent.paragraph.receiveOnWithdrawal', { token: assetData.symbol })}
+      </BaseText>
     </ContainerWithHeader>
   );
 };
