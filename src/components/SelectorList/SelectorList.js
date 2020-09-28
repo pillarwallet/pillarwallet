@@ -30,7 +30,7 @@ import { Wrapper } from 'components/Layout';
 
 type Value = string | number
 
-type Option = {
+export type Option = {
   id: string,
   label: string,
   valueToShow: string,
