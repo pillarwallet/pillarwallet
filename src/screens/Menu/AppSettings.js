@@ -86,6 +86,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   devices: ConnectedDevice[],
   activeDeviceAddress: string,
+  sessionLanguageCode: ?string,
 };
 
 type State = {
@@ -176,6 +177,7 @@ class AppSettings extends React.Component<Props, State> {
       navigation,
       devices,
       activeDeviceAddress,
+      sessionLanguageCode,
     } = this.props;
 
     const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
@@ -188,7 +190,7 @@ class AppSettings extends React.Component<Props, State> {
         key: 'language',
         title: t('settingsContent.settingsItem.language.title'),
         onPress: () => this.setState({ visibleModal: MODAL.LANGUAGES }),
-        value: getLanguageFullName(localisation?.activeLngCode || localeConfig.defaultLanguage),
+        value: getLanguageFullName(localisation?.activeLngCode || sessionLanguageCode || localeConfig.defaultLanguage),
         hidden: !localeConfig.isEnabled && Object.keys(localeConfig.supportedLanguages).length <= 1,
       },
       {
@@ -388,6 +390,7 @@ const mapStateToProps = ({
   },
   smartWallet: { connectedAccount: { activeDeviceAddress } },
   connectedDevices: { data: devices },
+  session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
@@ -395,6 +398,7 @@ const mapStateToProps = ({
   localisation,
   activeDeviceAddress,
   devices,
+  sessionLanguageCode,
 });
 
 const structuredSelector = createStructuredSelector({

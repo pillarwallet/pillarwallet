@@ -141,6 +141,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
 
 // constants
 import {
@@ -787,6 +788,7 @@ type Props = {
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
+  handleSystemLanguageChange: () => void,
 }
 
 type State = {
@@ -874,6 +876,7 @@ class AppFlow extends React.Component<Props, State> {
       isBrowsingWebView,
       endWalkthrough,
       handleSystemDefaultThemeChange,
+      handleSystemLanguageChange,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -889,6 +892,7 @@ class AppFlow extends React.Component<Props, State> {
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
+      handleSystemLanguageChange();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -966,6 +970,7 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

@@ -18,6 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { UPDATE_SESSION } from 'constants/sessionConstants';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
+import { changeLanguageAction } from 'actions/localisationActions';
+import localeConfig from 'configs/localeConfig';
+
 
 export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
   type: UPDATE_SESSION,
@@ -42,5 +47,23 @@ export const setSessionLanguageAction = (languageCode: string) => {
   return {
     type: UPDATE_SESSION,
     payload: { sessionLanguageCode: languageCode },
+  };
+};
+
+export const handleSystemLanguageChangeAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: { data: { sessionLanguageCode } },
+      appSettings: { data: { localisation } },
+    } = getState();
+
+    // should not react to device language changes if localisation is not enabled
+    // or user has language selected in settings
+    if (!localeConfig.isEnabled || localisation?.activeLngCode) return;
+
+    const deviceLanguage = getDefaultSupportedUserLanguage();
+    if (sessionLanguageCode === deviceLanguage) return;
+
+    dispatch(changeLanguageAction(deviceLanguage));
   };
 };
