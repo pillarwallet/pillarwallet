@@ -39,6 +39,7 @@ import { changeLanguageAction } from 'actions/localisationActions';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import Modal from 'components/Modal';
 
 // constants
 import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
@@ -102,7 +103,7 @@ type Props = {
 
 type State = {
   visibleModal: ?string,
-  showRelayerMigrationModal: boolean,
+  isAfterRelayerMigration: boolean,
 };
 
 const StyledWrapper = styled(Wrapper)`
@@ -140,7 +141,7 @@ const languages = Object.keys(localeConfig.supportedLanguages)
 class AppSettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
-    showRelayerMigrationModal: false,
+    isAfterRelayerMigration: false,
   };
 
   renderListItem = (
@@ -218,7 +219,7 @@ class AppSettings extends React.Component<Props, State> {
         value: preferredGasToken === PLR,
         onPress: () => {
           if (showRelayerMigration) {
-            this.setState({ showRelayerMigrationModal: true });
+            this.openRelayerMigrationModal();
             return;
           }
           setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
@@ -266,27 +267,32 @@ class AppSettings extends React.Component<Props, State> {
     }
   };
 
+  openRelayerMigrationModal = () => {
+    const { accountAssets, accountHistory } = this.props;
+
+    Modal.open(() => (
+      <RelayerMigrationModal
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+        onMigrated={() => this.setState({ isAfterRelayerMigration: true })}
+      />
+    ));
+  }
+
   componentDidUpdate(prevProps: Props) {
     const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
-    const { showRelayerMigrationModal } = this.state;
-    if (prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported && showRelayerMigrationModal) {
+    const gasTokenBecameSupported = prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported;
+
+    if (gasTokenBecameSupported && this.state.isAfterRelayerMigration) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ showRelayerMigrationModal: false });
+      this.setState({ isAfterRelayerMigration: false });
       setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
     }
   }
 
   render() {
-    const {
-      optOutTracking,
-      isSmartAccount,
-      isGasTokenSupported,
-      accountAssets,
-      accountHistory,
-    } = this.props;
-    const { visibleModal, showRelayerMigrationModal } = this.state;
-
-    const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
+    const { optOutTracking } = this.props;
+    const { visibleModal } = this.state;
 
     return (
       <ContainerWithHeader
@@ -359,16 +365,6 @@ class AppSettings extends React.Component<Props, State> {
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
         </SlideModal>
 
-        {/* RELAYER GAS FEE ACTIVATION MODAL */}
-        {showRelayerMigration &&
-          <RelayerMigrationModal
-            isVisible={showRelayerMigrationModal}
-            onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
-            accountAssets={accountAssets}
-            accountHistory={accountHistory}
-          />
-        }
-
         {/* LANGUAGES */}
         <SlideModal
           isVisible={visibleModal === MODAL.LANGUAGES}
@@ -384,7 +380,6 @@ class AppSettings extends React.Component<Props, State> {
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
-
       </ContainerWithHeader>
     );
   }

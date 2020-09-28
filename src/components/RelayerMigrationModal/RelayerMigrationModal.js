@@ -32,7 +32,7 @@ import { switchToGasTokenRelayerAction } from 'actions/smartWalletActions';
 // components
 import { Spacing } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 
 // constants
@@ -44,44 +44,51 @@ import { TX_PENDING_STATUS } from 'constants/historyConstants';
 import { spacing } from 'utils/variables';
 
 // types
-import type { Theme } from 'models/Theme';
 import type { Assets } from 'models/Asset';
 import type { Dispatch } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 
-
-type Props = {
-  isVisible: boolean,
-  onModalHide: (callback: () => void) => void,
-  theme: Theme,
+type DispatchProps = {|
   switchToGasTokenRelayer: () => void,
+|};
+
+type OwnProps = {|
   accountAssets: Assets,
   accountHistory: Transaction[],
-};
+  onMigrated?: () => void,
+|};
 
-type State = {
+type Props = {|
+  ...DispatchProps,
+  ...OwnProps,
+|};
+
+type State = {|
   switchPressed: boolean,
-};
+|};
 
 const ModalContainer = styled.View`
   padding: 20px ${spacing.layoutSides}px 40px;
 `;
 
 class RelayerMigrationModal extends React.PureComponent<Props, State> {
+  modalRef = React.createRef();
+
   state = {
     switchPressed: false,
   };
 
   onSwitchPress = () => {
     this.setState({ switchPressed: true }, () => {
-      this.props.switchToGasTokenRelayer();
+      const { switchToGasTokenRelayer, onMigrated } = this.props;
+      switchToGasTokenRelayer();
+      if (onMigrated) onMigrated();
+      if (this.modalRef.current) this.modalRef.current.close();
     });
   };
 
   render() {
     const {
-      isVisible,
-      onModalHide,
       accountAssets,
       accountHistory,
     } = this.props;
@@ -96,10 +103,10 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
     const subtitle = switchPressed || isSwitchPending
       ? t('relayerMigrationContent.modal.switch.label.switchPending')
       : t('relayerMigrationContent.modal.switch.label.freeSwitching');
+
     return (
       <SlideModal
-        isVisible={isVisible}
-        onModalHide={onModalHide}
+        ref={this.modalRef}
         hideHeader
       >
         <SafeAreaView forceInset={{ top: 'never', bottom: 'always' }}>
@@ -130,8 +137,8 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   switchToGasTokenRelayer: () => dispatch(switchToGasTokenRelayerAction()),
 });
 
-export default connect(null, mapDispatchToProps)(RelayerMigrationModal);
+export default (connect(null, mapDispatchToProps)(RelayerMigrationModal): React.AbstractComponent<OwnProps>);

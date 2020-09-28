@@ -33,6 +33,7 @@ import { Label, BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { Spacing } from 'components/Layout';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
+import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -99,7 +100,6 @@ const FeeLabelToggle = ({
   notEnoughToken,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
-  const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
 
   if (isLoading) {
     return <Spinner width={20} height={20} />;
@@ -118,6 +118,16 @@ const FeeLabelToggle = ({
     firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR) &&
     !isGasTokenSupported;
 
+  const openRelayerMigrationModal = () => {
+    if (!showRelayerMigration) return;
+    Modal.open(() => (
+      <RelayerMigrationModal
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+      />
+    ));
+  };
+
   return (
     <LabelWrapper >
       <Label>{labelText || t('label.estimatedFee')}&nbsp;</Label>
@@ -127,16 +137,10 @@ const FeeLabelToggle = ({
       </FeePill>
       <Spacing w={8} />
       {showRelayerMigration && (
-        <BaseText small link onPress={() => setShowRelayerMigrationModal(true)}>
+        <BaseText small link onPress={openRelayerMigrationModal}>
           {t('label.payWithPLR')} <Emoji name="ok_hand" style={{ fontSize: 12 }} />
         </BaseText>
       )}
-      <RelayerMigrationModal
-        isVisible={showRelayerMigrationModal}
-        onModalHide={() => setShowRelayerMigrationModal(false)}
-        accountAssets={accountAssets}
-        accountHistory={accountHistory}
-      />
     </LabelWrapper>
   );
 };
