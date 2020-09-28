@@ -1475,10 +1475,10 @@
   },
 
   "notification": {
-    "transactionReceivedPending": "{{paymentInfo}} is coming shortly.",
-    "transactionReceivedConfirmed": "{{paymentInfo}} received.",
-    "transactionSentPending": "{{paymentInfo}} is being sent.",
-    "transactionSentConfirmed": "{{paymentInfo}} is coming shortly.",
+    "transactionReceivedPending": "{{tokenValue}} is coming shortly.",
+    "transactionReceivedConfirmed": "{{tokenValue}} received.",
+    "transactionSentPending": "{{tokenValue}} is being sent.",
+    "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received a collectible.",
     "collectibleSentAndReceived": "Your collectible has been received."
   }

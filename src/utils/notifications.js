@@ -113,29 +113,29 @@ export const getToastNotification = (data: mixed, myEthAddress: string): null | 
       toAddress,
     } = notification;
 
-    const paymentInfo = t('tokenValue', {
+    const tokenValue = t('tokenValue', {
       value: utils.formatUnits(EthersBigNumber.from(value.toString()), decimals),
       token: asset,
     });
 
     if (isSameAddress(toAddress, myEthAddress) && status === 'pending') {
       return {
-        message: t('notification.transactionReceivedPending', { paymentInfo }),
+        message: t('notification.transactionReceivedPending', { tokenValue }),
         emoji: 'ok_hand',
       };
     } else if (isSameAddress(toAddress, myEthAddress) && status === 'confirmed') {
       return {
-        message: t('notification.transactionReceivedConfirmed', { paymentInfo }),
+        message: t('notification.transactionReceivedConfirmed', { tokenValue }),
         emoji: 'ok_hand',
       };
     } else if (isSameAddress(fromAddress, myEthAddress) && status === 'pending') {
       return {
-        message: t('notification.transactionSentPending', { paymentInfo }),
+        message: t('notification.transactionSentPending', { tokenValue }),
         emoji: 'ok_hand',
       };
     } else if (isSameAddress(fromAddress, myEthAddress) && status === 'confirmed') {
       return {
-        message: t('notification.transactionSentConfirmed', { paymentInfo }),
+        message: t('notification.transactionSentConfirmed', { tokenValue }),
         emoji: 'ok_hand',
       };
     }

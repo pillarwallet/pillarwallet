@@ -21,7 +21,7 @@ import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SHOW_HOME_UPDATE_INDICATOR,
-  CLEAR_HOME_UPDATE_INDICATOR,
+  HIDE_HOME_UPDATE_INDICATOR,
 } from 'constants/notificationConstants';
 import type { Notification } from 'models/Notification';
 
@@ -46,7 +46,7 @@ type ShowHomeIndicatorAction = {
 };
 
 type ClearHomeIndicatorAction = {
-  type: typeof CLEAR_HOME_UPDATE_INDICATOR,
+  type: typeof HIDE_HOME_UPDATE_INDICATOR,
 };
 
 type NotificationsReducerAction =
@@ -72,7 +72,7 @@ export default function notificationsReducer(
       return { ...state, data: [...state.data, action.notification] };
     case SHOW_HOME_UPDATE_INDICATOR:
       return { ...state, showHomeUpdateIndicator: true };
-    case CLEAR_HOME_UPDATE_INDICATOR:
+    case HIDE_HOME_UPDATE_INDICATOR:
       return { ...state, showHomeUpdateIndicator: false };
     default:
       return state;

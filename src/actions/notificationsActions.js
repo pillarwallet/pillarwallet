@@ -37,7 +37,7 @@ import {
   ADD_NOTIFICATION,
   UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
   SHOW_HOME_UPDATE_INDICATOR,
-  CLEAR_HOME_UPDATE_INDICATOR,
+  HIDE_HOME_UPDATE_INDICATOR,
   BCX,
   COLLECTIBLE,
   BADGE,
@@ -120,13 +120,14 @@ export const stopListeningIntercomNotificationsAction = () => {
 };
 
 export const showHomeUpdateIndicatorAction = () => ({ type: SHOW_HOME_UPDATE_INDICATOR });
-export const clearHomeIndicatorAction = () => ({ type: CLEAR_HOME_UPDATE_INDICATOR });
+export const hideHomeUpdateIndicatorAction = () => ({ type: HIDE_HOME_UPDATE_INDICATOR });
 
 export const fetchAllNotificationsAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkForMissedAssetsAction());
     dispatch(fetchSmartWalletTransactionsAction());
     dispatch(fetchAllCollectiblesDataAction());
+    dispatch(fetchAssetsBalancesAction());
   };
 };
 
