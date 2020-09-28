@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
@@ -29,7 +30,7 @@ import t from 'translations/translate';
 import { ETH } from 'constants/assetsConstants';
 
 // components
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
@@ -42,16 +43,16 @@ import { images } from 'utils/images';
 
 import type { EnableData } from './ExchangeOffers';
 
-
-type Props = {
+type OwnProps = {|
   onModalHide: () => void,
-  onConfirm: (status: ?string) => void,
-  isVisible: boolean,
   onEnable: () => void,
   enableData: EnableData,
-  theme: Theme,
-};
+|};
 
+type Props = {|
+  ...OwnProps,
+  theme: Theme,
+|};
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -75,10 +76,11 @@ const AssetEnableModal = (props: Props) => {
   const {
     onModalHide,
     onEnable,
-    isVisible,
     enableData,
     theme,
   } = props;
+
+  const modalRef = useRef();
 
   if (!enableData) {
     return null;
@@ -97,14 +99,14 @@ const AssetEnableModal = (props: Props) => {
   const { genericToken: fallbackSource } = images(theme);
   return (
     <SlideModal
-      isVisible={isVisible}
+      ref={modalRef}
       onModalHide={onModalHide}
       noClose
-      headerProps={{
+      headerProps={({
         centerItems: [{ title: t('exchangeContent.modal.enableAsset.title', { asset: assetSymbol }) }],
-        sideFlex: '0',
-        wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
-      }}
+          sideFlex: '0',
+          wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
+      }: $FlowFixMe)}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <AssetImage
@@ -120,7 +122,10 @@ const AssetEnableModal = (props: Props) => {
             ? t('label.notEnoughToken', { token: ETH })
             : t('exchangeContent.modal.enableAsset.button.enable')
           }
-          onPress={onEnable}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+            onEnable();
+          }}
           regularText
           style={{ marginBottom: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
@@ -135,4 +140,4 @@ const AssetEnableModal = (props: Props) => {
   );
 };
 
-export default withTheme(AssetEnableModal);
+export default (withTheme(AssetEnableModal): AbstractComponent<OwnProps>);
