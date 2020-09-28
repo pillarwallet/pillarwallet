@@ -301,6 +301,14 @@ export const connectSmartWalletAccountAction = (
     }
 
     if (setAccountActive) dispatch(setActiveAccountAction(accountId));
+
+    // sync deployed account state
+    const connectedAccountState = connectedAccount?.state;
+    const currentUpgradeStatus = getState().smartWallet.upgrade?.status;
+    if (currentUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE
+      && connectedAccountState === sdkConstants.AccountStates.Deployed) {
+      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
+    }
   };
 };
 
