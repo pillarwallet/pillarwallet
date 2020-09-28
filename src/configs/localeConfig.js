@@ -37,7 +37,7 @@ const DEFAULT_NAMESPACE = 'common';
 
 export default {
   isEnabled: true,
-  baseUrl: 'http://pillar-stories.dev.imas.lt/locales/', // todo: change into real one;
+  baseUrl: __DEV__ ? null : 'http://pillar-stories.dev.imas.lt/locales/', // todo: change into real one;
   defaultLanguage: DEFAULT_LANGUAGE_CODE,
   // pairs of language code and language name in native language
   supportedLanguages: {
