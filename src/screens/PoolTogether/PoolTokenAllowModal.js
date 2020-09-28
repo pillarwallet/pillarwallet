@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import t from 'translations/translate';
@@ -28,7 +29,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { DAI } from 'constants/assetsConstants';
 
 // components
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
@@ -47,16 +48,16 @@ export type AllowData = {
   feeToken: string,
 };
 
-type Props = {
+type OwnProps = {|
   onModalHide: () => void,
-  onConfirm: (status: ?string) => void,
-  isVisible: boolean,
-  manageContactType: string,
   onAllow: () => void,
   allowData: AllowData,
-  theme: Theme,
-};
+|};
 
+type Props = {|
+  ...OwnProps,
+  theme: Theme,
+|};
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -90,10 +91,11 @@ const PoolTokenAllowModal = (props: Props) => {
   const {
     onModalHide,
     onAllow,
-    isVisible,
     allowData,
     theme,
   } = props;
+
+  const modalRef = useRef();
 
   if (!allowData) {
     return null;
@@ -112,14 +114,14 @@ const PoolTokenAllowModal = (props: Props) => {
 
   return (
     <SlideModal
-      isVisible={isVisible}
+      ref={modalRef}
       onModalHide={onModalHide}
       noClose
-      headerProps={{
+      headerProps={({
         centerItems: [{ title: t('poolTogetherContent.title.authorizePoolTogether') }],
-        sideFlex: '0',
-        wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
-      }}
+          sideFlex: '0',
+          wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
+      }: $FlowFixMe)}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <ContentRow>
@@ -140,7 +142,10 @@ const PoolTokenAllowModal = (props: Props) => {
         <Button
           secondary
           title={isDisabled ? t('label.notEnoughToken', { token: feeToken }) : t('button.enable')}
-          onPress={onAllow}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+            onAllow();
+          }}
           regularText
           style={{ marginBottom: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
@@ -155,4 +160,4 @@ const PoolTokenAllowModal = (props: Props) => {
   );
 };
 
-export default withTheme(PoolTokenAllowModal);
+export default (withTheme(PoolTokenAllowModal): AbstractComponent<OwnProps>);
