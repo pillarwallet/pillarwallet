@@ -20,21 +20,19 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
 import {
   setAppThemeAction,
-  saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
 import { getLanguageFullName } from 'services/localisation/translations';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
+import { ScrollWrapper } from 'components/Layout';
 import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
 import Modal from 'components/Modal';
 
@@ -45,9 +43,7 @@ import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 
 // utils
-import { spacing, fontStyles, fontTrackings } from 'utils/variables';
-import { BaseText } from 'components/Typography';
-import Checkbox from 'components/Checkbox';
+import { spacing } from 'utils/variables';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import localeConfig from 'configs/localeConfig';
@@ -77,13 +73,12 @@ import type { ConnectedDevice } from 'models/ConnectedDevice';
 import { SettingsSection } from './SettingsSection';
 import BaseFiatCurrencyModal from './BaseFiatCurrencyModal';
 import LanguageModal from './LanguageModal';
+import AnalyticsModal from './AnalyticsModal';
 
 type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
-  optOutTracking: boolean,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
-  saveOptOutTracking: (status: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
   isSmartAccount: boolean,
@@ -102,39 +97,14 @@ type State = {
   isAfterRelayerMigration: boolean,
 };
 
-const StyledWrapper = styled(Wrapper)`
-  justify-content: space-between;
-  padding-bottom: ${spacing.rhythm}px;
-  margin-top: ${spacing.medium}px;
-`;
-
-const SmallText = styled(BaseText)`
-  ${fontStyles.regular};
-  margin-top: 2px;
-  letter-spacing: ${fontTrackings.small}px;
-`;
-
-const CheckboxText = styled(BaseText)`
-  ${fontStyles.medium};
-  margin-top: 2px;
-  letter-spacing: ${fontTrackings.small}px;
-  margin-bottom: ${spacing.medium}px;
-`;
-
 const MODAL = {
   SYSTEM_INFO: 'systemInfo',
-  ANALYTICS: 'analytics',
 };
 
 class AppSettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
     isAfterRelayerMigration: false,
-  };
-
-  handleToggleOptOutTracking = () => {
-    const { saveOptOutTracking, optOutTracking } = this.props;
-    saveOptOutTracking(!optOutTracking);
   };
 
   getItems = () => {
@@ -203,9 +173,9 @@ class AppSettings extends React.Component<Props, State> {
         },
       },
       {
-        key: MODAL.ANALYTICS,
+        key: 'analytics',
         title: t('settingsContent.settingsItem.analytics.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.ANALYTICS }),
+        onPress: this.openAnalyticsModal,
       },
       {
         key: MODAL.SYSTEM_INFO,
@@ -231,6 +201,8 @@ class AppSettings extends React.Component<Props, State> {
     ));
   }
 
+  openAnalyticsModal = () => Modal.open(() => <AnalyticsModal />)
+
   componentDidUpdate(prevProps: Props) {
     const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
     const gasTokenBecameSupported = prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported;
@@ -243,7 +215,6 @@ class AppSettings extends React.Component<Props, State> {
   }
 
   render() {
-    const { optOutTracking } = this.props;
     const { visibleModal } = this.state;
 
     return (
@@ -260,34 +231,6 @@ class AppSettings extends React.Component<Props, State> {
             sectionItems={this.getItems()}
           />
         </ScrollWrapper>
-
-        {/* ANALYTICS */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.ANALYTICS}
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-          avoidKeyboard
-          title={t('settingsContent.settingsItem.analytics.title')}
-          insetTop
-        >
-          <Wrapper regularPadding flex={1}>
-            <StyledWrapper>
-              <Checkbox
-                checked={!optOutTracking}
-                onPress={() => this.handleToggleOptOutTracking()}
-                wrapperStyle={{ marginBottom: spacing.large }}
-              >
-                <CheckboxText>
-                  {t('settingsContent.settingsItem.analytics.paragraph.agreeSharingInfo')}
-                </CheckboxText>
-              </Checkbox>
-              <SmallText>
-                {t('settingsContent.settingsItem.analytics.paragraph.legal')}
-              </SmallText>
-            </StyledWrapper>
-          </Wrapper>
-        </SlideModal>
 
         {/* SYSTEM INFO MODAL */}
         <SlideModal
@@ -310,7 +253,6 @@ const mapStateToProps = ({
     data: {
       baseFiatCurrency,
       themeType,
-      optOutTracking = false,
       localisation,
     },
   },
@@ -320,7 +262,6 @@ const mapStateToProps = ({
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
-  optOutTracking,
   localisation,
   activeDeviceAddress,
   devices,
@@ -344,7 +285,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => dispatch(
     setAppThemeAction(themeType, isManualThemeSelection),
   ),
-  saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
 });
 
