@@ -274,7 +274,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
 
 
     const customBalances = syntheticAssets
-      .map(asset => ({ symbol: asset.symbol || '', balance: asset.balance?.syntheticBalance?.balance || '0' }))
+      .map(asset => ({ symbol: asset.symbol || '', balance: asset.balance?.syntheticBalance || '0' }))
       .reduce((balances, assetBalance) => {
         balances[assetBalance.symbol] = assetBalance;
         return balances;
@@ -290,7 +290,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
         }}
         customValueSelectorProps={{
          onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
-         onValueChange: (newValue) => this.handleAssetValueSelect(newValue, assetData),
+         onValueChange: (newValue) => this.setState({ value: newValue }),
          assetData: assetData || defaultAssetData,
          value,
          customAssets: syntheticAssets,
