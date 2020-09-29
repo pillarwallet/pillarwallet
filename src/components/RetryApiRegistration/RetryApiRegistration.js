@@ -60,7 +60,7 @@ const RetryApiRegistration = ({
     {!!isRegisteringUser && <Loader messages={[t('auth:loadingMessage.registering')]} />}
     {!isRegisteringUser && (
       <>
-        <Text>Registration failed</Text>
+        <Text>{t('auth:label.registrationFailed')}</Text>
         <Button title={t('auth:button.tryAgain')} onPress={finishOnboarding} />
       </>
     )}

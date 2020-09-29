@@ -108,7 +108,7 @@ export const setupUserAction = (username: string, recoveryData?: Object) => {
       const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
 
       if (!!sdkWallet?.error || !sdkWallet?.walletId) {
-        const error = sdkWallet?.reason || 'default'; // TODO: default error message?
+        const error = sdkWallet?.reason || t('auth:error.registrationApiFailedWithNoReason');
         reportLog('setupUserAction user registration failed', { error });
         dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
         return;

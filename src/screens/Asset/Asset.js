@@ -84,7 +84,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // local components
 import ReceiveModal from './ReceiveModal';
 
-
 const RECEIVE = 'RECEIVE';
 
 const activeModalResetState = {
@@ -452,7 +451,7 @@ class AssetScreen extends React.Component<Props, State> {
               noBalance={isWalletEmpty}
               isSendDisabled={!isSendActive}
               isReceiveDisabled={!isReceiveActive}
-              showButtons={isSynthetic ? ['receive'] : undefined}
+              showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
             />
             {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>

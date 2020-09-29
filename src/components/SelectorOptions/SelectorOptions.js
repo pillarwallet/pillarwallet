@@ -413,7 +413,7 @@ class SelectorOptions extends React.Component<Props, State> {
     const emptyStateMessage = allowEnteringCustomAddress ? t('error.invalid.address') : t('label.nothingFound');
 
     const extendedHeaderItems = {
-      value: 'extendedHeaderItems',
+      value: 'extendedHeaderItems', /* eslint-disable-line i18next/no-literal-string */
       component: (
         <>
           {this.renderHorizontalOptions(filteredHorizontalOptionsData)}

@@ -351,7 +351,7 @@ export const selectorStructure = (
       if (showErrorMessageWithBalance) {
         return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance, token: symbol });
       }
-      return t('error.amount', { token: symbol });
+      return t('error.amount.notEnoughToken', { token: symbol });
     } else if (amount < MIN_TX_AMOUNT) {
       return t('error.amount.shouldBeGreaterThan1Wei');
     } else if (decimals === 0 && amount.toString().includes('.')) {

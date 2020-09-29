@@ -19,6 +19,7 @@
 */
 
 import t from 'translations/translate';
+import omit from 'lodash.omit';
 
 // constants
 import {
@@ -29,12 +30,13 @@ import {
   UPDATE_USER,
   USER_PHONE_VERIFIED,
   USER_EMAIL_VERIFIED,
+  SET_USER,
 } from 'constants/userConstants';
 import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { OTP_DIGITS } from 'constants/referralsConstants';
 
 // utils
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { isCaseInsensitiveMatch, reportLog } from 'utils/common';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
@@ -121,11 +123,11 @@ export const createOneTimePasswordAction = (
       if (callback) callback();
     } else {
       dispatch(resetOneTimePasswordAction());
-      const fieldName = field.smsNotification ? 'phone' : 'email';
+      const fieldName = field.smsNotification ? 'phone' : 'email'; // eslint-disable-line i18next/no-literal-string
       dispatch({
         type: ADD_NOTIFICATION,
         payload: {
-          message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.title.default']),
+          message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.default']),
           emoji: 'hushed',
           messageType: 'warning',
         },
@@ -250,5 +252,38 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
     });
 
     dispatch(logEventAction('avatar_updated'));
+  };
+};
+
+export const deleteUserAvatarAction = () => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const user = getState().user.data;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('deleteUserAvatarAction failed: unable to get walletId', { user });
+      return;
+    }
+
+    const success = await api.deleteUserAvatar(walletId);
+
+    if (success) {
+      const updatedUser = {
+        ...omit(user, 'profileImage'), // eslint-disable-line i18next/no-literal-string
+        lastUpdateTime: +new Date(),
+      };
+
+      dispatch(saveDbAction('user', { user: updatedUser }, true));
+      dispatch({ type: SET_USER, payload: updatedUser });
+    } else {
+      dispatch({
+        type: ADD_NOTIFICATION,
+        payload: {
+          message: t('toast.failedToDeleteAvatar'),
+          emoji: 'hushed',
+          messageType: 'warning',
+        },
+      });
+    }
   };
 };

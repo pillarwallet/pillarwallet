@@ -48,6 +48,10 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 
+import t from 'translations/translate';
+
+/* eslint-disable i18next/no-literal-string */
+
 const ethProvider = () => {
   return getEthereumProvider(getEnv().NETWORK_PROVIDER);
 };
@@ -75,7 +79,7 @@ export const get1inchOffer = async (
   const url =
     `${EXCHANGE_URL}/quote?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}&amount=${amount}`;
 
-  const response = await getResponseData(url);
+  const response = await getResponseData(url, 'Failed to fetch 1inch offer');
   if (!response) return null;
 
   const allowanceSet = await getAllowanceSet(clientAddress, safeFromAddress, fromAsset);
@@ -107,7 +111,8 @@ export const create1inchOrder = async (
     `${EXCHANGE_URL}/swap?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}` +
     `&amount=${amount}&disableEstimate=true&slippage=3&fromAddress=${clientSendAddress}`;
 
-  const response = await getResponseData(url);
+  const response = await getResponseData(url, 'Failed to create 1inch order', t('toast.failedToCreateOrder'));
+
   if (!response) return null;
   const txCount = await ethProvider().getTransactionCount(clientSendAddress);
 

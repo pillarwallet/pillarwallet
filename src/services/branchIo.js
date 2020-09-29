@@ -30,14 +30,16 @@ export const getUserReferralLink = async (
   data: LinkMetadata,
 ): Promise<string> => {
   const branchIoUniversalObject = await branch.createBranchUniversalObject(
-    `${inviterWalletId}-referral-link-${+new Date()}`,
+    `${inviterWalletId}-referral-link-${+new Date()}`, // eslint-disable-line i18next/no-literal-string
     { contentMetadata: { customMetadata: { ...data, inviterWalletId } } },
   );
 
+  /* eslint-disable i18next/no-literal-string */
   const result = await branchIoUniversalObject.generateShortUrl({
     feature: 'referral',
     channel: 'app',
   });
+  /* eslint-enable i18next/no-literal-string */
 
   return result.url;
 };

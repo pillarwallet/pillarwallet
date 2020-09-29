@@ -96,7 +96,7 @@ const SWActivationModal = ({
   const paidByPillar = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SMART_WALLET_ACTIVATION_PAID_BY_PILLAR);
 
   useEffect(() => {
-    if (!paidByPillar) {
+    if (!paidByPillar && isVisible) {
       estimateSmartWalletDeployment();
     }
   }, [isVisible]);

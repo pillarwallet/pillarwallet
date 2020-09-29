@@ -123,7 +123,7 @@ const KeyBasedAssetTransferConfirm = ({
             txFeeInWei={totalTransferFeeWeiBN}
             showFiatDefault={!notEnoughFee}
           />
-          {!!notEnoughFee && <NotEnoughFee negative>Not enough ETH left for transaction fee</NotEnoughFee>}
+          {!!notEnoughFee && <NotEnoughFee negative>{t('error.notEnoughTokenForFee', { token: ETH })}</NotEnoughFee>}
           <Button
             style={{ marginTop: spacing.large }}
             disabled={!!notEnoughFee}

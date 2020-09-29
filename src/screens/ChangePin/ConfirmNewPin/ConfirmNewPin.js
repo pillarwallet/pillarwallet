@@ -98,7 +98,7 @@ const ConfirmNewPin = ({
   if (pinSuccessfullyChanged) {
     return (
       <Container center>
-        <BaseText style={{ marginBottom: 20 }}>Pin changed!</BaseText>
+        <BaseText style={{ marginBottom: 20 }}>{t('label.pinChanged', { exclamation: true })}</BaseText>
         <Button title={t('button.continue')} onPress={() => navigation.navigate(MENU)} />
       </Container>
     );

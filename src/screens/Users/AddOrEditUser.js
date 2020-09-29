@@ -23,6 +23,7 @@ import { Platform, TouchableOpacity, View, TouchableWithoutFeedback } from 'reac
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
+import ImagePicker from 'react-native-image-crop-picker';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import tForm from 'tcomb-form-native';
@@ -45,6 +46,7 @@ import Button from 'components/Button';
 import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
+import Toast from 'components/Toast';
 
 // utils
 import { spacing, appFont, fontSizes, lineHeights } from 'utils/variables';
@@ -53,11 +55,13 @@ import { themedColors, getThemeColors } from 'utils/themes';
 import { getEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
+import { reportLog } from 'utils/common';
 
 // actions
-import { updateUserAction } from 'actions/userActions';
+import { updateUserAction, deleteUserAvatarAction, updateUserAvatarAction } from 'actions/userActions';
 import { dismissPrivacyInsightAction, dismissVerificationNoteAction } from 'actions/insightsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { handleImagePickAction } from 'actions/appSettingsActions';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -68,6 +72,8 @@ import VerifyOTPModal from './VerifyOTPModal';
 import CautionModal from './CautionModal';
 import VerifiedModal from './VerifiedModal';
 import InviteBanner from './InviteBanner';
+import ProfileImageModal from './ProfileImageModal';
+import DeleteAvatarModal from './DeleteAvatarModal';
 
 
 type Props = {
@@ -83,16 +89,32 @@ type Props = {
   dismissVerificationNote: () => void,
   goToInvitationFlow: () => void,
   isPillarRewardCampaignActive: boolean,
+  deleteUserAvatar: () => void,
+  updateUserAvatar: (walletId: string, formData: any) => void,
+  handleImagePick: (isPickingImage: boolean) => void,
 };
 
 type State = {
   permissionsGranted: boolean,
-  visibleModal: string,
+  showCamera: boolean,
   verifyingField: ?string,
   focusedField: ?string,
   value: Object,
   cautionModalField: ?string,
   verifiedModalField: ?string,
+  showProfileImageModal: boolean,
+  showDeleteAvatarModal: boolean,
+};
+
+
+const VISIBLE_CAUTION_MODAL = {
+  PHONE: 'phone',
+  EMAIL: 'email',
+};
+
+const FIELD_NAME = {
+  PHONE: 'phone',
+  EMAIL: 'email',
 };
 
 const RootContainer = styled.View`
@@ -206,7 +228,11 @@ const ProfileFormTemplate = (locals: Object) => {
 
     if (isVerified) {
       sideComponent = (
-        <LabelBadge positive labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }} label="Verified" />
+        <LabelBadge
+          positive
+          labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }}
+          label={t('label.verified')}
+        />
       );
     } else {
       const buttonTitle = fieldDisplayValue ? t('button.verify') : t('button.add');
@@ -326,11 +352,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.state = {
       verifyingField: null,
       permissionsGranted: false,
-      visibleModal: '',
+      showCamera: false,
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
       verifiedModalField: null,
+      showProfileImageModal: false,
+      showDeleteAvatarModal: false,
     };
   }
 
@@ -350,13 +378,13 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           autoCapitalize: 'none',
           template: ProfileFormTemplate,
           config: {
-            fieldName: 'email',
+            fieldName: FIELD_NAME.EMAIL,
             isFocused: false,
             onFocus: this.onFieldFocus,
             fieldDisplayName: t('form.email.label'),
             descriptionEmpty: t('form.email.description.empty'),
             descriptionAdded: t('form.email.description.added'),
-            descriptionVerified: t('form.email.description.verified'),
+            descriptionVerified: t('form.email.description.confirmed'),
             icon: roundedEmailIcon,
             onPressVerify: this.verifyField,
             isFormFocused: !!focusedField,
@@ -372,7 +400,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           keyboardType: 'phone-pad',
           template: ProfileFormTemplate,
           config: {
-            fieldName: 'phone',
+            fieldName: FIELD_NAME.PHONE,
             label: t('form.countryCode.label'),
             hasInput: true,
             options: sortedCountries,
@@ -418,22 +446,22 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     if (!focusedField || !this.formRef || !walletId) return;
     const e = this.formRef.getComponent(focusedField).validate();
-    const isEmpty = focusedField === 'phone' ? !value.phone.input : !value.email;
+    const isEmpty = focusedField === FIELD_NAME.PHONE ? !value.phone.input : !value.email;
 
     if (e.isValid() || isEmpty) {
       this.setState({ focusedField: null });
-      if (focusedField === 'email' && value.email !== user.email) {
+      if (focusedField === FIELD_NAME.EMAIL && value.email !== user.email) {
         if (isEmailVerified) {
-          this.setState({ cautionModalField: 'email' });
+          this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.EMAIL });
         } else {
           updateUser(walletId, { email: value.email });
         }
-      } else if (focusedField === 'phone') {
+      } else if (focusedField === FIELD_NAME.PHONE) {
         const { phone: { input, selector } } = value;
         const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
         if (formattedPhone !== user.phone) {
           if (isPhoneVerified) {
-            this.setState({ cautionModalField: 'phone' });
+            this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.PHONE });
           } else {
             updateUser(walletId, { phone: formattedPhone });
           }
@@ -445,9 +473,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onClear = () => {
     const { focusedField, value } = this.state;
     const newValue = { ...value };
-    if (focusedField === 'email') {
+    if (focusedField === FIELD_NAME.EMAIL) {
       newValue.email = '';
-    } else if (focusedField === 'phone') {
+    } else if (focusedField === FIELD_NAME.PHONE) {
       newValue.phone.input = '';
     }
     this.setState({ value: newValue });
@@ -473,13 +501,67 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     }));
     this.setState({
       permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
-      visibleModal: 'camera',
+      showCamera: true,
     });
   };
 
   closeCamera = () => {
-    this.setState({ visibleModal: '' });
+    this.setState({ showCamera: false });
   };
+
+  openProfileImageModal = () => {
+    this.setState({ showProfileImageModal: true });
+  }
+
+  onTakeSelfiePress = () => {
+    // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
+    this.setState({ showProfileImageModal: false }, () => setTimeout(this.openCamera, 500));
+  }
+
+  onUploadPicturePress = () => {
+    const { handleImagePick } = this.props;
+    handleImagePick(true);
+
+    ImagePicker.openPicker({
+      width: 300,
+      height: 300,
+      cropperCircleOverlay: true,
+      cropping: true,
+    })
+      .then((image) => {
+        handleImagePick(false);
+        this.setImage(image.path);
+      })
+      .catch((error) => {
+        handleImagePick(false);
+        reportLog('Failed to get image from the gallery', { error });
+        Toast.show({
+          message: t('toast.failedToUploadImage'),
+          emoji: 'hushed',
+          autoClose: true,
+        });
+      });
+  };
+
+  setImage = (imageUri: string) => {
+    const { user, updateUserAvatar } = this.props;
+
+    const walletId = user?.walletId;
+    if (!walletId) return;
+
+    const formData: any = new FormData();
+    formData.append('walletId', walletId);
+    formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
+    updateUserAvatar(walletId, formData);
+    this.setState({ showProfileImageModal: false });
+  };
+
+  onDeleteAvatarPress = () => {
+    // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
+    this.setState({ showProfileImageModal: false },
+      () => setTimeout(() => this.setState({ showDeleteAvatarModal: true }), 500),
+    );
+  }
 
   verifyField = (verifyingField) => {
     this.setState({ verifyingField });
@@ -488,7 +570,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onCloseVerification = () => {
     const { verifyingField } = this.state;
     const { isPhoneVerified, isEmailVerified } = this.props.user;
-    if ((verifyingField === 'phone' && isPhoneVerified) || (verifyingField === 'email' && isEmailVerified)) {
+    if ((verifyingField === FIELD_NAME.PHONE && isPhoneVerified)
+      || (verifyingField === FIELD_NAME.EMAIL && isEmailVerified)) {
       this.setState({ verifiedModalField: verifyingField });
     }
     this.setState({ verifyingField: null });
@@ -500,11 +583,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     if (!walletId) return;
 
-    if (cautionModalField === 'phone') {
+    if (cautionModalField === VISIBLE_CAUTION_MODAL.PHONE) {
       const { phone: { input, selector } } = value;
       const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
       updateUser(walletId, { phone: formattedPhone });
-    } else if (cautionModalField === 'email') {
+    } else if (cautionModalField === VISIBLE_CAUTION_MODAL.EMAIL) {
       updateUser(walletId, { email: value.email });
     }
     this.setState({ cautionModalField: null });
@@ -516,6 +599,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       value: getInitialValue(this.props.user),
     });
   };
+
+  deleteAvatar = () => {
+    this.setState({ showDeleteAvatarModal: false });
+    this.props.deleteUserAvatar();
+  }
 
   renderInsight = () => {
     const {
@@ -566,12 +654,14 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   render() {
     const {
       permissionsGranted,
-      visibleModal,
+      showCamera,
       verifyingField,
       value,
       focusedField,
       cautionModalField,
       verifiedModalField,
+      showProfileImageModal,
+      showDeleteAvatarModal,
     } = this.state;
     const {
       user, navigation, theme, accounts, goToInvitationFlow,
@@ -586,6 +676,10 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
     const colors = getThemeColors(theme);
 
+    const ensName = getEnsName(accounts);
+
+    const updatedProfileImage = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
+
     return (
       <ContainerWithHeader
         headerProps={{
@@ -599,10 +693,10 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           <TouchableWithoutFeedback onPress={this.onFieldBlur}>
             <RootContainer>
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
-                <TouchableOpacity onPress={this.openCamera}>
+                <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
                     {!!profileImage && <ProfileImage
-                      uri={`${profileImage}?t=${lastUpdateTime}`}
+                      uri={updatedProfileImage}
                       userName={username}
                       diameter={96}
                       borderWidth={0}
@@ -616,7 +710,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
                 </TouchableOpacity>
                 <Spacing h={20} />
                 <MediumText large center>{username}</MediumText>
-                <BaseText regular secondary center>{getEnsName(accounts)}</BaseText>
+                <BaseText regular secondary center>{ensName}</BaseText>
                 <Spacing h={32} />
               </View>
               <Form
@@ -634,7 +728,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         </ScrollWrapper>
 
         <Camera
-          isVisible={visibleModal === 'camera'}
+          isVisible={showCamera}
           modalHide={this.closeCamera}
           permissionsGranted={permissionsGranted}
           navigation={navigation}
@@ -655,6 +749,23 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           onModalHide={() => this.setState({ verifiedModalField: null })}
           onButtonPress={goToInvitationFlow}
           verifiedField={verifiedModalField}
+        />
+        <ProfileImageModal
+          isVisible={!!showProfileImageModal}
+          onModalHide={() => this.setState({ showProfileImageModal: false })}
+          ensName={ensName}
+          username={username}
+          profileImageUri={updatedProfileImage}
+          onTakeSelfiePress={this.onTakeSelfiePress}
+          onUploadPicturePress={this.onUploadPicturePress}
+          onDeleteAvatarPress={this.onDeleteAvatarPress}
+        />
+        <DeleteAvatarModal
+          isVisible={!!showDeleteAvatarModal}
+          onModalHide={() => this.setState({ showDeleteAvatarModal: false })}
+          profileImageUri={updatedProfileImage}
+          username={username}
+          deleteAvatar={this.deleteAvatar}
         />
       </ContainerWithHeader>
     );
@@ -684,6 +795,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   dismissPrivacyInsight: () => dispatch(dismissPrivacyInsightAction()),
   dismissVerificationNote: () => dispatch(dismissVerificationNoteAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
+  deleteUserAvatar: () => dispatch(deleteUserAvatarAction()),
+  updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
+  handleImagePick: (isPickingImage: boolean) => dispatch(handleImagePickAction(isPickingImage)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(AddOrEditUser));

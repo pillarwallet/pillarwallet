@@ -408,6 +408,8 @@ const homeFlow = createStackNavigator({
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
+  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -526,7 +528,7 @@ const tabNavigation = createBottomTabNavigator(
         height: 54,
       },
     },
-    tabBarPosition: 'bottom',
+    tabBarPosition: 'bottom', // eslint-disable-line i18next/no-literal-string
     animationEnabled: false,
     swipeEnabled: false,
     tabBarComponent: props => <CustomTabBarComponent {...props} />,

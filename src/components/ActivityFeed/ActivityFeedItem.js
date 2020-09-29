@@ -398,7 +398,7 @@ export class ActivityFeedItem extends React.Component<Props> {
     const decimalPlaces = getDecimalPlaces(assetSymbol);
     const formattedValue = formatAmount(value, decimalPlaces);
     const formattedFullValue = formatAmount(value);
-    const directionIcon = isReceived ? 'received' : 'sent';
+    const directionIcon = isReceived ? 'received' : 'sent'; // eslint-disable-line i18next/no-literal-string
 
     const isFailed = isFailedTransaction(event) || isTimedOutTransaction(event);
     const isPositivePPN = event.tag === PAYMENT_NETWORK_ACCOUNT_TOPUP && !isAssetView && !event.smartWalletEvent;
@@ -484,8 +484,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         };
         if (isPPNView) {
           data.label = t('label.withdraw');
-          data.iconName = 'sent';
-          data.iconColor = 'negative';
+          data.iconName = 'sent'; // eslint-disable-line i18next/no-literal-string
+          data.iconColor = 'negative'; // eslint-disable-line i18next/no-literal-string
         } else {
           data.label = this.NAMES.PPN_NETWORK;
           data.subtext = t('label.withdrawal');
@@ -711,6 +711,7 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           if (!isTrxBetweenAccounts) {
             additionalInfo.iconName = directionIcon;
+            // eslint-disable-next-line i18next/no-literal-string
             additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
           }
 

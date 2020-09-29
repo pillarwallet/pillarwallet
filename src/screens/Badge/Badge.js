@@ -4,6 +4,8 @@ import { Platform } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
+
 import { fontStyles, spacing } from 'utils/variables';
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -56,7 +58,11 @@ class Badge extends React.Component<Props, {}> {
     const hideDescription = navigation.getParam('hideDescription', false);
     const badge = passedBadge || badges.find(({ badgeId: _badgeId }) => _badgeId === badgeId) || {};
     return (
-      <ContainerWithHeader headerProps={{ centerItems: [{ title: badge.name || 'Unknown badge' }] }}>
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: badge.name || t('badgesContent.title.unknownBadge') }],
+        }}
+      >
         <ScrollWrapper>
           <BadgeWrapper>
             <Image data={badge} size="184" />

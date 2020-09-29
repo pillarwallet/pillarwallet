@@ -51,6 +51,7 @@ import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { STAGING } from 'constants/envConstants';
+import { DEFAULT_LANGUAGE, DEV_LANG } from 'translations/config';
 
 // components
 import { Container } from 'components/Layout';
@@ -104,11 +105,13 @@ type Props = {
   isManualThemeSelection: boolean,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
+  initialDeeplinkExecuted: boolean,
 }
 
 
 class App extends React.Component<Props, *> {
   removeNetInfoEventListener: NetInfoSubscription;
+  offlineToastId: null | string = null;
 
   constructor(props: Props) {
     super(props);
@@ -223,22 +226,27 @@ class App extends React.Component<Props, *> {
   handleConnectivityChange = (state: NetInfoState) => {
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
-    if (!isOnline) {
-      Toast.show({
+
+    if (!isOnline && this.offlineToastId === null) {
+      this.offlineToastId = Toast.show({
         message: t('toast.userIsOffline'),
         emoji: 'satellite_antenna',
         autoClose: false,
+        onClose: () => { this.offlineToastId = null; },
       });
-    } else {
-      Toast.close();
+    } else if (isOnline && this.offlineToastId !== null) {
+      Toast.close(this.offlineToastId);
     }
   };
 
-  handleDeepLinkEvent = event => {
-    const { executeDeepLink } = this.props;
-    const { url: deepLink } = event;
-    if (deepLink === undefined) return;
-    executeDeepLink(deepLink);
+  handleDeepLinkEvent = (event: { url: string }) => {
+    // prevents invoking upon app launch, before login
+    if (this.props.initialDeeplinkExecuted) {
+      const { executeDeepLink } = this.props;
+      const { url: deepLink } = event;
+      if (deepLink === undefined) return;
+      executeDeepLink(deepLink);
+    }
   };
 
   render() {
@@ -264,25 +272,25 @@ class App extends React.Component<Props, *> {
                   if (!node) return;
                   setTopLevelNavigator(node);
                 }}
-                theme={current === LIGHT_THEME ? 'light' : 'dark'}
+                theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18n.language}
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button
-                title={`THEME: ${current}`}
+                title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
                 onPress={() => {
                   const themeToChangeTo = current === LIGHT_THEME ? DARK_THEME : LIGHT_THEME;
                   setAppTheme(themeToChangeTo);
                 }}
               />}
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
-                title={`Change lang (current: ${i18n.language})`}
-                onPress={() => changeLanguage(i18n.language === 'fr' ? 'en' : 'fr')}
+                title={`Change lang (current: ${i18n.language})`} // eslint-disable-line i18next/no-literal-string
+                onPress={() => changeLanguage(i18n.language === DEV_LANG ? DEFAULT_LANGUAGE : DEV_LANG)}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&
                 <Button
-                  title={`Environment: ${this.state.env}`}
+                  title={`Environment: ${this.state.env}`} // eslint-disable-line i18next/no-literal-string
                   onPress={() => switchEnvironments()}
                 />
               }
@@ -302,13 +310,14 @@ class App extends React.Component<Props, *> {
 }
 
 const mapStateToProps = ({
-  appSettings: { isFetched, data: { themeType, isManualThemeSelection } },
+  appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   isManualThemeSelection,
   activeWalkthroughSteps,
+  initialDeeplinkExecuted,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

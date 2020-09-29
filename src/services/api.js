@@ -58,6 +58,8 @@ import EthplorerSdk from './EthplorerSdk';
 import { getLimitedData } from './opensea';
 
 
+const ERROR = 'error';
+const LOCATION_NOT_SUPPORTED = 'Location not supported';
 const USERNAME_EXISTS_ERROR_CODE = 409;
 export const API_REQUEST_TIMEOUT = 10000;
 export const defaultAxiosRequestConfig = { timeout: API_REQUEST_TIMEOUT };
@@ -303,14 +305,14 @@ class SDKWrapper {
         walletId,
       }))
       .then(({ data }) => data)
-      .catch(() => ({ result: 'error' }));
+      .catch(() => ({ result: ERROR }));
   }
 
   sendReferralInvitation(params: SendReferralInvitationParams) {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.referral.sendInvitation(params))
       .then(({ data }) => data)
-      .catch((error) => ({ result: 'error', error }));
+      .catch((error) => ({ result: ERROR, error }));
   }
 
   claimTokens({ walletId, code }: ClaimTokenAction) {
@@ -375,6 +377,16 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.imageByUserId(userId))
       .catch(() => null);
+  }
+
+  deleteUserAvatar(walletId: string): Promise<boolean> {
+    return Promise.resolve()
+      .then(() => this.pillarWalletSdk.user.deleteProfileImage({ walletId }))
+      .then(response => response.status === 204)
+      .catch((error) => {
+        reportLog('Failed to delete user avatar', { error }, Sentry.Severity.Error);
+        return false;
+      });
   }
 
   userInfo(walletId: string): Promise<Object> {
@@ -448,6 +460,7 @@ class SDKWrapper {
       .catch(() => []);
   }
 
+  /* eslint-disable i18next/no-literal-string */
   fetchCollectibles(walletAddress: string) {
     if (!walletAddress) return Promise.resolve({ assets: [] });
     const url = `${getEnv().OPEN_SEA_API}/assets/?owner=${walletAddress}` +
@@ -458,10 +471,11 @@ class SDKWrapper {
       .then(response => ({ assets: response }))
       .catch(() => ({ error: true }));
   }
+  /* eslint-enable i18next/no-literal-string */
 
   fetchCollectiblesTransactionHistory(walletAddress: string) {
-    const url =
-      `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
+    // eslint-disable-next-line i18next/no-literal-string, max-len
+    const url = `${getEnv().OPEN_SEA_API}/events/?account_address=${walletAddress}&exclude_currencies=true&event_type=transfer`;
     return Promise.resolve()
       .then(() => axios.get(url, {
         ...defaultAxiosRequestConfig,
@@ -703,6 +717,7 @@ class SDKWrapper {
 
   getAddressErc20TokensInfo(walletAddress: string) {
     if (getEnv().NETWORK_PROVIDER !== 'homestead') {
+      // eslint-disable-next-line i18next/no-literal-string
       const url = `https://blockchainparser.appspot.com/${getEnv().NETWORK_PROVIDER}/${walletAddress}/`;
       return Promise.resolve()
         .then(() => axios.get(url, defaultAxiosRequestConfig))
@@ -736,7 +751,11 @@ class SDKWrapper {
     })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog('generateAltalixTransactionUrl: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'generateAltalixTransactionUrl: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return null;
       });
   }
@@ -748,7 +767,11 @@ class SDKWrapper {
     })
       .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
       .catch(error => {
-        reportLog('fetchAltalixAvailability: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'fetchAltalixAvailability: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return false;
       });
   }
@@ -760,7 +783,11 @@ class SDKWrapper {
     })
       .then(response => response.data.exchangeRates)
       .catch(error => {
-        reportLog('getSendwyreRates: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'getSendwyreRates: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return {};
       });
   }
@@ -781,13 +808,17 @@ class SDKWrapper {
     })
       .then(() => true)
       .catch(error => {
-        const { response: { status, data } } = error;
+        const { response: { status, data } = {} } = error;
 
         if (status === 400) return true;
-        if (status === 403 && data.message === 'Location not supported') return false;
+        if (status === 403 && data.message === LOCATION_NOT_SUPPORTED) return false;
 
         // Any other type of error is unexpected and will be reported as usual.
-        reportLog('getSendwyreCountrySupport: SDK request error', data, Sentry.Severity.Error);
+        reportLog(
+          'getSendwyreCountrySupport: SDK request error',
+          data ?? { error },
+          Sentry.Severity.Error,
+        );
         return null;
       });
   }
@@ -804,7 +835,11 @@ class SDKWrapper {
     })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog('getSendwyreWidgetURL: SDK request error', error.response.data, Sentry.Severity.Error);
+        reportLog(
+          'getSendwyreWidgetURL: SDK request error',
+          error.response?.data ?? { error },
+          Sentry.Severity.Error,
+        );
         return null;
       });
   }

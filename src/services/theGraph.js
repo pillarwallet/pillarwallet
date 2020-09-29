@@ -22,6 +22,7 @@ import { reportLog } from 'utils/common';
 
 
 export const callSubgraph = (subgraphName: string, query: string) => {
+  // eslint-disable-next-line i18next/no-literal-string
   const url = `https://api.thegraph.com/subgraphs/name/${subgraphName}`;
   return axios
     .post(url, { query }, { timeout: 5000 })

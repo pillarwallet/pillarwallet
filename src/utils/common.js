@@ -62,9 +62,8 @@ import { isProdEnv, isTest } from './environment';
 
 
 const WWW_URL_PATTERN = /^www\./i;
-const supportedAddressPrefixes = new RegExp(
-  `^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi',
-);
+// eslint-disable-next-line i18next/no-literal-string
+const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
   if ((isProdEnv && !__DEV__) || isTest) return;
@@ -171,7 +170,7 @@ export const formatMoney = (
   c: ?string = '.',
   stripZeros: ?boolean = true,
 ): string => {
-  const re = `\\d(?=(\\d{${x || 3}})+${n > 0 ? '\\D' : '$'})`;
+  const re = `\\d(?=(\\d{${x || 3}})+${n > 0 ? '\\D' : '$'})`; // eslint-disable-line i18next/no-literal-string
   let num = new BigNumber(src).toFixed(Math.max(0, Math.floor(n)), 1);
 
   if (stripZeros) {
@@ -244,9 +243,9 @@ export const getCurrencySymbol = (currency: string): string => {
 };
 
 export const formatFiat = (src: number | string, baseFiatCurrency?: ?string): string => {
-  const re = '\\d(?=(\\d{3})+\\D)';
+  const REGEX = '\\d(?=(\\d{3})+\\D)';
   const num = new BigNumber(src).toFixed(2);
-  const formatedValue = num.replace(new RegExp(re, 'g'), '$&,');
+  const formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
   const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -520,11 +519,17 @@ export const humanizeDateString = (date: Date): string => {
   // by default don't show the year if the event happened this year
   if (isToday(date)) return t('label.today');
   if (isYesterday(date)) return t('label.yesterday');
+
+  // TODO: localize dates
+  // temp till dates will be localized
+  /* eslint-disable i18next/no-literal-string */
   const dateFormat = date.getFullYear() === new Date().getFullYear()
     ? 'MMM D'
     : 'MMM D YYYY';
+  /* eslint-enable i18next/no-literal-string */
   return formatDate(date, dateFormat);
 };
+
 
 // all default values makes common sense and usage
 export const groupAndSortByDate = (
@@ -586,18 +591,27 @@ export const getDeviceWidth = () => {
   return Dimensions.get('window').width;
 };
 
-export const formatTransactionFee = (feeInWei: string | number, gasToken: ?GasToken): string => {
-  if (!feeInWei) return '';
+export const getFormattedTransactionFeeValue = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+  // fixes exponential values with BigNumber.toPrecision()
+  // TODO: fix with BigNumber.toFixed() when updating BigNumber lib
+  const parsedFeeInWei = typeof feeInWei === 'object' && BigNumber.isBigNumber(feeInWei)
+    ? feeInWei.toPrecision()
+    : feeInWei.toString();
 
   if (gasToken && !isEmpty(gasToken)) {
-    const { symbol, decimals } = gasToken;
-    return t('tokenValue', {
-      value: formatAmount(utils.formatUnits(feeInWei.toString(), decimals), 2),
-      token: symbol,
-    });
+    return formatAmount(utils.formatUnits(parsedFeeInWei, gasToken.decimals), 2);
   }
 
-  return t('tokenValue', { value: formatAmount(utils.formatEther(feeInWei.toString())), token: ETH });
+  return formatAmount(utils.formatEther(parsedFeeInWei));
+};
+
+export const formatTransactionFee = (feeInWei: string | number | BigNumber, gasToken: ?GasToken): string => {
+  if (!feeInWei) return '';
+
+  const token = gasToken?.symbol || ETH;
+  const value = getFormattedTransactionFeeValue(feeInWei, gasToken);
+
+  return t('tokenValue', { value, token });
 };
 
 export const humanizeHexString = (hexString: ?string) => {

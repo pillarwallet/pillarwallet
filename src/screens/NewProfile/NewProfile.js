@@ -104,7 +104,7 @@ const MODAL = {
   PRIVACY_POLICY: 'PRIVACY_POLICY',
 };
 
-const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan';
+const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan'; // eslint-disable-line i18next/no-literal-string
 
 const NewProfile = ({
   user,
@@ -175,10 +175,10 @@ const NewProfile = ({
 
     if (isUsernameInputDirty && !isCheckingUsername) {
       if (usernameValidationErrorMessage || errorMessage) {
-        statusIcon = 'close';
+        statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
         iconColor = colors.negative;
       } else if (user?.username) {
-        statusIcon = 'check';
+        statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
         iconColor = colors.positive;
       }
     }

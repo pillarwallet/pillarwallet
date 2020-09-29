@@ -177,7 +177,7 @@ const themeColors = (theme: Theme) => {
       text: colors.secondaryText,
     },
     secondaryDanger: {
-      surface: 'transparent',
+      surface: colors.buttonSecondaryBackground,
       text: colors.negative,
     },
     danger: {
@@ -385,6 +385,7 @@ const NextIcon = styled(Icon)`
 `;
 
 const getThemeType = (props: Props, isForColors?: boolean) => {
+  /* eslint-disable i18next/no-literal-string */
   if (props.secondary && props.danger) {
     return 'secondaryDanger';
   }
@@ -400,11 +401,12 @@ const getThemeType = (props: Props, isForColors?: boolean) => {
   if (props.positive && props.disabled) {
     return 'positiveDisabled';
   }
+  /* eslint-enable i18next/no-literal-string */
 
   const propsKeys = Object.keys(props);
   const themesKeys = Object.keys(themes);
   const themeColorsKeys = Object.keys(themeColors(props.theme));
-  let themeToUse = 'primary';
+  let themeToUse = 'primary'; // eslint-disable-line i18next/no-literal-string
 
   propsKeys.forEach((prop: string) => {
     const indexOfTheme = isForColors ? themeColorsKeys.indexOf(prop) : themesKeys.indexOf(prop);
