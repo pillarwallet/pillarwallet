@@ -110,8 +110,8 @@ export const updatePinAttemptsAction = (isInvalidPin: boolean) => {
         lastPinAttempt: currentTimeStamp,
       },
     });
-    dispatch(saveDbAction('wallet', {
-      wallet: {
+    dispatch(saveDbAction('pinAttempt', {
+      pinAttempt: {
         pinAttemptsCount: newCount,
         lastPinAttempt: currentTimeStamp,
       },

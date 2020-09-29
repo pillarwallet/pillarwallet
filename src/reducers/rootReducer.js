@@ -21,9 +21,10 @@ import { combineReducers } from 'redux';
 
 // constants
 import { RESET_APP_STATE } from 'constants/authConstants';
-import type { DbAction } from 'models/DbAction';
 
-import { defaultTheme } from 'utils/themes';
+// types
+import type { DbAction } from 'models/DbAction';
+import type SDKWrapper from 'services/api';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -64,7 +65,7 @@ import sablierReducer from './sablierReducer';
 import fiatToCryptoReducer from './fiatToCryptoReducer';
 import onboardingReducer from './onboardingReducer';
 
-// types
+// local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
 import type { WalletReducerState } from './walletReducer';
 import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
@@ -155,7 +156,6 @@ type RootReducerAction =
   | BadgesReducerAction
   | BalancesAction
   | BlockchainNetworkAction
-  | BlockchainNetworkReducerState
   | CollectiblesAction
   | ExchangeReducerAction
   | HistoryAction
@@ -184,7 +184,7 @@ export type GetState = () => RootReducerState;
 export type ThunkAction = (
   dispatch: Dispatch, // eslint-disable-line no-use-before-define
   getState: GetState,
-  api: Object,
+  api: SDKWrapper,
 ) => any;
 export type Dispatch = (
   action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
@@ -240,7 +240,8 @@ const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
      * keep passed state (action.payload) or reset completely,
      * undefined will reset everything
      */
-    state = action.payload;
+    // $FlowFixMe
+    state = typeof action.payload === 'object' ? action.payload : undefined;
   }
   return appReducer(state, action);
 };

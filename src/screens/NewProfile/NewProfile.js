@@ -50,6 +50,7 @@ import { validateUsername } from 'utils/validators';
 // types
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { User } from 'models/User';
 
 
 const UsernameWrapper = styled(Wrapper)`
@@ -93,7 +94,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   checkUsernameAvailability: (username: string) => void,
   resetUsernameCheck: () => void,
-  user: ?Object,
+  user: ?User,
   theme: Theme,
   errorMessage: ?string,
 };
@@ -208,14 +209,14 @@ const NewProfile = ({
   const renderWelcomeBack = () => (
     <Wrapper flex={1} center regularPadding>
       <ProfileImage
-        uri={user.profileImage}
+        uri={user?.profileImage}
         diameter={PROFILE_IMAGE_WIDTH}
         style={{ marginBottom: 47 }}
-        userName={user.username}
+        userName={user?.username}
         initialsSize={48}
       />
       <UsernameWrapper>
-        <Text>{t('auth:title.welcomeBack', { username: user.username })}</Text>
+        <Text>{t('auth:title.welcomeBack', { username: user?.username })}</Text>
       </UsernameWrapper>
       <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
         {t('auth:paragraph.successfullyRestoredWallet')}

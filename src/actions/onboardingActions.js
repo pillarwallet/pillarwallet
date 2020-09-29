@@ -90,6 +90,12 @@ export const setupUserAction = (username: string, recoveryData?: Object) => {
     let userInfo = { username };
     await dispatch(saveDbAction('user', { user: userInfo }, true));
 
+    const privateKey = wallet?.privateKey;
+    if (!privateKey) {
+      reportLog('setupUserAction failed: no privateKey');
+      return;
+    }
+
     if (isOnline) {
       api.init();
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
@@ -99,7 +105,7 @@ export const setupUserAction = (username: string, recoveryData?: Object) => {
 
       if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
 
-      const sdkWallet: Object = await api.registerOnAuthServer(wallet.privateKey, fcmToken, username, recoveryData);
+      const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
 
       if (!!sdkWallet?.error || !sdkWallet?.walletId) {
         const error = sdkWallet?.reason || 'default'; // TODO: default error message?
@@ -144,10 +150,16 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
         isPortalRecovery,
       },
     } = getState();
+
+    if (!pinCode) {
+      reportLog('setupWalletAction failed: no pinCode');
+      return;
+    }
+
     const isImported = !!importedWallet;
 
     // will return new mnemonic if importedWallet is not present
-    const mnemonic = generateMnemonicPhrase(importedWallet?.mnemonic);
+    const mnemonic = importedWallet?.mnemonic || generateMnemonicPhrase();
 
     // create wallet object
     const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
@@ -172,10 +184,16 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
 export const setupAppServicesAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      wallet: { backupStatus, data: { privateKey } },
+      wallet: { backupStatus, data: walletData },
       user: { data: { walletId } },
       session: { data: { isOnline } },
     } = getState();
+
+    const privateKey = walletData?.privateKey;
+    if (!privateKey) {
+      reportLog('setupAppServicesAction failed: no privateKey');
+      return;
+    }
 
     if (isOnline) {
       dispatch(loadFeatureFlagsAction());

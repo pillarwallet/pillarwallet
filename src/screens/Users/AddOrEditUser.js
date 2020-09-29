@@ -414,9 +414,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onFieldBlur = () => {
     const { updateUser, user } = this.props;
     const { focusedField, value } = this.state;
-    const { isEmailVerified, isPhoneVerified } = user;
+    const { isEmailVerified, isPhoneVerified, walletId } = user;
 
-    if (!focusedField || !this.formRef) return;
+    if (!focusedField || !this.formRef || !walletId) return;
     const e = this.formRef.getComponent(focusedField).validate();
     const isEmpty = focusedField === 'phone' ? !value.phone.input : !value.email;
 
@@ -426,7 +426,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         if (isEmailVerified) {
           this.setState({ cautionModalField: 'email' });
         } else {
-          updateUser(user.walletId, { email: value.email });
+          updateUser(walletId, { email: value.email });
         }
       } else if (focusedField === 'phone') {
         const { phone: { input, selector } } = value;
@@ -435,7 +435,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           if (isPhoneVerified) {
             this.setState({ cautionModalField: 'phone' });
           } else {
-            updateUser(user.walletId, { phone: formattedPhone });
+            updateUser(walletId, { phone: formattedPhone });
           }
         }
       }
@@ -495,14 +495,17 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   changeField = () => {
-    const { updateUser, user } = this.props;
+    const { updateUser, user: { walletId } } = this.props;
     const { cautionModalField, value } = this.state;
+
+    if (!walletId) return;
+
     if (cautionModalField === 'phone') {
       const { phone: { input, selector } } = value;
       const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
-      updateUser(user.walletId, { phone: formattedPhone });
+      updateUser(walletId, { phone: formattedPhone });
     } else if (cautionModalField === 'email') {
-      updateUser(user.walletId, { email: value.email });
+      updateUser(walletId, { email: value.email });
     }
     this.setState({ cautionModalField: null });
   };

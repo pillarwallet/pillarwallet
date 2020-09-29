@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  GENERATE_ENCRYPTED_WALLET,
+  SET_WALLET,
   UPDATE_WALLET_STATE,
   DECRYPT_WALLET,
   CREATED,
@@ -54,8 +54,8 @@ const mockBackupStatus: BackupStatus = {
 };
 
 describe('Wallet reducer', () => {
-  it('should handle GENERATE_ENCRYPTED_WALLET', () => {
-    const updateAction = { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet };
+  it('should handle SET_WALLET', () => {
+    const updateAction = { type: SET_WALLET, payload: mockWallet };
     const expected = {
       data: mockWallet,
       error: null,

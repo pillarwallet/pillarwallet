@@ -27,7 +27,6 @@ import {
   RESET_OTP_STATUS,
   VERIFICATION_FAILED,
   UPDATE_USER,
-  REGISTERED,
   USER_PHONE_VERIFIED,
   USER_EMAIL_VERIFIED,
 } from 'constants/userConstants';

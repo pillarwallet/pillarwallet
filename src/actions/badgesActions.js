@@ -34,6 +34,9 @@ import {
 } from 'constants/badgesConstants';
 import { WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 
+// utils
+import { reportLog } from 'utils/common';
+
 // models, types
 import type { ApiNotification } from 'models/Notification';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -47,9 +50,15 @@ import { offlineApiCall } from './offlineApiActions';
 export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       badges: { data: badges },
     } = getState();
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('fetchBadgesAction failed: no walletId', { user });
+      return;
+    }
 
     let newBadgeName = null;
     const userBadges = await api.fetchBadges(walletId);
@@ -83,9 +92,16 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
 export const fetchContactBadgesAction = (contact: Object) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       badges: { contactsBadges },
     } = getState();
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('fetchContactBadgesAction failed: no walletId', { user });
+      return;
+    }
+
     dispatch({ type: FETCHING_CONTACTS_BADGES });
 
     const contactBadges = await api.fetchContactBadges(walletId, contact.id);
@@ -111,9 +127,16 @@ export const selfAwardBadgeAction = (badgeType: string) => {
 export const fetchBadgeAwardHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       userEvents: { data: userEvents = [] },
     } = getState();
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('fetchBadgeAwardHistoryAction failed: no walletId', { user });
+      return;
+    }
+
     const badgeAwardEvents: ApiNotification[] = await api.fetchNotifications(walletId, BADGE_REWARD_EVENT);
     const badgeAwardEventsWithRequiredData = badgeAwardEvents.filter(({ payload }) => !!payload.name);
     const walletCreateEvent = userEvents.find(({ subType }) => subType === WALLET_CREATE_EVENT);

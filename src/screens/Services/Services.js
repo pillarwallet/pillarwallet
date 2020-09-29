@@ -202,7 +202,9 @@ class ServicesScreen extends React.Component<Props, State> {
 
   getBuyCryptoServices = () => {
     const buyCryptoServices = [];
-    const { isAltalixAvailable } = this.props;
+    const { isAltalixAvailable, user, getApi } = this.props;
+
+    const walletId = user?.walletId;
 
     if (isRampEnabled) {
       buyCryptoServices.push({
@@ -210,15 +212,15 @@ class ServicesScreen extends React.Component<Props, State> {
         title: t('servicesContent.ramp.title'),
         body: t('servicesContent.ramp.description'),
         action: () => {
-          const { user: { email } } = this.props;
+          const email = user?.email;
           const address = this.getCryptoPurchaseAddress();
-          if (address === null) return;
+          if (address === null || !email) return;
           this.tryOpenCryptoPurchaseUrl(rampWidgetUrl(address, email));
         },
       });
     }
 
-    if (isWyreEnabled) {
+    if (isWyreEnabled && walletId) {
       buyCryptoServices.push({
         key: 'wyre',
         title: t('servicesContent.wyre.title'),
@@ -228,7 +230,6 @@ class ServicesScreen extends React.Component<Props, State> {
           if (address === null) return;
           this.props.navigation.navigate(SENDWYRE_INPUT, {
             onSubmit: async (values: SendwyreTrxValues) => {
-              const { user: { walletId }, getApi } = this.props;
               const url = await wyreWidgetUrl({ ...values, walletId, address }, getApi());
               await this.tryOpenCryptoPurchaseUrl(url);
             },
@@ -237,13 +238,12 @@ class ServicesScreen extends React.Component<Props, State> {
       });
     }
 
-    if (isAltalixEnabled && isAltalixAvailable) {
+    if (isAltalixEnabled && isAltalixAvailable && walletId) {
       buyCryptoServices.push({
         key: 'altalix',
         title: t('servicesContent.altalix.title'),
         body: t('servicesContent.altalix.description'),
         action: async () => {
-          const { user: { walletId }, getApi } = this.props;
           const address = this.getCryptoPurchaseAddress();
           if (address === null) return;
           this.tryOpenCryptoPurchaseUrl(await altalixWidgetUrl({

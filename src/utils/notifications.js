@@ -31,6 +31,7 @@ import { COLLECTIBLE, BCX, BADGE } from 'constants/notificationConstants';
 
 // utils
 import { reportLog } from 'utils/common';
+import { addressesEqual } from 'utils/assets';
 
 // models
 import type { ApiNotification } from 'models/Notification';
@@ -82,21 +83,22 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       status,
       value,
       decimals,
+      fromAddress: sender,
+      toAddress: receiver,
     } = parsedNotification;
-    const sender = parsedNotification.fromAddress.toUpperCase();
-    const receiver = parsedNotification.toAddress.toUpperCase();
     const amount = utils.formatUnits(EthersBigNumber.from(value.toString()), decimals);
 
-    if (receiver === myEthAddress && status === 'pending') {
+    // TODO: do we still need to process key based wallet notifications?
+    if (addressesEqual(receiver, myEthAddress) && status === 'pending') {
       title = t('tokenValue', { value: amount, token: asset });
       message = t('notification.received');
-    } else if (receiver === myEthAddress && status === 'confirmed') {
+    } else if (addressesEqual(receiver, myEthAddress) && status === 'confirmed') {
       title = `${amount} ${asset}`;
       message = t('notification.transactionConfirmed');
-    } else if (sender === myEthAddress && status === 'pending') {
+    } else if (addressesEqual(sender, myEthAddress) && status === 'pending') {
       title = t('tokenValue', { value: amount, token: asset });
       message = t('notification.transactionSent');
-    } else if (sender === myEthAddress && status === 'confirmed') {
+    } else if (addressesEqual(sender, myEthAddress) && status === 'confirmed') {
       title = t('tokenValue', { value: amount, token: asset });
       message = t('notification.transactionReceived');
     }

@@ -32,17 +32,14 @@ import {
 } from 'constants/onboardingConstants';
 
 // types
-import type { OnboardingEthereumWallet } from 'models/Wallet';
+import type { EthereumWallet } from 'models/Wallet';
+import type { User } from 'models/User';
 
 
 export type OnboardingReducerState = {
   pinCode: ?string,
-  wallet: ?OnboardingEthereumWallet,
-  user: ?{
-    username: string,
-    walletId: ?string,
-    profileImage: ?string,
-  },
+  wallet: ?EthereumWallet,
+  user: ?User,
   errorMessage: ?string,
   isCheckingUsername: boolean,
   isImportingWallet: boolean,

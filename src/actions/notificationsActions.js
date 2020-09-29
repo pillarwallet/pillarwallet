@@ -192,7 +192,7 @@ export const subscribeToPushNotificationsAction = () => {
     notificationsListener = firebaseMessaging.onMessage(debounce(message => {
       const messageData = get(message, 'data');
       if (isEmpty(messageData) || checkForSupportAlert(messageData)) return;
-      const notification = processNotification(messageData, wallet.address.toUpperCase());
+      const notification = processNotification(messageData, wallet?.address);
       if (!notification) return;
       if (notification.type === BCX) {
         dispatch(checkForMissedAssetsAction());

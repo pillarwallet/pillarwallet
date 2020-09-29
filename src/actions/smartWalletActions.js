@@ -646,7 +646,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const {
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
-        wallet: { data: { address: keyBasedWalletAddress } },
+        wallet: { data: walletData },
         assets: { supportedAssets },
       } = getState();
       let { history: { data: currentHistory } } = getState();
@@ -671,7 +671,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       };
 
       if (txStatus === TRANSACTION_COMPLETED) {
-        if (addressesEqual(txSenderAddress, keyBasedWalletAddress)) {
+        if (addressesEqual(txSenderAddress, walletData?.address)) {
           dispatch(checkKeyBasedAssetTransferTransactionsAction());
         }
 
@@ -1508,14 +1508,23 @@ export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartW
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
-      user: { data: { walletId } },
+      user: { data: user },
       session: { data: session },
     } = getState();
+
+    // cannot be done while offline
+    if (!session.isOnline) return;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('completeReferralsEventAction failed: unable to get walletId', { user });
+      return;
+    }
 
     const account = findAccountById(smartWalletAccountId, accounts);
     if (!account || account.walletId) return;
 
-    // No walletId set means we fail to register that account on the backend
+    // no account.walletId set means we fail to register that account on the backend
     const accountAddress = getAccountAddress(account);
     const result = await api.registerSmartWallet({
       walletId,

@@ -19,14 +19,7 @@
 */
 
 export type EthereumWallet = {
-  mnemonic?: string,
+  mnemonic: ?string,
   address: string,
-  path: string,
-  privateKey: string,
-};
-
-export type OnboardingEthereumWallet = {
-  mnemonic: string,
-  address?: string,
-  privateKey?: string,
+  privateKey: ?string,
 };

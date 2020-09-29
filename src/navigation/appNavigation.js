@@ -269,7 +269,6 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
-import { PENDING, REGISTERED } from 'constants/userConstants';
 
 // utils
 import { fontSizes } from 'utils/variables';

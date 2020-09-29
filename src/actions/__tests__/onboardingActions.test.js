@@ -25,7 +25,7 @@ import { WebSocket } from 'mock-socket';
 // constants
 import {
   UPDATE_WALLET_STATE,
-  GENERATE_ENCRYPTED_WALLET,
+  SET_WALLET,
   GENERATING,
   ENCRYPTING,
   REGISTERING,
@@ -54,7 +54,7 @@ import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
 
 // actions
-import { registerWalletAction } from 'actions/onboardingActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // utils
 import { transformAssetsToObject } from 'utils/assets';
@@ -165,7 +165,7 @@ describe('Wallet actions', () => {
       { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
-      { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: SET_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
@@ -187,7 +187,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
-    return store.dispatch(registerWalletAction())
+    return store.dispatch(beginOnboardingAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -228,7 +228,7 @@ describe('Wallet actions', () => {
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
-      { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
+      { type: SET_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },
       { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
       { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
@@ -250,7 +250,7 @@ describe('Wallet actions', () => {
       { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
-    return store.dispatch(registerWalletAction())
+    return store.dispatch(beginOnboardingAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

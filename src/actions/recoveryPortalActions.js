@@ -46,7 +46,7 @@ import smartWalletService from 'services/smartWallet';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { OnboardingEthereumWallet } from 'models/Wallet';
+import type { EthereumWallet } from 'models/Wallet';
 
 
 export const addRecoveryPortalDeviceAction = (deviceAddress: string, payWithGasToken: boolean = false) => {
@@ -150,14 +150,14 @@ export const initRecoveryPortalWalletRecoverAction = () => {
     // let's create new onboading wallet
     const mnemonic = generateMnemonicPhrase();
     const { address, privateKey } = ethers.Wallet.fromMnemonic(mnemonic);
-    const wallet: OnboardingEthereumWallet = {
+    const wallet: EthereumWallet = {
       address,
       privateKey,
       mnemonic,
     };
 
     // set temporary smart wallet and subscribe for events
-    await smartWalletService.init(wallet.privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
+    await smartWalletService.init(privateKey, (event) => dispatch(checkRecoveredSmartWalletStateAction(event)));
     dispatch({ type: SET_ONBOARDING_WALLET, payload: wallet });
   };
 };

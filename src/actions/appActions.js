@@ -178,7 +178,8 @@ export const initAppAndRedirectAction = () => {
       const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
 
-      const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
+      const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
+      const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
         payload: {

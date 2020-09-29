@@ -26,12 +26,12 @@ import RecoveryPortalWebView from 'components/RecoveryPortalWebView';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { OnboardingEthereumWallet } from 'models/Wallet';
+import type { EthereumWallet } from 'models/Wallet';
 
 
 type Props = {
   navigation: NavigationScreenProp,
-  wallet: ?OnboardingEthereumWallet,
+  wallet: ?EthereumWallet,
   initRecoveryPortalWalletRecover: () => void,
 };
 

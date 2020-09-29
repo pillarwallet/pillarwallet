@@ -28,12 +28,8 @@ import {
   SET_WALLET_IS_ENCRYPTING,
   SET_WALLET_IS_CHANGING_PIN,
 } from 'constants/walletConstants';
+import type { EthereumWallet } from 'models/Wallet';
 
-
-export type Wallet = {|
-  address: ?string,
-  privateKey: ?string,
-|};
 
 export type BackupStatus = {|
   isImported: boolean,
@@ -42,7 +38,7 @@ export type BackupStatus = {|
 |};
 
 export type WalletReducerState = {|
-  data: ?Wallet,
+  data: ?EthereumWallet,
   backupStatus: BackupStatus,
   pinAttemptsCount: number,
   lastPinAttempt: number,

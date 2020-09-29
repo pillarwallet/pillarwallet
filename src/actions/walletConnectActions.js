@@ -564,9 +564,10 @@ export const initWalletConnectSessions = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       walletConnectSessions: { isImported, sessions },
-      wallet: { data: { address: keyBasedWalletAddress } },
+      wallet: { data: walletData },
     } = getState();
 
+    const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
       reportLog('initWalletConnectSessions failed: ', { keyBasedWalletAddress });
       return;

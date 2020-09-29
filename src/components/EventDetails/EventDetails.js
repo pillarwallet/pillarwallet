@@ -192,7 +192,7 @@ type Props = {
   isSmartAccount: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
-  keyBasedWalletAddress: string,
+  keyBasedWalletAddress: ?string,
   incomingStreams: Stream[],
   outgoingStreams: Stream[],
 };
@@ -1529,7 +1529,7 @@ const mapStateToProps = ({
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
-  wallet: { data: { address: keyBasedWalletAddress } },
+  wallet: { data: walletData },
   sablier: { incomingStreams, outgoingStreams },
 }: RootReducerState): $Shape<Props> => ({
   rates,
@@ -1545,7 +1545,7 @@ const mapStateToProps = ({
   updatingCollectibleTransaction,
   depositedAssets,
   poolStats,
-  keyBasedWalletAddress,
+  keyBasedWalletAddress: walletData?.address,
   incomingStreams,
   outgoingStreams,
 });
