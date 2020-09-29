@@ -169,10 +169,10 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.setState(stateToUpdate, () => { if (onSuccess) onSuccess(); });
   };
 
-  handleAssetValueSelect = (value: string) => {
-    const { intentError, assetData } = this.state;
+  handleAssetValueSelect = (value: string, assetData: ?Option) => {
+    const { intentError } = this.state;
     const { fetchSingleAssetRates } = this.props;
-    let updatedState = { value };
+    let updatedState = { value, assetData };
     const symbol = assetData?.symbol;
     if (value && symbol) fetchSingleAssetRates(symbol);
 
@@ -289,8 +289,8 @@ class SendSyntheticAmount extends React.Component<Props, State> {
           selectedOption: selectedContact,
         }}
         customValueSelectorProps={{
-         onAssetDataChange: (newAssetData) => this.handleAssetDataSelect(newAssetData),
-         onValueChange: (newValue) => this.handleAssetValueSelect(newValue),
+         onAssetDataChange: (newAssetData) => this.handleAssetValueSelect(value, newAssetData),
+         onValueChange: (newValue) => this.handleAssetValueSelect(newValue, assetData),
          assetData: assetData || defaultAssetData,
          value,
          customAssets: syntheticAssets,
