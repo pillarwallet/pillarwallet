@@ -26,3 +26,7 @@ export type Theme = {
   current: string,
   colors: ThemeColors,
 };
+
+export type ThemeProps = {|
+  theme: Theme,
+|};
