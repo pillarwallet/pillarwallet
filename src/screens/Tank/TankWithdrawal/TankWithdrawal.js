@@ -20,12 +20,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -114,11 +115,11 @@ type State = {
   inputHasError: boolean,
 };
 
-const { Form } = t.form;
+const { Form } = tForm.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
 class TankWithdrawal extends React.Component<Props, State> {
-  _form: t.form;
+  _form: tForm.form;
   formSubmitted: boolean = false;
   state = {
     value: null,
