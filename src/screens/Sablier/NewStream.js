@@ -21,9 +21,8 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { addHours, addDays, addMinutes } from 'date-fns';
-import DatePicker from 'react-native-date-picker';
 import { utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -36,10 +35,9 @@ import { MediumText, TextLink, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Selector from 'components/Selector';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import Modal from 'components/Modal';
 
 // utils
-import { getThemeColors, getThemeType } from 'utils/themes';
 import { countDownDHMS } from 'utils/common';
 import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
@@ -49,8 +47,8 @@ import { isEnsName } from 'utils/validators';
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
 import { SABLIER_NEW_STREAM_REVIEW } from 'constants/navigationConstants';
-import { DARK_THEME } from 'constants/appSettingsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { DATE_PICKER } from 'constants/sablierConstants';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -63,25 +61,23 @@ import { accountAssetsSelector, visibleActiveAccountAssetsWithBalanceSelector } 
 import type { Asset, Assets } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
-import type { Theme } from 'models/Theme';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Contact } from 'models/Contact';
 
+// partials
+import SablierDatePicker from './SablierDatePicker';
 
 type Props = {
   supportedAssets: Asset[],
   activeAccountAddress: string,
   assets: Assets,
   assetsWithBalance: Option[],
-  theme: Theme,
   navigation: NavigationScreenProp<*>,
 };
 
 type State = {
   startDate: ?Date,
   endDate: ?Date,
-  modalDate: ?Date,
-  activeDatePicker: ?string,
   assetValue: number,
   assetSymbol: ?string,
   selectedContact: ?Contact,
@@ -96,21 +92,12 @@ const ContentWrapper = styled.View`
   padding: 0 20px;
 `;
 
-const PickerWrapper = styled.View`
-  padding: 18px 20px;
-`;
-
-const START_TIME = 'START_TIME';
-const END_TIME = 'END_TIME';
-
 class NewStream extends React.Component<Props, State> {
   constructor(props) {
     super(props);
     this.state = {
       startDate: this.getMinimalDate(),
       endDate: null,
-      modalDate: null,
-      activeDatePicker: null,
       assetValue: 0,
       assetSymbol: null,
       selectedContact: null,
@@ -185,94 +172,24 @@ class NewStream extends React.Component<Props, State> {
     });
   }
 
-  openDatePicker = (picker: string, date: ?Date) => {
-    this.setState({ activeDatePicker: picker, modalDate: date });
-  }
+  openDatePicker = (picker: $Values<typeof DATE_PICKER>, initialDate: ?Date) => {
+    const { startDate, endDate } = this.state;
 
-  closePicker = () => {
-    this.setState({ activeDatePicker: null });
-  }
+    const minimumDate = picker === DATE_PICKER.START_TIME ? this.getMinimalDate() : addMinutes(startDate, 1);
+    const maximumDate = picker === DATE_PICKER.START_TIME ? endDate : null;
 
-  handleDateModalConfirm = () => {
-    const { activeDatePicker, modalDate } = this.state;
-    let newState = {
-      activeDatePicker: null,
-    };
-    if (activeDatePicker === START_TIME) {
-      newState = { ...newState, startDate: modalDate };
-    } else {
-      newState = { ...newState, endDate: modalDate };
-    }
-    this.setState(newState);
-  }
-
-  renderDatePicker = (picker: string) => {
-    const {
-      activeDatePicker, modalDate, startDate, endDate,
-    } = this.state;
-    const { theme } = this.props;
-    const colors = getThemeColors(theme);
-
-    const minimumDate = picker === START_TIME ? this.getMinimalDate() : addMinutes(startDate, 1);
-    const maximumDate = picker === START_TIME ? endDate : null;
-
-    const header = picker === START_TIME ? (
-      <Row>
-        <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
-        <TextLink onPress={() => this.setState({ modalDate: this.getMinimalDate() })}>
-          {t('sablierContent.button.startImmediately')}
-        </TextLink>
-      </Row>
-    ) : (
-      <Row>
-        <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
-        <Row>
-          <TextLink onPress={() => this.setState({ modalDate: addHours(modalDate || minimumDate, 1) })}>
-            {t('sablierContent.button.plusHour')}
-          </TextLink>
-          <Spacing w={10} />
-          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate || minimumDate, 1) })}>
-            {t('sablierContent.button.plusDay')}
-          </TextLink>
-          <Spacing w={10} />
-          <TextLink onPress={() => this.setState({ modalDate: addDays(modalDate || minimumDate, 30) })}>
-            {t('sablierContent.button.plus30Days')}
-          </TextLink>
-        </Row>
-      </Row>
-    );
-
-    return (
-      <SlideModal
-        isVisible={activeDatePicker === picker}
-        onModalHide={this.closePicker}
-        hideHeader
-        noPadding
-      >
-        <PickerWrapper>
-          {header}
-          <Spacing h={8} />
-          <TimingInput value={modalDate} filled={getThemeType(theme) === DARK_THEME} />
-          <Spacing h={20} />
-          <DatePicker
-            date={modalDate || this.getMinimalDate()}
-            onDateChange={(date) => this.setState({ modalDate: date })}
-            androidVariant="nativeAndroid"
-            mode="datetime"
-            textColor={getThemeType(theme) === DARK_THEME ? colors.activeTabBarIcon : colors.text}
-            minimumDate={minimumDate}
-            maximumDate={maximumDate}
-            style={{ alignSelf: 'center' }}
-          />
-          <Spacing h={20} />
-          <Button
-            title={t('button.next')}
-            onPress={this.handleDateModalConfirm}
-            disabled={!modalDate}
-          />
-        </PickerWrapper>
-      </SlideModal>
-    );
+    Modal.open(() => (
+      <SablierDatePicker
+        picker={picker}
+        initialDate={initialDate}
+        minimumDate={minimumDate}
+        maximumDate={maximumDate}
+        onConfirm={date => {
+          const update = picker === DATE_PICKER.START_TIME ? { startDate: date } : { endDate: date };
+          this.setState(update);
+        }}
+      />
+    ));
   }
 
   isFormValid = () => {
@@ -361,7 +278,11 @@ class NewStream extends React.Component<Props, State> {
             </TextLink>
           </Row>
           <Spacing h={8} />
-          <TimingInput filled value={startDate} onPress={() => this.openDatePicker(START_TIME, startDate)} />
+          <TimingInput
+            filled
+            value={startDate}
+            onPress={() => this.openDatePicker(DATE_PICKER.START_TIME, startDate)}
+          />
 
           <Spacing h={38} />
 
@@ -382,7 +303,7 @@ class NewStream extends React.Component<Props, State> {
             </Row>
           </Row>
           <Spacing h={8} />
-          <TimingInput filled value={endDate} onPress={() => this.openDatePicker(END_TIME, endDate)} />
+          <TimingInput filled value={endDate} onPress={() => this.openDatePicker(DATE_PICKER.END_TIME, endDate)} />
 
           <Spacing h={64} />
           <Button
@@ -393,8 +314,6 @@ class NewStream extends React.Component<Props, State> {
           <Spacing h={19} />
           {this.renderStreamSummary()}
         </ContentWrapper>
-        {this.renderDatePicker(START_TIME)}
-        {this.renderDatePicker(END_TIME)}
       </ContainerWithHeader>
     );
   }
@@ -418,4 +337,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 
-export default withTheme(connect(combinedMapStateToProps)(NewStream));
+export default connect(combinedMapStateToProps)(NewStream);
