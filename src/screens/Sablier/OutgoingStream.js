@@ -29,6 +29,8 @@ import SablierStreamCircles from 'components/SablierStreamCircles';
 import Selector from 'components/Selector';
 import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
+import Modal from 'components/Modal';
+
 import { getCancellationFeeAndTransaction } from 'services/sablier';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
@@ -45,7 +47,6 @@ import type { Rates, Asset, Balances } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { GasToken } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
 
 import SablierCancellationModal from './SablierCancellationModal';
@@ -65,20 +66,12 @@ type Props = {
 };
 
 type State = {
-  isCancellationModalVisible: boolean,
   isFetchingCancellationFee: boolean,
-  gasToken: ?GasToken,
-  cancellationPayload: ?Object,
-  txFeeInWei: number,
 };
 
 class OutgoingStream extends React.Component<Props, State> {
   state = {
-    isCancellationModalVisible: false,
     isFetchingCancellationFee: false,
-    gasToken: null,
-    cancellationPayload: null,
-    txFeeInWei: 0,
   }
 
   onCancel = async () => {
@@ -90,22 +83,34 @@ class OutgoingStream extends React.Component<Props, State> {
     const {
       txFeeInWei,
       gasToken,
-      transactionPayload,
+      transactionPayload: cancellationPayload,
     } = await getCancellationFeeAndTransaction(stream, useGasToken);
 
-    this.setState({
-      isFetchingCancellationFee: false,
-      isCancellationModalVisible: true,
-      gasToken,
-      cancellationPayload: transactionPayload,
-      txFeeInWei,
-    });
+    this.setState({ isFetchingCancellationFee: false });
+
+    const { balances } = this.props;
+
+    if (cancellationPayload) {
+      const isDisabled = !isEnoughBalanceForTransactionFee(balances, cancellationPayload);
+
+      const cancelData = {
+        txFeeInWei,
+        isDisabled,
+        gasToken,
+        recipient: stream.recipient,
+      };
+
+      Modal.open(() => (
+        <SablierCancellationModal
+          cancelData={cancelData}
+          onCancel={() => this.onCancelConfirm(cancellationPayload)}
+        />
+      ));
+    }
   }
 
-  onCancelConfirm = () => {
+  onCancelConfirm = (cancellationPayload) => {
     const { navigation } = this.props;
-    const { cancellationPayload } = this.state;
-    this.setState({ isCancellationModalVisible: false });
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: cancellationPayload,
@@ -114,29 +119,11 @@ class OutgoingStream extends React.Component<Props, State> {
 
   render() {
     const {
-      balances, navigation, ensRegistry, history, accounts, sablierEvents,
+      navigation, ensRegistry, history, accounts, sablierEvents,
     } = this.props;
-    const {
-      isCancellationModalVisible,
-      isFetchingCancellationFee,
-      cancellationPayload,
-      txFeeInWei,
-      gasToken,
-    } = this.state;
+    const { isFetchingCancellationFee } = this.state;
 
     const stream = navigation.getParam('stream');
-
-    let cancelData = {};
-    if (cancellationPayload) {
-      const isDisabled = !isEnoughBalanceForTransactionFee(balances, cancellationPayload);
-
-      cancelData = {
-        txFeeInWei,
-        isDisabled,
-        gasToken,
-        recipient: stream.recipient,
-      };
-    }
 
     const recipient = {
       name: findEnsNameCaseInsensitive(ensRegistry, stream.recipient) || stream.recipient,
@@ -188,12 +175,6 @@ class OutgoingStream extends React.Component<Props, State> {
           feedData={combinedHistory}
           card
           cardHeaderTitle={t('sablierContent.title.streamingActivityFeed')}
-        />
-        <SablierCancellationModal
-          isVisible={isCancellationModalVisible}
-          cancelData={cancelData}
-          onModalHide={() => this.setState({ isCancellationModalVisible: false })}
-          onCancel={this.onCancelConfirm}
         />
       </ContainerWithHeader>
     );
