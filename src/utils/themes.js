@@ -268,7 +268,7 @@ const darkTheme = {
   colors: { ...darkThemeColors, ...darkThemeColorsOld },
 };
 
-export function getThemeByType(themeType: string) {
+export function getThemeByType(themeType?: string) {
   switch (themeType) {
     case DARK_THEME:
       return darkTheme;
