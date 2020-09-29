@@ -1198,7 +1198,7 @@
   "transactions": {
     "title": {
       "sendScreen": "Send",
-      "valueSelectorModal": "Send",
+      "valueSelectorModal": "Choose asset",
       "reviewAndConfirmScreen": "Review and confirm",
       "allowanceTransactionSuccess": "Transaction is on its way",
       "exchangeTransactionSuccess": "Swapping tokens...",

@@ -41,6 +41,7 @@ import Button from 'components/Button';
 import Input from 'components/Input';
 import ButtonText from 'components/ButtonText';
 import SelectorOptions from 'components/SelectorOptions';
+import Tooltip from 'components/Tooltip';
 
 import { fontSizes, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -63,7 +64,6 @@ type Props = {
   loading?: boolean,
   onLayout?: () => void,
   additionalStyle?: Object,
-  errorMessageStyle?: Object,
   itemHolderStyle?: Object,
   getInputRef?: (Input) => void,
   innerImageURI?: string,
@@ -74,7 +74,6 @@ type Props = {
   numeric?: boolean,
   iconProps?: IconButtonProps,
   selectorOptions?: SelectorOptionsType,
-  errorMessageOnTop?: boolean,
   inputWrapperStyle?: Object,
   rightPlaceholder?: string,
   fallbackToGenericToken?: boolean,
@@ -96,12 +95,6 @@ type State = {
 type EventLike = {
   nativeEvent: Object,
 };
-
-const ErrorMessage = styled(BaseText)`
-  color: ${themedColors.negative};
-  width: 100%;
-  ${({ isOnTop }) => isOnTop ? 'margin-bottom: 10px' : 'margin-top: 10px'};
-`;
 
 const InputField = styled(Input)`
   color: ${themedColors.text};
@@ -135,18 +128,9 @@ const InputBorder = styled.View`
 `;
 
 const ItemHolder = styled.View`
-  background-color: ${({ error, theme }) => error ? theme.colors.card : theme.colors.tertiary};
+  background-color: ${themedColors.tertiary};
   position: relative;
   border-radius: 4px;
-`;
-
-const InputFooter = styled(View)`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  padding: 0 2px;
-  margin-bottom: 6px;
-  margin-top: -4px;
 `;
 
 const ButtonWrapper = styled.View`
@@ -214,8 +198,8 @@ const Placeholder = styled(MediumText)`
   ${fontStyles.big};
 `;
 
-const PlaceholderRight = styled(BaseText)`
-  ${fontStyles.medium};
+const PlaceholderRight = styled(MediumText)`
+  ${fontStyles.big};
   ${({ addMargin }) => !!addMargin && 'margin-right: 8px;'}
 `;
 
@@ -352,10 +336,14 @@ class TextInput extends React.Component<Props, State> {
     if (this.searchInput) this.searchInput.focus();
   };
 
+  focusMultilineInput = () => {
+    if (this.multilineInputField) this.multilineInputField.focus();
+  }
+
   onMultilineInputFieldPress = () => {
     const { onLeftSideTextPress } = this.props;
     if (onLeftSideTextPress) onLeftSideTextPress();
-    if (this.multilineInputField) this.multilineInputField.focus();
+    this.focusMultilineInput();
   };
 
   renderSelector = () => {
@@ -474,7 +462,6 @@ class TextInput extends React.Component<Props, State> {
       onLayout,
       additionalStyle,
       getInputRef,
-      errorMessageStyle,
       innerImageURI,
       fallbackToGenericToken,
       buttonProps,
@@ -484,7 +471,6 @@ class TextInput extends React.Component<Props, State> {
       iconProps,
       rightPlaceholder,
       selectorOptions = {},
-      errorMessageOnTop,
       customInputHeight,
       inputWrapperStyle = {},
       renderOption,
@@ -528,9 +514,6 @@ class TextInput extends React.Component<Props, State> {
 
     const imageSource = resolveAssetSource(innerImageURI);
 
-    const errorTop = !!errorMessage && !!errorMessageOnTop;
-    const errorBottom = !!errorMessage && !errorMessageOnTop;
-    const showErrorIndicator = hasError || !!errorMessage;
     const disabledSelector = selectorOptionsCount <= 1;
 
     const defaultInputStyle = {
@@ -540,14 +523,14 @@ class TextInput extends React.Component<Props, State> {
       textAlignVertical: multiline ? 'top' : 'center', // eslint-disable-line i18next/no-literal-string
       height: inputHeight,
       flex: 1,
+      color: hasError ? colors.negative : colors.text,
     };
 
     return (
       <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
-        {errorTop && <ErrorMessage style={errorMessageStyle} isOnTop>{errorMessage}</ErrorMessage>}
         {this.renderInputHeader()}
-        <InputBorder error={showErrorIndicator} style={itemHolderStyle} >
-          <ItemHolder error={showErrorIndicator} style={itemHolderStyle} >
+        <InputBorder error={hasError} style={itemHolderStyle}>
+          <ItemHolder error={hasError} style={itemHolderStyle} >
             <Item
               isFocused={isFocused}
               height={inputHeight}
@@ -575,26 +558,38 @@ class TextInput extends React.Component<Props, State> {
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
                 </LeftSideWrapper>
               </TouchableWithoutFeedback>}
-              {!fullWidthSelector &&
-              <InputField
-                {...inputProps}
-                innerRef={(input) => {
-                  if (getInputRef) getInputRef(input);
-                  this.multilineInputField = input;
-                }}
-                onChange={this.handleChange}
-                onBlur={this.handleBlur}
-                onEndEditing={this.handleBlur}
-                onFocus={this.handleFocus}
-                onSubmitEditing={this.handleSubmit}
-                value={textInputValue}
-                autoCorrect={autoCorrect}
-                style={[defaultInputStyle, customStyle, additionalStyle, !editable && { color: colors.accent }]}
-                onLayout={onLayout}
-                placeholderTextColor={colors.accent}
-                alignTextOnRight={!!numeric}
-                smallPadding={!!onRightAddonPress}
-              />}
+              {!fullWidthSelector && (
+                <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
+                  <View style={{ flex: 1 }}>
+                    <Tooltip
+                      body={errorMessage || ''}
+                      isVisible={!!hasError}
+                      wrapperStyle={{ alignSelf: 'flex-end' }}
+                    >
+                      <InputField
+                        {...inputProps}
+                        innerRef={(input) => {
+                        if (getInputRef) getInputRef(input);
+                          this.multilineInputField = input;
+                        }}
+                        onChange={this.handleChange}
+                        onBlur={this.handleBlur}
+                        onEndEditing={this.handleBlur}
+                        onFocus={this.handleFocus}
+                        onSubmitEditing={this.handleSubmit}
+                        value={textInputValue}
+                        autoCorrect={autoCorrect}
+                        style={[defaultInputStyle, customStyle, additionalStyle, !editable && { color: colors.accent }]}
+                        onLayout={onLayout}
+                        placeholderTextColor={colors.accent}
+                        alignTextOnRight={!!numeric}
+                        smallPadding={!!onRightAddonPress}
+                      />
+                    </Tooltip>
+                  </View>
+                </TouchableWithoutFeedback>
+              )}
+
               {showRightAddon &&
               <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
                 {!!rightPlaceholder &&
@@ -615,10 +610,6 @@ class TextInput extends React.Component<Props, State> {
             />}
           </ItemHolder>
         </InputBorder>
-        {errorBottom &&
-        <InputFooter>
-          <ErrorMessage style={errorMessageStyle}>{errorMessage}</ErrorMessage>
-        </InputFooter>}
         <SelectorOptions
           isVisible={showOptionsSelector}
           onHide={this.closeSelector}

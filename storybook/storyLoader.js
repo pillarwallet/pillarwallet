@@ -12,6 +12,7 @@ function loadStories() {
 	require('../src/components/Selector/Selector.stories');
 	require('../src/components/Toast/ToastCard.stories');
 	require('../src/components/Tooltip/Tooltip.stories');
+	require('../src/components/ValueInput/ValueInput.stories');
 	require('../src/components/ValueSelectorCard/ValueSelectorCard.stories');
 }
 
@@ -24,6 +25,7 @@ const stories = [
 	'../src/components/Selector/Selector.stories',
 	'../src/components/Toast/ToastCard.stories',
 	'../src/components/Tooltip/Tooltip.stories',
+	'../src/components/ValueInput/ValueInput.stories',
 	'../src/components/ValueSelectorCard/ValueSelectorCard.stories'
 ];
 

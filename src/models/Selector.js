@@ -17,6 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import type { Balance } from 'models/Asset';
+
 
 export type Option = {
   name: string,
@@ -39,7 +41,14 @@ export type Option = {
   symbol?: string,
   assetBalance?: string,
   formattedBalanceInFiat?: string,
-  id?: string
+  id?: string,
+  decimals?: number,
+  tokenType?: string,
+  contractAddress?: string,
+  address?: string,
+  balance?: {
+    syntheticBalance?: Balance,
+  },
 };
 
 export type HorizontalOption = {

@@ -24,6 +24,7 @@ import { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
+import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
@@ -49,13 +50,15 @@ import {
 } from 'constants/navigationConstants';
 
 // models, types
-import type { AssetData } from 'models/Asset';
 import type { SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Option } from 'models/Selector';
 
 // services
 import smartWalletService from 'services/smartWallet';
+
+// selectors
+import { activeSyntheticAssetsSelector } from 'selectors/synthetics';
 
 
 type Props = {
@@ -66,17 +69,18 @@ type Props = {
   isOnline: boolean,
   isFetchingSyntheticAssets: boolean,
   fetchAvailableSyntheticAssets: () => void,
+  syntheticAssets: Option[],
 };
 
 type State = {
-  value: ?string,
+  value: string,
   submitPressed: boolean,
   intentError: ?string,
   inputHasError: boolean,
   receiver?: string,
   receiverEnsName?: string,
   selectedContact: ?Option,
-  assetData: ?AssetData,
+  assetData: ?Option,
 };
 
 
@@ -94,7 +98,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.state = {
       intentError: '',
       submitPressed: false,
-      value: null,
+      value: '',
       inputHasError: false,
       selectedContact: null,
       assetData: null,
@@ -165,20 +169,15 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     this.setState(stateToUpdate, () => { if (onSuccess) onSuccess(); });
   };
 
-  handleAssetValueSelect = (value?: Object) => {
-    const { intentError } = this.state;
+  handleAssetValueSelect = (value: string) => {
+    const { intentError, assetData } = this.state;
     const { fetchSingleAssetRates } = this.props;
-    let updatedState = { value: value?.input, assetData: value?.selector };
-    if (value) fetchSingleAssetRates(value.selector.token);
+    let updatedState = { value };
+    const symbol = assetData?.symbol;
+    if (value && symbol) fetchSingleAssetRates(symbol);
 
     if (intentError) updatedState = { ...updatedState, intentError: null };
     this.setState(updatedState);
-  };
-
-  manageFormErrorState = (errorMessage: ?string) => {
-    const { inputHasError } = this.state;
-    const newErrorState = !!errorMessage;
-    if (inputHasError !== newErrorState) this.setState({ inputHasError: newErrorState });
   };
 
   formSubmitComplete = (callback?: Function = () => {}) => {
@@ -186,16 +185,18 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   handleFormSubmit = () => {
+    const defaultAssetData = this.props.syntheticAssets.find(({ symbol }) => symbol === PLR);
     const {
       submitPressed,
       value,
-      assetData,
       receiver,
       receiverEnsName,
     } = this.state;
+    let { assetData } = this.state;
+    assetData = assetData || defaultAssetData;
     if (submitPressed || !assetData || !value || !receiver) return;
 
-    const { token: assetCode, contractAddress = '', decimals } = assetData;
+    const { token: assetCode = '', contractAddress = '', decimals } = assetData;
     this.setState({ submitPressed: true, intentError: null }, () => {
       const { navigation } = this.props;
       const amount = parseNumber(value);
@@ -212,7 +213,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
           usePPN: true,
           symbol: assetCode,
           contractAddress,
-          decimals,
+          decimals: decimals || 18,
         };
         this.formSubmitComplete(() => {
           navigation.navigate(SEND_TOKEN_CONFIRM, {
@@ -253,7 +254,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
   };
 
   render() {
-    const { isOnline, isFetchingSyntheticAssets } = this.props;
+    const { isOnline, syntheticAssets, isFetchingSyntheticAssets } = this.props;
     const {
       value,
       submitPressed,
@@ -261,26 +262,40 @@ class SendSyntheticAmount extends React.Component<Props, State> {
       inputHasError,
       selectedContact,
       receiver,
+      assetData,
     } = this.state;
+
+    const defaultAssetData: Option = syntheticAssets.find(({ symbol }) => symbol === PLR) || syntheticAssets[0];
 
     const showFeesLabel = !isEmpty(value) && !!receiver && !intentError;
     const showNextButton = showFeesLabel;
 
     const isNextButtonDisabled = inputHasError || !isOnline || !!intentError;
 
+
+    const customBalances = syntheticAssets
+      .map(asset => ({ symbol: asset.symbol || '', balance: asset.balance?.syntheticBalance?.balance || '0' }))
+      .reduce((balances, assetBalance) => {
+        balances[assetBalance.symbol] = assetBalance;
+        return balances;
+      }, {});
+
     return (
       <SendContainer
+        isLoading={isFetchingSyntheticAssets || syntheticAssets.length === 0}
         customSelectorProps={{
           onOptionSelect: this.handleReceiverSelect,
           options: [],
           selectedOption: selectedContact,
         }}
         customValueSelectorProps={{
-          showSyntheticOptions: true,
-          getFormValue: this.handleAssetValueSelect,
-          getError: this.manageFormErrorState,
-          customError: intentError,
-          isLoading: isFetchingSyntheticAssets,
+         onAssetDataChange: (newAssetData) => this.handleAssetDataSelect(newAssetData),
+         onValueChange: (newValue) => this.handleAssetValueSelect(newValue),
+         assetData: assetData || defaultAssetData,
+         value,
+         customAssets: syntheticAssets,
+         customBalances,
+         onFormValid: (isValid) => this.setState({ inputHasError: !isValid }),
         }}
         footerProps={{
           isNextButtonVisible: showNextButton,
@@ -304,10 +319,19 @@ const mapStateToProps = ({
   isFetchingSyntheticAssets,
 });
 
+const structuredSelector = createStructuredSelector({
+  syntheticAssets: activeSyntheticAssetsSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   initSyntheticsService: () => dispatch(initSyntheticsServiceAction()),
   fetchSingleAssetRates: (assetCode: string) => dispatch(fetchSingleAssetRatesAction(assetCode)),
   fetchAvailableSyntheticAssets: () => dispatch(fetchAvailableSyntheticAssetsAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SendSyntheticAmount);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendSyntheticAmount);

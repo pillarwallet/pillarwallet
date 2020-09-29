@@ -25,12 +25,13 @@ import t from 'translations/translate';
 // components
 import Selector from 'components/Selector';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ValueSelectorCard from 'components/ValueSelectorCard';
+import ValueInput from 'components/ValueInput';
 import Button from 'components/Button';
+import Spinner from 'components/Spinner';
 
 // types
 import type { Props as SelectorProps } from 'components/Selector';
-import type { ExternalProps as ValueSelectorProps } from 'components/ValueSelectorCard';
+import type { ExternalProps as ValueSelectorProps } from 'components/ValueInput';
 import type { ExternalButtonProps as ButtonProps } from 'components/Button';
 
 // utils
@@ -50,12 +51,18 @@ type Props = {
   customValueSelectorProps?: ValueSelectorProps,
   footerProps?: FooterProps,
   children?: React.Node,
+  isLoading?: boolean,
 };
 
 const FooterInner = styled.View`
   align-items: center;
   width: 100%;
   padding: ${spacing.large}px;
+`;
+
+const InputWrapper = styled.View`
+  padding: 0 40px;
+  align-items: center;
 `;
 
 const SendFooter = (props: FooterProps) => {
@@ -82,6 +89,7 @@ const SendContainer = (props: Props) => {
     customValueSelectorProps = {},
     footerProps = {},
     children,
+    isLoading,
   } = props;
 
   return (
@@ -101,12 +109,15 @@ const SendContainer = (props: Props) => {
         allowEnteringCustomAddress
         {...customSelectorProps}
       />
-      <ValueSelectorCard
-        selectorModalTitle={t('transactions.title.valueSelectorModal')}
-        maxLabel={t('button.sendMax')}
-        wrapperStyle={{ paddingTop: spacing.medium }}
-        {...customValueSelectorProps}
-      />
+
+      <InputWrapper>
+        {!!isLoading && <Spinner />}
+        {!isLoading && (
+        <ValueInput
+          {...customValueSelectorProps}
+        />
+        )}
+      </InputWrapper>
       {children}
     </ContainerWithHeader>
   );

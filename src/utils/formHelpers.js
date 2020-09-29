@@ -119,7 +119,6 @@ function AmountInputTemplate(locals) {
       fallbackToGenericToken
       leftSideText={valueInFiatOutput}
       numeric
-      errorMessageOnTop
       {...customProps}
     />
   );
