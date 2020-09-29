@@ -18,13 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
 import styled, { withTheme } from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
@@ -38,7 +39,6 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 
-
 type CancelData = {
   txFeeInWei: number,
   gasToken: GasToken,
@@ -46,14 +46,20 @@ type CancelData = {
   recipient: string,
 };
 
-type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
-  theme: Theme,
+type StateProps = {|
+  ensRegistry: EnsRegistry,
+|};
+
+type OwnProps = {|
   onCancel: () => void,
   cancelData: CancelData,
-  ensRegistry: EnsRegistry,
-};
+|};
+
+type Props = {|
+  ...StateProps,
+  ...OwnProps,
+  theme: Theme,
+|};
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -64,7 +70,7 @@ const ContentWrapper = styled(SafeAreaView)`
 const sablierLogo = require('assets/icons/sablier.png');
 
 const SablierCancellationModal = ({
-  isVisible, onModalHide, theme, onCancel, cancelData, ensRegistry,
+  theme, onCancel, cancelData, ensRegistry,
 }: Props) => {
   const colors = getThemeColors(theme);
 
@@ -74,17 +80,18 @@ const SablierCancellationModal = ({
 
   const username = findEnsNameCaseInsensitive(ensRegistry, recipient) || recipient;
 
+  const modalRef = useRef();
+
   return (
     <SlideModal
-      isVisible={isVisible}
-      onModalHide={onModalHide}
+      ref={modalRef}
       noClose
-      headerProps={{
+      headerProps={({
         centerItems: [
           { icon: 'warning', color: colors.negative, fontSize: 16 },
           { title: t('sablierContent.title.cancelStreamScreen') }],
-        sideFlex: '0',
-      }}
+          sideFlex: '0',
+      }: $FlowFixMe)}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <Spacing h={10} />
@@ -111,7 +118,10 @@ const SablierCancellationModal = ({
           secondary
           block
           title={t('sablierContent.button.confirmStreamCancellation')}
-          onPress={onCancel}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+            onCancel();
+          }}
           disabled={isDisabled}
         />
         <Spacing h={8} />
@@ -119,7 +129,9 @@ const SablierCancellationModal = ({
           squarePrimary
           block
           title={t('sablierContent.button.cancelStreamCancellation')}
-          onPress={onModalHide}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+          }}
         />
       </ContentWrapper>
     </SlideModal>
@@ -128,8 +140,8 @@ const SablierCancellationModal = ({
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-}: RootReducerState): $Shape<Props> => ({
+}: RootReducerState): StateProps => ({
   ensRegistry,
 });
 
-export default withTheme(connect(mapStateToProps)(SablierCancellationModal));
+export default (withTheme(connect(mapStateToProps)(SablierCancellationModal)): AbstractComponent<OwnProps>);
