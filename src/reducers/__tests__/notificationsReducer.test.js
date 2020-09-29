@@ -36,7 +36,7 @@ describe('Notifications reducer', () => {
   it('handles UPDATE_INTERCOM_NOTIFICATIONS_COUNT', () => {
     const action = {
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-      count: 3,
+      payload: 3,
     };
     const expected = { intercomNotificationsCount: 3 };
 
@@ -61,7 +61,7 @@ describe('Notifications reducer', () => {
 
     const action = {
       type: ADD_NOTIFICATION,
-      notification,
+      payload: notification,
     };
 
     const expected = {

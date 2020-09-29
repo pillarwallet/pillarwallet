@@ -33,12 +33,12 @@ export type NotificationsReducerState = {
 
 type UpdateIntercomNotificationsCountAction = {
   type: typeof UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-  count: number,
+  payload: number,
 };
 
 type AddNotificationAction = {
   type: typeof ADD_NOTIFICATION,
-  notification: Notification,
+  payload: Notification,
 };
 
 type ShowHomeIndicatorAction = {
@@ -67,9 +67,9 @@ export default function notificationsReducer(
 ) {
   switch (action.type) {
     case UPDATE_INTERCOM_NOTIFICATIONS_COUNT:
-      return { ...state, intercomNotificationsCount: action.count };
+      return { ...state, intercomNotificationsCount: action.payload };
     case ADD_NOTIFICATION:
-      return { ...state, data: [...state.data, action.notification] };
+      return { ...state, data: [...state.data, action.payload] };
     case SHOW_HOME_UPDATE_INDICATOR:
       return { ...state, showHomeUpdateIndicator: true };
     case HIDE_HOME_UPDATE_INDICATOR:

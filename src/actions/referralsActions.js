@@ -108,7 +108,7 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
   return async (dispatch: Dispatch) => {
     dispatch({
       type: ADD_NOTIFICATION,
-      notification: {
+      payload: {
         message: errorMessage || isAllInvitesNotSent
           ? t('toast.referralInviteCantBeSent.allInvites')
           : t('toast.referralInviteCantBeSent.notAllInvites'),
@@ -255,7 +255,7 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
       if (callback) callback({ error: true });
       dispatch({
         type: ADD_NOTIFICATION,
-        notification: {
+        payload: {
           message: t('toast.cantVerifyCode'),
           emoji: 'hushed',
         },

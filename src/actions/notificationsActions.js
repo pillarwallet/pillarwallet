@@ -101,7 +101,7 @@ export const startListeningIntercomNotificationsAction = () => {
     Intercom.setUserHash(supportHmac);
     intercomNotificationsListener = ({ count }) => dispatch({
       type: UPDATE_INTERCOM_NOTIFICATIONS_COUNT,
-      count,
+      payload: count,
     });
     Intercom.getUnreadConversationCount()
       .then(count => ({ count }))
@@ -165,7 +165,7 @@ export const subscribeToSocketEventsAction = () => {
           title: response.notification.title,
           message: response.notification.body,
         };
-        dispatch({ type: ADD_NOTIFICATION, notification });
+        dispatch({ type: ADD_NOTIFICATION, payload: notification });
         dispatch(showHomeUpdateIndicatorAction());
       }
     });
@@ -194,7 +194,7 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
       const notification = message.data && getToastNotification(message.data, wallet.address);
       if (!notification) return;
 
-      dispatch({ type: ADD_NOTIFICATION, notification });
+      dispatch({ type: ADD_NOTIFICATION, payload: notification });
       dispatch(showHomeUpdateIndicatorAction());
     }
   };
