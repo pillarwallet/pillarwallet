@@ -21,7 +21,7 @@
 
 import theme from 'styled-theming';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import type { Theme } from 'models/Theme';
+import type { Theme, ColorsByThemeProps } from 'models/Theme';
 import lightThemeColors from './themes/lightTheme';
 import darkThemeColors from './themes/darkTheme';
 
@@ -288,3 +288,20 @@ export function getThemeType(currentTheme: Theme = defaultTheme) {
 export function getThemeName(currentTheme: Theme = defaultTheme) {
   return currentTheme.current.replace('Theme', '');
 }
+
+export const getColorByTheme = (props: ColorsByThemeProps) => {
+  const {
+    lightKey,
+    darkKey,
+    lightCustom,
+    darkCustom,
+  } = props;
+
+  // in case there's no color by the key
+  const FALLBACK_COLOR = '#808080';
+
+  return theme('current', {
+    lightTheme: lightCustom || (lightKey && lightThemeColors[lightKey] ? lightThemeColors[lightKey] : FALLBACK_COLOR),
+    darkTheme: darkCustom || (darkKey && darkThemeColors[darkKey] ? darkThemeColors[darkKey] : FALLBACK_COLOR),
+  });
+};

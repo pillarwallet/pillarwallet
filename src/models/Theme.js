@@ -26,3 +26,10 @@ export type Theme = {
   current: string,
   colors: ThemeColors,
 };
+
+export type ColorsByThemeProps = {|
+  lightKey?: string,
+  darkKey?: string,
+  lightCustom?: string,
+  darkCustom?: string,
+|}
