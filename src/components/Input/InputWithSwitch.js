@@ -23,14 +23,16 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { Event } from 'react-native';
+import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Switcher from 'components/Switcher';
 import LabeledWrapper from 'components/Input/LabeledWrapper';
 import VerifyView from 'components/Input/VerifyView';
 import Input from 'components/Input';
+import Modal from 'components/Modal';
 
 // partials
 import SelectList from './SelectList';
@@ -63,11 +65,6 @@ type Props = {
   optionsTitle?: string,
   onPressVerify?: () => void,
 };
-
-type State = {
-  showModal: boolean,
-};
-
 
 const StyledItemView = styled.View`
   display: flex;
@@ -123,10 +120,8 @@ const ModalTitle = styled(MediumText)`
 `;
 
 
-export default class InputWithSwitch extends React.Component<Props, State> {
-  state = {
-    showModal: false,
-  };
+export default class InputWithSwitch extends React.Component<Props> {
+  modalRef = React.createRef<SlideModalInstance>();
 
   handleBlur = () => {
     const {
@@ -170,16 +165,36 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     if (onSelect) {
       onSelect(valueObject);
     }
-    this.toggleModal();
+    this.closeModal();
   };
 
-  toggleModal = () => {
-    const { showModal } = this.state;
-    this.setState({ showModal: !showModal });
-  };
+  openModal = () => {
+    const { options, optionsTitle } = this.props;
+
+    Modal.open(() => (
+      <SlideModal
+        ref={this.modalRef}
+        fullScreen
+        showHeader
+        avoidKeyboard
+        noSwipeToDismiss
+      >
+        <Wrapper flex={1}>
+          {!!optionsTitle &&
+          <ModalTitle extraHorizontalSpacing>
+            {optionsTitle}
+          </ModalTitle>}
+          <SelectList options={options || []} onSelect={this.selectOption} />
+        </Wrapper>
+      </SlideModal>
+    ));
+  }
+
+  closeModal = () => {
+    if (this.modalRef.current) this.modalRef.current.close();
+  }
 
   render() {
-    const { showModal } = this.state;
     const {
       disabledInput,
       errorMessage,
@@ -190,7 +205,6 @@ export default class InputWithSwitch extends React.Component<Props, State> {
       label,
       wrapperStyle,
       options,
-      optionsTitle,
       onPressVerify,
       isModified,
     } = this.props;
@@ -203,7 +217,7 @@ export default class InputWithSwitch extends React.Component<Props, State> {
     const inputSection = options ? (
       <LabeledWrapper
         label={label}
-        onPress={this.toggleModal}
+        onPress={this.openModal}
       >
         <SelectedOption>{value}</SelectedOption>
       </LabeledWrapper>
@@ -238,23 +252,6 @@ export default class InputWithSwitch extends React.Component<Props, State> {
         <ErrorMessage>
           {errorMessage}
         </ErrorMessage>}
-
-        <SlideModal
-          isVisible={showModal}
-          fullScreen
-          showHeader
-          onModalHide={this.toggleModal}
-          avoidKeyboard
-          noSwipeToDismiss
-        >
-          <Wrapper flex={1}>
-            {!!optionsTitle &&
-            <ModalTitle extraHorizontalSpacing>
-              {optionsTitle}
-            </ModalTitle>}
-            <SelectList options={options || []} onSelect={this.selectOption} />
-          </Wrapper>
-        </SlideModal>
       </Wrapper>
     );
   }
