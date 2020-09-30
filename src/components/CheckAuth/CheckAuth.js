@@ -33,7 +33,7 @@ import PinCode from 'components/PinCode';
 import { addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getKeychainDataObject } from 'utils/keychain';
 import { constructWalletFromMnemonic } from 'utils/wallet';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import CheckAuthWrapperModal from 'components/Modals/SlideModal/CheckAuthWrapperModal';
 import Header from 'components/Header';
 import type { EthereumWallet } from 'models/Wallet';
 
@@ -45,15 +45,10 @@ type HeaderProps = {
   onBack?: Function,
 };
 
-type ModalProps = {
+type ModalProps = {|
   onModalHide: Function,
-  onModalHidden?: Function,
-  title?: string,
-  centerTitle?: boolean,
-  fullScreen?: boolean,
-  showHeader?: boolean,
   isVisible?: boolean,
-};
+|};
 
 type ValidPinCallback = (pin: string, wallet: EthereumWallet) => Promise<void>;
 
@@ -142,10 +137,6 @@ class CheckAuth extends React.Component<Props, State> {
     if (modalProps.onModalHide) {
       modalProps.onModalHide();
     }
-
-    if (modalProps.onModalHidden) {
-      modalProps.onModalHidden();
-    }
   };
 
   checkPrivateKey = async (errorHandler?: Function) => {
@@ -209,30 +200,19 @@ class CheckAuth extends React.Component<Props, State> {
   renderSlideModalWithPin = () => {
     const { modalProps } = this.props;
     if (!modalProps) return null;
-    const {
-      title = t('auth:enterPincode'),
-      centerTitle = true,
-      fullScreen = true,
-      showHeader = true,
-      onModalHidden,
-      onModalHide,
-      isVisible,
-    } = modalProps;
+    const title = t('auth:enterPincode');
+
+    const { onModalHide, isVisible } = modalProps;
     return (
-      <SlideModal
-        {...modalProps}
+      <CheckAuthWrapperModal
         title={title}
-        centerTitle={centerTitle}
-        fullScreen={fullScreen}
-        showHeader={showHeader}
-        onModalHidden={onModalHidden}
         onModalHide={onModalHide}
-        isVisible={isVisible}
+        isVisible={!!isVisible}
       >
         <Wrapper flex={1}>
           {this.renderPinCode()}
         </Wrapper>
-      </SlideModal>
+      </CheckAuthWrapperModal>
     );
   };
 
