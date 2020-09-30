@@ -21,31 +21,33 @@ import * as React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import { getThemeColors, themedColors } from 'utils/themes';
 import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { spacing, fontStyles } from 'utils/variables';
+import { noop } from 'utils/common';
 import type { Theme } from 'models/Theme';
-
 
 type ItemType = {
   label: string,
   key: string,
-  onPress: () => void,
+  onPress?: () => void,
   value?: string,
   chevron?: boolean,
   isDisabled?: boolean,
 }
 
-type Props = {
-  theme: Theme,
-  onModalClose: (?() => void) => void,
-  isVisible: boolean,
+type OwnProps = {|
   items: ItemType[],
   doNotCloseOnPress?: boolean,
   storybook?: boolean,
-};
+|};
+
+type Props = {|
+  ...OwnProps,
+  theme: Theme,
+|};
 
 type ItemProps = {
   label: string,
@@ -102,13 +104,18 @@ const Item = ({
 );
 
 class ActionModal extends React.Component<Props> {
+  modalRef = React.createRef();
+
   renderItem = (item) => {
-    const { onModalClose, doNotCloseOnPress } = this.props;
-    const { onPress } = item;
+    const { doNotCloseOnPress } = this.props;
+    const { onPress = noop } = item;
     return (
       <Item
         {...item}
-        onPress={() => doNotCloseOnPress ? onPress() : onModalClose(onPress)}
+        onPress={() => {
+          onPress();
+          if (!doNotCloseOnPress && this.modalRef.current) this.modalRef.current.close();
+        }}
       />
     );
   };
@@ -127,8 +134,6 @@ class ActionModal extends React.Component<Props> {
   render() {
     const {
       theme,
-      onModalClose,
-      isVisible,
       storybook,
     } = this.props;
     const colors = getThemeColors(theme);
@@ -137,11 +142,10 @@ class ActionModal extends React.Component<Props> {
 
     return (
       <SlideModal
-        isVisible={isVisible}
+        ref={this.modalRef}
         noClose
-        background={colors.card}
+        backgroundColor={colors.card}
         hideHeader
-        onModalHide={onModalClose}
         sideMargins={spacing.large}
       >
         {this.renderContent()}
@@ -150,4 +154,4 @@ class ActionModal extends React.Component<Props> {
   }
 }
 
-export default withTheme(ActionModal);
+export default (withTheme(ActionModal): React.AbstractComponent<OwnProps>);
