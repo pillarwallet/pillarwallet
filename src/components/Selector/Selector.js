@@ -27,17 +27,18 @@ import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
-import { MediumText } from 'components/Typography';
-import ListItemWithImage from 'components/ListItem/ListItemWithImage';
+import { MediumText, BaseText } from 'components/Typography';
 import SelectorOptions from 'components/SelectorOptions';
 import AddressScanner from 'components/QRCodeScanner/AddressScanner';
+import ProfileImage from 'components/ProfileImage';
+import { Spacing } from 'components/Layout';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { spacing } from 'utils/variables';
 import { isValidAddress } from 'utils/validators';
+import { themedColors } from 'utils/themes';
 
 // types
 import type { HorizontalOption, Option } from 'models/Selector';
@@ -46,8 +47,6 @@ import type { HorizontalOption, Option } from 'models/Selector';
 export type Props = {
   selectedOption?: ?Option,
   onOptionSelect?: (option: Option, onSuccess?: () => void) => void | Promise<void>,
-  onOptionImagePress?: (option: Option) => void,
-  label?: string,
   placeholder?: string,
   optionsTitle?: string,
   options?: Option[],
@@ -68,31 +67,27 @@ export type Props = {
   resetOptionsModalOnHiddenOptionAdded?: boolean,
 };
 
-const Wrapper = styled.View`
-  width: 100%;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  padding: 24px ${spacing.layoutSides}px;
+const SelectorPill = styled.TouchableOpacity`
+  background-color: ${themedColors.tertiary};
+  padding: 10px 16px;
+  border-radius: 24px;
 `;
 
-const SelectedOption = styled.TouchableOpacity`
-  flex: 1;
+const SelectedOption = styled.View`
+  flex-direction: row;
+  align-items: center;
 `;
 
 const Selector = ({
   onOptionSelect,
   disableSelfSelect,
   activeAccountAddress,
-  onOptionImagePress,
-  label = t('label.select'),
   placeholder = t('label.choseOption'),
   optionsTitle,
   options,
   searchPlaceholder = t('label.search'),
   selectedOption,
   horizontalOptionsData,
-  wrapperStyle,
   noOptionImageFallback,
   hasQRScanner,
   allowEnteringCustomAddress,
@@ -146,35 +141,35 @@ const Selector = ({
     return null;
   };
 
-  const renderOption = (option: ?Option, disabled: boolean) => {
+  const renderOption = (option: ?Option) => {
     if (!option) return null;
     const {
-      name,
       imageUrl,
       lastUpdateTime,
-      imageSource,
     } = option;
+    let { name } = option;
 
-    const onItemPress = (itemImagePress: boolean = false) => {
-      if (itemImagePress && onOptionImagePress) {
-        onOptionImagePress(option);
-        return;
-      }
-      if (onOptionSelect) onOptionSelect(option);
-      setIsOptionsVisible(false);
-    };
+    if (isValidAddress(name)) {
+      name = t('ellipsedMiddleString', {
+        stringStart: name.slice(0, 6),
+        stringEnd: name.slice(-6),
+      });
+    }
+
+    const updatedUserImageUrl = lastUpdateTime && imageUrl ? `${imageUrl}?t=${lastUpdateTime}` : imageUrl;
 
     return (
-      <ListItemWithImage
-        label={name}
-        disabled={disabled}
-        onPress={() => !disabled && setIsOptionsVisible(true)}
-        avatarUrl={imageUrl}
-        navigateToProfile={() => onItemPress(true)}
-        imageUpdateTimeStamp={lastUpdateTime}
-        itemImageSource={imageSource}
-        padding="0 14px"
-      />
+      <SelectedOption>
+        <ProfileImage
+          uri={updatedUserImageUrl}
+          userName={name}
+          diameter={16}
+          noShadow
+          borderWidth={0}
+        />
+        <Spacing w={8} />
+        <MediumText medium>{name}</MediumText>
+      </SelectedOption>
     );
   };
 
@@ -182,7 +177,7 @@ const Selector = ({
   const hasOptions = !!options?.length;
   const disabled = !hasOptions && !allowEnteringCustomAddress;
   const placeholderText = !disabled
-    ? t('ellipsedString', { string: placeholder })
+    ? placeholder
     : t('label.noOptionsToSelect');
 
   const onModalHidden = () => {
@@ -192,17 +187,10 @@ const Selector = ({
 
   return (
     <>
-      <Wrapper style={wrapperStyle}>
-        <MediumText regular accent>{label}: </MediumText>
-        <SelectedOption disabled={disabled} onPress={() => setIsOptionsVisible(true)}>
-          {hasValue && renderOption(selectedOption, disabled)}
-          {!hasValue && (
-            <MediumText style={{ paddingHorizontal: spacing.layoutSides }} big>
-              {placeholderText}
-            </MediumText>
-          )}
-        </SelectedOption>
-      </Wrapper>
+      <SelectorPill onPress={() => setIsOptionsVisible(true)} disabled={disabled}>
+        {hasValue && renderOption(selectedOption)}
+        {!hasValue && <BaseText link medium>{placeholderText}</BaseText>}
+      </SelectorPill>
       <SelectorOptions
         isVisible={!hideModals && !changingModals && isOptionsVisible}
         onHide={() => setIsOptionsVisible(false)}

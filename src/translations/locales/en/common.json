@@ -163,7 +163,7 @@
     "gettingFee": "Getting fee...",
     "to": "To",
     "from": "From",
-    "chooseReceiver": "Choose receiver",
+    "whereToSend": "Where to send",
     "walletAddress": "Wallet address",
     "tokens": "Tokens",
     "collectibles": "Collectibles",

@@ -37,6 +37,7 @@ import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Selector from 'components/Selector';
 import SlideModal from 'components/Modals/SlideModal';
+import ArrowIcon from 'components/ArrowIcon';
 
 // utils
 import { getThemeColors, getThemeType } from 'utils/themes';
@@ -98,6 +99,10 @@ const ContentWrapper = styled.View`
 
 const PickerWrapper = styled.View`
   padding: 18px 20px;
+`;
+
+const InputWrapper = styled.View`
+  align-items: center;
 `;
 
 const START_TIME = 'START_TIME';
@@ -332,27 +337,31 @@ class NewStream extends React.Component<Props, State> {
         putContentInScrollView
         keyboardShouldPersistTaps="handled"
       >
-        <Selector
-          label={t('label.to')}
-          placeholder={t('label.chooseReceiver')}
-          searchPlaceholder={t('label.walletAddress')}
-          noOptionImageFallback
-          hasQRScanner
-          disableSelfSelect
-          allowEnteringCustomAddress
-          onOptionSelect={this.handleReceiverSelect}
-          options={[]}
-          selectedOption={selectedContact}
-        />
+        <InputWrapper>
+          <ValueSelectorCard
+            preselectedAsset={DAI}
+            maxLabel={t('button.sendMax')}
+            getFormValue={this.getFormValue}
+            customOptions={assetsOptions}
+          />
 
-        <ValueSelectorCard
-          preselectedAsset={DAI}
-          maxLabel={t('button.sendMax')}
-          getFormValue={this.getFormValue}
-          customOptions={assetsOptions}
-        />
+          <ArrowIcon />
+          <Spacing h={16} />
 
-        <Spacing h={34} />
+          <Selector
+            placeholder={t('label.whereToSend')}
+            searchPlaceholder={t('label.walletAddress')}
+            noOptionImageFallback
+            hasQRScanner
+            disableSelfSelect
+            allowEnteringCustomAddress
+            onOptionSelect={this.handleReceiverSelect}
+            options={[]}
+            selectedOption={selectedContact}
+          />
+        </InputWrapper>
+
+        <Spacing h={42} />
         <ContentWrapper>
           <Row>
             <MediumText regular>{t('sablierContent.label.start')}</MediumText>
