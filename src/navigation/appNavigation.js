@@ -271,7 +271,6 @@ import {
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
-import { BASIC } from 'constants/themesConstants';
 
 // utils
 import { fontSizes } from 'utils/variables';
@@ -312,8 +311,8 @@ const StackNavigatorConfig = {
   },
   cardStyle: {
     backgroundColor: {
-      dark: getThemeColors(getThemeByType(DARK_THEME))[BASIC['070']],
-      light: getThemeColors(getThemeByType())[BASIC['070']],
+      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+      light: getThemeColors(getThemeByType()).basic070,
     },
   },
 };
