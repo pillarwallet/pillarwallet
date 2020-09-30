@@ -24,7 +24,6 @@ import { Platform, StatusBar, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { spacing } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
-import { themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 type ContainerProps = {

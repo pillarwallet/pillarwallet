@@ -28,7 +28,7 @@ import isEmpty from 'lodash.isempty';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
-import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 import { DARK_THEME, LIGHT_CONTENT, DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
