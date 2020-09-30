@@ -34,6 +34,7 @@ import { ListCard } from 'components/ListItem/ListCard';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BuyCryptoAccountWarnModal, { ACCOUNT_MSG } from 'components/BuyCryptoAccountWarnModal';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // constants
 import {
@@ -69,7 +70,6 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
 import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { ModalMessage } from 'components/BuyCryptoAccountWarnModal';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
@@ -100,15 +100,7 @@ type Props = {
   loadAltalixInfo: () => void,
 };
 
-type State = {
-  buyCryptoModalMessage: null | ModalMessage,
-};
-
-class ServicesScreen extends React.Component<Props, State> {
-  state = {
-    buyCryptoModalMessage: null,
-  };
-
+class ServicesScreen extends React.Component<Props> {
   componentDidMount() {
     const { isAltalixAvailable, loadAltalixInfo } = this.props;
 
@@ -285,12 +277,16 @@ class ServicesScreen extends React.Component<Props, State> {
     const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
     if (!smartWalletStatus.hasAccount) {
-      this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.NO_SW_ACCOUNT });
+      Modal.open(() => (
+        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.NO_SW_ACCOUNT} />
+      ));
       return null;
     }
 
     if (!activeAccount || !checkIfSmartWalletAccount(activeAccount)) {
-      this.setState({ buyCryptoModalMessage: ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE });
+      Modal.open(() => (
+        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.SW_ACCOUNT_NOT_ACTIVE} />
+      ));
       return null;
     }
 
@@ -312,10 +308,6 @@ class ServicesScreen extends React.Component<Props, State> {
       emoji: 'hushed',
       supportLink: true,
     });
-  }
-
-  onBuyCryptoModalClose = () => {
-    this.setState({ buyCryptoModalMessage: null });
   }
 
   renderServicesItem = ({ item }) => {
@@ -346,7 +338,6 @@ class ServicesScreen extends React.Component<Props, State> {
 
   render() {
     const services = this.getServices();
-    const { buyCryptoModalMessage } = this.state;
 
     return (
       <ContainerWithHeader
@@ -367,11 +358,6 @@ class ServicesScreen extends React.Component<Props, State> {
               contentContainerStyle={{ width: '100%', padding: spacing.layoutSides, paddingBottom: 40 }}
               onScroll={onScroll}
               scrollEventThrottle={16}
-            />
-            <BuyCryptoAccountWarnModal
-              navigation={this.props.navigation}
-              message={buyCryptoModalMessage}
-              onClose={this.onBuyCryptoModalClose}
             />
           </React.Fragment>
         )}

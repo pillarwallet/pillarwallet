@@ -18,19 +18,23 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView, withNavigation } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 // components
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 
 // constants
 import { ACCOUNTS } from 'constants/navigationConstants';
+
+// utils
+import { noop } from 'utils/common';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -42,28 +46,32 @@ export const ACCOUNT_MSG = {
 
 export type ModalMessage = $Keys<typeof ACCOUNT_MSG>;
 
-type Props = {
-  navigation: NavigationScreenProp<*>,
-  message: ModalMessage | null,
-  onClose: () => void,
-};
+type OwnProps = {|
+  message: ModalMessage,
+|};
 
-type ModalContent = {
+type Props = {|
+  ...OwnProps,
+  navigation: NavigationScreenProp<*>,
+|};
+
+type ModalContent = {|
   title: string,
   text: string,
   buttonTitle: string,
   buttonAction: () => void,
-};
+|};
 
 const ModalContainer = styled.View`
   padding: 20px 0 40px;
 `;
 
-const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
+const BuyCryptoAccountWarnModal = ({ message, navigation }: Props) => {
+  const modalRef = useRef();
   const {
-    title = '',
-    text = '',
-    buttonTitle = '',
+    title,
+    text,
+    buttonTitle,
     buttonAction,
   }: ModalContent = useMemo(() => {
     switch (message) {
@@ -73,7 +81,7 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
           text: t('exchangeContent.modal.smartWalletMissing.paragraph'),
           buttonTitle: t('exchangeContent.modal.smartWalletMissing.button.enable'),
           buttonAction: () => {
-            onClose();
+            if (modalRef.current) modalRef.current.close();
             // intro screen deprecated, show message only, let user activate manually from home screen
             // navigation.navigate(SMART_WALLET_INTRO);
           },
@@ -85,19 +93,24 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
           text: t('exchangeContent.modal.smartWalletIsNotActive.paragraph'),
           buttonTitle: t('exchangeContent.modal.smartWalletIsNotActive.button.selectAccount'),
           buttonAction: () => {
-            onClose();
+            if (modalRef.current) modalRef.current.close();
             navigation.navigate(ACCOUNTS);
           },
         };
 
-      default: return {};
+      default:
+        return {
+          title: '',
+          text: '',
+          buttonTitle: '',
+          buttonAction: noop,
+        };
     }
-  }, [message, onClose, navigation]);
+  }, [message, navigation]);
 
   return (
     <SlideModal
-      isVisible={message !== null}
-      onModalHide={onClose}
+      ref={modalRef}
       hideHeader
     >
       <SafeAreaView>
@@ -120,4 +133,4 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
   );
 };
 
-export default withNavigation(BuyCryptoAccountWarnModal);
+export default (withNavigation(BuyCryptoAccountWarnModal): AbstractComponent<OwnProps>);
