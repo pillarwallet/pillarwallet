@@ -11,6 +11,7 @@ import {
 import type { Measurements, Steps, PosOverwrites } from 'reducers/walkthroughsReducer';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { WALKTHROUGH_TYPES } from 'constants/walkthroughConstants';
+import { measure } from 'utils/ui';
 import { WalkthroughTooltip } from './WalkthroughTooltip';
 
 type TooltipInfo = {
@@ -37,11 +38,6 @@ type State = {
   refMeasures: ?Measurements,
   tooltipInfo: ?TooltipInfo,
 };
-
-const measure = (ref: View): Promise<Measurements> =>
-  new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
-    x, y, w, h,
-  })));
 
 class WalkthroughItem extends React.Component<Props, State> {
   reference = React.createRef();
