@@ -52,7 +52,6 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 // utils, services
 import { spacing } from 'utils/variables';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
-import { themedColors } from 'utils/themes';
 import type { ExchangeOptions } from 'utils/exchange';
 import { formatAmount, formatFiat } from 'utils/common';
 
@@ -129,7 +128,6 @@ type State = {
 
 const FormWrapper = styled.View`
   padding: ${spacing.large}px 40px 60px;
-  background-color: ${themedColors.surface};
 `;
 
 class ExchangeScreen extends React.Component<Props, State> {

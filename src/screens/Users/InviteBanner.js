@@ -28,7 +28,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { fontStyles, spacing } from 'utils/variables';
-import { getThemeType, themedColors } from 'utils/themes';
+import { getThemeType } from 'utils/themes';
 
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -50,7 +50,9 @@ const HeaderWrapper = styled.View`
   justify-content: center;
   position: relative;
   height: 136px;
-  background-color: ${({ theme }) => getThemeType(theme) === DARK_THEME ? themedColors.tertiary : themedColors.surface};
+  background-color: ${({ theme }) => getThemeType(theme) === DARK_THEME
+    ? theme.colors.tertiary
+    : theme.colors.basic070};
   padding: ${spacing.large}px 36px;
 `;
 

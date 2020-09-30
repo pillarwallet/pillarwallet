@@ -239,7 +239,7 @@ class SlideModal extends React.Component<Props, *> {
 
     const customTheme = getTheme(this.props);
     const colors = getThemeColors(theme);
-    const backgroundColor = bgColor || colors.surface;
+    const backgroundColor = bgColor || colors.basic070;
 
     const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !isEmpty(headerProps);
     let leftItems = [];

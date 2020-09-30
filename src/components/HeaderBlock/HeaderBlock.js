@@ -373,7 +373,7 @@ class HeaderBlock extends React.Component<Props> {
     } else {
       backgroundColor = bottomBorderAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [theme.colors.surface, theme.colors.card],
+        outputRange: [theme.colors.basic070, theme.colors.card],
         extrapolate: 'clamp',
       });
 
@@ -383,7 +383,6 @@ class HeaderBlock extends React.Component<Props> {
         extrapolate: 'clamp',
       });
     }
-
 
     return (
       <ThemeProvider theme={updatedTheme}>

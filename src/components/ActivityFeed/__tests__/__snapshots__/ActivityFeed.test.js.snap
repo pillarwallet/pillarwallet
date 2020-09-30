@@ -103,9 +103,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -155,9 +153,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -520,9 +516,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -572,9 +566,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }

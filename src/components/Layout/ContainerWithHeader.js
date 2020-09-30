@@ -61,7 +61,7 @@ type State = {
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : themedColors.surface)};
+  background-color: ${({ color, theme }) => color || theme.colors.basic070};
   flex: 1;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
@@ -237,7 +237,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
               top: 'never', bottom: 'always', ...inset, ...footerContainerInset,
             }}
             style={{
-              backgroundColor: backgroundColor || colors.surface,
+              backgroundColor: backgroundColor || colors.basic070,
               width: '100%',
               flexWrap: 'wrap',
               ...footerContainerStyle,
