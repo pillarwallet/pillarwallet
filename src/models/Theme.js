@@ -18,11 +18,22 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import lightThemeColors from 'utils/themes/lightTheme';
+import darkThemeColors from 'utils/themes/darkTheme';
+
+
 export type ThemeColors = {
   [colorName: string]: string,
 };
 
 export type Theme = {
   current: string,
-  colors: ThemeColors,
+  colors: any,
 };
+
+export type ColorsByThemeProps = {|
+  lightKey?: $Keys<typeof lightThemeColors>,
+  darkKey?: $Keys<typeof darkThemeColors>,
+  lightCustom?: string,
+  darkCustom?: string,
+|}

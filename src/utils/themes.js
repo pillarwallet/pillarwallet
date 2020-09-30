@@ -21,9 +21,12 @@
 
 import theme from 'styled-theming';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import type { Theme } from 'models/Theme';
+import type { Theme, ColorsByThemeProps } from 'models/Theme';
+import lightThemeColors from './themes/lightTheme';
+import darkThemeColors from './themes/darkTheme';
 
-export const lightThemeColors = {
+// will be removed after transition
+export const lightThemeColorsOld = {
   text: '#0A1427',
   accent: '#818EB3',
   primary: '#007AFF',
@@ -65,7 +68,8 @@ export const lightThemeColors = {
   toastCloseIcon: '#ededed',
 };
 
-export const darkThemeColors = {
+// will be removed after transition
+export const darkThemeColorsOld = {
   text: '#B1BBD9',
   accent: '#818EB3',
   primary: '#007AFF',
@@ -109,162 +113,162 @@ export const darkThemeColors = {
 
 export const themedColors = {
   text: theme('current', {
-    lightTheme: lightThemeColors.text,
-    darkTheme: darkThemeColors.text,
+    lightTheme: lightThemeColorsOld.text,
+    darkTheme: darkThemeColorsOld.text,
   }),
   accent: theme('current', {
-    lightTheme: lightThemeColors.accent,
-    darkTheme: darkThemeColors.accent,
+    lightTheme: lightThemeColorsOld.accent,
+    darkTheme: darkThemeColorsOld.accent,
   }),
   primary: theme('current', {
-    lightTheme: lightThemeColors.primary,
-    darkTheme: darkThemeColors.primary,
+    lightTheme: lightThemeColorsOld.primary,
+    darkTheme: darkThemeColorsOld.primary,
   }),
   secondaryAccent: theme('current', {
-    lightTheme: lightThemeColors.secondaryAccent,
-    darkTheme: darkThemeColors.secondaryAccent,
+    lightTheme: lightThemeColorsOld.secondaryAccent,
+    darkTheme: darkThemeColorsOld.secondaryAccent,
   }),
   secondaryText: theme('current', {
-    lightTheme: lightThemeColors.secondaryText,
-    darkTheme: darkThemeColors.secondaryText,
+    lightTheme: lightThemeColorsOld.secondaryText,
+    darkTheme: darkThemeColorsOld.secondaryText,
   }),
   border: theme('current', {
-    lightTheme: lightThemeColors.border,
-    darkTheme: darkThemeColors.border,
+    lightTheme: lightThemeColorsOld.border,
+    darkTheme: darkThemeColorsOld.border,
   }),
   positive: theme('current', {
-    lightTheme: lightThemeColors.positive,
-    darkTheme: darkThemeColors.positive,
+    lightTheme: lightThemeColorsOld.positive,
+    darkTheme: darkThemeColorsOld.positive,
   }),
   negative: theme('current', {
-    lightTheme: lightThemeColors.negative,
-    darkTheme: darkThemeColors.negative,
+    lightTheme: lightThemeColorsOld.negative,
+    darkTheme: darkThemeColorsOld.negative,
   }),
   surface: theme('current', {
-    lightTheme: lightThemeColors.surface,
-    darkTheme: darkThemeColors.surface,
+    lightTheme: lightThemeColorsOld.surface,
+    darkTheme: darkThemeColorsOld.surface,
   }),
   card: theme('current', {
-    lightTheme: lightThemeColors.card,
-    darkTheme: darkThemeColors.card,
+    lightTheme: lightThemeColorsOld.card,
+    darkTheme: darkThemeColorsOld.card,
   }),
   tertiary: theme('current', {
-    lightTheme: lightThemeColors.tertiary,
-    darkTheme: darkThemeColors.tertiary,
+    lightTheme: lightThemeColorsOld.tertiary,
+    darkTheme: darkThemeColorsOld.tertiary,
   }),
   control: theme('current', {
-    lightTheme: lightThemeColors.control,
-    darkTheme: darkThemeColors.control,
+    lightTheme: lightThemeColorsOld.control,
+    darkTheme: darkThemeColorsOld.control,
   }),
   warning: theme('current', {
-    lightTheme: lightThemeColors.warning,
-    darkTheme: darkThemeColors.warning,
+    lightTheme: lightThemeColorsOld.warning,
+    darkTheme: darkThemeColorsOld.warning,
   }),
   indicator: theme('current', {
-    lightTheme: lightThemeColors.indicator,
-    darkTheme: darkThemeColors.indicator,
+    lightTheme: lightThemeColorsOld.indicator,
+    darkTheme: darkThemeColorsOld.indicator,
   }),
   userAvatar: theme('current', {
-    lightTheme: lightThemeColors.userAvatar,
-    darkTheme: darkThemeColors.userAvatar,
+    lightTheme: lightThemeColorsOld.userAvatar,
+    darkTheme: darkThemeColorsOld.userAvatar,
   }),
   legacyWallet: theme('current', {
-    lightTheme: lightThemeColors.legacyWallet,
-    darkTheme: darkThemeColors.legacyWallet,
+    lightTheme: lightThemeColorsOld.legacyWallet,
+    darkTheme: darkThemeColorsOld.legacyWallet,
   }),
   smartWallet: theme('current', {
-    lightTheme: lightThemeColors.smartWallet,
-    darkTheme: darkThemeColors.smartWallet,
+    lightTheme: lightThemeColorsOld.smartWallet,
+    darkTheme: darkThemeColorsOld.smartWallet,
   }),
   orange: theme('current', {
-    lightTheme: lightThemeColors.orange,
-    darkTheme: darkThemeColors.orange,
+    lightTheme: lightThemeColorsOld.orange,
+    darkTheme: darkThemeColorsOld.orange,
   }),
   PPNText: theme('current', {
-    lightTheme: lightThemeColors.PPNText,
-    darkTheme: darkThemeColors.PPNText,
+    lightTheme: lightThemeColorsOld.PPNText,
+    darkTheme: darkThemeColorsOld.PPNText,
   }),
   PPNSurface: theme('current', {
-    lightTheme: lightThemeColors.PPNSurface,
-    darkTheme: darkThemeColors.PPNSurface,
+    lightTheme: lightThemeColorsOld.PPNSurface,
+    darkTheme: darkThemeColorsOld.PPNSurface,
   }),
   smartWalletText: theme('current', {
-    lightTheme: lightThemeColors.smartWalletText,
-    darkTheme: darkThemeColors.smartWalletText,
+    lightTheme: lightThemeColorsOld.smartWalletText,
+    darkTheme: darkThemeColorsOld.smartWalletText,
   }),
   smartWalletSurface: theme('current', {
-    lightTheme: lightThemeColors.smartWalletSurface,
-    darkTheme: darkThemeColors.smartWalletSurface,
+    lightTheme: lightThemeColorsOld.smartWalletSurface,
+    darkTheme: darkThemeColorsOld.smartWalletSurface,
   }),
   danger: theme('current', {
-    lightTheme: lightThemeColors.danger,
-    darkTheme: darkThemeColors.danger,
+    lightTheme: lightThemeColorsOld.danger,
+    darkTheme: darkThemeColorsOld.danger,
   }),
   helpIcon: theme('current', {
-    lightTheme: lightThemeColors.helpIcon,
-    darkTheme: darkThemeColors.helpIcon,
+    lightTheme: lightThemeColorsOld.helpIcon,
+    darkTheme: darkThemeColorsOld.helpIcon,
   }),
   notice: theme('current', {
-    lightTheme: lightThemeColors.notice,
-    darkTheme: darkThemeColors.notice,
+    lightTheme: lightThemeColorsOld.notice,
+    darkTheme: darkThemeColorsOld.notice,
   }),
   activeTabBarIcon: theme('current', {
-    lightTheme: lightThemeColors.activeTabBarIcon,
-    darkTheme: darkThemeColors.activeTabBarIcon,
+    lightTheme: lightThemeColorsOld.activeTabBarIcon,
+    darkTheme: darkThemeColorsOld.activeTabBarIcon,
   }),
   inactiveTabBarIcon: theme('current', {
-    lightTheme: lightThemeColors.inactiveTabBarIcon,
-    darkTheme: darkThemeColors.inactiveTabBarIcon,
+    lightTheme: lightThemeColorsOld.inactiveTabBarIcon,
+    darkTheme: darkThemeColorsOld.inactiveTabBarIcon,
   }),
   buttonSecondaryBackground: theme('current', {
-    lightTheme: lightThemeColors.buttonSecondaryBackground,
-    darkTheme: darkThemeColors.buttonSecondaryBackground,
+    lightTheme: lightThemeColorsOld.buttonSecondaryBackground,
+    darkTheme: darkThemeColorsOld.buttonSecondaryBackground,
   }),
   synthetic: theme('current', {
-    lightTheme: lightThemeColors.synthetic,
-    darkTheme: darkThemeColors.synthetic,
+    lightTheme: lightThemeColorsOld.synthetic,
+    darkTheme: darkThemeColorsOld.synthetic,
   }),
   transactionReceivedIcon: theme('current', {
-    lightTheme: lightThemeColors.transactionReceivedIcon,
-    darkTheme: darkThemeColors.transactionReceivedIcon,
+    lightTheme: lightThemeColorsOld.transactionReceivedIcon,
+    darkTheme: darkThemeColorsOld.transactionReceivedIcon,
   }),
   iconBackground: theme('current', {
-    lightTheme: lightThemeColors.iconBackground,
-    darkTheme: darkThemeColors.iconBackground,
+    lightTheme: lightThemeColorsOld.iconBackground,
+    darkTheme: darkThemeColorsOld.iconBackground,
   }),
   link: theme('current', {
-    lightTheme: lightThemeColors.link,
-    darkTheme: darkThemeColors.link,
+    lightTheme: lightThemeColorsOld.link,
+    darkTheme: darkThemeColorsOld.link,
   }),
   avatarPlaceholderBackground: theme('current', {
-    lightTheme: lightThemeColors.avatarPlaceholderBackground,
-    darkTheme: darkThemeColors.avatarPlaceholderBackground,
+    lightTheme: lightThemeColorsOld.avatarPlaceholderBackground,
+    darkTheme: darkThemeColorsOld.avatarPlaceholderBackground,
   }),
   avatarPlaceholderText: theme('current', {
-    lightTheme: lightThemeColors.avatarPlaceholderText,
-    darkTheme: darkThemeColors.avatarPlaceholderText,
+    lightTheme: lightThemeColorsOld.avatarPlaceholderText,
+    darkTheme: darkThemeColorsOld.avatarPlaceholderText,
   }),
   labelTertiary: theme('current', {
-    lightTheme: lightThemeColors.labelTertiary,
-    darkTheme: darkThemeColors.labelTertiary,
+    lightTheme: lightThemeColorsOld.labelTertiary,
+    darkTheme: darkThemeColorsOld.labelTertiary,
   }),
   toastCloseIcon: theme('current', {
-    lightTheme: lightThemeColors.toastCloseIcon,
-    darkTheme: darkThemeColors.toastCloseIcon,
+    lightTheme: lightThemeColorsOld.toastCloseIcon,
+    darkTheme: darkThemeColorsOld.toastCloseIcon,
   }),
 };
 
 export const defaultTheme = {
   current: LIGHT_THEME,
-  colors: lightThemeColors,
+  colors: { ...lightThemeColors, ...lightThemeColorsOld },
 };
 
 const darkTheme = {
   current: DARK_THEME,
-  colors: darkThemeColors,
+  colors: { ...darkThemeColors, ...darkThemeColorsOld },
 };
 
-export function getThemeByType(themeType: string) {
+export function getThemeByType(themeType?: string) {
   switch (themeType) {
     case DARK_THEME:
       return darkTheme;
@@ -284,3 +288,20 @@ export function getThemeType(currentTheme: Theme = defaultTheme) {
 export function getThemeName(currentTheme: Theme = defaultTheme) {
   return currentTheme.current.replace('Theme', '');
 }
+
+export const getColorByTheme = (props: ColorsByThemeProps) => {
+  const {
+    lightKey,
+    darkKey,
+    lightCustom,
+    darkCustom,
+  } = props;
+
+  // in case there's no color by the key
+  const FALLBACK_COLOR = '#808080';
+
+  return theme('current', {
+    lightTheme: lightCustom || (lightKey && lightThemeColors[lightKey] ? lightThemeColors[lightKey] : FALLBACK_COLOR),
+    darkTheme: darkCustom || (darkKey && darkThemeColors[darkKey] ? darkThemeColors[darkKey] : FALLBACK_COLOR),
+  });
+};

@@ -226,7 +226,11 @@
         "top",
         "translationKey",
         "type",
-        "valueColor"
+        "valueColor",
+        "lightKey",
+        "darkKey",
+        "lightCustom",
+        "darkCustom"
       ],
       "validateTemplate": true
     }]

@@ -270,12 +270,13 @@ import {
   SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
 import { PENDING, REGISTERED } from 'constants/userConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
 
 // utils
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
+import { getThemeByType, getThemeColors } from 'utils/themes';
 
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
@@ -310,8 +311,8 @@ const StackNavigatorConfig = {
   },
   cardStyle: {
     backgroundColor: {
-      dark: darkThemeColors.surface,
-      light: lightThemeColors.surface,
+      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+      light: getThemeColors(getThemeByType()).basic070,
     },
   },
 };
