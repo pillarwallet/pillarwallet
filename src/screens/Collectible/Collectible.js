@@ -37,7 +37,8 @@ import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { Paragraph } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import CollectibleImage from 'components/CollectibleImage';
-import SlideModal from 'components/Modals/SlideModal/SlideModal-old';
+import SlideModal from 'components/Modals/SlideModal';
+import Modal from 'components/Modal';
 
 import { getDeviceHeight, getDeviceWidth } from 'utils/common';
 import { spacing } from 'utils/variables';
@@ -62,11 +63,6 @@ type Props = {
   accounts: Accounts,
   theme: Theme,
 };
-
-type State = {|
-  isImageViewVisible: boolean,
-|};
-
 
 const ActionButtonsWrapper = styled.View`
   flex: 1;
@@ -99,14 +95,11 @@ const StyledCollectibleImage = styled(CollectibleImage)`
 `;
 
 
-class CollectibleScreen extends React.Component<Props, State> {
+class CollectibleScreen extends React.Component<Props> {
   forceRender = false;
-  state = {
-    isImageViewVisible: false,
-  };
 
-  shouldComponentUpdate(nextProps: Props, nextState: State) {
-    const isEq = isEqual(this.props, nextProps) && isEqual(this.state, nextState);
+  shouldComponentUpdate(nextProps: Props) {
+    const isEq = isEqual(this.props, nextProps);
     const isFocused = this.props.navigation.isFocused();
 
     if (!isFocused) {
@@ -126,16 +119,7 @@ class CollectibleScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_COLLECTIBLE_FROM_ASSET_FLOW, { assetData });
   };
 
-  onTouchImage = () => {
-    this.setState({ isImageViewVisible: true });
-  };
-
-  onCloseImageView = () => {
-    this.setState({ isImageViewVisible: false });
-  };
-
-  renderImageView(collectible: Collectible) {
-    const { isImageViewVisible } = this.state;
+  openCollectibleImage(collectible: Collectible) {
     const { image } = collectible;
     const { theme } = this.props;
     const colors = getThemeColors(theme);
@@ -153,10 +137,8 @@ class CollectibleScreen extends React.Component<Props, State> {
 
     const imageViewImages = [imageViewImage];
 
-    return (
+    Modal.open(() => (
       <SlideModal
-        isVisible={isImageViewVisible}
-        onModalHide={this.onCloseImageView}
         fullScreen
         showHeader
       >
@@ -169,7 +151,7 @@ class CollectibleScreen extends React.Component<Props, State> {
           menus={() => null}
         />
       </SlideModal>
-    );
+    ));
   }
 
   render() {
@@ -207,9 +189,8 @@ class CollectibleScreen extends React.Component<Props, State> {
 
     return (
       <ContainerWithHeader headerProps={{ centerItems: [{ title: name }] }} inset={{ bottom: 0 }}>
-        {this.renderImageView(assetData)}
         <ScrollWrapper>
-          <TouchableOpacity onPress={this.onTouchImage}>
+          <TouchableOpacity onPress={() => this.openCollectibleImage(assetData)}>
             <StyledCollectibleImage
               key={id.toString()}
               source={{ uri: image }}
