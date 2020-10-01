@@ -58,7 +58,7 @@ import { DAI } from 'constants/assetsConstants';
 
 // actions
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
-import { setUnreadNotificationsStatusAction } from 'actions/notificationsActions';
+import { hideHomeUpdateIndicatorAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -113,8 +113,7 @@ type Props = {
   user: User,
   fetchSmartWalletTransactions: Function,
   checkForMissedAssets: Function,
-  setUnreadNotificationsStatus: Function,
-  homeNotifications: Object[],
+  hideHomeUpdateIndicator: () => void,
   intercomNotificationsCount: number,
   fetchAllCollectiblesData: Function,
   openSeaTxHistory: Object[],
@@ -203,7 +202,7 @@ class HomeScreen extends React.Component<Props> {
     resetAppNotificationsBadgeNumber();
 
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
-      this.props.setUnreadNotificationsStatus(false);
+      this.props.hideHomeUpdateIndicator();
     });
     if (isSmartWalletActive) {
       fetchPoolStats(true);
@@ -663,7 +662,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
-  setUnreadNotificationsStatus: status => dispatch(setUnreadNotificationsStatusAction(status)),
+  hideHomeUpdateIndicator: () => dispatch(hideHomeUpdateIndicatorAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),
   fetchBadges: () => dispatch(fetchBadgesAction()),
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),

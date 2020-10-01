@@ -51,7 +51,7 @@ type Props = {
 
 const TooltipParagraph = styled(Paragraph)`
   color: ${themedColors.control};
-  ${fontStyles.regular}px;
+  ${fontStyles.regular};
   margin: 0;
 `;
 
