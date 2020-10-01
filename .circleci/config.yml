@@ -741,7 +741,7 @@ workflows:
           filters:
             branches:
               only:
-                - fix/ios-appcenter
+                - develop
       - appcenter_android:
           requires:
             - build-and-test
