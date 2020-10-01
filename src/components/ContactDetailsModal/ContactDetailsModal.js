@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { View } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
@@ -25,7 +26,7 @@ import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // components
-import ModalBox from 'components/ModalBox/ModalBox-old';
+import ModalBox from 'components/ModalBox';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
@@ -49,20 +50,21 @@ import { getReceiverWithEnsName } from 'utils/contacts';
 import type { Theme } from 'models/Theme';
 import type { Contact } from 'models/Contact';
 
-
-type Props = {
-  theme: Theme,
-  isVisible: boolean,
-  onModalHide: () => void,
-  onSavePress: (contact: Contact) => void,
+type OwnProps = {|
+  onSave: (contact: Contact) => void,
   contact: ?Contact,
   dirtyInputs?: boolean,
   isDefaultNameEns?: boolean,
   title?: string,
   contacts: Contact[],
   showQRScanner?: boolean,
-  onModalHidden?: () => void,
-};
+  onModalHide?: () => void,
+|};
+
+type Props = {|
+  ...OwnProps,
+  theme: Theme,
+|};
 
 const InputWrapper = styled.View`
   flex-direction: row;
@@ -129,16 +131,14 @@ const renderContactInput = (
 );
 
 const ContactDetailsModal = ({
-  isVisible,
-  onModalHide,
   theme,
   contact,
-  onSavePress,
+  onSave,
   isDefaultNameEns,
   title,
   contacts,
   showQRScanner,
-  onModalHidden,
+  onModalHide,
 }: Props) => {
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
@@ -215,11 +215,15 @@ const ContactDetailsModal = ({
   }
 
   const colors = getThemeColors(theme);
+  const modalRef = useRef();
 
   const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
-  const onButtonPress = () => !errorMessage
-    && !resolvingEns
-    && onSavePress({ ...contact, name: nameValue, ethAddress: addressValue });
+  const onButtonPress = () => {
+    if (!errorMessage && !resolvingEns) {
+      if (modalRef.current) modalRef.current.close();
+      onSave({ ...contact, name: nameValue, ethAddress: addressValue });
+    }
+  };
 
   const handleScannerReadResult = (address: string) => {
     if (isEnsName(address)) {
@@ -236,9 +240,8 @@ const ContactDetailsModal = ({
 
   return (
     <ModalBox
-      isVisible={isVisible}
+      ref={modalRef}
       onModalHide={onModalHide}
-      onModalHidden={onModalHidden}
       showModalClose
       noBoxMinHeight
     >
@@ -274,4 +277,4 @@ const ContactDetailsModal = ({
   );
 };
 
-export default withTheme(ContactDetailsModal);
+export default (withTheme(ContactDetailsModal): AbstractComponent<OwnProps>);

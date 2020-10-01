@@ -17,10 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState } from 'react';
+import React, { useCallback } from 'react';
 import { FlatList } from 'react-native';
-import { connect } from 'react-redux';
-import isEmpty from 'lodash.isempty';
+import { useSelector, useDispatch } from 'react-redux';
 import Swipeout from 'react-native-swipeout';
 import { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
@@ -40,7 +39,7 @@ import Modal from 'components/Modal';
 import { getThemeColors } from 'utils/themes';
 
 // types
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { Contact } from 'models/Contact';
 import type { Theme } from 'models/Theme';
 
@@ -54,20 +53,33 @@ type Props = {
   updateContact: (prevEthAddress: string, contact: Contact) => void,
 };
 
-const ContactsList = ({
-  addContact,
-  updateContact,
-  contacts,
-  theme,
-}: Props) => {
+const ContactsList = ({ theme }: Props) => {
+  const dispatch = useDispatch();
+  const contacts = useSelector(({ contacts: { data } }: RootReducerState) => data);
   const colors = getThemeColors(theme);
-
-  const [selectedContact, setSelectedContact] = useState(null);
-  const hideContactDetailsModal = () => setSelectedContact(null);
 
   const openDeleteContactModal = (contact: Contact) => Modal.open(() => (
     <DeleteContactModal contact={contact} />
   ));
+
+  const openContactDetails = useCallback((contact: null | Contact) => {
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={contact === null ? t('title.addNewContact') : t('title.editContact')}
+        dirtyInputs={contact !== null}
+        contact={contact}
+        onSave={(newContact: Contact) => {
+          if (contact === null) {
+            dispatch(addContactAction(newContact));
+          } else {
+            dispatch(updateContactAction(contact.ethAddress, newContact));
+          }
+        }}
+        contacts={contacts}
+        showQRScanner
+      />
+    ));
+  }, [contacts, dispatch]);
 
   const renderListItem = ({ item }: { item: Contact }) => {
     const { name, ethAddress, ensName } = item;
@@ -90,7 +102,7 @@ const ContactsList = ({
       >
         <ListItemWithImage
           label={name || ensName || ethAddress}
-          onPress={() => setSelectedContact(item)}
+          onPress={() => openContactDetails(item)}
           diameter={48}
           rightColumnInnerStyle={{ alignItems: 'flex-end' }}
         />
@@ -99,13 +111,12 @@ const ContactsList = ({
   };
 
   const emptyStyle = { flex: 1, justifyContent: 'center', alignItems: 'center' };
-  const showContactDetailsModal = !!selectedContact;
 
   return (
     <ContainerWithHeader
       headerProps={{
         centerItems: [{ title: t('title.addressBook') }],
-        rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => setSelectedContact({}) }],
+        rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => openContactDetails(null) }],
       }}
     >
       <FlatList
@@ -116,38 +127,8 @@ const ContactsList = ({
         contentContainerStyle={!contacts.length && emptyStyle}
         ListEmptyComponent={<EmptyStateParagraph title={t('label.noContactsAdded')} />}
       />
-      {showContactDetailsModal && (
-        <ContactDetailsModal
-          title={isEmpty(selectedContact) ? t('title.addNewContact') : t('title.editContact')}
-          dirtyInputs={!isEmpty(selectedContact)}
-          isVisible={!!selectedContact}
-          contact={selectedContact}
-          onSavePress={(newContact: Contact) => {
-            if (isEmpty(selectedContact)) {
-              addContact(newContact);
-            } else if (selectedContact) {
-              updateContact(selectedContact.ethAddress, newContact);
-            }
-            hideContactDetailsModal();
-          }}
-          onModalHide={hideContactDetailsModal}
-          contacts={contacts}
-          showQRScanner
-        />
-      )}
     </ContainerWithHeader>
   );
 };
 
-const mapStateToProps = ({
-  contacts: { data: contacts },
-}: RootReducerState): $Shape<Props> => ({
-  contacts,
-});
-
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  updateContact: (prevEthAddress: string, contact: Contact) => dispatch(updateContactAction(prevEthAddress, contact)),
-  addContact: (contact: Contact) => dispatch(addContactAction(contact)),
-});
-
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ContactsList));
+export default withTheme(ContactsList);

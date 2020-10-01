@@ -33,6 +33,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 import ContactDetailsModal from 'components/ContactDetailsModal';
+import Modal from 'components/Modal';
 
 // utils
 import { isValidNumber, getEthereumProvider } from 'utils/common';
@@ -133,8 +134,6 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
-  const [contactToAdd, setContactToAdd] = useState(null);
-  const hideAddContactModal = () => setContactToAdd(null);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
@@ -358,10 +357,25 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline;
 
+  const openAddToContacts = useCallback((initial: ?Contact) => {
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={t('title.addNewContact')}
+        contact={initial}
+        onSave={(contact: Contact) => {
+          addContact(contact);
+          handleReceiverSelect({ ...contact, value: contact.ethAddress });
+        }}
+        contacts={contacts}
+        isDefaultNameEns
+      />
+    ));
+  }, [contacts, addContact, handleReceiverSelect]);
+
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
   const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
     option,
-    setContactToAdd,
+    openAddToContacts,
   );
   const customOptionButtonOnPress = !resolvingContactEnsName
     ? addContactButtonPress
@@ -373,7 +387,7 @@ const SendAsset = ({
   return (
     <SendContainer
       customSelectorProps={{
-        onOptionSelect: !resolvingContactEnsName && !contactToAdd ? handleReceiverSelect : () => {},
+        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
         options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
@@ -399,21 +413,7 @@ const SendAsset = ({
         },
         footerTopAddon: !!selectedContact && renderFeeToggle(txFeeInfo, showFee, feeError, gettingFee),
       }}
-    >
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        isVisible={!isEmpty(contactToAdd)}
-        contact={contactToAdd}
-        onSavePress={(contact: Contact) => {
-          hideAddContactModal();
-          addContact(contact);
-          handleReceiverSelect({ ...contact, value: contact.ethAddress });
-        }}
-        onModalHide={hideAddContactModal}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    </SendContainer>
+    />
   );
 };
 
