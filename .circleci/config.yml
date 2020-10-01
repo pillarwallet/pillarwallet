@@ -736,6 +736,8 @@ workflows:
     jobs:
       - build-and-test
       - appcenter_ios:
+          requires:
+            - build-and-test
           filters:
             branches:
               only:
