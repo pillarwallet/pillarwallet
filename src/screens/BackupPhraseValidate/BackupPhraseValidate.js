@@ -118,7 +118,7 @@ const FooterWrapper = styled.View`
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 const DEBUG_SKIP = 'debugskip';

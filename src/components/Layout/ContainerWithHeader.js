@@ -28,7 +28,7 @@ import isEmpty from 'lodash.isempty';
 import HeaderBlock from 'components/HeaderBlock';
 import { isColorDark } from 'utils/ui';
 import { isIphoneX } from 'utils/common';
-import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
+import { getThemeColors, getThemeType } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 import { DARK_THEME, LIGHT_CONTENT, DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
@@ -61,7 +61,7 @@ type State = {
 };
 
 export const StyledSafeAreaView = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : themedColors.surface)};
+  background-color: ${({ color, theme }) => color || theme.colors.basic070};
   flex: 1;
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
@@ -237,7 +237,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
               top: 'never', bottom: 'always', ...inset, ...footerContainerInset,
             }}
             style={{
-              backgroundColor: backgroundColor || colors.surface,
+              backgroundColor: backgroundColor || colors.basic070,
               width: '100%',
               flexWrap: 'wrap',
               ...footerContainerStyle,

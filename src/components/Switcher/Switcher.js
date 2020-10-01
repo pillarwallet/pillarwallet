@@ -21,7 +21,7 @@ import * as React from 'react';
 import { Animated, TouchableOpacity } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { Theme } from 'models/Theme';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
@@ -43,7 +43,7 @@ const Toggle = styled.View`
   align-items: center;
   justify-content: center;
   position: absolute;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
   elevation: 2;
   ${({ theme }) => theme.current === LIGHT_THEME && 'box-shadow: 0px 2px 2px rgba(0,0,0,0.05);'}
   width: ${TOGGLE_DIAMETER}px;

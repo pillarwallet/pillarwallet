@@ -129,7 +129,7 @@ const ResultScreen = styled.View`
   justify-content: center;
   align-items: center;
   padding: 30px;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
   z-index: 10;
 `;
 

@@ -24,7 +24,6 @@ import { Platform, StatusBar, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { spacing } from 'utils/variables';
 import { isIphoneX } from 'utils/common';
-import { themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 type ContainerProps = {
@@ -70,7 +69,7 @@ export const Center = styled.View`
 `;
 
 export const ContainerOuter = styled(SafeAreaView)`
-  background-color: ${props => (props.color ? props.color : themedColors.surface)};
+  background-color: ${({ color, theme }) => color || theme.colors.basic070};
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 

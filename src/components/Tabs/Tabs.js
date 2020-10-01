@@ -121,7 +121,7 @@ const Cover = styled.View`
   top: 0;
   left: 0;
   z-index: -1;
-  background-color: ${({ coverColor, theme }) => coverColor || theme.colors.surface};
+  background-color: ${({ coverColor, theme }) => coverColor || theme.colors.basic070};
   height: 30px;
   justify-content: flex-start;
   align-items: center;
