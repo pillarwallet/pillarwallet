@@ -26,7 +26,7 @@ import t from 'translations/translate';
 
 import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import ModalBox from 'components/ModalBox/ModalBox';
+import ModalBox from 'components/ModalBox/ModalBox-old';
 import { Spacing } from 'components/Layout';
 
 

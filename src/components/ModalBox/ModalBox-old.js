@@ -17,25 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useRef, useCallback, useImperativeHandle } from 'react';
-import type { Node as ReactNode } from 'react';
+import * as React from 'react';
 import { Platform, StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
+import Modal from 'react-native-modal';
 
 // utils
 import { themedColors } from 'utils/themes';
 
 // components
 import Icon from 'components/Icon';
-import Modal from 'components/Modal';
 
-type Props = {|
-  children: ReactNode,
+
+type Props = {
+  isVisible: boolean,
+  onModalHide: () => void,
+  children: React.Node,
   modalStyle?: StyleSheet.Styles,
   showModalClose?: boolean,
   noBoxMinHeight?: boolean,
-  onModalHide?: () => void,
-|};
+  onModalHidden?: () => void,
+};
 
 const Wrapper = styled.KeyboardAvoidingView`
   flex-direction: column;
@@ -66,49 +68,38 @@ const ModalCloseButton = styled.TouchableOpacity`
   opacity: 0.5;
 `;
 
-export type ModalBoxInstance = {
-  close: () => void,
-};
-
-const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
+const ModalBox = ({
+  isVisible,
+  onModalHide,
   modalStyle,
   children,
   showModalClose,
   noBoxMinHeight,
-  onModalHide,
-}: Props, ref) => {
-  const modalRef = useRef();
-
-  const close = useCallback(() => {
-    if (modalRef.current) modalRef.current.close();
-  }, []);
-
-  useImperativeHandle(ref, () => ({ close }), [close]);
-
-  return (
-    <Modal
-      ref={modalRef}
-      hasBackdrop
-      backdropOpacity={0.7}
-      onModalHide={onModalHide}
-      style={modalStyle}
+  onModalHidden,
+}: Props) => (
+  <Modal
+    isVisible={isVisible}
+    hasBackdrop
+    backdropOpacity={0.7}
+    onModalHide={onModalHidden}
+    onBackdropPress={onModalHide}
+    style={modalStyle}
+  >
+    <Wrapper
+      enabled
+      behavior={Platform.OS === 'ios' ? 'padding' : null}
+      style={{ flex: 1 }}
     >
-      <Wrapper
-        enabled
-        behavior={Platform.OS === 'ios' ? 'padding' : null}
-        style={{ flex: 1 }}
-      >
-        {showModalClose && (
-          <ModalCloseButton onPress={close}>
-            <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
-          </ModalCloseButton>
-        )}
-        <Box noBoxMinHeight={noBoxMinHeight}>
-          {children}
-        </Box>
-      </Wrapper>
-    </Modal>
-  );
-});
+      {showModalClose && (
+        <ModalCloseButton onPress={onModalHide}>
+          <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
+        </ModalCloseButton>
+      )}
+      <Box noBoxMinHeight={noBoxMinHeight}>
+        {children}
+      </Box>
+    </Wrapper>
+  </Modal>
+);
 
 export default ModalBox;

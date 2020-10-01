@@ -37,7 +37,7 @@ import {
 // components
 import Spinner from 'components/Spinner';
 import ConfirmCode from 'components/Verification/ConfirmCode';
-import ModalBox from 'components/ModalBox/ModalBox';
+import ModalBox from 'components/ModalBox/ModalBox-old';
 import BoxTitle from 'components/ModalBox/BoxTitle';
 import BoxBody from 'components/ModalBox/BoxBody';
 import StatusLabel from 'components/Verification/StatusLabel';

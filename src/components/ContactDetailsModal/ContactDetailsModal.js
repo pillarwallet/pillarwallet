@@ -25,7 +25,7 @@ import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // components
-import ModalBox from 'components/ModalBox';
+import ModalBox from 'components/ModalBox/ModalBox-old';
 import Title from 'components/Title';
 import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
