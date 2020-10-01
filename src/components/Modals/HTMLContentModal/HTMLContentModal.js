@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import Modal from 'react-native-modal';
 import styled, { withTheme } from 'styled-components/native';
 import { StyleSheet, ScrollView } from 'react-native';
 import HTMLView from 'react-native-htmlview';
@@ -27,6 +26,7 @@ import get from 'lodash.get';
 // components
 import Spinner from 'components/Spinner';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Modal from 'components/Modal';
 
 // utils
 import { fontSizes, lineHeights, appFont, spacing } from 'utils/variables';
@@ -36,27 +36,32 @@ import { getThemeColors } from 'utils/themes';
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import type { Theme } from 'models/Theme';
 
-type Props = {
-  htmlEndpoint: string,
-  onModalHide?: Function,
-  isVisible: boolean,
-  modalHide: Function,
-  theme: Theme,
+const LEGAL_HTML_ENDPOINT_PREFIX = 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/';
+export const ENDPOINTS = {
+  TERMS_OF_SERVICE: 'terms_of_service',
+  PRIVACY_POLICY: 'privacy_policy',
 };
 
-type State = {
+type OwnProps = {|
+  htmlEndpoint: string,
+|};
+
+type Props = {|
+  ...OwnProps,
+  theme: Theme,
+|};
+
+type State = {|
   isHtmlFetched: boolean,
   htmlData: string,
-  scrollOffset: ?number,
-  contentContainerHeight: ?number,
-  containerHeight: ?number,
-};
+  scrollOffset: number,
+  contentContainerHeight: number,
+  containerHeight: number,
+|};
 
 type CustomNode = {
   name: string,
 }
-
-const LEGAL_HTML_ENDPOINT = 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/';
 
 const ActivityIndicatorWrapper = styled.View`
   flex: 1;
@@ -91,6 +96,7 @@ const baseStyles = (colors) => {
 
 class HTMLContentModal extends React.Component<Props, State> {
   scrollViewRef: React.ElementRef<ScrollView>;
+  modalRef = React.createRef();
 
   constructor(props: Props) {
     super(props);
@@ -104,26 +110,24 @@ class HTMLContentModal extends React.Component<Props, State> {
     };
   }
 
-  componentDidUpdate(prevProps: Props) {
-    const { isVisible, htmlEndpoint } = this.props;
+  componentDidMount() {
+    const { htmlEndpoint } = this.props;
     // eslint-disable-next-line i18next/no-literal-string
-    const htmlEndpointFull = `${LEGAL_HTML_ENDPOINT}${htmlEndpoint}.html`;
+    const htmlEndpointFull = `${LEGAL_HTML_ENDPOINT_PREFIX}${htmlEndpoint}.html`;
 
-    if (prevProps.isVisible !== isVisible && !!isVisible) {
-      fetch(htmlEndpointFull)
-        .then((resp) => { return resp.text(); })
-        .then((text) => {
-          this.setState({
-            isHtmlFetched: true,
-            htmlData: text.replace(/(\r\n\t|\n|\r\t)/gm, ''),
-          });
-        })
-        .catch((() => {}));
-    }
+    fetch(htmlEndpointFull)
+      .then((resp) => resp.text())
+      .then((text) => {
+        this.setState({
+          isHtmlFetched: true,
+          htmlData: text.replace(/(\r\n\t|\n|\r\t)/gm, ''),
+        });
+      })
+      .catch((() => {}));
   }
 
   handleModalClose = () => {
-    this.setState({ isHtmlFetched: false });
+    if (this.modalRef.current) this.modalRef.current.close();
   };
 
   renderNode = (node: CustomNode) => {
@@ -157,11 +161,7 @@ class HTMLContentModal extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      isVisible,
-      modalHide,
-      theme,
-    } = this.props;
+    const { theme } = this.props;
     const {
       htmlData,
       isHtmlFetched,
@@ -180,21 +180,17 @@ class HTMLContentModal extends React.Component<Props, State> {
       fontFamily: appFont.regular,
     };
 
+    const scrollOffsetMax = contentContainerHeight > 0 &&
+      containerHeight ? contentContainerHeight - containerHeight : undefined;
+
     return (
       <Modal
-        isVisible={isVisible}
+        ref={this.modalRef}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
-        animationIn="slideInUp"
-        animationOut="slideOutDown"
-        onBackButtonPress={modalHide}
-        onModalHide={this.handleModalClose}
         scrollOffset={scrollOffset}
-        onSwipeComplete={modalHide}
-        scrollOffsetMax={contentContainerHeight && containerHeight ? contentContainerHeight - containerHeight : null}
-        swipeDirection="down"
+        scrollOffsetMax={scrollOffsetMax}
         scrollTo={this.handleModalScrollTo}
-        propagateSwipe
         style={{ margin: 0, justifyContent: 'flex-start' }}
       >
         <ContainerWithHeader
@@ -204,7 +200,7 @@ class HTMLContentModal extends React.Component<Props, State> {
             noPaddingTop: true,
             noBottomBorder: true,
             floating: true,
-            onClose: modalHide,
+            onClose: this.handleModalClose,
           }}
         >
           {!isHtmlFetched &&
@@ -238,4 +234,4 @@ class HTMLContentModal extends React.Component<Props, State> {
   }
 }
 
-export default withTheme(HTMLContentModal);
+export default (withTheme(HTMLContentModal): React.AbstractComponent<OwnProps>);

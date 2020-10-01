@@ -27,9 +27,10 @@ import { WALLET_RECOVERY_OPTIONS } from 'constants/navigationConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
-import HTMLContentModal from 'components/Modals/HTMLContentModal';
+import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
 import Button from 'components/Button';
 import Checkbox from 'components/Checkbox';
+import Modal from 'components/Modal';
 
 import { spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
@@ -39,13 +40,9 @@ type Props = {
 };
 
 type State = {
-  visibleModal: string,
   hasAgreedToTerms: boolean,
   hasAgreedToPolicy: boolean,
 };
-
-const TERMS_OF_USE_MODAL = 'TERMS_OF_USE_MODAL';
-const PRIVACY_POLICY_MODAL = 'PRIVACY_POLICY_MODAL';
 
 const Wrapper = styled.View`
   flex: 1;
@@ -74,7 +71,6 @@ const StyledButton = styled(Button)`
 
 class ImportWalletLegals extends React.Component<Props, State> {
   state = {
-    visibleModal: '',
     hasAgreedToTerms: false,
     hasAgreedToPolicy: false,
   };
@@ -109,14 +105,13 @@ class ImportWalletLegals extends React.Component<Props, State> {
     }
   };
 
-  closeModals = () => {
-    this.setState({ visibleModal: '' });
-  };
+  openLegalModal = (endpoint: string) => Modal.open(() => (
+    <HTMLContentModal htmlEndpoint={endpoint} />
+  ));
 
   render() {
     const { navigation } = this.props;
     const {
-      visibleModal,
       hasAgreedToTerms,
       hasAgreedToPolicy,
     } = this.state;
@@ -142,7 +137,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:termsOfUse'),
-                  onPress: () => this.setState({ visibleModal: TERMS_OF_USE_MODAL }),
+                  onPress: () => this.openLegalModal(ENDPOINTS.TERMS_OF_SERVICE),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -155,7 +150,7 @@ class ImportWalletLegals extends React.Component<Props, State> {
               <CheckboxText>
                 {t('auth:withLink.readUnderstandAgreeTo', {
                   linkedText: t('auth:privacyPolicy'),
-                  onPress: () => this.setState({ visibleModal: PRIVACY_POLICY_MODAL }),
+                  onPress: () => this.openLegalModal(ENDPOINTS.PRIVACY_POLICY),
                 })}
               </CheckboxText>
             </Checkbox>
@@ -168,16 +163,6 @@ class ImportWalletLegals extends React.Component<Props, State> {
             />
           </ButtonWrapper>
         </Wrapper>
-        <HTMLContentModal
-          isVisible={visibleModal === TERMS_OF_USE_MODAL}
-          modalHide={this.closeModals}
-          htmlEndpoint="terms_of_service"
-        />
-        <HTMLContentModal
-          isVisible={visibleModal === PRIVACY_POLICY_MODAL}
-          modalHide={this.closeModals}
-          htmlEndpoint="privacy_policy"
-        />
       </ContainerWithHeader>
     );
   }
