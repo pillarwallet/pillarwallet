@@ -304,26 +304,26 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
-      # - run:
-      #     no_output_timeout: 20m
-      #     name: Upload to App Center
-      #     command: |
-      #       export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
-      #       export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-      #       cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
-      # - run:
-      #     name: prepare to archive ipa file
-      #     command: |
-      #       mkdir -p ./toArchive
-      #       cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
-      # - store_artifacts:
-      #     path: ./toArchive
-      #     destination: app_build
-      # - slack/status:
-      #     fail_only: true
-      #     only_for_branches: develop
-      #     failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
-      #     webhook: "${SLACK_WEBHOOK_URL}"
+      - run:
+          no_output_timeout: 20m
+          name: Upload to App Center
+          command: |
+            export buildNumber=$(cat ~/pillarwallet/buildNumber.txt)
+            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
+      - run:
+          name: prepare to archive ipa file
+          command: |
+            mkdir -p ./toArchive
+            cp ./ios/output/gym/pillarwallet-staging.ipa ./toArchive
+      - store_artifacts:
+          path: ./toArchive
+          destination: app_build
+      - slack/status:
+          fail_only: true
+          only_for_branches: develop
+          failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
 
   appcenter_android:
     executor: android-executor
