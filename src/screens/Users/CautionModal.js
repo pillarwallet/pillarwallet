@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
 import { ScrollView } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import styled from 'styled-components/native';
@@ -26,16 +26,15 @@ import t from 'translations/translate';
 
 import { MediumText, BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import ModalBox from 'components/ModalBox/ModalBox-old';
+import ModalBox from 'components/ModalBox';
 import { Spacing } from 'components/Layout';
 
 
-type Props = {
-  isVisible: boolean,
-  onButtonPress: () => void,
-  onModalHide: () => void,
+type Props = {|
+  onAcceptChange: () => void,
+  onDismiss: () => void,
   focusedField: ?string,
-};
+|};
 
 const cautionImage = require('assets/images/profileAttention.png');
 
@@ -49,21 +48,24 @@ const CautionImage = styled(CachedImage)`
   height: 144px;
 `;
 
-const CautionModal = (props: Props) => {
-  const {
-    isVisible, onButtonPress, onModalHide, focusedField,
-  } = props;
+const CautionModal = ({ onAcceptChange, onDismiss, focusedField }: Props) => {
   const body = focusedField === 'phone'
     ? t('profileContent.modal.updatingData.paragraph.phoneChanged')
     : t('profileContent.modal.updatingData.paragraph.emailChanged');
   const buttonText = focusedField === 'phone'
     ? t('profileContent.modal.updatingData.button.changePhone')
     : t('profileContent.modal.updatingData.button.changeEmail');
+
+  const modalRef = useRef();
+  const isAccepted = useRef(false);
+
   return (
     <ModalBox
-      isVisible={isVisible}
-      onModalHide={onModalHide}
+      ref={modalRef}
       modalStyle={{ marginVertical: 80 }}
+      onModalHide={() => {
+        if (!isAccepted.current) onDismiss();
+      }}
     >
       <ScrollView>
         <ModalWrapper>
@@ -75,7 +77,16 @@ const CautionModal = (props: Props) => {
             {body}
           </BaseText>
           <Spacing h={32} />
-          <Button secondary small title={buttonText} onPress={onButtonPress} />
+          <Button
+            secondary
+            small
+            title={buttonText}
+            onPress={() => {
+              isAccepted.current = true;
+              if (modalRef.current) modalRef.current.close();
+              onAcceptChange();
+            }}
+          />
         </ModalWrapper>
       </ScrollView>
     </ModalBox>
