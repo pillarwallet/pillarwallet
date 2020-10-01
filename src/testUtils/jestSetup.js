@@ -77,8 +77,18 @@ jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {}
 jest.mock('@react-native-firebase/app', () => ({
   firebase: {
     iid: () => {},
-    auth: () => {},
-    database: () => {},
+    auth: () => ({
+      currentUser: {
+        uid: 'someId',
+      },
+    }),
+    database: () => ({
+      ref: () => Promise.resolve({
+        set: () => Promise.resolve(),
+        update: () => Promise.resolve(),
+        once: () => Promise.resolve({}),
+      }),
+    }),
     analytics: () => ({
       logEvent: () => {},
     }),
