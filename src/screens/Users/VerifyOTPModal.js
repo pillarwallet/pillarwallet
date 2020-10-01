@@ -37,7 +37,7 @@ import {
 // components
 import Spinner from 'components/Spinner';
 import ConfirmCode from 'components/Verification/ConfirmCode';
-import ModalBox from 'components/ModalBox/ModalBox-old';
+import ModalBox from 'components/ModalBox';
 import BoxTitle from 'components/ModalBox/BoxTitle';
 import BoxBody from 'components/ModalBox/BoxBody';
 import StatusLabel from 'components/Verification/StatusLabel';
@@ -46,28 +46,32 @@ import ResendMessage from 'components/Verification/ResendMessage';
 // constants
 import { OTP_DIGITS } from 'constants/referralsConstants';
 
+type StateProps = {|
+  user: User,
+  sendingOneTimePassword: boolean,
+  verificationFailed: boolean,
+|};
 
-type Props = {
-  verifyingField: string,
+type DispatchProps = {|
   createOneTimePassword: (walletId: string, field: Object) => void,
   resetOneTimePassword: () => void,
   verifyEmail: (walletId: string, code: string) => void,
   verifyPhone: (walletId: string, code: string) => void,
-  user: User,
-  sendingOneTimePassword: boolean,
-  verificationFailed: boolean,
+|};
+
+type OwnProps = {|
+  verifyingField: string,
   onModalClose: () => void,
-};
+|};
 
-type State = {
-  isModalVisible: boolean,
-};
+type Props = {|
+  ...StateProps,
+  ...DispatchProps,
+  ...OwnProps,
+|};
 
-
-class VerifyOTPModal extends React.PureComponent<Props, State> {
-  state = {
-    isModalVisible: true,
-  };
+class VerifyOTPModal extends React.PureComponent<Props> {
+  modalRef = React.createRef();
 
   componentDidMount() {
     this.sendOTP();
@@ -91,13 +95,13 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
 
     if (verifyingField === 'email') {
       if (!oldIsEmailVerified && isEmailVerified) {
-        this.hideModal();
+        this.closeModal();
       }
     }
 
     if (verifyingField === 'phone') {
       if (!oldIsPhoneVerified && isPhoneVerified) {
-        this.hideModal();
+        this.closeModal();
       }
     }
   }
@@ -155,18 +159,17 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
     }
   };
 
-  hideModal = () => {
-    this.setState({ isModalVisible: false });
+  closeModal = () => {
+    this.props.onModalClose();
+    if (this.modalRef.current) this.modalRef.current.close();
   };
 
   render() {
-    const { isModalVisible } = this.state;
     const {
       sendingOneTimePassword,
       verificationFailed,
       user,
       verifyingField,
-      onModalClose,
     } = this.props;
 
     const titleText = verifyingField === 'email'
@@ -176,13 +179,10 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
     const enteringCode = !sendingOneTimePassword;
 
     return (
-      <ModalBox
-        isVisible={isModalVisible}
-        onModalHide={onModalClose}
-      >
+      <ModalBox ref={this.modalRef} >
         <BoxTitle
           title={titleText}
-          onPressClose={this.hideModal}
+          onPressClose={this.closeModal}
         />
         <StatusLabel
           user={user}
@@ -208,13 +208,13 @@ const mapStateToProps = ({
     sendingOneTimePassword,
     verificationFailed,
   },
-}: RootReducerState): $Shape<Props> => ({
+}: RootReducerState): StateProps => ({
   user,
   sendingOneTimePassword,
   verificationFailed,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   createOneTimePassword: (walletId: string, field: Object) =>
     dispatch(createOneTimePasswordAction(walletId, field)),
   verifyEmail: (walletId: string, code: string) => dispatch(verifyEmailAction(walletId, code)),
@@ -222,4 +222,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetOneTimePassword: () => dispatch(resetOneTimePasswordAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(VerifyOTPModal);
+export default (connect(mapStateToProps, mapDispatchToProps)(VerifyOTPModal): React.AbstractComponent<OwnProps>);

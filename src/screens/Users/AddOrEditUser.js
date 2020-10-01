@@ -87,7 +87,6 @@ type Props = {
 };
 
 type State = {
-  verifyingField: ?string,
   focusedField: ?string,
   value: Object,
   cautionModalField: ?string,
@@ -338,7 +337,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const { user } = this.props;
 
     this.state = {
-      verifyingField: null,
       value: getInitialValue(user),
       focusedField: null,
       cautionModalField: null,
@@ -478,22 +476,28 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   openProfileImageModal = () => Modal.open(() => <ProfileImageModal />)
 
   verifyField = (verifyingField) => {
-    this.setState({ verifyingField });
-  };
+    const onCloseVerification = () => {
+      const { user: { isPhoneVerified, isEmailVerified }, goToInvitationFlow } = this.props;
+      const isFieldVerified =
+        (verifyingField === FIELD_NAME.PHONE && isPhoneVerified) ||
+        (verifyingField === FIELD_NAME.EMAIL && isEmailVerified);
 
-  onCloseVerification = () => {
-    const { verifyingField } = this.state;
-    const { user: { isPhoneVerified, isEmailVerified }, goToInvitationFlow } = this.props;
-    if ((verifyingField === FIELD_NAME.PHONE && isPhoneVerified)
-      || (verifyingField === FIELD_NAME.EMAIL && isEmailVerified)) {
-      Modal.open(() => (
-        <VerifiedModal
-          onButtonPress={goToInvitationFlow}
-          verifiedField={verifyingField}
-        />
-      ));
-    }
-    this.setState({ verifyingField: null });
+      if (isFieldVerified) {
+        Modal.open(() => (
+          <VerifiedModal
+            onButtonPress={goToInvitationFlow}
+            verifiedField={verifyingField}
+          />
+        ));
+      }
+    };
+
+    Modal.open(() => (
+      <VerifyOTPModal
+        verifyingField={verifyingField}
+        onModalClose={onCloseVerification}
+      />
+    ));
   };
 
   changeField = () => {
@@ -567,7 +571,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      verifyingField,
       value,
       focusedField,
       cautionModalField,
@@ -633,10 +636,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           <Spacing h={75} />
         </ScrollWrapper>
 
-        {!!verifyingField && <VerifyOTPModal
-          verifyingField={verifyingField}
-          onModalClose={this.onCloseVerification}
-        />}
         <CautionModal
           isVisible={!!cautionModalField}
           onModalHide={this.onDismissCautionModal}
