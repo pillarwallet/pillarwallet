@@ -106,7 +106,7 @@ type Props = {
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
   changeLanguage: (language: string) => void,
-  areTranslationsInitialised: boolean,
+  translationsInitialised: boolean,
   updateTranslationResourceOnNetworkChange: () => void,
   initialDeeplinkExecuted: boolean,
 }
@@ -264,12 +264,12 @@ class App extends React.Component<Props, *> {
       activeWalkthroughSteps,
       i18n: i18next,
       changeLanguage,
-      areTranslationsInitialised,
+      translationsInitialised,
     } = this.props;
     const theme = getThemeByType(themeType);
     const { current } = theme;
 
-    if (!isFetched || (localeConfig.isEnabled && localeConfig.baseUrl && !areTranslationsInitialised)) return null;
+    if (!isFetched || (localeConfig.isEnabled && localeConfig.baseUrl && !translationsInitialised)) return null;
 
     return (
       <AppearanceProvider>
@@ -322,13 +322,13 @@ class App extends React.Component<Props, *> {
 const mapStateToProps = ({
   appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
-  session: { data: { areTranslationsInitialised } },
+  session: { data: { translationsInitialised } },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
   isManualThemeSelection,
   activeWalkthroughSteps,
-  areTranslationsInitialised,
+  translationsInitialised,
   initialDeeplinkExecuted,
 });
 
@@ -350,7 +350,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));
 
 const AppRoot = () => (
-  <Suspense fallback={<View />}>
+  <Suspense fallback={<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Spinner /></View>}>
     <Provider store={store}>
       <PersistGate
         loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}

@@ -31,7 +31,7 @@ export const updateSessionNetworkStatusAction = (isOnline: boolean) => ({
 
 export const setSessionTranslationBundleInitialisedAction = () => ({
   type: UPDATE_SESSION,
-  payload: { areTranslationsInitialised: true },
+  payload: { translationsInitialised: true },
 });
 
 export const setFallbackLanguageVersionAction = (version: string) => {

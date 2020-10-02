@@ -446,9 +446,8 @@ export const logoutAction = () => {
     if (themeType === DARK_THEME) await dispatch(setAppThemeAction(DARK_THEME)); // to persist dark theme after storage
     // is cleaned up so we would not blind users after they delete wallet :)
 
-    // leave translation initialisated flag in place
-    const areTranslationsInitialised = get(getState(), 'session.data.areTranslationsInitialised', false);
-    if (areTranslationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
+    // leave translation initialised flag in place
+    if (getState()?.session?.data?.translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

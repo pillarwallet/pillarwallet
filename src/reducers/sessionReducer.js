@@ -35,7 +35,7 @@ export const initialState = {
   data: {
     isOnline: true,
     fcmToken: '',
-    areTranslationsInitialised: false,
+    translationsInitialised: false,
     fallbackLanguageVersion: null,
     sessionLanguageCode: null, // setting here to not persist supported user's device language
     // (as it might change and app should reflect that)
