@@ -147,8 +147,8 @@ const Tooltip = (props: Props) => {
     setBalloonWidth(layout.width);
   };
 
-  let wrapperPosition = {};
-  let arrowHolderPosition = {};
+  let wrapperPosition = { left: 0 };
+  let arrowHolderPosition = { left: 0 };
 
   if (wrapperLayout.width) {
     wrapperPosition = {
