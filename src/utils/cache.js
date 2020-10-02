@@ -18,7 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import * as Sentry from '@sentry/react-native';
 import RNFetchBlob from 'rn-fetch-blob';
+import { reportLog } from 'utils/common';
 
 export const getCachedJSONFile = async (localPath: string) => {
   return new Promise(resolve => {
@@ -32,7 +34,10 @@ export const getCachedJSONFile = async (localPath: string) => {
         stream.onData((chunk) => {
           data += chunk;
         });
-        stream.onError(() => resolve({}));
+        stream.onError((error) => {
+          reportLog('Could not read local file', { localPath, error }, Sentry.Severity.Error);
+          resolve({});
+        });
         stream.onEnd(() => {
           const jsonData = JSON.parse(data);
           resolve(jsonData);
