@@ -43,12 +43,10 @@ export const setFallbackLanguageVersionAction = (version: string) => {
   };
 };
 
-export const setSessionLanguageAction = (languageCode: string) => {
-  return {
-    type: UPDATE_SESSION,
-    payload: { sessionLanguageCode: languageCode },
-  };
-};
+export const setSessionLanguageAction = (languageCode: string) => ({
+  type: UPDATE_SESSION,
+  payload: { sessionLanguageCode: languageCode },
+});
 
 export const handleSystemLanguageChangeAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {

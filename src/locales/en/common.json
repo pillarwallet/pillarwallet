@@ -1347,9 +1347,9 @@
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
-    "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing",
-    "languageIsNoLongerSupported": "Your selected language is no longer supported. It's been changed to default language.",
-    "languageIsNotSupported": "This language is not supported",
+    "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing. We're actively working on it.",
+    "languageIsNoLongerSupported": "Sorry, your selected language is no longer supported. It's been changed to default language.",
+    "languageIsNotSupported": "Sorry, this language is not supported.",
     "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
     "failedToDeleteAvatar": "Failed to delete avatar. Please try again."
   },
