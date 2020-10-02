@@ -30,7 +30,7 @@ If previously selected user's language is no longer supported, `defaultLanguage`
 
 ### Translation resource types
 There are two types of resources: 
-- **external** (that can also be cached) - translation resources that are being fetched from provided url (`${localeConfig.baseUrl}${languageCode}/${nameSpace}.json`)
+- **external** (that can also be cached) - translation resources that are being fetched from provided url
 as a json file and are stored (cached) into folder on user's device.
 The newest versions of resources are fetched (if connection is available) on app open and on language change action.
 If connection is not available, cached version is being used instead.
