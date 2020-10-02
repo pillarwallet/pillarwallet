@@ -1340,7 +1340,8 @@
     "contactAdded": "New contact added",
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
     "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
-    "failedToDeleteAvatar": "Failed to delete avatar. Please try again."
+    "failedToDeleteAvatar": "Failed to delete avatar. Please try again.",
+    "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again."
   },
 
   "exchangeContent": {
@@ -1474,13 +1475,11 @@
   },
 
   "notification": {
-    "received": "Received",
-    "transactionConfirmed": "Transaction confirmed",
-    "transactionSent": "Transaction sent",
-    "transactionReceived": "Transaction was received",
-    "success": "Success",
-    "newBadgeReceived": "New badge received!",
-    "receivedCollectible": "You received a collectible",
-    "collectibleSentAndReceived": "Your collectible has been received"
+    "transactionReceivedPending": "{{tokenValue}} is coming shortly.",
+    "transactionReceivedConfirmed": "{{tokenValue}} received.",
+    "transactionSentPending": "{{tokenValue}} is being sent.",
+    "transactionSentConfirmed": "{{tokenValue}} sent.",
+    "receivedCollectible": "You received a collectible.",
+    "collectibleSentAndReceived": "Your collectible has been received."
   }
 }

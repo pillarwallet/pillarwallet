@@ -113,8 +113,6 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
           ? t('toast.referralInviteCantBeSent.allInvites')
           : t('toast.referralInviteCantBeSent.notAllInvites'),
         emoji: 'hushed',
-        messageType: 'warning',
-        autoClose: false,
       },
     });
     dispatch({
@@ -260,7 +258,6 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
         payload: {
           message: t('toast.cantVerifyCode'),
           emoji: 'hushed',
-          messageType: 'warning',
         },
       });
     }

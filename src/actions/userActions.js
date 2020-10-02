@@ -62,8 +62,6 @@ const verificationSucceededAction = (message: string) => ({
   payload: {
     message,
     emoji: 'ok_hand',
-    messageType: 'success',
-    autoClose: false,
   },
 });
 
@@ -85,7 +83,6 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
         type: ADD_NOTIFICATION,
         payload: {
           message: message || t('toast.cantUpdateUser'),
-          messageType: 'warning',
           emoji: 'hushed',
         },
       });
@@ -130,7 +127,6 @@ export const createOneTimePasswordAction = (
         payload: {
           message: t([`toast.cantVerifyInfo.${fieldName}`, 'toast.cantVerifyInfo.default']),
           emoji: 'hushed',
-          messageType: 'warning',
         },
       });
     }
@@ -279,7 +275,6 @@ export const deleteUserAvatarAction = () => {
         payload: {
           message: t('toast.failedToDeleteAvatar'),
           emoji: 'hushed',
-          messageType: 'warning',
         },
       });
     }
