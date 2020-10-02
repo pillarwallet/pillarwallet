@@ -71,12 +71,10 @@ export const addResourceBundles = (lng: string, nameSpaces: string[], translatio
 };
 
 
-export const setLanguage = (lng: string) => {
-  return new Promise((resolve, reject) => {
-    i18n.changeLanguage(lng)
-      .then(() => resolve())
-      .catch((e) => reject(e));
-  });
+export const setLanguage = async (lng: string) => {
+  i18n.changeLanguage(lng)
+    .then(() => Promise.resolve())
+    .catch(() => Promise.reject());
 };
 
 export const getDefaultSupportedUserLanguage = () => {

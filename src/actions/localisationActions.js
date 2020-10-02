@@ -73,6 +73,7 @@ const getCachedTranslationResources =
       if (!localPath) return { ns, translations: {} };
 
       const translations = await getCachedJSONFile(localPath);
+
       if (!translations) {
         // cached file no longer exists - remove it from map
         dispatch(removeUrlCacheAction(url));
@@ -105,7 +106,7 @@ const getTranslationsResources = async (props) => {
 
   const { session: { data: { isOnline } } } = getState();
 
-  const relatedLocalTranslationData = localeConfig.localTranslations[language];
+  const relatedLocalTranslationData = localeConfig.localTranslations[language] || {};
 
   // if translations' baseUrl is provided - use external translations. If not - local.
   if (localeConfig.baseUrl) {
@@ -275,9 +276,8 @@ export const changeLanguageAction = (language: string) => {
 
     if (!localeConfig.isEnabled) return;
 
-    const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
-
     if (isLanguageSupported(language)) {
+      const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
       const onLanguageChangeSuccess = () => {
         dispatch(setAppLanguageAction(language, version));
         if (missingNsArray?.length) {

@@ -28,21 +28,17 @@ import {
 const EN_COMMON = require('../locales/en/common.json');
 const EN_AUTH = require('../locales/en/auth.json');
 
-const LT_COMMON = require('../locales/lt/common.json');
-const LT_AUTH = require('../locales/lt/auth.json');
-
 const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
 const DEFAULT_NAMESPACE = 'common';
 
 export default {
   isEnabled: true,
-  baseUrl: __DEV__ ? '' : 'http://pillar-stories.dev.imas.lt/locales/', // todo: change into real one;
+  baseUrl: '', // todo: change into real one;
   defaultLanguage: DEFAULT_LANGUAGE_CODE,
   // pairs of language code and language name in native language
   supportedLanguages: {
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
-    lt: 'Lietuvių',
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
@@ -51,10 +47,6 @@ export default {
     en: {
       common: EN_COMMON,
       auth: EN_AUTH,
-    },
-    lt: {
-      common: LT_COMMON,
-      auth: LT_AUTH,
     },
   },
 };
