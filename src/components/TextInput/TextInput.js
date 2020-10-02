@@ -457,7 +457,6 @@ class TextInput extends React.Component<Props, State> {
     const {
       inputProps,
       errorMessage,
-      hasError,
       autoCorrect,
       loading,
       onLayout,
@@ -479,7 +478,9 @@ class TextInput extends React.Component<Props, State> {
       leftSideSymbol,
       onRightAddonPress,
     } = this.props;
-    let { fallbackSource } = this.props;
+    let { fallbackSource, hasError } = this.props;
+
+    hasError = hasError ?? (!!errorMessage);
 
     const colors = getThemeColors(theme);
     const {

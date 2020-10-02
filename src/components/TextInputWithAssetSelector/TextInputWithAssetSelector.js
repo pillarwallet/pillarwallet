@@ -90,7 +90,6 @@ const ExchangeTextInput = (props: Props) => {
   return (
     <TextInput
       style={{ width: '100%' }}
-      hasError={!!errorMessage}
       errorMessage={errorMessage}
       inputProps={inputProps}
       numeric
