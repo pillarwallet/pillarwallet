@@ -61,6 +61,7 @@ import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
+import FirebaseDBHandler from 'components/FirebaseDBHandler/FirebaseDBHandler';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
@@ -69,6 +70,7 @@ import { log } from 'utils/logger';
 // services
 import { setTopLevelNavigator } from 'services/navigation';
 import changeLanguage from 'translations/changeLanguage';
+import { firebaseAuth } from 'services/firebase';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -151,7 +153,7 @@ class App extends React.Component<Props, *> {
       startListeningOnOpenNotification,
       startReferralsListener,
     } = this.props;
-
+    await firebaseAuth.signInAnonymously();
     const env = await setupEnv();
     log.info('Environment: ', env);
     this.setState({ env });
@@ -338,7 +340,9 @@ const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDis
 const AppRoot = () => (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+      <FirebaseDBHandler>
+        {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+      </FirebaseDBHandler>
     </PersistGate>
   </Provider>
 );

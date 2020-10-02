@@ -27,9 +27,27 @@ import { firebaseAuth, firebaseDb } from './firebase';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
 
-const userUID = firebaseAuth.currentUser.uid;
+const userUID = firebaseAuth?.currentUser?.uid;
 
-export const db = firebaseDb.ref(`/users/${userUID}`); // eslint-disable-line i18next/no-literal-string
+const DB_PATH = `/users/${userUID}`;
+
+export const DB_STATE_KEY = 'storageState';
+
+export const db = firebaseDb.ref(DB_PATH); // eslint-disable-line i18next/no-literal-string
+
+// this thing overwrites the whole storageState object
+// everytime we want to update, we gotta do
+// firebaseDb.ref(FULL_PATH!!!!!).update({})
+// needless to say, we dont wanna (and can we?) do this for every val
+// so perhaps we can just overwrite each reducer whenever it changes?
+// export const updateDBState = (key: string, object: Object) => db.update({ [DB_STATE_KEY]: { [key]: object } });
+
+// export const updateDBState = (key: string, object: Object) =>
+//  firebaseDb.ref(`${DB_PATH}/${DB_STATE_KEY}/${key}`).update(object);
+
+// export const updateDBState = (key: string, object: Object) => db.update({
+//   [`/${DB_STATE_KEY}/${key}`]: object,
+// });
 
 function Storage(name: string) {
   this.name = name;

@@ -316,9 +316,6 @@ export const loginAction = (
       dispatch(getWalletsCreationEventsAction());
       dispatch(checkKeyBasedAssetTransferTransactionsAction());
 
-      // This is required to authorize FB Realtime Database
-      firebaseAuth.signInAnonymously();
-
       if (!initialDeeplinkExecuted) {
         Linking.getInitialURL()
           .then(url => {
@@ -432,7 +429,7 @@ export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete()
     .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
-  await firebaseAuth.signout()
+  await firebaseAuth.signOut()
     .catch(e => reportLog(`Could not sign out with Firebase when resetting app state: ${e.message}`, e));
   await storage.removeAll();
   await smartWalletService.reset();
