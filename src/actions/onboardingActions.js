@@ -56,7 +56,7 @@ import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
-import { SET_CACHE_MAP } from 'constants/cacheConstants';
+import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -250,7 +250,7 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     } = currentState.wallet;
 
     // get language setting and cached urls from storage
-    const { appSettings: { data: { localisation } }, cache: { cacheMap } } = currentState;
+    const { appSettings: { data: { localisation } }, cache: { cachedUrls } } = currentState;
 
     // STEP 0: Clear local storage and reset app state
     // Exceptions:
@@ -292,9 +292,9 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch({ type: SET_USER_EVENTS, payload: [] });
 
     // set cached languages (from onboarding) and add it to new storage
-    if (cacheMap) {
-      dispatch({ type: SET_CACHE_MAP, payload: cacheMap });
-      await dispatch(saveDbAction('cacheMap', { cacheMap }));
+    if (cachedUrls) {
+      dispatch({ type: SET_CACHED_URLS, payload: cachedUrls });
+      await dispatch(saveDbAction('cachedUrls', { cachedUrls }));
     }
 
     // STEP 1: navigate to the new wallet screen

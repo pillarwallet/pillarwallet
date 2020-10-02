@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { CACHE_STATUS, REMOVE_URL_CACHE, SET_CACHE_MAP } from 'constants/cacheConstants';
+import { CACHE_STATUS, REMOVE_URL_CACHE, SET_CACHED_URLS } from 'constants/cacheConstants';
 
 type CacheStatus =
   typeof CACHE_STATUS.REQUESTED |
@@ -30,14 +30,14 @@ type CacheStatus =
 // todo: add expiration
 type CacheData = {
   status: CacheStatus,
-  localUrl?: ?string,
+  localPath?: ?string,
 }
-export type CacheMap = {
+export type CachedUrls = {
   [urlAsKey: string]: ?CacheData;
 }
 
 export type CacheReducerState = {
-  cacheMap: CacheMap
+  cachedUrls: CachedUrls
 };
 
 export type CacheAction = {
@@ -46,20 +46,20 @@ export type CacheAction = {
 };
 
 export const initialState = {
-  cacheMap: {},
+  cachedUrls: {},
 };
 
 const setCacheStatus = (
   state: CacheReducerState,
   urlAsKey: string,
   status: CacheStatus,
-  localUrl?: ?string,
+  localPath?: ?string,
 ): CacheReducerState => {
   return {
     ...state,
-    cacheMap: {
-      ...state.cacheMap,
-      [urlAsKey]: { status, localUrl },
+    cachedUrls: {
+      ...state.cachedUrls,
+      [urlAsKey]: { status, localPath },
     },
   };
 };
@@ -72,21 +72,21 @@ export default function cacheReducer(
     case CACHE_STATUS.PENDING:
       return setCacheStatus(state, action.payload.url, action.type);
     case CACHE_STATUS.DONE:
-      return setCacheStatus(state, action.payload.url, CACHE_STATUS.DONE, action.payload.localUrl);
+      return setCacheStatus(state, action.payload.url, CACHE_STATUS.DONE, action.payload.localPath);
     case CACHE_STATUS.FAILED:
       return setCacheStatus(state, action.payload.url, CACHE_STATUS.FAILED, null);
     case REMOVE_URL_CACHE:
       return {
         ...state,
-        cacheMap: Object.keys(state.cacheMap).reduce((caches, url) => {
+        cachedUrls: Object.keys(state.cachedUrls).reduce((caches, url) => {
           if (url !== action.payload) {
-            caches[url] = state.cacheMap[url];
+            caches[url] = state.cachedUrls[url];
           }
           return caches;
         }, {}),
       };
-    case SET_CACHE_MAP:
-      return { ...state, cacheMap: action.payload };
+    case SET_CACHED_URLS:
+      return { ...state, cachedUrls: action.payload };
     default:
       return state;
   }

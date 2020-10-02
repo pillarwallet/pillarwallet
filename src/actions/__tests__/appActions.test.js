@@ -23,7 +23,7 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { CACHE_STATUS, SET_CACHE_MAP } from 'constants/cacheConstants';
+import { CACHE_STATUS, SET_CACHED_URLS } from 'constants/cacheConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -46,7 +46,7 @@ const initialSessionState = {
 };
 
 const initialCacheState = {
-  cacheMap: {},
+  cachedUrls: {},
 };
 
 
@@ -68,11 +68,11 @@ describe('App actions', () => {
     const expectedActions = [
       { type: RESET_APP_LOADED },
       { type: UPDATE_APP_SETTINGS, payload: {} },
-      { type: SET_CACHE_MAP, payload: {} },
+      { type: SET_CACHED_URLS, payload: {} },
       { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
       { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
-      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localUrl: 'localString' } },
-      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localUrl: 'localString' } },
+      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localPath: 'localString' } },
+      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localPath: 'localString' } },
       { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
       { type: UPDATE_SESSION, payload: { translationsInitialised: true } },
       { type: UPDATE_SESSION, payload: { sessionLanguageCode: localeConfig.defaultLanguage } },

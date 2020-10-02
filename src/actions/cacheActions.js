@@ -21,13 +21,13 @@
 import RNFetchBlob from 'rn-fetch-blob';
 
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import type { CacheMap } from 'reducers/cacheReducer';
+import type { CachedUrls } from 'reducers/cacheReducer';
 import { CACHE_STATUS, REMOVE_URL_CACHE } from 'constants/cacheConstants';
 import { saveDbAction } from './dbActions';
 
 // TODO: should prevent status === CACHE_STATUS.DONE ?
-const canStartCaching = (urlAsKey: string, cacheMap: CacheMap) => {
-  const { status } = cacheMap[urlAsKey] || {};
+const canStartCaching = (urlAsKey: string, cachedUrls: CachedUrls) => {
+  const { status } = cachedUrls[urlAsKey] || {};
   return !status // haven't yet cached it
     || status !== CACHE_STATUS.PENDING // not being cached
     || status === CACHE_STATUS.FAILED; // allow to retry if failed
@@ -35,31 +35,31 @@ const canStartCaching = (urlAsKey: string, cacheMap: CacheMap) => {
 
 const finishCachingAction = (url: string, path: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { cache: { cacheMap } } = getState();
+    const { cache: { cachedUrls } } = getState();
 
     dispatch({
       type: CACHE_STATUS.DONE,
       payload: {
         url,
-        localUrl: path,
+        localPath: path,
       },
     });
 
-    const updatedCacheMap = {
-      ...cacheMap,
+    const updatedCachedUrls = {
+      ...cachedUrls,
       [url]: {
         status: CACHE_STATUS.DONE,
-        localUrl: path,
+        localPath: path,
       },
     };
-    await dispatch(saveDbAction('cacheMap', { cacheMap: updatedCacheMap }, true));
+    await dispatch(saveDbAction('cachedUrls', { cachedUrls: updatedCachedUrls }, true));
   };
 };
 
 export const cacheUrlAction = (url: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { cache: { cacheMap } } = getState();
-    if (canStartCaching(url, cacheMap)) {
+    const { cache: { cachedUrls } } = getState();
+    if (canStartCaching(url, cachedUrls)) {
       dispatch({ type: CACHE_STATUS.PENDING, payload: { url } });
       await RNFetchBlob
         .config({
@@ -83,16 +83,16 @@ export const cacheUrlAction = (url: string) => {
 
 export const removeUrlCacheAction = (url: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const { cache: { cacheMap } } = getState();
+    const { cache: { cachedUrls } } = getState();
 
-    const updatedCacheMap = Object.keys(cacheMap).reduce((caches, mapKey) => {
+    const updatedCachedUrls = Object.keys(cachedUrls).reduce((caches, mapKey) => {
       if (url !== mapKey) {
-        caches[mapKey] = cacheMap[mapKey];
+        caches[mapKey] = cachedUrls[mapKey];
       }
       return caches;
     }, {});
 
-    await dispatch(saveDbAction('cacheMap', { cacheMap: updatedCacheMap }, true));
+    await dispatch(saveDbAction('cachedUrls', { cachedUrls: updatedCachedUrls }, true));
     dispatch({ type: REMOVE_URL_CACHE, payload: url });
   };
 };

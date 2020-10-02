@@ -42,7 +42,7 @@ import { setAppLanguageAction } from 'actions/appSettingsActions';
 import Toast from 'components/Toast';
 
 import type { TranslationData, TranslationResourcesOfLanguage } from 'models/Translations';
-import type { CacheMap } from 'reducers/cacheReducer';
+import type { CachedUrls } from 'reducers/cacheReducer';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { reportLog } from 'utils/common';
@@ -69,12 +69,12 @@ const getTranslationData = (lng: string) => {
 };
 
 const getCachedTranslationResources =
-  async (translationsData: TranslationData[], cacheMap: CacheMap, dispatch: Dispatch) => {
+  async (translationsData: TranslationData[], cachedUrls: CachedUrls, dispatch: Dispatch) => {
     const cachedTranslations = await Promise.all(translationsData.map(async ({ ns, url }) => {
-      const { localUrl } = cacheMap?.[url] || {};
-      if (!localUrl) return { ns, translations: {} };
+      const { localPath } = cachedUrls?.[url] || {};
+      if (!localPath) return { ns, translations: {} };
 
-      const translations = await getCachedJSONFile(localUrl);
+      const translations = await getCachedJSONFile(localPath);
       if (!translations) {
         // cached file no longer exists - remove it from map
         dispatch(removeUrlCacheAction(url));
@@ -111,13 +111,13 @@ const getTranslationsResources = async (props) => {
     // If network is available - fetch and cache newest translations
     // TODO: decide on how frequent to update translations - now its fetching newest all the time
     if (isOnline) {
-      // fetches to storage and set local path to cacheMap
+      // fetches to storage and set local path to cachedUrls
       await Promise.all(translationsData.map(({ url }) => dispatch(cacheUrlAction(url))));
     }
 
     // get newest cached translations
-    const { cache: { cacheMap } } = getState();
-    resources = await getCachedTranslationResources(translationsData, cacheMap, dispatch);
+    const { cache: { cachedUrls } } = getState();
+    resources = await getCachedTranslationResources(translationsData, cachedUrls, dispatch);
 
     // check missing namespaces
     const existingNameSpaces = Object.keys(resources).filter(ns => !isEmpty(resources[ns]));

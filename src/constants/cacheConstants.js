@@ -25,5 +25,5 @@ export const CACHE_STATUS = {
   FAILED: 'CACHE_FAILED',
 };
 
-export const SET_CACHE_MAP = 'SET_CACHE_MAP';
+export const SET_CACHED_URLS = 'SET_CACHED_URLS';
 export const REMOVE_URL_CACHE = 'REMOVE_URL_CACHE';
