@@ -110,7 +110,7 @@ const getTranslationsResources = async (props) => {
   // if translations' baseUrl is provided - use external translations. If not - local.
   if (localeConfig.baseUrl) {
     // If network is available - fetch and cache newest translations
-    // TODO: decide on how frequent to update translations - now its fetching newest all the time
+    // TODO: fetch newest only once per session.
     if (isOnline) {
       // fetches to storage and set local path to cachedUrls
       await Promise.all(translationsData.map(({ url }) => dispatch(cacheUrlAction(url))));
