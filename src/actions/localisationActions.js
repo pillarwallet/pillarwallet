@@ -61,12 +61,10 @@ type SetLngAndBundle = {
   onSuccess?: () => void,
 }
 
-const getTranslationData = (lng: string) => {
-  return localeConfig.namespaces.map((ns) => ({
-    ns,
-    url: `${localeConfig.baseUrl}${lng}/${ns}.json`, // eslint-disable-line i18next/no-literal-string
-  }));
-};
+const getTranslationData = (lng: string) => localeConfig.namespaces.map((ns) => ({
+  ns,
+  url: `${localeConfig.baseUrl}${lng}/${ns}.json`, // eslint-disable-line i18next/no-literal-string
+}));
 
 const getCachedTranslationResources =
   async (translationsData: TranslationData[], cachedUrls: CachedUrls, dispatch: Dispatch) => {
@@ -81,7 +79,10 @@ const getCachedTranslationResources =
         return { ns, translations: {} };
       }
       return { ns, translations };
-    }));
+    })).catch((e) => {
+      reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, e, Sentry.Severity.Error);
+      return [];
+    });
 
     return cachedTranslations.reduce((formattedResources, translation) => {
       const { ns, translations } = translation;
