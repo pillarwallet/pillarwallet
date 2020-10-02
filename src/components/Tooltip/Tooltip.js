@@ -47,6 +47,8 @@ type Props = {
   isVisible: boolean,
   wrapperStyle?: Object,
   children?: React.Node,
+  customWrapperWidth?: number,
+  adjustX?: number,
 };
 
 const TooltipParagraph = styled(Paragraph)`
@@ -96,11 +98,23 @@ const Tooltip = (props: Props) => {
     positionOnBottom = true,
     isVisible,
     wrapperStyle,
+    customWrapperWidth,
+    adjustX,
   } = props;
 
   const [wrapperLayout, setWrapperLayout] = React.useState<Layout>({
     width: 0, height: 0, x: 0, y: 0,
   });
+
+  const adjustedWrapperLayout = { ...wrapperLayout };
+
+  if (customWrapperWidth !== undefined) {
+    if (adjustX) {
+      adjustedWrapperLayout.x = wrapperLayout.width - customWrapperWidth;
+    }
+    adjustedWrapperLayout.width = customWrapperWidth;
+  }
+
   const [tooltipLayout, setTooltipLayout] = React.useState<Layout>({
     x: 0, y: 0, width: 0, height: 0,
   });
@@ -150,11 +164,11 @@ const Tooltip = (props: Props) => {
   let wrapperPosition = { left: 0 };
   let arrowHolderPosition = { left: 0 };
 
-  if (wrapperLayout.width) {
+  if (adjustedWrapperLayout.width) {
     wrapperPosition = {
-      left: (wrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2),
-      right: (wrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2),
-      top: positionOnBottom ? wrapperLayout.height : -tooltipLayout.height,
+      left: ((adjustedWrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2)) + adjustedWrapperLayout.x,
+      right: (adjustedWrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2),
+      top: positionOnBottom ? adjustedWrapperLayout.height : -tooltipLayout.height,
     };
     arrowHolderPosition = {
       left: (TOOLTIP_WIDTH / 2) - ((ARROW_SIZE * Math.sqrt(2)) / 2),

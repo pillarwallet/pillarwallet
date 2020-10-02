@@ -99,7 +99,7 @@ type EventLike = {
 const InputField = styled(Input)`
   color: ${themedColors.text};
   ${({ smallPadding }) => `padding: 0 ${smallPadding ? 6 : 14}px`};
-  align-self: center;
+  align-self: stretch;
   margin: 0;
   text-align: ${({ alignTextOnRight }) => alignTextOnRight ? 'right' : 'auto'};
 `;
@@ -235,6 +235,7 @@ class TextInput extends React.Component<Props, State> {
     this.state = {
       isFocused: false,
       showOptionsSelector: false,
+      textInputWidth: 0,
     };
   }
 
@@ -452,7 +453,7 @@ class TextInput extends React.Component<Props, State> {
   }
 
   render() {
-    const { isFocused, showOptionsSelector } = this.state;
+    const { isFocused, showOptionsSelector, textInputWidth } = this.state;
     const {
       inputProps,
       errorMessage,
@@ -564,7 +565,9 @@ class TextInput extends React.Component<Props, State> {
                     <Tooltip
                       body={errorMessage || ''}
                       isVisible={!!hasError}
-                      wrapperStyle={{ alignSelf: 'flex-end' }}
+                      wrapperStyle={{ alignSelf: 'stretch', flex: 1 }}
+                      customWrapperWidth={textInputWidth}
+                      adjustX={!!numeric}
                     >
                       <InputField
                         {...inputProps}
@@ -584,6 +587,9 @@ class TextInput extends React.Component<Props, State> {
                         placeholderTextColor={colors.accent}
                         alignTextOnRight={!!numeric}
                         smallPadding={!!onRightAddonPress}
+                        onContentSizeChange={({ nativeEvent: { contentSize: { width } } }) => {
+                          this.setState({ textInputWidth: width });
+                        }}
                       />
                     </Tooltip>
                   </View>
