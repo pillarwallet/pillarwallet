@@ -1475,13 +1475,11 @@
   },
 
   "notification": {
-    "received": "Received",
-    "transactionConfirmed": "Transaction confirmed",
-    "transactionSent": "Transaction sent",
-    "transactionReceived": "Transaction was received",
-    "success": "Success",
-    "newBadgeReceived": "New badge received!",
-    "receivedCollectible": "You received a collectible",
-    "collectibleSentAndReceived": "Your collectible has been received"
+    "transactionReceivedPending": "{{tokenValue}} is coming shortly.",
+    "transactionReceivedConfirmed": "{{tokenValue}} received.",
+    "transactionSentPending": "{{tokenValue}} is being sent.",
+    "transactionSentConfirmed": "{{tokenValue}} sent.",
+    "receivedCollectible": "You received a collectible.",
+    "collectibleSentAndReceived": "Your collectible has been received."
   }
 }

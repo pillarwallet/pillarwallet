@@ -27,15 +27,19 @@ import t from 'translations/translate';
 import BadgeAndroid from 'react-native-android-badge';
 
 // constants
-import { COLLECTIBLE, BCX, BADGE } from 'constants/notificationConstants';
+import {
+  COLLECTIBLE,
+  BCX,
+  BADGE,
+  FCM_DATA_TYPE,
+} from 'constants/notificationConstants';
 
 // utils
 import { reportLog } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 
 // models
-import type { ApiNotification } from 'models/Notification';
-
+import type { ApiNotification, Notification } from 'models/Notification';
 
 const parseNotification = (notificationBody: string): ?Object => {
   let messageObj = null;
@@ -68,16 +72,37 @@ const validCollectibleTransaction = (transaction: ?Object): boolean => {
   return true;
 };
 
-export const processNotification = (notification: Object, myEthAddress?: string): ?Object => {
+export const processNotification = (notification: Object): ?Object => {
   let result = null;
   const parsedNotification = parseNotification(notification.msg);
   if (!parsedNotification) return result;
 
   if (notification.type === BCX) {
     if (!parsedNotification || !validBcxTransaction(parsedNotification)) return result;
+    result = { type: notification.type };
+  }
 
-    let message = '';
-    let title = '';
+  if (notification.type === BADGE) {
+    result = { type: notification.type };
+  }
+
+  if (!!notification.type && notification.type.toUpperCase() === COLLECTIBLE) {
+    if (!parsedNotification || !validCollectibleTransaction(parsedNotification)) return result;
+    result = { type: COLLECTIBLE };
+  }
+
+  return result;
+};
+
+export const getToastNotification = (data: mixed, myEthAddress: ?string): null | Notification => {
+  if (typeof data !== 'object') return null;
+  const { type, msg } = data ?? {};
+  const notification = typeof msg === 'string' && parseNotification(msg);
+  if (!notification) return null;
+
+  if (type === FCM_DATA_TYPE.BCX) {
+    if (!validBcxTransaction(notification)) return null;
+
     const {
       asset,
       status,
@@ -85,68 +110,55 @@ export const processNotification = (notification: Object, myEthAddress?: string)
       decimals,
       fromAddress: sender,
       toAddress: receiver,
-    } = parsedNotification;
-    const amount = utils.formatUnits(EthersBigNumber.from(value.toString()), decimals);
+    } = notification;
+
+    const tokenValue = t('tokenValue', {
+      value: utils.formatUnits(EthersBigNumber.from(value.toString()), decimals),
+      token: asset,
+    });
 
     // TODO: do we still need to process key based wallet notifications?
     if (addressesEqual(receiver, myEthAddress) && status === 'pending') {
-      title = t('tokenValue', { value: amount, token: asset });
-      message = t('notification.received');
+      return {
+        message: t('notification.transactionReceivedPending', { tokenValue }),
+        emoji: 'ok_hand',
+      };
     } else if (addressesEqual(receiver, myEthAddress) && status === 'confirmed') {
-      title = `${amount} ${asset}`;
-      message = t('notification.transactionConfirmed');
+      return {
+        message: t('notification.transactionReceivedConfirmed', { tokenValue }),
+        emoji: 'ok_hand',
+      };
     } else if (addressesEqual(sender, myEthAddress) && status === 'pending') {
-      title = t('tokenValue', { value: amount, token: asset });
-      message = t('notification.transactionSent');
+      return {
+        message: t('notification.transactionSentPending', { tokenValue }),
+        emoji: 'ok_hand',
+      };
     } else if (addressesEqual(sender, myEthAddress) && status === 'confirmed') {
-      title = t('tokenValue', { value: amount, token: asset });
-      message = t('notification.transactionReceived');
+      return {
+        message: t('notification.transactionSentConfirmed', { tokenValue }),
+        emoji: 'ok_hand',
+      };
     }
-
-    result = {
-      title,
-      message,
-      asset,
-      status,
-      type: notification.type,
-    };
   }
 
-  if (notification.type === BADGE) {
-    result = {
-      title: t('notification.success'),
-      message: t('notification.newBadgeReceived'),
-      type: notification.type,
-    };
-  }
+  if (type === FCM_DATA_TYPE.COLLECTIBLE) {
+    if (!validCollectibleTransaction(notification)) return null;
+    const { fromAddress: sender, toAddress: receiver } = notification;
 
-  if (!!notification.type && notification.type.toUpperCase() === COLLECTIBLE) {
-    if (!parsedNotification || !validCollectibleTransaction(parsedNotification)) return result;
-
-    let message = '';
-    let title = '';
-    const {
-      contractName,
-    } = parsedNotification;
-    const sender = parsedNotification.fromAddress.toUpperCase();
-    const receiver = parsedNotification.toAddress.toUpperCase();
-
-    if (receiver === myEthAddress) {
-      title = contractName;
-      message = t('notification.receivedCollectible');
-    } else if (sender === myEthAddress) {
-      title = contractName;
-      message = t('notification.collectibleSentAndReceived');
+    if (addressesEqual(receiver, myEthAddress)) {
+      return {
+        message: t('notification.receivedCollectible'),
+        emoji: 'ok_hand',
+      };
+    } else if (addressesEqual(sender, myEthAddress)) {
+      return {
+        message: t('notification.collectibleSentAndReceived'),
+        emoji: 'ok_hand',
+      };
     }
-
-    result = {
-      title,
-      message,
-      type: COLLECTIBLE,
-    };
   }
 
-  return result;
+  return null;
 };
 
 export const mapInviteNotifications = (notifications: ApiNotification[]): Object[] => notifications
