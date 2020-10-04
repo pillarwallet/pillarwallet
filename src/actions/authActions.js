@@ -64,6 +64,7 @@ import {
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import { findFirstSmartAccount, getActiveAccountType } from 'utils/accounts';
+import { isTest } from 'utils/environment';
 
 // services
 import Storage from 'services/storage';
@@ -304,8 +305,12 @@ export const loginAction = (
         dispatch(setupSentryAction(user, wallet));
       }
 
+      // TODO: do we actually need getNavigationPathAndParamsState check at all?
       const pathAndParams = getNavigationPathAndParamsState();
-      if (!pathAndParams) return;
+      if (!pathAndParams && !isTest) { // do not execute check on test instance
+        reportLog('loginAction failed: no pathAndParams');
+        return;
+      }
 
       const { lastActiveScreen, lastActiveScreenParams } = getNavigationState();
       const navigateToLastActiveScreen = NavigationActions.navigate({

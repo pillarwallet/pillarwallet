@@ -77,10 +77,14 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
 
-export const setupUserAction = (username: string, recoveryData?: Object) => {
+export const setupUserAction = (username: ?string, recoveryData?: Object) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    dispatch({ type: SET_REGISTERING_USER, payload: true });
+    if (!username) {
+      reportLog('setupUserAction failed: no username', { recoveryData });
+      return;
+    }
 
+    dispatch({ type: SET_REGISTERING_USER, payload: true });
     const {
       wallet: { data: wallet },
       session: { data: { isOnline } },
@@ -92,7 +96,8 @@ export const setupUserAction = (username: string, recoveryData?: Object) => {
 
     const privateKey = wallet?.privateKey;
     if (!privateKey) {
-      reportLog('setupUserAction failed: no privateKey');
+      reportLog('setupUserAction failed: no privateKey', { recoveryData });
+      dispatch({ type: SET_REGISTERING_USER, payload: false });
       return;
     }
 
@@ -109,7 +114,7 @@ export const setupUserAction = (username: string, recoveryData?: Object) => {
 
       if (!!sdkWallet?.error || !sdkWallet?.walletId) {
         const error = sdkWallet?.reason || t('auth:error.registrationApiFailedWithNoReason');
-        reportLog('setupUserAction user registration failed', { error });
+        reportLog('setupUserAction user registration failed', { error, recoveryData });
         dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
         return;
       }
@@ -169,7 +174,7 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
     dispatch({ type: SET_WALLET, payload: { address, privateKey } });
 
     const isRecoveryPending = !!isPortalRecovery;
-    const backupStatus = { isImported, isBackedUp: !isImported, isRecoveryPending };
+    const backupStatus = { isImported, isBackedUp: !!isImported, isRecoveryPending };
 
     // dispatch to reducer only, will be stored with encryptAndSaveWalletAction
     dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: backupStatus });
@@ -240,7 +245,7 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
     } = getState();
 
     // either retry during onboarding or previously stored username during onboarding
-    if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user.username, recoveryData));
+    if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user?.username, recoveryData));
 
     await dispatch(setupAppServicesAction());
 

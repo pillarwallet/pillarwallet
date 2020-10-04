@@ -23,38 +23,10 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { WebSocket } from 'mock-socket';
 
 // constants
-import {
-  UPDATE_WALLET_STATE,
-  SET_WALLET,
-  GENERATING,
-  ENCRYPTING,
-  REGISTERING,
-  DECRYPTED,
-} from 'constants/walletConstants';
-import { SET_INITIAL_ASSETS, UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { SET_USER, REGISTERED } from 'constants/userConstants';
-import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
-import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import {
-  SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_SDK_INIT,
-  SET_SMART_WALLET_UPGRADE_STATUS,
-  SMART_WALLET_UPGRADE_STATUSES,
-  RESET_SMART_WALLET,
-  SET_SMART_WALLET_CONNECTED_ACCOUNT,
-} from 'constants/smartWalletConstants';
-import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
-import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
-import { UPDATE_BADGES } from 'constants/badgesConstants';
-import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_USER_EVENTS } from 'constants/userEventsConstants';
-import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
+import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
 
 // actions
-import { beginOnboardingAction } from 'actions/onboardingActions';
+import { beginOnboardingAction, setupWalletAction } from 'actions/onboardingActions';
 
 // utils
 import { transformAssetsToObject } from 'utils/assets';
@@ -66,11 +38,7 @@ import PillarSdk from 'services/api';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
 // test utils
-import {
-  mockSmartWalletAccountApiData,
-  mockSmartWalletAccount,
-  mockSmartWalletConnectedAccount,
-} from 'testUtils/jestSetup';
+import type { EthereumWallet } from 'models/Wallet';
 
 
 global.WebSocket = WebSocket;
@@ -100,91 +68,81 @@ const pillarSdk = new PillarSdk();
 
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
 
-const mockWallet: Object = {
-  address: '0x9c',
-};
-
-const mockImportedWallet: Object = {
+const mockWallet: EthereumWallet = {
   address: '0x9c',
   privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
-  encrypt: () => Promise.resolve({ address: 'encry_pted' }),
+  mnemonic: undefined,
+};
+
+const mockImportedWallet: EthereumWallet = {
+  address: '0x9c',
+  mnemonic: 'ecology any source blush mechanic drama latin special bind moon token step',
+  privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
 };
 
 const mockOnboarding: Object = {
-  confirmedPin: '',
-  importedWallet: null,
-  mnemonic: {
-    original: '',
-    shuffled: '',
-    wordsToValidate: [],
-  },
-  apiUser: { username: 'asd' },
-  pin: '',
+  wallet: null,
+  pinCode: '123456',
+  user: { username: mockUser.username },
 };
 
 const mockBackupStatus: Object = {
   isImported: false,
   isBackedUp: false,
+  isRecoveryPending: false,
 };
 
-describe('Wallet actions', () => {
+describe('Onboarding actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({});
   });
 
   it(`should expect series of actions with payload to be dispatched
-  on registerWalletAction execution when wallet wasn't imported`, () => {
+  on setupWalletAction execution when wallet wasn't imported`, () => {
     store = mockStore({
-      user: { data: mockUser },
       session: { data: { isOnline: true } },
-      oAuthTokens: { data: {} },
-      wallet: {
-        onboarding: mockOnboarding,
-        backupStatus: mockBackupStatus,
-      },
-      accounts: { data: [mockSmartWalletAccount] },
-      smartWallet: { upgrade: { status: null } },
-      assets: { data: {} },
-      history: { data: {} },
-      appSettings: {},
-      balances: { data: {} },
+      onboarding: mockOnboarding,
+      wallet: { data: { privateKey: '' } }, // redux mock is not setting into state, it's set based on previous test
     });
     const expectedActions = [
-      { type: UPDATE_ACCOUNTS, payload: [] },
-      { type: UPDATE_ASSETS, payload: {} },
-      { type: RESET_APP_SETTINGS, payload: {} },
-      { type: SET_HISTORY, payload: {} },
-      { type: UPDATE_BALANCES, payload: {} },
-      { type: UPDATE_COLLECTIBLES, payload: {} },
-      { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
-      { type: UPDATE_BADGES, payload: [] },
-      { type: RESET_SMART_WALLET },
-      { type: RESET_PAYMENT_NETWORK },
-      { type: SET_USER_SETTINGS, payload: {} },
-      { type: SET_USER_EVENTS, payload: [] },
-      { type: UPDATE_WALLET_STATE, payload: GENERATING },
-      { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: SET_WALLET, payload: mockWallet },
-      { type: UPDATE_WALLET_STATE, payload: REGISTERING },
-      { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
-      { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
-      { type: SET_CONNECTED_DEVICES, payload: [] },
-      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
-      { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
-      { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockSmartWalletAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_WALLET_BACKUP_STATUS, payload: mockBackupStatus },
+      { type: SET_WALLET_IS_ENCRYPTING, payload: true },
+      { type: SET_WALLET_IS_ENCRYPTING, payload: false },
+      // { type: UPDATE_ACCOUNTS, payload: [] },
+      // { type: UPDATE_ASSETS, payload: {} },
+      // { type: RESET_APP_SETTINGS, payload: {} },
+      // { type: SET_HISTORY, payload: {} },
+      // { type: UPDATE_BALANCES, payload: {} },
+      // { type: UPDATE_COLLECTIBLES, payload: {} },
+      // { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
+      // { type: UPDATE_BADGES, payload: [] },
+      // { type: RESET_SMART_WALLET },
+      // { type: RESET_PAYMENT_NETWORK },
+      // { type: SET_USER_SETTINGS, payload: {} },
+      // { type: SET_USER_EVENTS, payload: [] },
+      // { type: UPDATE_WALLET_STATE, payload: GENERATING },
+      // { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
+      // { type: SET_WALLET, payload: mockWallet },
+      // { type: UPDATE_WALLET_STATE, payload: REGISTERING },
+      // { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
+      // { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
+      // { type: SET_SMART_WALLET_SDK_INIT, payload: true },
+      // { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
+      // { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
+      // { type: SET_CONNECTED_DEVICES, payload: [] },
+      // { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      // { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
+      // { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
+      // {
+      //   type: SET_INITIAL_ASSETS,
+      //   payload: {
+      //     accountId: mockSmartWalletAccount.id,
+      //     assets: transformAssetsToObject(mockInitialAssets),
+      //   },
+      // },
+      // { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     return store.dispatch(beginOnboardingAction())
@@ -195,62 +153,55 @@ describe('Wallet actions', () => {
   });
 
   it(`should expect series of actions with payload to be
-  dispatch on registerWalletAction execution when wallet was imported`, () => {
+  dispatch on setupWalletAction execution when wallet was imported`, () => {
     store = mockStore({
-      user: { data: mockUser },
       session: { data: { isOnline: true } },
-      oAuthTokens: { data: {} },
+      onboarding: {
+        ...mockOnboarding,
+        wallet: mockImportedWallet,
+      },
       wallet: {
-        onboarding: {
-          ...mockOnboarding,
-          importedWallet: mockImportedWallet,
-        },
         backupStatus: mockBackupStatus,
       },
-      accounts: { data: [mockSmartWalletAccount] },
-      assets: { data: {} },
-      history: { data: {} },
-      appSettings: {},
-      smartWallet: { upgrade: { status: null } },
-      balances: { data: {} },
     });
     const expectedActions = [
-      { type: UPDATE_ACCOUNTS, payload: [] },
-      { type: UPDATE_ASSETS, payload: {} },
-      { type: RESET_APP_SETTINGS, payload: {} },
-      { type: SET_HISTORY, payload: {} },
-      { type: UPDATE_BALANCES, payload: {} },
-      { type: UPDATE_COLLECTIBLES, payload: {} },
-      { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
-      { type: UPDATE_BADGES, payload: [] },
-      { type: RESET_SMART_WALLET },
-      { type: RESET_PAYMENT_NETWORK },
-      { type: SET_USER_SETTINGS, payload: {} },
-      { type: SET_USER_EVENTS, payload: [] },
-      { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
-      { type: SET_WALLET, payload: mockWallet },
-      { type: UPDATE_WALLET_STATE, payload: REGISTERING },
-      { type: UPDATE_OAUTH_TOKENS, payload: { accessToken: 'uniqueAccessToken', refreshToken: 'uniqueRefreshToken' } },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
-      { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
-      { type: SET_CONNECTED_DEVICES, payload: [] },
-      { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
-      { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
-      { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
-      {
-        type: SET_INITIAL_ASSETS,
-        payload: {
-          accountId: mockSmartWalletAccount.id,
-          assets: transformAssetsToObject(mockInitialAssets),
-        },
-      },
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
+      { type: UPDATE_WALLET_BACKUP_STATUS, payload: { ...mockBackupStatus, isBackedUp: true, isImported: true } },
+      { type: SET_WALLET_IS_ENCRYPTING, payload: true },
+      { type: SET_WALLET_IS_ENCRYPTING, payload: false },
+      // { type: UPDATE_ASSETS, payload: {} },
+      // { type: RESET_APP_SETTINGS, payload: {} },
+      // { type: SET_HISTORY, payload: {} },
+      // { type: UPDATE_BALANCES, payload: {} },
+      // { type: UPDATE_COLLECTIBLES, payload: {} },
+      // { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
+      // { type: UPDATE_BADGES, payload: [] },
+      // { type: RESET_SMART_WALLET },
+      // { type: RESET_PAYMENT_NETWORK },
+      // { type: SET_USER_SETTINGS, payload: {} },
+      // { type: SET_USER_EVENTS, payload: [] },
+      // { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
+      // { type: SET_WALLET, payload: mockWallet },
+      // { type: UPDATE_WALLET_STATE, payload: REGISTERING },
+      // { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
+      // { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
+      // { type: SET_SMART_WALLET_SDK_INIT, payload: true },
+      // { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
+      // { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
+      // { type: SET_CONNECTED_DEVICES, payload: [] },
+      // { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      // { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
+      // { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
+      // {
+      //   type: SET_INITIAL_ASSETS,
+      //   payload: {
+      //     accountId: mockSmartWalletAccount.id,
+      //     assets: transformAssetsToObject(mockInitialAssets),
+      //   },
+      // },
+      // { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
-    return store.dispatch(beginOnboardingAction())
+    return store.dispatch(setupWalletAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

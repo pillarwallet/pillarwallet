@@ -172,13 +172,13 @@ export const fetchAvailableBalancesToTransferAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER });
-
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
       reportLog('fetchAvailableBalancesToTransferAction failed: no keyBasedWalletAddress');
       return;
     }
+
+    dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER });
 
     // fetch key based assets
     const ownedAssets = await getAllOwnedAssets(api, keyBasedWalletAddress, supportedAssets);

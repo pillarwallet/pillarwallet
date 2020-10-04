@@ -75,7 +75,9 @@ jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
 jest.mock('@react-native-firebase/app', () => ({
   firebase: {
-    iid: () => {},
+    iid: () => ({
+      delete: () => Promise.resolve(),
+    }),
     analytics: () => ({
       logEvent: () => {},
     }),
@@ -178,6 +180,7 @@ jest.setMock('react-native-intercom', {
   reset: () => { },
   setInAppMessageVisibility: () => { },
   sendTokenToIntercom: () => Promise.resolve(),
+  logout: jest.fn(),
 });
 
 const mockCameraView = mockView;
@@ -196,6 +199,7 @@ jest.mock('react-native-cookies', () => ({
   canOpenURL: jest.fn(),
   getInitialURL: jest.fn(),
   get: () => Promise.resolve(null),
+  clearAll: () => Promise.resolve(),
 }));
 
 jest.setMock('react-native-camera', {
@@ -335,4 +339,3 @@ jest.setMock('@react-native-community/netinfo');
 jest.setMock('react-native-appearance', {});
 
 jest.setMock('configs/envConfig', envConfigMock);
-
