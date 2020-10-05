@@ -166,7 +166,7 @@ const Tooltip = (props: Props) => {
 
   if (adjustedWrapperLayout.width) {
     wrapperPosition = {
-      left: ((adjustedWrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2)) + adjustedWrapperLayout.x,
+      left: ((adjustedWrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2)) + (adjustX ? adjustedWrapperLayout.x : 0),
       right: (adjustedWrapperLayout.width / 2) - (TOOLTIP_WIDTH / 2),
       top: positionOnBottom ? adjustedWrapperLayout.height : -tooltipLayout.height,
     };
