@@ -109,14 +109,8 @@ const SendContainer = (props: Props) => {
         allowEnteringCustomAddress
         {...customSelectorProps}
       />
-
       <InputWrapper>
-        {!!isLoading && <Spinner />}
-        {!isLoading && (
-        <ValueInput
-          {...customValueSelectorProps}
-        />
-        )}
+        {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
       </InputWrapper>
       {children}
     </ContainerWithHeader>

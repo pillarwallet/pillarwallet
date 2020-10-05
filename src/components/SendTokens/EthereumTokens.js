@@ -462,7 +462,7 @@ const SendEthereumTokens = ({
         onAssetDataChange: setAssetData,
         showCollectibles: true,
         txFeeInfo,
-        hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
+        hideMaxSend: gettingFee || !selectedContact,
         updateTxFee: calculateBalancePercentTxFee,
         onFormValid: setInputIsValid,
       }}

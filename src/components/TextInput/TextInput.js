@@ -582,7 +582,7 @@ class TextInput extends React.Component<Props, State> {
                         autoCorrect={autoCorrect}
                         style={[defaultInputStyle, customStyle, additionalStyle, !editable && { color: colors.accent }]}
                         onLayout={onLayout}
-                        placeholderTextColor={colors.accent}
+                        placeholderTextColor={colors.text}
                         alignTextOnRight={!!numeric}
                         smallPadding={!!onRightAddonPress}
                       />
