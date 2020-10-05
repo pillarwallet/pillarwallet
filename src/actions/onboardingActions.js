@@ -200,33 +200,34 @@ export const setupAppServicesAction = () => {
       return;
     }
 
-    if (isOnline) {
-      dispatch(loadFeatureFlagsAction());
+    // all the calls below require user to be online
+    if (!isOnline) return;
 
-      // user might not be registered at this point
-      if (walletId) {
-        const initialAssets = await api.fetchInitialAssets(walletId);
-        const rates = await getExchangeRates(Object.keys(initialAssets));
-        dispatch(setRatesAction(rates));
-        dispatch(fetchBadgesAction(false));
-        dispatch(fetchReferralRewardAction());
-      }
+    dispatch(loadFeatureFlagsAction());
 
-      // create smart wallet account only for new wallets
-      await dispatch(importSmartWalletAccountsAction(privateKey));
-      await dispatch(fetchSmartWalletTransactionsAction());
-      dispatch(managePPNInitFlagAction());
+    // user might not be registered at this point
+    if (walletId) {
+      const initialAssets = await api.fetchInitialAssets(walletId);
+      const rates = await getExchangeRates(Object.keys(initialAssets));
+      dispatch(setRatesAction(rates));
+      dispatch(fetchBadgesAction(false));
+      dispatch(fetchReferralRewardAction());
+    }
 
-      // if wallet was imported let's check its balance for key based assets migration
-      if (backupStatus.isImported) {
-        dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-      }
+    // create smart wallet account only for new wallets
+    await dispatch(importSmartWalletAccountsAction(privateKey));
+    await dispatch(fetchSmartWalletTransactionsAction());
+    dispatch(managePPNInitFlagAction());
+
+    // if wallet was imported let's check its balance for key based assets migration
+    if (backupStatus.isImported) {
+      dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
     }
 
     // add wallet created / imported events
     dispatch(getWalletsCreationEventsAction());
 
-    // check if wallet backup warning toast needed
+    // check if wallet backup warning toast needed, balance can only be retrieved online
     dispatch(checkForWalletBackupToastAction());
   };
 };

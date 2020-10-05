@@ -24,9 +24,23 @@ import { WebSocket } from 'mock-socket';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
+import { SET_REGISTERING_USER } from 'constants/onboardingConstants';
+import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { SET_USER } from 'constants/userConstants';
+import { SET_SMART_WALLET_ACCOUNTS, SET_SMART_WALLET_SDK_INIT } from 'constants/smartWalletConstants';
+import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { SET_INITIAL_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import { SET_HISTORY } from 'constants/historyConstants';
+import { UPDATE_RATES } from 'constants/ratesConstants';
+import { UPDATE_BADGES } from 'constants/badgesConstants';
 
 // actions
-import { beginOnboardingAction, setupWalletAction } from 'actions/onboardingActions';
+import {
+  setupAppServicesAction,
+  setupUserAction,
+  setupWalletAction,
+} from 'actions/onboardingActions';
 
 // utils
 import { transformAssetsToObject } from 'utils/assets';
@@ -38,6 +52,16 @@ import PillarSdk from 'services/api';
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
 // test utils
+import {
+  mockExchangeRates,
+  mockSmartWalletAccount,
+  mockSmartWalletAccountApiData,
+  mockSmartWalletConnectedAccount,
+  mockSupportedAssets,
+  mockUserBadges,
+} from 'testUtils/jestSetup';
+
+// types
 import type { EthereumWallet } from 'models/Wallet';
 
 
@@ -62,6 +86,8 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   updateUser: jest.fn(() => mockUser),
   userInfo: jest.fn(() => mockUser),
   fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
+  fetchSupportedAssets: jest.fn(() => mockSupportedAssets),
+  fetchBadges: jest.fn(() => mockUserBadges),
 })));
 
 const pillarSdk = new PillarSdk();
@@ -92,6 +118,13 @@ const mockBackupStatus: Object = {
   isRecoveryPending: false,
 };
 
+const mockOauthTokens: Object = {
+  accessToken: 'uniqueAccessToken',
+  refreshToken: 'uniqueRefreshToken',
+};
+
+const mockFcmToken = '12x2342x212';
+
 describe('Onboarding actions', () => {
   let store;
   beforeEach(() => {
@@ -103,49 +136,16 @@ describe('Onboarding actions', () => {
     store = mockStore({
       session: { data: { isOnline: true } },
       onboarding: mockOnboarding,
-      wallet: { data: { privateKey: '' } }, // redux mock is not setting into state, it's set based on previous test
     });
+
     const expectedActions = [
       { type: SET_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_BACKUP_STATUS, payload: mockBackupStatus },
       { type: SET_WALLET_IS_ENCRYPTING, payload: true },
       { type: SET_WALLET_IS_ENCRYPTING, payload: false },
-      // { type: UPDATE_ACCOUNTS, payload: [] },
-      // { type: UPDATE_ASSETS, payload: {} },
-      // { type: RESET_APP_SETTINGS, payload: {} },
-      // { type: SET_HISTORY, payload: {} },
-      // { type: UPDATE_BALANCES, payload: {} },
-      // { type: UPDATE_COLLECTIBLES, payload: {} },
-      // { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
-      // { type: UPDATE_BADGES, payload: [] },
-      // { type: RESET_SMART_WALLET },
-      // { type: RESET_PAYMENT_NETWORK },
-      // { type: SET_USER_SETTINGS, payload: {} },
-      // { type: SET_USER_EVENTS, payload: [] },
-      // { type: UPDATE_WALLET_STATE, payload: GENERATING },
-      // { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
-      // { type: SET_WALLET, payload: mockWallet },
-      // { type: UPDATE_WALLET_STATE, payload: REGISTERING },
-      // { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      // { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      // { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      // { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
-      // { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
-      // { type: SET_CONNECTED_DEVICES, payload: [] },
-      // { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
-      // { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
-      // { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
-      // {
-      //   type: SET_INITIAL_ASSETS,
-      //   payload: {
-      //     accountId: mockSmartWalletAccount.id,
-      //     assets: transformAssetsToObject(mockInitialAssets),
-      //   },
-      // },
-      // { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
-    return store.dispatch(beginOnboardingAction())
+    return store.dispatch(setupWalletAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -153,58 +153,137 @@ describe('Onboarding actions', () => {
   });
 
   it(`should expect series of actions with payload to be
-  dispatch on setupWalletAction execution when wallet was imported`, () => {
+  dispatched on setupWalletAction execution when wallet was imported`, () => {
     store = mockStore({
       session: { data: { isOnline: true } },
       onboarding: {
         ...mockOnboarding,
         wallet: mockImportedWallet,
       },
-      wallet: {
-        backupStatus: mockBackupStatus,
-      },
     });
+
     const expectedActions = [
+      { type: SET_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_BACKUP_STATUS, payload: { ...mockBackupStatus, isBackedUp: true, isImported: true } },
       { type: SET_WALLET_IS_ENCRYPTING, payload: true },
       { type: SET_WALLET_IS_ENCRYPTING, payload: false },
-      // { type: UPDATE_ASSETS, payload: {} },
-      // { type: RESET_APP_SETTINGS, payload: {} },
-      // { type: SET_HISTORY, payload: {} },
-      // { type: UPDATE_BALANCES, payload: {} },
-      // { type: UPDATE_COLLECTIBLES, payload: {} },
-      // { type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} },
-      // { type: UPDATE_BADGES, payload: [] },
-      // { type: RESET_SMART_WALLET },
-      // { type: RESET_PAYMENT_NETWORK },
-      // { type: SET_USER_SETTINGS, payload: {} },
-      // { type: SET_USER_EVENTS, payload: [] },
-      // { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
-      // { type: SET_WALLET, payload: mockWallet },
-      // { type: UPDATE_WALLET_STATE, payload: REGISTERING },
-      // { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
-      // { type: SET_USER, payload: { state: REGISTERED, user: { username: 'snow', walletId: 2 } } },
-      // { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      // { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
-      // { type: UPDATE_ACCOUNTS, payload: [mockSmartWalletAccount] },
-      // { type: SET_CONNECTED_DEVICES, payload: [] },
-      // { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
-      // { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, isActive: true }] },
-      // { type: SET_SMART_WALLET_UPGRADE_STATUS, payload: SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED },
-      // {
-      //   type: SET_INITIAL_ASSETS,
-      //   payload: {
-      //     accountId: mockSmartWalletAccount.id,
-      //     assets: transformAssetsToObject(mockInitialAssets),
-      //   },
-      // },
-      // { type: UPDATE_WALLET_STATE, payload: DECRYPTED },
     ];
 
     return store.dispatch(setupWalletAction())
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it(`should expect series of actions with payload to be
+  dispatched on setupUserAction execution when network is online`, () => {
+    store = mockStore({
+      session: { data: { isOnline: true } },
+      wallet: {
+        backupStatus: mockBackupStatus,
+        data: mockImportedWallet,
+      },
+    });
+
+    const expectedActions = [
+      { type: SET_REGISTERING_USER, payload: true },
+      { type: UPDATE_OAUTH_TOKENS, payload: mockOauthTokens },
+      { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
+      { type: SET_USER, payload: mockUser },
+      { type: SET_REGISTERING_USER, payload: false },
+    ];
+
+    return store.dispatch(setupUserAction(mockUser.username))
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it(`should expect series of actions with payload to be
+  dispatched on setupUserAction execution when network is offline`, () => {
+    store = mockStore({
+      session: { data: { isOnline: false } },
+      wallet: {
+        backupStatus: mockBackupStatus,
+        data: mockImportedWallet,
+      },
+    });
+
+    const expectedActions = [
+      { type: SET_REGISTERING_USER, payload: true },
+      { type: SET_USER, payload: { username: mockUser.username } },
+      { type: SET_REGISTERING_USER, payload: false },
+    ];
+
+    return store.dispatch(setupUserAction(mockUser.username))
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it(`should expect series of actions with payload to be
+  dispatched on setupAppServicesAction execution when network is online`, () => {
+    store = mockStore({
+      session: { data: { isOnline: true } },
+      wallet: {
+        backupStatus: mockBackupStatus,
+        data: mockImportedWallet,
+      },
+      user: { data: mockUser },
+      accounts: { data: [mockSmartWalletAccount] },
+      smartWallet: { connectedAccount: mockSmartWalletConnectedAccount },
+      assets: {
+        supportedAssets: [],
+        data: { [mockSmartWalletAccount.id]: transformAssetsToObject(mockInitialAssets) },
+      },
+      history: { data: {} },
+      balances: { data: {} },
+      rates: { data: {} },
+      badges: { data: [] },
+    });
+
+    const expectedActions = [
+      { type: UPDATE_RATES, payload: mockExchangeRates },
+      { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
+      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
+      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
+      { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, extra: mockSmartWalletAccountApiData }] },
+      {
+        type: SET_INITIAL_ASSETS,
+        payload: {
+          accountId: mockSmartWalletAccount.id,
+          assets: transformAssetsToObject(mockInitialAssets),
+        },
+      },
+      { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
+      { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
+    ];
+
+    return store.dispatch(setupAppServicesAction())
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual(expectedActions);
+      });
+  });
+
+  it(`should expect series of actions with payload to be
+  dispatched on setupAppServicesAction execution when network is offline`, () => {
+    store = mockStore({
+      session: { data: { isOnline: false } },
+      wallet: {
+        backupStatus: mockBackupStatus,
+        data: mockImportedWallet,
+      },
+      user: { data: mockUser },
+    });
+
+    return store.dispatch(setupAppServicesAction())
+      .then(() => {
+        const actualActions = store.getActions();
+        expect(actualActions).toEqual([]);
       });
   });
 });

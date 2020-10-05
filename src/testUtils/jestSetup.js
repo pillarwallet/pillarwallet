@@ -29,6 +29,7 @@ import mocktract from 'mocktract';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
 
 // mocks
 import StorageMock from './asyncStorageMock';
@@ -100,12 +101,6 @@ jest.mock('@react-native-firebase/app', () => ({
     }),
   },
 }));
-
-jest.setMock('cryptocompare', {
-  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
-    return Promise.resolve({});
-  },
-});
 
 jest.setMock('react-native-splash-screen', {
   show: jest.fn(),
@@ -210,7 +205,7 @@ jest.setMock('react-native-vector-icons', {
   createIconSet: () => mockView,
 });
 
-const mockExchangeRates = {
+export const mockExchangeRates = {
   ETH: {
     EUR: 624.21,
     GBP: 544.57,
@@ -306,6 +301,8 @@ jest.setMock('@smartwallet/sdk', {
       account: mockSmartWalletAccountApiData,
       accountDevice: { device: { address: '0x0' } },
     },
+    getConnectedAccountPayments: () => Promise.resolve([]),
+    getConnectedAccountTransactions: () => Promise.resolve([]),
   }),
 });
 
@@ -339,3 +336,40 @@ jest.setMock('@react-native-community/netinfo');
 jest.setMock('react-native-appearance', {});
 
 jest.setMock('configs/envConfig', envConfigMock);
+
+export const mockSupportedAssets = [
+  {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+  {
+    symbol: PLR,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+];
+
+export const mockUserBadges = [{
+  badgeId: '5c9bda927d7363000673f08c',
+  createdAt: 1553717906,
+  description: 'Badge description',
+  id: 1553717906,
+  imageUrl: 'https://s3.eu-west-2.amazonaws.com/pillar-qa-badges-images-eu-west-2-861741397496/new-wallet_180%403x.png',
+  name: 'To the Moon!',
+  receivedAt: 1601876318,
+  subtitle: 'Wallet created',
+  updatedAt: 1553717968,
+}];
