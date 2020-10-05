@@ -1,6 +1,6 @@
 source "https://rubygems.org"
 gem 'rake'
-gem "fastlane"
+gem "fastlane", "2.160.0"
 gem 'fastlane-plugin-get_version_name'
 gem 'fastlane-plugin-property_file_read'
 gem 'fastlane-plugin-appcenter'
