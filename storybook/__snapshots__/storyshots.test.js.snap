@@ -34144,7 +34144,8 @@ exports[`Storyshots Value Input default 1`] = `
               onLayout={[Function]}
               style={
                 Object {
-                  "alignSelf": "flex-end",
+                  "alignSelf": "stretch",
+                  "flex": 1,
                 }
               }
             >
@@ -34191,6 +34192,7 @@ exports[`Storyshots Value Input default 1`] = `
                 maxLength={42}
                 onBlur={[Function]}
                 onChange={[Function]}
+                onContentSizeChange={[Function]}
                 onEndEditing={[Function]}
                 onFocus={[Function]}
                 onSubmitEditing={[Function]}
@@ -34201,7 +34203,7 @@ exports[`Storyshots Value Input default 1`] = `
                 style={
                   Array [
                     Object {
-                      "alignSelf": "center",
+                      "alignSelf": "stretch",
                       "color": "#0A1427",
                       "marginBottom": 0,
                       "marginLeft": 0,
@@ -36308,7 +36310,8 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                         onLayout={[Function]}
                         style={
                           Object {
-                            "alignSelf": "flex-end",
+                            "alignSelf": "stretch",
+                            "flex": 1,
                           }
                         }
                       >
@@ -36330,6 +36333,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                           maxLength={42}
                           onBlur={[Function]}
                           onChange={[Function]}
+                          onContentSizeChange={[Function]}
                           onEndEditing={[Function]}
                           onFocus={[Function]}
                           onPressRightLabel={[Function]}
@@ -36352,7 +36356,7 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                           style={
                             Array [
                               Object {
-                                "alignSelf": "center",
+                                "alignSelf": "stretch",
                                 "color": "#0A1427",
                                 "marginBottom": 0,
                                 "marginLeft": 0,
@@ -37869,7 +37873,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                         onLayout={[Function]}
                         style={
                           Object {
-                            "alignSelf": "flex-end",
+                            "alignSelf": "stretch",
+                            "flex": 1,
                           }
                         }
                       >
@@ -37903,6 +37908,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           maxLength={42}
                           onBlur={[Function]}
                           onChange={[Function]}
+                          onContentSizeChange={[Function]}
                           onEndEditing={[Function]}
                           onFocus={[Function]}
                           onPressRightLabel={[Function]}
@@ -37947,7 +37953,7 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                           style={
                             Array [
                               Object {
-                                "alignSelf": "center",
+                                "alignSelf": "stretch",
                                 "color": "#0A1427",
                                 "marginBottom": 0,
                                 "marginLeft": 0,
@@ -39358,7 +39364,8 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                         onLayout={[Function]}
                         style={
                           Object {
-                            "alignSelf": "flex-end",
+                            "alignSelf": "stretch",
+                            "flex": 1,
                           }
                         }
                       >
@@ -39380,6 +39387,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                           maxLength={42}
                           onBlur={[Function]}
                           onChange={[Function]}
+                          onContentSizeChange={[Function]}
                           onEndEditing={[Function]}
                           onFocus={[Function]}
                           onPressRightLabel={[Function]}
@@ -39402,7 +39410,7 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                           style={
                             Array [
                               Object {
-                                "alignSelf": "center",
+                                "alignSelf": "stretch",
                                 "color": "#0A1427",
                                 "marginBottom": 0,
                                 "marginLeft": 0,

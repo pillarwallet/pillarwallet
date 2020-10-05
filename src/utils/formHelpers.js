@@ -200,7 +200,7 @@ export function SelectorInputTemplate(locals: Object) {
   return (
     <TextInput
       style={{ width: '100%' }}
-      hasError={!!locals.error}
+      hasError={false}
       errorMessage={errorMessage}
       inputProps={inputProps}
       leftSideText={inputAddonText}

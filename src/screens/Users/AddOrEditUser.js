@@ -197,6 +197,7 @@ const ProfileFormTemplate = (locals: Object) => {
     optionsTitle,
     onSubmit,
     selectorModalTitle,
+    zIndex,
   } = config;
 
   const value = get(locals, 'value', {});
@@ -242,7 +243,7 @@ const ProfileFormTemplate = (locals: Object) => {
     }
 
     return (
-      <FieldWrapper pointerEvents={isFormFocused ? 'none' : 'auto'}>
+      <FieldWrapper pointerEvents={isFormFocused ? 'none' : 'auto'} zIndex={zIndex}>
         <TouchableOpacity onPress={() => onFocus(fieldName)} style={{ flex: 1 }}>
           <FieldTitle>
             <FieldIcon source={icon} />
@@ -264,7 +265,7 @@ const ProfileFormTemplate = (locals: Object) => {
   description = isVerified ? descriptionVerified : descriptionEmpty;
 
   return (
-    <FieldWrapper>
+    <FieldWrapper zIndex={zIndex}>
       <FieldTitle alignItems="flex-start">
         <FieldIcon source={icon} marginTop={2} />
         <Spacing w={8} />
@@ -394,6 +395,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             statusIcon: 'rounded-close',
             statusIconColor: colors.secondaryText,
             onIconPress: this.onClear,
+            zIndex: 2,
           },
         },
         phone: {
@@ -425,6 +427,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
             statusIcon: 'rounded-close',
             statusIconColor: colors.secondaryText,
             onIconPress: this.onClear,
+            zIndex: 3,
           },
         },
       },
@@ -684,7 +687,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       >
         <ScrollWrapper disableOnAndroid keyboardShouldPersistTaps="handled">
           <TouchableWithoutFeedback onPress={this.onFieldBlur}>
-            <RootContainer>
+            <RootContainer zIndex={10}>
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>

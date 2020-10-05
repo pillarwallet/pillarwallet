@@ -48,6 +48,7 @@ type State = {
 
 const NewsletterWrapper = styled.View`
   margin: 0 ${spacing.layoutSides}px;
+  z-index: 10;
 `;
 
 

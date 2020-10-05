@@ -200,7 +200,7 @@ const Tooltip = (props: Props) => {
           <TooltipArrowHolder {...arrowHolderPosition}>
             <TooltipArrow {...arrowPosition} />
           </TooltipArrowHolder>
-          <BalloonWrapper >
+          <BalloonWrapper>
             <TooltipBalloon onLayout={onBalloonLayout}>
               <TooltipParagraph>{body}</TooltipParagraph>
             </TooltipBalloon>
