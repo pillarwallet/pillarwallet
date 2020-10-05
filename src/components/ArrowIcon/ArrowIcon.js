@@ -19,9 +19,9 @@
 */
 
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
 import { withTheme } from 'styled-components/native';
-import { images } from 'utils/images';
+import Icon from 'components/Icon';
+import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 
@@ -30,12 +30,13 @@ type Props = {
 };
 
 const ArrowIcon = ({ theme }: Props) => {
-  const { directIcon } = images(theme);
   return (
-    <CachedImage
-      style={{ width: 24, height: 24 }}
-      source={directIcon}
-      resizeMode="contain"
+    <Icon
+      name="direct"
+      style={{
+        fontSize: 24,
+        color: getThemeColors(theme).text,
+      }}
     />
   );
 };
