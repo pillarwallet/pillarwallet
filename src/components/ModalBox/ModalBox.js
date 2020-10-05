@@ -19,7 +19,7 @@
 */
 import React, { useRef, useCallback, useImperativeHandle } from 'react';
 import type { Node as ReactNode } from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
 // utils
@@ -36,12 +36,6 @@ type Props = {|
   noBoxMinHeight?: boolean,
   onModalHide?: () => void,
 |};
-
-const Wrapper = styled.KeyboardAvoidingView`
-  flex-direction: column;
-  align-items: center;
-  background-color: transparent;
-`;
 
 const Box = styled.View`
   flex-direction: column;
@@ -88,25 +82,17 @@ const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
   return (
     <Modal
       ref={modalRef}
-      hasBackdrop
-      backdropOpacity={0.7}
       onModalHide={onModalHide}
-      style={modalStyle}
+      style={[{ justifyContent: 'center' }, modalStyle]}
     >
-      <Wrapper
-        enabled
-        behavior={Platform.OS === 'ios' ? 'padding' : null}
-        style={{ flex: 1 }}
-      >
-        {showModalClose && (
-          <ModalCloseButton onPress={close}>
-            <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
-          </ModalCloseButton>
-        )}
-        <Box noBoxMinHeight={noBoxMinHeight}>
-          {children}
-        </Box>
-      </Wrapper>
+      {showModalClose && (
+        <ModalCloseButton onPress={close}>
+          <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
+        </ModalCloseButton>
+      )}
+      <Box noBoxMinHeight={noBoxMinHeight}>
+        {children}
+      </Box>
     </Modal>
   );
 });
