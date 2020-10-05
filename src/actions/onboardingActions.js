@@ -43,6 +43,7 @@ import {
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
+import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, UPDATE_ASSETS } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -51,6 +52,7 @@ import Toast from 'components/Toast';
 import { generateMnemonicPhrase } from 'utils/wallet';
 import { isCaseInsensitiveMatch, reportLog } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
+import { transformAssetsToObject } from 'utils/assets';
 
 // services
 import { navigate } from 'services/navigation';
@@ -71,6 +73,9 @@ import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
 import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
+
+// other
+import { initialAssets } from 'fixtures/assets';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -200,6 +205,16 @@ export const setupAppServicesAction = () => {
       return;
     }
 
+    // set default in case account cannot be created offline
+    const defaultInitialAssets = isOnline && walletId ?
+      await api.fetchInitialAssets(walletId)
+      : transformAssetsToObject(initialAssets);
+
+    const defaultAssets = { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: defaultInitialAssets };
+    dispatch({ type: UPDATE_ASSETS, payload: defaultAssets });
+
+    dispatch(saveDbAction('assets', { assets: defaultAssets }, true));
+
     // all the calls below require user to be online
     if (!isOnline) return;
 
@@ -207,8 +222,7 @@ export const setupAppServicesAction = () => {
 
     // user might not be registered at this point
     if (walletId) {
-      const initialAssets = await api.fetchInitialAssets(walletId);
-      const rates = await getExchangeRates(Object.keys(initialAssets));
+      const rates = await getExchangeRates(Object.keys(defaultInitialAssets));
       dispatch(setRatesAction(rates));
       dispatch(fetchBadgesAction(false));
       dispatch(fetchReferralRewardAction());

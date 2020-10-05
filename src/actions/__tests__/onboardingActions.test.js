@@ -30,7 +30,12 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
 import { SET_SMART_WALLET_ACCOUNTS, SET_SMART_WALLET_SDK_INIT } from 'constants/smartWalletConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
-import { SET_INITIAL_ASSETS, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
+import {
+  DEFAULT_ACCOUNTS_ASSETS_DATA_KEY,
+  SET_INITIAL_ASSETS,
+  UPDATE_ASSETS,
+  UPDATE_SUPPORTED_ASSETS,
+} from 'constants/assetsConstants';
 import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
@@ -246,6 +251,10 @@ describe('Onboarding actions', () => {
     });
 
     const expectedActions = [
+      {
+        type: UPDATE_ASSETS,
+        payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
+      },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
@@ -280,10 +289,17 @@ describe('Onboarding actions', () => {
       user: { data: mockUser },
     });
 
+    const expectedActions = [
+      {
+        type: UPDATE_ASSETS,
+        payload: { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: transformAssetsToObject(mockInitialAssets) },
+      },
+    ];
+
     return store.dispatch(setupAppServicesAction())
       .then(() => {
         const actualActions = store.getActions();
-        expect(actualActions).toEqual([]);
+        expect(actualActions).toEqual(expectedActions);
       });
   });
 });

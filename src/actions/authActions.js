@@ -479,7 +479,7 @@ export const resetAppServicesAction = () => {
 };
 
 export const logoutAction = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     // show logout pending screen
     navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
 
@@ -487,7 +487,7 @@ export const logoutAction = () => {
     await dispatch(resetAppServicesAction());
 
     // reset reducer state
-    dispatch(resetAppStateAction());
+    dispatch(resetAppStateAction({ session: getState().session })); // keep network state after reset
 
     // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
