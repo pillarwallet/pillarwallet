@@ -49,6 +49,7 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { spacing } from 'utils/variables';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
+import { formatAmount } from 'utils/common';
 import type { ExchangeOptions } from 'utils/exchange';
 
 // selectors
@@ -256,7 +257,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     let toAmount = '0';
     if (offers?.length && fromAmount) {
-      toAmount = getBestAmountToBuy(offers, fromAmount) || '0';
+      toAmount = formatAmount(getBestAmountToBuy(offers, fromAmount) || '0');
     }
 
     return (
