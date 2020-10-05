@@ -235,7 +235,6 @@ class TextInput extends React.Component<Props, State> {
     this.state = {
       isFocused: false,
       showOptionsSelector: false,
-      textInputWidth: 0,
     };
   }
 
@@ -453,7 +452,7 @@ class TextInput extends React.Component<Props, State> {
   }
 
   render() {
-    const { isFocused, showOptionsSelector, textInputWidth } = this.state;
+    const { isFocused, showOptionsSelector } = this.state;
     const {
       inputProps,
       errorMessage,
@@ -567,8 +566,6 @@ class TextInput extends React.Component<Props, State> {
                       body={errorMessage || ''}
                       isVisible={!!hasError}
                       wrapperStyle={{ alignSelf: 'stretch', flex: 1 }}
-                      customWrapperWidth={textInputWidth}
-                      adjustX={!!numeric}
                     >
                       <InputField
                         {...inputProps}
@@ -588,9 +585,6 @@ class TextInput extends React.Component<Props, State> {
                         placeholderTextColor={colors.accent}
                         alignTextOnRight={!!numeric}
                         smallPadding={!!onRightAddonPress}
-                        onContentSizeChange={({ nativeEvent: { contentSize: { width } } }) => {
-                          this.setState({ textInputWidth: width });
-                        }}
                       />
                     </Tooltip>
                   </View>
