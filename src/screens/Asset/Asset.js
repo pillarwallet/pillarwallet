@@ -20,7 +20,7 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl } from 'react-native';
 import isEqual from 'lodash.isequal';
 import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -38,18 +38,18 @@ import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
-import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
+import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { logScreenViewAction } from 'actions/analyticsActions';
 import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
-import { fetchReferralRewardsIssuerAddressesAction, goToInvitationFlowAction } from 'actions/referralsActions';
+import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActions';
 
 // constants
-import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW, SERVICES } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
@@ -82,9 +82,6 @@ import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
-// local components
-import ReceiveModal from './ReceiveModal';
-
 type Props = {
   fetchAssetsBalances: () => void,
   assets: Assets,
@@ -103,8 +100,6 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
-  goToInvitationFlow: () => void,
-  rewardActive?: boolean,
 };
 
 const AssetCardWrapper = styled.View`
@@ -211,64 +206,14 @@ class AssetScreen extends React.Component<Props> {
     this.props.navigation.navigate(EXCHANGE, { fromAssetCode, toAssetCode });
   };
 
-  openReceiveTokenModal = assetData => {
-    Modal.open(() => (
-      <ReceiveModal
-        address={assetData.address}
-        showErc20Note={assetData.token !== ETH}
-      />
-    ));
-  };
-
-  getModalActionOptions = () => {
-    const {
-      navigation,
-      rewardActive,
-      goToInvitationFlow,
-      balances,
-      exchangeSupportedAssets,
-    } = this.props;
-    const { assetData } = navigation.state.params;
-    const { token } = assetData;
-    const balance = getBalance(balances, token);
-    const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
-    return [
-      {
-        key: 'buy',
-        label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
-        iconName: 'wallet',
-        onPress: () => navigation.navigate(SERVICES),
-      },
-      {
-        key: 'receive',
-        label: t('button.sendFromAnotherWallet'),
-        iconName: 'qrDetailed',
-        onPress: () => this.openReceiveTokenModal({ ...assetData, balance }),
-      },
-      {
-        key: 'exchange',
-        label: t('button.exchange'),
-        iconName: 'flip',
-        onPress: () => this.goToExchangeFlow(token),
-        hide: !isSupportedByExchange,
-      },
-      {
-        key: 'invite',
-        label: t('button.inviteAndGetTokens'),
-        iconName: 'present',
-        hide: !rewardActive,
-        onPress: goToInvitationFlow,
-      },
-    ];
-  };
-
   openAddFundsModal = () => {
-    const options = this.getModalActionOptions();
+    const { navigation } = this.props;
+    const { assetData: { token, address } } = navigation.state.params;
 
     Modal.open(() => (
-      <ActionOptionsModal
-        items={options}
-        title={t('title.addFundsToWallet')}
+      <AddFundsModal
+        token={token}
+        receiveAddress={address}
       />
     ));
   }
@@ -435,14 +380,12 @@ const mapStateToProps = ({
   smartWallet: smartWalletState,
   accounts: { data: accounts },
   exchange: { exchangeSupportedAssets },
-  referrals: { isPillarRewardCampaignActive: rewardActive },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
   exchangeSupportedAssets,
-  rewardActive,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -468,7 +411,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   },
   getExchangeSupportedAssets: () => dispatch(getExchangeSupportedAssetsAction()),
   fetchReferralRewardsIssuerAddresses: () => dispatch(fetchReferralRewardsIssuerAddressesAction()),
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AssetScreen);
