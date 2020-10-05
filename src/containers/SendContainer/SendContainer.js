@@ -104,7 +104,7 @@ const SendContainer = (props: Props) => {
           {...customValueSelectorProps}
         />
         <ArrowIcon />
-        <Spacing h={16} />
+        <Spacing h={20} />
         <Selector
           placeholder={t('label.whereToSend')}
           searchPlaceholder={t('label.walletAddress')}

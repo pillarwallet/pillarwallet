@@ -344,10 +344,8 @@ class NewStream extends React.Component<Props, State> {
             getFormValue={this.getFormValue}
             customOptions={assetsOptions}
           />
-
           <ArrowIcon />
-          <Spacing h={16} />
-
+          <Spacing h={20} />
           <Selector
             placeholder={t('label.whereToSend')}
             searchPlaceholder={t('label.walletAddress')}

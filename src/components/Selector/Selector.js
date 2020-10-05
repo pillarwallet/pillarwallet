@@ -166,6 +166,7 @@ const Selector = ({
           diameter={16}
           noShadow
           borderWidth={0}
+          initialsSize={10}
         />
         <Spacing w={8} />
         <MediumText medium>{name}</MediumText>
@@ -188,8 +189,7 @@ const Selector = ({
   return (
     <>
       <SelectorPill onPress={() => setIsOptionsVisible(true)} disabled={disabled}>
-        {hasValue && renderOption(selectedOption)}
-        {!hasValue && <BaseText link medium>{placeholderText}</BaseText>}
+        {hasValue ? renderOption(selectedOption) : <BaseText link medium>{placeholderText}</BaseText>}
       </SelectorPill>
       <SelectorOptions
         isVisible={!hideModals && !changingModals && isOptionsVisible}

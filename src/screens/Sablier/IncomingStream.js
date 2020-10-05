@@ -139,14 +139,12 @@ class IncomingStream extends React.Component<Props> {
             selectedOption={sender}
             customOptions={[]}
           />
-          <Spacing h={16} />
+          <Spacing h={20} />
           <ArrowIcon />
         </SelectorWrapper>
         <SablierStreamCircles
           stream={stream}
         />
-
-
         <Spacing h={27} />
         <WithdrawCardWrapper>
           <MediumText big>{t('sablierContent.label.streamed')}</MediumText>

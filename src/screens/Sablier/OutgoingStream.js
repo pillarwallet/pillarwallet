@@ -179,7 +179,7 @@ class OutgoingStream extends React.Component<Props, State> {
         />
         <SelectorWrapper>
           <ArrowIcon />
-          <Spacing h={16} />
+          <Spacing h={20} />
           <Selector
             disabled
             selectedOption={recipient}
