@@ -104,9 +104,9 @@ const AssetEnableModal = (props: Props) => {
       noClose
       headerProps={({
         centerItems: [{ title: t('exchangeContent.modal.enableAsset.title', { asset: assetSymbol }) }],
-          sideFlex: '0',
+          sideFlex: 0,
           wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
-      }: $FlowFixMe)}
+      })}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <AssetImage

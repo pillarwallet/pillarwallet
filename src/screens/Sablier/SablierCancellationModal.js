@@ -90,8 +90,8 @@ const SablierCancellationModal = ({
         centerItems: [
           { icon: 'warning', color: colors.negative, fontSize: 16 },
           { title: t('sablierContent.title.cancelStreamScreen') }],
-          sideFlex: '0',
-      }: $FlowFixMe)}
+          sideFlex: 0,
+      })}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <Spacing h={10} />
