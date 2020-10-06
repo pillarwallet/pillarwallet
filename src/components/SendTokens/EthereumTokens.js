@@ -60,7 +60,11 @@ import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles'
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload, Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, Assets } from 'models/Asset';
+import type {
+  Balances,
+  Assets,
+  AssetData,
+} from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Option } from 'models/Selector';
@@ -73,6 +77,8 @@ import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
 import { addContactAction } from 'actions/contactsActions';
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import type { AccountTransaction } from 'services/smartWallet';
 
 
 type Props = {
@@ -90,35 +96,10 @@ type Props = {
   collectibles: Option[],
   contacts: Contact[],
   addContact: (contact: Contact) => void,
-};
-
-type FooterProps = {
-  showRelayerMigration: boolean,
-  showFee: boolean,
-  isLoading: boolean,
-  feeError: boolean,
-};
-
-const renderFeeToggle = (
-  txFeeInfo: ?TransactionFeeInfo,
-  showFee: boolean,
-  feeError: boolean,
-) => {
-  if (!showFee || !txFeeInfo) return null;
-
-  const { fee, gasToken } = txFeeInfo;
-  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
-
-  return (
-    <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />
-      {!!feeError &&
-      <BaseText center secondary>
-        {t('error.notEnoughTokenForFeeExtended', { token: gasTokenSymbol })}
-      </BaseText>
-      }
-    </>
-  );
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  estimateTransaction: (transaction: AccountTransaction, assetData?: AssetData) => void,
 };
 
 const SendEthereumTokens = ({
@@ -136,6 +117,10 @@ const SendEthereumTokens = ({
   contacts,
   addContact,
   defaultContact,
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+  estimateTransaction,
 }: Props) => {
   const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
   const hideRelayerMigrationModal = () => setShowRelayerMigrationModal(false);
@@ -151,8 +136,6 @@ const SendEthereumTokens = ({
 
   const [amount, setAmount] = useState(null);
   const [inputHasError, setInputHasError] = useState(false);
-  const [txFeeInfo, setTxFeeInfo] = useState(null);
-  const [gettingFee, setGettingFee] = useState(true);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
@@ -171,8 +154,6 @@ const SendEthereumTokens = ({
 
     // specified amount is always valid and not necessarily matches input amount
     if ((!specifiedAmount && !isValidAmount) || value === 0 || !assetData || !selectedContact) {
-      setGettingFee(false);
-      setTxFeeInfo(null);
       return;
     }
 
@@ -197,24 +178,7 @@ const SendEthereumTokens = ({
       data = await buildERC721TransactionData(collectibleTransaction, provider);
     }
 
-    const transaction = { recipient: selectedContact.ethAddress, value, data };
-    const estimated = await smartWalletService
-      .estimateAccountTransaction(transaction, assetData)
-      .then(res => buildTxFeeInfo(res, useGasToken))
-      .catch(() => null);
-
-    if (!estimated) {
-      Toast.show({
-        message: t('toast.transactionFeeEstimationFailed'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
-      setGettingFee(false);
-      setTxFeeInfo(null);
-      return;
-    }
-
-    setTxFeeInfo(estimated);
+    estimateTransaction({ recipient: selectedContact.ethAddress, value, data }, assetData);
   };
 
   const updateTxFeeDebounced = useCallback(
@@ -223,13 +187,9 @@ const SendEthereumTokens = ({
   );
 
   useEffect(() => {
-    if (!gettingFee) setGettingFee(true);
     updateTxFeeDebounced();
     return updateTxFeeDebounced.cancel;
   }, [updateTxFeeDebounced]);
-
-  // fee changed, no longer getting
-  useEffect(() => { if (gettingFee) setGettingFee(false); }, [txFeeInfo]);
 
   const handleAmountChange = (value: ?Object) => {
     if (amount !== value?.input) setAmount(value?.input || '0');
@@ -299,7 +259,7 @@ const SendEthereumTokens = ({
   };
 
   const handleFormSubmit = async () => {
-    if (submitPressed || !txFeeInfo || !amount || !selectedContact || !assetData) return;
+    if (submitPressed || !feeInfo || !amount || !selectedContact || !assetData) return;
 
     setSubmitPressed(true);
 
@@ -319,13 +279,13 @@ const SendEthereumTokens = ({
       to: selectedContact.ethAddress,
       receiverEnsName: selectedContact.ensName,
       amount,
-      txFeeInWei: txFeeInfo.fee,
+      txFeeInWei: feeInfo.fee,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
       decimals: assetData.decimals,
     };
 
-    if (txFeeInfo?.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+    if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
 
     Keyboard.dismiss();
     setSubmitPressed(false);
@@ -336,7 +296,6 @@ const SendEthereumTokens = ({
   };
 
   const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
-    setGettingFee(true);
     const maxBalance = parseFloat(getBalance(balances, assetSymbol));
     const calculatedBalanceAmount = maxBalance * percentageModifier;
 
@@ -356,31 +315,6 @@ const SendEthereumTokens = ({
     />
   );
 
-  const renderFee = (props: FooterProps) => {
-    const {
-      showRelayerMigration,
-      showFee,
-      isLoading,
-      feeError,
-    } = props;
-
-    if (isLoading) {
-      return <Spinner width={20} height={20} />;
-    }
-
-    return (
-      <>
-        {renderFeeToggle(txFeeInfo, showFee, feeError)}
-        {showRelayerMigration && (
-          <>
-            <Spacing h={spacing.medium} />
-            {renderRelayerMigrationButton()}
-          </>
-        )}
-      </>
-    );
-  };
-
   const token = get(assetData, 'token');
   const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
@@ -388,7 +322,7 @@ const SendEthereumTokens = ({
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
-  const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!selectedContact;
+  const hasAllFeeData = !isEstimating && !estimateErrorMessage && !!selectedContact;
 
   const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
@@ -403,18 +337,41 @@ const SendEthereumTokens = ({
     ? (!!selectedContact && !!assetData)
     : (!inputHasError && !!selectedContact && !!currentValue);
 
-  let feeError = false;
-  if (txFeeInfo && assetData && isValidAmount) {
-    feeError = !isEnoughBalanceForTransactionFee(balances, {
-      txFeeInWei: txFeeInfo.fee,
-      gasToken: txFeeInfo.gasToken,
+  const enoughBalanceForTransaction = feeInfo
+    && assetData
+    && isValidAmount
+    && isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
       decimals: assetData.decimals,
       amount,
       symbol: token,
     });
-  }
 
-  const showNextButton = !gettingFee && hasAllData && !feeError;
+  const errorMessage = !enoughBalanceForTransaction
+    ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
+
+  const renderFee = () => {
+    if (isEstimating) {
+      return <Spinner width={20} height={20} />;
+    }
+
+    return (
+      <>
+        {!!showFee && !!feeInfo && <FeeLabelToggle txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />}
+        {!!errorMessage && <BaseText center secondary>{errorMessage}</BaseText>}
+        {showRelayerMigration && (
+          <>
+            <Spacing h={spacing.medium} />
+            {renderRelayerMigrationButton()}
+          </>
+        )}
+      </>
+    );
+  };
+
+  const showNextButton = !isEstimating && hasAllData && enoughBalanceForTransaction;
 
   const isNextButtonDisabled = !session.isOnline;
 
@@ -451,12 +408,12 @@ const SendEthereumTokens = ({
       customValueSelectorProps={{
         getFormValue: handleAmountChange,
         getError: manageFormErrorState,
-        txFeeInfo,
+        txFeeInfo: feeInfo,
         preselectedAsset: token,
         preselectedCollectible,
         showAllAssetTypes: true,
-        gettingFee,
-        hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
+        gettingFee: isEstimating,
+        hideMaxSend: isEstimating || !selectedContact, // we cannot calculate max if no receiver is set
         calculateBalancePercentTxFee,
       }}
       footerProps={{
@@ -467,10 +424,9 @@ const SendEthereumTokens = ({
           disabled: isNextButtonDisabled,
         },
         footerTopAddon: !!selectedContact && renderFee({
-          showRelayerMigration,
           showFee,
-          isLoading: gettingFee,
-          feeError,
+          isLoading: isEstimating,
+          feeError: estimateErrorMessage,
         }),
       }}
     >
@@ -503,6 +459,18 @@ const SendEthereumTokens = ({
   );
 };
 
+const mapStateToProps = ({
+  transactionEstimate: {
+    estimated,
+    isEstimating,
+    errorMessage: estimateErrorMessage,
+  },
+}: RootReducerState): $Shape<Props> => ({
+  feeInfo: estimated?.feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+});
+
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   isGasTokenSupported: isGasTokenSupportedSelector,
@@ -514,10 +482,15 @@ const structuredSelector = createStructuredSelector({
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
+  estimateTransaction: (
+    transaction: AccountTransaction,
+    assetData?: AssetData,
+  ) => dispatch(estimateTransactionAction(transaction, assetData)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendEthereumTokens);

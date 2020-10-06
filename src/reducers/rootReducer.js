@@ -63,6 +63,7 @@ import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
 import contactsReducer from './contactsReducer';
 import sablierReducer from './sablierReducer';
 import fiatToCryptoReducer from './fiatToCryptoReducer';
+import transactionEstimateReducer from './transactionEstimateReducer';
 
 // types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -108,6 +109,7 @@ import type {
 import type { ContactsReducerAction, ContactsReducerState } from './contactsReducer';
 import type { SablierReducerAction, SablierReducerState } from './sablierReducer';
 import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiatToCryptoReducer.js';
+import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -147,6 +149,7 @@ export type RootReducerState = {|
   contacts: ContactsReducerState,
   sablier: SablierReducerState,
   fiatToCrypto: FiatToCryptoReducerState,
+  transactionEstimate: TransactionEstimateReducerState,
 |};
 
 type RootReducerAction =
@@ -178,7 +181,8 @@ type RootReducerAction =
   | KeyBasedAssetTransferReducerAction
   | ContactsReducerAction
   | SablierReducerAction
-  | FiatToCryptoReducerAction;
+  | FiatToCryptoReducerAction
+  | TransactionEstimateReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -228,6 +232,7 @@ const appReducer = combineReducers({
   contacts: contactsReducer,
   sablier: sablierReducer,
   fiatToCrypto: fiatToCryptoReducer,
+  transactionEstimate: transactionEstimateReducer,
 });
 
 export const initialState = appReducer(undefined, {});
