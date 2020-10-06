@@ -20,10 +20,9 @@
 
 // constants
 import {
-  RESET_TRANSACTION_ESTIMATE,
   SET_ESTIMATING_TRANSACTION,
-  SET_TRANSACTION_ESTIMATE,
   SET_TRANSACTION_ESTIMATE_ERROR,
+  SET_TRANSACTION_ESTIMATE_FEE_INFO,
 } from 'constants/transactionEstimateConstants';
 
 // types
@@ -31,7 +30,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 export type TransactionEstimateReducerState = {
-  estimated: ?{ raw: Object, feeInfo: TransactionFeeInfo },
+  feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   errorMessage: ?string,
 };
@@ -42,7 +41,7 @@ export type TransactionEstimateReducerAction = {
 };
 
 export const initialState = {
-  estimated: null,
+  feeInfo: null,
   isEstimating: false,
   errorMessage: null,
 };
@@ -57,20 +56,15 @@ const transactionEstimateReducer = (
         ...state,
         isEstimating: action.payload,
       };
-    case RESET_TRANSACTION_ESTIMATE:
+    case SET_TRANSACTION_ESTIMATE_FEE_INFO:
       return {
         ...state,
-        errorMessage: null,
-        estimated: null,
-      };
-    case SET_TRANSACTION_ESTIMATE:
-      return {
-        ...state,
-        estimated: action.payload,
+        feeInfo: action.payload,
       };
     case SET_TRANSACTION_ESTIMATE_ERROR:
       return {
         ...state,
+        isEstimating: false,
         errorMessage: action.payload,
       };
     default:

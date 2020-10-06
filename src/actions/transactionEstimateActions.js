@@ -24,20 +24,26 @@ import Toast from 'components/Toast';
 
 // services
 import smartWalletService from 'services/smartWallet';
+import { buildERC721TransactionData } from 'services/assets';
 
 // utils
 import { buildTxFeeInfo } from 'utils/smartWallet';
+import { getEthereumProvider } from 'utils/common';
+
+// config
+import { getEnv } from 'configs/envConfig';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
+import { activeAccountAddressSelector } from 'selectors';
 
 // constants
 import {
-  RESET_TRANSACTION_ESTIMATE,
   SET_ESTIMATING_TRANSACTION,
-  SET_TRANSACTION_ESTIMATE,
+  SET_TRANSACTION_ESTIMATE_FEE_INFO,
   SET_TRANSACTION_ESTIMATE_ERROR,
 } from 'constants/transactionEstimateConstants';
+import { COLLECTIBLES } from 'constants/assetsConstants';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -45,13 +51,51 @@ import type { AccountTransaction } from 'services/smartWallet';
 import type { AssetData } from 'models/Asset';
 
 
+export const resetEstimateTransactionAction = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: null });
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+  };
+};
+
 export const estimateTransactionAction = (
-  transaction: AccountTransaction,
+  recipientAddress: string,
+  value: number,
+  data: ?string,
   assetData?: AssetData,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
-    dispatch({ type: RESET_TRANSACTION_ESTIMATE });
+
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+
+    let transaction: AccountTransaction = {
+      recipient: recipientAddress,
+      value,
+    };
+
+    if (assetData?.tokenType === COLLECTIBLES && !data && assetData) {
+      const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
+      const {
+        name,
+        id,
+        contractAddress,
+        tokenType,
+      } = assetData;
+      const collectibleTransaction = {
+        from: activeAccountAddress,
+        to: recipientAddress,
+        name,
+        tokenId: id,
+        contractAddress,
+        tokenType,
+      };
+      data = await buildERC721TransactionData(collectibleTransaction, provider);
+    }
+
+    if (data) {
+      transaction = { ...transaction, data };
+    }
 
     let errorMessage;
     let feeInfo;
@@ -59,14 +103,14 @@ export const estimateTransactionAction = (
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
       .catch((sdkError) => {
-        console.log('sdkError: ', sdkError);
+        console.log('estimateAccountTransaction sdkError: ', sdkError);
         errorMessage = sdkError || t('toast.transactionFeeEstimationFailed');
         return null;
       });
 
     if (!errorMessage) {
       const useGasToken = useGasTokenSelector(getState());
-      feeInfo = buildTxFeeInfo(estimated, useGasToken)
+      feeInfo = buildTxFeeInfo(estimated, useGasToken);
     }
 
     if (feeInfo && !feeInfo.fee.gt(0)) {
@@ -74,6 +118,7 @@ export const estimateTransactionAction = (
     }
 
     if (errorMessage) {
+      console.log('errorMessage!!!!', errorMessage)
       Toast.show({
         message: errorMessage,
         emoji: 'woman-shrugging',
@@ -83,10 +128,7 @@ export const estimateTransactionAction = (
       return;
     }
 
-    console.log('feeInfo: ', feeInfo)
-
-    dispatch({ type: SET_TRANSACTION_ESTIMATE, payload: { raw: estimated, feeInfo } });
-
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
   };
 };
