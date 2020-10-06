@@ -741,7 +741,7 @@ workflows:
           filters:
             branches:
               only:
-                - chore/appcenter-ios-fastlane
+                - develop
       - appcenter_android:
           requires:
             - build-and-test
