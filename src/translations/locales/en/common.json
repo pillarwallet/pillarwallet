@@ -171,7 +171,7 @@
     "processing": "Processing...",
     "mainAccount": "Main Account",
     "free": "Free",
-    "estimatedFee": "Estimated fee:",
+    "estimatedFee": "Est. fee",
     "nothingFound": "Nothing found",
     "verified": "Verified",
     "select": "Select",
@@ -198,7 +198,8 @@
     "popular": "Popular",
     "set": "Set",
     "notAvailableInYourCountry": "Not available in Your country",
-    "cannotProceedOffline": "Cannot proceed offline"
+    "cannotProceedOffline": "Cannot proceed offline",
+    "payWithPLR": "Pay with PLR"
   },
 
   "button": {
