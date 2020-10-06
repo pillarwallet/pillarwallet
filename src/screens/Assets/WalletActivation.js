@@ -21,13 +21,19 @@
 import * as React from 'react';
 import { ScrollView, Linking } from 'react-native';
 import styled from 'styled-components/native';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
+// utils
 import { fontStyles } from 'utils/variables';
+
+// services
+import smartWalletInstance from 'services/smartWallet';
+
+// components
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
+import Toast from 'components/Toast';
 
 
 const Title = styled(MediumText)`
@@ -56,11 +62,30 @@ class WalletActivation extends React.PureComponent<Props> {
     Linking.openURL('https://help.pillarproject.io/en/articles/3935106-smart-wallet-faq');
   };
 
-  handleEtherscan = () => {
+  handleEtherscan = async () => {
     const { deploymentHash } = this.props;
-    if (deploymentHash) {
-      Linking.openURL(`${getEnv().TX_DETAILS_URL}${deploymentHash}`);
+    if (!deploymentHash) {
+      Toast.show({
+        message: t('toast.cannotFindDeploymentHash'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
     }
+
+    const explorerLink = await smartWalletInstance.getConnectedAccountTransactionExplorerLink(deploymentHash);
+    if (!explorerLink) {
+      Toast.show({
+        message: t('toast.cannotGetBlockchainExplorerLink'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    Linking.openURL(explorerLink);
   };
 
   render() {
