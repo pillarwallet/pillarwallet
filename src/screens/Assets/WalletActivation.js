@@ -62,7 +62,7 @@ class WalletActivation extends React.PureComponent<Props> {
     Linking.openURL('https://help.pillarproject.io/en/articles/3935106-smart-wallet-faq');
   };
 
-  handleEtherscan = async () => {
+  handleEtherscan = () => {
     const { deploymentHash } = this.props;
     if (!deploymentHash) {
       Toast.show({
@@ -74,7 +74,7 @@ class WalletActivation extends React.PureComponent<Props> {
       return;
     }
 
-    const explorerLink = await smartWalletInstance.getConnectedAccountTransactionExplorerLink(deploymentHash);
+    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(deploymentHash);
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),

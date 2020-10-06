@@ -473,7 +473,7 @@ export class EventDetail extends React.Component<Props, State> {
     this.props.onClose();
   };
 
-  viewOnTheBlockchain = async () => {
+  viewOnTheBlockchain = () => {
     const { hash } = this.props.event;
     if (!hash) {
       Toast.show({
@@ -485,7 +485,7 @@ export class EventDetail extends React.Component<Props, State> {
       return;
     }
 
-    const explorerLink = await smartWalletInstance.getConnectedAccountTransactionExplorerLink(hash);
+    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(hash);
     if (!explorerLink) {
       Toast.show({
         message: t('toast.cannotGetBlockchainExplorerLink'),
