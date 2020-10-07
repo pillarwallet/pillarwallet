@@ -8,6 +8,7 @@ function loadStories() {
 	require('../src/components/ActivityFeed/ActivityFeedItem.stories');
 	require('../src/components/EventDetails/EventDetails.stories');
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
+	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/Selector/Selector.stories');
 	require('../src/components/Toast/ToastCard.stories');
@@ -20,6 +21,7 @@ const stories = [
 	'../src/components/ActivityFeed/ActivityFeedItem.stories',
 	'../src/components/EventDetails/EventDetails.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',
+	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/Selector/Selector.stories',
 	'../src/components/Toast/ToastCard.stories',

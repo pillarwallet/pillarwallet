@@ -26121,6 +26121,262 @@ exports[`Storyshots InsightWithButton without list 1`] = `
 </View>
 `;
 
+exports[`Storyshots ReviewSummary collectible 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "marginBottom": 20,
+        "marginLeft": 20,
+        "marginRight": 20,
+        "marginTop": 20,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      h={16}
+      style={
+        Array [
+          Object {
+            "height": 16,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      regular={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 14,
+            "lineHeight": 22,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      You are sending
+    </Text>
+    <View
+      h={16}
+      style={
+        Array [
+          Object {
+            "height": 16,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      medium={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 16,
+            "lineHeight": 24,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 16,
+              "lineHeight": 24,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      CryptoKittiesRinkeby 5191
+    </Text>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ReviewSummary token 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "alignItems": "center",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "marginBottom": 20,
+        "marginLeft": 20,
+        "marginRight": 20,
+        "marginTop": 20,
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "center",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      h={16}
+      style={
+        Array [
+          Object {
+            "height": 16,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      regular={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 14,
+            "lineHeight": 22,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      You are sending
+    </Text>
+    <View
+      h={16}
+      style={
+        Array [
+          Object {
+            "height": 16,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      giant={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 36,
+            "lineHeight": 54,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 36,
+              "lineHeight": 54,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      102.1
+       
+      <Text
+        fontSize={20}
+        secondary={true}
+        style={
+          Array [
+            Object {
+              "color": "#8B939E",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 20,
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontFamily": "EuclidCircularB-Medium",
+                "fontSize": 20,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        PLR
+      </Text>
+    </Text>
+    <View
+      h={7}
+      style={
+        Array [
+          Object {
+            "height": 7,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      secondary={true}
+      small={true}
+      style={
+        Array [
+          Object {
+            "color": "#8B939E",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 12,
+            "lineHeight": 18,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      £ 0
+    </Text>
+  </View>
+</View>
+`;
+
 exports[`Storyshots SWActivationCard default 1`] = `
 Array [
   <View
