@@ -121,7 +121,7 @@ const renderFeeToggle = (
   );
 };
 
-const SendEthereumTokens = ({
+const SendAsset = ({
   source,
   navigation,
   balances,
@@ -527,4 +527,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendEthereumTokens);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);
