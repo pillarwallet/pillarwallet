@@ -46,7 +46,7 @@ export type UserReducerAction = {
 
 export const initialState: UserReducerState = {
   data: {
-    username: '',
+    username: null,
     isLegacyUser: true,
     isEmailVerified: false,
     isPhoneVerified: false,
