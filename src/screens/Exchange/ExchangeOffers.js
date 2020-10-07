@@ -111,6 +111,8 @@ type Props = {
   session: SessionData,
   activeAccountAddress: string,
   useGasToken: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
 };
 
 type State = {
@@ -150,6 +152,7 @@ function getCardAdditionalButtonData(additionalData) {
     pressedTokenAllowanceId,
     setFromAmount,
     onSetTokenAllowancePress,
+    isEstimating,
   } = additionalData;
 
   const {
@@ -175,7 +178,7 @@ function getCardAdditionalButtonData(additionalData) {
       title: storedAllowance ? t('label.pending') : t('exchangeContent.button.allowExchange'),
       onPress: () => onSetTokenAllowancePress(offer),
       disabled: isSetAllowancePressed || !!storedAllowance,
-      isLoading: isSetAllowancePressed,
+      isLoading: isSetAllowancePressed || isEstimating,
     };
   }
   return null;
@@ -188,27 +191,6 @@ class ExchangeOffers extends React.Component<Props, State> {
     isEnableAssetModalVisible: false,
     enableData: null,
     enablePayload: null,
-  };
-
-  getSmartWalletTxFee = async (transaction): Promise<TransactionFeeInfo> => {
-    const { useGasToken } = this.props;
-    const defaultResponse = { fee: new BigNumber(0) };
-    const estimateTransaction = {
-      data: transaction.data,
-      recipient: transaction.to,
-      value: transaction.amount,
-    };
-
-    const estimated = await smartWalletService
-      .estimateAccountTransaction(estimateTransaction)
-      .then(result => buildTxFeeInfo(result, useGasToken))
-      .catch(() => null);
-
-    if (!estimated) {
-      return defaultResponse;
-    }
-
-    return estimated;
   };
 
   onSetTokenAllowancePress = (offer: Offer) => {
@@ -231,7 +213,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       setExecutingTransaction,
       rates,
       balances,
+      feeInfo,
+      isEstimating,
     } = this.props;
+
+    if (!feeInfo || isEstimating) return;
 
     const { provider, fromAsset, toAsset } = offer;
     const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
@@ -241,6 +227,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
       return;
     }
+
     setExecutingTransaction();
     const {
       payToAddress,
@@ -267,7 +254,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       },
     };
 
-    const { fee: txFeeInWei, gasToken } = await this.getSmartWalletTxFee(transactionPayload);
+    const { fee: txFeeInWei, gasToken } = feeInfo;
 
     if (gasToken) {
       transactionPayload = { ...transactionPayload, gasToken };
@@ -362,6 +349,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       theme,
       fromAmount,
       setFromAmount,
+      isEstimating,
     } = this.props;
 
     const {
@@ -413,6 +401,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       pressedTokenAllowanceId,
       setFromAmount,
       onSetTokenAllowancePress: this.onSetTokenAllowancePress,
+      isEstimating,
     };
 
     return (
@@ -498,6 +487,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   session: { data: session },
+  transactionEstimate: { feeInfo, isEstimating },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
@@ -505,6 +495,8 @@ const mapStateToProps = ({
   exchangeSupportedAssets,
   rates,
   session,
+  feeInfo,
+  isEstimating,
 });
 
 const structuredSelector = createStructuredSelector({
