@@ -271,7 +271,7 @@ describe('Onboarding actions', () => {
       { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
     ];
 
-    return store.dispatch(setupAppServicesAction())
+    return store.dispatch(setupAppServicesAction('0xprivateKey'))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -296,7 +296,7 @@ describe('Onboarding actions', () => {
       },
     ];
 
-    return store.dispatch(setupAppServicesAction())
+    return store.dispatch(setupAppServicesAction('0xprivateKey'))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

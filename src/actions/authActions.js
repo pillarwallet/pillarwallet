@@ -260,7 +260,6 @@ export const loginAction = (
       }
 
       dispatch(checkForWalletBackupToastAction());
-      dispatch(getWalletsCreationEventsAction());
 
       // user is registered
       if (user?.walletId) {
@@ -290,6 +289,7 @@ export const loginAction = (
             dispatch(saveDbAction('user', { user }, true));
           }
 
+          dispatch(getWalletsCreationEventsAction());
           dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchReferralRewardAction());
 
@@ -487,7 +487,8 @@ export const logoutAction = () => {
     await dispatch(resetAppServicesAction());
 
     // reset reducer state
-    dispatch(resetAppStateAction({ session: getState().session })); // keep network state after reset
+    const { isOnline } = getState().session.data; // keep network state after reset
+    dispatch(resetAppStateAction({ session: { data: { isOnline } } }));
 
     // is cleaned up so we would not blind users after they delete wallet :)
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));

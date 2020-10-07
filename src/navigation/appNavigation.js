@@ -280,6 +280,8 @@ import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
 import type { User } from 'models/User';
 import type { Notification } from 'models/Notification';
+import type { EthereumWallet } from 'models/Wallet';
+import type { BackupStatus } from 'reducers/walletReducer';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -782,8 +784,8 @@ type Props = {
   showHomeUpdateIndicator: boolean,
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
-  wallet: Object,
-  backupStatus: Object,
+  wallet: ?EthereumWallet,
+  backupStatus: BackupStatus,
   isPickingImage: boolean,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
@@ -815,6 +817,7 @@ class AppFlow extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       initWalletConnect,
       backupStatus,
+      user,
     } = this.props;
 
     /**
@@ -828,11 +831,15 @@ class AppFlow extends React.Component<Props, State> {
 
     startListeningNotifications();
     startListeningIntercomNotifications();
+    addAppStateChangeListener(this.handleAppStateChange);
+
+    // the following actions are useless if user is not yet registered on back-end
+    if (!user?.walletId) return;
+
     fetchAllAccountsBalances();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
-    addAppStateChangeListener(this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -844,7 +851,7 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
-    if (user?.walletId && wallet.privateKey) {
+    if (user?.walletId && wallet?.privateKey) {
       removePrivateKeyFromMemory();
     }
 

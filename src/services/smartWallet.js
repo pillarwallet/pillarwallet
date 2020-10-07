@@ -237,7 +237,7 @@ class SmartWallet {
     smartAccounts: SmartWalletAccount[],
     walletId: string,
     privateKey: string,
-    fcmToken: string,
+    fcmToken: ?string,
   ) {
     const backendAccounts = await api.listAccounts(walletId);
     const registerOnBackendPromises = smartAccounts.map(async account => {

@@ -126,9 +126,10 @@ export const completeReferralsEventAction = () => {
     const {
       user: { data: user },
       referrals: { referralToken, isRewardClaimed },
+      session: { data: { isOnline } },
     } = getState();
 
-    if (!referralToken || isRewardClaimed) {
+    if (!referralToken || isRewardClaimed || !isOnline) {
       return;
     }
 

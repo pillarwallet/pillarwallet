@@ -185,7 +185,8 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     // it's not fetched on mainnet using getAllOwnedAssets
     if (!ownedAssets[ETH]) {
-      ownedAssets[ETH] = supportedAssets.find(({ symbol }) => symbol === ETH);
+      const ethAsset = supportedAssets.find(({ symbol }) => symbol === ETH);
+      if (ethAsset) ownedAssets[ETH] = ethAsset;
     }
 
     const availableBalances = await api.fetchBalances({

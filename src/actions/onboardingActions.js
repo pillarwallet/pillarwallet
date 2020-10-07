@@ -196,15 +196,14 @@ export const setupWalletAction = (enableBiometrics?: boolean) => {
   };
 };
 
-export const setupAppServicesAction = () => {
+export const setupAppServicesAction = (privateKey: ?string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      wallet: { backupStatus, data: walletData },
+      wallet: { backupStatus },
       user: { data: { walletId } },
       session: { data: { isOnline } },
     } = getState();
 
-    const privateKey = walletData?.privateKey;
     if (!privateKey) {
       reportLog('setupAppServicesAction failed: no privateKey');
       return;
@@ -261,13 +260,13 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
     const {
       onboarding: { user: onboardingUser },
       user: { data: user },
-      wallet: { backupStatus: { isRecoveryPending } },
+      wallet: { backupStatus: { isRecoveryPending }, data: walletData },
     } = getState();
 
     // either retry during onboarding or previously stored username during onboarding
     if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user?.username, recoveryData));
 
-    await dispatch(setupAppServicesAction());
+    await dispatch(setupAppServicesAction(walletData?.privateKey));
 
     dispatch({ type: RESET_ONBOARDING });
 
@@ -385,6 +384,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
 
     // if user is offline then proceed with local registration
     if (!getState()?.session?.data?.isOnline) {
+      Toast.closeAll(); // close current ones to not block with multiple toasts
       Toast.show({
         message: t('auth:toast.userIsOffline'),
         emoji: 'satellite_antenna',

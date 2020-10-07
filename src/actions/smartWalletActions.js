@@ -216,7 +216,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
         smartAccounts,
         user.walletId,
         privateKey,
-        session.fcmToken,
+        session?.fcmToken,
       );
     }
     const backendAccounts = await api.listAccounts(user.walletId);
@@ -1527,7 +1527,7 @@ export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartW
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('completeReferralsEventAction failed: unable to get walletId', { user });
+      reportLog('checkIfSmartWalletWasRegisteredAction failed: unable to get walletId', { user });
       return;
     }
 

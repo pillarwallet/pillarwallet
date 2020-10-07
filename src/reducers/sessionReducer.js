@@ -34,7 +34,7 @@ export type SessionReducerAction = {|
 export const initialState = {
   data: {
     isOnline: true,
-    fcmToken: '',
+    fcmToken: null,
     isAuthorizing: false,
   },
 };
