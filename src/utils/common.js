@@ -86,6 +86,13 @@ export const reportLog = (
   printLog(`${level}: ${message}`, extra);
 };
 
+export const reportErrorLog = (
+  message: string,
+  extra?: Object,
+) => {
+  reportLog(message, extra, Sentry.Severity.Error);
+};
+
 export const reportOrWarn = (
   message: string,
   extra?: Object,

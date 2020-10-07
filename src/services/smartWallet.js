@@ -29,7 +29,6 @@ import {
 import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
-import * as Sentry from '@sentry/react-native';
 import isEmpty from 'lodash.isempty';
 
 import { getEnv } from 'configs/envConfig';
@@ -41,7 +40,7 @@ import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
-import { printLog, reportLog, reportOrWarn } from 'utils/common';
+import { printLog, reportErrorLog, reportOrWarn } from 'utils/common';
 
 // services
 import { encodeContractMethod } from 'services/assets';
@@ -214,7 +213,7 @@ class SmartWallet {
     return this.getSdk()
       .createAccount(ensName)
       .catch((e) => {
-        this.reportError('Unable to create Smart Account', { username, e });
+        reportErrorLog('Unable to create Smart Account', { username, e });
         return null;
       });
   }
@@ -255,7 +254,7 @@ class SmartWallet {
     });
     return Promise
       .all(registerOnBackendPromises)
-      .catch(e => this.reportError('Unable to sync smart wallets', { e }));
+      .catch(e => reportErrorLog('Unable to sync smart wallets', { e }));
   }
 
   async deployAccount(
@@ -267,7 +266,7 @@ class SmartWallet {
     return this.getSdk().deployAccount(deployEstimate, false)
       .then((hash) => ({ deployTxHash: hash }))
       .catch((e) => {
-        this.reportError('Unable to deploy account', { e });
+        reportErrorLog('Unable to deploy account', { e });
         return { error: e.message };
       });
   }
@@ -278,7 +277,7 @@ class SmartWallet {
 
     return this.getSdk().submitAccountTransaction(deployEstimate, payForGasWithToken)
       .catch((e) => {
-        this.reportError('Unable to deploy device', { e });
+        reportErrorLog('Unable to deploy device', { e });
         return null;
       });
   }
@@ -288,7 +287,7 @@ class SmartWallet {
       await this.getSdk().estimateAccountDeviceUnDeployment(deviceAddress).catch(this.handleError);
     return this.getSdk().submitAccountTransaction(unDeployEstimate, payForGasWithToken)
       .catch((e) => {
-        this.reportError('Unable to undeploy device', { e });
+        reportErrorLog('Unable to undeploy device', { e });
         return null;
       });
   }
@@ -556,12 +555,12 @@ class SmartWallet {
     const ensName = normalizeForEns(username);
     const estimated = await this.getSdk()
       .estimateSetAccountEnsName(ensName)
-      .catch(e => this.reportError('Unable to estimate ENS update transaction', { e, username, ensName }));
+      .catch(e => reportErrorLog('Unable to estimate ENS update transaction', { e, username, ensName }));
 
     if (!estimated) return null;
     return this.getSdk()
       .setAccountEnsName(estimated)
-      .catch(e => this.reportError('Unable to set ENS name for user', { e, username, ensName }));
+      .catch(e => reportErrorLog('Unable to set ENS name for user', { e, username, ensName }));
   }
 
   switchToGasTokenRelayer() {
@@ -578,10 +577,6 @@ class SmartWallet {
 
   handleError(error: any) {
     reportOrWarn('SmartWallet handleError: ', error, 'critical');
-  }
-
-  reportError(errorMessage: string, errorData: Object) {
-    reportLog(errorMessage, errorData, Sentry.Severity.Error);
   }
 
   async reset() {

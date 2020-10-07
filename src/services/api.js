@@ -20,7 +20,6 @@
 import get from 'lodash.get';
 import { PillarSdk } from '@pillarwallet/pillarwallet-nodejs-sdk';
 import { Platform } from 'react-native';
-import * as Sentry from '@sentry/react-native';
 import { getEnv } from 'configs/envConfig';
 import axios, { AxiosResponse } from 'axios';
 import isEmpty from 'lodash.isempty';
@@ -34,7 +33,7 @@ import { ALTALIX_AVAILABLE_COUNTRIES } from 'constants/fiatToCryptoConstants';
 // utils
 import { transformAssetsToObject } from 'utils/assets';
 import { isTransactionEvent } from 'utils/history';
-import { reportLog, uniqBy } from 'utils/common';
+import { reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { validEthplorerTransaction } from 'utils/notifications';
 import { normalizeWalletAddress } from 'utils/wallet';
 
@@ -195,7 +194,7 @@ class SDKWrapper {
       .then(() => this.pillarWalletSdk.wallet.registerAuthServer(requestPayload))
       .then(({ data }) => data)
       .catch((error) => {
-        reportLog('Registration error', { error }, Sentry.Severity.Error);
+        reportErrorLog('Registration error', { error });
         const responseStatus = get(error, 'response.status');
         const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
           ? USERNAME_FAILED
@@ -233,12 +232,12 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        reportLog('updateUser: Failed to update user', {
+        reportErrorLog('updateUser: Failed to update user', {
           walletId: user.walletId,
           user,
           status,
           message,
-        }, Sentry.Severity.Error);
+        });
         return { responseStatus: status, message };
       });
   }
@@ -251,12 +250,12 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        reportLog('createOneTimePassword: Failed to send text', {
+        reportErrorLog('createOneTimePassword: Failed to send text', {
           walletId: user.walletId,
           user,
           status,
           message,
-        }, Sentry.Severity.Error);
+        });
         return { responseStatus: status, message };
       });
   }
@@ -269,12 +268,12 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        reportLog('Can\'t verify code', {
+        reportErrorLog('Can\'t verify code', {
           walletId: params.walletId,
           user: params,
           status,
           message,
-        }, Sentry.Severity.Error);
+        });
         return { responseStatus: status, message };
       });
   }
@@ -288,12 +287,12 @@ class SDKWrapper {
         const message = get(error, 'response.data.message');
 
         if (message !== 'One-time password is not valid.') {
-          reportLog('verifyPhone: Can\'t verify code', {
+          reportErrorLog('verifyPhone: Can\'t verify code', {
             walletId: user.walletId,
             user,
             status,
             message,
-          }, Sentry.Severity.Error);
+          });
         }
         return { responseStatus: status, message };
       });
@@ -325,12 +324,12 @@ class SDKWrapper {
         const status = get(error, 'response.status');
         const message = get(error, 'response.data.message');
 
-        reportLog('claimTokens: Can\'t claim referral code', {
+        reportErrorLog('claimTokens: Can\'t claim referral code', {
           walletId,
           code,
           status,
           message,
-        }, Sentry.Severity.Error);
+        });
         return { responseStatus: status, message };
       });
   }
@@ -384,7 +383,7 @@ class SDKWrapper {
       .then(() => this.pillarWalletSdk.user.deleteProfileImage({ walletId }))
       .then(response => response.status === 204)
       .catch((error) => {
-        reportLog('Failed to delete user avatar', { error }, Sentry.Severity.Error);
+        reportErrorLog('Failed to delete user avatar', { error });
         return false;
       });
   }
@@ -597,7 +596,7 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.register.approveExternalLogin({ loginToken }))
       .catch(error => {
-        reportLog('approveLoginToExternalResource: External login approve error', { error }, Sentry.Severity.Error);
+        reportErrorLog('approveLoginToExternalResource: External login approve error', { error });
         return { error };
       });
   }
@@ -751,10 +750,9 @@ class SDKWrapper {
     })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog(
+        reportErrorLog(
           'generateAltalixTransactionUrl: SDK request error',
           error.response?.data ?? { error },
-          Sentry.Severity.Error,
         );
         return null;
       });
@@ -767,10 +765,9 @@ class SDKWrapper {
     })
       .then(response => ALTALIX_AVAILABLE_COUNTRIES.includes(response.data.country))
       .catch(error => {
-        reportLog(
+        reportErrorLog(
           'fetchAltalixAvailability: SDK request error',
           error.response?.data ?? { error },
-          Sentry.Severity.Error,
         );
         return false;
       });
@@ -783,10 +780,9 @@ class SDKWrapper {
     })
       .then(response => response.data.exchangeRates)
       .catch(error => {
-        reportLog(
+        reportErrorLog(
           'getSendwyreRates: SDK request error',
           error.response?.data ?? { error },
-          Sentry.Severity.Error,
         );
         return {};
       });
@@ -814,10 +810,9 @@ class SDKWrapper {
         if (status === 403 && data.message === LOCATION_NOT_SUPPORTED) return false;
 
         // Any other type of error is unexpected and will be reported as usual.
-        reportLog(
+        reportErrorLog(
           'getSendwyreCountrySupport: SDK request error',
           data ?? { error },
-          Sentry.Severity.Error,
         );
         return null;
       });
@@ -835,10 +830,9 @@ class SDKWrapper {
     })
       .then(response => response.data.url)
       .catch(error => {
-        reportLog(
+        reportErrorLog(
           'getSendwyreWidgetURL: SDK request error',
           error.response?.data ?? { error },
-          Sentry.Severity.Error,
         );
         return null;
       });

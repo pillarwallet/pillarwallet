@@ -60,12 +60,7 @@ import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import {
-  noop,
-  parseTokenAmount,
-  reportLog,
-  uniqBy,
-} from 'utils/common';
+import { noop, parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -408,7 +403,7 @@ export const fetchAllAccountsBalancesAction = () => {
 
     await Promise
       .all(promises)
-      .catch((error) => reportLog('fetchAllAccountsBalancesAction failed', { error }));
+      .catch((error) => reportErrorLog('fetchAllAccountsBalancesAction failed', { error }));
 
     // migration for key based balances to remove existing
     const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
@@ -433,7 +428,7 @@ export const fetchInitialAssetsAction = () => {
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('fetchInitialAssetsAction failed: no walletId', { user });
+      reportErrorLog('fetchInitialAssetsAction failed: no walletId', { user });
       return;
     }
 
@@ -555,7 +550,7 @@ export const searchAssetsAction = (query: string) => {
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('searchAssetsAction failed: no walletId', { user });
+      reportErrorLog('searchAssetsAction failed: no walletId', { user });
       return;
     }
 
@@ -615,7 +610,7 @@ export const loadSupportedAssetsAction = () => {
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('loadSupportedAssetsAction failed: no walletId', { user });
+      reportErrorLog('loadSupportedAssetsAction failed: no walletId', { user });
       return;
     }
 

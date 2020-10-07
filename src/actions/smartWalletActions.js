@@ -25,7 +25,6 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
-import * as Sentry from '@sentry/react-native';
 
 // components
 import Toast from 'components/Toast';
@@ -140,6 +139,7 @@ import {
   isCaseInsensitiveMatch,
   parseTokenAmount,
   printLog,
+  reportErrorLog,
   reportLog,
 } from 'utils/common';
 import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
@@ -917,7 +917,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate top up account virtual balance', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
         return {};
       });
     if (isEmpty(response)) return;
@@ -953,7 +953,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate top up account virtual balance', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
         return {};
       });
 
@@ -966,7 +966,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to top up account virtual balance', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to top up account virtual balance', { error: e });
         return null;
       });
 
@@ -1025,7 +1025,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate withdraw from virtual account', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
         return {};
       });
     if (isEmpty(response)) return;
@@ -1061,7 +1061,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate withdraw from virtual account', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
         return {};
       });
 
@@ -1074,7 +1074,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to withdraw from virtual account', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to withdraw from virtual account', { error: e });
         return null;
       });
 
@@ -1190,7 +1190,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
           supportLink: true,
           autoClose: false,
         });
-        reportLog('Failed to estimate payment settlement', { error: e, hashes }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
         return {};
       });
     if (isEmpty(response)) return;
@@ -1221,7 +1221,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
           supportLink: true,
           autoClose: false,
         });
-        reportLog('Failed to estimate payment settlement', { error: e, hashes }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
         return {};
       });
 
@@ -1235,7 +1235,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
           supportLink: true,
           autoClose: false,
         });
-        reportLog('Failed to settle transactions', { error: e, hashes }, Sentry.Severity.Error);
+        reportErrorLog('Failed to settle transactions', { error: e, hashes });
         return null;
       });
 
@@ -1578,7 +1578,7 @@ export const estimateSmartWalletDeploymentAction = () => {
     const rawEstimate = await smartWalletService
       .estimateAccountDeployment()
       .catch((error) => {
-        reportLog('estimateAccountDeployment failed', { error });
+        reportErrorLog('estimateAccountDeployment failed', { error });
         return null;
       });
 

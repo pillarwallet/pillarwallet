@@ -50,7 +50,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { isCaseInsensitiveMatch, reportLog } from 'utils/common';
+import { isCaseInsensitiveMatch, reportErrorLog, reportLog } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
 import { transformAssetsToObject } from 'utils/assets';
 
@@ -109,9 +109,14 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
     if (isOnline) {
       api.init();
       // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
-      await firebaseMessaging.registerForRemoteNotifications().catch(() => null);
+      await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
+        reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
+      });
       await firebaseMessaging.requestPermission().catch(() => null);
-      const fcmToken = await firebaseMessaging.getToken().catch(() => null);
+      const fcmToken = await firebaseMessaging.getToken().catch((error) => {
+        reportErrorLog('firebaseMessaging.getToken failed', { error });
+        return null;
+      });
 
       if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
 
@@ -119,7 +124,7 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
 
       if (!!sdkWallet?.error || !sdkWallet?.walletId) {
         const error = sdkWallet?.reason || t('auth:error.registrationApiFailedWithNoReason');
-        reportLog('setupUserAction user registration failed', { error, recoveryData });
+        reportErrorLog('setupUserAction user registration failed', { error, recoveryData });
         dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
         return;
       }

@@ -21,7 +21,6 @@ import { Contract, utils } from 'ethers';
 import isEmpty from 'lodash.isempty';
 import { utils as ptUtils } from 'pooltogetherjs';
 import { BigNumber } from 'bignumber.js';
-import * as Sentry from '@sentry/react-native';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -29,7 +28,7 @@ import { DAI } from 'constants/assetsConstants';
 import { POOLTOGETHER_WITHDRAW_TRANSACTION, POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // utils
-import { getEthereumProvider, formatMoney, reportLog } from 'utils/common';
+import { getEthereumProvider, formatMoney, reportErrorLog } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // abi
@@ -142,10 +141,10 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
   } = getPoolTogetherTokenContract(symbol);
 
   const currentOpenDrawId = await contract.currentOpenDrawId().catch(() => {
-    reportLog('Error getting PoolTogether currentOpenDrawId', {
+    reportErrorLog('Error getting PoolTogether currentOpenDrawId', {
       address,
       contractAddress,
-    }, Sentry.Severity.Error);
+    });
     return null;
   });
 
@@ -175,10 +174,10 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
   if (!isEmpty(players)) {
     // open, committed, fees, sponsorship balance
     const totalBalance = await contract.totalBalanceOf(address).catch(() => {
-      reportLog('Error getting PoolTogether user totalBalance', {
+      reportErrorLog('Error getting PoolTogether user totalBalance', {
         address,
         contractAddress,
-      }, Sentry.Severity.Error);
+      });
       return null;
     });
     if (!totalBalance) { // if an error occurred do not return results at all
@@ -201,11 +200,11 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
     balance = contract.interface.decodeFunctionResult('balance', result);
     supplyRatePerBlock = await contract.supplyRatePerBlock();
   } catch (e) {
-    reportLog('Error getting PoolTogether balances', {
+    reportErrorLog('Error getting PoolTogether balances', {
       address,
       contractAddress,
       message: e.message,
-    }, Sentry.Severity.Error);
+    });
     return null;
   }
 
@@ -275,10 +274,10 @@ export const getSmartWalletTxFee = async (transaction: Object, useGasToken: bool
     .estimateAccountTransaction(estimateTransaction)
     .then(result => buildTxFeeInfo(result, useGasToken))
     .catch((e) => {
-      reportLog('Error getting PoolTogether fee for transaction', {
+      reportErrorLog('Error getting PoolTogether fee for transaction', {
         ...transaction,
         message: e.message,
-      }, Sentry.Severity.Error);
+      });
       return null;
     });
 
@@ -344,13 +343,13 @@ export const checkPoolAllowance = async (symbol: string, address: string): Promi
       hasAllowance = allowanceResult.toString() !== '0';
     }
   } catch (e) {
-    reportLog('Error checking PoolTogether Allowance', {
+    reportErrorLog('Error checking PoolTogether Allowance', {
       address,
       poolContractAddress,
       contractAddress,
       symbol,
       message: e.message,
-    }, Sentry.Severity.Error);
+    });
     return null;
   }
   return hasAllowance;
