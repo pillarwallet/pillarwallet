@@ -35,7 +35,7 @@ import {
 import { WALLET_CREATE_EVENT } from 'constants/userEventsConstants';
 
 // utils
-import { reportLog } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 
 // models, types
 import type { ApiNotification } from 'models/Notification';
@@ -56,7 +56,7 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('fetchBadgesAction failed: no walletId', { user });
+      reportErrorLog('fetchBadgesAction failed: no walletId', { user });
       return;
     }
 
@@ -98,7 +98,7 @@ export const fetchContactBadgesAction = (contact: Object) => {
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('fetchContactBadgesAction failed: no walletId', { user });
+      reportErrorLog('fetchContactBadgesAction failed: no walletId', { user });
       return;
     }
 

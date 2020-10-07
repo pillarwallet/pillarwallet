@@ -50,7 +50,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
-import { formatFullAmount, getGasPriceWei, reportLog } from 'utils/common';
+import { formatFullAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
@@ -174,7 +174,7 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
-      reportLog('fetchAvailableBalancesToTransferAction failed: no keyBasedWalletAddress');
+      reportErrorLog('fetchAvailableBalancesToTransferAction failed: no keyBasedWalletAddress');
       return;
     }
 

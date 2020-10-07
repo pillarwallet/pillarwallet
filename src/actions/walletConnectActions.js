@@ -66,7 +66,7 @@ import {
   checkIfSmartWalletAccount,
 } from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
-import { reportLog } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
 
 // actions
 import {
@@ -572,7 +572,7 @@ export const initWalletConnectSessions = () => {
 
     const keyBasedWalletAddress = walletData?.address;
     if (!keyBasedWalletAddress) {
-      reportLog('initWalletConnectSessions failed: ', { keyBasedWalletAddress });
+      reportErrorLog('initWalletConnectSessions failed', { keyBasedWalletAddress });
       return;
     }
 
