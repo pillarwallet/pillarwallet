@@ -19,7 +19,7 @@
 */
 export type User = {
   id?: string,
-  username: string,
+  username: ?string,
   firstName?: string,
   lastName?: string,
   country?: string,

@@ -670,7 +670,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const {
       profileImage,
       lastUpdateTime = 0,
-      username = '',
+      username,
     } = user;
 
 
@@ -695,21 +695,24 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
-                    {!!profileImage && <ProfileImage
-                      uri={updatedProfileImage}
-                      userName={username}
-                      diameter={96}
-                      borderWidth={0}
-                      noShadow
-                    />}
-                    {!profileImage &&
-                    <ProfileImagePlaceholder>
-                      <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
-                    </ProfileImagePlaceholder>}
+                    {!!profileImage && (
+                      <ProfileImage
+                        uri={updatedProfileImage}
+                        userName={username || ''}
+                        diameter={96}
+                        borderWidth={0}
+                        noShadow
+                      />
+                    )}
+                    {!profileImage && !!username && (
+                      <ProfileImagePlaceholder>
+                        <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
+                      </ProfileImagePlaceholder>
+                    )}
                   </ImageWrapper>
                 </TouchableOpacity>
                 <Spacing h={20} />
-                <MediumText large center>{username}</MediumText>
+                {!!username && <MediumText large center>{username}</MediumText>}
                 <BaseText regular secondary center>{ensName}</BaseText>
                 <Spacing h={32} />
               </View>
@@ -754,7 +757,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           isVisible={!!showProfileImageModal}
           onModalHide={() => this.setState({ showProfileImageModal: false })}
           ensName={ensName}
-          username={username}
+          username={username || ''}
           profileImageUri={updatedProfileImage}
           onTakeSelfiePress={this.onTakeSelfiePress}
           onUploadPicturePress={this.onUploadPicturePress}
@@ -764,7 +767,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           isVisible={!!showDeleteAvatarModal}
           onModalHide={() => this.setState({ showDeleteAvatarModal: false })}
           profileImageUri={updatedProfileImage}
-          username={username}
+          username={username || ''}
           deleteAvatar={this.deleteAvatar}
         />
       </ContainerWithHeader>
