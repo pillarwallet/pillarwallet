@@ -44,6 +44,7 @@ type Props<T> = {
   items: Item<T>[],
   renderItem: (Item<T>) => ReactNode,
   onSwipeDismiss?: (id: string) => void,
+  noAnimation?: boolean,
 };
 
 type Dict<T> = { [id: string]: T };
@@ -71,6 +72,11 @@ const SWIPE_EXIT_DURATION = 100;
 const positionSpringConfig = {
   speed: 15,
   bounciness: 6,
+  useNativeDriver: true,
+};
+
+const positionDisabledConfig = {
+  duration: 0,
   useNativeDriver: true,
 };
 
@@ -164,7 +170,12 @@ const ItemWrapper = Animated.createAnimatedComponent(styled.View`
 // Some additional values are kept in refs for use in callbacks, which
 // otherwise would have to be recreated on every update.
 
-const AnimatedToastList = <T>({ items, renderItem, onSwipeDismiss }: Props<T>) => {
+const AnimatedToastList = <T>({
+  items,
+  renderItem,
+  onSwipeDismiss,
+  noAnimation = false,
+}: Props<T>) => {
   const [open, setOpen] = useState<string[]>([]);
   const [rendered, setRendered] = useState<RenderedToasts<T>>({ order: [], data: {} });
   const [toastHeight, setToastHeight] = useState<Dict<number>>({});
@@ -172,6 +183,8 @@ const AnimatedToastList = <T>({ items, renderItem, onSwipeDismiss }: Props<T>) =
   const animation = useRef<Dict<AnimationInfo>>({});
   const swipeDismissCallback = useRef<(id: string) => void>(noop);
   swipeDismissCallback.current = onSwipeDismiss ?? noop;
+  const disableAnimation = useRef(noAnimation);
+  disableAnimation.current = noAnimation;
 
   const cleanUpAfterExit = useCallback((id: string) => {
     delete animation.current[id];
@@ -187,6 +200,7 @@ const AnimatedToastList = <T>({ items, renderItem, onSwipeDismiss }: Props<T>) =
     Animated.timing(animation.current[id].fade, {
       toValue: 0,
       ...exitFadeConfig,
+      ...(disableAnimation.current ? { duration: 0 } : {}),
     }).start(() => cleanUpAfterExit(id));
   }, [cleanUpAfterExit]);
 
@@ -194,10 +208,13 @@ const AnimatedToastList = <T>({ items, renderItem, onSwipeDismiss }: Props<T>) =
     const initYValue = INITIAL_Y_OFFSET;
     const xPosition = new Animated.Value(0);
 
-    const clearSwipe = () => Animated.spring(xPosition, {
-      toValue: 0,
-      ...positionSpringConfig,
-    }).start();
+    const clearSwipe = () => {
+      const transition = disableAnimation.current
+        ? Animated.timing(xPosition, { toValue: 0, ...positionDisabledConfig })
+        : Animated.spring(xPosition, { toValue: 0, ...positionSpringConfig });
+
+      transition.start();
+    };
 
     const finishSwipe = ({ vx, dx }) => {
       // NOTE: The original gestureState object may be mutated, so any values
@@ -207,6 +224,7 @@ const AnimatedToastList = <T>({ items, renderItem, onSwipeDismiss }: Props<T>) =
       Animated.timing(xPosition, {
         toValue: swipeDirection * Dimensions.get('window').width,
         ...exitSwipeConfig,
+        ...(disableAnimation.current ? { duration: 0 } : {}),
       }).start(() => {
         // Make sure the toast hadn't been removed before the animation ended
         if (!animation.current[id]) return;
@@ -282,10 +300,11 @@ const AnimatedToastList = <T>({ items, renderItem, onSwipeDismiss }: Props<T>) =
       if (anim && y !== anim.yTarget) {
         anim.yTarget = y;
         anim.y.stopAnimation(() => {
-          Animated.spring(anim.y, {
-            toValue: y,
-            ...positionSpringConfig,
-          }).start();
+          const transition = disableAnimation.current
+            ? Animated.timing(anim.y, { toValue: y, ...positionDisabledConfig })
+            : Animated.spring(anim.y, { toValue: y, ...positionSpringConfig });
+
+          transition.start();
         });
       }
 
