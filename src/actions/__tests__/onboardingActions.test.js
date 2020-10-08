@@ -24,7 +24,7 @@ import { WebSocket } from 'mock-socket';
 
 // constants
 import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SET_WALLET_IS_ENCRYPTING } from 'constants/walletConstants';
-import { SET_REGISTERING_USER } from 'constants/onboardingConstants';
+import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } from 'constants/onboardingConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
@@ -193,6 +193,7 @@ describe('Onboarding actions', () => {
 
     const expectedActions = [
       { type: SET_REGISTERING_USER, payload: true },
+      { type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false },
       { type: UPDATE_OAUTH_TOKENS, payload: mockOauthTokens },
       { type: UPDATE_SESSION, payload: { fcmToken: mockFcmToken } },
       { type: SET_USER, payload: mockUser },
@@ -218,6 +219,7 @@ describe('Onboarding actions', () => {
 
     const expectedActions = [
       { type: SET_REGISTERING_USER, payload: true },
+      { type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false },
       { type: SET_USER, payload: { username: mockUser.username } },
       { type: SET_REGISTERING_USER, payload: false },
     ];
@@ -271,7 +273,7 @@ describe('Onboarding actions', () => {
       { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKey'))
+    return store.dispatch(setupAppServicesAction('0xprivateKeyF'))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

@@ -669,3 +669,7 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   if (!addressMixedCase) return null;
   return ensRegistry[addressMixedCase];
 };
+
+export const getEnsPrefix = () => isProdEnv
+  ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
+  : '.pillar.kovan';

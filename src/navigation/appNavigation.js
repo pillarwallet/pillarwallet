@@ -129,6 +129,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';
+import UsernameFailed from 'components/UsernameFailed';
 
 // actions
 import {
@@ -800,7 +801,9 @@ type Props = {
   i18n: I18n,
   isRegisteringUser: boolean,
   finishOnboarding: () => void,
-}
+  onboardingErrorMessage: ?string,
+  onboardingUsernameRegistrationFailed: boolean,
+};
 
 type State = {
   lastAppState: string,
@@ -892,9 +895,17 @@ class AppFlow extends React.Component<Props, State> {
       isRegisteringUser,
       finishOnboarding,
       wallet,
+      onboardingErrorMessage,
+      onboardingUsernameRegistrationFailed,
     } = this.props;
+
     // no user.walletId means user is not yet registered, try to finish this right away when online
-    if (!!wallet && !user?.walletId && !isRegisteringUser && isOnline) {
+    if (!!wallet
+      && !user?.walletId
+      && !isRegisteringUser
+      && !onboardingErrorMessage
+      && !onboardingUsernameRegistrationFailed
+      && isOnline) {
       finishOnboarding();
     }
   }
@@ -936,12 +947,15 @@ class AppFlow extends React.Component<Props, State> {
       theme,
       i18n,
       isOnline,
+      onboardingUsernameRegistrationFailed,
     } = this.props;
 
 
-    // wallet might be created, but recovery is pending and no user assigned yet
-
-    if (!backupStatus.isRecoveryPending && !user?.walletId && isOnline) {
+    // wallet might be created, but recovery is pending and no user registered yet
+    if (!backupStatus.isRecoveryPending
+      && !user?.walletId
+      && isOnline) {
+      if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
       return <RetryApiRegistration />;
     }
 
@@ -974,7 +988,11 @@ const mapStateToProps = ({
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   session: { data: { isOnline } },
-  onboarding: { isRegisteringUser },
+  onboarding: {
+    isRegisteringUser,
+    errorMessage: onboardingErrorMessage,
+    usernameRegistrationFailed: onboardingUsernameRegistrationFailed,
+  },
 }) => ({
   user,
   notifications,
@@ -986,6 +1004,8 @@ const mapStateToProps = ({
   isBrowsingWebView,
   isOnline,
   isRegisteringUser,
+  onboardingErrorMessage,
+  onboardingUsernameRegistrationFailed,
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -208,7 +208,12 @@ class SmartWallet {
     return accounts;
   }
 
-  createAccount(username: string) {
+  createAccount(username: ?string) {
+    if (!username) {
+      reportErrorLog('Unable to create Smart Account: no username', { username });
+      return null;
+    }
+
     const ensName = normalizeForEns(username);
     return this.getSdk()
       .createAccount(ensName)
