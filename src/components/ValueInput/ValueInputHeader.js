@@ -27,8 +27,10 @@ import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
 import { themedColors } from 'utils/themes';
-import { BaseText, MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
+import { BaseText, MediumText } from 'components/Typography';
+import { Spacing } from 'components/Layout';
+
 
 type Props = {
   theme: Theme,
@@ -89,7 +91,7 @@ const ValueInputHeader = (props: Props) => {
   const { genericToken } = images(theme);
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} >
+      <SideWrapper onPress={onAssetPress}>
         <Image
           key={id}
           source={optionImageSource}
@@ -102,7 +104,8 @@ const ValueInputHeader = (props: Props) => {
         </ChevronWrapper>
         <AssetName>{name}</AssetName>
       </SideWrapper>
-      <SideWrapper onPress={onLabelPress} >
+      <Spacing w={8} />
+      <SideWrapper onPress={onLabelPress}>
         <LabelText>{labelText}</LabelText>
       </SideWrapper>
     </Wrapper>
