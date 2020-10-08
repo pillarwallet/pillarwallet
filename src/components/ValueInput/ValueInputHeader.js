@@ -75,6 +75,7 @@ const ChevronWrapper = styled.View`
 const AssetName = styled(MediumText)`
   ${fontStyles.medium};
   ${({ theme }) => `color: ${theme.colors.text};`}
+  flex: 1;
 `;
 
 const LabelText = styled(BaseText)`
@@ -104,7 +105,7 @@ const ValueInputHeader = (props: Props) => {
           <SelectorChevron name="selector" />
         </ChevronWrapper>
       </SideWrapper>
-      <AssetName onPress={onAssetPress} style={{ flex: 1 }} numberOfLines={1}>{name}</AssetName>
+      <AssetName onPress={onAssetPress}numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />
       <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>
