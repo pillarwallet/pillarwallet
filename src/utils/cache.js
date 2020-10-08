@@ -18,34 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { TranslationResource } from 'models/Translations';
+import * as Sentry from '@sentry/react-native';
+import RNFetchBlob from 'rn-fetch-blob';
+import { reportLog } from 'utils/common';
 
-
-// en
-const COMMON_EN = require('./locales/en/common.json');
-const AUTH_EN = require('./locales/en/auth.json');
-
-
-const sources = {
-  en: {
-    common: () => COMMON_EN,
-    auth: () => AUTH_EN,
-  },
+export const getCachedJSONFile = async (localPath: string) => {
+  return new Promise(resolve => {
+    let data = '';
+    RNFetchBlob.fs.readStream(
+      localPath,
+      'utf8',
+    )
+      .then((stream) => {
+        stream.open();
+        stream.onData((chunk) => {
+          data += chunk;
+        });
+        stream.onError((error) => {
+          reportLog('Could not read local file', { localPath, error }, Sentry.Severity.Error);
+          resolve({});
+        });
+        stream.onEnd(() => {
+          const jsonData = JSON.parse(data);
+          resolve(jsonData);
+        });
+      })
+      .catch(() => resolve(null));
+  });
 };
-
-const translationLoader = {
-  type: 'backend',
-  init: () => {},
-  read: (language: string, namespace: string, callback: (error: ?Error, resource: ?TranslationResource) => void) => {
-    let resource;
-    let error;
-    try {
-      resource = sources[language][namespace]();
-    } catch (_error) {
-      error = _error;
-    }
-    callback(error, resource);
-  },
-};
-
-export default translationLoader;

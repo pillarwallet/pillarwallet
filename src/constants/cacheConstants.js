@@ -18,27 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as RNLocalize from 'react-native-localize';
-import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
-
-
-const userPreferredLocales = RNLocalize.getLocales();
-const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
-
-const getSupportedLanguage = () => {
-  const language = userPreferredLanguages.find((languageCode) => SUPPORTED_LANGUAGES.includes(languageCode));
-  return language || DEFAULT_LANGUAGE;
+export const CACHE_STATUS = {
+  REQUESTED: 'CACHE_REQUESTED',
+  PENDING: 'CACHE_PENDING',
+  DONE: 'CACHED',
+  FAILED: 'CACHE_FAILED',
 };
 
-const languageDetector = {
-  type: 'languageDetector',
-  async: true,
-  detect: (callback: (lang: string) => void) => {
-    callback(getSupportedLanguage());
-  },
-  init: () => {},
-  cacheUserLanguage: () => {},
-};
-
-export default languageDetector;
-
+export const SET_CACHED_URLS = 'SET_CACHED_URLS';
+export const REMOVE_URL_CACHE = 'REMOVE_URL_CACHE';

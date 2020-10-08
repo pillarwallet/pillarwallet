@@ -52,6 +52,7 @@ import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
 import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
+import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // actions
 import { registerWalletAction } from 'actions/onboardingActions';
@@ -147,8 +148,9 @@ describe('Wallet actions', () => {
       smartWallet: { upgrade: { status: null } },
       assets: { data: {} },
       history: { data: {} },
-      appSettings: {},
+      appSettings: { data: {} },
       balances: { data: {} },
+      cache: { cachedUrls: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -163,6 +165,7 @@ describe('Wallet actions', () => {
       { type: RESET_PAYMENT_NETWORK },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
+      { type: SET_CACHED_URLS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: GENERATING },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
@@ -210,9 +213,10 @@ describe('Wallet actions', () => {
       accounts: { data: [mockSmartWalletAccount] },
       assets: { data: {} },
       history: { data: {} },
-      appSettings: {},
+      appSettings: { data: {} },
       smartWallet: { upgrade: { status: null } },
       balances: { data: {} },
+      cache: { cachedUrls: {} },
     });
     const expectedActions = [
       { type: UPDATE_ACCOUNTS, payload: [] },
@@ -227,6 +231,7 @@ describe('Wallet actions', () => {
       { type: RESET_PAYMENT_NETWORK },
       { type: SET_USER_SETTINGS, payload: {} },
       { type: SET_USER_EVENTS, payload: [] },
+      { type: SET_CACHED_URLS, payload: {} },
       { type: UPDATE_WALLET_STATE, payload: ENCRYPTING },
       { type: GENERATE_ENCRYPTED_WALLET, payload: mockWallet },
       { type: UPDATE_WALLET_STATE, payload: REGISTERING },

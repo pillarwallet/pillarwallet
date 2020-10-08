@@ -68,6 +68,7 @@ const Section = (props: Props) => {
           label,
           labelBadge,
           disabled,
+          bulletedLabel,
         } = item;
         if (hidden) return null;
         return (
@@ -81,6 +82,7 @@ const Section = (props: Props) => {
               notificationsCount={notificationsCount}
               rightLabel={label}
               labelBadge={labelBadge}
+              bulletedLabel={bulletedLabel}
             />
           </ShadowedCard>
         );

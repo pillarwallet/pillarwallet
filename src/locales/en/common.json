@@ -754,7 +754,7 @@
       },
       "linkedDevices": {
         "title": "Linked devices",
-        "subtitle": "Manage Smart Wallet account devices"
+        "subtitle": "Assign your contacts as recovery agents for restoring the wallet"
       },
       "payFeeWithPillar": {
         "title": "Pay fees with PLR"
@@ -810,6 +810,14 @@
       },
       "addressBook": {
         "title": "Address book"
+      },
+      "language": {
+        "title": "Language",
+        "screenTitle": "Select preferred language"
+      },
+      "walletSettings": {
+        "title": "Wallet settings",
+        "screenTitle": "Wallet settings"
       }
     },
     "button": {
@@ -1339,6 +1347,9 @@
     "contactDeleted": "Contact deleted",
     "contactAdded": "New contact added",
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
+    "languageChangedWithSomeTranslationsMissing": "Language changed, but some translations might be missing. We're actively working on it.",
+    "languageIsNoLongerSupported": "Sorry, your selected language is no longer supported. It's been changed to default language.",
+    "languageIsNotSupported": "Sorry, this language is not supported.",
     "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
     "failedToDeleteAvatar": "Failed to delete avatar. Please try again.",
     "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again.",

@@ -21,4 +21,7 @@
 export type SessionData = {|
   isOnline: boolean,
   fcmToken: string,
+  translationsInitialised: boolean,
+  fallbackLanguageVersion: ?string,
+  sessionLanguageCode: ?string,
 |};

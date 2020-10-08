@@ -25,7 +25,7 @@ import configureMockStore from 'redux-mock-store';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'styled-components/native';
 import { I18nextProvider } from 'react-i18next';
-import i18n from 'translations/testing';
+import i18n from 'services/localisation/testing';
 
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as balancesState } from 'reducers/balancesReducer';
