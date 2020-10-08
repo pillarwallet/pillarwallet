@@ -90,6 +90,7 @@ const glyphMap = {
   'count-plus': '\uE83F',
   'count-minus': '\uE840',
   wallet: '\uE842',
+  direct: '\uE8C4',
 };
 
 export type IconProps = {
