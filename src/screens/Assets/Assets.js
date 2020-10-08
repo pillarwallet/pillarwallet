@@ -101,7 +101,6 @@ type State = {
 };
 
 const VIEWS = {
-  KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
   SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
   PPN_VIEW: 'PPN_VIEW',
 };
@@ -180,7 +179,7 @@ class AssetsScreen extends React.Component<Props, State> {
         return {
           label: getAccountName(walletType),
           action: () => navigation.navigate(ACCOUNTS),
-          screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
+          screenView: VIEWS.SMART_WALLET_VIEW,
           customHeaderButtonProps: {
             backgroundColor: walletType === ACCOUNT_TYPES.KEY_BASED ? colors.legacyWallet : colors.smartWallet,
           },
@@ -246,7 +245,7 @@ class AssetsScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
     } = this.props;
-    const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
+    const { showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -287,15 +286,6 @@ class AssetsScreen extends React.Component<Props, State> {
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />);
-      case VIEWS.KEY_WALLET_VIEW:
-        return (
-          <WalletView
-            showInsight={showKeyWalletInsight}
-            hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={this.getInsightsList()}
-            insightsTitle={t('insight.keyWalletIntro.title')}
-            onScroll={onScroll}
-          />);
       default:
         return null;
     }
@@ -303,7 +293,6 @@ class AssetsScreen extends React.Component<Props, State> {
 
   render() {
     const { activeAccount } = this.props;
-    if (!activeAccount) return null;
 
     const screenInfo = this.getScreenInfo();
     const {
@@ -316,7 +305,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: [{
+          rightItems: !!activeAccount && [{
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,

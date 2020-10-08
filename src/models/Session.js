@@ -20,7 +20,8 @@
 
 export type SessionData = {|
   isOnline: boolean,
-  fcmToken: string,
+  fcmToken: ?string,
+  isAuthorizing: boolean,
   translationsInitialised: boolean,
   fallbackLanguageVersion: ?string,
   sessionLanguageCode: ?string,
