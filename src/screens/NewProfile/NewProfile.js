@@ -310,7 +310,7 @@ const mapStateToProps = ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   checkUsernameAvailability: (username: string) => dispatch(checkUsernameAvailabilityAction(username)),
-  resetUsernameCheck: () => dispatch(resetUsernameCheckAction()),
+  resetUsernameCheck: () => dispatch(resetUsernameCheckAction(true)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));

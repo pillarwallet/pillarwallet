@@ -838,9 +838,12 @@ class AppFlow extends React.Component<Props, State> {
     startListeningIntercomNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
 
-    // the following actions are useless if user is not yet registered on back-end
-    if (!user?.walletId) return;
+    if (!user?.walletId) {
+      this.checkIfOnboardingFinished();
+      return;
+    }
 
+    // the following actions are useless if user is not yet registered on back-end
     fetchAllAccountsBalances();
     checkForMissedAssets();
     fetchAllCollectiblesData();
@@ -853,9 +856,6 @@ class AppFlow extends React.Component<Props, State> {
       user,
       wallet,
       removePrivateKeyFromMemory,
-      isOnline,
-      finishOnboarding,
-      isRegisteringUser,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
@@ -863,10 +863,7 @@ class AppFlow extends React.Component<Props, State> {
       removePrivateKeyFromMemory();
     }
 
-    // no walletId means user is not yet registered, try to finish this right away when online
-    if (!user?.walletId && !isRegisteringUser && isOnline) {
-      finishOnboarding();
-    }
+    this.checkIfOnboardingFinished();
 
     notifications
       .slice(prevNotifications.length)
@@ -886,6 +883,19 @@ class AppFlow extends React.Component<Props, State> {
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
+  }
+
+  checkIfOnboardingFinished = () => {
+    const {
+      isOnline,
+      user,
+      isRegisteringUser,
+      finishOnboarding,
+    } = this.props;
+    // no walletId means user is not yet registered, try to finish this right away when online
+    if (!user?.walletId && !isRegisteringUser && isOnline) {
+      finishOnboarding();
+    }
   }
 
   handleAppStateChange = (nextAppState: string) => {
@@ -974,6 +984,7 @@ const mapStateToProps = ({
   isPickingImage,
   isBrowsingWebView,
   isOnline,
+  isRegisteringUser,
 });
 
 const mapDispatchToProps = dispatch => ({
