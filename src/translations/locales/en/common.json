@@ -1341,7 +1341,10 @@
     "smartWalletActivationUnavailable": "Activation is temporarily unavailable. Please try again later",
     "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
     "failedToDeleteAvatar": "Failed to delete avatar. Please try again.",
-    "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again."
+    "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again.",
+    "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
+    "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
+    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again."
   },
 
   "exchangeContent": {
