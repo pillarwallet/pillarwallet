@@ -79,7 +79,8 @@ const AssetName = styled(MediumText)`
 
 const LabelText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.link}
+  color: ${themedColors.link};
+  margin-top: 1px;
 `;
 
 const ValueInputHeader = (props: Props) => {
