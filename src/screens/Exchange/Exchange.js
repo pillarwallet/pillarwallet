@@ -46,7 +46,6 @@ import { ETH, PLR } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
-import { spacing } from 'utils/variables';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { formatAmount } from 'utils/common';
