@@ -27,7 +27,7 @@ import { GasPriceOracle } from 'gas-price-oracle';
 import https from 'https';
 
 // constants
-import { REGISTRATION_FAILED, USERNAME_FAILED } from 'constants/walletConstants';
+import { SDK_REASON_REGISTRATION_FAILED, SDK_REASON_USERNAME_FAILED } from 'constants/walletConstants';
 import { ALTALIX_AVAILABLE_COUNTRIES } from 'constants/fiatToCryptoConstants';
 
 // utils
@@ -156,12 +156,12 @@ class SDKWrapper {
         if (status === USERNAME_EXISTS_ERROR_CODE) {
           return {
             error: true,
-            reason: USERNAME_FAILED,
+            reason: SDK_REASON_USERNAME_FAILED,
           };
         }
         return {
           error: true,
-          reason: REGISTRATION_FAILED,
+          reason: SDK_REASON_REGISTRATION_FAILED,
         };
       });
   }
@@ -197,8 +197,8 @@ class SDKWrapper {
         reportErrorLog('Registration error', { error });
         const responseStatus = get(error, 'response.status');
         const reason = responseStatus === USERNAME_EXISTS_ERROR_CODE
-          ? USERNAME_FAILED
-          : REGISTRATION_FAILED;
+          ? SDK_REASON_USERNAME_FAILED
+          : SDK_REASON_REGISTRATION_FAILED;
         return { error: true, reason };
       });
   }

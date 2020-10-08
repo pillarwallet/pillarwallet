@@ -208,7 +208,12 @@ class SmartWallet {
     return accounts;
   }
 
-  createAccount(username: string) {
+  createAccount(username: ?string) {
+    if (!username) {
+      reportErrorLog('Unable to create Smart Account: no username', { username });
+      return null;
+    }
+
     const ensName = normalizeForEns(username);
     return this.getSdk()
       .createAccount(ensName)
@@ -237,7 +242,7 @@ class SmartWallet {
     smartAccounts: SmartWalletAccount[],
     walletId: string,
     privateKey: string,
-    fcmToken: string,
+    fcmToken: ?string,
   ) {
     const backendAccounts = await api.listAccounts(walletId);
     const registerOnBackendPromises = smartAccounts.map(async account => {
@@ -588,7 +593,7 @@ class SmartWallet {
     await this.sdk.reset({
       device: true,
       session: true,
-    }).catch(null);
+    }).catch(() => null);
   }
 }
 

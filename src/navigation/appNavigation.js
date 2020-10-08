@@ -129,6 +129,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';
+import UsernameFailed from 'components/UsernameFailed';
 
 // actions
 import {
@@ -142,6 +143,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { finishOnboardingAction } from 'actions/onboardingActions';
 
 // constants
 import {
@@ -276,10 +278,14 @@ import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
+// types
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
 import type { User } from 'models/User';
 import type { Notification } from 'models/Notification';
+import type { EthereumWallet } from 'models/Wallet';
+import type { BackupStatus } from 'reducers/walletReducer';
+
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -782,8 +788,8 @@ type Props = {
   showHomeUpdateIndicator: boolean,
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
-  wallet: Object,
-  backupStatus: Object,
+  wallet: ?EthereumWallet,
+  backupStatus: BackupStatus,
   isPickingImage: boolean,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
@@ -793,7 +799,11 @@ type Props = {
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
-}
+  isRegisteringUser: boolean,
+  finishOnboarding: () => void,
+  onboardingErrorMessage: ?string,
+  onboardingUsernameRegistrationFailed: boolean,
+};
 
 type State = {
   lastAppState: string,
@@ -815,6 +825,7 @@ class AppFlow extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       initWalletConnect,
       backupStatus,
+      user,
     } = this.props;
 
     /**
@@ -828,11 +839,18 @@ class AppFlow extends React.Component<Props, State> {
 
     startListeningNotifications();
     startListeningIntercomNotifications();
+    addAppStateChangeListener(this.handleAppStateChange);
+
+    if (!user?.walletId) {
+      this.checkIfOnboardingFinished();
+      return;
+    }
+
+    // the following actions are useless if user is not yet registered on back-end
     fetchAllAccountsBalances();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
-    addAppStateChangeListener(this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
@@ -844,9 +862,11 @@ class AppFlow extends React.Component<Props, State> {
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
-    if (user?.walletId && wallet.privateKey) {
+    if (user?.walletId && wallet?.privateKey) {
       removePrivateKeyFromMemory();
     }
+
+    this.checkIfOnboardingFinished();
 
     notifications
       .slice(prevNotifications.length)
@@ -866,6 +886,28 @@ class AppFlow extends React.Component<Props, State> {
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
+  }
+
+  checkIfOnboardingFinished = () => {
+    const {
+      isOnline,
+      user,
+      isRegisteringUser,
+      finishOnboarding,
+      wallet,
+      onboardingErrorMessage,
+      onboardingUsernameRegistrationFailed,
+    } = this.props;
+
+    // no user.walletId means user is not yet registered, try to finish this right away when online
+    if (!!wallet
+      && !user?.walletId
+      && !isRegisteringUser
+      && !onboardingErrorMessage
+      && !onboardingUsernameRegistrationFailed
+      && isOnline) {
+      finishOnboarding();
+    }
   }
 
   handleAppStateChange = (nextAppState: string) => {
@@ -905,12 +947,15 @@ class AppFlow extends React.Component<Props, State> {
       theme,
       i18n,
       isOnline,
+      onboardingUsernameRegistrationFailed,
     } = this.props;
 
 
-    // wallet might be created, but recovery is pending and no user assigned yet
-
-    if (!backupStatus.isRecoveryPending && !user?.walletId && isOnline) {
+    // wallet might be created, but recovery is pending and no user registered yet
+    if (!backupStatus.isRecoveryPending
+      && !user?.walletId
+      && isOnline) {
+      if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
       return <RetryApiRegistration />;
     }
 
@@ -943,6 +988,11 @@ const mapStateToProps = ({
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   session: { data: { isOnline } },
+  onboarding: {
+    isRegisteringUser,
+    errorMessage: onboardingErrorMessage,
+    usernameRegistrationFailed: onboardingUsernameRegistrationFailed,
+  },
 }) => ({
   user,
   notifications,
@@ -953,6 +1003,9 @@ const mapStateToProps = ({
   isPickingImage,
   isBrowsingWebView,
   isOnline,
+  isRegisteringUser,
+  onboardingErrorMessage,
+  onboardingUsernameRegistrationFailed,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -967,6 +1020,7 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  finishOnboarding: () => dispatch(finishOnboardingAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

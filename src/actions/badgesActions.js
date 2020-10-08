@@ -52,7 +52,10 @@ export const fetchBadgesAction = (notifyOnNewBadge: boolean = true) => {
     const {
       user: { data: user },
       badges: { data: badges },
+      session: { data: { isOnline } },
     } = getState();
+
+    if (!isOnline) return;
 
     const walletId = user?.walletId;
     if (!walletId) {
@@ -129,7 +132,10 @@ export const fetchBadgeAwardHistoryAction = () => {
     const {
       user: { data: user },
       userEvents: { data: userEvents = [] },
+      session: { data: { isOnline } },
     } = getState();
+
+    if (!isOnline) return;
 
     const walletId = user?.walletId;
     if (!walletId) {

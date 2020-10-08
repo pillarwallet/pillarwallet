@@ -103,6 +103,7 @@ describe('Auth actions', () => {
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
       balances: { data: {} },
+      user: { data: {} },
     });
   });
 

@@ -216,7 +216,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
         smartAccounts,
         user.walletId,
         privateKey,
-        session.fcmToken,
+        session?.fcmToken,
       );
     }
     const backendAccounts = await api.listAccounts(user.walletId);
@@ -1296,8 +1296,15 @@ export const importSmartWalletAccountsAction = (privateKey: string) => {
 
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const { user = {} } = await storage.get('user');
-    const { session: { data: session } } = getState();
+    const {
+      session: { data: session },
+      user: { data: user },
+    } = getState();
+
+    if (!user.username) {
+      reportErrorLog('importSmartWalletAccountsAction failed: no username', { user });
+      return;
+    }
 
     const smartAccounts = await smartWalletService.getAccounts();
     if (isEmpty(smartAccounts)) {
@@ -1309,6 +1316,11 @@ export const importSmartWalletAccountsAction = (privateKey: string) => {
       payload: smartAccounts,
     });
     await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
+
+    if (!user.walletId) {
+      reportErrorLog('importSmartWalletAccountsAction failed: no walletId', { user });
+      return;
+    }
 
     // register missed accounts on the backend
     await smartWalletService.syncSmartAccountsWithBackend(
@@ -1527,7 +1539,7 @@ export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartW
 
     const walletId = user?.walletId;
     if (!walletId) {
-      reportLog('completeReferralsEventAction failed: unable to get walletId', { user });
+      reportLog('checkIfSmartWalletWasRegisteredAction failed: unable to get walletId', { user });
       return;
     }
 
