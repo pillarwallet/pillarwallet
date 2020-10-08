@@ -23,7 +23,7 @@ import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
 // constants
-import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
+import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SDK_REASON_USERNAME_FAILED } from 'constants/walletConstants';
 import {
   APP_FLOW,
   NEW_WALLET,
@@ -40,6 +40,7 @@ import {
   SET_ONBOARDING_ERROR,
   SET_ONBOARDING_PIN_CODE,
   SET_ONBOARDING_USER,
+  SET_ONBOARDING_USERNAME_REGISTRATION_FAILED,
   SET_ONBOARDING_WALLET,
   SET_REGISTERING_USER,
 } from 'constants/onboardingConstants';
@@ -90,6 +91,8 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
     }
 
     dispatch({ type: SET_REGISTERING_USER, payload: true });
+    dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false }); // reset
+
     const {
       wallet: { data: wallet },
       session: { data: { isOnline } },
@@ -123,8 +126,14 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
       const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
 
       if (!!sdkWallet?.error || !sdkWallet?.walletId) {
-        const error = sdkWallet?.reason || t('auth:error.registrationApiFailedWithNoReason');
-        reportErrorLog('setupUserAction user registration failed', { error, recoveryData });
+        const usernameFailed = sdkWallet?.reason === SDK_REASON_USERNAME_FAILED;
+        const error = usernameFailed
+          ? t('auth:error.registrationApiUsernameFailed')
+          : t('auth:error.registrationApiFailedWithNoReason');
+        reportErrorLog('setupUserAction user registration failed', { error, username, recoveryData });
+        if (usernameFailed) {
+          dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: true });
+        }
         dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
         return;
       }
@@ -230,20 +239,20 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(setRatesAction(rates));
       dispatch(fetchBadgesAction(false));
       dispatch(fetchReferralRewardAction());
-    }
 
-    // create smart wallet account only for new wallets
-    await dispatch(importSmartWalletAccountsAction(privateKey));
-    await dispatch(fetchSmartWalletTransactionsAction());
-    dispatch(managePPNInitFlagAction());
+      // create smart wallet account only for new wallets
+      await dispatch(importSmartWalletAccountsAction(privateKey));
+      await dispatch(fetchSmartWalletTransactionsAction());
+      dispatch(managePPNInitFlagAction());
+
+      // add wallet created / imported events
+      dispatch(getWalletsCreationEventsAction());
+    }
 
     // if wallet was imported let's check its balance for key based assets migration
     if (backupStatus.isImported) {
       dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
     }
-
-    // add wallet created / imported events
-    dispatch(getWalletsCreationEventsAction());
 
     // check if wallet backup warning toast needed, balance can only be retrieved online
     dispatch(checkForWalletBackupToastAction());
@@ -266,9 +275,13 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
     // either retry during onboarding or previously stored username during onboarding
     if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user?.username, recoveryData));
 
+
     await dispatch(setupAppServicesAction(walletData?.privateKey));
 
-    dispatch({ type: RESET_ONBOARDING });
+    const { errorMessage, usernameRegistrationFailed } = getState().onboarding;
+
+    // do not reset onboarding in case there were errors as retry will happen in app flow
+    if (!errorMessage && !usernameRegistrationFailed) dispatch({ type: RESET_ONBOARDING });
 
     // reset if recovery was pending as it's successful recover by this step
     if (isRecoveryPending) {
@@ -388,6 +401,7 @@ export const checkUsernameAvailabilityAction = (username: string) => {
     // if user is offline then proceed with local registration
     if (!getState()?.session?.data?.isOnline) {
       if (!usernameCheckOfflineToastShown) {
+        Toast.closeAll(); // just in case another offline toast is showing from welcome screen
         Toast.show({
           message: t('auth:toast.userIsOffline'),
           emoji: 'satellite_antenna',

@@ -447,7 +447,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 export const resetAppServicesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     // reset intercom user
-    Intercom.logout();
+    Intercom.logout().catch(() => null);
 
     // reset firebase fcm
     await firebaseIid

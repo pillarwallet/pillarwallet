@@ -44,8 +44,8 @@ import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants'
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { isProdEnv } from 'utils/environment';
 import { validateUsername } from 'utils/validators';
+import { getEnsPrefix } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -104,7 +104,29 @@ const MODAL = {
   PRIVACY_POLICY: 'PRIVACY_POLICY',
 };
 
-const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan'; // eslint-disable-line i18next/no-literal-string
+export const getUsernameInputIcon = (
+  colors: Object,
+  isUsernameInputDirty: boolean,
+  isCheckingUsername: boolean,
+  user: ?User,
+  usernameValidationErrorMessage: ?string,
+  errorMessage: ?string,
+) => {
+  let statusIcon = null;
+  let iconColor = null;
+
+  if (isUsernameInputDirty && !isCheckingUsername) {
+    if (usernameValidationErrorMessage || errorMessage) {
+      statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.negative;
+    } else if (user?.username) {
+      statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.positive;
+    }
+  }
+
+  return { statusIcon, iconColor };
+};
 
 const NewProfile = ({
   user,
@@ -127,7 +149,7 @@ const NewProfile = ({
 
   const isUsernameInputDirty = usernameValue !== null;
 
-  const usernameValidationErrorMessage = isUsernameInputDirty && validateUsername(usernameValue);
+  const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
 
   const onValidUsername = useCallback(
     debounce(() => { if (usernameValue) checkUsernameAvailability(usernameValue); }, 200),
@@ -143,7 +165,7 @@ const NewProfile = ({
       // reset if error occurred during update
       setIsCheckingUsername(false);
     }
-  }, [usernameValue]);
+  }, [usernameValue, errorMessage]);
 
   useEffect(() => {
     // user updated, reset
@@ -170,18 +192,14 @@ const NewProfile = ({
   };
 
   const renderChooseUsername = () => {
-    let statusIcon = null;
-    let iconColor = null;
-
-    if (isUsernameInputDirty && !isCheckingUsername) {
-      if (usernameValidationErrorMessage || errorMessage) {
-        statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
-        iconColor = colors.negative;
-      } else if (user?.username) {
-        statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
-        iconColor = colors.positive;
-      }
-    }
+    const { statusIcon, iconColor } = getUsernameInputIcon(
+      colors,
+      isUsernameInputDirty,
+      isCheckingUsername,
+      user,
+      usernameValidationErrorMessage,
+      errorMessage,
+    );
 
     return (
       <StyledWrapper>
