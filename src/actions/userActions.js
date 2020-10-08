@@ -28,7 +28,6 @@ import {
   RESET_OTP_STATUS,
   VERIFICATION_FAILED,
   UPDATE_USER,
-  REGISTERED,
   USER_PHONE_VERIFIED,
   USER_EMAIL_VERIFIED,
   SET_USER,
@@ -37,7 +36,7 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import { OTP_DIGITS } from 'constants/referralsConstants';
 
 // utils
-import { isCaseInsensitiveMatch } from 'utils/common';
+import { isCaseInsensitiveMatch, reportLog } from 'utils/common';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
@@ -95,7 +94,7 @@ export const updateUserAction = (walletId: string, field: Object, callback?: Fun
     dispatch(saveDbAction('user', { user: updatedUser }, true));
     dispatch({
       type: UPDATE_USER,
-      payload: { user: updatedUser, state: REGISTERED },
+      payload: updatedUser,
     });
 
     dispatch(logEventAction('user_profile_updated'));
@@ -245,7 +244,7 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
 
     dispatch({
       type: UPDATE_USER,
-      payload: { user: updatedUser, state: REGISTERED },
+      payload: updatedUser,
     });
 
     dispatch(logEventAction('avatar_updated'));
@@ -254,8 +253,15 @@ export const updateUserAvatarAction = (walletId: string, formData: any) => {
 
 export const deleteUserAvatarAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { user: { data: user } } = getState();
-    const success = await api.deleteUserAvatar(user.walletId);
+    const user = getState().user.data;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('deleteUserAvatarAction failed: unable to get walletId', { user });
+      return;
+    }
+
+    const success = await api.deleteUserAvatar(walletId);
 
     if (success) {
       const updatedUser = {
@@ -264,11 +270,7 @@ export const deleteUserAvatarAction = () => {
       };
 
       dispatch(saveDbAction('user', { user: updatedUser }, true));
-
-      dispatch({
-        type: SET_USER,
-        payload: { user: updatedUser, state: REGISTERED },
-      });
+      dispatch({ type: SET_USER, payload: updatedUser });
     } else {
       dispatch({
         type: ADD_NOTIFICATION,

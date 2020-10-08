@@ -20,10 +20,11 @@
 import { combineReducers } from 'redux';
 
 // constants
-import { LOG_OUT } from 'constants/authConstants';
-import type { DbAction } from 'models/DbAction';
+import { RESET_APP_STATE } from 'constants/authConstants';
 
-import { defaultTheme } from 'utils/themes';
+// types
+import type { DbAction } from 'models/DbAction';
+import type SDKWrapper from 'services/api';
 
 // reducers
 import offlineQueueReducer from './offlineQueueReducer';
@@ -56,16 +57,16 @@ import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
 import phoneContactsReducer from './phoneContactsReducer';
 import connectedDevicesReducer from './connectedDevicesReducer';
-import recoveryPortalReducer from './recoveryPortalReducer';
 import lendingReducer from './lendingReducer';
 import poolTogetherReducer from './poolTogetherReducer';
 import keyBasedAssetTransferReducer from './keyBasedAssetTransferReducer';
 import contactsReducer from './contactsReducer';
 import sablierReducer from './sablierReducer';
 import fiatToCryptoReducer from './fiatToCryptoReducer';
+import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
 
-// types
+// local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
 import type { WalletReducerState } from './walletReducer';
 import type { SmartWalletReducerState, SmartWalletReducerAction } from './smartWalletReducer';
@@ -99,7 +100,6 @@ import type { InsightsReducerAction, InsightsReducerState } from './insightsRedu
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
 import type { PhoneContactsReducerAction, PhoneContactsReducerState } from './phoneContactsReducer';
 import type { ConnectedDevicesReducerAction, ConnectedDevicesReducerState } from './connectedDevicesReducer';
-import type { RecoveryPortalReducerAction, RecoveryPortalReducerState } from './recoveryPortalReducer';
 import type { LendingReducerAction, LendingReducerState } from './lendingReducer';
 import type { PoolTogetherReducerState } from './poolTogetherReducer';
 import type {
@@ -110,6 +110,7 @@ import type { ContactsReducerAction, ContactsReducerState } from './contactsRedu
 import type { SablierReducerAction, SablierReducerState } from './sablierReducer';
 import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiatToCryptoReducer.js';
 import type { CacheAction, CacheReducerState } from './cacheReducer';
+import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -142,13 +143,13 @@ export type RootReducerState = {|
   insights: InsightsReducerState,
   phoneContacts: PhoneContactsReducerState,
   connectedDevices: ConnectedDevicesReducerState,
-  recoveryPortal: RecoveryPortalReducerState,
   lending: LendingReducerState,
   poolTogether: PoolTogetherReducerState,
   keyBasedAssetTransfer: KeyBasedAssetTransferReducerState,
   contacts: ContactsReducerState,
   sablier: SablierReducerState,
   fiatToCrypto: FiatToCryptoReducerState,
+  onboarding: OnboardingReducerState,
   cache: CacheReducerState,
 |};
 
@@ -158,7 +159,6 @@ type RootReducerAction =
   | BadgesReducerAction
   | BalancesAction
   | BlockchainNetworkAction
-  | BlockchainNetworkReducerState
   | CollectiblesAction
   | ExchangeReducerAction
   | HistoryAction
@@ -176,19 +176,19 @@ type RootReducerAction =
   | ReferralsReducerAction
   | PhoneContactsReducerAction
   | ConnectedDevicesReducerAction
-  | RecoveryPortalReducerAction
   | LendingReducerAction
   | KeyBasedAssetTransferReducerAction
   | ContactsReducerAction
   | SablierReducerAction
   | FiatToCryptoReducerAction
+  | OnboardingReducerAction
   | CacheAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
   dispatch: Dispatch, // eslint-disable-line no-use-before-define
   getState: GetState,
-  api: Object,
+  api: SDKWrapper,
 ) => any;
 export type Dispatch = (
   action: RootReducerAction | Promise<RootReducerAction> | ThunkAction,
@@ -225,21 +225,28 @@ const appReducer = combineReducers({
   referrals: referralsReducer,
   phoneContacts: phoneContactsReducer,
   connectedDevices: connectedDevicesReducer,
-  recoveryPortal: recoveryPortalReducer,
   lending: lendingReducer,
   poolTogether: poolTogetherReducer,
   keyBasedAssetTransfer: keyBasedAssetTransferReducer,
   contacts: contactsReducer,
   sablier: sablierReducer,
   fiatToCrypto: fiatToCryptoReducer,
+  onboarding: onboardingReducer,
   cache: cacheReducer,
 });
 
 export const initialState = appReducer(undefined, {});
 
 const rootReducer = (state: RootReducerState, action: RootReducerAction) => {
-  if (action.type === LOG_OUT) {
-    return appReducer({ appSettings: { isFetched: true, data: { theme: defaultTheme } } }, {});
+  if (action.type === RESET_APP_STATE) {
+    /**
+     * resets reducer state, ref – https://stackoverflow.com/a/35641992
+     *
+     * keep passed state (action.payload) or reset completely,
+     * undefined will reset everything
+     */
+    // $FlowFixMe
+    state = typeof action.payload === 'object' ? action.payload : undefined;
   }
   return appReducer(state, action);
 };

@@ -36,6 +36,7 @@ import {
 
 // utils
 import { reportLog } from 'utils/common';
+import { addressesEqual } from 'utils/assets';
 
 // models
 import type { ApiNotification, Notification } from 'models/Notification';
@@ -93,9 +94,7 @@ export const processNotification = (notification: Object): ?Object => {
   return result;
 };
 
-const isSameAddress = (a: ?string, b: ?string) => a && b && a.toUpperCase() === b.toUpperCase();
-
-export const getToastNotification = (data: mixed, myEthAddress: string): null | Notification => {
+export const getToastNotification = (data: mixed, myEthAddress: ?string): null | Notification => {
   if (typeof data !== 'object') return null;
   const { type, msg } = data ?? {};
   const notification = typeof msg === 'string' && parseNotification(msg);
@@ -109,8 +108,8 @@ export const getToastNotification = (data: mixed, myEthAddress: string): null | 
       status,
       value,
       decimals,
-      fromAddress,
-      toAddress,
+      fromAddress: sender,
+      toAddress: receiver,
     } = notification;
 
     const tokenValue = t('tokenValue', {
@@ -118,22 +117,23 @@ export const getToastNotification = (data: mixed, myEthAddress: string): null | 
       token: asset,
     });
 
-    if (isSameAddress(toAddress, myEthAddress) && status === 'pending') {
+    // TODO: do we still need to process key based wallet notifications?
+    if (addressesEqual(receiver, myEthAddress) && status === 'pending') {
       return {
         message: t('notification.transactionReceivedPending', { tokenValue }),
         emoji: 'ok_hand',
       };
-    } else if (isSameAddress(toAddress, myEthAddress) && status === 'confirmed') {
+    } else if (addressesEqual(receiver, myEthAddress) && status === 'confirmed') {
       return {
         message: t('notification.transactionReceivedConfirmed', { tokenValue }),
         emoji: 'ok_hand',
       };
-    } else if (isSameAddress(fromAddress, myEthAddress) && status === 'pending') {
+    } else if (addressesEqual(sender, myEthAddress) && status === 'pending') {
       return {
         message: t('notification.transactionSentPending', { tokenValue }),
         emoji: 'ok_hand',
       };
-    } else if (isSameAddress(fromAddress, myEthAddress) && status === 'confirmed') {
+    } else if (addressesEqual(sender, myEthAddress) && status === 'confirmed') {
       return {
         message: t('notification.transactionSentConfirmed', { tokenValue }),
         emoji: 'ok_hand',
@@ -143,14 +143,14 @@ export const getToastNotification = (data: mixed, myEthAddress: string): null | 
 
   if (type === FCM_DATA_TYPE.COLLECTIBLE) {
     if (!validCollectibleTransaction(notification)) return null;
-    const { fromAddress, toAddress } = notification;
+    const { fromAddress: sender, toAddress: receiver } = notification;
 
-    if (isSameAddress(toAddress, myEthAddress)) {
+    if (addressesEqual(receiver, myEthAddress)) {
       return {
         message: t('notification.receivedCollectible'),
         emoji: 'ok_hand',
       };
-    } else if (isSameAddress(fromAddress, myEthAddress)) {
+    } else if (addressesEqual(sender, myEthAddress)) {
       return {
         message: t('notification.collectibleSentAndReceived'),
         emoji: 'ok_hand',

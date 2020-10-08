@@ -33,6 +33,7 @@ import type { Assets, AssetsByAccount } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
 import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -79,31 +80,6 @@ const mockAssetsByAccount: Assets = {
 const mockAssets: AssetsByAccount = {
   '0x9c': mockAssetsByAccount,
 };
-
-const mockSupportedAssets = [
-  {
-    symbol: ETH,
-    name: 'ethereum',
-    balance: 1,
-    address: '',
-    description: '',
-    iconUrl: '',
-    iconMonoUrl: '',
-    wallpaperUrl: '',
-    decimals: 18,
-  },
-  {
-    symbol: PLR,
-    name: 'ethereum',
-    balance: 1,
-    address: '',
-    description: '',
-    iconUrl: '',
-    iconMonoUrl: '',
-    wallpaperUrl: '',
-    decimals: 18,
-  },
-];
 
 const mockFullAssetsListByAccount: Assets = {
   ETH: {

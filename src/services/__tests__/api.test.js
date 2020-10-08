@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import SDKWrapper from 'services/api';
-import { REGISTRATION_FAILED, USERNAME_FAILED } from 'constants/walletConstants';
+import { SDK_REASON_REGISTRATION_FAILED, SDK_REASON_USERNAME_FAILED } from 'constants/walletConstants';
 
 const sdkWrapper = new SDKWrapper();
 
@@ -105,15 +105,16 @@ describe('API service', () => {
     );
     expect(result).toEqual({
       error: true,
-      reason: USERNAME_FAILED,
+      reason: SDK_REASON_USERNAME_FAILED,
     });
   });
 
-  it('fails to register an account with empty parameters and return REGISTRATION_FAILED reason', async () => {
+  it('fails to register an account with empty parameters and' +
+    'return SDK_REASON_REGISTRATION_FAILED reason', async () => {
     const result = await sdkWrapper.registerOnAuthServer('', '', '');
     expect(result).toEqual({
       error: true,
-      reason: REGISTRATION_FAILED,
+      reason: SDK_REASON_REGISTRATION_FAILED,
     });
   });
 });

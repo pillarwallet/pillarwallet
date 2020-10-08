@@ -26,7 +26,7 @@ import debounce from 'lodash.debounce';
 import t from 'translations/translate';
 
 // actions
-import { checkUsernameAvailabilityAction, registerOnBackendAction } from 'actions/onboardingActions';
+import { checkUsernameAvailabilityAction, resetUsernameCheckAction } from 'actions/onboardingActions';
 
 // components
 import { Wrapper, Spacing } from 'components/Layout';
@@ -39,18 +39,18 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 import TextInput from 'components/TextInput';
 
 // constants
-import { USERNAME_OK, CHECKING_USERNAME } from 'constants/walletConstants';
 import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
-import { isProdEnv } from 'utils/environment';
 import { validateUsername } from 'utils/validators';
+import { getEnsPrefix } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { User } from 'models/User';
 
 
 const UsernameWrapper = styled(Wrapper)`
@@ -93,15 +93,10 @@ const PROFILE_IMAGE_WIDTH = 144;
 type Props = {
   navigation: NavigationScreenProp<*>,
   checkUsernameAvailability: (username: string) => void,
-  resetWalletState: Function,
-  walletState: ?string,
-  session: Object,
-  apiUser: Object,
-  retry?: boolean,
-  registerOnBackend: Function,
-  importedWallet: ?Object,
+  resetUsernameCheck: () => void,
+  user: ?User,
   theme: Theme,
-  usernameCheckErrorMessage: ?string,
+  errorMessage: ?string,
 };
 
 const MODAL = {
@@ -109,19 +104,43 @@ const MODAL = {
   PRIVACY_POLICY: 'PRIVACY_POLICY',
 };
 
-const getEnsPrefix = () => isProdEnv ? '.pillar.eth' : '.pillar.kovan'; // eslint-disable-line i18next/no-literal-string
+export const getUsernameInputIcon = (
+  colors: Object,
+  isUsernameInputDirty: boolean,
+  isCheckingUsername: boolean,
+  user: ?User,
+  usernameValidationErrorMessage: ?string,
+  errorMessage: ?string,
+) => {
+  let statusIcon = null;
+  let iconColor = null;
+
+  if (isUsernameInputDirty && !isCheckingUsername) {
+    if (usernameValidationErrorMessage || errorMessage) {
+      statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.negative;
+    } else if (user?.username) {
+      statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
+      iconColor = colors.positive;
+    }
+  }
+
+  return { statusIcon, iconColor };
+};
 
 const NewProfile = ({
-  apiUser,
-  retry,
-  walletState,
-  importedWallet,
+  user,
   checkUsernameAvailability,
   navigation,
-  registerOnBackend,
   theme,
-  usernameCheckErrorMessage,
+  errorMessage,
+  resetUsernameCheck,
 }: Props) => {
+  useEffect(() => {
+    // prepare for username check if no user set
+    if (!user) resetUsernameCheck();
+  }, []);
+
   const [usernameValue, setUsernameValue] = useState(null);
   const [hasAgreedToTerms, setHasAgreedToTerms] = useState(false);
   const [hasAgreedToPolicy, setHasAgreedToPolicy] = useState(false);
@@ -130,7 +149,7 @@ const NewProfile = ({
 
   const isUsernameInputDirty = usernameValue !== null;
 
-  const usernameValidationErrorMessage = isUsernameInputDirty && validateUsername(usernameValue);
+  const usernameValidationErrorMessage = isUsernameInputDirty ? validateUsername(usernameValue) : null;
 
   const onValidUsername = useCallback(
     debounce(() => { if (usernameValue) checkUsernameAvailability(usernameValue); }, 200),
@@ -140,34 +159,31 @@ const NewProfile = ({
   useEffect(() => {
     if (!isCheckingUsername
       && !usernameValidationErrorMessage
+      && !errorMessage
       && isUsernameInputDirty) {
       setIsCheckingUsername(true);
-    } else if (usernameValidationErrorMessage && isCheckingUsername) {
-      // reset
+    } else if (isCheckingUsername && (usernameValidationErrorMessage || errorMessage)) {
+      // reset if error occurred during update
       setIsCheckingUsername(false);
     }
-  }, [usernameValue]);
+  }, [usernameValue, errorMessage]);
+
+  useEffect(() => {
+    // user updated, reset
+    if (isCheckingUsername) setIsCheckingUsername(false);
+  }, [user]);
 
   useEffect(() => {
     if (!usernameValidationErrorMessage) onValidUsername();
     return onValidUsername.cancel;
   }, [onValidUsername, usernameValue]);
 
-
-  useEffect(() => {
-    if (walletState !== CHECKING_USERNAME && isCheckingUsername) setIsCheckingUsername(false);
-  }, [walletState]);
-
   const colors = getThemeColors(theme);
 
-  const existingUser = !!apiUser?.walletId;
+  const existingUser = !!user?.walletId;
 
   const proceedToNextScreen = () => {
     Keyboard.dismiss();
-    if (retry) {
-      registerOnBackend();
-      return;
-    }
     const navProps = usernameValue ? { username: usernameValue } : null;
     if (Platform.OS === 'android') {
       navigation.navigate(PERMISSIONS, navProps);
@@ -177,25 +193,21 @@ const NewProfile = ({
   };
 
   const renderChooseUsername = () => {
-    let statusIcon = null;
-    let iconColor = null;
-
-    if (isUsernameInputDirty && !isCheckingUsername) {
-      if (usernameValidationErrorMessage || usernameCheckErrorMessage) {
-        statusIcon = 'close'; // eslint-disable-line i18next/no-literal-string
-        iconColor = colors.negative;
-      } else if (walletState === USERNAME_OK) {
-        statusIcon = 'check'; // eslint-disable-line i18next/no-literal-string
-        iconColor = colors.positive;
-      }
-    }
+    const { statusIcon, iconColor } = getUsernameInputIcon(
+      colors,
+      isUsernameInputDirty,
+      isCheckingUsername,
+      user,
+      usernameValidationErrorMessage,
+      errorMessage,
+    );
 
     return (
       <StyledWrapper>
         <TextInput
-          errorMessage={usernameValidationErrorMessage || usernameCheckErrorMessage}
+          errorMessage={usernameValidationErrorMessage || errorMessage}
           loading={isCheckingUsername}
-          rightPlaceholder={!importedWallet ? getEnsPrefix() : ''}
+          rightPlaceholder={!existingUser ? getEnsPrefix() : ''}
           iconProps={{
             icon: statusIcon,
             color: iconColor,
@@ -217,14 +229,14 @@ const NewProfile = ({
   const renderWelcomeBack = () => (
     <Wrapper flex={1} center regularPadding>
       <ProfileImage
-        uri={apiUser.profileLargeImage}
+        uri={user?.profileImage}
         diameter={PROFILE_IMAGE_WIDTH}
         style={{ marginBottom: 47 }}
-        userName={apiUser.username}
+        userName={user?.username}
         initialsSize={48}
       />
       <UsernameWrapper>
-        <Text>{t('auth:title.welcomeBack', { username: apiUser.username })}</Text>
+        <Text>{t('auth:title.welcomeBack', { username: user?.username })}</Text>
       </UsernameWrapper>
       <Paragraph small light center style={{ marginBottom: 40, paddingLeft: 40, paddingRight: 40 }}>
         {t('auth:paragraph.successfullyRestoredWallet')}
@@ -237,9 +249,9 @@ const NewProfile = ({
 
   const allowNext = isUsernameInputDirty
     && !usernameValidationErrorMessage
-    && !usernameCheckErrorMessage
+    && !errorMessage
     && !isCheckingUsername
-    && (importedWallet || hasAgreedToAllTerms);
+    && (existingUser || hasAgreedToAllTerms);
 
   const headerProps = existingUser
     ? { default: true, floating: true, transparent: true }
@@ -247,42 +259,38 @@ const NewProfile = ({
 
   return (
     <ContainerWithHeader
-      noBack={!!retry}
       headerProps={headerProps}
       putContentInScrollView={!existingUser}
       keyboardShouldPersistTaps="always"
       footer={!existingUser && (
         <FooterWrapper>
-          {!importedWallet &&
-          <React.Fragment>
-            <Checkbox
-              onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
-              small
-              lightText
-              wrapperStyle={{ marginBottom: 16 }}
-              checked={hasAgreedToTerms}
-            >
-              <CheckboxText>
-                {t('auth:withLink.readUnderstandAgreeTo', {
-                  linkedText: t('auth:termsOfUse'),
-                  onPress: () => setVisibleModal(MODAL.TERMS_OF_USE),
-                })}
-              </CheckboxText>
-            </Checkbox>
-            <Checkbox
-              onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
-              small
-              lightText
-              checked={hasAgreedToPolicy}
-            >
-              <CheckboxText>
-                {t('auth:withLink.readUnderstandAgreeTo', {
-                  linkedText: t('auth:privacyPolicy'),
-                  onPress: () => setVisibleModal(MODAL.PRIVACY_POLICY),
-                })}
-              </CheckboxText>
-            </Checkbox>
-          </React.Fragment>}
+          <Checkbox
+            onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
+            small
+            lightText
+            wrapperStyle={{ marginBottom: 16 }}
+            checked={hasAgreedToTerms}
+          >
+            <CheckboxText>
+              {t('auth:withLink.readUnderstandAgreeTo', {
+                linkedText: t('auth:termsOfUse'),
+                onPress: () => setVisibleModal(MODAL.TERMS_OF_USE),
+              })}
+            </CheckboxText>
+          </Checkbox>
+          <Checkbox
+            onPress={() => setHasAgreedToPolicy(!hasAgreedToPolicy)}
+            small
+            lightText
+            checked={hasAgreedToPolicy}
+          >
+            <CheckboxText>
+              {t('auth:withLink.readUnderstandAgreeTo', {
+                linkedText: t('auth:privacyPolicy'),
+                onPress: () => setVisibleModal(MODAL.PRIVACY_POLICY),
+              })}
+            </CheckboxText>
+          </Checkbox>
           <Spacing h={22} />
           <Button
             title={t('auth:button.next')}
@@ -311,17 +319,18 @@ const NewProfile = ({
 };
 
 const mapStateToProps = ({
-  wallet: { walletState, onboarding: { apiUser, importedWallet, usernameCheckErrorMessage } },
+  onboarding: {
+    user,
+    errorMessage,
+  },
 }: RootReducerState): $Shape<Props> => ({
-  walletState,
-  apiUser,
-  importedWallet,
-  usernameCheckErrorMessage,
+  user,
+  errorMessage,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   checkUsernameAvailability: (username: string) => dispatch(checkUsernameAvailabilityAction(username)),
-  registerOnBackend: () => dispatch(registerOnBackendAction()),
+  resetUsernameCheck: () => dispatch(resetUsernameCheckAction(true)),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(NewProfile));

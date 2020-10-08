@@ -92,3 +92,5 @@ export const CURRENCY_SYMBOLS = {
   EUR: '€',
 };
 
+export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
+

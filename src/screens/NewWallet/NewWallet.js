@@ -17,53 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import t from 'translations/translate';
 
-import { Container, Wrapper } from 'components/Layout';
-import { BaseText } from 'components/Typography';
+// components
+import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
-import Button from 'components/Button';
-import { USERNAME_FAILED, REGISTRATION_FAILED } from 'constants/walletConstants';
-import { APP_FLOW } from 'constants/navigationConstants';
+import RetryApiRegistration from 'components/RetryApiRegistration';
 
-const API_FAILURES = [USERNAME_FAILED, REGISTRATION_FAILED];
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  wallet: Object,
+  errorMessage: ?string,
 };
 
-class NewWallet extends React.PureComponent<Props> {
-  render() {
-    const { wallet, navigation } = this.props;
-    const { walletState } = wallet;
+const NewWallet = ({ errorMessage }: Props) => (
+  <Container center={!!errorMessage}>
+    {!errorMessage && <Loader />}
+    {!!errorMessage && <RetryApiRegistration />}
+  </Container>
+);
 
-    const tryToReRegister = () => {
-      navigation.navigate(APP_FLOW);
-    };
+const mapStateToProps = ({ onboarding: { errorMessage } }) => ({ errorMessage });
 
-    const failedToRegister = API_FAILURES.includes(walletState);
-
-    return (
-      <Container center={failedToRegister}>
-        {!failedToRegister && (
-          <Loader />
-        )}
-        {failedToRegister && (
-          <Wrapper fullScreen center flex={1}>
-            <BaseText style={{ marginBottom: 20 }} bigText={!failedToRegister}>
-              {t('auth:label.registrationFailed')}
-            </BaseText>
-            <Button title={t('auth:button.tryAgain')} onPress={tryToReRegister} />
-          </Wrapper>
-        )}
-      </Container>
-    );
-  }
-}
-
-const mapStateToProps = ({ wallet }) => ({ wallet });
 export default connect(mapStateToProps)(NewWallet);
