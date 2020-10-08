@@ -61,7 +61,6 @@ import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
-import FirebaseDBHandler from 'components/FirebaseDBHandler/FirebaseDBHandler';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
@@ -289,7 +288,7 @@ class App extends React.Component<Props, *> {
                 title={`Change lang (current: ${i18n.language})`} // eslint-disable-line i18next/no-literal-string
                 onPress={() => changeLanguage(i18n.language === DEV_LANG ? DEFAULT_LANGUAGE : DEV_LANG)}
               />}
-              {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
+              {!!activeWalkthroughSteps?.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&
                 <Button
                   title={`Environment: ${this.state.env}`} // eslint-disable-line i18next/no-literal-string
@@ -340,9 +339,7 @@ const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDis
 const AppRoot = () => (
   <Provider store={store}>
     <PersistGate loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>} persistor={persistor}>
-      <FirebaseDBHandler>
-        {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
-      </FirebaseDBHandler>
+      {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
     </PersistGate>
   </Provider>
 );

@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import AsyncStorage from '@react-native-community/async-storage';
 import get from 'lodash.get';
 import merge from 'lodash.merge';
 import * as Sentry from '@sentry/react-native';
@@ -25,44 +24,28 @@ import { printLog, reportLog } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
 import { firebaseAuth, firebaseDb } from './firebase';
 
+const { Error, Warning } = Sentry.Severity;
+
 const STORAGE_SETTINGS_KEY = 'storageSettings';
 
-const userUID = firebaseAuth?.currentUser?.uid;
-
-const DB_PATH = `/users/${userUID}`;
-
-export const DB_STATE_KEY = 'storageState';
-
-export const db = firebaseDb.ref(DB_PATH); // eslint-disable-line i18next/no-literal-string
-
-// this thing overwrites the whole storageState object
-// everytime we want to update, we gotta do
-// firebaseDb.ref(FULL_PATH!!!!!).update({})
-// needless to say, we dont wanna (and can we?) do this for every val
-// so perhaps we can just overwrite each reducer whenever it changes?
-// export const updateDBState = (key: string, object: Object) => db.update({ [DB_STATE_KEY]: { [key]: object } });
-
-// export const updateDBState = (key: string, object: Object) =>
-//  firebaseDb.ref(`${DB_PATH}/${DB_STATE_KEY}/${key}`).update(object);
-
-// export const updateDBState = (key: string, object: Object) => db.update({
-//   [`/${DB_STATE_KEY}/${key}`]: object,
-// });
+const getDb = (uid: string) => firebaseDb.ref(`/users/${uid}`); // eslint-disable-line i18next/no-literal-string
 
 function Storage(name: string) {
   this.name = name;
-  this.prefix = `wallet-storage:${this.name}:`; // eslint-disable-line i18next/no-literal-string
   this.activeDocs = {};
+  this.db = getDb(firebaseAuth?.currentUser?.uid);
 }
 
-Storage.prototype.getKey = function (id: string) {
-  return this.prefix + id;
-};
-
 Storage.prototype.get = async function (id: string) {
-  const data = await AsyncStorage.getItem(this.getKey(id))
-    .then(JSON.parse)
-    .catch(() => {});
+  const data = await this.db.once('value')
+    .then(snapshot => {
+      const dbState = snapshot.val();
+      // TODO is this safe?
+      return dbState ? dbState[id] : {};
+    })
+    .catch(e => {
+      reportLog('Failed to fetch value from Database', e, Warning);
+    });
   return data || {};
 };
 
@@ -73,51 +56,35 @@ Storage.prototype.mergeValue = async function (id: string, data: Object): Object
 
 Storage.prototype.save = async function (id: string, data: Object, forceRewrite: boolean = false) {
   const newValue = forceRewrite ? data : await this.mergeValue(id, data);
-  const key = this.getKey(id);
 
-  if (this.activeDocs[key]) {
-    reportLog('Race condition spotted', { id, data, forceRewrite }, Sentry.Severity.Error);
+  if (this.activeDocs[id]) {
+    reportLog('Race condition spotted', { id, data, forceRewrite }, Error);
   }
 
-  this.activeDocs[key] = true;
+  this.activeDocs[id] = true;
 
-  return AsyncStorage
-    .setItem(key, JSON.stringify(newValue))
-    .then(() => {
-      this.activeDocs[key] = false;
-    })
-    .catch(err => {
-      reportLog('AsyncStorage Exception', { id, data, err }, Sentry.Severity.Error);
-      this.activeDocs[key] = false;
+  return this.db.update({ [id]: newValue })
+    .then(() => { this.activeDocs[id] = false; })
+    .catch(e => {
+      reportLog('Failed to update user storage database', e, Warning);
+      this.activeDocs[id] = false;
     });
 };
 
-Storage.prototype.getAllKeys = function () {
-  return AsyncStorage
-    .getAllKeys()
-    .then(keys => keys.filter(key => key.startsWith(this.prefix)))
-    .catch(() => []);
-};
-
 Storage.prototype.getAll = function () {
-  return this.getAllKeys()
-    .then(keys => AsyncStorage.multiGet(keys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
-    .then(values => {
-      return values.reduce((memo, [_key, _value]) => {
-        const key = _key.replace(this.prefix, '');
-        return {
-          ...memo,
-          [key]: JSON.parse(_value),
-        };
-      }, {});
-    }) // { user: 'userValue', ... }
-    .catch(() => ({}));
+  return this.db.once('value')
+    .then(snapshot => snapshot.val())
+    .catch(e => {
+      reportLog('Failed to load data from database', e, Warning);
+    });
 };
 
 Storage.prototype.removeAll = async function () {
-  const keys = await this.getAllKeys()
-    .then(data => data.filter(key => key !== this.getKey(STORAGE_SETTINGS_KEY)));
-  return AsyncStorage.multiRemove(keys);
+  try {
+    await this.db.remove();
+  } catch (e) {
+    reportLog('Failed to remove user data from database', e, Error);
+  }
 };
 
 Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
@@ -147,9 +114,17 @@ Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
       },
     }, true);
   } catch (e) {
-    reportLog('DB migration to AsyncStorage failed', { error: e }, Sentry.Severity.Error);
+    reportLog('PouchB migration failed', { error: e }, Error);
   }
   return Promise.resolve();
+};
+
+Storage.prototype.set = async function (data: object) {
+  try {
+    await this.db.set(data);
+  } catch (e) {
+    reportLog('Failed to migrate user storage to firebase', e, Error);
+  }
 };
 
 Storage.getInstance = function (name: string) {
@@ -158,6 +133,26 @@ Storage.getInstance = function (name: string) {
   }
   this._instances[name] = this._instances[name] || new Storage(name);
   return this._instances[name];
+};
+
+Storage.prototype.initialize = async function () {
+  const timeout = setTimeout(() => {
+    // failed to fetch data, likely because user is offline
+    reportLog('Failed to initialize user Firebase storage', null, Warning);
+    // TODO handle
+  }, 5000);
+  try {
+    const dbState = await this.getAll();
+    if (!dbState) {
+      const userUID = firebaseAuth?.currentUser?.uid;
+      this.db = getDb(userUID);
+      await this.set({ });
+    }
+    clearTimeout(timeout);
+  } catch (e) {
+    clearTimeout(timeout);
+    reportLog('Failed to initialize user Firebase storage', e, Warning);
+  }
 };
 
 export default Storage;

@@ -429,11 +429,22 @@ export const resetAppState = async () => {
   Intercom.logout();
   await firebaseIid.delete()
     .catch(e => reportLog(`Could not delete the Firebase ID when resetting app state: ${e.message}`, e));
-  await firebaseAuth.signOut()
-    .catch(e => reportLog(`Could not sign out with Firebase when resetting app state: ${e.message}`, e));
-  await storage.removeAll();
   await smartWalletService.reset();
   clearWebViewCookies();
+};
+
+const callFirebaseLogoutActions = async () => {
+  try {
+    // clear storage and remove UID
+    await storage.removeAll();
+    await firebaseAuth.signOut();
+    // create a new UID
+    await firebaseAuth.signInAnonymously();
+    // create a new user object in the Firebase db
+    await storage.initialize();
+  } catch (e) {
+    reportLog('Could not reset user storage on logout', e, 'error');
+  }
 };
 
 export const logoutAction = () => {
@@ -441,6 +452,7 @@ export const logoutAction = () => {
     navigate(NavigationActions.navigate({ routeName: LOGOUT_PENDING }));
     const themeType = get(getState(), 'appSettings.data.themeType', '');
     await resetAppState();
+    await callFirebaseLogoutActions();
     await dispatch({ type: LOG_OUT });
     await dispatch({ type: RESET_APP_SETTINGS, payload: {} });
     await resetKeychainDataObject();
