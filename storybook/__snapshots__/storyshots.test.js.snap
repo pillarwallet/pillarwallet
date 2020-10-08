@@ -33567,12 +33567,13 @@ exports[`Storyshots Value Input default 1`] = `
                 Array [
                   Object {
                     "color": "#0A1427",
+                    "flexBasis": 0,
+                    "flexGrow": 1,
+                    "flexShrink": 1,
                     "fontSize": 16,
                     "lineHeight": 24,
                   },
-                  Object {
-                    "flex": 1,
-                  },
+                  undefined,
                 ],
               ],
             ]
