@@ -165,7 +165,7 @@ const NewProfile = ({
       // reset if error occurred during update
       setIsCheckingUsername(false);
     }
-  }, [usernameValue]);
+  }, [usernameValue, errorMessage]);
 
   useEffect(() => {
     // user updated, reset
