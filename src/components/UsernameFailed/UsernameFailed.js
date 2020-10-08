@@ -105,6 +105,7 @@ const UsernameFailed = ({
   useEffect(() => {
     if (!isCheckingUsername
       && !usernameValidationErrorMessage
+      && !errorMessage
       && isUsernameInputDirty) {
       setIsCheckingUsername(true);
     } else if (isCheckingUsername && (usernameValidationErrorMessage || errorMessage)) {
