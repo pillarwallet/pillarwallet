@@ -47,14 +47,98 @@ type ToastItem = {
   data: $Exact<CardProps>,
 };
 
+// Meant to be 'symbol', which is supported from flow 0.114.0
+type ProviderId = $FlowFixMe;
+
 type Instance = {
-  show: (options: ToastItem) => void;
+  show: (toast: ToastItem, options?: { noAnimation?: boolean }) => void;
   close: (id: string) => void;
   closeAll: () => void;
-  count: () => number;
+  getToasts: () => ToastItem[];
+  +id: ProviderId,
 };
 
+type ListUpdate = ToastItem[] | ((prev: ToastItem[]) => ToastItem[]);
+
 const AUTOCLOSE_DELAY = 2000;
+const goToSupport = () => Intercom.displayMessenger();
+
+export default class Toast {
+  static _toastInstances: Instance[] = [];
+  static _lastToastId = 0;
+  static _justShownIds = new Set<string>();
+
+  static _getTopInstance = (): ?Instance => Toast._toastInstances[Toast._toastInstances.length - 1];
+
+  static addProvider = (provider: Instance) => Toast._toastInstances.push(provider);
+
+  static removeProvider = (providerId: ProviderId) => {
+    const instance = Toast._toastInstances.find(({ id }) => id === providerId);
+    if (!instance) return;
+
+    Toast._toastInstances.splice(Toast._toastInstances.indexOf(instance), 1);
+    const toasts = instance.getToasts();
+    const nextInstance = Toast._getTopInstance();
+
+    if (nextInstance) {
+      toasts.forEach(toast => {
+        const noAnimation = !Toast._justShownIds.has(toast.id);
+        nextInstance.show(toast, { noAnimation });
+      });
+    } else {
+      toasts.forEach(({ data: { onClose = noop } }) => onClose());
+    }
+  }
+
+  static show = (options: ToastOptions): string | null => {
+    const instance = Toast._getTopInstance();
+
+    if (instance) {
+      const {
+        link,
+        onLinkPress,
+        supportLink,
+        autoClose = false,
+        ...rest
+      } = options;
+
+      const id = (++Toast._lastToastId).toString();
+
+      Toast._justShownIds.add(id);
+      requestAnimationFrame(() => {
+        Toast._justShownIds.delete(id);
+      });
+
+      const linkProps = supportLink ? {
+        link: t('label.contactSupport'),
+        onLinkPress: goToSupport,
+      } : {
+        link,
+        onLinkPress,
+      };
+
+      instance.show({
+        id,
+        data: {
+          ...linkProps,
+          ...rest,
+        },
+      });
+
+      if (autoClose) {
+        setTimeout(() => Toast.close(id), AUTOCLOSE_DELAY);
+      }
+
+      return id;
+    }
+
+    return null;
+  };
+
+  static close = (id: string) => Toast._toastInstances.forEach(instance => instance.close(id));
+  static closeAll = () => Toast._toastInstances.forEach(instance => instance.closeAll());
+  static isVisible = () => Toast._toastInstances.some(instance => instance.getToasts().length > 0);
+}
 
 const ToastsWrapper = styled(SafeAreaView)`
   position: absolute;
@@ -66,50 +150,69 @@ const ToastsWrapper = styled(SafeAreaView)`
   padding: 0px 20px;
 `;
 
-const toastInstances: Instance[] = [];
-
-const Toast = () => {
+export const ToastProvider = () => {
   const [toasts, setToasts] = useState<ToastItem[]>([]);
+  const [isAnimationDisabled, setAnimationDisabled] = useState(false);
+
+  // Because sometimes the compoment unmounts with a closing modal before the
+  // render function is re-run, we keep a synced copy of the array in order not
+  // to miss any toast. This also ensures the isAnimationDisabled flag is always reset.
+  const toastCopy = useRef<ToastItem[]>(toasts);
+
+  const updateToasts = useCallback((update: ListUpdate, noAnimation = false) => {
+    if (typeof update === 'function') {
+      toastCopy.current = update(toastCopy.current);
+    } else {
+      toastCopy.current = update;
+    }
+
+    setAnimationDisabled(noAnimation);
+    setToasts(update);
+  }, []);
+
   const instance = useRef<Instance>({
     show: noop,
     close: noop,
     closeAll: noop,
-    count: () => 0,
+    getToasts: () => toastCopy.current,
+    id: Symbol('ToastProvider instance id'),
   });
 
-  instance.current.show = useCallback((toast: ToastItem) => setToasts(prev => [toast, ...prev]), []);
+  instance.current.show = useCallback((toast: ToastItem, { noAnimation = false } = {}) => {
+    updateToasts(prev => [toast, ...prev], noAnimation);
+  }, [updateToasts]);
 
   const close = useCallback((targetId: string) => {
     const toast = toasts.find(({ id }) => id === targetId);
     if (toast) {
-      setToasts(prev => prev.filter(({ id }) => id !== targetId));
+      updateToasts(prev => prev.filter(({ id }) => id !== targetId));
       if (toast.data.onClose) toast.data.onClose();
     }
-  }, [toasts]);
+  }, [toasts, updateToasts]);
   instance.current.close = close;
 
   instance.current.closeAll = useCallback(() => {
-    setToasts([]);
+    updateToasts([]);
     toasts.forEach(({ data: { onClose = noop } }) => onClose());
-  }, [toasts]);
-
-  instance.current.count = useCallback(() => toasts.length, [toasts.length]);
+  }, [toasts, updateToasts]);
 
   useEffect(() => {
+    const providerId = instance.current.id;
+
     // This proxy ensures that the identities of the instance and its methods
     // available on outside are stable.
     const instanceWrapper: Instance = {
-      show: toast => instance.current.show(toast),
+      show: (toast, options) => instance.current.show(toast, options),
       close: id => instance.current.close(id),
       closeAll: () => instance.current.closeAll(),
-      count: () => instance.current.count(),
+      getToasts: () => toastCopy.current,
+      id: providerId,
     };
 
-    toastInstances.push(instanceWrapper);
+    Toast.addProvider(instanceWrapper);
 
     return () => {
-      const index = toastInstances.indexOf(instanceWrapper);
-      if (index !== -1) toastInstances.splice(index, 1);
+      Toast.removeProvider(providerId);
     };
   }, []);
 
@@ -134,56 +237,8 @@ const Toast = () => {
         items={toasts}
         renderItem={renderToast}
         onSwipeDismiss={close}
+        noAnimation={isAnimationDisabled}
       />
     </ToastsWrapper>
   );
 };
-
-const getTopInstance = (): ?Instance => toastInstances[toastInstances.length - 1];
-const goToSupport = () => Intercom.displayMessenger();
-const closeWithDelay = (id: string) => setTimeout(() => Toast.close(id), AUTOCLOSE_DELAY);
-
-let lastToastId = 0;
-
-Toast.show = (options: ToastOptions): string | null => {
-  const instance = getTopInstance();
-
-  if (instance) {
-    const {
-      link,
-      onLinkPress,
-      supportLink,
-      autoClose = false,
-      ...rest
-    } = options;
-
-    const id = (++lastToastId).toString();
-
-    const linkProps = supportLink ? {
-      link: t('label.contactSupport'),
-      onLinkPress: goToSupport,
-    } : {
-      link,
-      onLinkPress,
-    };
-
-    instance.show({
-      id,
-      data: {
-        ...linkProps,
-        ...rest,
-      },
-    });
-
-    if (autoClose) closeWithDelay(id);
-    return id;
-  }
-
-  return null;
-};
-
-Toast.close = (id: string) => toastInstances.forEach(instance => instance.close(id));
-Toast.closeAll = () => toastInstances.forEach(instance => instance.closeAll());
-Toast.isVisible = () => toastInstances.some(instance => instance.count() > 0);
-
-export default Toast;

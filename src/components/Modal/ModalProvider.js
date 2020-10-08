@@ -22,8 +22,6 @@ import React, { useContext } from 'react';
 import type { Node as ReactNode } from 'react';
 import { Keyboard } from 'react-native';
 
-import Toast from 'components/Toast';
-
 export type ModalOptions = {|
   render: () => ReactNode,
 |}
@@ -126,7 +124,6 @@ class ModalProvider extends React.Component<{||}, State> {
 
     (async () => {
       Keyboard.dismiss();
-      if (Toast.isVisible()) Toast.closeAll();
 
       // If this is the modal on top of the stack, close with animation before
       // removing from state. The other case shouldn't happen, so while we make

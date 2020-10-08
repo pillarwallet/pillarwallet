@@ -22,7 +22,8 @@ import React from 'react';
 import type { Node as ReactNode } from 'react';
 import RNModal from 'react-native-modal';
 
-import Toast from 'components/Toast';
+import { ToastProvider } from 'components/Toast';
+
 import ModalProvider, { ModalStack, ModalIdContext } from './ModalProvider';
 import type { ModalOptions } from './ModalProvider';
 
@@ -142,10 +143,11 @@ class Modal extends React.Component<Props, State> {
     // swipeDirection is passed explicitly to work around issues with using
     // spread operator on union types
     const { children, swipeDirection, ...props } = this.props;
+    const { isVisible } = this.state;
 
     return (
       <RNModal
-        isVisible={this.state.isVisible}
+        isVisible={isVisible}
         propagateSwipe
         swipeDirection={swipeDirection ?? 'down'}
         onSwipeComplete={this.close}
@@ -157,7 +159,7 @@ class Modal extends React.Component<Props, State> {
         onModalHide={this.onHide}
       >
         {children}
-        <Toast />
+        {isVisible && <ToastProvider />}
         <ModalStack />
       </RNModal>
     );
