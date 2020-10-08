@@ -891,9 +891,10 @@ class AppFlow extends React.Component<Props, State> {
       user,
       isRegisteringUser,
       finishOnboarding,
+      wallet,
     } = this.props;
-    // no walletId means user is not yet registered, try to finish this right away when online
-    if (!user?.walletId && !isRegisteringUser && isOnline) {
+    // no user.walletId means user is not yet registered, try to finish this right away when online
+    if (!!wallet && !user?.walletId && !isRegisteringUser && isOnline) {
       finishOnboarding();
     }
   }
