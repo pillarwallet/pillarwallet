@@ -50,6 +50,7 @@ import { DARK_THEME } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
 import { delay, reportLog, reportOrWarn } from 'utils/common';
@@ -87,7 +88,7 @@ import {
   updatePinAttemptsAction,
 } from './walletActions';
 import { fetchSmartWalletTransactionsAction } from './historyActions';
-import { setAppThemeAction, initialDeeplinkExecutedAction } from './appSettingsActions';
+import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
@@ -102,6 +103,7 @@ import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
+import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
 
 
 const storage = Storage.getInstance('db');
@@ -433,13 +435,33 @@ export const lockScreenAction = (onLoginSuccess?: Function, errorMessage?: strin
 
 export const resetAppStateAction = (stateAfterReset: Object) => {
   return (dispatch: Dispatch, getState: GetState) => {
-    const savedThemeType = getState().appSettings?.data?.themeType;
+    const {
+      appSettings: {
+        data: {
+          localisation: savedLocalisation,
+          themeType: savedThemeType,
+        },
+      },
+      cache: { cachedUrls },
+    } = getState();
 
     dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
 
     // set and store theme after reset
     if (savedThemeType === DARK_THEME) {
       dispatch(setAppThemeAction(DARK_THEME));
+    }
+
+    // manage language settings (from onboarding) as those are overwritten
+    if (savedLocalisation && savedLocalisation.activeLngCode) {
+      const { activeLngCode, translationVersion } = savedLocalisation;
+      dispatch(setAppLanguageAction(activeLngCode, translationVersion));
+    }
+
+    // app level cached urls
+    if (cachedUrls) {
+      dispatch({ type: SET_CACHED_URLS, payload: cachedUrls });
+      dispatch(saveDbAction('cachedUrls', { cachedUrls }));
     }
   };
 };
@@ -491,6 +513,9 @@ export const logoutAction = () => {
     dispatch(resetAppStateAction({ session: { data: { isOnline } } }));
 
     // is cleaned up so we would not blind users after they delete wallet :)
+
+    // leave translation initialised flag in place
+    if (getState()?.session?.data?.translationsInitialised) dispatch(setSessionTranslationBundleInitialisedAction());
     navigate(NavigationActions.navigate({ routeName: ONBOARDING_FLOW }));
   };
 };

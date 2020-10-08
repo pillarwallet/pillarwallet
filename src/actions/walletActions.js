@@ -35,7 +35,7 @@ import {
   UPDATE_WALLET_BACKUP_STATUS,
   SET_WALLET_IS_ENCRYPTING,
 } from 'constants/walletConstants';
-import { RECOVERY_SETTINGS } from 'constants/navigationConstants';
+import { WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
@@ -179,7 +179,7 @@ export const checkForWalletBackupToastAction = () => {
       autoClose: false,
       onPress: () => {
         const action = NavigationActions.navigate({
-          routeName: RECOVERY_SETTINGS,
+          routeName: WALLET_SETTINGS,
         });
         navigate(action);
       },

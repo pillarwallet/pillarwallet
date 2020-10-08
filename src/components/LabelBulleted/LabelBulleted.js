@@ -18,11 +18,40 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type SessionData = {|
-  isOnline: boolean,
-  fcmToken: ?string,
-  isAuthorizing: boolean,
-  translationsInitialised: boolean,
-  fallbackLanguageVersion: ?string,
-  sessionLanguageCode: ?string,
-|};
+import * as React from 'react';
+import styled from 'styled-components/native';
+import { BaseText } from 'components/Typography';
+import { fontSizes } from 'utils/variables';
+
+
+type Props = {
+  label: string,
+  color?: string,
+};
+
+const BadgeWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const Bullet = styled.View`
+  background-color: ${({ color, theme }) => color || theme.colors.primary};
+  height: 10px;
+  width: 10px;
+  border-radius: 10px;
+  margin-right: 4px;
+`;
+
+const Label = styled(BaseText)`
+  font-size: ${fontSizes.tiny}px;
+`;
+
+export const LabelBulleted = (props: Props) => {
+  const { label, color } = props;
+  return (
+    <BadgeWrapper {...props}>
+      <Bullet color={color} />
+      <Label>{label}</Label>
+    </BadgeWrapper>
+  );
+};

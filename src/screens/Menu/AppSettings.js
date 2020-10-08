@@ -32,6 +32,8 @@ import {
   saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
+import { getDefaultSupportedUserLanguage, getLanguageFullName } from 'services/localisation/translations';
+import { changeLanguageAction } from 'actions/localisationActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -42,6 +44,7 @@ import SlideModal from 'components/Modals/SlideModal';
 import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 
 // utils
 import { spacing, fontStyles, fontTrackings } from 'utils/variables';
@@ -50,6 +53,8 @@ import SettingsListItem from 'components/ListItem/SettingsItem';
 import Checkbox from 'components/Checkbox';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
+import localeConfig from 'configs/localeConfig';
+import { addressesEqual } from 'utils/assets';
 
 // selectors
 import {
@@ -67,6 +72,9 @@ import { firebaseRemoteConfig } from 'services/firebase';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { Assets } from 'models/Asset';
+import type { LocalisationOptions } from 'models/Translations';
+import type { NavigationScreenProp } from 'react-navigation';
+import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // local
 import { SettingsSection } from './SettingsSection';
@@ -84,6 +92,12 @@ type Props = {
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
+  changeLanguage: (languageCode: string) => void,
+  localisation: ?LocalisationOptions,
+  navigation: NavigationScreenProp<*>,
+  devices: ConnectedDevice[],
+  activeDeviceAddress: string,
+  sessionLanguageCode: ?string,
 };
 
 type State = {
@@ -113,11 +127,15 @@ const CheckboxText = styled(BaseText)`
 
 const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
 const CURRENCY = 'currency';
+const LANGUAGE = 'language';
 const MODAL = {
   SYSTEM_INFO: 'systemInfo',
   BASE_CURRENCY: 'baseCurrency',
   ANALYTICS: 'analytics',
+  LANGUAGES: 'languages',
 };
+const languages = Object.keys(localeConfig.supportedLanguages)
+  .map(languageCode => ({ name: localeConfig.supportedLanguages[languageCode], value: languageCode }));
 
 class AppSettings extends React.Component<Props, State> {
   state = {
@@ -136,13 +154,19 @@ class AppSettings extends React.Component<Props, State> {
       key={value}
       label={name}
       isSelected={value === currentValue}
-      onPress={() => onSelect({ [field]: value })}
+      onPress={() => onSelect(value)}
     />
   );
 
-  handleCurrencyUpdate = ({ currency }: Object) => {
+  handleCurrencyUpdate = (value: string) => {
     const { saveBaseFiatCurrency } = this.props;
-    saveBaseFiatCurrency(currency);
+    saveBaseFiatCurrency(value);
+    this.setState({ visibleModal: null });
+  };
+
+  handleLanguageUpdate = (value: string) => {
+    const { changeLanguage } = this.props;
+    changeLanguage(value);
     this.setState({ visibleModal: null });
   };
 
@@ -160,13 +184,27 @@ class AppSettings extends React.Component<Props, State> {
       isGasTokenSupported,
       setPreferredGasToken,
       isSmartAccount,
+      localisation,
+      navigation,
+      devices,
+      activeDeviceAddress,
+      sessionLanguageCode,
     } = this.props;
 
     const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
 
+    const hasOtherDevicesLinked = !!devices.length
+      && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
     const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR);
 
     return [
+      {
+        key: 'language',
+        title: t('settingsContent.settingsItem.language.title'),
+        onPress: () => this.setState({ visibleModal: MODAL.LANGUAGES }),
+        value: getLanguageFullName(localisation?.activeLngCode || sessionLanguageCode || localeConfig.defaultLanguage),
+        hidden: !localeConfig.isEnabled && Object.keys(localeConfig.supportedLanguages).length <= 1,
+      },
       {
         key: 'localFiatCurrency',
         title: t('settingsContent.settingsItem.fiatCurrency.title'),
@@ -194,6 +232,15 @@ class AppSettings extends React.Component<Props, State> {
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
       },
       {
+        key: 'linkedDevices',
+        title: t('settingsContent.settingsItem.linkedDevices.title'),
+        subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
+        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
+        bulletedLabel: !hasOtherDevicesLinked && {
+          label: 'Not set',
+        },
+      },
+      {
         key: MODAL.ANALYTICS,
         title: t('settingsContent.settingsItem.analytics.title'),
         onPress: () => this.setState({ visibleModal: MODAL.ANALYTICS }),
@@ -206,9 +253,17 @@ class AppSettings extends React.Component<Props, State> {
     ].filter(Boolean);
   };
 
-  renderCurrencyListItem = (item) => {
-    const { baseFiatCurrency } = this.props;
-    return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
+  handleOptionListItemRender = (item, type) => {
+    const { baseFiatCurrency, localisation } = this.props;
+    switch (type) {
+      case CURRENCY:
+        return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
+      case LANGUAGE:
+        const currentLanguage = localisation?.activeLngCode || getDefaultSupportedUserLanguage();
+        return this.renderListItem(LANGUAGE, this.handleLanguageUpdate, currentLanguage)(item);
+      default:
+        return null;
+    }
   };
 
   componentDidUpdate(prevProps: Props) {
@@ -259,7 +314,7 @@ class AppSettings extends React.Component<Props, State> {
         >
           <FlatList
             data={currencies}
-            renderItem={this.renderCurrencyListItem}
+            renderItem={(item) => this.handleOptionListItemRender(item, CURRENCY)}
             keyExtractor={({ name }) => name}
           />
         </SlideModal>
@@ -314,6 +369,22 @@ class AppSettings extends React.Component<Props, State> {
           />
         }
 
+        {/* LANGUAGES */}
+        <SlideModal
+          isVisible={visibleModal === MODAL.LANGUAGES}
+          fullScreen
+          showHeader
+          onModalHide={() => this.setState({ visibleModal: null })}
+          title={t('settingsContent.settingsItem.language.screenTitle')}
+          insetTop
+        >
+          <FlatList
+            data={languages}
+            renderItem={(item) => this.handleOptionListItemRender(item, LANGUAGE)}
+            keyExtractor={({ name }) => name}
+          />
+        </SlideModal>
+
       </ContainerWithHeader>
     );
   }
@@ -325,12 +396,20 @@ const mapStateToProps = ({
       baseFiatCurrency,
       themeType,
       optOutTracking = false,
+      localisation,
     },
   },
+  smartWallet: { connectedAccount: { activeDeviceAddress } },
+  connectedDevices: { data: devices },
+  session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
   optOutTracking,
+  localisation,
+  activeDeviceAddress,
+  devices,
+  sessionLanguageCode,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -353,6 +432,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
+  changeLanguage: (languageCode: string) => dispatch(changeLanguageAction(languageCode)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AppSettings);

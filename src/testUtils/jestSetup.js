@@ -35,6 +35,7 @@ import { ETH, PLR } from 'constants/assetsConstants';
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 import envConfigMock from './envConfigMock';
+import localeConfigMock from './localeConfigMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -373,3 +374,5 @@ export const mockUserBadges = [{
   subtitle: 'Wallet created',
   updatedAt: 1553717968,
 }];
+
+jest.setMock('configs/localeConfig', localeConfigMock);

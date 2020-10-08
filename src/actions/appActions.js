@@ -66,9 +66,13 @@ import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
+import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
+
+// actions
+import { getTranslationsResourcesAndSetLanguageOnAppOpen } from 'actions/localisationActions';
 
 
 const storage = Storage.getInstance('db');
@@ -223,6 +227,11 @@ export const initAppAndRedirectAction = () => {
     } else {
       navAction = { routeName: ONBOARDING_FLOW };
     }
+
+    const { cachedUrls = {} } = get(storageData, 'cachedUrls', {});
+    dispatch({ type: SET_CACHED_URLS, payload: cachedUrls });
+
+    await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpen());
 
     navigate(NavigationActions.navigate(navAction));
 

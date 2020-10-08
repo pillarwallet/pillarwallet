@@ -18,15 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import { DEFAULT_NAMESPACE, NAMESPACES } from './config';
-
-i18n
-  .use(initReactI18next)
-  .init({
-    ns: DEFAULT_NAMESPACE,
-    defaultNS: NAMESPACES,
-  });
-
-export default i18n;
+export const CAPITALIZATION_POSTPROCESSOR = 'capitalization';
+export const PUNCTUATION_POSTPROCESSOR = 'punctuation';
+export const SUFFIX_PREFIX_POSTPROCESSOR = 'suffixPrefix';

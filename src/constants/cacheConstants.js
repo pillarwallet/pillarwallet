@@ -18,26 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import i18n from 'i18next';
-import t from 'translations/translate';
-import Toast from 'components/Toast';
-
-
-const changeLanguage = (code: string) => {
-  i18n.changeLanguage(code)
-    .then(() => {
-      Toast.show({
-        message: t('toast.languageChanged'),
-        emoji: 'ok_hand',
-      });
-    })
-    .catch(() => {
-      Toast.show({
-        message: t('toast.languageChangeFailed'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
-    });
+export const CACHE_STATUS = {
+  REQUESTED: 'CACHE_REQUESTED',
+  PENDING: 'CACHE_PENDING',
+  DONE: 'CACHED',
+  FAILED: 'CACHE_FAILED',
 };
 
-export default changeLanguage;
+export const SET_CACHED_URLS = 'SET_CACHED_URLS';
+export const REMOVE_URL_CACHE = 'REMOVE_URL_CACHE';

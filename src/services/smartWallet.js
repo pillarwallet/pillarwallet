@@ -580,6 +580,10 @@ class SmartWallet {
     return this.getSdk().removeAccountDevice(address).catch(() => null);
   }
 
+  getConnectedAccountTransactionExplorerLink(hash: string): string {
+    return this.getSdk().getConnectedAccountTransactionExplorerLink(hash); // not a promise
+  }
+
   handleError(error: any) {
     reportOrWarn('SmartWallet handleError: ', error, 'critical');
   }
