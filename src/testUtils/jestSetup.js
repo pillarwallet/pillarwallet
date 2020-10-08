@@ -34,6 +34,7 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 import envConfigMock from './envConfigMock';
+import localeConfigMock from './localeConfigMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -335,4 +336,6 @@ jest.setMock('@react-native-community/netinfo');
 jest.setMock('react-native-appearance', {});
 
 jest.setMock('configs/envConfig', envConfigMock);
+
+jest.setMock('configs/localeConfig', localeConfigMock);
 

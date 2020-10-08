@@ -47,7 +47,7 @@ import {
   ENCRYPTING,
   GENERATE_ENCRYPTED_WALLET,
 } from 'constants/walletConstants';
-import { PIN_CODE_CONFIRMATION, NEW_PROFILE, RECOVERY_SETTINGS } from 'constants/navigationConstants';
+import { PIN_CODE_CONFIRMATION, NEW_PROFILE, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
@@ -325,7 +325,7 @@ export const checkForWalletBackupToastAction = () => {
       autoClose: false,
       onPress: () => {
         const action = NavigationActions.navigate({
-          routeName: RECOVERY_SETTINGS,
+          routeName: WALLET_SETTINGS,
         });
         navigate(action);
       },

@@ -28,6 +28,8 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueInput from 'components/ValueInput';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
+import ArrowIcon from 'components/ArrowIcon';
+import { Spacing } from 'components/Layout';
 
 // types
 import type { Props as SelectorProps } from 'components/Selector';
@@ -61,7 +63,12 @@ const FooterInner = styled.View`
 `;
 
 const InputWrapper = styled.View`
-  padding: 0 40px;
+  padding: 24px 40px 10px;
+  align-items: center;
+  z-index: 10;
+`;
+
+const Wrapper = styled.View`
   align-items: center;
 `;
 
@@ -98,20 +105,22 @@ const SendContainer = (props: Props) => {
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
     >
-      <Selector
-        label={t('label.to')}
-        placeholder={t('label.chooseReceiver')}
-        searchPlaceholder={t('label.walletAddress')}
-        wrapperStyle={{ marginTop: spacing.medium }}
-        noOptionImageFallback
-        hasQRScanner
-        disableSelfSelect
-        allowEnteringCustomAddress
-        {...customSelectorProps}
-      />
-      <InputWrapper>
-        {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
-      </InputWrapper>
+      <Wrapper>
+        <InputWrapper>
+          {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
+        </InputWrapper>
+        <ArrowIcon />
+        <Spacing h={20} />
+        <Selector
+          placeholder={t('label.whereToSend')}
+          searchPlaceholder={t('label.walletAddress')}
+          noOptionImageFallback
+          hasQRScanner
+          disableSelfSelect
+          allowEnteringCustomAddress
+          {...customSelectorProps}
+        />
+      </Wrapper>
       {children}
     </ContainerWithHeader>
   );

@@ -44,8 +44,7 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
 // constants
 import {
-  SECURITY_SETTINGS,
-  RECOVERY_SETTINGS,
+  WALLET_SETTINGS,
   APP_SETTINGS,
   COMMUNITY_SETTINGS,
   ADD_EDIT_USER,
@@ -173,22 +172,11 @@ const Menu = ({
 
   const menuItems = [
     {
-      key: 'securitySettings',
-      title: t('settingsContent.settingsItem.securitySettings.title'),
-      emoji: 'rotating_light',
+      key: 'appSettings',
+      title: t('settingsContent.settingsItem.appSettings.title'),
+      emoji: 'gear',
       card: true,
-      action: () => navigation.navigate(SECURITY_SETTINGS),
-    },
-    {
-      key: 'recoverySettings',
-      title: t('settingsContent.settingsItem.recoverySettings.title'),
-      labelBadge: !isBackedUp && {
-        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
-        color: colors.negative,
-      },
-      emoji: 'mage',
-      card: true,
-      action: () => navigation.navigate(RECOVERY_SETTINGS),
+      action: () => navigation.navigate(APP_SETTINGS),
     },
     {
       key: 'userProfile',
@@ -198,18 +186,22 @@ const Menu = ({
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
-      key: 'appSettings',
-      title: t('settingsContent.settingsItem.appSettings.title'),
-      emoji: 'gear',
-      card: true,
-      action: () => navigation.navigate(APP_SETTINGS),
-    },
-    {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
       card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
+    },
+    {
+      key: 'walletSettings',
+      title: t('settingsContent.settingsItem.walletSettings.title'),
+      emoji: 'moneybag',
+      card: true,
+      action: () => navigation.navigate(WALLET_SETTINGS),
+      labelBadge: !isBackedUp && {
+        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
+        color: colors.negative,
+      },
     },
     {
       key: 'referFriends',

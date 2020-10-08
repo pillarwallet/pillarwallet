@@ -291,7 +291,7 @@ class AssetSearch extends React.Component<Props, State> {
       <ListItemWithImage
         label={name}
         itemImageUrl={fullIconUrl}
-        subtext={`${balance} ${symbol}`}
+        subtext={t('tokenValue', { value: balance, token: symbol })}
         fallbackToGenericToken
       >
         <Switcher

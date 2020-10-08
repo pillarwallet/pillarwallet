@@ -20,36 +20,13 @@
 
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-import languageDetector from './deviceLanguageDetector';
-import translationLoader from './translationLoader';
-import {
-  DEFAULT_NAMESPACE,
-  NAMESPACES,
-  POST_PROCESSORS,
-  SUPPORTED_LANGUAGES,
-  DEFAULT_LANGUAGE,
-  DEV_LANG,
-} from './config';
-
-import { PunctuationPostProcessor, CapitalizationPostProcessor, SuffixPrefixPostProcessor } from './postProcessors';
-
+import localeConfig from 'configs/localeConfig';
 
 i18n
   .use(initReactI18next)
-  .use(languageDetector)
-  .use(translationLoader)
-  .use(PunctuationPostProcessor)
-  .use(SuffixPrefixPostProcessor)
-  .use(CapitalizationPostProcessor)
   .init({
-    interpolation: { escapeValue: false },
-    transSupportBasicHtmlNodes: false,
-    ns: NAMESPACES,
-    defaultNS: DEFAULT_NAMESPACE,
-    postProcess: POST_PROCESSORS,
-    fallbackLng: DEFAULT_LANGUAGE,
-    supportedLngs: __DEV__ ? [...SUPPORTED_LANGUAGES, DEV_LANG] : SUPPORTED_LANGUAGES,
-    debug: !!__DEV__,
+    ns: localeConfig.defaultNameSpace,
+    defaultNS: localeConfig.namespaces,
   });
 
 export default i18n;

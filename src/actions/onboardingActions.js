@@ -56,6 +56,7 @@ import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
 import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
 import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -85,7 +86,7 @@ import {
 } from 'actions/walletActions';
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction } from 'actions/appSettingsActions';
+import { setAppThemeAction, setAppLanguageAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
@@ -248,7 +249,15 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
       },
     } = currentState.wallet;
 
-    // STEP 0: Clear local storage and reset app state except env if setup
+    // get language setting and cached urls from storage
+    const { appSettings: { data: { localisation } }, cache: { cachedUrls } } = currentState;
+
+    // STEP 0: Clear local storage and reset app state
+    // Exceptions:
+    //  env if setup
+    // theme and language selections in onboarding
+    // cached urls (used for languages)
+
     const env = await storage.get('environment');
     if (isImported) {
       await resetAppState();
@@ -266,6 +275,12 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     // manage theme as appSettings gets overwritten
     if (themeToStore) dispatch(setAppThemeAction(themeToStore));
 
+    // manage language settings (from onboarding) as those are overwritten
+    if (localisation) {
+      const { activeLngCode, translationVersion } = localisation;
+      if (activeLngCode) dispatch(setAppLanguageAction(activeLngCode, translationVersion));
+    }
+
     dispatch({ type: SET_HISTORY, payload: {} });
     dispatch({ type: UPDATE_BALANCES, payload: {} });
     dispatch({ type: UPDATE_COLLECTIBLES, payload: {} });
@@ -275,6 +290,12 @@ export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: 
     dispatch({ type: RESET_PAYMENT_NETWORK });
     dispatch({ type: SET_USER_SETTINGS, payload: {} });
     dispatch({ type: SET_USER_EVENTS, payload: [] });
+
+    // set cached languages (from onboarding) and add it to new storage
+    if (cachedUrls) {
+      dispatch({ type: SET_CACHED_URLS, payload: cachedUrls });
+      await dispatch(saveDbAction('cachedUrls', { cachedUrls }));
+    }
 
     // STEP 1: navigate to the new wallet screen
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));

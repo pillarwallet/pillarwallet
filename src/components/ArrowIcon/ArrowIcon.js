@@ -18,27 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as RNLocalize from 'react-native-localize';
-import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
+import * as React from 'react';
+import { withTheme } from 'styled-components/native';
+import Icon from 'components/Icon';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 
-const userPreferredLocales = RNLocalize.getLocales();
-const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
-
-const getSupportedLanguage = () => {
-  const language = userPreferredLanguages.find((languageCode) => SUPPORTED_LANGUAGES.includes(languageCode));
-  return language || DEFAULT_LANGUAGE;
+type Props = {
+  theme: Theme
 };
 
-const languageDetector = {
-  type: 'languageDetector',
-  async: true,
-  detect: (callback: (lang: string) => void) => {
-    callback(getSupportedLanguage());
-  },
-  init: () => {},
-  cacheUserLanguage: () => {},
+const ArrowIcon = ({ theme }: Props) => {
+  return (
+    <Icon
+      name="direct"
+      style={{
+        fontSize: 24,
+        color: getThemeColors(theme).text,
+      }}
+    />
+  );
 };
 
-export default languageDetector;
+export default withTheme(ArrowIcon);
 
