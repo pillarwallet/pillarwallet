@@ -105,7 +105,7 @@ const ValueInputHeader = (props: Props) => {
           <SelectorChevron name="selector" />
         </ChevronWrapper>
       </SideWrapper>
-      <AssetName onPress={onAssetPress}numberOfLines={1}>{name}</AssetName>
+      <AssetName onPress={onAssetPress} numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />
       <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>
