@@ -26,14 +26,13 @@ import { Container } from 'components/Layout';
 import CheckAuth from 'components/CheckAuth';
 import Loader from 'components/Loader';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { DECRYPTING } from 'constants/walletConstants';
 import { CHANGE_PIN_NEW_PIN } from 'constants/navigationConstants';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   resetIncorrectPassword: () => void,
-  walletState: ?string,
+  isDecrypting: boolean,
 };
 
 class CurrentPin extends React.Component<Props> {
@@ -43,9 +42,9 @@ class CurrentPin extends React.Component<Props> {
   };
 
   render() {
-    const { navigation, walletState } = this.props;
+    const { navigation, isDecrypting } = this.props;
 
-    if (walletState === DECRYPTING) {
+    if (isDecrypting) {
       return (
         <Container center>
           <Loader messages={[t('label.checking')]} />
@@ -65,9 +64,9 @@ class CurrentPin extends React.Component<Props> {
 }
 
 const mapStateToProps = ({
-  wallet: { walletState },
+  wallet: { isDecrypting },
 }: RootReducerState): $Shape<Props> => ({
-  walletState,
+  isDecrypting,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

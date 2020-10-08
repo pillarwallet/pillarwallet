@@ -2231,10 +2231,10 @@
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@smartwallet/sdk@2.2.0":
-  version "2.2.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-2.2.0.tgz#0d6370e7d8c43bc432024c8e206f17444c6a383c"
-  integrity sha1-DWNw59jEO8QyAkyOIG8XRExqODw=
+"@smartwallet/sdk@2.3.0":
+  version "2.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-2.3.0.tgz#04724b4bb0358fd0f97ee28ff3920ff30ef4f0a3"
+  integrity sha1-BHJLS7A1j9D5fuKP85IP8w708KM=
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.8"

@@ -187,6 +187,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     const {
       appSettings: { data: { blockchainNetwork } },
       accounts: { data: accounts },
+      user: { data: user },
     } = getState();
 
     const smartWalletAccount = findFirstSmartAccount(accounts);
@@ -207,6 +208,9 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
         payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
       });
     }
+
+    // following code should not be done if user is not registered on back-end
+    if (!user?.walletId) return;
 
     dispatch(setUserEnsIfEmptyAction());
     dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));

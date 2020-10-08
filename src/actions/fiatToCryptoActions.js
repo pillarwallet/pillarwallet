@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
 import {
   SET_ALTALIX_AVAILABILITY,
   SET_SENDWYRE_RATES,
@@ -25,17 +26,27 @@ import {
   SET_SENDWYRE_COUNTRY_SUPPORT,
   RESET_SENDWYRE_COUNTRY_SUPPORT,
 } from 'constants/fiatToCryptoConstants';
-import { reportOrWarn } from 'utils/common';
 
+// utils
+import { reportLog, reportOrWarn } from 'utils/common';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+
 
 export const loadAltalixAvailability = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       fiatToCrypto: { isAltalixAvailable },
-      user: { data: { walletId } },
+      user: { data: user },
     } = getState();
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('loadAltalixAvailability failed: no walletId', { user });
+      return;
+    }
 
     if (isAltalixAvailable === null) {
       const isAvailable = await api.fetchAltalixAvailability(walletId)
@@ -53,7 +64,13 @@ export const loadAltalixAvailability = () => {
 
 export const loadSendwyreRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { user: { data: { walletId } } } = getState();
+    const user = getState().user.data;
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('loadSendwyreRatesAction failed: no walletId', { user });
+      return;
+    }
+
     const rates = await api.getSendwyreRates(walletId);
 
     dispatch({
@@ -67,7 +84,13 @@ export const loadSendwyreCountrySupportAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     dispatch({ type: LOAD_SENDWYRE_COUNTRY_SUPPORT });
 
-    const { user: { data: { walletId } } } = getState();
+    const user = getState().user.data;
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('loadSendwyreCountrySupportAction failed: no walletId', { user });
+      return;
+    }
+
     const isCountrySupported = await api.getSendwyreCountrySupport(walletId);
 
     if (isCountrySupported === null) {

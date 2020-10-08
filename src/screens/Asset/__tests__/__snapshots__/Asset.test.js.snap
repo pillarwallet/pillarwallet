@@ -2087,9 +2087,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       "width": 48,
                     }
                   }
-                >
-                  
-                </View>
+                />
               </View>
             </View>
             <View
