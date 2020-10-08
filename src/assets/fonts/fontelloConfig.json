@@ -969,6 +969,20 @@
       "search": [
         "direct"
       ]
+    },
+    {
+      "uid": "755e4feccc72eb735bd7869fa1e91fbd",
+      "css": "icons_24_minus_lined",
+      "code": 59422,
+      "src": "custom_icons",
+      "selected": true,
+      "svg": {
+        "path": "M125 458.3H874.9C898 458.3 916.6 476.9 916.6 500 916.6 523 898 541.6 874.9 541.6H125C101.9 541.6 83.3 523 83.3 500 83.3 476.9 101.9 458.3 125 458.3Z",
+        "width": 1000
+      },
+      "search": [
+        "icons_24_minus_lined"
+      ]
     }
   ]
 }

@@ -116,7 +116,7 @@ type State = {
 
 
 const FormWrapper = styled.View`
-  padding: ${spacing.large}px 40px 60px;
+  padding: 24px 40px 60px;
   background-color: ${themedColors.surface};
 `;
 
@@ -240,7 +240,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         selectorOptionsTitle={t('label.sell')}
         customAssets={fromOptions}
         horizontalOptions={horizontalOptions}
-        leftSideSymbol="-"
+        leftSideSymbol="minus" // eslint-disable-line i18next/no-literal-string
         getInputRef={ref => { this.fromInputRef = ref; }}
         onBlur={this.blurFromInput}
         onFormValid={valid => this.setState({ isFormValid: valid })}
@@ -269,7 +269,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         selectorOptionsTitle={t('label.buy')}
         customAssets={toOptions}
         horizontalOptions={horizontalOptions}
-        leftSideSymbol="+"
+        leftSideSymbol="plus" // eslint-disable-line i18next/no-literal-string
         onBlur={this.blurFromInput}
         hideMaxSend
       />

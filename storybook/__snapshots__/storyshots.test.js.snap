@@ -33672,7 +33672,7 @@ exports[`Storyshots Value Input default 1`] = `
               "borderTopWidth": 0,
               "borderWidth": undefined,
               "flexDirection": "row",
-              "height": 54,
+              "height": 62,
               "marginBottom": 0,
               "marginLeft": 0,
               "marginRight": 0,
@@ -33705,24 +33705,15 @@ exports[`Storyshots Value Input default 1`] = `
               ]
             }
           >
-            <Text
+            <View
               style={
                 Array [
                   Object {
                     "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
+                    "fontSize": 16,
+                    "marginRight": 9,
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 36,
-                      "lineHeight": 54,
-                      "marginRight": 9,
-                      "marginTop": -5,
-                    },
-                    undefined,
-                  ],
+                  undefined,
                 ]
               }
             />
@@ -33843,7 +33834,7 @@ exports[`Storyshots Value Input default 1`] = `
                         "flex": 1,
                         "fontFamily": "EuclidCircularB-Medium",
                         "fontSize": 34,
-                        "height": 54,
+                        "height": 62,
                         "lineHeight": null,
                         "textAlignVertical": "center",
                       },

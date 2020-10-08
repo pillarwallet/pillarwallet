@@ -162,11 +162,10 @@ const AddonRegularText = styled(BaseText)`
   flex-wrap: wrap;
 `;
 
-const AddonBigText = styled(BaseText)`
-  ${fontStyles.giant};
+const AddonIcon = styled(Icon)`
+  font-size: 16px;
   color: ${themedColors.text};
   margin-right: 9;
-  margin-top: -5;
 `;
 
 const Selector = styled.TouchableOpacity`
@@ -555,7 +554,7 @@ class TextInput extends React.Component<Props, State> {
                     fallbackSource={fallbackSource}
                     style={{ marginRight: 9 }}
                   />}
-                  <AddonBigText>{leftSideSymbol}</AddonBigText>
+                  <AddonIcon name={leftSideSymbol} />
                   {!!leftSideText && <AddonRegularText>{leftSideText}</AddonRegularText>}
                 </LeftSideWrapper>
               </TouchableWithoutFeedback>}

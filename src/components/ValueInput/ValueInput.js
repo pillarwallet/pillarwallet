@@ -254,6 +254,7 @@ export const ValueInput = (props: Props) => {
           leftSideSymbol={leftSideSymbol}
           getInputRef={getInputRef}
           inputWrapperStyle={{ zIndex: 10 }}
+          customInputHeight={62}
         />
       )}
       {tokenType === COLLECTIBLES && (
