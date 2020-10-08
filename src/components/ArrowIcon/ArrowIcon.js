@@ -19,31 +19,27 @@
 */
 
 import * as React from 'react';
-import initStoryshots from '@storybook/addon-storyshots';
+import { withTheme } from 'styled-components/native';
+import Icon from 'components/Icon';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
-jest.mock('global', () => global);
-jest.mock('react-navigation', () => {
-  return {
-    withOrientation: jest.fn().mockImplementation(component => component),
-    withNavigation: Component => props => (
-      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />
-    ),
-    ThemeColors: {
-      light: {
-        bodyContent: '',
-      },
-      dark: {
-        bodyContent: '',
-      },
-    },
-    SafeAreaView: ({ children }) => <>{children}</>,
-  };
-});
 
-jest.mock('react-navigation-redux-helpers', () => ({
-  createReactNavigationReduxMiddleware: () => () => () => () => {},
-}));
+type Props = {
+  theme: Theme
+};
 
-jest.useFakeTimers();
+const ArrowIcon = ({ theme }: Props) => {
+  return (
+    <Icon
+      name="direct"
+      style={{
+        fontSize: 24,
+        color: getThemeColors(theme).text,
+      }}
+    />
+  );
+};
 
-initStoryshots({ /* configuration options */ });
+export default withTheme(ArrowIcon);
+

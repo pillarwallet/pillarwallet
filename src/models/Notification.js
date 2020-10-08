@@ -19,11 +19,9 @@
 */
 
 export type Notification = {
-  title: string,
-  body: string,
-  type: string,
-  messageType?: string,
-  data: ?Object,
+  message: string,
+  emoji: string,
+  autoClose?: boolean,
 };
 
 export type ApiNotification = {
@@ -42,4 +40,12 @@ export type ApiNotification = {
   },
   type: string,
   createdAt: number,
+};
+
+export type FirebaseMessage = {
+  data?: Object,
+  notification?: {
+    title?: string,
+    body?: string,
+  },
 };

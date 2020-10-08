@@ -163,7 +163,7 @@
     "gettingFee": "Getting fee...",
     "to": "To",
     "from": "From",
-    "chooseReceiver": "Choose receiver",
+    "whereToSend": "Where to send",
     "walletAddress": "Wallet address",
     "tokens": "Tokens",
     "collectibles": "Collectibles",
@@ -1351,7 +1351,11 @@
     "languageIsNoLongerSupported": "Sorry, your selected language is no longer supported. It's been changed to default language.",
     "languageIsNotSupported": "Sorry, this language is not supported.",
     "failedToUploadImage": "Failed to get image from the gallery. Please try again.",
-    "failedToDeleteAvatar": "Failed to delete avatar. Please try again."
+    "failedToDeleteAvatar": "Failed to delete avatar. Please try again.",
+    "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again.",
+    "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
+    "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
+    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again."
   },
 
   "exchangeContent": {
@@ -1485,13 +1489,11 @@
   },
 
   "notification": {
-    "received": "Received",
-    "transactionConfirmed": "Transaction confirmed",
-    "transactionSent": "Transaction sent",
-    "transactionReceived": "Transaction was received",
-    "success": "Success",
-    "newBadgeReceived": "New badge received!",
-    "receivedCollectible": "You received a collectible",
-    "collectibleSentAndReceived": "Your collectible has been received"
+    "transactionReceivedPending": "{{tokenValue}} is coming shortly.",
+    "transactionReceivedConfirmed": "{{tokenValue}} received.",
+    "transactionSentPending": "{{tokenValue}} is being sent.",
+    "transactionSentConfirmed": "{{tokenValue}} sent.",
+    "receivedCollectible": "You received a collectible.",
+    "collectibleSentAndReceived": "Your collectible has been received."
   }
 }

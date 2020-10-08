@@ -278,6 +278,7 @@ import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes'
 
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
+import type { Notification } from 'models/Notification';
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -472,7 +473,7 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon({
           icon: iconHome,
-          hasIndicator: !navigation.isFocused() && (screenProps.hasUnreadNotifications
+          hasIndicator: !navigation.isFocused() && (screenProps.showHomeUpdateIndicator
             || !!screenProps.intercomNotificationsCount),
           theme: screenProps.theme,
         }),
@@ -775,8 +776,8 @@ type Props = {
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
   checkForMissedAssets: Function,
-  notifications: Object[],
-  hasUnreadNotifications: boolean,
+  notifications: Notification[],
+  showHomeUpdateIndicator: boolean,
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
@@ -846,13 +847,9 @@ class AppFlow extends React.Component<Props, State> {
       removePrivateKeyFromMemory();
     }
 
-    if (notifications.length && notifications.length !== prevNotifications.length) {
-      const lastNotification = notifications[notifications.length - 1];
-
-      Toast.show({
-        ...lastNotification,
-      });
-    }
+    notifications
+      .slice(prevNotifications.length)
+      .forEach(notification => Toast.show({ ...notification }));
   }
 
   componentWillUnmount() {
@@ -903,7 +900,7 @@ class AppFlow extends React.Component<Props, State> {
     const {
       userState,
       profileImage,
-      hasUnreadNotifications,
+      showHomeUpdateIndicator,
       intercomNotificationsCount,
       navigation,
       backupStatus,
@@ -925,7 +922,7 @@ class AppFlow extends React.Component<Props, State> {
       <AppFlowNavigation
         screenProps={{
           profileImage,
-          hasUnreadNotifications,
+          showHomeUpdateIndicator,
           intercomNotificationsCount,
           isWalletBackedUp,
           theme,
@@ -942,7 +939,7 @@ const mapStateToProps = ({
   notifications: {
     data: notifications,
     intercomNotificationsCount,
-    hasUnreadNotifications,
+    showHomeUpdateIndicator,
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
@@ -951,7 +948,7 @@ const mapStateToProps = ({
   profileImage,
   userState,
   notifications,
-  hasUnreadNotifications,
+  showHomeUpdateIndicator,
   wallet,
   backupStatus,
   intercomNotificationsCount,
