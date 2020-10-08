@@ -133,8 +133,8 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
         reportErrorLog('setupUserAction user registration failed', { error, username, recoveryData });
         if (usernameFailed) {
           dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: true });
-          dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
         }
+        dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
         return;
       }
 

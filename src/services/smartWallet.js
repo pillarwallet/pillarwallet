@@ -593,7 +593,7 @@ class SmartWallet {
     await this.sdk.reset({
       device: true,
       session: true,
-    }).catch(null);
+    }).catch(() => null);
   }
 }
 
