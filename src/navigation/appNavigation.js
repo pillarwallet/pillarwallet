@@ -142,6 +142,7 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { finishOnboardingAction } from 'actions/onboardingActions';
 
 // constants
 import {
@@ -276,12 +277,14 @@ import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
+// types
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
 import type { User } from 'models/User';
 import type { Notification } from 'models/Notification';
 import type { EthereumWallet } from 'models/Wallet';
 import type { BackupStatus } from 'reducers/walletReducer';
+
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -795,6 +798,8 @@ type Props = {
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
+  isRegisteringUser: boolean,
+  finishOnboarding: () => void,
 }
 
 type State = {
@@ -848,11 +853,19 @@ class AppFlow extends React.Component<Props, State> {
       user,
       wallet,
       removePrivateKeyFromMemory,
+      isOnline,
+      finishOnboarding,
+      isRegisteringUser,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
     if (user?.walletId && wallet?.privateKey) {
       removePrivateKeyFromMemory();
+    }
+
+    // no walletId means user is not yet registered, try to finish this right away when online
+    if (!user?.walletId && !isRegisteringUser && isOnline) {
+      finishOnboarding();
     }
 
     notifications
@@ -950,6 +963,7 @@ const mapStateToProps = ({
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
   session: { data: { isOnline } },
+  onboarding: { isRegisteringUser },
 }) => ({
   user,
   notifications,
@@ -974,6 +988,7 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  finishOnboarding: () => dispatch(finishOnboardingAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

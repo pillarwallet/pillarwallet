@@ -362,8 +362,11 @@ export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   };
 };
 
-export const resetUsernameCheckAction = () => {
-  return async (dispatch: Dispatch) => {
+let usernameCheckOfflineToastShown = false;
+
+export const resetUsernameCheckAction = (resetOfflineToast?: boolean) => {
+  return (dispatch: Dispatch) => {
+    if (resetOfflineToast) usernameCheckOfflineToastShown = false;
     dispatch({ type: SET_ONBOARDING_USER, payload: null });
     dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
   };
@@ -384,11 +387,13 @@ export const checkUsernameAvailabilityAction = (username: string) => {
 
     // if user is offline then proceed with local registration
     if (!getState()?.session?.data?.isOnline) {
-      Toast.closeAll(); // close current ones to not block with multiple toasts
-      Toast.show({
-        message: t('auth:toast.userIsOffline'),
-        emoji: 'satellite_antenna',
-      });
+      if (!usernameCheckOfflineToastShown) {
+        Toast.show({
+          message: t('auth:toast.userIsOffline'),
+          emoji: 'satellite_antenna',
+        });
+        usernameCheckOfflineToastShown = true;
+      }
       dispatch({
         type: SET_ONBOARDING_USER,
         payload: { username },
