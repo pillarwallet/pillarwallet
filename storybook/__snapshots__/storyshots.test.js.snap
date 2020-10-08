@@ -33547,76 +33547,74 @@ exports[`Storyshots Value Input default 1`] = `
               }
             />
           </View>
-          <Text
-            style={
+        </View>
+        <Text
+          numberOfLines={1}
+          onPress={[Function]}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
               Array [
                 Object {
                   "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontFamily": "EuclidCircularB-Medium",
                   "textAlignVertical": "center",
                 },
                 Array [
                   Object {
                     "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Medium",
-                    "textAlignVertical": "center",
+                    "fontSize": 16,
+                    "lineHeight": 24,
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 16,
-                      "lineHeight": 24,
-                    },
-                    undefined,
-                  ],
+                  Object {
+                    "flex": 1,
+                  },
                 ],
-              ]
-            }
-          >
-            Ethereum
-          </Text>
-        </View>
-        <View
-          accessible={true}
-          focusable={true}
-          isTVSelectable={true}
-          onClick={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
-          style={
-            Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "opacity": 1,
-            }
+              ],
+            ]
           }
         >
-          <Text
-            style={
+          Ethereum
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "height": 0,
+                "width": 8,
+              },
+              undefined,
+            ]
+          }
+          w={8}
+        />
+        <Text
+          onPress={[Function]}
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
+                  "color": "#007aff",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "marginTop": 1,
                 },
-                Array [
-                  Object {
-                    "color": "#007aff",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                  },
-                  undefined,
-                ],
-              ]
-            }
-          >
-            0.51 ETH (£ 94.78)
-          </Text>
-        </View>
+                undefined,
+              ],
+            ]
+          }
+        >
+          0.51 ETH (£ 94.78)
+        </Text>
       </View>
     </View>
     <View
