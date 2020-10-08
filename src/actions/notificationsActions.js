@@ -61,7 +61,7 @@ import {
   resetAppNotificationsBadgeNumber,
   getToastNotification,
 } from 'utils/notifications';
-import { reportLog } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -141,7 +141,7 @@ export const subscribeToSocketEventsAction = () => {
         data = JSON.parse(response.data.msg);
       } catch (error) {
         // this shouldn't happen, but was reported to Sentry as issue, let's report with more details
-        reportLog('Platform WebSocket notification parse failed', { response, error });
+        reportErrorLog('Platform WebSocket notification parse failed', { response, error });
         return; // unable to parse data, do not proceed
       }
       if (data.type === COLLECTIBLE_EVENT) {
@@ -191,9 +191,8 @@ const onFirebaseMessageAction = (message: FirebaseMessage) => {
 
     if (message.notification) {
       const { wallet: { data: wallet } } = getState();
-      const notification = message.data && getToastNotification(message.data, wallet.address);
+      const notification = message.data && getToastNotification(message.data, wallet?.address);
       if (!notification) return;
-
       dispatch({ type: ADD_NOTIFICATION, payload: notification });
       dispatch(showHomeUpdateIndicatorAction());
     }

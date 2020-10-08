@@ -37,7 +37,6 @@ export type UserReducerState = {
   sendingOneTimePassword: boolean,
   oneTimePasswordSent: boolean,
   verificationFailed: boolean,
-  userState: ?string,
 };
 
 export type UserReducerAction = {
@@ -47,15 +46,14 @@ export type UserReducerAction = {
 
 export const initialState: UserReducerState = {
   data: {
+    username: null,
     isLegacyUser: true,
-    walletId: '',
     isEmailVerified: false,
     isPhoneVerified: false,
   },
   sendingOneTimePassword: false,
   oneTimePasswordSent: false,
   verificationFailed: false,
-  userState: null,
 };
 
 const userReducer = (
@@ -100,16 +98,13 @@ const userReducer = (
     case SET_USER:
       return {
         ...state,
-        data: { ...initialState.data, ...action.payload.user },
-        userState: action.payload.state,
+        data: { ...initialState.data, ...action.payload },
       };
 
     case UPDATE_USER:
-      const { state: userState, user } = action.payload;
       return {
         ...state,
-        data: merge({}, { ...data }, user),
-        userState,
+        data: merge({}, { ...data }, action.payload),
       };
 
     case SET_USERNAME:

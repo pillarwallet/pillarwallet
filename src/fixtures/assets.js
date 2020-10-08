@@ -21,15 +21,15 @@
 
 export const initialAssets = [
   {
-    address: '0x1585936b53834b021f68CC13eEeFdEc2EfC8e724',
+    address: '0x0000000000000000000000000000000000000000',
     decimals: 18,
     description: `Ethereum is a decentralized platform that runs smart contracts: applications that run exactly
     as programmed without any possibility of downtime, censorship, fraud or third-party interference.`,
     name: 'Ethereum',
     symbol: 'ETH',
-    wallpaperUrl: 'assets/images/backgrounds/ethereum.png',
-    iconUrl: 'assets/images/tokens/icon_ethereum.png',
-    iconMonoUrl: 'assets/images/tokens/icon_ethereum.png',
+    wallpaperUrl: 'asset/images/tokens/wallpaper/ethBg.png',
+    iconUrl: 'asset/images/tokens/icons/ethColor.png',
+    iconMonoUrl: 'asset/images/tokens/icons/eth.png',
     email: 'mailto://info@pillarproject.io',
     telegram: '',
     twitter: 'https://twitter.com/PillarWallet',
@@ -45,9 +45,9 @@ export const initialAssets = [
     for your digital life.`,
     name: 'Pillar',
     symbol: 'PLR',
-    wallpaperUrl: 'assets/images/tokens/wallpaper/wp_blue.png',
-    iconUrl: 'assets/images/tokens/icons/icon_pillar.png',
-    iconMonoUrl: 'assets/images/tokens/icons/icon_pillar.png',
+    wallpaperUrl: 'asset/images/tokens/wallpaper/plrBg.png',
+    iconUrl: 'asset/images/tokens/icons/plrColor.png',
+    iconMonoUrl: 'asset/images/tokens/icons/plr.png',
     email: 'mailto://info@pillarproject.io',
     telegram: '',
     twitter: 'https://twitter.com/PillarWallet',

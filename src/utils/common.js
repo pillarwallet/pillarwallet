@@ -86,6 +86,13 @@ export const reportLog = (
   printLog(`${level}: ${message}`, extra);
 };
 
+export const reportErrorLog = (
+  message: string,
+  extra?: Object,
+) => {
+  reportLog(message, extra, Sentry.Severity.Error);
+};
+
 export const reportOrWarn = (
   message: string,
   extra?: Object,
@@ -662,3 +669,7 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   if (!addressMixedCase) return null;
   return ensRegistry[addressMixedCase];
 };
+
+export const getEnsPrefix = () => isProdEnv
+  ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
+  : '.pillar.kovan';

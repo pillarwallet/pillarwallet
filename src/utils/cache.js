@@ -18,15 +18,31 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import i18n from 'i18next';
-import { initReactI18next } from 'react-i18next';
-import { DEFAULT_NAMESPACE, NAMESPACES } from './config';
+import * as Sentry from '@sentry/react-native';
+import RNFetchBlob from 'rn-fetch-blob';
+import { reportLog } from 'utils/common';
 
-i18n
-  .use(initReactI18next)
-  .init({
-    ns: DEFAULT_NAMESPACE,
-    defaultNS: NAMESPACES,
+export const getCachedJSONFile = async (localPath: string) => {
+  return new Promise(resolve => {
+    let data = '';
+    RNFetchBlob.fs.readStream(
+      localPath,
+      'utf8',
+    )
+      .then((stream) => {
+        stream.open();
+        stream.onData((chunk) => {
+          data += chunk;
+        });
+        stream.onError((error) => {
+          reportLog('Could not read local file', { localPath, error }, Sentry.Severity.Error);
+          resolve({});
+        });
+        stream.onEnd(() => {
+          const jsonData = JSON.parse(data);
+          resolve(jsonData);
+        });
+      })
+      .catch(() => resolve(null));
   });
-
-export default i18n;
+};

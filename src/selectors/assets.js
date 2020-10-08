@@ -26,6 +26,7 @@ import type { Assets, Balance, Rates } from 'models/Asset';
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
+import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 import {
   assetsSelector,
   activeAccountIdSelector,
@@ -43,7 +44,10 @@ export const accountAssetsSelector = createSelector(
   activeAccountIdSelector,
   hiddenAssetsSelector,
   (assets, activeAccountId, hiddenAssets) => {
-    if (!activeAccountId) return {};
+    if (!activeAccountId) {
+      // return default in case account was created offline
+      return get(assets, DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, {});
+    }
     const activeAccountAssets = get(assets, activeAccountId, {});
     const activeAccountHiddenAssets = get(hiddenAssets, activeAccountId, []);
 

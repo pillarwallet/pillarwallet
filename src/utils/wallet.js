@@ -21,17 +21,10 @@ import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
-import * as Sentry from '@sentry/react-native';
 import { isHexString } from '@walletconnect/utils';
 import { getEnv } from 'configs/envConfig';
 
-import {
-  getRandomInt,
-  ethSign,
-  getEthereumProvider,
-  printLog,
-  reportLog,
-} from 'utils/common';
+import { getRandomInt, ethSign, getEthereumProvider, printLog, reportLog, reportErrorLog } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import type { Dispatch } from 'reducers/rootReducer';
@@ -70,11 +63,11 @@ export function normalizeWalletAddress(walletAddress: string): string {
 }
 
 export function catchTransactionError(e: Object, type: string, tx: Object) {
-  reportLog('Exception in wallet transaction', {
+  reportErrorLog('Exception in wallet transaction', {
     tx,
     type,
     error: e.message,
-  }, Sentry.Severity.Error);
+  });
   return { error: e.message };
 }
 

@@ -303,13 +303,14 @@ class WalletView extends React.Component<Props, State> {
             />)}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
-            {!balance &&
-            <ListItemChevron
-              label={t('button.buyTokensWithCreditCard')}
-              onPress={() => navigation.navigate(SERVICES)}
-              bordered
-              addon={(<LabelBadge label={t('badgeText.new')} />)}
-            />}
+            {!balance && !!activeAccountAddress && (
+              <ListItemChevron
+                label={t('button.buyTokensWithCreditCard')}
+                onPress={() => navigation.navigate(SERVICES)}
+                bordered
+                addon={(<LabelBadge label={t('badgeText.new')} />)}
+              />
+            )}
           </ActionsWrapper>}
         </ListWrapper>}
       </ScrollComponent>

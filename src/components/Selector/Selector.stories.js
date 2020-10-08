@@ -57,7 +57,6 @@ storiesOf('Selector', module)
   .add('with custom wording', () => (
     <CenterView>
       <Selector
-        label="To"
         placeholder="Choose contact"
         searchPlaceholder="Username or wallet address"
         options={options}
@@ -68,7 +67,6 @@ storiesOf('Selector', module)
   .add('selected option', () => (
     <CenterView>
       <Selector
-        label="To"
         placeholder="Choose contact"
         options={options}
         onOptionSelect={() => {}}

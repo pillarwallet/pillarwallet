@@ -59,7 +59,7 @@ type Props = {
   isCalculatingGas: boolean,
   availableBalances: Balances,
   activeAccountAddress: string,
-  keyBasedWalletAddress: string,
+  keyBasedWalletAddress: ?string,
 };
 
 const DetailsTitle = styled(BaseText)`
@@ -96,6 +96,7 @@ const KeyBasedAssetTransferConfirm = ({
   navigation,
 }: Props) => {
   const isLoading = isCalculatingGas;
+
   const tokensTransfer = keyBasedAssetsToTransfer.filter(
     ({ assetData }) => assetData?.tokenType !== COLLECTIBLES,
   );
@@ -184,12 +185,12 @@ const mapStateToProps = ({
     isCalculatingGas,
     availableBalances,
   },
-  wallet: { data: { address: keyBasedWalletAddress } },
+  wallet: { data: walletData },
 }: RootReducerState): $Shape<Props> => ({
   keyBasedAssetsToTransfer,
   isCalculatingGas,
   availableBalances,
-  keyBasedWalletAddress,
+  keyBasedWalletAddress: walletData?.address,
 });
 
 const structuredSelector = createStructuredSelector({
