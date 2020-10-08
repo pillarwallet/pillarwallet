@@ -161,7 +161,6 @@ export function SelectorInputTemplate(locals: Object) {
       onPressRightLabel,
       customInputHeight,
       inputHeaderStyle,
-      noErrorText,
       renderOption,
       optionTabs,
       customRightLabel,
@@ -176,7 +175,6 @@ export function SelectorInputTemplate(locals: Object) {
     ...value,
     selector: { ...selector, icon: selectedOptionIcon },
   };
-  const errorMessage = noErrorText ? '' : locals.error;
   const inputProps = {
     onChange: locals.onChange,
     onBlur: locals.onBlur,
@@ -200,8 +198,6 @@ export function SelectorInputTemplate(locals: Object) {
   return (
     <TextInput
       style={{ width: '100%' }}
-      hasError={false}
-      errorMessage={errorMessage}
       inputProps={inputProps}
       leftSideText={inputAddonText}
       numeric
