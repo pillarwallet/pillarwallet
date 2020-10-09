@@ -119,7 +119,7 @@ Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
   return Promise.resolve();
 };
 
-Storage.prototype.set = async function (data: object) {
+Storage.prototype.set = async function (data: Object) {
   try {
     await this.db.set(data);
   } catch (e) {
@@ -146,6 +146,7 @@ Storage.prototype.initialize = async function () {
     if (!dbState) {
       const userUID = firebaseAuth?.currentUser?.uid;
       this.db = getDb(userUID);
+      // TODO - rather migrate user straight away
       await this.set({ });
     }
     clearTimeout(timeout);

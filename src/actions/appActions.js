@@ -26,7 +26,8 @@ import SplashScreen from 'react-native-splash-screen';
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-import { migrate } from 'services/dataMigration';
+// import { migrate } from 'services/dataMigration';
+import { firebaseAuth, firebaseDb } from 'services/firebase';
 
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
@@ -70,17 +71,18 @@ import { SET_CONTACTS } from 'constants/contactsConstants';
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 
-
-const storage = Storage.getInstance('db');
-
 export const initAppAndRedirectAction = () => {
   return async (dispatch: Function, getState: Function, api: Object) => {
     dispatch({ type: RESET_APP_LOADED });
 
-    let storageData = await storage.getAll();
+    await firebaseAuth.signInAnonymously();
+    await firebaseDb.setPersistenceEnabled(true);
+    const storage = await Storage.getInstance('db');
+
+    const storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
 
-    storageData = await migrate('app_settings', storageData, dispatch, getState);
+    // storageData = await migrate('app_settings', storageData, dispatch, getState);
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
@@ -88,12 +90,12 @@ export const initAppAndRedirectAction = () => {
 
     if (walletTimestamp) {
       // migrations
-      storageData = await migrate('accounts', storageData, dispatch, getState);
-      storageData = await migrate('assets', storageData, dispatch, getState);
-      storageData = await migrate('balances', storageData, dispatch, getState);
-      storageData = await migrate('collectibles', storageData, dispatch, getState);
-      storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
-      storageData = await migrate('history', storageData, dispatch, getState);
+      // storageData = await migrate('accounts', storageData, dispatch, getState);
+      // storageData = await migrate('assets', storageData, dispatch, getState);
+      // storageData = await migrate('balances', storageData, dispatch, getState);
+      // storageData = await migrate('collectibles', storageData, dispatch, getState);
+      // storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
+      // storageData = await migrate('history', storageData, dispatch, getState);
 
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });

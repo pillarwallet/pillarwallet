@@ -69,24 +69,38 @@ Enzyme.configure({ adapter: new Adapter() });
 const storageCache = {};
 const MockAsyncStorage = new StorageMock(storageCache);
 
+export const registeredMockUser: Object = {
+  username: 'Jon',
+  walletId: 'walletId',
+};
+
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
 
 jest.setMock('@react-native-firebase/auth');
 jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
-jest.mock('@react-native-firebase/app', () => ({
+jest.setMock('@react-native-firebase/app', {
   firebase: {
     iid: () => {},
     auth: () => ({
+      signInAnonymously: () => Promise.resolve(),
       currentUser: {
         uid: 'someId',
       },
     }),
     database: () => ({
-      ref: () => Promise.resolve({
+      setPersistenceEnabled: () => Promise.resolve(),
+      ref: () => ({
         set: () => Promise.resolve(),
         update: () => Promise.resolve(),
-        once: () => Promise.resolve({}),
+        once: () => Promise.resolve({
+          val: () => ({
+            app_settings: {},
+            user: {
+              user: registeredMockUser,
+            },
+          }),
+        }),
       }),
     }),
     analytics: () => ({
@@ -104,13 +118,13 @@ jest.mock('@react-native-firebase/app', () => ({
       getBoolean: jest.fn(),
     }),
     messaging: () => ({
-      registerForRemoteNotifications: () => Promise.resolve(),
+      registerDeviceForRemoteMessages: () => Promise.resolve(),
       requestPermission: () => Promise.resolve(),
       hasPermission: () => Promise.resolve(1),
       getToken: () => Promise.resolve('12x2342x212'),
     }),
   },
-}));
+});
 
 jest.setMock('cryptocompare', {
   priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
