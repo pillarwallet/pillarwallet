@@ -33795,6 +33795,7 @@ exports[`Storyshots Value Input default 1`] = `
                         "whitepaper": "",
                       }
                     }
+                    disableAssetSelection={false}
                     labelText="0.51 ETH (£ 94.78)"
                     onAssetPress={[Function]}
                     onLabelPress={[Function]}

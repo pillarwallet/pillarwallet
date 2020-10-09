@@ -187,6 +187,8 @@ export const ValueInputComponent = (props: Props) => {
     PercentsInputAccessoryHolder.addAccessory(handleUsePercent);
   };
 
+  const assetsOptions = customAssets || assets;
+
   const getCustomLabel = () => {
     return (
       <ValueInputHeader
@@ -194,11 +196,10 @@ export const ValueInputComponent = (props: Props) => {
         onAssetPress={() => setIsAssetSelectorVisible(true)}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
+        disableAssetSelection={assetsOptions.length <= 1}
       />
     );
   };
-
-  const assetsOptions = customAssets || assets;
 
   const inputProps = {
     value: displayFiatAmount ? valueInFiat : value,

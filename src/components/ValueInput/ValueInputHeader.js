@@ -38,6 +38,7 @@ type Props = {
   labelText: string,
   onLabelPress: () => void,
   onAssetPress: () => void,
+  disableAssetSelection: boolean,
 };
 
 const Wrapper = styled.View`
@@ -86,14 +87,14 @@ const LabelText = styled(BaseText)`
 
 const ValueInputHeader = (props: Props) => {
   const {
-    asset, labelText, onLabelPress, onAssetPress, theme,
+    asset, labelText, onLabelPress, onAssetPress, theme, disableAssetSelection,
   } = props;
   const { id, name, imageUrl } = asset;
   const optionImageSource = resolveAssetSource(imageUrl);
   const { genericToken } = images(theme);
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress}>
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection}>
         <Image
           key={id}
           source={optionImageSource}
