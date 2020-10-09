@@ -105,7 +105,7 @@ export const getErrorMessage = (
   return '';
 };
 
-export const ValueInput = (props: Props) => {
+export const ValueInputComponent = (props: Props) => {
   const {
     disabled,
     assets,
@@ -307,4 +307,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 
-export default withTheme(connect(combinedMapStateToProps)(ValueInput));
+export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
