@@ -19,7 +19,6 @@
 */
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
-import shuffle from 'shuffle-array';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
 import t from 'translations/translate';
@@ -29,7 +28,6 @@ import Toast from 'components/Toast';
 
 // constants
 import {
-  UPDATE_WALLET_MNEMONIC,
   REMOVE_WALLET_PRIVATE_KEY,
   UPDATE_PIN_ATTEMPTS,
   UPDATE_WALLET_BACKUP_STATUS,
@@ -38,7 +36,7 @@ import {
 import { WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
-import { generateMnemonicPhrase, generateWordsToValidate, getSaltedPin } from 'utils/wallet';
+import { getSaltedPin } from 'utils/wallet';
 import { findKeyBasedAccount, getAccountId } from 'utils/accounts';
 import { setKeychainDataObject } from 'utils/keychain';
 
@@ -57,32 +55,6 @@ import { selfAwardBadgeAction } from './badgesActions';
 import { addWalletBackupEventAction } from './userEventsActions';
 import { changeUseBiometricsAction } from './appSettingsActions';
 
-
-const NUM_WORDS_TO_CHECK = 3;
-
-/**
- * Generates a mnemonic phrase, and accepts mnemonic as a parameter.
- * If parameter is passed just reshuffle the phrase
- * and don't generate a new one.
- * @param {String} mnemonicPhrase
- */
-export const generateWalletMnemonicAction = (mnemonicPhrase?: string) => {
-  return (dispatch: Dispatch) => {
-    mnemonicPhrase = generateMnemonicPhrase(mnemonicPhrase);
-    const mnemonicList = mnemonicPhrase.split(' ');
-    const shuffledMnemonicPhrase = shuffle(mnemonicList, { copy: true }).join(' ');
-    const wordsToValidate = generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicList.length);
-
-    dispatch({
-      type: UPDATE_WALLET_MNEMONIC,
-      payload: {
-        original: mnemonicPhrase,
-        shuffled: shuffledMnemonicPhrase,
-        wordsToValidate,
-      },
-    });
-  };
-};
 
 export const backupWalletAction = () => {
   return (dispatch: Dispatch) => {
