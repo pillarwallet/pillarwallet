@@ -129,6 +129,7 @@ type Props = {
   isAssetView?: boolean,
   referralRewardIssuersAddresses: ReferralRewardsIssuersAddresses,
   supportedAssets: Asset[],
+  sessionLanguageCode: ?string, // important for re-rendering on language change
 };
 
 export type EventData = {
@@ -182,15 +183,15 @@ const ItemValue = styled(BaseText)`
 const aaveImage = require('assets/images/apps/aave.png');
 
 export class ActivityFeedItem extends React.Component<Props> {
-  NAMES = {
+  NAMES = () => ({
     SMART_WALLET: t('smartWallet'),
     KEY_WALLET: t('keyWallet'),
     PPN_NETWORK: t('pillarNetwork'),
     AAVE_DEPOSIT: t('aaveDeposit'),
     POOL_TOGETHER: t('poolTogether'),
-  };
+  });
 
-  STATUSES = {
+  STATUSES = () => ({
     CREATED: t('label.created'),
     IMPORTED: t('label.imported'),
     RECEIVED: t('label.received'),
@@ -199,15 +200,15 @@ export class ActivityFeedItem extends React.Component<Props> {
     ACTIVATED: t('label.activated'),
     ADDED: t('label.added'),
     REMOVED: t('label.removed'),
-  };
+  });
 
-  FROM = {
+  FROM = () => ({
     PPN_NETWORK: t('label.fromPPN'),
-  };
+  });
 
-  TO = {
+  TO = () => ({
     PPN_NETWORK: t('label.toPPN'),
-  };
+  });
 
   shouldComponentUpdate(nextProps: Props) {
     const isEq = isEqual(this.props, nextProps);
@@ -327,22 +328,22 @@ export class ActivityFeedItem extends React.Component<Props> {
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
-          label: this.NAMES.KEY_WALLET,
+          label: this.NAMES().KEY_WALLET,
           itemImageSource: keyWalletIcon,
-          actionLabel: this.STATUSES.CREATED,
+          actionLabel: this.STATUSES().CREATED,
         };
       case 'Smart Wallet created':
         return {
-          label: this.NAMES.SMART_WALLET,
+          label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
-          actionLabel: this.STATUSES.CREATED,
+          actionLabel: this.STATUSES().CREATED,
           badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case 'Wallet imported':
         return {
-          label: this.NAMES.KEY_WALLET,
+          label: this.NAMES().KEY_WALLET,
           itemImageSource: keyWalletIcon,
-          actionLabel: this.STATUSES.IMPORTED,
+          actionLabel: this.STATUSES().IMPORTED,
         };
       default:
         return null;
@@ -357,16 +358,16 @@ export class ActivityFeedItem extends React.Component<Props> {
         return this.getWalletCreatedEventData(event);
       case PPN_INIT_EVENT:
         return {
-          label: this.NAMES.PPN_NETWORK,
+          label: this.NAMES().PPN_NETWORK,
           itemImageSource: PPNIcon,
-          actionLabel: this.STATUSES.CREATED,
+          actionLabel: this.STATUSES().CREATED,
           badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case WALLET_BACKUP_EVENT:
         return {
-          label: this.NAMES.KEY_WALLET,
+          label: this.NAMES().KEY_WALLET,
           itemImageSource: keyWalletIcon,
-          actionLabel: this.STATUSES.BACKUP,
+          actionLabel: this.STATUSES().BACKUP,
         };
       default:
         return null;
@@ -427,15 +428,15 @@ export class ActivityFeedItem extends React.Component<Props> {
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
         data = {
-          label: this.NAMES.SMART_WALLET,
+          label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
-          actionLabel: this.STATUSES.ACTIVATED,
+          actionLabel: this.STATUSES().ACTIVATED,
         };
         break;
       case PAYMENT_NETWORK_ACCOUNT_TOPUP:
         if (isAssetView) {
           data = {
-            label: this.NAMES.PPN_NETWORK,
+            label: this.NAMES().PPN_NETWORK,
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
@@ -451,8 +452,8 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         } else if (event.smartWalletEvent) {
           data = {
-            label: this.NAMES.SMART_WALLET,
-            subtext: this.TO.PPN_NETWORK,
+            label: this.NAMES().SMART_WALLET,
+            subtext: this.TO().PPN_NETWORK,
             itemImageSource: smartWalletIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
@@ -460,7 +461,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           };
         } else {
           data = {
-            label: this.NAMES.PPN_NETWORK,
+            label: this.NAMES().PPN_NETWORK,
             subtext: t('label.topUp'),
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
@@ -471,7 +472,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case SET_SMART_WALLET_ACCOUNT_ENS:
         data = {
-          label: this.NAMES.SMART_WALLET,
+          label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
           subtext: t('label.registerEnsName'),
         };
@@ -487,7 +488,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           data.iconName = 'sent'; // eslint-disable-line i18next/no-literal-string
           data.iconColor = 'negative'; // eslint-disable-line i18next/no-literal-string
         } else {
-          data.label = this.NAMES.PPN_NETWORK;
+          data.label = this.NAMES().PPN_NETWORK;
           data.subtext = t('label.withdrawal');
           data.itemImageSource = PPNIcon;
         }
@@ -526,31 +527,31 @@ export class ActivityFeedItem extends React.Component<Props> {
         break;
       case SMART_WALLET_SWITCH_TO_GAS_TOKEN_RELAYER:
         data = {
-          label: this.NAMES.SMART_WALLET,
+          label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
           subtext: t('label.enableSmartWalletGasRelayerPLR'),
         };
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_ADDED:
         data = {
-          label: this.NAMES.SMART_WALLET,
+          label: this.NAMES().SMART_WALLET,
           itemImageSource: roundedPhoneIcon,
           subtext: t('label.smartWalletAccountDeviceAdded'),
-          actionLabel: this.STATUSES.ADDED,
+          actionLabel: this.STATUSES().ADDED,
         };
         break;
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         data = {
-          label: this.NAMES.SMART_WALLET,
+          label: this.NAMES().SMART_WALLET,
           itemImageSource: roundedPhoneIcon,
           subtext: t('label.smartWalletAccountDeviceRemoved'),
-          actionLabel: this.STATUSES.REMOVED,
+          actionLabel: this.STATUSES().REMOVED,
         };
         break;
       case AAVE_LENDING_DEPOSIT_TRANSACTION:
         const depositDisplayValue = this.getAaveDisplayAmount(false);
         data = {
-          label: this.NAMES.AAVE_DEPOSIT,
+          label: this.NAMES().AAVE_DEPOSIT,
           itemValue: depositDisplayValue,
           fullItemValue: depositDisplayValue,
           valueColor: 'text',
@@ -563,7 +564,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       case AAVE_LENDING_WITHDRAW_TRANSACTION:
         const withdrawDisplayValue = this.getAaveDisplayAmount(true);
         data = {
-          label: this.NAMES.AAVE_DEPOSIT,
+          label: this.NAMES().AAVE_DEPOSIT,
           itemValue: withdrawDisplayValue,
           fullItemValue: withdrawDisplayValue,
           valueColor: 'positive',
@@ -579,7 +580,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         const isPositive = event.tag !== POOLTOGETHER_DEPOSIT_TRANSACTION;
         const formattedVal = parseFloat(formatUnits(amount, decimals)).toString();
         data = {
-          label: this.NAMES.POOL_TOGETHER,
+          label: this.NAMES().POOL_TOGETHER,
           itemImageSource: poolTogetherLogo,
           cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
           itemValue: getFormattedValue(formattedVal, symbol, { isPositive, noSymbol: !amount }),
@@ -644,8 +645,8 @@ export class ActivityFeedItem extends React.Component<Props> {
         if (isPPNTransaction) {
           if (isTrxBetweenSWAccount) {
             data = {
-              label: isAssetView ? this.NAMES.PPN_NETWORK : this.NAMES.SMART_WALLET,
-              subtext: isAssetView ? '' : this.FROM.PPN_NETWORK,
+              label: isAssetView ? this.NAMES().PPN_NETWORK : this.NAMES().SMART_WALLET,
+              subtext: isAssetView ? '' : this.FROM().PPN_NETWORK,
               itemImageSource: isAssetView ? PPNIcon : smartWalletIcon,
               isReceived: true,
               fullItemValue: t('positiveTokenValue', { value: formattedFullValue, token: event.asset }),
@@ -683,7 +684,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           }
         } else if (isPoolTogetherAddress(event.to)) {
           data = {
-            label: this.NAMES.POOL_TOGETHER,
+            label: this.NAMES().POOL_TOGETHER,
             itemImageSource: poolTogetherLogo,
             itemImageRoundedSquare: true,
           };
@@ -774,7 +775,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: asset,
       collectibleUrl: isSvgImage(image) ? image : icon,
       subtext,
-      actionLabel: isReceived ? this.STATUSES.RECEIVED : this.STATUSES.SENT,
+      actionLabel: isReceived ? this.STATUSES().RECEIVED : this.STATUSES().SENT,
       iconBackgroundColor: 'card',
       iconBorder: true,
       fallbackToGenericToken: true,
@@ -789,7 +790,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       label: name,
       itemImageUrl: imageUrl,
       subtext: t('label.badge'),
-      actionLabel: this.STATUSES.RECEIVED,
+      actionLabel: this.STATUSES().RECEIVED,
     };
   };
 
@@ -818,7 +819,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   render() {
-    const { event, selectEvent } = this.props;
+    const { event, selectEvent, sessionLanguageCode } = this.props;
     const itemData = this.getEventData(event);
 
     if (!itemData) return null;
@@ -839,6 +840,7 @@ export class ActivityFeedItem extends React.Component<Props> {
         diameter={48}
         iconBackgroundColor={this.getColor(iconBackgroundColor)}
         valueColor={isFailed ? this.getColor('secondaryText') : this.getColor(valueColor)}
+        sessionLanguageCode={sessionLanguageCode}
       />
     );
   }
@@ -849,11 +851,13 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   referrals: { referralRewardIssuersAddresses },
   assets: { supportedAssets },
+  session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   ensRegistry,
   accounts,
   referralRewardIssuersAddresses,
   supportedAssets,
+  sessionLanguageCode,
 });
 
 const structuredSelector = createStructuredSelector({

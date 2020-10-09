@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // constants
@@ -39,6 +40,7 @@ import { saveDbAction } from 'actions/dbActions';
 
 // utils
 import { isNotKeyBasedType } from 'utils/accounts';
+import { reportLog } from 'utils/common';
 
 // types
 import type SDKWrapper from 'services/api';
@@ -112,11 +114,23 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
 export const getWalletsCreationEventsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
+      session: { data: { isOnline } },
       user: { data: user },
     } = getState();
+    // cannot be done while offline
+    if (!isOnline) return;
 
-    const userAccounts = await api.listAccounts(user.walletId);
-    if (!userAccounts.length) return;
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('getWalletsCreationEventsAction failed: unable to get walletId', { user });
+      return;
+    }
+
+    const userAccounts = await api.listAccounts(walletId);
+    if (isEmpty(userAccounts)) {
+      reportLog('getWalletsCreationEventsAction failed: userAccounts is empty');
+      return;
+    }
 
     const walletCreatedEventsPromises = userAccounts
       .filter(isNotKeyBasedType)

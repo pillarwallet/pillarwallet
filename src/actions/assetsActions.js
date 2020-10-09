@@ -60,13 +60,7 @@ import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import {
-  delay,
-  noop,
-  parseTokenAmount,
-  reportLog,
-  uniqBy,
-} from 'utils/common';
+import { noop, parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccountAddress,
@@ -409,7 +403,7 @@ export const fetchAllAccountsBalancesAction = () => {
 
     await Promise
       .all(promises)
-      .catch((error) => reportLog('fetchAllAccountsBalancesAction failed', { error }));
+      .catch((error) => reportErrorLog('fetchAllAccountsBalancesAction failed', { error }));
 
     // migration for key based balances to remove existing
     const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
@@ -427,25 +421,32 @@ export const fetchAllAccountsBalancesAction = () => {
 
 export const fetchInitialAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      user: { data: user },
+      accounts: { data: accounts },
+    } = getState();
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportErrorLog('fetchInitialAssetsAction failed: no walletId', { user });
+      return;
+    }
+
     dispatch({
       type: UPDATE_ASSETS_STATE,
       payload: FETCHING_INITIAL,
     });
-    await delay(1000);
-
-    const {
-      user: { data: { walletId } },
-      accounts: { data: accounts },
-    } = getState();
 
     const initialAssets = await api.fetchInitialAssets(walletId);
     if (isEmpty(initialAssets)) {
+      // TODO: add default initial assets if none set
       dispatch({
         type: UPDATE_ASSETS_STATE,
         payload: FETCH_INITIAL_FAILED,
       });
       return;
     }
+
     const activeAccountId = getActiveAccountId(accounts);
     dispatch({
       type: SET_INITIAL_ASSETS,
@@ -454,6 +455,7 @@ export const fetchInitialAssetsAction = () => {
         assets: initialAssets,
       },
     });
+
     dispatch(fetchAssetsBalancesAction());
   };
 };
@@ -525,13 +527,12 @@ export const addAssetAction = (asset: Asset) => {
   };
 };
 
-export const startAssetsSearchAction = () => ({
-  type: START_ASSETS_SEARCH,
-});
-
 export const searchAssetsAction = (query: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { assets: { supportedAssets } } = getState();
+    const {
+      assets: { supportedAssets },
+      user: { data: user },
+    } = getState();
     const search = query.toUpperCase();
 
     const filteredAssets = supportedAssets.filter(({ name, symbol }) => {
@@ -547,9 +548,13 @@ export const searchAssetsAction = (query: string) => {
       return;
     }
 
-    const { user: { data: { walletId } } } = getState();
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportErrorLog('searchAssetsAction failed: no walletId', { user });
+      return;
+    }
 
-    dispatch(startAssetsSearchAction());
+    dispatch({ type: START_ASSETS_SEARCH });
 
     const apiAssets = await api.assetsSearch(query, walletId);
     dispatch({
@@ -596,12 +601,18 @@ export const getAllOwnedAssets = async (api: SDKWrapper, accountId: string, supp
 export const loadSupportedAssetsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       session: { data: { isOnline } },
     } = getState();
 
     // nothing to do if offline
     if (!isOnline) return;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportErrorLog('loadSupportedAssetsAction failed: no walletId', { user });
+      return;
+    }
 
     const supportedAssets = await api.fetchSupportedAssets(walletId);
 

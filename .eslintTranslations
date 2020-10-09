@@ -115,7 +115,7 @@
         "removeEventListener",
         "removeListener",
         "replace",
-        "reportError",
+        "reportErrorLog",
         "reportLog",
         "reportOrWarn",
         "reportToSentry",

@@ -22,13 +22,13 @@ import React, { useEffect } from 'react';
 import { Animated, Easing } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import { connect } from 'react-redux';
 import t from 'translations/translate';
 import { switchEnvironments } from 'configs/envConfig';
 import type { NavigationScreenProp } from 'react-navigation';
+import { connect } from 'react-redux';
 
 // actions
-import { navigateToNewWalletPageAction } from 'actions/walletActions';
+import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // components
 import { Wrapper } from 'components/Layout';
@@ -41,7 +41,7 @@ import { fontSizes, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
 // constants
-import { IMPORT_WALLET_LEGALS } from 'constants/navigationConstants';
+import { IMPORT_WALLET_LEGALS, NEW_PROFILE } from 'constants/navigationConstants';
 import { LIGHT_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // types
@@ -51,8 +51,8 @@ import type { Dispatch } from 'reducers/rootReducer';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  navigateToNewWalletPage: () => void,
   theme: Theme,
+  resetOnboardingAndNavigate: (routeName: string) => void,
 };
 
 const LOGO_HEIGHT = 56;
@@ -114,9 +114,8 @@ const handleSecretClick = () => {
 };
 
 const Welcome = ({
-  navigation,
-  navigateToNewWalletPage,
   theme,
+  resetOnboardingAndNavigate,
 }: Props) => {
   useEffect(() => {
     Animated.timing(translateY, {
@@ -145,7 +144,7 @@ const Welcome = ({
             <Button
               roundedCorners
               marginBottom={spacing.mediumLarge}
-              onPress={navigateToNewWalletPage}
+              onPress={() => resetOnboardingAndNavigate(NEW_PROFILE)}
               title={t('auth:button.createAccount')}
               style={{ backgroundColor: '#00ff24' }}
               textStyle={{ color: '#000000' }}
@@ -153,7 +152,7 @@ const Welcome = ({
             />
             <ButtonText
               buttonText={t('auth:button.recoverWallet')}
-              onPress={() => navigation.navigate(IMPORT_WALLET_LEGALS)}
+              onPress={() => resetOnboardingAndNavigate(IMPORT_WALLET_LEGALS)}
               fontSize={fontSizes.big}
               textStyle={{ color: '#fcfdff' }}
             />
@@ -164,8 +163,8 @@ const Welcome = ({
   );
 };
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  navigateToNewWalletPage: () => dispatch(navigateToNewWalletPageAction()),
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  resetOnboardingAndNavigate: (routeName: string) => dispatch(resetOnboardingAndNavigateAction(routeName)),
 });
 
 export default withTheme(connect(null, mapDispatchToProps)(Welcome));

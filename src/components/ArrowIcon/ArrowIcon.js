@@ -18,26 +18,28 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import i18n from 'i18next';
-import t from 'translations/translate';
-import Toast from 'components/Toast';
+import * as React from 'react';
+import { withTheme } from 'styled-components/native';
+import Icon from 'components/Icon';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 
-const changeLanguage = (code: string) => {
-  i18n.changeLanguage(code)
-    .then(() => {
-      Toast.show({
-        message: t('toast.languageChanged'),
-        emoji: 'ok_hand',
-      });
-    })
-    .catch(() => {
-      Toast.show({
-        message: t('toast.languageChangeFailed'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
-    });
+type Props = {
+  theme: Theme
 };
 
-export default changeLanguage;
+const ArrowIcon = ({ theme }: Props) => {
+  return (
+    <Icon
+      name="direct"
+      style={{
+        fontSize: 24,
+        color: getThemeColors(theme).text,
+      }}
+    />
+  );
+};
+
+export default withTheme(ArrowIcon);
+
