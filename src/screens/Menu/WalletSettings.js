@@ -228,7 +228,9 @@ class WalletSettings extends React.Component<Props, State> {
           color: colors.negative,
           label: t('settingsContent.settingsItem.backup.label.notFinished'),
         },
-        onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
+        onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, {
+          mnemonicPhrase: wallet?.mnemonic,
+        }),
         hidden: isBackedUp,
       },
     ];
