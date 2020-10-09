@@ -18,34 +18,12 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import type { TranslationResource } from 'models/Translations';
-
-
-// en
-const COMMON_EN = require('./locales/en/common.json');
-const AUTH_EN = require('./locales/en/auth.json');
-
-
-const sources = {
-  en: {
-    common: () => COMMON_EN,
-    auth: () => AUTH_EN,
-  },
+export const CACHE_STATUS = {
+  REQUESTED: 'CACHE_REQUESTED',
+  PENDING: 'CACHE_PENDING',
+  DONE: 'CACHED',
+  FAILED: 'CACHE_FAILED',
 };
 
-const translationLoader = {
-  type: 'backend',
-  init: () => {},
-  read: (language: string, namespace: string, callback: (error: ?Error, resource: ?TranslationResource) => void) => {
-    let resource;
-    let error;
-    try {
-      resource = sources[language][namespace]();
-    } catch (_error) {
-      error = _error;
-    }
-    callback(error, resource);
-  },
-};
-
-export default translationLoader;
+export const SET_CACHED_URLS = 'SET_CACHED_URLS';
+export const REMOVE_URL_CACHE = 'REMOVE_URL_CACHE';

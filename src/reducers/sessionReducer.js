@@ -34,7 +34,13 @@ export type SessionReducerAction = {|
 export const initialState = {
   data: {
     isOnline: true,
-    fcmToken: '',
+    fcmToken: null,
+    isAuthorizing: false,
+    translationsInitialised: false,
+    fallbackLanguageVersion: null,
+    sessionLanguageCode: null, // setting here to not persist supported user's device language
+    // (as it might change and app should reflect that)
+    // and changes on device should not be treated as changes on App Settings
   },
 };
 

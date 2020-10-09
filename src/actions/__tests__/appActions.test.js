@@ -22,17 +22,45 @@ import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import { UPDATE_SESSION } from 'constants/sessionConstants';
+import { CACHE_STATUS, SET_CACHED_URLS } from 'constants/cacheConstants';
+
 import Storage from 'services/storage';
-import { initAppAndRedirectAction } from '../appActions';
+import { initAppAndRedirectAction } from 'actions/appActions';
+import localeConfig from 'configs/localeConfig';
+import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
 
 const storage = Storage.getInstance('db');
+
+const initialAppSettingsState = {
+  data: {
+    localisation: null,
+  },
+};
+
+const initialSessionState = {
+  data: {
+    isOnline: true,
+    translationsInitialised: false,
+  },
+};
+
+const initialCacheState = {
+  cachedUrls: {},
+};
+
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {
   let store;
   beforeEach(() => {
-    store = mockStore({});
+    store = mockStore({ appSettings: initialAppSettingsState, session: initialSessionState, cache: initialCacheState });
   });
+
+  const defaultLanguage = getDefaultSupportedUserLanguage();
+  const authTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/auth.json`;
+  const commonTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/common.json`;
+
 
   it(`initAppAndRedirectAction - should trigger the app settings updated 
   with any redirection due to the empty storage`, async () => {
@@ -40,6 +68,14 @@ describe('App actions', () => {
     const expectedActions = [
       { type: RESET_APP_LOADED },
       { type: UPDATE_APP_SETTINGS, payload: {} },
+      { type: SET_CACHED_URLS, payload: {} },
+      { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
+      { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
+      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localPath: 'localString' } },
+      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localPath: 'localString' } },
+      { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
+      { type: UPDATE_SESSION, payload: { translationsInitialised: true } },
+      { type: UPDATE_SESSION, payload: { sessionLanguageCode: localeConfig.defaultLanguage } },
     ];
 
     return store.dispatch(initAppAndRedirectAction())

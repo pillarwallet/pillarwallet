@@ -442,9 +442,9 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   onFieldBlur = () => {
     const { updateUser, user } = this.props;
     const { focusedField, value } = this.state;
-    const { isEmailVerified, isPhoneVerified } = user;
+    const { isEmailVerified, isPhoneVerified, walletId } = user;
 
-    if (!focusedField || !this.formRef) return;
+    if (!focusedField || !this.formRef || !walletId) return;
     const e = this.formRef.getComponent(focusedField).validate();
     const isEmpty = focusedField === FIELD_NAME.PHONE ? !value.phone.input : !value.email;
 
@@ -454,7 +454,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         if (isEmailVerified) {
           this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.EMAIL });
         } else {
-          updateUser(user.walletId, { email: value.email });
+          updateUser(walletId, { email: value.email });
         }
       } else if (focusedField === FIELD_NAME.PHONE) {
         const { phone: { input, selector } } = value;
@@ -463,7 +463,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           if (isPhoneVerified) {
             this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.PHONE });
           } else {
-            updateUser(user.walletId, { phone: formattedPhone });
+            updateUser(walletId, { phone: formattedPhone });
           }
         }
       }
@@ -545,10 +545,14 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   setImage = (imageUri: string) => {
     const { user, updateUserAvatar } = this.props;
+
+    const walletId = user?.walletId;
+    if (!walletId) return;
+
     const formData: any = new FormData();
-    formData.append('walletId', user.walletId);
+    formData.append('walletId', walletId);
     formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
-    updateUserAvatar(user.walletId, formData);
+    updateUserAvatar(walletId, formData);
     this.setState({ showProfileImageModal: false });
   };
 
@@ -574,14 +578,17 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   changeField = () => {
-    const { updateUser, user } = this.props;
+    const { updateUser, user: { walletId } } = this.props;
     const { cautionModalField, value } = this.state;
+
+    if (!walletId) return;
+
     if (cautionModalField === VISIBLE_CAUTION_MODAL.PHONE) {
       const { phone: { input, selector } } = value;
       const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
-      updateUser(user.walletId, { phone: formattedPhone });
+      updateUser(walletId, { phone: formattedPhone });
     } else if (cautionModalField === VISIBLE_CAUTION_MODAL.EMAIL) {
-      updateUser(user.walletId, { email: value.email });
+      updateUser(walletId, { email: value.email });
     }
     this.setState({ cautionModalField: null });
   };
@@ -663,7 +670,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const {
       profileImage,
       lastUpdateTime = 0,
-      username = '',
+      username,
     } = user;
 
 
@@ -688,21 +695,24 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
-                    {!!profileImage && <ProfileImage
-                      uri={updatedProfileImage}
-                      userName={username}
-                      diameter={96}
-                      borderWidth={0}
-                      noShadow
-                    />}
-                    {!profileImage &&
-                    <ProfileImagePlaceholder>
-                      <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
-                    </ProfileImagePlaceholder>}
+                    {!!profileImage && (
+                      <ProfileImage
+                        uri={updatedProfileImage}
+                        userName={username || ''}
+                        diameter={96}
+                        borderWidth={0}
+                        noShadow
+                      />
+                    )}
+                    {!profileImage && !!username && (
+                      <ProfileImagePlaceholder>
+                        <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
+                      </ProfileImagePlaceholder>
+                    )}
                   </ImageWrapper>
                 </TouchableOpacity>
                 <Spacing h={20} />
-                <MediumText large center>{username}</MediumText>
+                {!!username && <MediumText large center>{username}</MediumText>}
                 <BaseText regular secondary center>{ensName}</BaseText>
                 <Spacing h={32} />
               </View>
@@ -747,7 +757,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           isVisible={!!showProfileImageModal}
           onModalHide={() => this.setState({ showProfileImageModal: false })}
           ensName={ensName}
-          username={username}
+          username={username || ''}
           profileImageUri={updatedProfileImage}
           onTakeSelfiePress={this.onTakeSelfiePress}
           onUploadPicturePress={this.onUploadPicturePress}
@@ -757,7 +767,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           isVisible={!!showDeleteAvatarModal}
           onModalHide={() => this.setState({ showDeleteAvatarModal: false })}
           profileImageUri={updatedProfileImage}
-          username={username}
+          username={username || ''}
           deleteAvatar={this.deleteAvatar}
         />
       </ContainerWithHeader>

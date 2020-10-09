@@ -84,6 +84,7 @@ type Props = {
   hideAsset: Function,
   scrollViewRef?: Object,
   theme: Theme,
+  sessionLanguageCode: ?string, // important for re-rendering on language change
 };
 
 type State = {
@@ -130,7 +131,6 @@ class AssetsList extends React.Component<Props, State> {
     this.didBlur.remove();
     this.willFocus.remove();
   }
-
 
   shouldComponentUpdate(nextProps: Props, nextState: State) {
     const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
@@ -343,10 +343,12 @@ class AssetsList extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency, appearanceSettings: { assetsLayout } } },
+  session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   assetsLayout,
+  sessionLanguageCode,
 });
 
 const structuredSelector = createStructuredSelector({

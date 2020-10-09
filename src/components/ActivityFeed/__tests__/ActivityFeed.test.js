@@ -26,7 +26,7 @@ import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from 'utils/themes';
 import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
 import { I18nextProvider } from 'react-i18next';
-import i18n from 'translations/testing';
+import i18n from 'services/localisation/testing';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 
 import { initialState as historyState } from 'reducers/historyReducer';
@@ -35,6 +35,7 @@ import { initialState as accountsState } from 'reducers/accountsReducer';
 import { initialState as ensRegistryState } from 'reducers/ensRegistryReducer';
 import { initialState as smartWalletState } from 'reducers/smartWalletReducer';
 import { initialState as referralsState } from 'reducers/referralsReducer';
+import { initialState as sessionState } from 'reducers/sessionReducer';
 
 
 const mockStore = configureMockStore([thunk]);
@@ -46,6 +47,7 @@ const initialStore = mockStore({
   ensRegistry: ensRegistryState,
   smartWallet: smartWalletState,
   referrals: referralsState,
+  session: sessionState,
 });
 
 const Component = (store, children) => (

@@ -27,6 +27,8 @@ import Selector from 'components/Selector';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueSelectorCard from 'components/ValueSelectorCard';
 import Button from 'components/Button';
+import ArrowIcon from 'components/ArrowIcon';
+import { Spacing } from 'components/Layout';
 
 // types
 import type { Props as SelectorProps } from 'components/Selector';
@@ -56,6 +58,10 @@ const FooterInner = styled.View`
   align-items: center;
   width: 100%;
   padding: ${spacing.large}px;
+`;
+
+const Wrapper = styled.View`
+  align-items: center;
 `;
 
 const SendFooter = (props: FooterProps) => {
@@ -90,23 +96,25 @@ const SendContainer = (props: Props) => {
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
     >
-      <Selector
-        label={t('label.to')}
-        placeholder={t('label.chooseReceiver')}
-        searchPlaceholder={t('label.walletAddress')}
-        wrapperStyle={{ marginTop: spacing.medium }}
-        noOptionImageFallback
-        hasQRScanner
-        disableSelfSelect
-        allowEnteringCustomAddress
-        {...customSelectorProps}
-      />
-      <ValueSelectorCard
-        selectorModalTitle={t('transactions.title.valueSelectorModal')}
-        maxLabel={t('button.sendMax')}
-        wrapperStyle={{ paddingTop: spacing.medium }}
-        {...customValueSelectorProps}
-      />
+      <Wrapper>
+        <ValueSelectorCard
+          selectorModalTitle={t('transactions.title.valueSelectorModal')}
+          maxLabel={t('button.sendMax')}
+          wrapperStyle={{ paddingTop: spacing.medium }}
+          {...customValueSelectorProps}
+        />
+        <ArrowIcon />
+        <Spacing h={20} />
+        <Selector
+          placeholder={t('label.whereToSend')}
+          searchPlaceholder={t('label.walletAddress')}
+          noOptionImageFallback
+          hasQRScanner
+          disableSelfSelect
+          allowEnteringCustomAddress
+          {...customSelectorProps}
+        />
+      </Wrapper>
       {children}
     </ContainerWithHeader>
   );

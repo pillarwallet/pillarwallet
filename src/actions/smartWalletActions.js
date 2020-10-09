@@ -25,7 +25,6 @@ import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
-import * as Sentry from '@sentry/react-native';
 
 // components
 import Toast from 'components/Toast';
@@ -140,6 +139,7 @@ import {
   isCaseInsensitiveMatch,
   parseTokenAmount,
   printLog,
+  reportErrorLog,
   reportLog,
 } from 'utils/common';
 import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
@@ -216,7 +216,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
         smartAccounts,
         user.walletId,
         privateKey,
-        session.fcmToken,
+        session?.fcmToken,
       );
     }
     const backendAccounts = await api.listAccounts(user.walletId);
@@ -656,7 +656,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const {
         accounts: { data: accounts },
         paymentNetwork: { txToListen },
-        wallet: { data: { address: keyBasedWalletAddress } },
+        wallet: { data: walletData },
         assets: { supportedAssets },
       } = getState();
       let { history: { data: currentHistory } } = getState();
@@ -681,7 +681,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       };
 
       if (txStatus === TRANSACTION_COMPLETED) {
-        if (addressesEqual(txSenderAddress, keyBasedWalletAddress)) {
+        if (addressesEqual(txSenderAddress, walletData?.address)) {
           dispatch(checkKeyBasedAssetTransferTransactionsAction());
         }
 
@@ -917,7 +917,7 @@ export const estimateTopUpVirtualAccountAction = (amount: string = '1') => {
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate top up account virtual balance', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
         return {};
       });
     if (isEmpty(response)) return;
@@ -953,7 +953,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate top up account virtual balance', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate top up account virtual balance', { error: e });
         return {};
       });
 
@@ -966,7 +966,7 @@ export const topUpVirtualAccountAction = (amount: string, payForGasWithToken: bo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to top up account virtual balance', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to top up account virtual balance', { error: e });
         return null;
       });
 
@@ -1025,7 +1025,7 @@ export const estimateWithdrawFromVirtualAccountAction = (amount: string) => {
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate withdraw from virtual account', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
         return {};
       });
     if (isEmpty(response)) return;
@@ -1061,7 +1061,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to estimate withdraw from virtual account', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate withdraw from virtual account', { error: e });
         return {};
       });
 
@@ -1074,7 +1074,7 @@ export const withdrawFromVirtualAccountAction = (amount: string, payForGasWithTo
           emoji: 'hushed',
           autoClose: false,
         });
-        reportLog('Failed to withdraw from virtual account', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Failed to withdraw from virtual account', { error: e });
         return null;
       });
 
@@ -1190,7 +1190,7 @@ export const estimateSettleBalanceAction = (txToSettle: Object) => {
           supportLink: true,
           autoClose: false,
         });
-        reportLog('Failed to estimate payment settlement', { error: e, hashes }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
         return {};
       });
     if (isEmpty(response)) return;
@@ -1221,7 +1221,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
           supportLink: true,
           autoClose: false,
         });
-        reportLog('Failed to estimate payment settlement', { error: e, hashes }, Sentry.Severity.Error);
+        reportErrorLog('Failed to estimate payment settlement', { error: e, hashes });
         return {};
       });
 
@@ -1235,7 +1235,7 @@ export const settleTransactionsAction = (txToSettle: TxToSettle[], payForGasWith
           supportLink: true,
           autoClose: false,
         });
-        reportLog('Failed to settle transactions', { error: e, hashes }, Sentry.Severity.Error);
+        reportErrorLog('Failed to settle transactions', { error: e, hashes });
         return null;
       });
 
@@ -1296,8 +1296,15 @@ export const importSmartWalletAccountsAction = (privateKey: string) => {
 
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
-    const { user = {} } = await storage.get('user');
-    const { session: { data: session } } = getState();
+    const {
+      session: { data: session },
+      user: { data: user },
+    } = getState();
+
+    if (!user.username) {
+      reportErrorLog('importSmartWalletAccountsAction failed: no username', { user });
+      return;
+    }
 
     const smartAccounts = await smartWalletService.getAccounts();
     if (isEmpty(smartAccounts)) {
@@ -1309,6 +1316,11 @@ export const importSmartWalletAccountsAction = (privateKey: string) => {
       payload: smartAccounts,
     });
     await dispatch(saveDbAction('smartWallet', { accounts: smartAccounts }));
+
+    if (!user.walletId) {
+      reportErrorLog('importSmartWalletAccountsAction failed: no walletId', { user });
+      return;
+    }
 
     // register missed accounts on the backend
     await smartWalletService.syncSmartAccountsWithBackend(
@@ -1518,14 +1530,23 @@ export const checkIfSmartWalletWasRegisteredAction = (privateKey: string, smartW
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
       accounts: { data: accounts },
-      user: { data: { walletId } },
+      user: { data: user },
       session: { data: session },
     } = getState();
+
+    // cannot be done while offline
+    if (!session.isOnline) return;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('checkIfSmartWalletWasRegisteredAction failed: unable to get walletId', { user });
+      return;
+    }
 
     const account = findAccountById(smartWalletAccountId, accounts);
     if (!account || account.walletId) return;
 
-    // No walletId set means we fail to register that account on the backend
+    // no account.walletId set means we fail to register that account on the backend
     const accountAddress = getAccountAddress(account);
     const result = await api.registerSmartWallet({
       walletId,
@@ -1569,7 +1590,7 @@ export const estimateSmartWalletDeploymentAction = () => {
     const rawEstimate = await smartWalletService
       .estimateAccountDeployment()
       .catch((error) => {
-        reportLog('estimateAccountDeployment failed', { error });
+        reportErrorLog('estimateAccountDeployment failed', { error });
         return null;
       });
 

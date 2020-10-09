@@ -48,6 +48,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Asset, Assets } from 'models/Asset';
 import type { Accounts } from 'models/Account';
+import ArrowIcon from '../../components/ArrowIcon/ArrowIcon';
 
 
 type Props = {
@@ -73,6 +74,11 @@ const Column = styled.View``;
 
 const WithdrawCardWrapper = styled.View`
   padding: 16px;
+`;
+
+const SelectorWrapper = styled.View`
+  align-items: center;
+  padding: 24px 0 16px;
 `;
 
 class IncomingStream extends React.Component<Props> {
@@ -127,13 +133,15 @@ class IncomingStream extends React.Component<Props> {
         headerProps={{ centerItems: [{ title: t('sablierContent.title.incomingStream') }] }}
         putContentInScrollView
       >
-        <Selector
-          label={t('label.from')}
-          disabled
-          selectedOption={sender}
-          customOptions={[]}
-        />
-
+        <SelectorWrapper>
+          <Selector
+            disabled
+            selectedOption={sender}
+            customOptions={[]}
+          />
+          <Spacing h={20} />
+          <ArrowIcon />
+        </SelectorWrapper>
         <SablierStreamCircles
           stream={stream}
         />

@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -49,6 +50,7 @@ import type { GasToken } from 'models/Transaction';
 import type { Accounts } from 'models/Account';
 
 import SablierCancellationModal from './SablierCancellationModal';
+import ArrowIcon from '../../components/ArrowIcon/ArrowIcon';
 
 
 type Props = {
@@ -71,6 +73,11 @@ type State = {
   cancellationPayload: ?Object,
   txFeeInWei: number,
 };
+
+const SelectorWrapper = styled.View`
+  align-items: center;
+  padding: 30px 0 48px;
+`;
 
 class OutgoingStream extends React.Component<Props, State> {
   state = {
@@ -166,15 +173,18 @@ class OutgoingStream extends React.Component<Props, State> {
         headerProps={{ centerItems: [{ title: t('sablierContent.title.outgoingStreamScreen') }] }}
         putContentInScrollView
       >
-        <Selector
-          label={t('label.to')}
-          disabled
-          selectedOption={recipient}
-        />
+
         <SablierStreamCircles
           stream={stream}
         />
-        <Spacing h={40} />
+        <SelectorWrapper>
+          <ArrowIcon />
+          <Spacing h={20} />
+          <Selector
+            disabled
+            selectedOption={recipient}
+          />
+        </SelectorWrapper>
         <Button
           title={t('sablierContent.button.cancelStream')}
           onPress={this.onCancel}

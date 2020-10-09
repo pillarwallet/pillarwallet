@@ -26,7 +26,7 @@ import { ETH } from 'constants/assetsConstants';
 
 // utils
 import { addressesEqual, getAssetData, getAssetDataByAddress } from 'utils/assets';
-import { formatAmount, reportLog } from 'utils/common';
+import { formatAmount, reportErrorLog } from 'utils/common';
 import { AAVE_ETH_ADDRESS, parseReserveAssetAddress } from 'utils/aave';
 
 // services
@@ -257,7 +257,7 @@ class AaveService {
   }
 
   handleError(error: any, result: any): any {
-    reportLog('AAVE service failed', { error });
+    reportErrorLog('AAVE service failed', { error });
     return result;
   }
 }

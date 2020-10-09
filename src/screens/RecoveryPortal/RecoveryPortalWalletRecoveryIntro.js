@@ -19,6 +19,10 @@ import styled, { withTheme } from 'styled-components/native';
 import { View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import { connect } from 'react-redux';
+
+// actions
+import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // constants
 import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY } from 'constants/navigationConstants';
@@ -37,11 +41,13 @@ import { getThemeColors, themedColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
+import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp,
   theme: Theme,
+  resetOnboardingAndNavigate: (routeName: string) => void,
 };
 
 const Title = styled(MediumText)`
@@ -69,9 +75,12 @@ const WarningTitleRow = styled.View`
   align-items: center;
 `;
 
-const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
-  const { navigation, theme } = props;
+const RecoveryPortalWalletRecoveryIntro = ({
+  theme,
+  resetOnboardingAndNavigate,
+}: Props) => {
   const colors = getThemeColors(theme);
+
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:recoveryPortal.title.recoveryOptions') }] }}>
       <ScrollWrapper regularPadding>
@@ -86,13 +95,13 @@ const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
           <Button
             block
             title={t('auth:button.proceed')}
-            onPress={() => navigation.navigate(RECOVERY_PORTAL_WALLET_RECOVERY)}
+            onPress={() => resetOnboardingAndNavigate(RECOVERY_PORTAL_WALLET_RECOVERY)}
             marginTop={50}
             marginBottom={spacing.large}
           />
           <ButtonText
             buttonText={t('auth:button.recoverKeyWalletFirst')}
-            onPress={() => navigation.navigate(IMPORT_WALLET)}
+            onPress={() => resetOnboardingAndNavigate(IMPORT_WALLET)}
             fontSize={fontSizes.medium}
             medium
           />
@@ -102,4 +111,9 @@ const RecoveryPortalWalletRecoveryIntro = (props: Props) => {
   );
 };
 
-export default withTheme(RecoveryPortalWalletRecoveryIntro);
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  resetOnboardingAndNavigate: (routeName: string) => dispatch(resetOnboardingAndNavigateAction(routeName)),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(RecoveryPortalWalletRecoveryIntro));

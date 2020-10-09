@@ -27228,99 +27228,46 @@ exports[`Storyshots Selector default 1`] = `
   }
 >
   <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-          "paddingBottom": 24,
-          "paddingLeft": 16,
-          "paddingRight": 16,
-          "paddingTop": 24,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "#EBF0F6",
+        "borderRadius": 24,
+        "opacity": 1,
+        "paddingBottom": 10,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingTop": 10,
+      }
     }
   >
     <Text
-      accent={true}
-      regular={true}
+      link={true}
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#818EB3",
+            "color": "#007aff",
             "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 14,
-            "lineHeight": 22,
+            "fontSize": 16,
+            "lineHeight": 24,
             "textAlignVertical": "center",
           },
-          Array [
-            Object {
-              "color": "#818EB3",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
+          undefined,
         ]
       }
     >
-      label.select
-      : 
+      label.choseOption
     </Text>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "opacity": 1,
-        }
-      }
-    >
-      <Text
-        big={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 18,
-              "lineHeight": 28,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Medium",
-                "fontSize": 18,
-                "lineHeight": 28,
-                "textAlignVertical": "center",
-              },
-              Object {
-                "paddingHorizontal": 16,
-              },
-            ],
-          ]
-        }
-      >
-        ellipsedString
-      </Text>
-    </View>
   </View>
   <Modal
     animationType="none"
@@ -28372,99 +28319,46 @@ exports[`Storyshots Selector no options 1`] = `
   }
 >
   <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-          "paddingBottom": 24,
-          "paddingLeft": 16,
-          "paddingRight": 16,
-          "paddingTop": 24,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "#EBF0F6",
+        "borderRadius": 24,
+        "opacity": 1,
+        "paddingBottom": 10,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingTop": 10,
+      }
     }
   >
     <Text
-      accent={true}
-      regular={true}
+      link={true}
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#818EB3",
+            "color": "#007aff",
             "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 14,
-            "lineHeight": 22,
+            "fontSize": 16,
+            "lineHeight": 24,
             "textAlignVertical": "center",
           },
-          Array [
-            Object {
-              "color": "#818EB3",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
+          undefined,
         ]
       }
     >
-      label.select
-      : 
+      label.noOptionsToSelect
     </Text>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "opacity": 1,
-        }
-      }
-    >
-      <Text
-        big={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 18,
-              "lineHeight": 28,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Medium",
-                "fontSize": 18,
-                "lineHeight": 28,
-                "textAlignVertical": "center",
-              },
-              Object {
-                "paddingHorizontal": 16,
-              },
-            ],
-          ]
-        }
-      >
-        label.noOptionsToSelect
-      </Text>
-    </View>
   </View>
   <Modal
     animationType="none"
@@ -29189,267 +29083,104 @@ exports[`Storyshots Selector selected option 1`] = `
   }
 >
   <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-          "paddingBottom": 24,
-          "paddingLeft": 16,
-          "paddingRight": 16,
-          "paddingTop": 24,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "#EBF0F6",
+        "borderRadius": 24,
+        "opacity": 1,
+        "paddingBottom": 10,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingTop": 10,
+      }
     }
   >
-    <Text
-      accent={true}
-      regular={true}
+    <View
       style={
         Array [
           Object {
-            "color": "#818EB3",
-            "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 14,
-            "lineHeight": 22,
-            "textAlignVertical": "center",
+            "alignItems": "center",
+            "flexDirection": "row",
           },
-          Array [
-            Object {
-              "color": "#818EB3",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
+          undefined,
         ]
       }
     >
-      To
-      : 
-    </Text>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "opacity": 1,
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "borderColor": "#FFFFFF",
+            "borderRadius": 8,
+            "borderStyle": "solid",
+            "borderWidth": 0,
+            "display": "flex",
+            "height": 16,
+            "justifyContent": "center",
+            "opacity": 1,
+            "position": "relative",
+            "width": 16,
+          }
         }
-      }
-    >
+      />
       <View
         style={
           Array [
             Object {
-              "flexDirection": "column",
-              "width": "100%",
+              "height": 0,
+              "width": 8,
             },
             undefined,
           ]
         }
-      >
-        <View
-          accessible={true}
-          focusable={true}
-          isTVSelectable={true}
-          onClick={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
-          style={
+        w={8}
+      />
+      <Text
+        medium={true}
+        style={
+          Array [
             Object {
-              "alignItems": "center",
-              "flexDirection": "row",
-              "justifyContent": "center",
-              "opacity": 1,
-              "paddingBottom": 0,
-              "paddingLeft": 14,
-              "paddingRight": 14,
-              "paddingTop": 0,
-              "width": "100%",
-            }
-          }
-        >
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "justifyContent": "center",
-                  "paddingRight": 12,
-                },
-                undefined,
-              ]
-            }
-          >
-            <View
-              accessible={true}
-              focusable={true}
-              isTVSelectable={true}
-              onClick={[Function]}
-              onResponderGrant={[Function]}
-              onResponderMove={[Function]}
-              onResponderRelease={[Function]}
-              onResponderTerminate={[Function]}
-              onResponderTerminationRequest={[Function]}
-              onStartShouldSetResponder={[Function]}
-              style={
-                Object {
-                  "alignItems": "center",
-                  "borderColor": "#FFFFFF",
-                  "borderRadius": 26,
-                  "borderStyle": "solid",
-                  "borderWidth": 0,
-                  "display": "flex",
-                  "height": 52,
-                  "justifyContent": "center",
-                  "opacity": 1,
-                  "position": "relative",
-                  "width": 52,
-                }
-              }
-            />
-          </View>
-          <View
-            style={
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 16,
+              "lineHeight": 24,
+              "textAlignVertical": "center",
+            },
+            Array [
               Object {
-                "flex": 1,
-              }
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "alignItems": "center",
-                    "flexDirection": "row",
-                    "justifyContent": "space-between",
-                    "width": "100%",
-                  },
-                  undefined,
-                ]
-              }
-              type="DEFAULT"
-            >
-              <View
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-start",
-                      "flexBasis": 0,
-                      "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
-                      "justifyContent": "center",
-                      "marginTop": 0,
-                      "minHeight": 54,
-                    },
-                    Object {
-                      "flexGrow": 1,
-                    },
-                  ]
-                }
-                type="DEFAULT"
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "alignItems": "center",
-                        "flexDirection": "row",
-                        "justifyContent": "space-between",
-                      },
-                      undefined,
-                    ]
-                  }
-                >
-                  <Text
-                    ellipsizeMode="tail"
-                    numberOfLines={2}
-                    style={
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
-                            "textAlignVertical": "center",
-                          },
-                          Array [
-                            Object {
-                              "color": "#0A1427",
-                              "fontSize": 18,
-                              "lineHeight": 28,
-                              "width": "100%",
-                            },
-                            undefined,
-                          ],
-                        ],
-                      ]
-                    }
-                    type="DEFAULT"
-                  >
-                    alice
-                  </Text>
-                </View>
-              </View>
-              <View
-                rightColumn={true}
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "flex-end",
-                      "flexDirection": "column",
-                      "justifyContent": "center",
-                      "marginLeft": 10,
-                      "marginTop": 0,
-                      "minHeight": 54,
-                    },
-                    Object {
-                      "maxWidth": "50%",
-                    },
-                  ]
-                }
-                type="DEFAULT"
-              >
-                <View
-                  style={
-                    Array [
-                      undefined,
-                      Object {
-                        "flexWrap": "wrap",
-                      },
-                    ]
-                  }
-                />
-              </View>
-            </View>
-          </View>
-        </View>
-      </View>
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Medium",
+                "fontSize": 16,
+                "lineHeight": 24,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        alice
+      </Text>
     </View>
   </View>
   <Modal
@@ -30502,99 +30233,46 @@ exports[`Storyshots Selector with custom wording 1`] = `
   }
 >
   <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-          "paddingBottom": 24,
-          "paddingLeft": 16,
-          "paddingRight": 16,
-          "paddingTop": 24,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "#EBF0F6",
+        "borderRadius": 24,
+        "opacity": 1,
+        "paddingBottom": 10,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingTop": 10,
+      }
     }
   >
     <Text
-      accent={true}
-      regular={true}
+      link={true}
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#818EB3",
+            "color": "#007aff",
             "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 14,
-            "lineHeight": 22,
+            "fontSize": 16,
+            "lineHeight": 24,
             "textAlignVertical": "center",
           },
-          Array [
-            Object {
-              "color": "#818EB3",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
+          undefined,
         ]
       }
     >
-      To
-      : 
+      Choose contact
     </Text>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "opacity": 1,
-        }
-      }
-    >
-      <Text
-        big={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 18,
-              "lineHeight": 28,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Medium",
-                "fontSize": 18,
-                "lineHeight": 28,
-                "textAlignVertical": "center",
-              },
-              Object {
-                "paddingHorizontal": 16,
-              },
-            ],
-          ]
-        }
-      >
-        ellipsedString
-      </Text>
-    </View>
   </View>
   <Modal
     animationType="none"
@@ -31646,99 +31324,46 @@ exports[`Storyshots Selector with horizontal options 1`] = `
   }
 >
   <View
+    accessible={true}
+    focusable={true}
+    isTVSelectable={true}
+    onClick={[Function]}
+    onResponderGrant={[Function]}
+    onResponderMove={[Function]}
+    onResponderRelease={[Function]}
+    onResponderTerminate={[Function]}
+    onResponderTerminationRequest={[Function]}
+    onStartShouldSetResponder={[Function]}
     style={
-      Array [
-        Object {
-          "alignItems": "center",
-          "flexDirection": "row",
-          "justifyContent": "space-between",
-          "paddingBottom": 24,
-          "paddingLeft": 16,
-          "paddingRight": 16,
-          "paddingTop": 24,
-          "width": "100%",
-        },
-        undefined,
-      ]
+      Object {
+        "backgroundColor": "#EBF0F6",
+        "borderRadius": 24,
+        "opacity": 1,
+        "paddingBottom": 10,
+        "paddingLeft": 16,
+        "paddingRight": 16,
+        "paddingTop": 10,
+      }
     }
   >
     <Text
-      accent={true}
-      regular={true}
+      link={true}
+      medium={true}
       style={
         Array [
           Object {
-            "color": "#818EB3",
+            "color": "#007aff",
             "fontFamily": "EuclidCircularB-Regular",
-            "fontSize": 14,
-            "lineHeight": 22,
+            "fontSize": 16,
+            "lineHeight": 24,
             "textAlignVertical": "center",
           },
-          Array [
-            Object {
-              "color": "#818EB3",
-              "fontFamily": "EuclidCircularB-Medium",
-              "fontSize": 14,
-              "lineHeight": 22,
-              "textAlignVertical": "center",
-            },
-            undefined,
-          ],
+          undefined,
         ]
       }
     >
-      label.select
-      : 
+      label.choseOption
     </Text>
-    <View
-      accessible={true}
-      focusable={true}
-      isTVSelectable={true}
-      onClick={[Function]}
-      onResponderGrant={[Function]}
-      onResponderMove={[Function]}
-      onResponderRelease={[Function]}
-      onResponderTerminate={[Function]}
-      onResponderTerminationRequest={[Function]}
-      onStartShouldSetResponder={[Function]}
-      style={
-        Object {
-          "flexBasis": 0,
-          "flexGrow": 1,
-          "flexShrink": 1,
-          "opacity": 1,
-        }
-      }
-    >
-      <Text
-        big={true}
-        style={
-          Array [
-            Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "fontSize": 18,
-              "lineHeight": 28,
-              "textAlignVertical": "center",
-            },
-            Array [
-              Object {
-                "color": "#0A1427",
-                "fontFamily": "EuclidCircularB-Medium",
-                "fontSize": 18,
-                "lineHeight": 28,
-                "textAlignVertical": "center",
-              },
-              Object {
-                "paddingHorizontal": 16,
-              },
-            ],
-          ]
-        }
-      >
-        ellipsedString
-      </Text>
-    </View>
   </View>
   <Modal
     animationType="none"
