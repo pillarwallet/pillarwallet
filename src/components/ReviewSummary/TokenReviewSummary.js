@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import React from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -25,19 +24,16 @@ import { getEnv } from 'configs/envConfig';
 import { CachedImage } from 'react-native-cached-image';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import CollectibleImage from 'components/CollectibleImage';
 import { formatAmount } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import type { Rates, Asset } from 'models/Asset';
-import type { Collectible } from 'models/Collectible';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
-  amount?: number,
-  asset?: Asset,
-  collectible?: Collectible,
+  amount: number,
+  asset: Asset,
   text: string,
   rates: Rates,
   baseFiatCurrency: ?string,
@@ -52,45 +48,24 @@ const TokenImage = styled(CachedImage)`
   height: 64px;
 `;
 
-const StyledCollectibleImage = styled(CollectibleImage)`
-  width: 192px;
-  height: 192px;
-`;
+const TokenReivewSummary = ({
+  asset, amount, rates, baseFiatCurrency, text,
+}) => {
+  const assetIcon = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
+  const formattedAmount = formatAmount(amount);
+  const fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
 
-const ReviewSummary = ({
-  asset, collectible, text, amount, rates, baseFiatCurrency,
-}: Props) => {
-  if (asset && amount) {
-    const assetIcon = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
-    const formattedAmount = formatAmount(amount);
-    const fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
-
-    return (
-      <Container>
-        <TokenImage source={{ uri: assetIcon }} />
-        <Spacing h={16} />
-        <BaseText regular>{text}</BaseText>
-        <Spacing h={16} />
-        <MediumText giant>{formattedAmount} <MediumText secondary fontSize={20}>{asset.symbol}</MediumText></MediumText>
-        <Spacing h={7} />
-        <BaseText secondary small>{fiatAmount}</BaseText>
-      </Container>
-    );
-  }
-
-  if (collectible) {
-    return (
-      <Container>
-        <StyledCollectibleImage source={{ uri: collectible.icon }} />
-        <Spacing h={16} />
-        <BaseText regular>{text}</BaseText>
-        <Spacing h={16} />
-        <MediumText medium>{collectible.name}</MediumText>
-      </Container>
-    );
-  }
-
-  return null;
+  return (
+    <Container>
+      <TokenImage source={{ uri: assetIcon }} />
+      <Spacing h={16} />
+      <BaseText regular>{text}</BaseText>
+      <Spacing h={16} />
+      <MediumText giant>{formattedAmount} <MediumText secondary fontSize={20}>{asset.symbol}</MediumText></MediumText>
+      <Spacing h={7} />
+      <BaseText secondary small>{fiatAmount}</BaseText>
+    </Container>
+  );
 };
 
 const mapStateToProps = ({
@@ -101,4 +76,4 @@ const mapStateToProps = ({
   baseFiatCurrency,
 });
 
-export default connect(mapStateToProps)(ReviewSummary);
+export default connect(mapStateToProps)(TokenReivewSummary);
