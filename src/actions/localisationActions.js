@@ -19,7 +19,6 @@
 */
 
 import isEmpty from 'lodash.isempty';
-import * as Sentry from '@sentry/react-native';
 
 import localeConfig from 'configs/localeConfig';
 import t from 'translations/translate';
@@ -45,7 +44,7 @@ import type { TranslationData, TranslationResourcesOfLanguage } from 'models/Tra
 import type { CachedUrls } from 'reducers/cacheReducer';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
-import { reportLog } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 import { getCachedJSONFile } from 'utils/cache';
 
 
@@ -81,7 +80,7 @@ const getCachedTranslationResources =
       }
       return { ns, translations };
     })).catch((e) => {
-      reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, e, Sentry.Severity.Error);
+      reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, e);
       return [];
     });
 
@@ -174,7 +173,7 @@ const setLanguageAndTranslationBundles = async ({ language, resources, onSuccess
   } else {
     // report to sentry if fallback language misses translations
     if (language === localeConfig.defaultLanguage) {
-      reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, null, Sentry.Severity.Error);
+      reportErrorLog(LANGUAGE_ERROR.NO_TRANSLATIONS);
     }
     onLanguageChangeError();
   }
@@ -193,7 +192,7 @@ export const getAndSetFallbackLanguageResources = () => {
     if (missingNameSpaces.length || !hasFallbackTranslations) {
       const ERROR = missingNameSpaces.length ? LANGUAGE_ERROR.MISSES_NAMESPACES : LANGUAGE_ERROR.NO_TRANSLATIONS;
       const extra = missingNameSpaces.length ? { missingNameSpaces } : null;
-      reportLog(ERROR, extra, Sentry.Severity.Error);
+      reportLog(ERROR, extra);
     }
 
     if (hasFallbackTranslations) {
@@ -249,7 +248,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
 
       // log to Sentry if any default language name spaces are missing
       if (language === localeConfig.defaultLanguage && missingNsArray.length) {
-        reportLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray }, Sentry.Severity.Error);
+        reportErrorLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray });
       }
 
       await setLanguageAndTranslationBundles({ resources, language });
@@ -287,7 +286,7 @@ export const changeLanguageAction = (language: string) => {
             autoClose: true,
           });
           if (language === localeConfig.defaultLanguage) {
-            reportLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray }, Sentry.Severity.Error);
+            reportErrorLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray });
           }
         } else {
           Toast.show({
