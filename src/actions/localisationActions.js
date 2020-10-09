@@ -248,7 +248,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
       } = await getTranslationsResources({ language, dispatch, getState });
 
       // log to Sentry if any default language name spaces are missing
-      if (language === localeConfig.defaultLanguage) {
+      if (language === localeConfig.defaultLanguage && missingNsArray.length) {
         reportLog(LANGUAGE_ERROR.MISSES_NAMESPACES, { missingNameSpaces: missingNsArray }, Sentry.Severity.Error);
       }
 
