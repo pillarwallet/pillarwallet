@@ -17,33 +17,37 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import styled, { withTheme } from 'styled-components/native';
+import shuffle from 'shuffle-array';
 
+// actions
+import { backupWalletAction } from 'actions/walletActions';
+
+// utils
 import { fontSizes, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import styled, { withTheme } from 'styled-components/native';
+import { generateWordsToValidate } from 'utils/wallet';
+import { reportErrorLog } from 'utils/common';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
-import { backupWalletAction } from 'actions/walletActions';
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
+// types
+import type { Dispatch } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 
-type State = {
-  enteredWords: string[],
-  enteredIndex: string[],
-  isFormValid: boolean,
-};
 
 type Props = {
-  wallet: Object,
   navigation: NavigationScreenProp<*>,
-  backupWallet: Function,
+  backupWallet: () => void,
   theme: Theme,
 };
 
@@ -122,171 +126,147 @@ const FooterWrapper = styled.View`
 `;
 
 const DEBUG_SKIP = 'debugskip';
+const NUM_WORDS_TO_CHECK = 3;
 
-class BackupPhraseValidate extends React.Component<Props, State> {
-  state = {
-    enteredWords: [],
-    enteredIndex: [],
-    isFormValid: false,
-  };
-
-  handleWordSetting = (word, index) => {
-    let { enteredWords, enteredIndex } = this.state;
-    const { onboarding: wallet } = this.props.wallet;
-    const maxWords = wallet.mnemonic.wordsToValidate.length;
-    if (enteredWords.length === maxWords) return;
-    enteredWords = [...enteredWords, word];
-    enteredIndex = [...enteredIndex, index];
-
-    this.setState({
-      enteredWords,
-      enteredIndex,
-    }, () => {
-      const isFormValid = this.validateForm(this.state.enteredWords);
-      this.setState({
-        isFormValid,
-      });
-    });
-  };
-
-  handleLastWordRemoval = () => {
-    let { enteredWords, enteredIndex } = this.state;
-    enteredWords = [...enteredWords.slice(0, -1)];
-    enteredIndex = [...enteredIndex.slice(0, -1)];
-
-    this.setState({
-      enteredWords,
-      enteredIndex,
-    }, () => {
-      const isFormValid = this.validateForm(this.state.enteredWords);
-      this.setState({
-        isFormValid,
-      });
-    });
-  };
-
-  validateForm(enteredWords) {
-    const { onboarding: wallet } = this.props.wallet;
-    const maxWords = wallet.mnemonic.wordsToValidate.length;
-    if (enteredWords.length !== maxWords) return false;
-
-    const { wordsToValidate } = wallet.mnemonic;
-    const mnemonicList = wallet.mnemonic.original.split(' ');
-
-    const validPhrase = wordsToValidate.map((wordIndex) => {
-      return mnemonicList[wordIndex - 1];
-    });
-
-    return validPhrase.toString() === enteredWords.toString();
+const BackupPhraseValidate = ({
+  navigation,
+  theme,
+  backupWallet,
+}: Props) => {
+  const mnemonicPhrase = navigation.getParam('mnemonicPhrase', null);
+  if (!mnemonicPhrase) {
+    // some edge case caused fail, report and navigate back;
+    navigation.dismiss();
+    reportErrorLog('BackupPhraseValidate screen has no mnemonicPhrase!');
+    return null;
   }
 
-  renderInputFields = () => {
-    const { theme, wallet: { onboarding: wallet } } = this.props;
-    const { wordsToValidate } = wallet.mnemonic;
-    const { enteredWords } = this.state;
-    const mnemonicList = wallet.mnemonic.original.split(' ');
-    const colors = getThemeColors(theme);
+  const mnemonicWords = mnemonicPhrase.split(' ');
 
-    return [...Array(wordsToValidate.length)]
-      .map((el, i) => {
-        return (
-          <WordInputWrapper key={`${mnemonicList[i]}_${i}`}>
-            <WordInputPrefix><Label>{wordsToValidate[i]}</Label></WordInputPrefix>
-            <WordInput filled={!!enteredWords[i]}>
-              <WordInputText>{enteredWords[i] || ''}</WordInputText>
-            </WordInput>
-            {enteredWords.length === (i + 1) &&
-              <RemoveWordButtonIcon
-                icon="close"
-                onPress={this.handleLastWordRemoval}
-                fontSize={fontSizes.medium}
-                color={colors.primary}
-              />
-            }
-          </WordInputWrapper>
-        );
-      });
+  const [wordsToValidate, setWordsToValidate] = useState(null);
+  const [shuffledPhrase, setShuffledPhrase] = useState(null);
+
+  // shuffles on initial render
+  useEffect(() => {
+    setShuffledPhrase(shuffle(mnemonicWords, { copy: true }).join(' '));
+    setWordsToValidate(generateWordsToValidate(NUM_WORDS_TO_CHECK, mnemonicWords.length));
+  }, []);
+
+  const [enteredWords, setEnteredWords] = useState([]);
+  const [isFormValid, setIsFormValid] = useState(false);
+
+  const validateForm = () => {
+    if (!wordsToValidate) {
+      if (isFormValid) setIsFormValid(false);
+      return;
+    }
+
+    const maxWords = wordsToValidate.length;
+
+    if (enteredWords.length !== maxWords) {
+      if (isFormValid) setIsFormValid(false);
+      return;
+    }
+
+    const validPhrase = wordsToValidate.map((wordIndex) => mnemonicWords[wordIndex - 1]);
+
+    setIsFormValid(validPhrase.toString() === enteredWords.toString());
   };
 
-  renderShuffledWordList = () => {
-    const { onboarding: wallet } = this.props.wallet;
-    const { enteredIndex } = this.state;
-    const shuffledMnemonicList = wallet.mnemonic.shuffled.split(' ');
+  useEffect(() => { validateForm(); }, [enteredWords]);
 
-    return shuffledMnemonicList.map((word: string, index: number) => {
-      const indexAsString = index.toString();
-      const isEntered = enteredIndex.includes(indexAsString);
-      return (
-        <MnemonicPhraseWord
-          key={`${word}${index}`}
-          onPress={() => this.handleWordSetting(word, indexAsString)}
-          disabled={isEntered}
-        >
-          <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
-        </MnemonicPhraseWord>
-      );
-    });
+  const handleWordSetting = (word) => {
+    const maxWords = wordsToValidate?.length || 0;
+    if (enteredWords.length === maxWords) return;
+    setEnteredWords([...enteredWords, word]);
   };
 
-  handlePassedValidation = () => {
-    const { navigation, backupWallet } = this.props;
+  const handleLastWordRemoval = () => setEnteredWords([...enteredWords.slice(0, -1)]);
+
+  const colors = getThemeColors(theme);
+
+  const renderInputFields = () => !wordsToValidate
+    ? null
+    : [...Array(wordsToValidate.length)].map((el, i) => (
+      <WordInputWrapper key={`${mnemonicWords[i]}_${i}`}>
+        <WordInputPrefix><Label>{wordsToValidate[i]}</Label></WordInputPrefix>
+        <WordInput filled={!!enteredWords[i]}>
+          <WordInputText>{enteredWords[i] || ''}</WordInputText>
+        </WordInput>
+        {enteredWords.length === (i + 1) && (
+          <RemoveWordButtonIcon
+            icon="close"
+            onPress={handleLastWordRemoval}
+            fontSize={fontSizes.medium}
+            color={colors.primary}
+          />
+        )}
+      </WordInputWrapper>
+    ));
+
+  const renderShuffledWordList = () => !shuffledPhrase
+    ? null
+    : shuffledPhrase.split(' ').map((word: string, index: number) => (
+      <MnemonicPhraseWord
+        key={`${word}${index}`}
+        onPress={() => handleWordSetting(word)}
+        disabled={enteredWords.includes(word)}
+      >
+        <MnemonicPhraseWordText>{word}</MnemonicPhraseWordText>
+      </MnemonicPhraseWord>
+    ));
+
+  const handlePassedValidation = () => {
     backupWallet();
     navigation.dismiss();
   };
 
-  render() {
-    const { onboarding: wallet } = this.props.wallet;
-    const { isFormValid, enteredWords } = this.state;
-    if (!wallet.mnemonic.original) return null;
-
-    return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: t('title.verifyBackupPhrase') }] }}
-        footer={(
-          <FooterWrapper>
-            <ShuffledWordWrapper>
-              {this.renderShuffledWordList()}
-              {!!__DEV__ && (
-                <MnemonicPhraseWord
-                  key="automagical"
-                  onPress={this.handlePassedValidation}
-                >
-                  <MnemonicPhraseWordText>{DEBUG_SKIP}</MnemonicPhraseWordText>
-                </MnemonicPhraseWord>
-              )}
-            </ShuffledWordWrapper>
-            <Button
-              onPress={this.handlePassedValidation}
-              title={t('button.next')}
-              disabled={!isFormValid}
-            />
-          </FooterWrapper>
-        )}
+  return (
+    <ContainerWithHeader
+      headerProps={{ centerItems: [{ title: t('title.verifyBackupPhrase') }] }}
+      footer={(
+        <FooterWrapper>
+          <ShuffledWordWrapper>
+            {renderShuffledWordList()}
+            {!!__DEV__ && (
+              <MnemonicPhraseWord
+                key="automagical"
+                onPress={handlePassedValidation}
+              >
+                <MnemonicPhraseWordText>{DEBUG_SKIP}</MnemonicPhraseWordText>
+              </MnemonicPhraseWord>
+            )}
+          </ShuffledWordWrapper>
+          <Button
+            onPress={handlePassedValidation}
+            title={t('button.next')}
+            disabled={!isFormValid}
+          />
+        </FooterWrapper>
+      )}
+    >
+      <ScrollWrapper
+        regularPadding
+        contentContainerStyle={{ paddingTop: spacing.mediumLarge }}
       >
-        <ScrollWrapper
-          regularPadding
-          contentContainerStyle={{ paddingTop: spacing.mediumLarge }}
-        >
-          <Paragraph>
-            {t('paragraph.backupPhraseVerificationInstructions')}
-          </Paragraph>
-          <WordInputFields>
-            {this.renderInputFields()}
-          </WordInputFields>
-          {enteredWords.length === 3 && !isFormValid &&
+        <Paragraph>
+          {t('paragraph.backupPhraseVerificationInstructions')}
+        </Paragraph>
+        <WordInputFields>
+          {renderInputFields()}
+        </WordInputFields>
+        {enteredWords.length === 3 && !isFormValid && (
           <ErrorParagraph small>
             {t('error.incorrectBackupPhraseWordsSelected')}
           </ErrorParagraph>
-          }
-        </ScrollWrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
+        )}
+      </ScrollWrapper>
+    </ContainerWithHeader>
+  );
+};
 
-const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   backupWallet: () => dispatch(backupWalletAction()),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(BackupPhraseValidate));
+export default withTheme(connect(null, mapDispatchToProps)(BackupPhraseValidate));
