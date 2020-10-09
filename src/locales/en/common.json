@@ -242,7 +242,6 @@
     "sendFromAnotherWallet": "Send from another wallet",
     "sendInvites": "Send invites",
     "sendMore": "Send more",
-    "sendMax": "Send max",
     "settleMore": "Settle more",
     "settleTransactions": "Settle transactions",
     "shareAddress": "Share Address",
@@ -264,16 +263,13 @@
     "viewSablierStream": "View stream",
     "verify": "Verify",
     "withdraw": "Withdraw",
-    "withdrawAll": "Withdraw all",
     "withdrawMore": "Withdraw more",
     "delete": "Delete",
     "addNew": "Add new",
     "save": "Save",
     "next": "Next",
-    "spendMax": "Spend max",
     "confirmWithdraw": "Confirm withdraw",
     "enable": "Enable",
-    "useMax": "Use max",
     "allow": "Allow",
     "max": "Max",
     "sendTokenInstead": "Send token instead",
@@ -681,9 +677,6 @@
     "button": {
       "confirmDeposit": "Confirm deposit",
       "confirmWithdrawal": "Confirm withdraw"
-    },
-    "paragraph": {
-      "receiveOnWithdrawal": "You will receive {{token}} in your wallet"
     }
   },
 
@@ -1015,7 +1008,6 @@
       "automationMissing": "In order to join Pool Together you will need to automate transactions first.",
       "pendingAutomation": "Please wait for Pool Together automation",
       "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes.",
-      "receiveOnWithdrawal": "You will receive {{token}} in your wallet",
       "allowAutomationWithToken": "Allow Pool Together to spend your {{token}} and automate transactions for you. You will have to do it only once. All further purchases will be executed with no automation fee."
     }
   },
