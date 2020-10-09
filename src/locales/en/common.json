@@ -1066,8 +1066,7 @@
       "allowancePending": "Please wait for Sablier allowance transaction",
       "newStreamInformation": "You will stream a total of {{value}} {{asset}} for {{duration}} at a rate of {{streamingRate}} per minute",
       "allowSablierWithToken": "Allow Sablier to send {{token}} transactions on your behalf",
-      "cancelStreamWarning": "If you cancel the stream, the money sent to the recipient will remain with them, and the rest will be returned to you.",
-      "receiveOnWithdrawal": "You will receive {{token}} in your wallet"
+      "cancelStreamWarning": "If you cancel the stream, the money sent to the recipient will remain with them, and the rest will be returned to you."
     },
     "tabs": {
       "outgoingStreams": "Outgoing",
