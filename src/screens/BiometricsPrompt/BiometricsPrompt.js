@@ -81,11 +81,12 @@ const TouchIdImage = styled(CachedImage)`
 
 const getBiometryImage = (biometryType: string) => {
   switch (biometryType) {
+    case Keychain.BIOMETRY_TYPE.FACE_ID:
+    case Keychain.BIOMETRY_TYPE.FACE:
+      return faceIdImageSource;
     case Keychain.BIOMETRY_TYPE.TOUCH_ID:
     case Keychain.BIOMETRY_TYPE.FINGERPRINT:
       return touchIdImageSource;
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return faceIdImageSource;
     default:
       return '';
   }
