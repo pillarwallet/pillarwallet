@@ -76,7 +76,7 @@ const BackupPhrase = ({
 
   const onPinValid = (decryptedWallet: ?EthereumWallet) => {
     setPinIsValid(true);
-    setMnemonicPhrase(decryptedWallet?.mnemonic);
+    setMnemonicPhrase(decryptedWallet?.mnemonic?.phrase);
   };
 
   if (!pinIsValid || !mnemonicPhrase) {
