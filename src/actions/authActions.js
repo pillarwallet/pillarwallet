@@ -448,9 +448,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
     dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
 
     // set and store theme after reset
-    if (savedThemeType === DARK_THEME) {
-      dispatch(setAppThemeAction(DARK_THEME));
-    }
+    dispatch(setAppThemeAction(DARK_THEME));
 
     // manage language settings (from onboarding) as those are overwritten
     if (savedLocalisation && savedLocalisation.activeLngCode) {
