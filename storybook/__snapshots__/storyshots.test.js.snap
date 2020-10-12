@@ -27328,27 +27328,131 @@ exports[`Storyshots Selector default 1`] = `
                     </View>
                   </View>
                 </View>
-                <RCTScrollView
-                  ListHeaderComponent={
-                    <React.Fragment>
-                      <SelectorOptions__SearchBarWrapper>
-                        <WithTheme(SearchBar)
-                          inputProps={
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    marginBottom="0"
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "marginBottom": 0,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      backgroundColor="#EBF0F6"
+                      borderColor="#EBF0F6"
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "#EBF0F6",
+                            "borderColor": "#EBF0F6",
+                            "borderRadius": 20,
+                            "borderWidth": 1,
+                            "height": 40,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <TextInput
+                        allowFontScaling={true}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardAppearance="light"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        placeholder="label.search"
+                        placeholderTextColor="#8B939E"
+                        rejectResponderTermination={true}
+                        style={
+                          Array [
                             Object {
-                              "autoCapitalize": "none",
-                              "onChange": [Function],
-                              "validator": [Function],
-                              "value": null,
+                              "color": "#0A1427",
+                              "flexBasis": 0,
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 14,
+                              "height": 42,
+                              "paddingLeft": 14,
+                              "paddingRight": 46,
+                            },
+                            undefined,
+                          ]
+                        }
+                        underlineColorAndroid="transparent"
+                        validator={[Function]}
+                        value={null}
+                      />
+                      <View
+                        accessible={true}
+                        focusable={true}
+                        isTVSelectable={true}
+                        onClick={[Function]}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "flexBasis": 20,
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 0,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 0,
+                            "position": "absolute",
+                            "right": 10,
+                            "top": 7,
+                          }
+                        }
+                      >
+                        <View
+                          name="search"
+                          style={
+                            Object {
+                              "color": "#007AFF",
+                              "fontSize": 24,
+                              "height": 24,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                              "width": 24,
                             }
                           }
-                          inputRef={[Function]}
-                          marginBottom="0"
-                          noClose={true}
-                          placeholder="label.search"
                         />
-                      </SelectorOptions__SearchBarWrapper>
-                    </React.Fragment>
-                  }
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <RCTScrollView
                   data={
                     Array [
                       Object {
@@ -27406,134 +27510,6 @@ exports[`Storyshots Selector default 1`] = `
                   windowSize={10}
                 >
                   <View>
-                    <View
-                      onLayout={[Function]}
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "paddingBottom": 0,
-                              "paddingLeft": 16,
-                              "paddingRight": 16,
-                              "paddingTop": 16,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          marginBottom="0"
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "display": "flex",
-                                "marginBottom": 0,
-                                "marginTop": 0,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            backgroundColor="#EBF0F6"
-                            borderColor="#EBF0F6"
-                            style={
-                              Array [
-                                Object {
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderColor": "#EBF0F6",
-                                  "borderRadius": 20,
-                                  "borderWidth": 1,
-                                  "height": 40,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <TextInput
-                              allowFontScaling={true}
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              keyboardAppearance="light"
-                              onBlur={[Function]}
-                              onChange={[Function]}
-                              onFocus={[Function]}
-                              placeholder="label.search"
-                              placeholderTextColor="#8B939E"
-                              rejectResponderTermination={true}
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "flexBasis": 0,
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "fontFamily": "EuclidCircularB-Regular",
-                                    "fontSize": 14,
-                                    "height": 42,
-                                    "paddingLeft": 14,
-                                    "paddingRight": 46,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                              underlineColorAndroid="transparent"
-                              validator={[Function]}
-                              value={null}
-                            />
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "alignItems": "center",
-                                  "flexBasis": 20,
-                                  "flexGrow": 0,
-                                  "flexShrink": 0,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "paddingBottom": 0,
-                                  "paddingLeft": 0,
-                                  "paddingRight": 0,
-                                  "paddingTop": 0,
-                                  "position": "absolute",
-                                  "right": 10,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="search"
-                                style={
-                                  Object {
-                                    "color": "#007AFF",
-                                    "fontSize": 24,
-                                    "height": 24,
-                                    "marginBottom": undefined,
-                                    "marginLeft": undefined,
-                                    "marginRight": undefined,
-                                    "marginTop": undefined,
-                                    "paddingTop": 0,
-                                    "width": 24,
-                                  }
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
                     <View
                       onLayout={[Function]}
                       style={null}
@@ -28419,27 +28395,131 @@ exports[`Storyshots Selector no options 1`] = `
                     </View>
                   </View>
                 </View>
-                <RCTScrollView
-                  ListHeaderComponent={
-                    <React.Fragment>
-                      <SelectorOptions__SearchBarWrapper>
-                        <WithTheme(SearchBar)
-                          inputProps={
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    marginBottom="0"
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "marginBottom": 0,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      backgroundColor="#EBF0F6"
+                      borderColor="#EBF0F6"
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "#EBF0F6",
+                            "borderColor": "#EBF0F6",
+                            "borderRadius": 20,
+                            "borderWidth": 1,
+                            "height": 40,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <TextInput
+                        allowFontScaling={true}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardAppearance="light"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        placeholder="label.search"
+                        placeholderTextColor="#8B939E"
+                        rejectResponderTermination={true}
+                        style={
+                          Array [
                             Object {
-                              "autoCapitalize": "none",
-                              "onChange": [Function],
-                              "validator": [Function],
-                              "value": null,
+                              "color": "#0A1427",
+                              "flexBasis": 0,
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 14,
+                              "height": 42,
+                              "paddingLeft": 14,
+                              "paddingRight": 46,
+                            },
+                            undefined,
+                          ]
+                        }
+                        underlineColorAndroid="transparent"
+                        validator={[Function]}
+                        value={null}
+                      />
+                      <View
+                        accessible={true}
+                        focusable={true}
+                        isTVSelectable={true}
+                        onClick={[Function]}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "flexBasis": 20,
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 0,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 0,
+                            "position": "absolute",
+                            "right": 10,
+                            "top": 7,
+                          }
+                        }
+                      >
+                        <View
+                          name="search"
+                          style={
+                            Object {
+                              "color": "#007AFF",
+                              "fontSize": 24,
+                              "height": 24,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                              "width": 24,
                             }
                           }
-                          inputRef={[Function]}
-                          marginBottom="0"
-                          noClose={true}
-                          placeholder="label.search"
                         />
-                      </SelectorOptions__SearchBarWrapper>
-                    </React.Fragment>
-                  }
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <RCTScrollView
                   data={
                     Array [
                       Object {
@@ -28493,134 +28573,6 @@ exports[`Storyshots Selector no options 1`] = `
                   windowSize={10}
                 >
                   <View>
-                    <View
-                      onLayout={[Function]}
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "paddingBottom": 0,
-                              "paddingLeft": 16,
-                              "paddingRight": 16,
-                              "paddingTop": 16,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          marginBottom="0"
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "display": "flex",
-                                "marginBottom": 0,
-                                "marginTop": 0,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            backgroundColor="#EBF0F6"
-                            borderColor="#EBF0F6"
-                            style={
-                              Array [
-                                Object {
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderColor": "#EBF0F6",
-                                  "borderRadius": 20,
-                                  "borderWidth": 1,
-                                  "height": 40,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <TextInput
-                              allowFontScaling={true}
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              keyboardAppearance="light"
-                              onBlur={[Function]}
-                              onChange={[Function]}
-                              onFocus={[Function]}
-                              placeholder="label.search"
-                              placeholderTextColor="#8B939E"
-                              rejectResponderTermination={true}
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "flexBasis": 0,
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "fontFamily": "EuclidCircularB-Regular",
-                                    "fontSize": 14,
-                                    "height": 42,
-                                    "paddingLeft": 14,
-                                    "paddingRight": 46,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                              underlineColorAndroid="transparent"
-                              validator={[Function]}
-                              value={null}
-                            />
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "alignItems": "center",
-                                  "flexBasis": 20,
-                                  "flexGrow": 0,
-                                  "flexShrink": 0,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "paddingBottom": 0,
-                                  "paddingLeft": 0,
-                                  "paddingRight": 0,
-                                  "paddingTop": 0,
-                                  "position": "absolute",
-                                  "right": 10,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="search"
-                                style={
-                                  Object {
-                                    "color": "#007AFF",
-                                    "fontSize": 24,
-                                    "height": 24,
-                                    "marginBottom": undefined,
-                                    "marginLeft": undefined,
-                                    "marginRight": undefined,
-                                    "marginTop": undefined,
-                                    "paddingTop": 0,
-                                    "width": 24,
-                                  }
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
                     <View
                       onLayout={[Function]}
                       style={null}
@@ -29242,27 +29194,131 @@ exports[`Storyshots Selector selected option 1`] = `
                     </View>
                   </View>
                 </View>
-                <RCTScrollView
-                  ListHeaderComponent={
-                    <React.Fragment>
-                      <SelectorOptions__SearchBarWrapper>
-                        <WithTheme(SearchBar)
-                          inputProps={
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    marginBottom="0"
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "marginBottom": 0,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      backgroundColor="#EBF0F6"
+                      borderColor="#EBF0F6"
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "#EBF0F6",
+                            "borderColor": "#EBF0F6",
+                            "borderRadius": 20,
+                            "borderWidth": 1,
+                            "height": 40,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <TextInput
+                        allowFontScaling={true}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardAppearance="light"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        placeholder="label.search"
+                        placeholderTextColor="#8B939E"
+                        rejectResponderTermination={true}
+                        style={
+                          Array [
                             Object {
-                              "autoCapitalize": "none",
-                              "onChange": [Function],
-                              "validator": [Function],
-                              "value": null,
+                              "color": "#0A1427",
+                              "flexBasis": 0,
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 14,
+                              "height": 42,
+                              "paddingLeft": 14,
+                              "paddingRight": 46,
+                            },
+                            undefined,
+                          ]
+                        }
+                        underlineColorAndroid="transparent"
+                        validator={[Function]}
+                        value={null}
+                      />
+                      <View
+                        accessible={true}
+                        focusable={true}
+                        isTVSelectable={true}
+                        onClick={[Function]}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "flexBasis": 20,
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 0,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 0,
+                            "position": "absolute",
+                            "right": 10,
+                            "top": 7,
+                          }
+                        }
+                      >
+                        <View
+                          name="search"
+                          style={
+                            Object {
+                              "color": "#007AFF",
+                              "fontSize": 24,
+                              "height": 24,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                              "width": 24,
                             }
                           }
-                          inputRef={[Function]}
-                          marginBottom="0"
-                          noClose={true}
-                          placeholder="label.search"
                         />
-                      </SelectorOptions__SearchBarWrapper>
-                    </React.Fragment>
-                  }
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <RCTScrollView
                   data={
                     Array [
                       Object {
@@ -29320,134 +29376,6 @@ exports[`Storyshots Selector selected option 1`] = `
                   windowSize={10}
                 >
                   <View>
-                    <View
-                      onLayout={[Function]}
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "paddingBottom": 0,
-                              "paddingLeft": 16,
-                              "paddingRight": 16,
-                              "paddingTop": 16,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          marginBottom="0"
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "display": "flex",
-                                "marginBottom": 0,
-                                "marginTop": 0,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            backgroundColor="#EBF0F6"
-                            borderColor="#EBF0F6"
-                            style={
-                              Array [
-                                Object {
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderColor": "#EBF0F6",
-                                  "borderRadius": 20,
-                                  "borderWidth": 1,
-                                  "height": 40,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <TextInput
-                              allowFontScaling={true}
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              keyboardAppearance="light"
-                              onBlur={[Function]}
-                              onChange={[Function]}
-                              onFocus={[Function]}
-                              placeholder="label.search"
-                              placeholderTextColor="#8B939E"
-                              rejectResponderTermination={true}
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "flexBasis": 0,
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "fontFamily": "EuclidCircularB-Regular",
-                                    "fontSize": 14,
-                                    "height": 42,
-                                    "paddingLeft": 14,
-                                    "paddingRight": 46,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                              underlineColorAndroid="transparent"
-                              validator={[Function]}
-                              value={null}
-                            />
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "alignItems": "center",
-                                  "flexBasis": 20,
-                                  "flexGrow": 0,
-                                  "flexShrink": 0,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "paddingBottom": 0,
-                                  "paddingLeft": 0,
-                                  "paddingRight": 0,
-                                  "paddingTop": 0,
-                                  "position": "absolute",
-                                  "right": 10,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="search"
-                                style={
-                                  Object {
-                                    "color": "#007AFF",
-                                    "fontSize": 24,
-                                    "height": 24,
-                                    "marginBottom": undefined,
-                                    "marginLeft": undefined,
-                                    "marginRight": undefined,
-                                    "marginTop": undefined,
-                                    "paddingTop": 0,
-                                    "width": 24,
-                                  }
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
                     <View
                       onLayout={[Function]}
                       style={null}
@@ -30333,27 +30261,131 @@ exports[`Storyshots Selector with custom wording 1`] = `
                     </View>
                   </View>
                 </View>
-                <RCTScrollView
-                  ListHeaderComponent={
-                    <React.Fragment>
-                      <SelectorOptions__SearchBarWrapper>
-                        <WithTheme(SearchBar)
-                          inputProps={
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    marginBottom="0"
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "marginBottom": 0,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      backgroundColor="#EBF0F6"
+                      borderColor="#EBF0F6"
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "#EBF0F6",
+                            "borderColor": "#EBF0F6",
+                            "borderRadius": 20,
+                            "borderWidth": 1,
+                            "height": 40,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <TextInput
+                        allowFontScaling={true}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardAppearance="light"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        placeholder="Username or wallet address"
+                        placeholderTextColor="#8B939E"
+                        rejectResponderTermination={true}
+                        style={
+                          Array [
                             Object {
-                              "autoCapitalize": "none",
-                              "onChange": [Function],
-                              "validator": [Function],
-                              "value": null,
+                              "color": "#0A1427",
+                              "flexBasis": 0,
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 14,
+                              "height": 42,
+                              "paddingLeft": 14,
+                              "paddingRight": 46,
+                            },
+                            undefined,
+                          ]
+                        }
+                        underlineColorAndroid="transparent"
+                        validator={[Function]}
+                        value={null}
+                      />
+                      <View
+                        accessible={true}
+                        focusable={true}
+                        isTVSelectable={true}
+                        onClick={[Function]}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "flexBasis": 20,
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 0,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 0,
+                            "position": "absolute",
+                            "right": 10,
+                            "top": 7,
+                          }
+                        }
+                      >
+                        <View
+                          name="search"
+                          style={
+                            Object {
+                              "color": "#007AFF",
+                              "fontSize": 24,
+                              "height": 24,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                              "width": 24,
                             }
                           }
-                          inputRef={[Function]}
-                          marginBottom="0"
-                          noClose={true}
-                          placeholder="Username or wallet address"
                         />
-                      </SelectorOptions__SearchBarWrapper>
-                    </React.Fragment>
-                  }
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <RCTScrollView
                   data={
                     Array [
                       Object {
@@ -30411,134 +30443,6 @@ exports[`Storyshots Selector with custom wording 1`] = `
                   windowSize={10}
                 >
                   <View>
-                    <View
-                      onLayout={[Function]}
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "paddingBottom": 0,
-                              "paddingLeft": 16,
-                              "paddingRight": 16,
-                              "paddingTop": 16,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          marginBottom="0"
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "display": "flex",
-                                "marginBottom": 0,
-                                "marginTop": 0,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            backgroundColor="#EBF0F6"
-                            borderColor="#EBF0F6"
-                            style={
-                              Array [
-                                Object {
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderColor": "#EBF0F6",
-                                  "borderRadius": 20,
-                                  "borderWidth": 1,
-                                  "height": 40,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <TextInput
-                              allowFontScaling={true}
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              keyboardAppearance="light"
-                              onBlur={[Function]}
-                              onChange={[Function]}
-                              onFocus={[Function]}
-                              placeholder="Username or wallet address"
-                              placeholderTextColor="#8B939E"
-                              rejectResponderTermination={true}
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "flexBasis": 0,
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "fontFamily": "EuclidCircularB-Regular",
-                                    "fontSize": 14,
-                                    "height": 42,
-                                    "paddingLeft": 14,
-                                    "paddingRight": 46,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                              underlineColorAndroid="transparent"
-                              validator={[Function]}
-                              value={null}
-                            />
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "alignItems": "center",
-                                  "flexBasis": 20,
-                                  "flexGrow": 0,
-                                  "flexShrink": 0,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "paddingBottom": 0,
-                                  "paddingLeft": 0,
-                                  "paddingRight": 0,
-                                  "paddingTop": 0,
-                                  "position": "absolute",
-                                  "right": 10,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="search"
-                                style={
-                                  Object {
-                                    "color": "#007AFF",
-                                    "fontSize": 24,
-                                    "height": 24,
-                                    "marginBottom": undefined,
-                                    "marginLeft": undefined,
-                                    "marginRight": undefined,
-                                    "marginTop": undefined,
-                                    "paddingTop": 0,
-                                    "width": 24,
-                                  }
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
                     <View
                       onLayout={[Function]}
                       style={null}
@@ -31424,27 +31328,131 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                     </View>
                   </View>
                 </View>
-                <RCTScrollView
-                  ListHeaderComponent={
-                    <React.Fragment>
-                      <SelectorOptions__SearchBarWrapper>
-                        <WithTheme(SearchBar)
-                          inputProps={
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    marginBottom="0"
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "marginBottom": 0,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      backgroundColor="#EBF0F6"
+                      borderColor="#EBF0F6"
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "#EBF0F6",
+                            "borderColor": "#EBF0F6",
+                            "borderRadius": 20,
+                            "borderWidth": 1,
+                            "height": 40,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <TextInput
+                        allowFontScaling={true}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardAppearance="light"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        placeholder="label.search"
+                        placeholderTextColor="#8B939E"
+                        rejectResponderTermination={true}
+                        style={
+                          Array [
                             Object {
-                              "autoCapitalize": "none",
-                              "onChange": [Function],
-                              "validator": [Function],
-                              "value": null,
+                              "color": "#0A1427",
+                              "flexBasis": 0,
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 14,
+                              "height": 42,
+                              "paddingLeft": 14,
+                              "paddingRight": 46,
+                            },
+                            undefined,
+                          ]
+                        }
+                        underlineColorAndroid="transparent"
+                        validator={[Function]}
+                        value={null}
+                      />
+                      <View
+                        accessible={true}
+                        focusable={true}
+                        isTVSelectable={true}
+                        onClick={[Function]}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "flexBasis": 20,
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 0,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 0,
+                            "position": "absolute",
+                            "right": 10,
+                            "top": 7,
+                          }
+                        }
+                      >
+                        <View
+                          name="search"
+                          style={
+                            Object {
+                              "color": "#007AFF",
+                              "fontSize": 24,
+                              "height": 24,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                              "width": 24,
                             }
                           }
-                          inputRef={[Function]}
-                          marginBottom="0"
-                          noClose={true}
-                          placeholder="label.search"
                         />
-                      </SelectorOptions__SearchBarWrapper>
-                    </React.Fragment>
-                  }
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <RCTScrollView
                   data={
                     Array [
                       Object {
@@ -31543,134 +31551,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                   windowSize={10}
                 >
                   <View>
-                    <View
-                      onLayout={[Function]}
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "paddingBottom": 0,
-                              "paddingLeft": 16,
-                              "paddingRight": 16,
-                              "paddingTop": 16,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          marginBottom="0"
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "display": "flex",
-                                "marginBottom": 0,
-                                "marginTop": 0,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            backgroundColor="#EBF0F6"
-                            borderColor="#EBF0F6"
-                            style={
-                              Array [
-                                Object {
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderColor": "#EBF0F6",
-                                  "borderRadius": 20,
-                                  "borderWidth": 1,
-                                  "height": 40,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <TextInput
-                              allowFontScaling={true}
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              keyboardAppearance="light"
-                              onBlur={[Function]}
-                              onChange={[Function]}
-                              onFocus={[Function]}
-                              placeholder="label.search"
-                              placeholderTextColor="#8B939E"
-                              rejectResponderTermination={true}
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "flexBasis": 0,
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "fontFamily": "EuclidCircularB-Regular",
-                                    "fontSize": 14,
-                                    "height": 42,
-                                    "paddingLeft": 14,
-                                    "paddingRight": 46,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                              underlineColorAndroid="transparent"
-                              validator={[Function]}
-                              value={null}
-                            />
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "alignItems": "center",
-                                  "flexBasis": 20,
-                                  "flexGrow": 0,
-                                  "flexShrink": 0,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "paddingBottom": 0,
-                                  "paddingLeft": 0,
-                                  "paddingRight": 0,
-                                  "paddingTop": 0,
-                                  "position": "absolute",
-                                  "right": 10,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="search"
-                                style={
-                                  Object {
-                                    "color": "#007AFF",
-                                    "fontSize": 24,
-                                    "height": 24,
-                                    "marginBottom": undefined,
-                                    "marginLeft": undefined,
-                                    "marginRight": undefined,
-                                    "marginTop": undefined,
-                                    "paddingTop": 0,
-                                    "width": 24,
-                                  }
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
                     <View
                       onLayout={[Function]}
                       style={null}
@@ -34198,26 +34078,131 @@ exports[`Storyshots Value Input default 1`] = `
                       </View>
                     </View>
                   </View>
-                  <RCTScrollView
-                    ListHeaderComponent={
-                      <React.Fragment>
-                        <SelectorOptions__SearchBarWrapper>
-                          <WithTheme(SearchBar)
-                            inputProps={
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "paddingBottom": 0,
+                          "paddingLeft": 16,
+                          "paddingRight": 16,
+                          "paddingTop": 16,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      marginBottom="0"
+                      style={
+                        Array [
+                          Object {
+                            "alignItems": "center",
+                            "display": "flex",
+                            "marginBottom": 0,
+                            "marginTop": 0,
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <View
+                        backgroundColor="#EBF0F6"
+                        borderColor="#EBF0F6"
+                        style={
+                          Array [
+                            Object {
+                              "backgroundColor": "#EBF0F6",
+                              "borderColor": "#EBF0F6",
+                              "borderRadius": 20,
+                              "borderWidth": 1,
+                              "height": 40,
+                              "width": "100%",
+                            },
+                            undefined,
+                          ]
+                        }
+                      >
+                        <TextInput
+                          allowFontScaling={true}
+                          autoCapitalize="none"
+                          autoCorrect={false}
+                          keyboardAppearance="light"
+                          onBlur={[Function]}
+                          onChange={[Function]}
+                          onFocus={[Function]}
+                          placeholder="label.search"
+                          placeholderTextColor="#8B939E"
+                          rejectResponderTermination={true}
+                          style={
+                            Array [
                               Object {
-                                "autoCapitalize": "none",
-                                "onChange": [Function],
-                                "validator": [Function],
-                                "value": null,
+                                "color": "#0A1427",
+                                "flexBasis": 0,
+                                "flexGrow": 1,
+                                "flexShrink": 1,
+                                "fontFamily": "EuclidCircularB-Regular",
+                                "fontSize": 14,
+                                "height": 42,
+                                "paddingLeft": 14,
+                                "paddingRight": 46,
+                              },
+                              undefined,
+                            ]
+                          }
+                          underlineColorAndroid="transparent"
+                          validator={[Function]}
+                          value={null}
+                        />
+                        <View
+                          accessible={true}
+                          focusable={true}
+                          isTVSelectable={true}
+                          onClick={[Function]}
+                          onResponderGrant={[Function]}
+                          onResponderMove={[Function]}
+                          onResponderRelease={[Function]}
+                          onResponderTerminate={[Function]}
+                          onResponderTerminationRequest={[Function]}
+                          onStartShouldSetResponder={[Function]}
+                          style={
+                            Object {
+                              "alignItems": "center",
+                              "flexBasis": 20,
+                              "flexGrow": 0,
+                              "flexShrink": 0,
+                              "justifyContent": "center",
+                              "opacity": 1,
+                              "paddingBottom": 0,
+                              "paddingLeft": 0,
+                              "paddingRight": 0,
+                              "paddingTop": 0,
+                              "position": "absolute",
+                              "right": 10,
+                              "top": 7,
+                            }
+                          }
+                        >
+                          <View
+                            name="search"
+                            style={
+                              Object {
+                                "color": "#007AFF",
+                                "fontSize": 24,
+                                "height": 24,
+                                "marginBottom": undefined,
+                                "marginLeft": undefined,
+                                "marginRight": undefined,
+                                "marginTop": undefined,
+                                "paddingTop": 0,
+                                "width": 24,
                               }
                             }
-                            inputRef={[Function]}
-                            marginBottom="0"
-                            noClose={true}
                           />
-                        </SelectorOptions__SearchBarWrapper>
-                      </React.Fragment>
-                    }
+                        </View>
+                      </View>
+                    </View>
+                  </View>
+                  <RCTScrollView
                     data={
                       Array [
                         Object {
@@ -34271,134 +34256,6 @@ exports[`Storyshots Value Input default 1`] = `
                     windowSize={10}
                   >
                     <View>
-                      <View
-                        onLayout={[Function]}
-                      >
-                        <View
-                          style={
-                            Array [
-                              Object {
-                                "paddingBottom": 0,
-                                "paddingLeft": 16,
-                                "paddingRight": 16,
-                                "paddingTop": 16,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            marginBottom="0"
-                            style={
-                              Array [
-                                Object {
-                                  "alignItems": "center",
-                                  "display": "flex",
-                                  "marginBottom": 0,
-                                  "marginTop": 0,
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <View
-                              backgroundColor="#EBF0F6"
-                              borderColor="#EBF0F6"
-                              style={
-                                Array [
-                                  Object {
-                                    "backgroundColor": "#EBF0F6",
-                                    "borderColor": "#EBF0F6",
-                                    "borderRadius": 20,
-                                    "borderWidth": 1,
-                                    "height": 40,
-                                    "width": "100%",
-                                  },
-                                  undefined,
-                                ]
-                              }
-                            >
-                              <TextInput
-                                allowFontScaling={true}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                keyboardAppearance="light"
-                                onBlur={[Function]}
-                                onChange={[Function]}
-                                onFocus={[Function]}
-                                placeholder="label.search"
-                                placeholderTextColor="#8B939E"
-                                rejectResponderTermination={true}
-                                style={
-                                  Array [
-                                    Object {
-                                      "color": "#0A1427",
-                                      "flexBasis": 0,
-                                      "flexGrow": 1,
-                                      "flexShrink": 1,
-                                      "fontFamily": "EuclidCircularB-Regular",
-                                      "fontSize": 14,
-                                      "height": 42,
-                                      "paddingLeft": 14,
-                                      "paddingRight": 46,
-                                    },
-                                    undefined,
-                                  ]
-                                }
-                                underlineColorAndroid="transparent"
-                                validator={[Function]}
-                                value={null}
-                              />
-                              <View
-                                accessible={true}
-                                focusable={true}
-                                isTVSelectable={true}
-                                onClick={[Function]}
-                                onResponderGrant={[Function]}
-                                onResponderMove={[Function]}
-                                onResponderRelease={[Function]}
-                                onResponderTerminate={[Function]}
-                                onResponderTerminationRequest={[Function]}
-                                onStartShouldSetResponder={[Function]}
-                                style={
-                                  Object {
-                                    "alignItems": "center",
-                                    "flexBasis": 20,
-                                    "flexGrow": 0,
-                                    "flexShrink": 0,
-                                    "justifyContent": "center",
-                                    "opacity": 1,
-                                    "paddingBottom": 0,
-                                    "paddingLeft": 0,
-                                    "paddingRight": 0,
-                                    "paddingTop": 0,
-                                    "position": "absolute",
-                                    "right": 10,
-                                    "top": 7,
-                                  }
-                                }
-                              >
-                                <View
-                                  name="search"
-                                  style={
-                                    Object {
-                                      "color": "#007AFF",
-                                      "fontSize": 24,
-                                      "height": 24,
-                                      "marginBottom": undefined,
-                                      "marginLeft": undefined,
-                                      "marginRight": undefined,
-                                      "marginTop": undefined,
-                                      "paddingTop": 0,
-                                      "width": 24,
-                                    }
-                                  }
-                                />
-                              </View>
-                            </View>
-                          </View>
-                        </View>
-                      </View>
                       <View
                         onLayout={[Function]}
                         style={null}
@@ -34898,26 +34755,131 @@ exports[`Storyshots Value Input default 1`] = `
                     </View>
                   </View>
                 </View>
-                <RCTScrollView
-                  ListHeaderComponent={
-                    <React.Fragment>
-                      <SelectorOptions__SearchBarWrapper>
-                        <WithTheme(SearchBar)
-                          inputProps={
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "paddingBottom": 0,
+                        "paddingLeft": 16,
+                        "paddingRight": 16,
+                        "paddingTop": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <View
+                    marginBottom="0"
+                    style={
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "display": "flex",
+                          "marginBottom": 0,
+                          "marginTop": 0,
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <View
+                      backgroundColor="#EBF0F6"
+                      borderColor="#EBF0F6"
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "#EBF0F6",
+                            "borderColor": "#EBF0F6",
+                            "borderRadius": 20,
+                            "borderWidth": 1,
+                            "height": 40,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <TextInput
+                        allowFontScaling={true}
+                        autoCapitalize="none"
+                        autoCorrect={false}
+                        keyboardAppearance="light"
+                        onBlur={[Function]}
+                        onChange={[Function]}
+                        onFocus={[Function]}
+                        placeholder="label.search"
+                        placeholderTextColor="#8B939E"
+                        rejectResponderTermination={true}
+                        style={
+                          Array [
                             Object {
-                              "autoCapitalize": "none",
-                              "onChange": [Function],
-                              "validator": [Function],
-                              "value": null,
+                              "color": "#0A1427",
+                              "flexBasis": 0,
+                              "flexGrow": 1,
+                              "flexShrink": 1,
+                              "fontFamily": "EuclidCircularB-Regular",
+                              "fontSize": 14,
+                              "height": 42,
+                              "paddingLeft": 14,
+                              "paddingRight": 46,
+                            },
+                            undefined,
+                          ]
+                        }
+                        underlineColorAndroid="transparent"
+                        validator={[Function]}
+                        value={null}
+                      />
+                      <View
+                        accessible={true}
+                        focusable={true}
+                        isTVSelectable={true}
+                        onClick={[Function]}
+                        onResponderGrant={[Function]}
+                        onResponderMove={[Function]}
+                        onResponderRelease={[Function]}
+                        onResponderTerminate={[Function]}
+                        onResponderTerminationRequest={[Function]}
+                        onStartShouldSetResponder={[Function]}
+                        style={
+                          Object {
+                            "alignItems": "center",
+                            "flexBasis": 20,
+                            "flexGrow": 0,
+                            "flexShrink": 0,
+                            "justifyContent": "center",
+                            "opacity": 1,
+                            "paddingBottom": 0,
+                            "paddingLeft": 0,
+                            "paddingRight": 0,
+                            "paddingTop": 0,
+                            "position": "absolute",
+                            "right": 10,
+                            "top": 7,
+                          }
+                        }
+                      >
+                        <View
+                          name="search"
+                          style={
+                            Object {
+                              "color": "#007AFF",
+                              "fontSize": 24,
+                              "height": 24,
+                              "marginBottom": undefined,
+                              "marginLeft": undefined,
+                              "marginRight": undefined,
+                              "marginTop": undefined,
+                              "paddingTop": 0,
+                              "width": 24,
                             }
                           }
-                          inputRef={[Function]}
-                          marginBottom="0"
-                          noClose={true}
                         />
-                      </SelectorOptions__SearchBarWrapper>
-                    </React.Fragment>
-                  }
+                      </View>
+                    </View>
+                  </View>
+                </View>
+                <RCTScrollView
                   data={
                     Array [
                       Object {
@@ -35010,134 +34972,6 @@ exports[`Storyshots Value Input default 1`] = `
                   windowSize={10}
                 >
                   <View>
-                    <View
-                      onLayout={[Function]}
-                    >
-                      <View
-                        style={
-                          Array [
-                            Object {
-                              "paddingBottom": 0,
-                              "paddingLeft": 16,
-                              "paddingRight": 16,
-                              "paddingTop": 16,
-                            },
-                            undefined,
-                          ]
-                        }
-                      >
-                        <View
-                          marginBottom="0"
-                          style={
-                            Array [
-                              Object {
-                                "alignItems": "center",
-                                "display": "flex",
-                                "marginBottom": 0,
-                                "marginTop": 0,
-                              },
-                              undefined,
-                            ]
-                          }
-                        >
-                          <View
-                            backgroundColor="#EBF0F6"
-                            borderColor="#EBF0F6"
-                            style={
-                              Array [
-                                Object {
-                                  "backgroundColor": "#EBF0F6",
-                                  "borderColor": "#EBF0F6",
-                                  "borderRadius": 20,
-                                  "borderWidth": 1,
-                                  "height": 40,
-                                  "width": "100%",
-                                },
-                                undefined,
-                              ]
-                            }
-                          >
-                            <TextInput
-                              allowFontScaling={true}
-                              autoCapitalize="none"
-                              autoCorrect={false}
-                              keyboardAppearance="light"
-                              onBlur={[Function]}
-                              onChange={[Function]}
-                              onFocus={[Function]}
-                              placeholder="label.search"
-                              placeholderTextColor="#8B939E"
-                              rejectResponderTermination={true}
-                              style={
-                                Array [
-                                  Object {
-                                    "color": "#0A1427",
-                                    "flexBasis": 0,
-                                    "flexGrow": 1,
-                                    "flexShrink": 1,
-                                    "fontFamily": "EuclidCircularB-Regular",
-                                    "fontSize": 14,
-                                    "height": 42,
-                                    "paddingLeft": 14,
-                                    "paddingRight": 46,
-                                  },
-                                  undefined,
-                                ]
-                              }
-                              underlineColorAndroid="transparent"
-                              validator={[Function]}
-                              value={null}
-                            />
-                            <View
-                              accessible={true}
-                              focusable={true}
-                              isTVSelectable={true}
-                              onClick={[Function]}
-                              onResponderGrant={[Function]}
-                              onResponderMove={[Function]}
-                              onResponderRelease={[Function]}
-                              onResponderTerminate={[Function]}
-                              onResponderTerminationRequest={[Function]}
-                              onStartShouldSetResponder={[Function]}
-                              style={
-                                Object {
-                                  "alignItems": "center",
-                                  "flexBasis": 20,
-                                  "flexGrow": 0,
-                                  "flexShrink": 0,
-                                  "justifyContent": "center",
-                                  "opacity": 1,
-                                  "paddingBottom": 0,
-                                  "paddingLeft": 0,
-                                  "paddingRight": 0,
-                                  "paddingTop": 0,
-                                  "position": "absolute",
-                                  "right": 10,
-                                  "top": 7,
-                                }
-                              }
-                            >
-                              <View
-                                name="search"
-                                style={
-                                  Object {
-                                    "color": "#007AFF",
-                                    "fontSize": 24,
-                                    "height": 24,
-                                    "marginBottom": undefined,
-                                    "marginLeft": undefined,
-                                    "marginRight": undefined,
-                                    "marginTop": undefined,
-                                    "paddingTop": 0,
-                                    "width": 24,
-                                  }
-                                }
-                              />
-                            </View>
-                          </View>
-                        </View>
-                      </View>
-                    </View>
                     <View
                       onLayout={[Function]}
                       style={null}

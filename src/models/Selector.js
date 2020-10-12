@@ -58,4 +58,5 @@ export type OptionTabs = {
   name: string,
   id: string,
   options?: Option[],
+  collectibles?: boolean,
 }

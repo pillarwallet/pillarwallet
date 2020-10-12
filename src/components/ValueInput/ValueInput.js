@@ -226,7 +226,9 @@ export const ValueInputComponent = (props: Props) => {
   if (showCollectibles) {
     optionTabs = [
       { name: t('label.tokens'), options: assetsOptions, id: TOKENS },
-      { name: t('label.collectibles'), options: collectibles, id: COLLECTIBLES },
+      {
+        name: t('label.collectibles'), options: collectibles, id: COLLECTIBLES, collectibles: true,
+      },
     ];
   }
 

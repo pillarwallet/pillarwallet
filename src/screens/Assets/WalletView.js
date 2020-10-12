@@ -36,11 +36,12 @@ import SearchBlock from 'components/SearchBlock';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
 import SWActivationCard from 'components/SWActivationCard';
+import CollectiblesList from 'components/CollectiblesList';
 
 import { spacing } from 'utils/variables';
 
 import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
-import { SERVICES, ASSET_SEARCH } from 'constants/navigationConstants';
+import { SERVICES, ASSET_SEARCH, COLLECTIBLE } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
@@ -67,7 +68,6 @@ import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // partials
-import CollectiblesList from './CollectiblesList';
 import AssetsList from './AssetsList';
 
 
@@ -179,6 +179,11 @@ class WalletView extends React.Component<Props, State> {
       }}
     />
   );
+
+  handleCollectiblePress = (collectible: Collectible) => {
+    const { navigation } = this.props;
+    navigation.navigate(COLLECTIBLE, { assetData: collectible });
+  };
 
   render() {
     const { query, activeTab } = this.state;
@@ -297,10 +302,10 @@ class WalletView extends React.Component<Props, State> {
           {activeTab === COLLECTIBLES && (
             <CollectiblesList
               collectibles={this.getFilteredCollectibles()}
-              searchQuery={query}
-              navigation={navigation}
-              activeAccountAddress={activeAccountAddress}
-            />)}
+              onCollectiblePress={this.handleCollectiblePress}
+              isSearching={!!query}
+            />
+          )}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
           <ActionsWrapper>
             {!balance && !!activeAccountAddress && (
