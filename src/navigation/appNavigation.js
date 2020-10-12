@@ -802,6 +802,7 @@ type Props = {
   onboardingUsernameRegistrationFailed: boolean,
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
+  isFinishingOnboarding: boolean,
 };
 
 type State = {
@@ -858,6 +859,8 @@ class AppFlow extends React.Component<Props, State> {
       user,
       wallet,
       removePrivateKeyFromMemory,
+      isOnline,
+      isAuthorizing,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
@@ -865,7 +868,11 @@ class AppFlow extends React.Component<Props, State> {
       removePrivateKeyFromMemory();
     }
 
-    this.checkIfOnboardingFinished();
+    // do check only on network change or unlock
+    if ((isOnline && prevProps.isOnline !== isOnline)
+      || (!isAuthorizing && prevProps.isAuthorizing !== isAuthorizing)) {
+      this.checkIfOnboardingFinished();
+    }
 
     notifications
       .slice(prevNotifications.length)
@@ -897,11 +904,13 @@ class AppFlow extends React.Component<Props, State> {
       onboardingErrorMessage,
       onboardingUsernameRegistrationFailed,
       isAuthorizing,
+      isFinishingOnboarding,
     } = this.props;
 
     // no user.walletId means user is not yet registered, try to finish this right away when online
-    if (!!wallet
+    if (!!wallet?.privateKey
       && !isAuthorizing
+      && !isFinishingOnboarding
       && !user?.walletId
       && !isRegisteringUser
       && !onboardingErrorMessage
@@ -995,6 +1004,7 @@ const mapStateToProps = ({
     isRegisteringUser,
     errorMessage: onboardingErrorMessage,
     usernameRegistrationFailed: onboardingUsernameRegistrationFailed,
+    isFinishingOnboarding,
   },
 }) => ({
   user,
@@ -1010,6 +1020,7 @@ const mapStateToProps = ({
   onboardingErrorMessage,
   onboardingUsernameRegistrationFailed,
   isAuthorizing,
+  isFinishingOnboarding,
 });
 
 const mapDispatchToProps = dispatch => ({
