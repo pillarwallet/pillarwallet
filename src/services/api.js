@@ -392,7 +392,10 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.info({ walletId }))
       .then(({ data }) => ({ ...data, walletId }))
-      .catch(() => ({}));
+      .catch((error) => {
+        reportErrorLog('userInfo failed', { error, walletId });
+        return null;
+      });
   }
 
   userInfoById(targetUserId: string, myWalletId: string) {
