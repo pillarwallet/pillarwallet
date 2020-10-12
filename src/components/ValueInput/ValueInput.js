@@ -32,6 +32,7 @@ import CollectibleImage from 'components/CollectibleImage';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Input from 'components/Input';
+import { Spacing } from 'components/Layout';
 
 import { formatAmount, isValidNumber } from 'utils/common';
 import { themedColors, getThemeColors } from 'utils/themes';
@@ -262,6 +263,7 @@ export const ValueInput = (props: Props) => {
           <MediumText medium onPress={() => setIsAssetSelectorVisible(true)}>{assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
+          <Spacing h={16} />
           <CollectibleImage
             source={{ uri: assetData.imageUrl }}
             fallbackSource={genericCollectible}
