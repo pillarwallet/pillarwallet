@@ -27,7 +27,6 @@ import Icon from 'components/Icon';
 
 // utils
 import { fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 
 type Props = {
@@ -44,7 +43,7 @@ const ButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
   flex: 1;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 const ButtonLabel = styled(BaseText)`

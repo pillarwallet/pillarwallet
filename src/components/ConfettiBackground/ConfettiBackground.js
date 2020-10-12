@@ -22,7 +22,6 @@ import * as React from 'react';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
-import { themedColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
 
@@ -36,7 +35,7 @@ const screenWidth = getDeviceWidth();
 
 const StyledScrollView = styled.ScrollView`
   flex-grow: 1;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 const ContentWrapper = styled.View`

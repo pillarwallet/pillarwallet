@@ -388,7 +388,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
         }}
       >
         {body}
-        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={colors.basic070}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton

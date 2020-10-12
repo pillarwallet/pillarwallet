@@ -35,7 +35,6 @@ export const lightThemeColorsOld = {
   border: '#EDEDED',
   positive: '#2AA057',
   negative: '#BD573A',
-  surface: '#FAFAFA',
   card: '#FFFFFF',
   tertiary: '#EBF0F6',
   control: '#FCFDFF',
@@ -78,7 +77,6 @@ export const darkThemeColorsOld = {
   border: '#181F30',
   positive: '#00E097',
   negative: '#FF367F',
-  surface: '#222C46',
   card: '#32426B',
   tertiary: '#171F31',
   control: '#FCFDFF',
@@ -143,10 +141,6 @@ export const themedColors = {
   negative: theme('current', {
     lightTheme: lightThemeColorsOld.negative,
     darkTheme: darkThemeColorsOld.negative,
-  }),
-  surface: theme('current', {
-    lightTheme: lightThemeColorsOld.surface,
-    darkTheme: darkThemeColorsOld.surface,
   }),
   card: theme('current', {
     lightTheme: lightThemeColorsOld.card,

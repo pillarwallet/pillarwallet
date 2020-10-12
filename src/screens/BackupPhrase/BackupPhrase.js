@@ -36,15 +36,13 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 import { spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
-
 
 const FooterWrapper = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 type Props = {

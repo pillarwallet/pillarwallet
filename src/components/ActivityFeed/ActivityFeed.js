@@ -96,7 +96,7 @@ const CardHeaderWrapper = styled.View`
 `;
 
 const CardBackgroundWrapper = styled.View`
-  background-color: ${({ theme, card }) => card ? theme.colors.card : theme.colors.surface};
+  ${({ theme, card }) => card && `background-color: ${theme.colors.card};`}
 `;
 
 type EmptyState = {|

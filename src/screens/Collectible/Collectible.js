@@ -164,7 +164,7 @@ class CollectibleScreen extends React.Component<Props, State> {
           imageUrls={imageViewImages}
           renderImage={props => <CollectibleImage {...props} />}
           renderIndicator={() => null}
-          backgroundColor={colors.surface}
+          backgroundColor={colors.basic070}
           saveToLocalByLongPress={false}
           menus={() => null}
         />
