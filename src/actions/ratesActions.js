@@ -38,7 +38,7 @@ import { saveDbAction } from './dbActions';
 
 
 export const setRatesAction = (newRates: Rates) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(newRates)) return;
     const { rates: { data: currentRates = {} } } = getState();
     const rates = { ...currentRates, ...newRates };
@@ -59,7 +59,7 @@ export const fetchAllAccountsAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const allAssets = allAccountsAssetsSelector(getState());
     const rates = await getExchangeRates(allAssets);
-    await dispatch(setRatesAction(rates));
+    dispatch(setRatesAction(rates));
   };
 };
 

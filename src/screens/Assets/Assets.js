@@ -56,7 +56,7 @@ import {
 import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNTS, RECOVERY_SETTINGS, SECURITY_SETTINGS } from 'constants/navigationConstants';
+import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
@@ -101,7 +101,6 @@ type State = {
 };
 
 const VIEWS = {
-  KEY_WALLET_VIEW: 'KEY_WALLET_VIEW',
   SMART_WALLET_VIEW: 'SMART_WALLET_VIEW',
   PPN_VIEW: 'PPN_VIEW',
 };
@@ -180,7 +179,7 @@ class AssetsScreen extends React.Component<Props, State> {
         return {
           label: getAccountName(walletType),
           action: () => navigation.navigate(ACCOUNTS),
-          screenView: walletType === ACCOUNT_TYPES.KEY_BASED ? VIEWS.KEY_WALLET_VIEW : VIEWS.SMART_WALLET_VIEW,
+          screenView: VIEWS.SMART_WALLET_VIEW,
           customHeaderButtonProps: {
             backgroundColor: walletType === ACCOUNT_TYPES.KEY_BASED ? colors.legacyWallet : colors.smartWallet,
           },
@@ -213,7 +212,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: t('insight.keyWalletIntro.description.backupWallet'),
         status: isBackedUp,
         onPress: !isBackedUp
-          ? () => navigation.navigate(RECOVERY_SETTINGS)
+          ? () => navigation.navigate(WALLET_SETTINGS)
           : null,
       },
       {
@@ -229,7 +228,7 @@ class AssetsScreen extends React.Component<Props, State> {
         title: t('insight.keyWalletIntro.description.enableBiometrics'),
         status: useBiometrics,
         onPress: !useBiometrics
-          ? () => navigation.navigate(SECURITY_SETTINGS)
+          ? () => navigation.navigate(WALLET_SETTINGS)
           : null,
       };
       return [...keyWalletInsights, biometricsInsight];
@@ -246,7 +245,7 @@ class AssetsScreen extends React.Component<Props, State> {
       accounts,
       smartWalletState,
     } = this.props;
-    const { showKeyWalletInsight, showSmartWalletInsight } = this.state;
+    const { showSmartWalletInsight } = this.state;
 
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
 
@@ -287,15 +286,6 @@ class AssetsScreen extends React.Component<Props, State> {
             showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
           />);
-      case VIEWS.KEY_WALLET_VIEW:
-        return (
-          <WalletView
-            showInsight={showKeyWalletInsight}
-            hideInsight={() => this.hideWalletInsight('KEY')}
-            insightList={this.getInsightsList()}
-            insightsTitle={t('insight.keyWalletIntro.title')}
-            onScroll={onScroll}
-          />);
       default:
         return null;
     }
@@ -303,7 +293,6 @@ class AssetsScreen extends React.Component<Props, State> {
 
   render() {
     const { activeAccount } = this.props;
-    if (!activeAccount) return null;
 
     const screenInfo = this.getScreenInfo();
     const {
@@ -316,7 +305,7 @@ class AssetsScreen extends React.Component<Props, State> {
     return (
       <ContainerWithHeader
         headerProps={{
-          rightItems: [{
+          rightItems: !!activeAccount && [{
             actionButton: {
               key: 'manageAccounts',
               label: headerButtonLabel,

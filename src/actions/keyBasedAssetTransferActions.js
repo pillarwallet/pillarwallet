@@ -50,7 +50,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // utils
 import { addressesEqual, getAssetsAsList, getBalance, transformBalancesToObject } from 'utils/assets';
-import { formatFullAmount, getGasPriceWei, reportLog } from 'utils/common';
+import { formatFullAmount, getGasPriceWei, reportErrorLog, reportLog } from 'utils/common';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { calculateETHTransactionAmountAfterFee } from 'utils/transactions';
 
@@ -168,9 +168,16 @@ export const addKeyBasedAssetToTransferAction = (assetData: AssetData, amount?: 
 export const fetchAvailableBalancesToTransferAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      wallet: { data: { address: keyBasedWalletAddress } },
+      wallet: { data: walletData },
       assets: { supportedAssets },
     } = getState();
+
+    const keyBasedWalletAddress = walletData?.address;
+    if (!keyBasedWalletAddress) {
+      reportErrorLog('fetchAvailableBalancesToTransferAction failed: no keyBasedWalletAddress');
+      return;
+    }
+
     dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_BALANCES_TO_TRANSFER });
 
     // fetch key based assets
@@ -178,7 +185,8 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
     // it's not fetched on mainnet using getAllOwnedAssets
     if (!ownedAssets[ETH]) {
-      ownedAssets[ETH] = supportedAssets.find(({ symbol }) => symbol === ETH);
+      const ethAsset = supportedAssets.find(({ symbol }) => symbol === ETH);
+      if (ethAsset) ownedAssets[ETH] = ethAsset;
     }
 
     const availableBalances = await api.fetchBalances({
@@ -195,7 +203,11 @@ export const fetchAvailableBalancesToTransferAction = () => {
 
 export const fetchAvailableCollectiblesToTransferAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { wallet: { data: { address: keyBasedWalletAddress } } } = getState();
+    const keyBasedWalletAddress = getState().wallet.data?.address;
+    if (!keyBasedWalletAddress) {
+      reportLog('fetchAvailableCollectiblesToTransferAction failed: no keyBasedWalletAddress');
+      return;
+    }
 
     dispatch({ type: SET_FETCHING_AVAILABLE_KEY_BASED_COLLECTIBLES_TO_TRANSFER });
 
@@ -224,10 +236,16 @@ export const setAndStoreKeyBasedAssetsToTransferAction = (keyBasedAssetsToTransf
 export const calculateKeyBasedAssetsToTransferTransactionGasAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      wallet: { data: { address: keyBasedWalletAddress } },
+      wallet: { data: walletData },
       accounts: { data: accounts },
       keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer, isCalculatingGas, availableBalances },
     } = getState();
+
+    const keyBasedWalletAddress = walletData?.address;
+    if (!keyBasedWalletAddress) {
+      reportLog('calculateKeyBasedAssetsToTransferTransactionGasAction failed: no keyBasedWalletAddress');
+      return;
+    }
 
     const firstSmartAccount = findFirstSmartAccount(accounts);
     if (!firstSmartAccount) {
@@ -371,10 +389,16 @@ export const checkKeyBasedAssetTransferTransactionsAction = () => {
 export const createKeyBasedAssetsToTransferTransactionsAction = (wallet: Wallet) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      wallet: { data: { address: keyBasedWalletAddress } },
+      wallet: { data: walletData },
       accounts: { data: accounts },
       keyBasedAssetTransfer: { data: keyBasedAssetsToTransfer, creatingTransactions },
     } = getState();
+
+    const keyBasedWalletAddress = walletData?.address;
+    if (!keyBasedWalletAddress) {
+      reportLog('createKeyBasedAssetsToTransferTransactionsAction failed: no keyBasedWalletAddress');
+      return;
+    }
 
     if (creatingTransactions) return;
     dispatch({ type: SET_CREATING_KEY_BASED_ASSET_TRANSFER_TRANSACTIONS, payload: true });

@@ -18,27 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as RNLocalize from 'react-native-localize';
-import { SUPPORTED_LANGUAGES, DEFAULT_LANGUAGE } from './config';
-
-
-const userPreferredLocales = RNLocalize.getLocales();
-const userPreferredLanguages = userPreferredLocales.map(({ languageCode }) => languageCode);
-
-const getSupportedLanguage = () => {
-  const language = userPreferredLanguages.find((languageCode) => SUPPORTED_LANGUAGES.includes(languageCode));
-  return language || DEFAULT_LANGUAGE;
-};
-
-const languageDetector = {
-  type: 'languageDetector',
-  async: true,
-  detect: (callback: (lang: string) => void) => {
-    callback(getSupportedLanguage());
-  },
-  init: () => {},
-  cacheUserLanguage: () => {},
-};
-
-export default languageDetector;
-
+export const SET_ONBOARDING_ERROR = 'SET_ONBOARDING_ERROR';
+export const SET_IMPORTING_WALLET = 'SET_IMPORTING_WALLET';
+export const SET_GENERATING_WALLET = 'SET_GENERATING_WALLET';
+export const SET_ONBOARDING_WALLET = 'SET_ONBOARDING_WALLET';
+export const SET_CHECKING_USERNAME = 'SET_CHECKING_USERNAME';
+export const SET_ONBOARDING_USER = 'SET_ONBOARDING_USER';
+export const SET_ONBOARDING_PIN_CODE = 'SET_ONBOARDING_PIN_CODE';
+export const SET_REGISTERING_USER = 'SET_REGISTERING_USER';
+export const SET_IS_PORTAL_RECOVERY = 'SET_IS_PORTAL_RECOVERY';
+export const SET_ONBOARDING_USERNAME_REGISTRATION_FAILED = 'SET_ONBOARDING_USERNAME_REGISTRATION_FAILED';
+export const RESET_ONBOARDING = 'RESET_ONBOARDING';

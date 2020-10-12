@@ -18,4 +18,4 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const LOG_OUT = 'LOG_OUT';
+export const RESET_APP_STATE = 'RESET_APP_STATE';

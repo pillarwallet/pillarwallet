@@ -32,7 +32,7 @@ import { migrate } from 'services/dataMigration';
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_ASSETS, UPDATE_BALANCES, UPDATE_SUPPORTED_ASSETS } from 'constants/assetsConstants';
-import { UPDATE_WALLET_IMPORT_STATE, UPDATE_PIN_ATTEMPTS } from 'constants/walletConstants';
+import { UPDATE_PIN_ATTEMPTS, UPDATE_WALLET_BACKUP_STATUS } from 'constants/walletConstants';
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { UPDATE_COLLECTIBLES, SET_COLLECTIBLES_TRANSACTION_HISTORY } from 'constants/collectiblesConstants';
@@ -66,9 +66,13 @@ import { SET_LENDING_DEPOSITED_ASSETS } from 'constants/lendingConstants';
 import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransferConstants';
 import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
+import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
+
+// actions
+import { getTranslationsResourcesAndSetLanguageOnAppOpen } from 'actions/localisationActions';
 
 
 const storage = Storage.getInstance('db');
@@ -178,7 +182,8 @@ export const initAppAndRedirectAction = () => {
       const { contacts = [] } = get(storageData, 'localContacts', []);
       dispatch({ type: SET_CONTACTS, payload: contacts });
 
-      const { pinAttemptsCount = 0, lastPinAttempt = 0 } = wallet;
+      const { pinAttempt = {} } = get(storageData, 'pinAttempt', {});
+      const { pinAttemptsCount = 0, lastPinAttempt = 0 } = pinAttempt;
       dispatch({
         type: UPDATE_PIN_ATTEMPTS,
         payload: {
@@ -203,7 +208,7 @@ export const initAppAndRedirectAction = () => {
       const { ensRegistry = {} } = get(storageData, 'ensRegistry', {});
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
-      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_IMPORT_STATE, payload: wallet.backupStatus });
+      if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });
@@ -222,6 +227,11 @@ export const initAppAndRedirectAction = () => {
     } else {
       navAction = { routeName: ONBOARDING_FLOW };
     }
+
+    const { cachedUrls = {} } = get(storageData, 'cachedUrls', {});
+    dispatch({ type: SET_CACHED_URLS, payload: cachedUrls });
+
+    await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpen());
 
     navigate(NavigationActions.navigate(navAction));
 

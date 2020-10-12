@@ -28,7 +28,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { registerWalletAction } from 'actions/onboardingActions';
+import { beginOnboardingAction } from 'actions/onboardingActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -43,13 +43,12 @@ import { getBiometryType } from 'utils/settings';
 import { themedColors } from 'utils/themes';
 
 // types
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  registerWallet: (setBiometrics: boolean, themeToStore: string) => void,
-  themeType: string,
+  beginOnboarding: (enableBiometrics: boolean) => void,
 };
 
 const touchIdImageSource = require('assets/images/touchId.png');
@@ -82,11 +81,12 @@ const TouchIdImage = styled(CachedImage)`
 
 const getBiometryImage = (biometryType: string) => {
   switch (biometryType) {
+    case Keychain.BIOMETRY_TYPE.FACE_ID:
+    case Keychain.BIOMETRY_TYPE.FACE:
+      return faceIdImageSource;
     case Keychain.BIOMETRY_TYPE.TOUCH_ID:
     case Keychain.BIOMETRY_TYPE.FINGERPRINT:
       return touchIdImageSource;
-    case Keychain.BIOMETRY_TYPE.FACE_ID:
-      return faceIdImageSource;
     default:
       return '';
   }
@@ -104,8 +104,8 @@ const showFaceIDFailed = () => {
 };
 
 class BiometricsPrompt extends React.Component<Props> {
-  proceedToRegisterWallet = (setBiometrics: boolean) => {
-    const { registerWallet, themeType, navigation } = this.props;
+  proceedTobeginOnboarding = (setBiometrics: boolean) => {
+    const { beginOnboarding, navigation } = this.props;
 
     /**
      * as for permission if it's iOS FaceID, otherwise – no permission needed,
@@ -120,12 +120,12 @@ class BiometricsPrompt extends React.Component<Props> {
       && Platform.OS === 'ios'
       && biometryType === Keychain.BIOMETRY_TYPE.FACE_ID) {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
-        .then((status) => registerWallet(status === RESULTS.GRANTED, themeType))
+        .then((status) => beginOnboarding(status === RESULTS.GRANTED))
         .catch(showFaceIDFailed);
       return;
     }
 
-    registerWallet(setBiometrics, themeType);
+    beginOnboarding(setBiometrics);
   };
 
   render() {
@@ -140,12 +140,12 @@ class BiometricsPrompt extends React.Component<Props> {
           <ContentInnerWrapper>
             <TouchIdImage source={imageSource} />
             <ButtonsWrapper>
-              <Button title={t('auth:button.yesPlease')} onPress={() => this.proceedToRegisterWallet(true)} />
+              <Button title={t('auth:button.yesPlease')} onPress={() => this.proceedTobeginOnboarding(true)} />
               <ButtonText
                 buttonText={t('auth:button.okToUsePinCodeOnly')}
-                onPress={() => this.proceedToRegisterWallet(false)}
+                onPress={() => this.proceedTobeginOnboarding(false)}
                 fontSize={fontSizes.medium}
-                wrapperStyle={{ marginTop: spacing.large }}
+                wrapperStyle={{ padding: spacing.large }} // leave padding for better clickable area
               />
             </ButtonsWrapper>
           </ContentInnerWrapper>
@@ -155,16 +155,8 @@ class BiometricsPrompt extends React.Component<Props> {
   }
 }
 
-const mapStateToProps = ({
-  appSettings: { data: { themeType } },
-}: RootReducerState): $Shape<Props> => ({
-  themeType,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  registerWallet: (setBiometrics, themeToStore) => dispatch(
-    registerWalletAction(setBiometrics, themeToStore),
-  ),
+  beginOnboarding: (enableBiometrics) => dispatch(beginOnboardingAction(enableBiometrics)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(BiometricsPrompt);
+export default connect(null, mapDispatchToProps)(BiometricsPrompt);

@@ -20,7 +20,6 @@
 
 import { utils, Contract, BigNumber as EthersBigNumber } from 'ethers';
 import { BigNumber } from 'bignumber.js';
-import * as Sentry from '@sentry/react-native';
 import { getEnv } from 'configs/envConfig';
 
 // constants
@@ -37,7 +36,7 @@ import smartWalletService from 'services/smartWallet';
 import { callSubgraph } from 'services/theGraph';
 
 // utils
-import { reportLog, getEthereumProvider } from 'utils/common';
+import { getEthereumProvider, reportErrorLog } from 'utils/common';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // abi
@@ -69,9 +68,7 @@ export const fetchStreamBalance = (streamId: string, address: string): Promise<E
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const contract = new Contract(getEnv().SABLIER_CONTRACT_ADDRESS, SABLIER_ABI, provider);
   return contract.balanceOf(streamId, address).catch((e) => {
-    reportLog('Error getting sablier stream balance', {
-      message: e.message,
-    }, Sentry.Severity.Error);
+    reportErrorLog('Error getting sablier stream balance', { message: e.message });
     return 0;
   });
 };
@@ -208,10 +205,10 @@ export const getSmartWalletTxFee = async (transaction: Object, useGasToken: bool
     .estimateAccountTransaction(estimateTransaction)
     .then(result => buildTxFeeInfo(result, useGasToken))
     .catch((e) => {
-      reportLog('Error getting sablier fee for transaction', {
+      reportErrorLog('Error getting sablier fee for transaction', {
         ...transaction,
         message: e.message,
-      }, Sentry.Severity.Error);
+      });
       return null;
     });
 

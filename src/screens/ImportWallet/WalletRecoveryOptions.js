@@ -19,6 +19,10 @@ import { FlatList } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import { connect } from 'react-redux';
+
+// actions
+import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // constants
 import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY_INTRO } from 'constants/navigationConstants';
@@ -33,9 +37,11 @@ import { getThemeColors, themedColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
+import type { Dispatch } from 'reducers/rootReducer';
 
 // images
 const imageRecovery = require('assets/images/recovery.png');
+
 
 const RecoveryIcon = styled.Image`
   width: 73px;
@@ -48,11 +54,13 @@ const RecoveryIcon = styled.Image`
 type Props = {
   navigation: NavigationScreenProp,
   theme: Theme,
+  resetOnboardingAndNavigate: (routeName: string) => void,
 };
 
-const WalletRecoveryOptions = (props: Props) => {
-  const { theme, navigation } = props;
-
+const WalletRecoveryOptions = ({
+  theme,
+  resetOnboardingAndNavigate,
+}: Props) => {
   const colors = getThemeColors(theme);
 
   const renderRecoveryOption = ({ item }) => {
@@ -62,7 +70,7 @@ const WalletRecoveryOptions = (props: Props) => {
         label={title}
         chevronColor={colors.secondaryText}
         wrapperStyle={{ backgroundColor: colors.card }}
-        onPress={() => navigation.navigate(route)}
+        onPress={() => resetOnboardingAndNavigate(route)}
         bordered
       />
     );
@@ -90,4 +98,9 @@ const WalletRecoveryOptions = (props: Props) => {
   );
 };
 
-export default withTheme(WalletRecoveryOptions);
+
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  resetOnboardingAndNavigate: (routeName: string) => dispatch(resetOnboardingAndNavigateAction(routeName)),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(WalletRecoveryOptions));
