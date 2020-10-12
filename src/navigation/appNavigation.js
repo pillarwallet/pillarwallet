@@ -801,6 +801,7 @@ type Props = {
   onboardingErrorMessage: ?string,
   onboardingUsernameRegistrationFailed: boolean,
   handleSystemLanguageChange: () => void,
+  isAuthorizing: boolean,
 };
 
 type State = {
@@ -895,10 +896,12 @@ class AppFlow extends React.Component<Props, State> {
       wallet,
       onboardingErrorMessage,
       onboardingUsernameRegistrationFailed,
+      isAuthorizing,
     } = this.props;
 
     // no user.walletId means user is not yet registered, try to finish this right away when online
     if (!!wallet
+      && !isAuthorizing
       && !user?.walletId
       && !isRegisteringUser
       && !onboardingErrorMessage
@@ -987,7 +990,7 @@ const mapStateToProps = ({
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  session: { data: { isOnline } },
+  session: { data: { isOnline, isAuthorizing } },
   onboarding: {
     isRegisteringUser,
     errorMessage: onboardingErrorMessage,
@@ -1006,6 +1009,7 @@ const mapStateToProps = ({
   isRegisteringUser,
   onboardingErrorMessage,
   onboardingUsernameRegistrationFailed,
+  isAuthorizing,
 });
 
 const mapDispatchToProps = dispatch => ({

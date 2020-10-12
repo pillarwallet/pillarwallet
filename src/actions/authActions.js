@@ -46,7 +46,6 @@ import {
 } from 'constants/navigationConstants';
 import { SET_USERNAME, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
-import { DARK_THEME } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -448,9 +447,7 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
     dispatch({ type: RESET_APP_STATE, payload: stateAfterReset });
 
     // set and store theme after reset
-    if (savedThemeType === DARK_THEME) {
-      dispatch(setAppThemeAction(DARK_THEME));
-    }
+    dispatch(setAppThemeAction(savedThemeType));
 
     // manage language settings (from onboarding) as those are overwritten
     if (savedLocalisation && savedLocalisation.activeLngCode) {
