@@ -17,16 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState } from 'react';
+import * as React from 'react';
 import { connect } from 'react-redux';
-import type { NavigationScreenProp } from 'react-navigation';
+import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
-// constants
-import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
-
-// components
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { Paragraph } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
@@ -34,16 +31,12 @@ import MnemonicPhrase from 'components/MnemonicPhrase';
 import Button from 'components/Button';
 import CheckAuth from 'components/CheckAuth';
 
-// actions
+import { generateWalletMnemonicAction } from 'actions/walletActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
 
-// utils
+import { BACKUP_PHRASE_VALIDATE } from 'constants/navigationConstants';
 import { spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-
-// types
-import type { Dispatch } from 'reducers/rootReducer';
-import type { EthereumWallet } from 'models/Wallet';
 
 
 const FooterWrapper = styled.View`
@@ -55,65 +48,110 @@ const FooterWrapper = styled.View`
 `;
 
 type Props = {
+  wallet: Object,
   navigation: NavigationScreenProp<*>,
-  resetIncorrectPassword: () => void
+  generateWalletMnemonic: (mnemonicPhrase?: string) => void,
+  resetIncorrectPassword: Function,
 };
 
-const BackupPhrase = ({
-  navigation,
-  resetIncorrectPassword,
-}: Props) => {
-  // mnemonicPhrase can be passed from unlocked screen, otherwise unlock will render here
-  const unlockedMnemonicPhrase = navigation.getParam('mnemonicPhrase', null);
+type State = {
+  pinIsValid: boolean,
+  wallet: Object,
+}
 
-  const [pinIsValid, setPinIsValid] = useState(!!unlockedMnemonicPhrase);
-  const [mnemonicPhrase, setMnemonicPhrase] = useState(unlockedMnemonicPhrase);
+class BackupPhrase extends React.Component<Props, State> {
+  _willFocus: NavigationEventSubscription;
+  _isBackingupViaSettings: boolean;
 
-  const handleScreenDismissal = () => {
+  constructor(props) {
+    super(props);
+    const { generateWalletMnemonic, navigation, wallet } = this.props;
+    this._isBackingupViaSettings = navigation.getParam('backupViaSettings', false);
+    this._willFocus = navigation.addListener(
+      'willFocus',
+      () => {
+        if (this._isBackingupViaSettings) {
+          if (this.state.wallet.mnemonic) {
+            generateWalletMnemonic(this.state.wallet.mnemonic);
+          }
+        } else {
+          generateWalletMnemonic(wallet.onboarding.mnemonic.original);
+        }
+      },
+    );
+    this.state = {
+      pinIsValid: !this._isBackingupViaSettings,
+      wallet: this._isBackingupViaSettings ? {} : wallet,
+    };
+  }
+
+  componentWillUnmount() {
+    this._willFocus.remove();
+  }
+
+  handleScreenDismissal = () => {
+    const { resetIncorrectPassword, navigation } = this.props;
     resetIncorrectPassword();
     navigation.goBack(null);
   };
 
-  const onPinValid = (decryptedWallet: ?EthereumWallet) => {
-    setPinIsValid(true);
-    setMnemonicPhrase(decryptedWallet?.mnemonic);
+  onPinValid = (wallet: Object) => {
+    const { generateWalletMnemonic } = this.props;
+    generateWalletMnemonic(wallet.mnemonic.phrase);
+    this.setState({ pinIsValid: true, wallet });
   };
 
-  if (!pinIsValid || !mnemonicPhrase) {
+  render() {
+    const { pinIsValid, wallet: unlockedWallet } = this.state;
+
+    const { wallet: onboardingWallet, navigation } = this.props;
+    const mnemonic = this._isBackingupViaSettings
+      ? unlockedWallet?.mnemonic?.phrase
+      : onboardingWallet.onboarding.mnemonic.original;
+
+    if (!pinIsValid) {
+      return (
+        <CheckAuth
+          revealMnemonic
+          enforcePin
+          onPinValid={(pin, walletObj) => this.onPinValid(walletObj)}
+          headerProps={{ onClose: this.handleScreenDismissal }}
+        />
+      );
+    }
+
+    if (!mnemonic) return null;
     return (
-      <CheckAuth
-        revealMnemonic
-        enforcePin
-        onPinValid={(pin, walletObj) => onPinValid(walletObj)}
-        headerProps={{ onClose: handleScreenDismissal }}
-      />
+      <ContainerWithHeader
+        headerProps={{ centerItems: [{ title: t('title.backupPhrase') }] }}
+        footer={(
+          <FooterWrapper>
+            <Button
+              onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE,
+                { backupViaSettings: this._isBackingupViaSettings })}
+              title={t('button.next')}
+            />
+          </FooterWrapper>
+        )}
+      >
+        <ScrollWrapper regularPadding>
+          <Paragraph style={{ marginTop: spacing.medium }}>
+            {t('paragraph.instructionsOnBackingUpBackupPhase')}
+          </Paragraph>
+          <MnemonicPhrase phrase={mnemonic} />
+        </ScrollWrapper>
+      </ContainerWithHeader>
     );
   }
+}
 
-  return (
-    <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('title.backupPhrase') }] }}
-      footer={(
-        <FooterWrapper>
-          <Button
-            onPress={() => navigation.navigate(BACKUP_PHRASE_VALIDATE, { mnemonicPhrase })}
-            title={t('button.next')}
-          />
-        </FooterWrapper>
-      )}
-    >
-      <ScrollWrapper regularPadding>
-        <Paragraph style={{ marginTop: spacing.medium }}>
-          {t('paragraph.instructionsOnBackingUpBackupPhase')}
-        </Paragraph>
-        <MnemonicPhrase phrase={mnemonicPhrase} />
-      </ScrollWrapper>
-    </ContainerWithHeader>
-  );
-};
+const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  generateWalletMnemonic: (mnemonicPhrase?: string) => {
+    dispatch(generateWalletMnemonicAction(mnemonicPhrase));
+  },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });
 
-export default connect(null, mapDispatchToProps)(BackupPhrase);
+export default connect(mapStateToProps, mapDispatchToProps)(BackupPhrase);
