@@ -142,7 +142,10 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
       .then(({ data }) => data.wallets || [])
-      .catch(() => []);
+      .catch(() => {
+        reportErrorLog('listAccounts failed', { walletId });
+        return [];
+      });
   }
 
   registerOnBackend(fcmToken: ?string, username: string) {
