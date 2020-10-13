@@ -83,22 +83,18 @@ type Props = {
 const renderFeeToggle = (
   txFeeInfo: ?TransactionFeeInfo,
   showFee: boolean,
-  feeError: boolean,
+  feeError: ?string,
   isLoading: boolean,
+  enoughBalance: boolean,
 ) => {
   if (!showFee || !txFeeInfo) return null;
 
   const { fee, gasToken } = txFeeInfo;
-  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
 
   return (
     <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} notEnoughToken={!!feeError} />
-      {!!feeError &&
-      <BaseText center secondary>
-        {t('error.notEnoughTokenForFeeExtended', { token: gasTokenSymbol })}
-      </BaseText>
-      }
+      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} notEnoughToken={!enoughBalance} />
+      {!!feeError && <BaseText center secondary>{feeError}</BaseText>}
     </>
   );
 };
@@ -363,7 +359,13 @@ const SendEthereumTokens = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFeeToggle(feeInfo, showFee, errorMessage, isEstimating),
+        footerTopAddon: !!selectedContact && renderFeeToggle(
+          feeInfo,
+          showFee,
+          errorMessage,
+          isEstimating,
+          enoughBalanceForTransaction,
+        ),
       }}
     >
       <ContactDetailsModal
