@@ -43,7 +43,7 @@ import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch } from 'reducers/rootReducer';
-import type { EthereumWallet } from 'models/Wallet';
+import type { Wallet } from 'ethers';
 
 
 const FooterWrapper = styled.View`
@@ -74,9 +74,9 @@ const BackupPhrase = ({
     navigation.goBack(null);
   };
 
-  const onPinValid = (decryptedWallet: ?EthereumWallet) => {
+  const onPinValid = (decryptedWallet: ?Wallet) => {
     setPinIsValid(true);
-    setMnemonicPhrase(decryptedWallet?.mnemonic);
+    setMnemonicPhrase(decryptedWallet?.mnemonic?.phrase);
   };
 
   if (!pinIsValid || !mnemonicPhrase) {

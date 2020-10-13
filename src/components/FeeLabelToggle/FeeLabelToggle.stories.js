@@ -18,15 +18,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_ONBOARDING_ERROR = 'SET_ONBOARDING_ERROR';
-export const SET_IMPORTING_WALLET = 'SET_IMPORTING_WALLET';
-export const SET_GENERATING_WALLET = 'SET_GENERATING_WALLET';
-export const SET_ONBOARDING_WALLET = 'SET_ONBOARDING_WALLET';
-export const SET_CHECKING_USERNAME = 'SET_CHECKING_USERNAME';
-export const SET_ONBOARDING_USER = 'SET_ONBOARDING_USER';
-export const SET_ONBOARDING_PIN_CODE = 'SET_ONBOARDING_PIN_CODE';
-export const SET_REGISTERING_USER = 'SET_REGISTERING_USER';
-export const SET_IS_PORTAL_RECOVERY = 'SET_IS_PORTAL_RECOVERY';
-export const SET_ONBOARDING_USERNAME_REGISTRATION_FAILED = 'SET_ONBOARDING_USERNAME_REGISTRATION_FAILED';
-export const SET_FINISHING_ONBOARDING = 'SET_FINISHING_ONBOARDING';
-export const RESET_ONBOARDING = 'RESET_ONBOARDING';
+import * as React from 'react';
+import { storiesOf } from '@storybook/react-native';
+import CenterView from '../../../storybook/CenterView';
+
+import FeeLabelToggle from './FeeLabelToggle';
+
+storiesOf('FeeLabelToggle', module)
+  .add('default', () => (
+    <CenterView>
+      <FeeLabelToggle
+        txFeeInWei="10000000000000000000"
+        gasToken={{
+          address: '0x0',
+          decimals: 18,
+          symbol: 'ETH',
+        }}
+      />
+    </CenterView>
+  ))
+  .add('not enough token', () => (
+    <CenterView>
+      <FeeLabelToggle
+        txFeeInWei="10000000000000000000"
+        gasToken={{
+          address: '0x0',
+          decimals: 18,
+          symbol: 'ETH',
+        }}
+        notEnoughToken
+      />
+    </CenterView>
+  ));
