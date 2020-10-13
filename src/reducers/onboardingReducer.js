@@ -22,6 +22,7 @@
 import {
   RESET_ONBOARDING,
   SET_CHECKING_USERNAME,
+  SET_FINISHING_ONBOARDING,
   SET_IMPORTING_WALLET,
   SET_IS_PORTAL_RECOVERY,
   SET_ONBOARDING_ERROR,
@@ -47,6 +48,7 @@ export type OnboardingReducerState = {
   isRegisteringUser: boolean,
   isPortalRecovery: boolean,
   usernameRegistrationFailed: boolean,
+  isFinishingOnboarding: boolean,
 };
 
 export type OnboardingReducerAction = {
@@ -64,6 +66,7 @@ export const initialState = {
   isRegisteringUser: false,
   isPortalRecovery: false,
   usernameRegistrationFailed: false,
+  isFinishingOnboarding: false,
 };
 
 export default function onboardingReducer(
@@ -77,6 +80,7 @@ export default function onboardingReducer(
         isCheckingUsername: false,
         isImportingWallet: false,
         isRegisteringUser: false,
+        isFinishingOnboarding: false,
         errorMessage: action.payload,
       };
     case SET_IMPORTING_WALLET:
@@ -123,6 +127,11 @@ export default function onboardingReducer(
       return {
         ...state,
         usernameRegistrationFailed: action.payload,
+      };
+    case SET_FINISHING_ONBOARDING:
+      return {
+        ...state,
+        isFinishingOnboarding: action.payload,
       };
     case RESET_ONBOARDING:
       return { ...initialState };

@@ -52,6 +52,7 @@ type Props = {
   errorMessage: ?string,
   navigation: NavigationScreenProp<*>,
   resetWalletError: () => void,
+  isImportingWallet: boolean,
 };
 
 type State = {
@@ -60,7 +61,6 @@ type State = {
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
-  isImporting: boolean,
 };
 
 const DEV = 'DEV';
@@ -133,11 +133,9 @@ class ImportWallet extends React.Component<Props, State> {
     currentBPWord: '',
     currentWordIndex: 1,
     activeTab: TWORDSPHRASE,
-    isImporting: false,
   };
 
   handleImportSubmit = () => {
-    this.setState({ isImporting: true });
     requestAnimationFrame(() => {
       Keyboard.dismiss();
       const { importWalletFromMnemonic } = this.props;
@@ -230,12 +228,12 @@ class ImportWallet extends React.Component<Props, State> {
       activeTab,
       currentBPWord,
       currentWordIndex,
-      isImporting,
     } = this.state;
+    const { isImportingWallet } = this.props;
 
     if (activeTab === TWORDSPHRASE) {
       const { errorMessage } = this.props;
-      const showPrev = currentWordIndex > 1 && !isImporting;
+      const showPrev = currentWordIndex > 1 && !isImportingWallet;
       const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(currentWordIndex, errorMessage);
       return (
         <ButtonsWrapper isRow>
@@ -243,7 +241,7 @@ class ImportWallet extends React.Component<Props, State> {
             title={t('auth:button.prev')}
             onPress={this.showPrevWord}
             leftIconName="back"
-            disabled={isImporting}
+            disabled={isImportingWallet}
             secondary
           />}
           <StyledButton
@@ -251,8 +249,8 @@ class ImportWallet extends React.Component<Props, State> {
             onPress={this.showNextWord}
             rightIconName={showBackArrow ? 'back' : null}
             rightIconStyle={{ transform: [{ rotate: '180deg' }] }}
-            disabled={!currentBPWord || isImporting}
-            isLoading={isImporting}
+            disabled={!currentBPWord || isImportingWallet}
+            isLoading={isImportingWallet}
           />
         </ButtonsWrapper>
       );
@@ -260,10 +258,10 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <Button
-        disabled={!tabsInfo[activeTab].value || isImporting}
+        disabled={!tabsInfo[activeTab].value || isImportingWallet}
         title={t('auth:button.reimport')}
         onPress={this.handleImportSubmit}
-        isLoading={isImporting}
+        isLoading={isImportingWallet}
       />
     );
   };
@@ -373,10 +371,12 @@ const mapStateToProps = ({
   onboarding: {
     wallet,
     errorMessage,
+    isImportingWallet,
   },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   errorMessage,
+  isImportingWallet,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
