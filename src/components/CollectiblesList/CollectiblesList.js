@@ -35,7 +35,7 @@ import { Spacing } from 'components/Layout';
 
 // utils
 import { smallScreen, getDeviceWidth } from 'utils/common';
-import { fontStyles, fontTrackings } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 
