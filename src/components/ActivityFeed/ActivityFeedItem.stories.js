@@ -22,10 +22,7 @@ import { storiesOf } from '@storybook/react-native';
 import { ActivityFeedItem as ActivityFeedItemNoTheme } from 'components/ActivityFeed/ActivityFeedItem';
 
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import {
-  TRANSACTION_EVENT,
-  TX_PENDING_STATUS,
-} from 'constants/historyConstants';
+import { TRANSACTION_EVENT, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -151,8 +148,8 @@ storiesOf('ActivityFeedItem', module)
       {...reduxData}
       event={{
         type: TRANSACTION_EVENT,
-        from: '0x000000',
-        to: '0x222222',
+        from: '0x222222',
+        to: '0x000000',
         accountType: ACCOUNT_TYPES.KEY_BASED,
         asset: 'ETH',
         value: '1000000000000000000',
@@ -164,8 +161,8 @@ storiesOf('ActivityFeedItem', module)
       {...reduxData}
       event={{
         type: TRANSACTION_EVENT,
-        from: '0x000000',
-        to: '0x222222',
+        from: '0x222222',
+        to: '0x000000',
         accountType: ACCOUNT_TYPES.KEY_BASED,
         asset: 'ETH',
         value: '1000000000000000000',
@@ -316,6 +313,20 @@ storiesOf('ActivityFeedItem', module)
         asset: 'PLR',
         value: '1000000000000000000',
         isPPNTransaction: true,
+      }}
+    />
+  ))
+  .add('Synthetic sent Failed', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        to: '0x111111',
+        from: '0x000000',
+        asset: 'PLR',
+        value: '1000000000000000000',
+        isPPNTransaction: true,
+        status: TX_FAILED_STATUS,
       }}
     />
   ))

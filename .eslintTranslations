@@ -63,6 +63,7 @@
         "tel:",
         "text-align:",
         "text-align-vertical:",
+        "textDecorationLine",
         "top:",
         "transparent",
         "width:",
@@ -173,7 +174,7 @@
         "swipeDirection",
         "underlineColorAndroid",
         "url",
-        "viewBox"
+        "viewBox",
       ],
       "ignoreProperty": [
         "_id",
@@ -230,7 +231,7 @@
         "lightKey",
         "darkKey",
         "lightCustom",
-        "darkCustom"
+        "darkCustom",
       ],
       "validateTemplate": true
     }]

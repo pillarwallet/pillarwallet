@@ -31,9 +31,12 @@ export type Theme = {
   colors: any,
 };
 
+export type LightThemeColorKey = $Keys<typeof lightThemeColors>;
+export type DarkThemeColorKey = $Keys<typeof darkThemeColors>;
+
 export type ColorsByThemeProps = {|
-  lightKey?: $Keys<typeof lightThemeColors>,
-  darkKey?: $Keys<typeof darkThemeColors>,
+  lightKey?: LightThemeColorKey,
+  darkKey?: DarkThemeColorKey,
   lightCustom?: string,
   darkCustom?: string,
 |}

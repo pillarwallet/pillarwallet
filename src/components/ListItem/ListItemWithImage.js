@@ -40,7 +40,7 @@ import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
 
 import { formatAmount, getDecimalPlaces } from 'utils/common';
 import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors, themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 
 import type { Theme, ThemeColors } from 'models/Theme';
@@ -178,20 +178,20 @@ const Column = styled.View`
 `;
 
 const ItemTitle = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.big};
   width: 100%;
 `;
 
 const ItemParagraph = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
   flex: 1;
 `;
 
 const ItemSubText = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   font-size: ${fontSizes.regular}px;
 `;
 
@@ -201,7 +201,8 @@ const IconRounded = styled.View`
     height: ${(!borderRadius && diameter) || 52}px;
     border-radius: ${borderRadius || (diameter ? diameter / 2 : 26)}px;
   `}
-  background-color: ${props => props.backgroundColor || themedColors.tertiary};
+  background-color: ${({ backgroundColor }) => backgroundColor
+    || getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -214,7 +215,7 @@ const IconRounded = styled.View`
 
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
-  color: ${({ iconColor, theme }) => iconColor || theme.colors.primary};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.basic000};
 `;
 
 const IconImage = styled(CachedImage)`
@@ -289,7 +290,7 @@ const BalanceFiatValue = styled(BaseText)`
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 12px;
-  color: ${({ iconColor }) => iconColor || themedColors.secondaryText};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.basic020};
   ${fontStyles.big};
 `;
 
