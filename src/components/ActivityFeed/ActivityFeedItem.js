@@ -101,7 +101,7 @@ import { assetDecimalsSelector } from 'selectors/assets';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
-import type { DarkThemeColorKey, LightThemeColorKey, Theme } from 'models/Theme';
+import type { ColorKey, Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
@@ -144,7 +144,7 @@ export type EventData = {
   iconColor?: string,
   itemValue?: string,
   fullItemValue?: string,
-  valueColor?: LightThemeColorKey | DarkThemeColorKey,
+  valueColor?: ColorKey,
   customAddon?: React.Node,
   itemStatusIcon?: string,
   iconBackgroundColor?: string,
