@@ -69,7 +69,6 @@ const EmptyStateWrapper = styled.View`
 
 const Name = styled(BaseText)`
   ${fontStyles.small};
-  letter-spacing: ${fontTrackings.small};
   width: 100%; 
   text-align: center;
 `;
@@ -98,9 +97,7 @@ const CollectiblesList = ({
   const [isReceiveModalVisible, setIsReceiveModalVisible] = useState<boolean>(false);
 
   const renderCollectible = ({ item }: CollectibleItem) => {
-    const { name, image } = item;
-
-    const icon = image;
+    const { name, image: icon } = item;
     const { genericToken } = images(theme);
 
     const collectibleSize = (screenWidth / 2) - collectibleMargins;

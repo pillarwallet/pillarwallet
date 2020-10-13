@@ -303,7 +303,7 @@ class WalletView extends React.Component<Props, State> {
             <CollectiblesList
               collectibles={this.getFilteredCollectibles()}
               onCollectiblePress={this.handleCollectiblePress}
-              isSearching={!!query}
+              isSearching={query.length >= MIN_QUERY_LENGTH}
             />
           )}
           {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
