@@ -32292,7 +32292,7 @@ exports[`Storyshots SWActivationCard default 1`] = `
                               },
                               Array [
                                 Object {
-                                  "color": "#8B939E",
+                                  "color": "#818EB3",
                                   "fontSize": 14,
                                   "lineHeight": 22,
                                 },
@@ -32321,7 +32321,7 @@ exports[`Storyshots SWActivationCard default 1`] = `
                               },
                               Array [
                                 Object {
-                                  "color": "#8B939E",
+                                  "color": "#818EB3",
                                   "fontSize": 14,
                                   "lineHeight": 22,
                                 },
@@ -38950,7 +38950,7 @@ exports[`Storyshots ToastCard link 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007aff",
+                          "color": "#007AFF",
                           "fontSize": 14,
                           "lineHeight": 22,
                         },

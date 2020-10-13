@@ -132,7 +132,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#0A1427",
                       "fontSize": 14,
                       "lineHeight": 22,
                     },
@@ -545,7 +545,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#0A1427",
                       "fontSize": 14,
                       "lineHeight": 22,
                     },

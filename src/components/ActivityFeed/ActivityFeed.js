@@ -40,7 +40,6 @@ import EventDetails from 'components/EventDetails';
 // utils
 import { groupAndSortByDate } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 // constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -71,7 +70,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const EmptyStateWrapper = styled.View`
