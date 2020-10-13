@@ -24,7 +24,7 @@ import merge from 'lodash.merge';
 
 // constants
 import { UPDATE_PIN_ATTEMPTS, SET_WALLET_IS_DECRYPTING, SET_WALLET } from 'constants/walletConstants';
-import { UPDATE_USER, SET_USERNAME } from 'constants/userConstants';
+import { UPDATE_USER, SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
@@ -111,7 +111,7 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
       { type: SET_WALLET_IS_DECRYPTING },
-      { type: SET_USERNAME, payload: mockUser.username },
+      { type: SET_USER, payload: mockUser },
       {
         type: SET_WALLET,
         payload: {
@@ -142,7 +142,7 @@ describe('Auth actions', () => {
     const expectedActions = [
       { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
       { type: SET_WALLET_IS_DECRYPTING },
-      { type: SET_USERNAME, payload: mockRegisteredUser.username },
+      { type: SET_USER, payload: mockRegisteredUser },
       { type: SET_WALLET, payload: mockWallet },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },

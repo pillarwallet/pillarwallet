@@ -20,6 +20,7 @@
 import { ethers } from 'ethers';
 import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
+import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // constants
@@ -36,6 +37,7 @@ import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   RESET_ONBOARDING,
+  SET_FINISHING_ONBOARDING,
   SET_IMPORTING_WALLET,
   SET_ONBOARDING_ERROR,
   SET_ONBOARDING_PIN_CODE,
@@ -138,12 +140,8 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
         return;
       }
 
-      userInfo = await api.userInfo(sdkWallet.walletId);
-
-      // save updated
-      dispatch(saveDbAction('user', { user: userInfo }, true));
-
-      api.setUsername(userInfo.username);
+      const { walletId } = sdkWallet;
+      userInfo = { ...userInfo, walletId };
 
       const oAuthTokens = {
         refreshToken: sdkWallet.refreshToken,
@@ -153,6 +151,16 @@ export const setupUserAction = (username: ?string, recoveryData?: Object) => {
       const updateOAuth = updateOAuthTokensCB(dispatch);
       api.init(updateOAuth, oAuthTokens);
       await updateOAuth(oAuthTokens);
+
+      const updatedUserInfo = await api.userInfo(walletId);
+      if (!isEmpty(updatedUserInfo)) {
+        userInfo = { ...userInfo, ...updatedUserInfo };
+      }
+
+      api.setUsername(userInfo.username);
+
+      // save updated
+      dispatch(saveDbAction('user', { user: userInfo }, true));
 
       dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
 
@@ -261,6 +269,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
 export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) => {
   return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_FINISHING_ONBOARDING, payload: true });
+
     // reset on retry
     if (retry) {
       dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
@@ -296,6 +306,8 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
       params: {},
       action: NavigationActions.navigate({ routeName }),
     }));
+
+    dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
   };
 };
 
