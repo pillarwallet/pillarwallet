@@ -49,8 +49,6 @@ const reduxData = {
   },
   activeAccountAddress: '0x000000',
   selectEvent: () => {},
-  acceptInvitation: () => {},
-  rejectInvitation: () => {},
   activeBlockchainNetwork: '',
   isSmartWalletActivated: false,
   accounts: [],

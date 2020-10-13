@@ -289,7 +289,9 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -332,7 +334,6 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -430,7 +431,6 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -455,6 +455,8 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -577,7 +579,7 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -622,7 +624,6 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -720,7 +721,6 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -745,6 +745,8 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -867,7 +869,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -912,7 +914,6 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1010,7 +1011,6 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1035,6 +1035,8 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -1157,7 +1159,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -1202,7 +1204,6 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1300,7 +1301,6 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1325,6 +1325,8 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -1447,7 +1449,7 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -1492,7 +1494,6 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1590,7 +1591,6 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1615,6 +1615,8 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -1737,7 +1739,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -1782,7 +1784,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1880,7 +1881,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -1905,6 +1905,8 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -2027,7 +2029,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -2072,7 +2074,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -2170,7 +2171,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -2195,6 +2195,8 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -2317,7 +2319,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -2362,7 +2364,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -2460,7 +2461,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -2485,6 +2485,8 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -2607,7 +2609,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#FFFFFF",
-                  "borderColor": "#EDEDED",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
                   "height": 48,
@@ -2652,7 +2654,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -2750,7 +2751,6 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -2775,6 +2775,8 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -2921,7 +2923,6 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3019,7 +3020,6 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3149,7 +3149,6 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3214,7 +3213,6 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3239,6 +3237,8 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -3385,7 +3385,6 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3450,7 +3449,6 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3475,6 +3473,8 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -3596,7 +3596,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -3652,7 +3654,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3717,7 +3718,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3868,7 +3868,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -3924,7 +3926,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -3989,7 +3990,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4140,7 +4140,9 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -4196,7 +4198,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4261,7 +4262,6 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4426,7 +4426,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -4482,7 +4484,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4547,7 +4548,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4698,7 +4698,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -4754,7 +4756,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4819,7 +4820,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -4970,7 +4970,9 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -5026,7 +5028,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5091,7 +5092,6 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5256,7 +5256,9 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -5312,7 +5314,6 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5377,7 +5378,6 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5553,7 +5553,6 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5684,7 +5683,6 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5709,6 +5707,8 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -5855,7 +5855,6 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -5953,7 +5952,6 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6129,7 +6127,6 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6227,7 +6224,6 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6403,7 +6399,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit DAI 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6468,7 +6463,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit DAI 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6644,7 +6638,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit USDC 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6709,7 +6702,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit USDC 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6885,7 +6877,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw DAI 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -6950,7 +6941,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw DAI 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7126,7 +7116,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7191,7 +7180,6 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7367,7 +7355,6 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7432,7 +7419,6 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7457,6 +7443,8 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -7603,7 +7591,6 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7668,7 +7655,6 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -7869,7 +7855,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8000,7 +7985,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8025,6 +8009,8 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -8146,7 +8132,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -8202,7 +8190,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8267,7 +8254,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8418,7 +8404,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -8474,7 +8462,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8539,7 +8526,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8690,7 +8676,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -8746,7 +8734,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8811,7 +8798,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -8976,7 +8962,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -9032,7 +9020,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9097,7 +9084,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9248,7 +9234,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -9304,7 +9292,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9369,7 +9356,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9520,7 +9506,9 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                 Object {
                   "alignItems": "center",
                   "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
                   "borderRadius": 24,
+                  "borderWidth": 0,
                   "height": 48,
                   "justifyContent": "center",
                   "overflow": "hidden",
@@ -9576,7 +9564,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9641,7 +9628,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9901,7 +9887,6 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -9966,7 +9951,6 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10213,7 +10197,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10278,7 +10261,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10525,7 +10507,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10590,7 +10571,6 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10786,7 +10766,6 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
                     "flexGrow": 1,
                     "flexShrink": 1,
                     "justifyContent": "center",
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10851,7 +10830,6 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
                     "flexDirection": "column",
                     "justifyContent": "center",
                     "marginLeft": 10,
-                    "marginTop": 0,
                     "minHeight": 54,
                   },
                   Object {
@@ -10876,6 +10854,8 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
                     Array [
                       Object {
                         "alignItems": "center",
+                        "borderColor": "#EBF0F6",
+                        "borderWidth": 0,
                         "justifyContent": "center",
                       },
                       undefined,
@@ -33354,7 +33334,9 @@ exports[`Storyshots Selector default 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -33397,7 +33379,6 @@ exports[`Storyshots Selector default 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -33462,7 +33443,6 @@ exports[`Storyshots Selector default 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -33546,7 +33526,9 @@ exports[`Storyshots Selector default 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -33589,7 +33571,6 @@ exports[`Storyshots Selector default 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -33654,7 +33635,6 @@ exports[`Storyshots Selector default 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -34851,7 +34831,6 @@ exports[`Storyshots Selector selected option 1`] = `
                           "flexGrow": 1,
                           "flexShrink": 1,
                           "justifyContent": "center",
-                          "marginTop": 0,
                           "minHeight": 54,
                         },
                         Object {
@@ -34916,7 +34895,6 @@ exports[`Storyshots Selector selected option 1`] = `
                           "flexDirection": "column",
                           "justifyContent": "center",
                           "marginLeft": 10,
-                          "marginTop": 0,
                           "minHeight": 54,
                         },
                         Object {
@@ -35526,7 +35504,9 @@ exports[`Storyshots Selector selected option 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -35569,7 +35549,6 @@ exports[`Storyshots Selector selected option 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -35634,7 +35613,6 @@ exports[`Storyshots Selector selected option 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -35718,7 +35696,9 @@ exports[`Storyshots Selector selected option 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -35761,7 +35741,6 @@ exports[`Storyshots Selector selected option 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -35826,7 +35805,6 @@ exports[`Storyshots Selector selected option 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -36691,7 +36669,9 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -36734,7 +36714,6 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -36799,7 +36778,6 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -36883,7 +36861,9 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -36926,7 +36906,6 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -36991,7 +36970,6 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -38135,7 +38113,9 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -38178,7 +38158,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -38243,7 +38222,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -38327,7 +38305,9 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                       Object {
                                         "alignItems": "center",
                                         "backgroundColor": "#EBF0F6",
+                                        "borderColor": "#EBF0F6",
                                         "borderRadius": 26,
+                                        "borderWidth": 0,
                                         "height": 52,
                                         "justifyContent": "center",
                                         "overflow": "hidden",
@@ -38370,7 +38350,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                           "flexGrow": 1,
                                           "flexShrink": 1,
                                           "justifyContent": "center",
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -38435,7 +38414,6 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                           "flexDirection": "column",
                                           "justifyContent": "center",
                                           "marginLeft": 10,
-                                          "marginTop": 0,
                                           "minHeight": 54,
                                         },
                                         Object {
@@ -40228,7 +40206,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                                       "flexGrow": 1,
                                                       "flexShrink": 1,
                                                       "justifyContent": "center",
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -40293,7 +40270,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                                       "flexDirection": "column",
                                                       "justifyContent": "center",
                                                       "marginLeft": 10,
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -40431,7 +40407,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                                       "flexGrow": 1,
                                                       "flexShrink": 1,
                                                       "justifyContent": "center",
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -40496,7 +40471,6 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                                       "flexDirection": "column",
                                                       "justifyContent": "center",
                                                       "marginLeft": 10,
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -41817,7 +41791,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                                       "flexGrow": 1,
                                                       "flexShrink": 1,
                                                       "justifyContent": "center",
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -41882,7 +41855,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                                       "flexDirection": "column",
                                                       "justifyContent": "center",
                                                       "marginLeft": 10,
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -42020,7 +41992,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                                       "flexGrow": 1,
                                                       "flexShrink": 1,
                                                       "justifyContent": "center",
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -42085,7 +42056,6 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                                       "flexDirection": "column",
                                                       "justifyContent": "center",
                                                       "marginLeft": 10,
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -43266,7 +43236,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                                       "flexGrow": 1,
                                                       "flexShrink": 1,
                                                       "justifyContent": "center",
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -43331,7 +43300,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                                       "flexDirection": "column",
                                                       "justifyContent": "center",
                                                       "marginLeft": 10,
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -43469,7 +43437,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                                       "flexGrow": 1,
                                                       "flexShrink": 1,
                                                       "justifyContent": "center",
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
@@ -43534,7 +43501,6 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                                       "flexDirection": "column",
                                                       "justifyContent": "center",
                                                       "marginLeft": 10,
-                                                      "marginTop": 0,
                                                       "minHeight": 54,
                                                     },
                                                     Object {
