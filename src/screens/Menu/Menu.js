@@ -312,7 +312,7 @@ const Menu = ({
           { text: t('alert.attemptToLogOutWithoutBackup.button.cancel') },
           {
             text: t('alert.attemptToLogOutWithoutBackup.button.backup'),
-            onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
+            onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW),
           },
         ],
       );
