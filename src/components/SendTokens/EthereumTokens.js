@@ -33,38 +33,29 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 // constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // components
-import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
-import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import { Spacing } from 'components/Layout';
 import SendContainer from 'containers/SendContainer';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 
 // utils
 import { isValidNumber } from 'utils/common';
-import { spacing } from 'utils/variables';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
 
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
-
 // selectors
-import { isGasTokenSupportedSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 import { contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TokenTransactionPayload, Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, Assets, AssetData } from 'models/Asset';
+import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { Balances, AssetData } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Option } from 'models/Selector';
@@ -77,9 +68,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
   session: SessionData,
-  accountAssets: Assets,
-  accountHistory: Transaction[],
-  isGasTokenSupported: boolean,
   useGasToken: boolean,
   assetsWithBalance: Option[],
   collectibles: Option[],
@@ -92,14 +80,34 @@ type Props = {
   estimateTransaction: (recipient: string, value: number, assetData?: AssetData) => void,
 };
 
+const renderFeeToggle = (
+  txFeeInfo: ?TransactionFeeInfo,
+  showFee: boolean,
+  feeError: boolean,
+  isLoading: boolean,
+) => {
+  if (!showFee || !txFeeInfo) return null;
+
+  const { fee, gasToken } = txFeeInfo;
+  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
+
+  return (
+    <>
+      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} notEnoughToken={!!feeError} />
+      {!!feeError &&
+      <BaseText center secondary>
+        {t('error.notEnoughTokenForFeeExtended', { token: gasTokenSymbol })}
+      </BaseText>
+      }
+    </>
+  );
+};
+
 const SendEthereumTokens = ({
   source,
   navigation,
   balances,
   session,
-  accountAssets,
-  accountHistory,
-  isGasTokenSupported,
   useGasToken,
   assetsWithBalance,
   collectibles,
@@ -112,15 +120,6 @@ const SendEthereumTokens = ({
   estimateTransaction,
   resetEstimateTransaction,
 }: Props) => {
-  const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
-  const hideRelayerMigrationModal = () => setShowRelayerMigrationModal(false);
-
-  useEffect(() => {
-    if (isGasTokenSupported && showRelayerMigrationModal) {
-      hideRelayerMigrationModal(); // hide on update
-    }
-  }, [isGasTokenSupported]);
-
   const defaultAssetData = navigation.getParam('assetData');
   const [assetData, setAssetData] = useState(defaultAssetData);
 
@@ -278,15 +277,6 @@ const SendEthereumTokens = ({
     }
   };
 
-  const renderRelayerMigrationButton = () => (
-    <Button
-      title={t('transactions.button.payFeeWithPillar')}
-      onPress={() => setShowRelayerMigrationModal(true)}
-      secondary
-      small
-    />
-  );
-
   const token = get(assetData, 'token');
   const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
@@ -300,10 +290,6 @@ const SendEthereumTokens = ({
   const showFeeForCollectible = hasAllFeeData;
   const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
   const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
-
-  const showRelayerMigration = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR)
-    && showFee
-    && !isGasTokenSupported;
 
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)
@@ -324,29 +310,6 @@ const SendEthereumTokens = ({
   const errorMessage = !enoughBalanceForTransaction
     ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
-
-  const renderFee = () => {
-    if (!selectedContact) {
-      return null;
-    }
-
-    if (isEstimating) {
-      return <Spinner width={20} height={20} />;
-    }
-
-    return (
-      <>
-        {!!showFee && !!feeInfo && <FeeLabelToggle txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />}
-        {!!errorMessage && <BaseText center secondary>{errorMessage}</BaseText>}
-        {showRelayerMigration && (
-          <>
-            <Spacing h={spacing.medium} />
-            {renderRelayerMigrationButton()}
-          </>
-        )}
-      </>
-    );
-  };
 
   const showNextButton = !isEstimating && hasAllData && enoughBalanceForTransaction && !!feeInfo;
 
@@ -400,17 +363,9 @@ const SendEthereumTokens = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: renderFee(),
+        footerTopAddon: !!selectedContact && renderFeeToggle(feeInfo, showFee, errorMessage, isEstimating),
       }}
     >
-      {showRelayerMigration &&
-        <RelayerMigrationModal
-          isVisible={showRelayerMigrationModal}
-          onModalHide={hideRelayerMigrationModal}
-          accountAssets={accountAssets}
-          accountHistory={accountHistory}
-        />
-      }
       <ContactDetailsModal
         title={t('title.addNewContact')}
         isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
@@ -445,7 +400,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  isGasTokenSupported: isGasTokenSupportedSelector,
   useGasToken: useGasTokenSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
