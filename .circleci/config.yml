@@ -23,6 +23,9 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/android:api-29-node
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
     resource_class: large
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -36,6 +39,9 @@ executors:
     working_directory: ~/pillarwallet
     docker:
       - image: circleci/node:10.19
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
     resource_class: large
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
@@ -704,6 +710,9 @@ jobs:
     working_directory: ~/pillarwallet
     docker:
       - image: cimg/go:1.13
+        auth:
+          username: $DOCKERHUB_USER
+          password: $DOCKERHUB_PASSWORD
     steps:
       - checkout
       - attach_workspace: &attach_workspace
@@ -734,7 +743,8 @@ workflows:
   version: 2.1
   build_and_deploy:
     jobs:
-      - build-and-test
+      - build-and-test:
+          context: docker-hub-creds
       - appcenter_ios:
           requires:
             - build-and-test
@@ -743,6 +753,7 @@ workflows:
               only:
                 - develop
       - appcenter_android:
+          context: docker-hub-creds
           requires:
             - build-and-test
           filters:
@@ -750,6 +761,7 @@ workflows:
               only:
                 - develop
       - get-latest-tag:
+          context: docker-hub-creds
           requires:
             - build-and-test
           filters:
@@ -765,6 +777,7 @@ workflows:
               only:
                 - master
       - prod_android:
+          context: docker-hub-creds
           requires:
             - build-and-test
             - get-latest-tag
@@ -773,6 +786,7 @@ workflows:
               only:
                 - master
       - publish_releases_to_github:
+          context: docker-hub-creds
           requires:
             - prod_android
             - prod_ios
