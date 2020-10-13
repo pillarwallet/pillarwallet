@@ -34363,6 +34363,479 @@ exports[`Storyshots Selector with horizontal options 1`] = `
 </View>
 `;
 
+exports[`Storyshots Table default 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+        "paddingBottom": 30,
+        "paddingLeft": 30,
+        "paddingRight": 30,
+        "paddingTop": 30,
+      },
+      undefined,
+    ]
+  }
+>
+  <View>
+    <Text
+      big={true}
+      style={
+        Array [
+          Object {
+            "color": "#0A1427",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 18,
+            "lineHeight": 28,
+            "textAlignVertical": "center",
+          },
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Medium",
+              "fontSize": 18,
+              "lineHeight": 28,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ],
+        ]
+      }
+    >
+      Table
+    </Text>
+    <View
+      h={16}
+      style={
+        Array [
+          Object {
+            "height": 16,
+            "width": 0,
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        One
+      </Text>
+      <View
+        onLayout={[Function]}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            onPress={[Function]}
+            regular={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                },
+                undefined,
+              ]
+            }
+          >
+            £ 0
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        Two
+      </Text>
+      <Text
+        big={true}
+        positive={true}
+        style={
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 18,
+              "lineHeight": 28,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+      >
+        Some weird component
+      </Text>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <Text
+      large={true}
+      negative={true}
+      style={
+        Array [
+          Object {
+            "color": "#BD573A",
+            "fontFamily": "EuclidCircularB-Regular",
+            "fontSize": 24,
+            "lineHeight": 38,
+            "textAlignVertical": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      Even weirder component
+    </Text>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        Free
+      </Text>
+      <Text
+        positive={true}
+        regular={true}
+        style={
+          Array [
+            Object {
+              "color": "#2AA057",
+              "fontFamily": "EuclidCircularB-Regular",
+              "fontSize": 14,
+              "lineHeight": 22,
+              "textAlignVertical": "center",
+            },
+            undefined,
+          ]
+        }
+      >
+        label.free
+      </Text>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontSize": 14,
+                "lineHeight": 22,
+              },
+              undefined,
+            ],
+          ]
+        }
+      >
+        High fees
+      </Text>
+      <View
+        onLayout={[Function]}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            onPress={[Function]}
+            regular={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                },
+                undefined,
+              ]
+            }
+          >
+            £ 0
+          </Text>
+        </View>
+      </View>
+    </View>
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "#EBF0F6",
+            "height": 1,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    />
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "paddingBottom": 10,
+            "paddingLeft": 0,
+            "paddingRight": 0,
+            "paddingTop": 10,
+          },
+          undefined,
+        ]
+      }
+    >
+      <Text
+        style={
+          Array [
+            Object {
+              "color": "#0A1427",
+              "fontFamily": "EuclidCircularB-Regular",
+              "textAlignVertical": "center",
+            },
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Medium",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                undefined,
+              ],
+            ],
+          ]
+        }
+      >
+        Total
+      </Text>
+      <View
+        onLayout={[Function]}
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            onPress={[Function]}
+            regular={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "textAlignVertical": "center",
+                },
+                undefined,
+              ]
+            }
+          >
+            £ 0
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots ToastCard default 1`] = `
 <View
   style={
