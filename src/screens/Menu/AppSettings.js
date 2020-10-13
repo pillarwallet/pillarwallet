@@ -20,7 +20,6 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList } from 'react-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -31,8 +30,7 @@ import {
   saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
-import { getDefaultSupportedUserLanguage, getLanguageFullName } from 'services/localisation/translations';
-import { changeLanguageAction } from 'actions/localisationActions';
+import { getLanguageFullName } from 'services/localisation/translations';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -49,7 +47,6 @@ import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 // utils
 import { spacing, fontStyles, fontTrackings } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-import SettingsListItem from 'components/ListItem/SettingsItem';
 import Checkbox from 'components/Checkbox';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
@@ -79,6 +76,7 @@ import type { ConnectedDevice } from 'models/ConnectedDevice';
 // local
 import { SettingsSection } from './SettingsSection';
 import BaseFiatCurrencyModal from './BaseFiatCurrencyModal';
+import LanguageModal from './LanguageModal';
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -92,7 +90,6 @@ type Props = {
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
-  changeLanguage: (languageCode: string) => void,
   localisation: ?LocalisationOptions,
   navigation: NavigationScreenProp<*>,
   devices: ConnectedDevice[],
@@ -124,40 +121,15 @@ const CheckboxText = styled(BaseText)`
   margin-bottom: ${spacing.medium}px;
 `;
 
-const LANGUAGE = 'language';
 const MODAL = {
   SYSTEM_INFO: 'systemInfo',
   ANALYTICS: 'analytics',
-  LANGUAGES: 'languages',
 };
-const languages = Object.keys(localeConfig.supportedLanguages)
-  .map(languageCode => ({ name: localeConfig.supportedLanguages[languageCode], value: languageCode }));
 
 class AppSettings extends React.Component<Props, State> {
   state = {
     visibleModal: null,
     isAfterRelayerMigration: false,
-  };
-
-  renderListItem = (
-    field: string,
-    onSelect: Function,
-    currentValue: string,
-  ) => ({
-    item: { name, value },
-  }: Object) => (
-    <SettingsListItem
-      key={value}
-      label={name}
-      isSelected={value === currentValue}
-      onPress={() => onSelect(value)}
-    />
-  );
-
-  handleLanguageUpdate = (value: string) => {
-    const { changeLanguage } = this.props;
-    changeLanguage(value);
-    this.setState({ visibleModal: null });
   };
 
   handleToggleOptOutTracking = () => {
@@ -191,7 +163,7 @@ class AppSettings extends React.Component<Props, State> {
       {
         key: 'language',
         title: t('settingsContent.settingsItem.language.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.LANGUAGES }),
+        onPress: this.openLanguageModal,
         value: getLanguageFullName(localisation?.activeLngCode || sessionLanguageCode || localeConfig.defaultLanguage),
         hidden: !localeConfig.isEnabled && Object.keys(localeConfig.supportedLanguages).length <= 1,
       },
@@ -243,18 +215,9 @@ class AppSettings extends React.Component<Props, State> {
     ].filter(Boolean);
   };
 
-  handleOptionListItemRender = (item, type) => {
-    const { localisation } = this.props;
-    switch (type) {
-      case LANGUAGE:
-        const currentLanguage = localisation?.activeLngCode || getDefaultSupportedUserLanguage();
-        return this.renderListItem(LANGUAGE, this.handleLanguageUpdate, currentLanguage)(item);
-      default:
-        return null;
-    }
-  };
-
   openBaseFiatCurrencyModal = () => Modal.open(() => <BaseFiatCurrencyModal />)
+
+  openLanguageModal = () => Modal.open(() => <LanguageModal />)
 
   openRelayerMigrationModal = () => {
     const { accountAssets, accountHistory } = this.props;
@@ -337,22 +300,6 @@ class AppSettings extends React.Component<Props, State> {
         >
           <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
         </SlideModal>
-
-        {/* LANGUAGES */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.LANGUAGES}
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-          title={t('settingsContent.settingsItem.language.screenTitle')}
-          insetTop
-        >
-          <FlatList
-            data={languages}
-            renderItem={(item) => this.handleOptionListItemRender(item, LANGUAGE)}
-            keyExtractor={({ name }) => name}
-          />
-        </SlideModal>
       </ContainerWithHeader>
     );
   }
@@ -399,7 +346,6 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
-  changeLanguage: (languageCode: string) => dispatch(changeLanguageAction(languageCode)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AppSettings);
