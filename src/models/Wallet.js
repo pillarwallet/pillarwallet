@@ -19,8 +19,7 @@
 */
 
 export type EthereumWallet = {
-  mnemonic?: string,
+  mnemonic: ?string,
   address: string,
-  path: string,
-  privateKey: string,
+  privateKey: ?string,
 };

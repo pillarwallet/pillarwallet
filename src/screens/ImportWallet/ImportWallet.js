@@ -25,10 +25,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import {
-  importWalletFromTWordsPhraseAction,
-  resetWalletErrorAction,
-} from 'actions/walletActions';
+import { resetWalletImportErrorAction, importWalletFromMnemonicAction } from 'actions/onboardingActions';
 
 // components
 import { ScrollWrapper, Wrapper } from 'components/Layout';
@@ -39,14 +36,7 @@ import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 
 // constants
-import {
-  WALLET_ERROR,
-  IMPORT_ERROR,
-  IMPORT_WALLET_TWORDS_PHRASE,
-  TWORDSPHRASE,
-  IMPORTING,
-  IMPORTED,
-} from 'constants/walletConstants';
+import { TWORDSPHRASE } from 'constants/walletConstants';
 
 // utils
 import { spacing, fontStyles } from 'utils/variables';
@@ -57,22 +47,20 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 
 type Props = {
-  importWalletFromTWordsPhrase: (tWordsPhrase: string) => void,
+  importWalletFromMnemonic: (mnemonic: string) => void,
   wallet: Object,
+  errorMessage: ?string,
   navigation: NavigationScreenProp<*>,
-  resetWalletError: Function,
+  resetWalletError: () => void,
+  isImportingWallet: boolean,
 };
 
 type State = {
   tWordsPhrase: string,
-  errorMessage: string,
-  errorField: string,
   activeTab: string,
-  inputEnabled: boolean,
   backupPhrase: Object,
   currentWordIndex: number,
   currentBPWord: string,
-  isImporting: boolean,
 };
 
 const DEV = 'DEV';
@@ -144,49 +132,13 @@ class ImportWallet extends React.Component<Props, State> {
     backupPhrase: {},
     currentBPWord: '',
     currentWordIndex: 1,
-    errorMessage: '',
-    errorField: '',
     activeTab: TWORDSPHRASE,
-    inputEnabled: false,
-    isImporting: false,
   };
 
-  static getDerivedStateFromProps(nextProps: Props, prevState: State) {
-    const { walletState, error } = nextProps.wallet;
-
-    if (walletState === WALLET_ERROR && error.code === IMPORT_ERROR) {
-      const errorMessage = t('auth:error.incorrectBackupPhrase.default');
-      return {
-        ...prevState,
-        errorMessage,
-        errorField: error.field,
-        isImporting: false,
-      };
-    } else if (walletState === IMPORTING) {
-      return {
-        ...prevState,
-        isImporting: true,
-      };
-    } else if (walletState === IMPORTED) {
-      return {
-        ...prevState,
-        isImporting: false,
-      };
-    } else if (walletState !== WALLET_ERROR) {
-      return {
-        ...prevState,
-        errorMessage: '',
-        errorField: '',
-      };
-    }
-    return null;
-  }
-
   handleImportSubmit = () => {
-    this.setState({ isImporting: true });
     requestAnimationFrame(() => {
       Keyboard.dismiss();
-      const { importWalletFromTWordsPhrase } = this.props;
+      const { importWalletFromMnemonic } = this.props;
       const {
         tWordsPhrase,
         activeTab,
@@ -195,21 +147,12 @@ class ImportWallet extends React.Component<Props, State> {
 
       if (activeTab === TWORDSPHRASE) {
         const trimmedPhrase = Object.values(backupPhrase).join(' ');
-        importWalletFromTWordsPhrase(trimmedPhrase);
+        importWalletFromMnemonic(trimmedPhrase);
       } else if (activeTab === DEV) {
         const trimmedPhrase = tWordsPhrase.split(' ').filter(Boolean).join(' ');
-        importWalletFromTWordsPhrase(trimmedPhrase);
-      } else {
-        this.setState({ errorField: '' });
+        importWalletFromMnemonic(trimmedPhrase);
       }
     });
-  };
-
-  getError = (errorField: string) => {
-    if (errorField === this.state.errorField) {
-      return this.state.errorMessage;
-    }
-    return '';
   };
 
   handleValueChange = (field) => (value) => {
@@ -230,6 +173,7 @@ class ImportWallet extends React.Component<Props, State> {
   };
 
   renderForm = (tabsInfo) => {
+    const { errorMessage } = this.props;
     const { activeTab, backupPhrase, currentWordIndex } = this.state;
     const inputProps = {
       onChange: this.handleValueChange(tabsInfo[activeTab].changeName),
@@ -248,7 +192,7 @@ class ImportWallet extends React.Component<Props, State> {
             multiline: true,
             numberOfLines: 2,
           }}
-          errorMessage={tabsInfo[activeTab].errorMessage}
+          errorMessage={errorMessage}
           onLayout={() => {
             if (!this.devPhraseInput) return;
             this.devPhraseInput.focus();
@@ -269,7 +213,7 @@ class ImportWallet extends React.Component<Props, State> {
           getInputRef={(ref) => { this.backupPhraseInput = ref; }}
           inputProps={inputProps}
           additionalStyle={{ textAlign: 'center' }}
-          errorMessage={tabsInfo[activeTab].errorMessage}
+          errorMessage={errorMessage}
           onLayout={() => {
             if (!this.backupPhraseInput) return;
             this.backupPhraseInput.focus();
@@ -284,12 +228,12 @@ class ImportWallet extends React.Component<Props, State> {
       activeTab,
       currentBPWord,
       currentWordIndex,
-      isImporting,
     } = this.state;
+    const { isImportingWallet } = this.props;
 
     if (activeTab === TWORDSPHRASE) {
-      const { errorMessage } = tabsInfo[activeTab];
-      const showPrev = currentWordIndex > 1 && !isImporting;
+      const { errorMessage } = this.props;
+      const showPrev = currentWordIndex > 1 && !isImportingWallet;
       const { text: nextButtonText, showArrow: showBackArrow } = getButtonLabel(currentWordIndex, errorMessage);
       return (
         <ButtonsWrapper isRow>
@@ -297,7 +241,7 @@ class ImportWallet extends React.Component<Props, State> {
             title={t('auth:button.prev')}
             onPress={this.showPrevWord}
             leftIconName="back"
-            disabled={isImporting}
+            disabled={isImportingWallet}
             secondary
           />}
           <StyledButton
@@ -305,8 +249,8 @@ class ImportWallet extends React.Component<Props, State> {
             onPress={this.showNextWord}
             rightIconName={showBackArrow ? 'back' : null}
             rightIconStyle={{ transform: [{ rotate: '180deg' }] }}
-            disabled={!currentBPWord || isImporting}
-            isLoading={isImporting}
+            disabled={!currentBPWord || isImportingWallet}
+            isLoading={isImportingWallet}
           />
         </ButtonsWrapper>
       );
@@ -314,10 +258,10 @@ class ImportWallet extends React.Component<Props, State> {
 
     return (
       <Button
-        disabled={!tabsInfo[activeTab].value || isImporting}
+        disabled={!tabsInfo[activeTab].value || isImportingWallet}
         title={t('auth:button.reimport')}
         onPress={this.handleImportSubmit}
-        isLoading={isImporting}
+        isLoading={isImportingWallet}
       />
     );
   };
@@ -382,13 +326,11 @@ class ImportWallet extends React.Component<Props, State> {
         inputLabel: t('auth:label.backupPhrase'),
         changeName: 'currentBPWord',
         value: currentBPWord,
-        errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
       DEV: {
         inputLabel: t('auth:label.backupPhrase'),
         changeName: 'tWordsPhrase',
         value: tWordsPhrase,
-        errorMessage: this.getError(IMPORT_WALLET_TWORDS_PHRASE),
       },
     };
 
@@ -425,15 +367,21 @@ class ImportWallet extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ wallet }: RootReducerState): $Shape<Props> => ({ wallet });
+const mapStateToProps = ({
+  onboarding: {
+    wallet,
+    errorMessage,
+    isImportingWallet,
+  },
+}: RootReducerState): $Shape<Props> => ({
+  wallet,
+  errorMessage,
+  isImportingWallet,
+});
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  importWalletFromTWordsPhrase: (tWordsPhrase) => {
-    dispatch(importWalletFromTWordsPhraseAction(tWordsPhrase));
-  },
-  resetWalletError: () => {
-    dispatch(resetWalletErrorAction());
-  },
+  importWalletFromMnemonic: (mnemonic) => dispatch(importWalletFromMnemonicAction(mnemonic)),
+  resetWalletError: () => dispatch(resetWalletImportErrorAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ImportWallet);

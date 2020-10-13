@@ -18,26 +18,35 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import i18n from 'i18next';
-import t from 'translations/translate';
-import Toast from 'components/Toast';
+import * as React from 'react';
+import { storiesOf } from '@storybook/react-native';
+import CenterView from '../../../storybook/CenterView';
 
+import FeeLabelToggle from './FeeLabelToggle';
 
-const changeLanguage = (code: string) => {
-  i18n.changeLanguage(code)
-    .then(() => {
-      Toast.show({
-        message: t('toast.languageChanged'),
-        emoji: 'ok_hand',
-      });
-    })
-    .catch(() => {
-      Toast.show({
-        message: t('toast.languageChangeFailed'),
-        emoji: 'hushed',
-        supportLink: true,
-      });
-    });
-};
-
-export default changeLanguage;
+storiesOf('FeeLabelToggle', module)
+  .add('default', () => (
+    <CenterView>
+      <FeeLabelToggle
+        txFeeInWei="10000000000000000000"
+        gasToken={{
+          address: '0x0',
+          decimals: 18,
+          symbol: 'ETH',
+        }}
+      />
+    </CenterView>
+  ))
+  .add('not enough token', () => (
+    <CenterView>
+      <FeeLabelToggle
+        txFeeInWei="10000000000000000000"
+        gasToken={{
+          address: '0x0',
+          decimals: 18,
+          symbol: 'ETH',
+        }}
+        notEnoughToken
+      />
+    </CenterView>
+  ));
