@@ -478,7 +478,7 @@ class SelectorOptions extends React.Component<Props, State> {
                 </SearchBarWrapper>
                 {!!optionTabs && <Tabs
                   tabs={updatedOptionTabs}
-                  wrapperStyle={{ paddingTop: 16 }}
+                  wrapperStyle={{ paddingTop: 22 }}
                   activeTab={activeTab || updatedOptionTabs[0].name}
                 />}
               </>}
