@@ -55,13 +55,13 @@ export const getCoinGeckoAssets = async (assetSymbols: string[]): Promise<?CoinG
       .get(`${COINGECKO_API_URL}/coins/list`, requestConfig)
       .then(({ data: responseData }: AxiosResponse) => responseData)
       .catch((error) => {
-        reportErrorLog('getCoinGeckoAssetIds failed: API request error', { error, assetSymbols });
+        reportErrorLog('getCoinGeckoAssets failed: API request error', { error, assetSymbols });
         return null;
       });
   }
 
   if (!cachedCoinGeckoAssets || !Array.isArray(cachedCoinGeckoAssets)) {
-    reportErrorLog('getCoinGeckoAssetIds failed: unexpected data', { data: cachedCoinGeckoAssets, assetSymbols });
+    reportErrorLog('getCoinGeckoAssets failed: unexpected data', { data: cachedCoinGeckoAssets, assetSymbols });
     return null;
   }
 
@@ -125,7 +125,7 @@ export const getCoinGeckoTokenPrices = async (assetSymbols: string[]): Promise<?
     requestConfig,
   )
     .then(({ data: responseData }: AxiosResponse) => {
-      if (!Array.isArray(responseData)) {
+      if (!responseData) {
         reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', { response: responseData, assetSymbols });
         return null;
       }
