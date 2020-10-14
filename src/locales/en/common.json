@@ -673,10 +673,11 @@
     "label": {
       "currentAPY": "Current APY",
       "currentAPYPercentage": "Current APY {{rate}} %",
-      "earned": "Earned"
+      "earned": "Earned",
+      "youAreAdding": "You are adding"
     },
     "button": {
-      "confirmDeposit": "Confirm deposit",
+      "confirmDeposit": "Deposit",
       "confirmWithdrawal": "Confirm withdraw"
     }
   },
