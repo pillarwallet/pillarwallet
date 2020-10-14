@@ -1045,7 +1045,8 @@
       "endTime": "End time",
       "estStreamTime": "Est. stream time",
       "youAreStreaming": "You are streaming",
-      "streamDetails": "Stream details"
+      "streamDetails": "Stream details",
+      "youAreWithdrawing": "You are withdrawing"
     },
     "button": {
       "startImmediately": "Start immediately",
@@ -1057,7 +1058,7 @@
       "confirmStreamCancellation": "Confirm cancellation",
       "cancelStreamCancellation": "Do not cancel",
       "newStream": "New stream",
-      "confirmWithdraw": "Confirm withdraw"
+      "confirmWithdraw": "Withdraw"
     },
     "paragraph": {
       "allowanceMissing": "In order to create a stream you will need to allow Sablier to send {{asset}} transactions on your behalf",
@@ -1228,6 +1229,7 @@
       "amount": "Amount",
       "receiver": "Receiver",
       "recipient": "Recipient",
+      "sender": "Sender",
       "recipientEnsName": "Recipient ENS name",
       "recipientAddress": "Recipient Address",
       "transactionFee": "Est. Fee",

@@ -36,7 +36,7 @@ type Props = {
 };
 
 type TableUserProps = {
-  ensName?: string,
+  ensName?: ?string,
   address: string,
 };
 
