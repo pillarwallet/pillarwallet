@@ -1040,7 +1040,12 @@
       "withdrawn": "withdrawn",
       "start": "Start",
       "end": "End",
-      "ofTokenValueStream": "of {{value}} {{token}} stream"
+      "ofTokenValueStream": "of {{value}} {{token}} stream",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "estStreamTime": "Est. stream time",
+      "youAreStreaming": "You are streaming",
+      "streamDetails": "Stream details"
     },
     "button": {
       "startImmediately": "Start immediately",
