@@ -33,10 +33,11 @@ import type { RootReducerState } from 'reducers/rootReducer';
 
 type Props = {
   amount: number,
-  asset: Asset,
+  assetSymbol: string,
   text: string,
   rates: Rates,
   baseFiatCurrency: ?string,
+  supportedAssets: Asset[],
 };
 
 const Container = styled.View`
@@ -48,9 +49,11 @@ const TokenImage = styled(CachedImage)`
   height: 64px;
 `;
 
-const TokenReivewSummary = ({
-  asset, amount, rates, baseFiatCurrency, text,
-}) => {
+export const TokenReviewSummaryComponent = ({
+  assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets,
+}: Props) => {
+  const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
+  if (!asset) return null;
   const assetIcon = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
   const formattedAmount = formatAmount(amount);
   const fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
@@ -71,9 +74,11 @@ const TokenReivewSummary = ({
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
+  supportedAssets,
 });
 
-export default connect(mapStateToProps)(TokenReivewSummary);
+export default connect(mapStateToProps)(TokenReviewSummaryComponent);

@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { Keyboard } from 'react-native';
+import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
@@ -34,16 +35,23 @@ import t from 'translations/translate';
 import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
-import ReviewAndConfirm from 'components/ReviewAndConfirm';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser } from 'components/Table';
+import Button from 'components/Button';
+import { Spacing, ScrollWrapper } from 'components/Layout';
+import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
+import { Paragraph } from 'components/Typography';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { formatTransactionFee, getEthereumProvider } from 'utils/common';
+import { getEthereumProvider, formatUnits } from 'utils/common';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
+import { spacing } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -82,6 +90,12 @@ type State = {
   gasLimit: number,
   txFeeInfo: ?TransactionFeeInfo,
 };
+
+const WarningMessage = styled(Paragraph)`
+  text-align: center;
+  color: ${themedColors.negative};
+  padding-bottom: ${spacing.small}px;
+`;
 
 class SendCollectibleConfirm extends React.Component<Props, State> {
   assetData: Object;
@@ -254,13 +268,10 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       gettingFee,
       txFeeInfo,
     } = this.state;
-    const { name } = this.assetData;
-
     // recipient
     const to = this.receiver;
 
     let isEnoughForFee = true;
-    let feeDisplayValue = '';
     if (txFeeInfo) {
       // rinkeby testnet fee check
       const txFee = utils.formatEther(txFeeInfo.fee.toString());
@@ -273,7 +284,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
         gasToken: txFeeInfo.gasToken,
       };
       isEnoughForFee = canProceedTesting || isEnoughBalanceForTransactionFee(balances, balanceCheckTransaction);
-      feeDisplayValue = formatTransactionFee(txFeeInfo.fee, txFeeInfo.gasToken);
     }
 
     const feeSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
@@ -283,52 +293,60 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
     const isConfirmDisabled = gettingFee || !session.isOnline || !txFeeInfo || !isEnoughForFee;
     const confirmButtonTitle = gettingFee
       ? t('label.gettingFee')
-      : t('transactions.button.confirmTransaction');
+      : t('transactions.button.send');
 
-    const reviewData = [
-      {
-        label: t('transactions.label.collectibleName'),
-        value: name,
-      },
-    ];
-
-    if (this.receiverEnsName) {
-      reviewData.push({
-        label: t('transactions.label.recipientEnsName'),
-        value: this.receiverEnsName,
-      });
-    }
-
-    reviewData.push(
-      {
-        label: t('transactions.label.recipientAddress'),
-        value: to,
-      },
-      {
-        label: t('transactions.label.transactionFee'),
-        value: feeDisplayValue,
-        isLoading: gettingFee,
-      },
-    );
-
-    if (this.isKovanNetwork) {
-      /* eslint-disable i18next/no-literal-string */
-      reviewData.push({
-        label: 'Balance in Rinkeby ETH (visible in dev and staging while on Kovan)',
-        value: `${rinkebyETH} ETH`,
-      });
-      /* eslint-enable i18next/no-literal-string */
-    }
+    const decimals = txFeeInfo?.gasToken?.decimals || 18;
+    const formattedFee = formatUnits(txFeeInfo?.fee, decimals);
 
     return (
-      <ReviewAndConfirm
-        reviewData={reviewData}
-        isConfirmDisabled={isConfirmDisabled}
-        onConfirm={this.handleFormSubmit}
-        submitButtonTitle={confirmButtonTitle}
-        contentContainerStyle={{ marginTop: 40 }}
-        errorMessage={errorMessage}
-      />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: t('transactions.title.review') }],
+        }}
+      >
+        <ScrollWrapper
+          disableAutomaticScroll
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16 }}
+          disableOnAndroid
+        >
+          <CollectibleReviewSummary collectible={this.assetData} text={t('transactions.label.youAreSending')} />
+          <Spacing h={32} />
+          <Table>
+            <TableRow>
+              <TableLabel>{t('transactions.label.recipient')}</TableLabel>
+              <TableUser address={to} />
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+              <TableAmount amount={formattedFee} token={feeSymbol} />
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+              <TableAmount amount={0} token={feeSymbol} />
+            </TableRow>
+            {!!this.isKovanNetwork && (
+            <TableRow>
+              <TableLabel style={{ flex: 1 }}>
+                {/* eslint-disable i18next/no-literal-string */}
+                Balance in Rinkeby ETH (visible in dev and staging while on Kovan)
+              </TableLabel>
+              <TableAmount amount={rinkebyETH} token={ETH} />
+            </TableRow>
+          )}
+            <TableRow>
+              <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+              <TableAmount amount={formattedFee} token={feeSymbol} />
+            </TableRow>
+          </Table>
+          <Spacing h={40} />
+          {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
+          <Button
+            disabled={isConfirmDisabled}
+            onPress={this.handleFormSubmit}
+            title={confirmButtonTitle}
+          />
+        </ScrollWrapper>
+      </ContainerWithHeader>
     );
   }
 }

@@ -1199,6 +1199,7 @@
     "title": {
       "sendScreen": "Send",
       "valueSelectorModal": "Choose asset",
+      "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",
       "allowanceTransactionSuccess": "Transaction is on its way",
       "exchangeTransactionSuccess": "Swapping tokens...",
@@ -1216,7 +1217,7 @@
       "payFeeWithPillar": "Pay fees with PLR",
       "confirmTransaction": "Confirm Transaction",
       "cancelUnsent": "Cancel unsent",
-      "speedSettings": "Speed settings"
+      "send": "Send"
     },
     "label": {
       "amount": "Amount",
@@ -1228,24 +1229,26 @@
       "assetsToSettle": "Assets to settle",
       "recipientGet": "Recipient will get",
       "youPay": "You will pay",
-      "collectibleName": "Collectible",
       "noAssetsFound": "No assets found",
       "noCollectiblesFound": "No collectibles found",
       "fromKeyWallet": "From Key based wallet",
       "toSmartWallet": "To Smart Wallet",
       "tokensToTransfer": "Tokens to transfer",
       "collectiblesToTransfer": "Collectibles to transfer",
-      "speed": "Speed",
       "data": "Data",
       "message": "Message",
-      "address": "Address"
+      "address": "Address",
+      "ethFee": "Ethereum fee",
+      "pillarFee": "Pillar fee",
+      "totalFee": "Total fee",
+      "youAreSending": "You are sending",
+      "fees": "Fees"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
-      "finalFeeInformation": "Final rate may be slightly higher or lower at the end of the transaction."
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
     },
     "emptyState": {
       "assetsList": {
@@ -1392,15 +1395,16 @@
       "allowExchange": "Allow this exchange"
     },
     "paragraph": {
-      "tokenAllowanceInReviewScreen": "Review the details and enable asset as well as confirm the cost of data transaction.",
       "ruleToGetExchangedTokensIntoSmartWallet": "Activate Smart Wallet \n in order to receive exchanged tokens into"
     },
     "label": {
-      "assetToEnable": "Asset to enable",
       "enabledAssets": "Enabled exchange assets:",
       "exchangeRate": "Exchange rate",
+      "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "availableAmount": "Available",
-      "updatedRealTime": "Updated in realtime"
+      "updatedRealTime": "Updated in realtime",
+      "exchangeDetails": "Exchange details",
+      "maxSlippage": "Max. slippage"
     },
     "emptyState": {
       "noOffers": {

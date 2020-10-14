@@ -25,12 +25,17 @@ import t from 'translations/translate';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // components
-import ReviewAndConfirm from 'components/ReviewAndConfirm';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser } from 'components/Table';
+import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Button from 'components/Button';
+import { Spacing, ScrollWrapper } from 'components/Layout';
+import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
 // utils
-import { formatTransactionFee } from 'utils/common';
+import { formatUnits } from 'utils/common';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -73,39 +78,50 @@ class SendTokenConfirm extends React.Component<Props> {
       gasToken,
     } = navigation.getParam('transactionPayload', {});
 
-    const feeDisplayValue = txFeeInWei === 0 ? t('label.fee') : formatTransactionFee(txFeeInWei, gasToken);
+    const feeTokenSymbol = gasToken?.symbol || ETH;
 
-    const reviewData = [
-      {
-        label: t('transactions.label.amount'),
-        value: t('tokenValue', { value: amount, token: symbol }),
-      },
-    ];
-
-    if (receiverEnsName) {
-      reviewData.push({
-        label: t('transactions.label.recipientEnsName'),
-        value: receiverEnsName,
-      });
-    }
-
-    reviewData.push(
-      {
-        label: t('transactions.label.recipientAddress'),
-        value: to,
-      },
-      {
-        label: t('transactions.label.transactionFee'),
-        value: feeDisplayValue,
-      },
-    );
+    const decimals = gasToken?.decimals || 18;
+    const formattedFee = formatUnits(txFeeInWei, decimals);
 
     return (
-      <ReviewAndConfirm
-        reviewData={reviewData}
-        isConfirmDisabled={!session.isOnline}
-        onConfirm={this.handleFormSubmit}
-      />
+      <ContainerWithHeader
+        headerProps={{
+          centerItems: [{ title: t('transactions.title.review') }],
+        }}
+      >
+        <ScrollWrapper
+          disableAutomaticScroll
+          contentContainerStyle={{ paddingHorizontal: 20, paddingTop: 16 }}
+          disableOnAndroid
+        >
+          <TokenReviewSummary assetSymbol={symbol} text={t('transactions.label.youAreSending')} amount={amount} />
+          <Spacing h={32} />
+          <Table>
+            <TableRow>
+              <TableLabel>{t('transactions.label.recipient')}</TableLabel>
+              <TableUser ensName={receiverEnsName} address={to} />
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+              <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+              <TableAmount amount={0} token={feeTokenSymbol} />
+            </TableRow>
+            <TableRow>
+              <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+              <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+            </TableRow>
+          </Table>
+          <Spacing h={40} />
+          <Button
+            disabled={!session.isOnline}
+            onPress={this.handleFormSubmit}
+            title={t('transactions.button.send')}
+          />
+        </ScrollWrapper>
+      </ContainerWithHeader>
     );
   }
 }
