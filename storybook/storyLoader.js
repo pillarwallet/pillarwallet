@@ -15,7 +15,7 @@ function loadStories() {
 	require('../src/components/Table/Table.stories');
 	require('../src/components/Toast/ToastCard.stories');
 	require('../src/components/Tooltip/Tooltip.stories');
-	require('../src/components/ValueSelectorCard/ValueSelectorCard.stories');
+	require('../src/components/ValueInput/ValueInput.stories');
 }
 
 const stories = [
@@ -30,7 +30,7 @@ const stories = [
 	'../src/components/Table/Table.stories',
 	'../src/components/Toast/ToastCard.stories',
 	'../src/components/Tooltip/Tooltip.stories',
-	'../src/components/ValueSelectorCard/ValueSelectorCard.stories'
+	'../src/components/ValueInput/ValueInput.stories'
 ];
 
 module.exports = {

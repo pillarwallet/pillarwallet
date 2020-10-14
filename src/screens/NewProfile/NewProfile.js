@@ -219,6 +219,7 @@ const NewProfile = ({
             autoFocus: true,
             onChange: setUsernameValue,
           }}
+          inputWrapperStyle={{ zIndex: 10 }}
         />
         <BaseText regular>{t('auth:label.cannotBeChanged')}</BaseText>
       </StyledWrapper>

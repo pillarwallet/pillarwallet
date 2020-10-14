@@ -30,11 +30,7 @@ import t from 'translations/translate';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
-import SelectorOptions from 'components/SelectorOptions';
-import TextInput from 'components/TextInputWithAssetSelector/TextInputWithAssetSelector';
-import PercentsInputAccessoryHolder, {
-  INPUT_ACCESSORY_NATIVE_ID,
-} from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
+import ValueInput from 'components/ValueInput';
 
 // actions
 import {
@@ -46,15 +42,14 @@ import {
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
-import { spacing } from 'utils/variables';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
+import { formatAmount } from 'utils/common';
 import type { ExchangeOptions } from 'utils/exchange';
-import { formatAmount, formatFiat } from 'utils/common';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -74,18 +69,15 @@ import type { Option } from 'models/Selector';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import {
-  getFormattedSellMax,
-  getBalanceInFiat,
-  getAssetBalanceFromFiat,
   validateInput,
   getBestAmountToBuy,
   provideOptions,
   getHeaderRightItems,
-  getErrorMessage,
   shouldTriggerSearch,
   shouldBlockView,
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
+
 
 type Props = {
   rates: Rates,
@@ -116,19 +108,14 @@ type State = {
   isSubmitted: boolean,
   showEmptyMessage: boolean,
   fromAmount: string,
-  fromAmountInFiat: string,
   fromAsset: Option,
   toAsset: Option,
-  errorMessage: string,
-  showSellOptions: boolean,
-  showBuyOptions: boolean,
-  displayFiatFromAmount: boolean,
-  displayFiatToAmount: boolean,
+  isFormValid: boolean,
 };
 
 
 const FormWrapper = styled.View`
-  padding: ${spacing.large}px 40px 60px;
+  padding: 24px 40px 60px;
   background-color: ${themedColors.surface};
 `;
 
@@ -147,16 +134,11 @@ class ExchangeScreen extends React.Component<Props, State> {
 
     this.state = {
       fromAmount: '',
-      fromAmountInFiat: '',
       fromAsset,
       toAsset,
-      errorMessage: '',
-      showSellOptions: false,
-      showBuyOptions: false,
-      displayFiatFromAmount: false,
-      displayFiatToAmount: false,
       isSubmitted: false,
       showEmptyMessage: false,
+      isFormValid: false,
     };
     this.triggerSearch = debounce(this.triggerSearch, 500);
   }
@@ -188,10 +170,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       oAuthAccessToken,
     } = this.props;
     const {
-      fromAsset, toAsset, fromAmount, errorMessage,
+      fromAsset, toAsset, fromAmount, isFormValid,
     } = this.state;
     const {
-      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount, errorMessage: prevErrorMessage,
+      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount,
     } = prevState;
 
     // update from and to options when (supported) assets changes or user selects an option
@@ -211,9 +193,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       ((
         fromAsset !== prevFromAsset ||
         toAsset !== prevToAsset ||
-        fromAmount !== prevFromAmount ||
-        (prevErrorMessage && !errorMessage)) &&
-      validateInput(fromAmount, fromAsset, toAsset, errorMessage))
+        fromAmount !== prevFromAmount) &&
+        isFormValid &&
+        validateInput(fromAmount, fromAsset, toAsset))
     ) {
       this.resetSearch();
       this.triggerSearch();
@@ -242,105 +224,60 @@ class ExchangeScreen extends React.Component<Props, State> {
     });
   };
 
-  setErrorMessage = (errorMessage: string) => this.setState({ errorMessage });
-
-  handleFromInputChange = (input: string) => {
-    const { fromAsset, displayFiatFromAmount } = this.state;
-    const { baseFiatCurrency, rates } = this.props;
-    const { symbol = '' } = fromAsset;
-    const val = input.replace(/,/g, '.');
-    this.setState(displayFiatFromAmount
-      ? {
-        fromAmountInFiat: val,
-        fromAmount: String(getAssetBalanceFromFiat(baseFiatCurrency, val, rates, symbol)),
-      }
-      : {
-        fromAmount: val,
-        fromAmountInFiat: String(getBalanceInFiat(baseFiatCurrency, val, rates, symbol)),
-      },
-    );
-    this.setErrorMessage(getErrorMessage(val, fromAsset));
-  };
-
   getFromInput = () => {
-    const { baseFiatCurrency } = this.props;
     const {
-      errorMessage, fromAsset, fromAmount, fromAmountInFiat, displayFiatFromAmount,
+      fromAsset, fromAmount,
     } = this.state;
-    const { assetBalance, symbol = '' } = fromAsset;
-    const value = displayFiatFromAmount ? fromAmountInFiat : fromAmount;
+    const { fromOptions, horizontalOptions } = this.options;
 
     return (
-      <TextInput
+      <ValueInput
+        assetData={fromAsset}
+        onAssetDataChange={(assetData) => this.setState({ fromAsset: assetData })}
+        value={fromAmount}
+        onValueChange={amount => this.setState({ fromAmount: amount })}
+        selectorOptionsTitle={t('label.sell')}
+        customAssets={fromOptions}
+        horizontalOptions={horizontalOptions}
+        leftSideSymbol="minus" // eslint-disable-line i18next/no-literal-string
         getInputRef={ref => { this.fromInputRef = ref; }}
-        onChange={this.handleFromInputChange}
-        value={value}
-        onFocus={this.onFocusInput}
         onBlur={this.blurFromInput}
-        errorMessage={errorMessage}
-        asset={fromAsset}
-        onAssetPress={() => this.setState({ showSellOptions: true })}
-        labelText={assetBalance && getFormattedSellMax(fromAsset)}
-        onLabelPress={() => this.handleUsePercent(100)}
-        leftSideText={displayFiatFromAmount
-          ? t('tokenValue', {
-            value: formatAmount(fromAmount || '0', 2) || '0',
-            token: fromAsset.symbol || '',
-          })
-          : formatFiat(fromAmountInFiat, baseFiatCurrency).replace(/ /g, '')
-        }
-        leftSideSymbol="-"
-        onLeftSideTextPress={() => this.setState({ displayFiatFromAmount: !displayFiatFromAmount })}
-        rightPlaceholder={displayFiatFromAmount ? baseFiatCurrency || defaultFiatCurrency : symbol}
-        inputAccessoryViewID={INPUT_ACCESSORY_NATIVE_ID}
+        onFormValid={valid => this.setState({ isFormValid: valid })}
       />
     );
   };
 
   getToInput = () => {
-    const { baseFiatCurrency, offers, rates } = this.props;
+    const { offers } = this.props;
     const {
-      displayFiatToAmount, toAsset, fromAmount,
+      toAsset, fromAmount,
     } = this.state;
+    const { toOptions, horizontalOptions } = this.options;
 
-    let value;
-    let toAmount;
-    let toAmountInFiat;
+    let toAmount = '0';
     if (offers?.length && fromAmount) {
-      toAmount = getBestAmountToBuy(offers, fromAmount);
-      if (toAmount) {
-        toAmountInFiat = formatAmount(getBalanceInFiat(baseFiatCurrency, toAmount, rates, toAsset.symbol || ''), 2);
-        value = displayFiatToAmount ? toAmountInFiat : formatAmount(toAmount || '', 6);
-      }
+      toAmount = formatAmount(getBestAmountToBuy(offers, fromAmount) || '0');
     }
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
     return (
-      <TextInput
+      <ValueInput
         disabled
-        value={value}
+        value={toAmount}
+        assetData={toAsset}
+        onAssetDataChange={(assetData) => this.setState({ toAsset: assetData })}
+        selectorOptionsTitle={t('label.buy')}
+        customAssets={toOptions}
+        horizontalOptions={horizontalOptions}
+        leftSideSymbol="plus" // eslint-disable-line i18next/no-literal-string
         onBlur={this.blurFromInput}
-        asset={toAsset}
-        onAssetPress={() => this.setState({ showBuyOptions: true })}
-        leftSideText={displayFiatToAmount
-          ? t('tokenValue', { value: formatAmount(toAmount || '0', 2), token: toAsset.symbol || '' })
-          : formatFiat(toAmountInFiat || '0', fiatCurrency).replace(/ /g, '')
-        }
-        leftSideSymbol="+"
-        onLeftSideTextPress={() => this.setState({ displayFiatToAmount: !displayFiatToAmount })}
-        rightPlaceholder={displayFiatToAmount ? fiatCurrency : toAsset.symbol || ''}
+        hideMaxSend
       />
     );
   }
 
   blurFromInput = () => {
     if (this.fromInputRef) this.fromInputRef.blur();
-    PercentsInputAccessoryHolder.removeAccessory();
   };
-
-  onFocusInput = () => {
-    PercentsInputAccessoryHolder.addAccessory(this.handleUsePercent);
-  }
 
   focusInputWithKeyboard = () => {
     const { hasSeenExchangeIntro } = this.props;
@@ -350,19 +287,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     }, 200);
   };
 
-  handleUsePercent = (percent: number) => {
-    const { fromAsset } = this.state;
-    const fiatAmount = fromAsset.formattedBalanceInFiat || '';
-    this.setState({
-      fromAmount: (parseFloat(fromAsset.assetBalance) * (percent / 100)).toString(),
-      fromAmountInFiat: (parseFloat(fiatAmount) * (percent / 100)).toString().substr(2),
-      errorMessage: '',
-    }, () => Keyboard.dismiss());
-  };
-
   resetSearch = () => {
     this.props.resetOffers();
-    this.setState({ isSubmitted: false, showEmptyMessage: false, errorMessage: '' });
+    this.setState({ isSubmitted: false, showEmptyMessage: false });
     if (this.emptyMessageTimeout) {
       clearTimeout(this.emptyMessageTimeout);
     }
@@ -398,16 +325,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 
-  handleSelectorOptionSelect = (option: Option) => {
-    const { showSellOptions, fromAmount } = this.state;
-    const optionsStateChanges = { showSellOptions: false, showBuyOptions: false };
-    this.setState(showSellOptions
-      ? { fromAsset: option, ...optionsStateChanges }
-      : { toAsset: option, ...optionsStateChanges },
-    () => this.setErrorMessage(getErrorMessage(fromAmount, this.state.fromAsset)),
-    );
-  }
-
   render() {
     const {
       navigation,
@@ -424,12 +341,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAmount,
       isSubmitted,
       showEmptyMessage,
-      showSellOptions,
-      showBuyOptions,
-      errorMessage,
+      isFormValid,
     } = this.state;
 
-    const { fromOptions, toOptions, horizontalOptions } = this.options;
+    const { fromOptions, toOptions } = this.options;
     const assetsLoaded = !!fromOptions.length && !!toOptions.length;
     const rightItems = getHeaderRightItems(
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
@@ -441,55 +356,44 @@ class ExchangeScreen extends React.Component<Props, State> {
     const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
 
     return (
-      <>
-        <ContainerWithHeader
-          headerProps={{
-          rightItems,
-          centerItems: [{ title: t('title.exchange') }],
-        }}
-          inset={{ bottom: 'never' }}
+      <ContainerWithHeader
+        headerProps={{
+        rightItems,
+        centerItems: [{ title: t('title.exchange') }],
+      }}
+        inset={{ bottom: 'never' }}
+      >
+        <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
+        {(blockView || !!deploymentData.error) && <SWActivationCard />}
+        {!blockView &&
+        <ScrollView
+          onScroll={() => Keyboard.dismiss()}
+          keyboardShouldPersistTaps="handled"
+          disableOnAndroid
         >
-          <ExchangeIntroModal isVisible={!hasSeenExchangeIntro} onButtonPress={updateHasSeenExchangeIntro} />
-          {(blockView || !!deploymentData.error) && <SWActivationCard />}
-          {!blockView &&
-          <ScrollView
-            onScroll={() => Keyboard.dismiss()}
-            keyboardShouldPersistTaps="handled"
-            disableOnAndroid
-          >
-            {assetsLoaded &&
-            <FormWrapper>
-              {this.getFromInput()}
-              <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
-              {this.getToInput()}
-            </FormWrapper>}
-            {!!disableNonFiatExchange &&
-            <SWActivationCard
-              message={t('smartWalletContent.exchangeActivation.message')}
-              buttonTitle={t('smartWalletContent.exchangeActivation.button')}
-            />
-          }
-            {!!isSubmitted && !errorMessage &&
-            <ExchangeOffers
-              fromAmount={fromAmount}
-              disableNonFiatExchange={disableNonFiatExchange}
-              isExchangeActive={isSubmitted}
-              showEmptyMessage={showEmptyMessage}
-              setFromAmount={val => this.setState({ fromAmount: val })}
-              navigation={navigation}
-            />}
-          </ScrollView>}
-        </ContainerWithHeader>
-        <SelectorOptions
-          isVisible={showBuyOptions || showSellOptions}
-          onHide={() => this.setState({ showBuyOptions: false, showSellOptions: false })}
-          title={t(`label.${showSellOptions ? 'sell' : 'buy'}`)}
-          options={showSellOptions ? fromOptions : toOptions}
-          searchPlaceholder={t('form.selector.searchPlaceholder')}
-          onOptionSelect={this.handleSelectorOptionSelect}
-          horizontalOptionsData={horizontalOptions}
-        />
-      </>
+          {assetsLoaded &&
+          <FormWrapper>
+            {this.getFromInput()}
+            <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
+            {this.getToInput()}
+          </FormWrapper>}
+          {!!disableNonFiatExchange &&
+          <SWActivationCard
+            message={t('smartWalletContent.exchangeActivation.message')}
+            buttonTitle={t('smartWalletContent.exchangeActivation.button')}
+          />
+        }
+          {!!isSubmitted && isFormValid &&
+          <ExchangeOffers
+            fromAmount={fromAmount}
+            disableNonFiatExchange={disableNonFiatExchange}
+            isExchangeActive={isSubmitted}
+            showEmptyMessage={showEmptyMessage}
+            setFromAmount={val => this.setState({ fromAmount: val })}
+            navigation={navigation}
+          />}
+        </ScrollView>}
+      </ContainerWithHeader>
     );
   }
 }
