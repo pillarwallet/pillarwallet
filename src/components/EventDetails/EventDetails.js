@@ -1313,7 +1313,7 @@ export class EventDetail extends React.Component<Props, State> {
                   amount={getFormattedValue(formattedVal, group.symbol, { isPositive: !isFailed, noSymbol: !isFailed })}
                   textStyle={{ fontSize: fontSizes.big }}
                   iconStyle={{ height: 14, width: 8, marginRight: 9 }}
-                  secondary={isFailed}
+                  failed={isFailed}
                 />
               </Row>
               {group.transactions.map(({

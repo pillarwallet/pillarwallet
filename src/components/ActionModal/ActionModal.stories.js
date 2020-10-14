@@ -48,6 +48,7 @@ const ModalWrapper = styled.View`
   background-color: #FFFFFF;
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
+  flex: 1;
 `;
 
 storiesOf('ActionModal', module).add('default', () => (

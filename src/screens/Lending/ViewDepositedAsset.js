@@ -255,7 +255,6 @@ const ViewDepositedAsset = ({
           <ActivityFeed
             feedTitle={t('aaveContent.title.activityFeed')}
             navigation={navigation}
-            noBorder
             feedData={activityFeedData}
             isAssetView
           />

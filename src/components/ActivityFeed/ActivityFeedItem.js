@@ -28,7 +28,7 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // utils
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { addressesEqual, getAssetDataByAddress } from 'utils/assets';
 import { fontSizes, spacing } from 'utils/variables';
 import {
@@ -101,7 +101,7 @@ import { assetDecimalsSelector } from 'selectors/assets';
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
-import type { Theme } from 'models/Theme';
+import type { ColorKey, Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Accounts } from 'models/Account';
@@ -109,7 +109,6 @@ import type { TransactionsGroup } from 'utils/feedData';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
-
 
 type Props = {
   type?: string,
@@ -145,7 +144,7 @@ export type EventData = {
   iconColor?: string,
   itemValue?: string,
   fullItemValue?: string,
-  valueColor?: string,
+  valueColor?: ColorKey,
   customAddon?: React.Node,
   itemStatusIcon?: string,
   iconBackgroundColor?: string,
@@ -175,7 +174,7 @@ const ListWrapper = styled.View`
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.big}px;
-  color: ${themedColors.positive};
+  color: ${({ theme }) => theme.colors.secondaryAccent140};
   text-align: right;
 `;
 
@@ -423,6 +422,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       isPositive: isPositivePPN,
       noSymbol: isZero,
     });
+    const isPPNTransaction = get(event, 'isPPNTransaction', false);
 
     switch (event.tag) {
       case PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT:
@@ -439,7 +439,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
-            valueColor: 'text',
+            valueColor: 'basic010',
           };
         } else if (isPPNView) {
           data = {
@@ -447,7 +447,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
-            valueColor: 'positive',
+            valueColor: 'secondaryAccent140',
           };
         } else if (event.smartWalletEvent) {
           data = {
@@ -456,7 +456,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             itemImageSource: smartWalletIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
-            valueColor: 'text',
+            valueColor: 'basic010',
           };
         } else {
           data = {
@@ -465,7 +465,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             itemImageSource: PPNIcon,
             fullItemValue: fullItemValuePPN,
             itemValue: itemValuePPN,
-            valueColor: 'positive',
+            valueColor: 'secondaryAccent140',
           };
         }
         break;
@@ -480,12 +480,12 @@ export class ActivityFeedItem extends React.Component<Props> {
         data = {
           fullItemValue: fullItemValuePPN,
           itemValue: itemValuePPN,
-          valueColor: 'text',
+          valueColor: 'basic010',
         };
         if (isPPNView) {
           data.label = t('label.withdraw');
           data.iconName = 'sent'; // eslint-disable-line i18next/no-literal-string
-          data.iconColor = 'negative'; // eslint-disable-line i18next/no-literal-string
+          data.iconColor = 'secondaryAccent240'; // eslint-disable-line i18next/no-literal-string
         } else {
           data.label = this.NAMES.PPN_NETWORK;
           data.subtext = t('label.withdrawal');
@@ -506,7 +506,7 @@ export class ActivityFeedItem extends React.Component<Props> {
                 <TankAssetBalance
                   key={symbol}
                   amount={getFormattedValue(formatted, symbol, { isPositive: !isFailed, noSymbol: isZero })}
-                  secondary={isFailed}
+                  failed={isFailed}
                 />
               ))}
               {!isFailed && isPPNView && transactionsCount > 1 && (
@@ -553,7 +553,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES.AAVE_DEPOSIT,
           itemValue: depositDisplayValue,
           fullItemValue: depositDisplayValue,
-          valueColor: 'text',
+          valueColor: 'basic010',
           itemImageSource: aaveImage,
           itemImageRoundedSquare: true,
           iconImageSize: 52,
@@ -566,7 +566,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES.AAVE_DEPOSIT,
           itemValue: withdrawDisplayValue,
           fullItemValue: withdrawDisplayValue,
-          valueColor: 'positive',
+          valueColor: 'secondaryAccent140',
           itemImageSource: aaveImage,
           itemImageRoundedSquare: true,
           iconImageSize: 52,
@@ -584,7 +584,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           cornerIcon: symbol === DAI ? daiIcon : usdcIcon,
           itemValue: getFormattedValue(formattedVal, symbol, { isPositive, noSymbol: !amount }),
           itemImageRoundedSquare: true,
-          valueColor: isPositive ? 'positive' : 'text',
+          valueColor: isPositive ? 'secondaryAccent140' : 'basic010',
         };
         break;
       }
@@ -610,7 +610,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext: t('label.outgoingSablierStream'),
             itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: false }),
             fullItemValue: getFormattedValue(formattedAmount, symbol, { isPositive: false }),
-            valueColor: 'text',
+            valueColor: 'basic010',
           };
         } else if (event.tag === SABLIER_WITHDRAW) {
           data = {
@@ -618,7 +618,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext: t('label.withdraw'),
             itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             fullItemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
-            valueColor: 'positive',
+            valueColor: 'secondaryAccent140',
           };
         } else if (event.tag === SABLIER_CANCEL_STREAM) {
           data = {
@@ -626,7 +626,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext: t('label.outgoingSablierStream'),
             itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             itemStatusIcon: TX_FAILED_STATUS,
-            statusIconColor: this.getColor('negative'),
+            statusIconColor: 'secondaryAccent240', // eslint-disable-line i18next/no-literal-string
             isFailed: true,
           };
         }
@@ -636,7 +636,6 @@ export class ActivityFeedItem extends React.Component<Props> {
         const usernameOrAddress = event.username
           || ensRegistry[relevantAddress]
           || elipsizeAddress(relevantAddress);
-        const isPPNTransaction = get(event, 'isPPNTransaction', false);
 
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
         const isReferralRewardTransaction = referralRewardIssuersAddresses.includes(relevantAddress) && isReceived;
@@ -650,7 +649,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               isReceived: true,
               fullItemValue: t('positiveTokenValue', { value: formattedFullValue, token: event.asset }),
               itemValue: t('positiveTokenValue', { value: formattedValue, token: event.asset }),
-              valueColor: 'positive',
+              valueColor: 'secondaryAccent140',
             };
           } else {
             data = {
@@ -665,7 +664,10 @@ export class ActivityFeedItem extends React.Component<Props> {
                   <TankAssetBalance
                     amount={getFormattedValue(toAmount, toAssetCode, { isPositive: isReceived, noSymbol: !toAmount })}
                   />
-                  {!isReceived && <BaseText regular secondary>{formattedValue} {event.asset}</BaseText>}
+                  {!isReceived &&
+                  <BaseText regular secondary>
+                    {t('tokenValue', { value: formattedValue, token: event.asset })}
+                  </BaseText>}
                 </ListWrapper>
               );
             } else {
@@ -676,6 +678,7 @@ export class ActivityFeedItem extends React.Component<Props> {
                       isPositive: isReceived,
                       noSymbol: isZero,
                     })}
+                    failed={isFailed}
                   />
                 </ListWrapper>
               );
@@ -712,7 +715,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           if (!isTrxBetweenAccounts) {
             additionalInfo.iconName = directionIcon;
             // eslint-disable-next-line i18next/no-literal-string
-            additionalInfo.iconColor = isReceived ? 'transactionReceivedIcon' : 'negative';
+            additionalInfo.iconColor = isReceived ? 'secondaryAccent140' : 'secondaryAccent240';
           }
 
           if (isReferralRewardTransaction) {
@@ -734,7 +737,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               noSymbol: !formattedFullValue,
             }),
             itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
-            valueColor: isReceived && !this.isZeroValue(value) ? 'positive' : 'text',
+            valueColor: isReceived && !this.isZeroValue(value) ? 'secondaryAccent140' : 'basic010',
             ...additionalInfo,
             isReceived,
           };
@@ -742,8 +745,8 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
     data.itemStatusIcon = data.itemStatusIcon || (isPending ? TX_PENDING_STATUS : '');
     if (isFailed) {
-      data.itemStatusIcon = TX_FAILED_STATUS;
-      data.statusIconColor = this.getColor('negative');
+      data.itemStatusIcon = isPPNTransaction ? '' : TX_FAILED_STATUS;
+      data.statusIconColor = 'secondaryAccent240'; // eslint-disable-line i18next/no-literal-string
       data.isFailed = true;
     }
     return data;
@@ -828,17 +831,19 @@ export class ActivityFeedItem extends React.Component<Props> {
       valueColor,
       iconBackgroundColor,
       isFailed,
+      statusIconColor,
     } = itemData;
 
     return (
       <ListItemWithImage
         {...itemData}
         onPress={() => selectEvent(event, itemData)}
-        actionLabelColor={this.getColor('secondaryText')}
+        actionLabelColor={this.getColor('basic030')}
         iconColor={this.getColor(iconColor)}
         diameter={48}
         iconBackgroundColor={this.getColor(iconBackgroundColor)}
-        valueColor={isFailed ? this.getColor('secondaryText') : this.getColor(valueColor)}
+        valueColor={isFailed ? this.getColor('basic030') : this.getColor(valueColor)}
+        statusIconColor={this.getColor(statusIconColor)}
       />
     );
   }

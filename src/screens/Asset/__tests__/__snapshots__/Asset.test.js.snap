@@ -1441,7 +1441,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "backgroundColor": "#EBF0F6",
+                                "borderColor": "#EBF0F6",
                                 "borderRadius": 24,
+                                "borderWidth": 0,
                                 "height": 48,
                                 "justifyContent": "center",
                                 "overflow": "hidden",
@@ -1497,7 +1499,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   "flexGrow": 1,
                                   "flexShrink": 1,
                                   "justifyContent": "center",
-                                  "marginTop": 0,
                                   "minHeight": 54,
                                 },
                                 Object {
@@ -1547,7 +1548,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   "flexDirection": "column",
                                   "justifyContent": "center",
                                   "marginLeft": 10,
-                                  "marginTop": 0,
                                   "minHeight": 54,
                                 },
                                 Object {
@@ -1627,7 +1627,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               Object {
                                 "alignItems": "center",
                                 "backgroundColor": "#EBF0F6",
+                                "borderColor": "#EBF0F6",
                                 "borderRadius": 24,
+                                "borderWidth": 0,
                                 "height": 48,
                                 "justifyContent": "center",
                                 "overflow": "hidden",
@@ -1683,7 +1685,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   "flexGrow": 1,
                                   "flexShrink": 1,
                                   "justifyContent": "center",
-                                  "marginTop": 0,
                                   "minHeight": 54,
                                 },
                                 Object {
@@ -1733,7 +1734,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                   "flexDirection": "column",
                                   "justifyContent": "center",
                                   "marginLeft": 10,
-                                  "marginTop": 0,
                                   "minHeight": 54,
                                 },
                                 Object {
@@ -3061,7 +3061,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#8B939E",
+                          "color": "#818EB3",
                           "flexWrap": "wrap",
                           "fontSize": 16,
                           "lineHeight": 24,

@@ -195,11 +195,7 @@ class SettleBalance extends React.Component<Props, State> {
         customAddon={
           <AddonWrapper>
             <BalanceWrapper>
-              <TankAssetBalance
-                amount={formattedAmount}
-                token={tokenSymbol}
-                monoColor
-              />
+              <TankAssetBalance amount={formattedAmount} token={tokenSymbol} />
               <ValueInFiat>
                 {formattedAmountInFiat}
               </ValueInFiat>

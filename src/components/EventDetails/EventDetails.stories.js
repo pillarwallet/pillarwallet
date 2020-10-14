@@ -103,8 +103,6 @@ const actions = {
 const commonProps = {
   isVisible: true,
   onClose: noop,
-  rejectInvitation: noop,
-  acceptInvitation: noop,
   isForAllAccounts: true,
   navigation: {
     navigate: noop(),

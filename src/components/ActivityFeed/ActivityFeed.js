@@ -40,7 +40,6 @@ import EventDetails from 'components/EventDetails';
 // utils
 import { groupAndSortByDate } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 // constants
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
@@ -62,8 +61,6 @@ const ActivityFeedWrapper = styled.View`
 
 const ActivityFeedHeader = styled.View`
   padding: ${spacing.mediumLarge}px ${spacing.large}px 0;
-  border-top-width: ${props => props.noBorder ? 0 : '1px'};
-  border-top-color: ${themedColors.border};
 `;
 
 const SectionHeaderWrapper = styled.View`
@@ -73,7 +70,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const EmptyStateWrapper = styled.View`
@@ -86,7 +83,7 @@ const EmptyStateWrapper = styled.View`
 const CardHeaderWrapper = styled.View`
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   padding: 13px 20px 17px;
   margin-top: 16px;
   ${({ theme }) => theme.current === LIGHT_THEME && `
@@ -96,7 +93,7 @@ const CardHeaderWrapper = styled.View`
 `;
 
 const CardBackgroundWrapper = styled.View`
-  ${({ theme, card }) => card && `background-color: ${theme.colors.card};`}
+  ${({ theme, card }) => card && `background-color: ${theme.colors.basic050};`}
 `;
 
 type EmptyState = {|
@@ -120,7 +117,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   feedTitle?: string,
   wrapperStyle?: Object,
-  noBorder?: boolean,
   contentContainerStyle?: Object,
   initialNumToRender: number,
   tabs?: Tab[],
@@ -319,7 +315,6 @@ class ActivityFeed extends React.Component<Props, State> {
       feedTitle,
       navigation,
       wrapperStyle,
-      noBorder,
       contentContainerStyle,
       initialNumToRender,
       tabs = [],
@@ -356,7 +351,7 @@ class ActivityFeed extends React.Component<Props, State> {
     return (
       <ActivityFeedWrapper style={wrapperStyle}>
         {!!feedTitle &&
-        <ActivityFeedHeader noBorder={noBorder}>
+        <ActivityFeedHeader>
           <Title subtitle title={feedTitle} noMargin />
         </ActivityFeedHeader>}
         {tabs.length > 1 && !hideTabs &&
