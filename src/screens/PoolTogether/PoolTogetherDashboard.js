@@ -235,8 +235,9 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
                 resizeMode="contain"
               />
             </LogoWrapper>
-            <Spacing h={12} />
+            <Spacing h={22} />
             <Tabs tabs={poolCurrencyTabs} activeTab={activeTab} />
+            <Spacing h={16} />
             <PoolCard
               currentPrize={currentPrize}
               prizeEstimate={prizeEstimate}
@@ -245,6 +246,7 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
               activeTab={activeTab}
               userTickets={userTickets}
             />
+            <Spacing h={16} />
             {!!userInfo &&
               <TicketButtonsWrapper>
                 <CircleButton

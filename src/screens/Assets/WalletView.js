@@ -288,7 +288,7 @@ class WalletView extends React.Component<Props, State> {
           {!isInSearchAndFocus &&
             <Tabs
               tabs={this.getAssetTabs()}
-              wrapperStyle={{ paddingBottom: 0 }}
+              wrapperStyle={{ paddingTop: 22, paddingBottom: 8 }}
               activeTab={activeTab}
             />
           }

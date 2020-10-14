@@ -348,7 +348,7 @@ class ImportWallet extends React.Component<Props, State> {
           disableAutomaticScroll
           keyboardShouldPersistTaps="always"
         >
-          {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 8 }} activeTab={activeTab} />}
+          {__DEV__ && <Tabs tabs={restoreWalletTabs} wrapperStyle={{ marginTop: 16 }} activeTab={activeTab} />}
           <Wrapper regularPadding>
             {!__DEV__ &&
             <MediumText center style={{ marginTop: spacing.large }}>
