@@ -992,7 +992,8 @@
       "youArePurchasing": "You are purchasing",
       "ticketsReview": "{{count}} <0>ticket</0>",
       "ticketsReview_plural": "{{count}} <0>tickets</0>",
-      "chanceOfWin": "Chance of win"
+      "chanceOfWin": "Chance of win",
+      "youAreWithdrawing": "You are withdrawing"
     },
     "ticketsList": {
       "title": "PoolTogether savings game"
@@ -1008,7 +1009,8 @@
     },
     "button": {
       "joinPool": "Join Pool",
-      "purchaseTickets": "Purchase tickets"
+      "purchaseTickets": "Purchase",
+      "confirmWithdraw": "Withdraw"
     },
     "paragraph": {
       "purchasedTicketsEligibleDate": "Tickets purchased today will be eligible for prizes starting {{date}}",

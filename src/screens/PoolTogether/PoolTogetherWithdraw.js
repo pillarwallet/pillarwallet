@@ -221,6 +221,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             feeDisplayValue,
             isDisabled,
             tokenValueInFiat,
+            txFeeInWei,
+            gasToken,
           };
           this.setState({ withdrawPayload });
         }
