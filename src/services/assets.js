@@ -19,7 +19,7 @@
 */
 import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
 import cryptocompare from 'cryptocompare';
-import { getEnv } from 'configs/envConfig';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
@@ -34,6 +34,12 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
+
+// services
+import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+
+// config
+import { getEnv } from 'configs/envConfig';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -331,7 +337,7 @@ export async function fetchAddressBalancesFromProxyContract(
   return balances;
 }
 
-export function getExchangeRates(assets: string[]): Promise<?Object> {
+export async function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
   const targetCurrencies = supportedFiatCurrencies.concat(ETH);
 
@@ -350,21 +356,40 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
         data[HOT] = { ...data[HOLO] };
         delete data[HOLO];
       }
-      /**
-       * sometimes symbols have different symbol case and mismatch
-       * between our back-end and crypto compare returned result
-       */
-      return Object.keys(data).reduce((mappedData, returnedSymbol) => {
-        const walletSupportedSymbol = assets.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
-        if (walletSupportedSymbol && !mappedData[walletSupportedSymbol]) {
-          mappedData = {
-            ...mappedData,
-            [walletSupportedSymbol]: data[returnedSymbol],
-          };
-        }
-        return mappedData;
-      }, {});
+      return data;
     }).catch(() => ({}));
+}
+
+/**
+ * CryptoCompare is legacy price oracle, however,
+ * the change to new one is feature flagged
+ */
+export async function getExchangeRates(assetSymbols: string[], useLegacyCryptoCompare?: boolean): Promise<?Object> {
+  let data = useLegacyCryptoCompare
+    ? await getLegacyExchangeRates(assetSymbols)
+    : await getCoinGeckoTokenPrices(assetSymbols);
+
+  console.log('getExchangeRates: ', data)
+
+  // by any mean if CoinGecko failed let's try legacy way
+  if (!useLegacyCryptoCompare && isEmpty(data)) {
+    data = await getLegacyExchangeRates(assetSymbols);
+  }
+
+  /**
+   * sometimes symbols have different symbol case and mismatch
+   * between our back-end and crypto compare returned result
+   */
+  return Object.keys(data).reduce((mappedData, returnedSymbol) => {
+    const walletSupportedSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
+    if (walletSupportedSymbol && !mappedData[walletSupportedSymbol]) {
+      mappedData = {
+        ...mappedData,
+        [walletSupportedSymbol]: data[returnedSymbol],
+      };
+    }
+    return mappedData;
+  }, {});
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status
