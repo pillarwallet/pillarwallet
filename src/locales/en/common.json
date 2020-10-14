@@ -988,7 +988,11 @@
       "winningChance": "<0>{{primaryText}}</0> chance of win",
       "purchaseTickets": "Purchase tickets for pool",
       "daiPool": "DAI Pool",
-      "usdcPool": "USDC Pool"
+      "usdcPool": "USDC Pool",
+      "youArePurchasing": "You are purchasing",
+      "ticketsReview": "{{count}} <0>ticket</0>",
+      "ticketsReview_plural": "{{count}} <0>tickets</0>",
+      "chanceOfWin": "Chance of win"
     },
     "ticketsList": {
       "title": "PoolTogether savings game"

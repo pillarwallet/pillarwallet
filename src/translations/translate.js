@@ -21,12 +21,14 @@
 import * as React from 'react';
 import i18next from 'i18next';
 import { Trans } from 'react-i18next';
-import { BaseText } from 'components/Typography';
+import { BaseText, MediumText } from 'components/Typography';
 import type { TranslationOptions, TranslatedString } from 'models/Translations';
 
 
 const t = (key: string | string[], options?: TranslationOptions = {}): TranslatedString => {
-  const { linkedText, primaryText, onPress } = options;
+  const {
+    linkedText, primaryText, mediumText, onPress, ...values
+  } = options;
   if (linkedText) {
     return (
       <Trans
@@ -42,6 +44,15 @@ const t = (key: string | string[], options?: TranslationOptions = {}): Translate
         i18nKey={key}
         components={[<BaseText {...options} primary />]}
         values={{ primaryText }}
+      />
+    );
+  }
+  if (mediumText) {
+    return (
+      <Trans
+        i18nKey={key}
+        components={[<MediumText {...options} />]}
+        values={values}
       />
     );
   }
