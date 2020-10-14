@@ -32,7 +32,7 @@ type CoinGeckoAsset = {
 type CoinGeckoAssetsPrices = {
   [coinGeckoAssetId: string]: {
     [currency: string]: number,
-  }
+  },
 };
 
 // does not change between envs
@@ -47,23 +47,22 @@ const requestConfig = {
 };
 
 // note: there is no pagination for /coins/list endpoint
-export const getCoinGeckoAssets = (assetSymbols: string[]): ?CoinGeckoAsset[] => {
-  return axios.get(`${COINGECKO_API_URL}/coins/list`, requestConfig)
-    .then(({ data: responseData }: AxiosResponse) => {
-      if (!Array.isArray(responseData)) {
-        reportErrorLog('getCoinGeckoAssetIds failed: unexpected response', { response: responseData, assetSymbols });
-        return null;
-      }
-
-      return responseData.filter((coinGeckoAsset: CoinGeckoAsset) => assetSymbols.find(
-        (assetSymbol) => isCaseInsensitiveMatch(assetSymbol, coinGeckoAsset.symbol)),
-      );
-    })
-    .catch((error) => {
-      reportErrorLog('getCoinGeckoAssetIds failed: API request error', { error, assetSymbols });
+export const getCoinGeckoAssets = (assetSymbols: string[]): ?CoinGeckoAsset[] => axios
+  .get(`${COINGECKO_API_URL}/coins/list`, requestConfig)
+  .then(({ data: responseData }: AxiosResponse) => {
+    if (!Array.isArray(responseData)) {
+      reportErrorLog('getCoinGeckoAssetIds failed: unexpected response', { response: responseData, assetSymbols });
       return null;
-    });
-};
+    }
+
+    return responseData.filter((coinGeckoAsset: CoinGeckoAsset) => assetSymbols.find(
+      (assetSymbol) => isCaseInsensitiveMatch(assetSymbol, coinGeckoAsset.symbol)),
+    );
+  })
+  .catch((error) => {
+    reportErrorLog('getCoinGeckoAssetIds failed: API request error', { error, assetSymbols });
+    return null;
+  });
 
 const mapWalletAndCoinGeckoCurrencies = (
   coinGeckoSingleAssetPrices: { [string]: number },
@@ -111,10 +110,9 @@ export const getCoinGeckoTokenPrices = async (assetSymbols: string[]) => {
   console.log('coinGeckoAssetIdsQuery: ', coinGeckoAssetIdsQuery)
   console.log('vsCurrenciesQuery: ', vsCurrenciesQuery)
 
-  return axios.get(
-    `${COINGECKO_API_URL}/simple/price?ids=${coinGeckoAssetIdsQuery}&vs_currencies=${vsCurrenciesQuery}`,
-    requestConfig,
-  )
+  const requestUrl = `${COINGECKO_API_URL}/simple/price?ids=${coinGeckoAssetIdsQuery}&vs_currencies=${vsCurrenciesQuery}`;
+
+  return axios.get(requestUrl, requestConfig)
     .then(({ data: responseData }: AxiosResponse) => {
       if (!Array.isArray(responseData)) {
         reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', { response: responseData, assetSymbols });

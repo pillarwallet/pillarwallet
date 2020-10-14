@@ -24,6 +24,7 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
 import { getEthereumProvider, isCaseInsensitiveMatch, parseTokenBigNumberAmount, reportLog } from 'utils/common';
@@ -37,6 +38,7 @@ import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
 
 // services
 import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // config
 import { getEnv } from 'configs/envConfig';
@@ -360,12 +362,12 @@ export async function getLegacyExchangeRates(assets: string[]): Promise<?Object>
     }).catch(() => ({}));
 }
 
-/**
- * CryptoCompare is legacy price oracle, however,
- * the change to new one is feature flagged
- */
-export async function getExchangeRates(assetSymbols: string[], useLegacyCryptoCompare?: boolean): Promise<?Object> {
-  let data = useLegacyCryptoCompare
+export async function getExchangeRates(assetSymbols: string[]): Promise<?Object> {
+  // CryptoCompare is legacy price oracle, however, the change to new one is feature flagged
+  const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
+
+  let data = [];
+  useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
     : await getCoinGeckoTokenPrices(assetSymbols);
 
