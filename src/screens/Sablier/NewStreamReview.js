@@ -29,12 +29,11 @@ import { format as formatDate } from 'date-fns';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
-import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser } from 'components/Table';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
 import { getCreateStreamFeeAndTransaction } from 'services/sablier';
 import {
@@ -151,10 +150,6 @@ class NewStreamReview extends React.Component<Props, State> {
     || !isEnoughForFee
     || (!!txFeeInWei && !txFeeInWei.gt(0));
 
-    const decimals = gasToken?.decimals || 18;
-    const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
-    const feeTokenSymbol = gasToken?.symbol || ETH;
-
     return (
       <ContainerWithHeader
         inset={{ bottom: 'never' }}
@@ -190,15 +185,15 @@ class NewStreamReview extends React.Component<Props, State> {
           <Table title={t('transactions.label.fees')}>
             <TableRow>
               <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-              <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-              <TableAmount amount={0} token={feeTokenSymbol} />
+              <TableAmount amount={0} />
             </TableRow>
             <TableRow>
               <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-              <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
             </TableRow>
           </Table>
           <Spacing h={50} />

@@ -33,7 +33,7 @@ import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
-import Table, { TableRow, TableLabel, TableAmount } from 'components/Table';
+import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
 import Icon from 'components/Icon';
 
 // constants
@@ -49,7 +49,6 @@ import { setDismissTransactionAction } from 'actions/exchangeActions';
 import {
   formatAmountDisplay,
   formatFiat,
-  formatUnits,
 } from 'utils/common';
 import {
   isEnoughBalanceForTransactionFee,
@@ -357,9 +356,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
     const confirmButtonTitle = gettingFee ? t('label.gettingFee') : t('button.confirm');
 
-    const feeTokenDecimals = txFeeInfo?.gasToken?.decimals || 18;
-    const formattedFee = formatUnits(txFeeInfo?.fee, feeTokenDecimals);
-
     return (
       <ContainerWithHeader
         headerProps={{
@@ -404,15 +400,15 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
               <Table title={t('transactions.label.fees')}>
                 <TableRow>
                   <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-                  <TableAmount amount={formattedFee} token={feeSymbol} />
+                  <TableFee txFeeInWei={txFeeInfo?.fee} gasToken={txFeeInfo?.gasToken} />
                 </TableRow>
                 <TableRow>
                   <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-                  <TableAmount amount={0} token={feeSymbol} />
+                  <TableAmount amount={0} />
                 </TableRow>
                 <TableRow>
                   <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
-                  <TableAmount amount={formattedFee} token={feeSymbol} />
+                  <TableFee txFeeInWei={txFeeInfo?.fee} gasToken={txFeeInfo?.gasToken} />
                 </TableRow>
               </Table>
               <Spacing h={48} />

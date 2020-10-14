@@ -25,17 +25,13 @@ import t from 'translations/translate';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
 
 // components
-import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser } from 'components/Table';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
-
-// utils
-import { formatUnits } from 'utils/common';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -78,11 +74,6 @@ class SendTokenConfirm extends React.Component<Props> {
       gasToken,
     } = navigation.getParam('transactionPayload', {});
 
-    const feeTokenSymbol = gasToken?.symbol || ETH;
-
-    const decimals = gasToken?.decimals || 18;
-    const formattedFee = formatUnits(txFeeInWei, decimals);
-
     return (
       <ContainerWithHeader
         headerProps={{
@@ -103,15 +94,15 @@ class SendTokenConfirm extends React.Component<Props> {
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-              <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-              <TableAmount amount={0} token={feeTokenSymbol} />
+              <TableAmount amount={0} />
             </TableRow>
             <TableRow>
               <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-              <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
             </TableRow>
           </Table>
           <Spacing h={40} />

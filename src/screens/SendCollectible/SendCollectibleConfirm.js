@@ -36,7 +36,7 @@ import { fetchGasInfoAction } from 'actions/historyActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser } from 'components/Table';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import Button from 'components/Button';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import CollectibleReviewSummary from 'components/ReviewSummary/CollectibleReviewSummary';
@@ -47,7 +47,7 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { getEthereumProvider, formatUnits } from 'utils/common';
+import { getEthereumProvider } from 'utils/common';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
@@ -295,9 +295,6 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
       ? t('label.gettingFee')
       : t('transactions.button.send');
 
-    const decimals = txFeeInfo?.gasToken?.decimals || 18;
-    const formattedFee = formatUnits(txFeeInfo?.fee, decimals);
-
     return (
       <ContainerWithHeader
         headerProps={{
@@ -318,11 +315,11 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-              <TableAmount amount={formattedFee} token={feeSymbol} />
+              <TableFee txFeeInWei={txFeeInfo?.fee} gasToken={txFeeInfo?.gasToken} />
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-              <TableAmount amount={0} token={feeSymbol} />
+              <TableAmount amount={0} />
             </TableRow>
             {!!this.isKovanNetwork && (
             <TableRow>
@@ -335,7 +332,7 @@ class SendCollectibleConfirm extends React.Component<Props, State> {
           )}
             <TableRow>
               <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-              <TableAmount amount={formattedFee} token={feeSymbol} />
+              <TableFee txFeeInWei={txFeeInfo?.fee} gasToken={txFeeInfo?.gasToken} />
             </TableRow>
           </Table>
           <Spacing h={40} />

@@ -20,12 +20,17 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
+import { formatUnits } from 'utils/common';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
+import { ETH } from 'constants/assetsConstants';
+import type { GasToken } from 'models/Transaction';
+import TableAmount from './TableAmount';
 
 export { default as TableAmount } from './TableAmount';
 
@@ -38,6 +43,11 @@ type Props = {
 type TableUserProps = {
   ensName?: ?string,
   address: string,
+};
+
+type TableFeeProps = {
+  txFeeInWei: BigNumber | number,
+  gasToken: ?GasToken,
 };
 
 export const TableRow = styled.View`
@@ -80,6 +90,13 @@ export const TableUser = ({ ensName, address }: TableUserProps) => {
       <BaseText regular>{ensName || address}</BaseText>
     </TableUserWrapper>
   );
+};
+
+export const TableFee = ({ txFeeInWei, gasToken }: TableFeeProps) => {
+  const decimals = gasToken?.decimals || 18;
+  const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
+  const feeTokenSymbol = gasToken?.symbol || ETH;
+  return <TableAmount amount={formattedFee} token={feeTokenSymbol} />;
 };
 
 const Divider = styled.View`

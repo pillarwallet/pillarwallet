@@ -27,7 +27,7 @@ import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
-import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser } from 'components/Table';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
 import { buildTxFeeInfo } from 'utils/smartWallet';
@@ -37,7 +37,6 @@ import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { ETH } from 'constants/assetsConstants';
 import { getSablierWithdrawTransaction } from 'services/sablier';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -98,11 +97,6 @@ const WithdrawReview = ({
 
   const withdrawAmount = formatUnits(withdrawAmountInWei, assetData.decimals);
 
-  const feeTokenSymbol = txFeeInfo.gasToken?.symbol || ETH;
-
-  const decimals = txFeeInfo.gasToken?.decimals || 18;
-  const formattedFee = formatUnits(txFeeInfo.fee, decimals);
-
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('sablierContent.title.withdrawReviewScreen') }] }}
@@ -121,15 +115,15 @@ const WithdrawReview = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} token={feeTokenSymbol} />
+            <TableAmount amount={0} />
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableAmount amount={formattedFee} token={feeTokenSymbol} />
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
           </TableRow>
         </Table>
         <Spacing h={50} />
