@@ -35,7 +35,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, TextLink } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import Button from 'components/Button';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
+import ValueInput from 'components/ValueInput';
 import Spinner from 'components/Spinner';
 
 // constants
@@ -54,13 +54,11 @@ import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetToDeposit, Balances, Rates } from 'models/Asset';
+import type { AssetToDeposit, Balances } from 'models/Asset';
 
 
 type Props = {
   assetsToDeposit: AssetToDeposit[],
-  baseFiatCurrency: ?string,
-  rates: Rates,
   balances: Balances,
   navigation: NavigationScreenProp<*>,
   isCalculatingDepositTransactionEstimate: boolean,
@@ -98,12 +96,15 @@ const NotEnoughFee = styled(BaseText)`
   margin-top: ${spacing.medium}px;
 `;
 
+const InputWrapper = styled.View`
+  padding: 24px 40px 0;
+  z-index: 10;
+`;
+
 const EnterDepositAmount = ({
   navigation,
   balances,
   assetsToDeposit,
-  baseFiatCurrency,
-  rates,
   depositTransactionEstimate,
   isCalculatingDepositTransactionEstimate,
   calculateLendingDepositTransactionEstimate,
@@ -113,7 +114,7 @@ const EnterDepositAmount = ({
 }: Props) => {
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
-  const [depositAmount, setDepositAmount] = useState(null);
+  const [depositAmount, setDepositAmount] = useState('');
 
   const assetToDeposit = assetsToDeposit.find(({ symbol }) => symbol === selectedAssetSymbol);
 
@@ -148,26 +149,6 @@ const EnterDepositAmount = ({
     LENDING_DEPOSIT_TRANSACTION_CONFIRM,
     { amount: depositAmount, asset: assetToDeposit },
   );
-
-  const onValueChanged = (value: Object) => {
-    if (!value) {
-      if (depositAmount) setDepositAmount(0);
-      return;
-    }
-
-    const selectedValueSymbol = value?.symbol;
-    const newAmount = value?.input;
-
-    if (selectedValueSymbol && selectedValueSymbol !== selectedAssetSymbol) {
-      setSelectedAssetSymbol(selectedValueSymbol);
-    }
-
-    if (newAmount !== depositAmount) {
-      setDepositAmount(Number(newAmount));
-    } else if (!newAmount && depositAmount) {
-      setDepositAmount(0);
-    }
-  };
 
   return (
     <ContainerWithHeader
@@ -206,15 +187,15 @@ const EnterDepositAmount = ({
     >
       {isFetchingAssetsToDeposit && <Spinner style={{ marginTop: spacing.large, alignSelf: 'center' }} />}
       {!isFetchingAssetsToDeposit && (
-        <ValueSelectorCard
-          preselectedAsset={preselectedAssetSymbol}
-          customOptions={assetsToDeposit}
-          balances={balances}
-          baseFiatCurrency={baseFiatCurrency}
-          rates={rates}
-          maxLabel={t('button.useMax')}
-          getFormValue={onValueChanged}
-        />
+        <InputWrapper>
+          <ValueInput
+            value={depositAmount}
+            onValueChange={setDepositAmount}
+            assetData={assetToDeposit}
+            onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
+            customAssets={assetsToDeposit}
+          />
+        </InputWrapper>
       )}
       {!isFetchingAssetsToDeposit && assetToDeposit && (
         <CurrentInterestRate>
@@ -235,12 +216,8 @@ const mapStateToProps = ({
     depositTransactionEstimate,
     isFetchingAssetsToDeposit,
   },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
   assetsToDeposit,
-  rates,
-  baseFiatCurrency,
   isCalculatingDepositTransactionEstimate,
   depositTransactionEstimate,
   isFetchingAssetsToDeposit,

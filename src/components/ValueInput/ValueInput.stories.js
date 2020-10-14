@@ -23,7 +23,7 @@ import { storiesOf } from '@storybook/react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { GBP } from 'constants/assetsConstants';
 
-import { ValueInput } from 'components/ValueInput';
+import { ValueInputComponent } from 'components/ValueInput';
 
 
 const Wrapper = styled.View`
@@ -113,7 +113,7 @@ const reduxMock = {
   collectibles: [],
 };
 
-const ValueInputWithTheme = withTheme(ValueInput);
+const ValueInputWithTheme = withTheme(ValueInputComponent);
 
 storiesOf('Value Input', module)
   .add('default', () => (

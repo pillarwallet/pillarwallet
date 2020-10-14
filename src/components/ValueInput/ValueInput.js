@@ -106,7 +106,7 @@ export const getErrorMessage = (
   return '';
 };
 
-export const ValueInput = (props: Props) => {
+export const ValueInputComponent = (props: Props) => {
   const {
     disabled,
     assets,
@@ -188,6 +188,8 @@ export const ValueInput = (props: Props) => {
     PercentsInputAccessoryHolder.addAccessory(handleUsePercent);
   };
 
+  const assetsOptions = customAssets || assets;
+
   const getCustomLabel = () => {
     return (
       <ValueInputHeader
@@ -195,11 +197,10 @@ export const ValueInput = (props: Props) => {
         onAssetPress={() => setIsAssetSelectorVisible(true)}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
+        disableAssetSelection={assetsOptions.length <= 1}
       />
     );
   };
-
-  const assetsOptions = customAssets || assets;
 
   const inputProps = {
     value: displayFiatAmount ? valueInFiat : value,
@@ -226,7 +227,9 @@ export const ValueInput = (props: Props) => {
   if (showCollectibles) {
     optionTabs = [
       { name: t('label.tokens'), options: assetsOptions, id: TOKENS },
-      { name: t('label.collectibles'), options: collectibles, id: COLLECTIBLES },
+      {
+        name: t('label.collectibles'), options: collectibles, id: COLLECTIBLES, collectibles: true,
+      },
     ];
   }
 
@@ -309,4 +312,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 
-export default withTheme(connect(combinedMapStateToProps)(ValueInput));
+export default withTheme(connect(combinedMapStateToProps)(ValueInputComponent));
