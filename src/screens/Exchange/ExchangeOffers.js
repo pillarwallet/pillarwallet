@@ -55,7 +55,12 @@ import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, Balances, Rates } from 'models/Asset';
+import type {
+  Asset,
+  AssetData,
+  Balances,
+  Rates,
+} from 'models/Asset';
 import type { SessionData } from 'models/Session';
 
 //  selectors
@@ -74,15 +79,13 @@ import { buildTxFeeInfo } from 'utils/smartWallet';
 import ExchangeStatus from './ExchangeStatus';
 import { calculateAmountToBuy, getAvailable } from './utils';
 import AssetEnableModal from './AssetEnableModal';
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 
 export type EnableData = {
   providerName: string,
   assetSymbol: string,
   assetIcon: string,
-  feeDisplayValue: string,
-  feeInFiat: string,
-  isDisabled?: boolean,
 };
 
 type AllowanceResponse = {
@@ -113,6 +116,8 @@ type Props = {
   useGasToken: boolean,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => void,
 };
 
 type State = {
@@ -215,9 +220,10 @@ class ExchangeOffers extends React.Component<Props, State> {
       balances,
       feeInfo,
       isEstimating,
+      estimateTransaction,
     } = this.props;
 
-    if (!feeInfo || isEstimating) return;
+    if (isEstimating) return;
 
     const { provider, fromAsset, toAsset } = offer;
     const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
@@ -254,21 +260,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       },
     };
 
-    const { fee: txFeeInWei, gasToken } = feeInfo;
-
-    if (gasToken) {
-      transactionPayload = { ...transactionPayload, gasToken };
-    }
-
-    transactionPayload = { ...transactionPayload, txFeeInWei };
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const feeSymbol = get(gasToken, 'symbol', ETH);
-    const feeDecimals = get(gasToken, 'decimals', 'ether');
-    const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-    const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-    const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-    const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+    estimateTransaction();
 
     this.setState({
       pressedTokenAllowanceId: '',
@@ -277,12 +269,29 @@ class ExchangeOffers extends React.Component<Props, State> {
         providerName,
         assetSymbol,
         assetIcon,
-        feeDisplayValue,
-        feeInFiat,
-        isDisabled,
+        // feeDisplayValue,
+        // feeInFiat,
+        // isDisabled,
       },
       enablePayload: { ...transactionPayload },
     });
+
+    // const { fee: txFeeInWei, gasToken } = feeInfo;
+
+    // if (gasToken) {
+    //   transactionPayload = { ...transactionPayload, gasToken };
+    // }
+
+    // transactionPayload = { ...transactionPayload, txFeeInWei };
+
+    // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    // const feeSymbol = get(gasToken, 'symbol', ETH);
+    // const feeDecimals = get(gasToken, 'decimals', 'ether');
+    // const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
+    // const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
+    // const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
+    // const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
+
   };
 
   hideEnableAssetModal = () => {
@@ -432,6 +441,9 @@ class ExchangeOffers extends React.Component<Props, State> {
       disableNonFiatExchange,
       isExchangeActive,
       showEmptyMessage,
+      feeInfo,
+      isEstimating,
+      estimateErrorMessage,
     } = this.props;
     const { isEnableAssetModalVisible, enableData } = this.state;
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
@@ -469,6 +481,9 @@ class ExchangeOffers extends React.Component<Props, State> {
           onModalHide={this.hideEnableAssetModal}
           onEnable={this.enableAsset}
           enableData={enableData}
+          feeInfo={feeInfo}
+          isLoading={isEstimating}
+          errorMessage={estimateErrorMessage}
         />
       </React.Fragment>
     );
@@ -487,7 +502,7 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   session: { data: session },
-  transactionEstimate: { feeInfo, isEstimating },
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   offers,
@@ -497,6 +512,7 @@ const mapStateToProps = ({
   session,
   feeInfo,
   isEstimating,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -518,6 +534,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ),
   takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
     takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
+  ),
+  estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => dispatch(
+    estimateTransactionAction(recipientAddress, value, data, assetData),
   ),
 });
 

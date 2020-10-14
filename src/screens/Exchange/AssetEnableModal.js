@@ -40,6 +40,7 @@ import type { Theme } from 'models/Theme';
 // utils
 import { images } from 'utils/images';
 
+import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnableData } from './ExchangeOffers';
 
 
@@ -50,6 +51,9 @@ type Props = {
   onEnable: () => void,
   enableData: EnableData,
   theme: Theme,
+  isLoading: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  estimateErrorMessage: ?string,
 };
 
 
@@ -86,11 +90,10 @@ const AssetEnableModal = (props: Props) => {
 
   const {
     providerName,
-    feeDisplayValue,
-    feeInFiat,
+    // feeDisplayValue,
+    // feeInFiat,
     assetSymbol,
     assetIcon,
-    isDisabled,
   } = enableData;
   const fullIconUrl = `${getEnv().SDK_PROVIDER}/${assetIcon}?size=3`;
 
