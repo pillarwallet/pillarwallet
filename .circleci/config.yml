@@ -751,7 +751,7 @@ workflows:
           filters:
             branches:
               only:
-                - fix/fastlane-register-devices
+                - develop
       - appcenter_android:
           context: docker-hub-creds
           requires:
