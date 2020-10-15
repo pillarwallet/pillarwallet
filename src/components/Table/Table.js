@@ -20,10 +20,17 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
+import { BigNumber } from 'bignumber.js';
+import t from 'translations/translate';
 import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
+import { formatUnits } from 'utils/common';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
+import ProfileImage from 'components/ProfileImage';
+import { ETH } from 'constants/assetsConstants';
+import type { GasToken } from 'models/Transaction';
+import TableAmount from './TableAmount';
 
 export { default as TableAmount } from './TableAmount';
 
@@ -31,6 +38,16 @@ export { default as TableAmount } from './TableAmount';
 type Props = {
   children?: React.Node,
   title?: string,
+};
+
+type TableUserProps = {
+  ensName?: ?string,
+  address: string,
+};
+
+type TableFeeProps = {
+  txFeeInWei: BigNumber | number,
+  gasToken: ?GasToken,
 };
 
 export const TableRow = styled.View`
@@ -48,6 +65,39 @@ export const TableLabel = styled(BaseText)`
 export const TableTotal = styled(MediumText)`
   ${fontStyles.regular};
 `;
+
+const TableUserWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+export const TableUser = ({ ensName, address }: TableUserProps) => {
+  address = t('ellipsedMiddleString', {
+    stringStart: address.slice(0, 6),
+    stringEnd: address.slice(-6),
+  });
+
+  return (
+    <TableUserWrapper>
+      <ProfileImage
+        userName={ensName || address}
+        diameter={16}
+        noShadow
+        borderWidth={0}
+        initialsSize={10}
+      />
+      <Spacing w={8} />
+      <BaseText regular>{ensName || address}</BaseText>
+    </TableUserWrapper>
+  );
+};
+
+export const TableFee = ({ txFeeInWei, gasToken }: TableFeeProps) => {
+  const decimals = gasToken?.decimals || 18;
+  const formattedFee = txFeeInWei ? formatUnits(txFeeInWei.toString(), decimals) : '0';
+  const feeTokenSymbol = gasToken?.symbol || ETH;
+  return <TableAmount amount={formattedFee} token={feeTokenSymbol} />;
+};
 
 const Divider = styled.View`
   height: 1px;

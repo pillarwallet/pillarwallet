@@ -20,10 +20,14 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+import { withTheme } from 'styled-components/native';
 import CenterView from '../../../storybook/CenterView';
 
-import TokenReviewSummary from './TokenReviewSummary';
+import { TokenReviewSummaryComponent } from './TokenReviewSummary';
 import CollectibleReviewSummary from './CollectibleReviewSummary';
+
+const PLR_SYMBOL = 'PLR';
+const EUR_CURRENCY = 'EUR';
 
 const plrAsset = {
   isPreferred: false,
@@ -50,6 +54,16 @@ const plrAsset = {
   icos: [],
 };
 
+const reduxMock = {
+  supportedAssets: [plrAsset],
+  rates: {
+    [PLR_SYMBOL]: {
+      [EUR_CURRENCY]: 0.25,
+    },
+  },
+  baseFiatCurrency: EUR_CURRENCY,
+};
+
 const collectible = {
   id: 5191,
   category: 'CryptoKittiesRinkeby',
@@ -62,10 +76,12 @@ const collectible = {
   description: '',
 };
 
+const TokenReviewSummaryComponentWithTheme = withTheme(TokenReviewSummaryComponent);
+
 storiesOf('ReviewSummary', module)
   .add('token', () => (
     <CenterView>
-      <TokenReviewSummary asset={plrAsset} text="You are sending" amount={102.1} />
+      <TokenReviewSummaryComponentWithTheme assetSymbol="PLR" text="You are sending" amount={102.1} {...reduxMock} />
     </CenterView>
   ))
   .add('collectible', () => (
