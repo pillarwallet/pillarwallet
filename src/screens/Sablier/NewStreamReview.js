@@ -32,6 +32,7 @@ import { Spacing } from 'components/Layout';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
@@ -42,6 +43,7 @@ import {
 } from 'utils/common';
 import { getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
+import { themedColors } from 'utils/themes';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/smartWallet';
@@ -73,6 +75,11 @@ type State = {
 
 const RootContainer = styled.View`
   padding: 16px 20px;
+`;
+
+const ClockIcon = styled(Icon)`
+  color: ${themedColors.labelTertiary};
+  font-size: 14px;
 `;
 
 class NewStreamReview extends React.Component<Props, State> {
@@ -178,7 +185,7 @@ class NewStreamReview extends React.Component<Props, State> {
             </TableRow>
             <TableRow>
               <TableLabel>{t('sablierContent.label.estStreamTime')}</TableLabel>
-              <BaseText>{t('timeDaysHoursMinutes', { days, hours, minutes })}</BaseText>
+              <BaseText><ClockIcon name="pending" /> {t('timeDaysHoursMinutes', { days, hours, minutes })}</BaseText>
             </TableRow>
           </Table>
           <Spacing h={38} />
