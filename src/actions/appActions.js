@@ -26,7 +26,6 @@ import SplashScreen from 'react-native-splash-screen';
 // services
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
-// import { migrate } from 'services/dataMigration';
 import { firebaseAuth, firebaseDb } from 'services/firebase';
 
 // constants
@@ -87,21 +86,12 @@ export const initAppAndRedirectAction = () => {
     const storageData = await storage.getAll();
     await storage.migrateFromPouchDB(storageData);
 
-    // storageData = await migrate('app_settings', storageData, dispatch, getState);
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
 
     if (walletTimestamp) {
-      // migrations
-      // storageData = await migrate('accounts', storageData, dispatch, getState);
-      // storageData = await migrate('assets', storageData, dispatch, getState);
-      // storageData = await migrate('balances', storageData, dispatch, getState);
-      // storageData = await migrate('collectibles', storageData, dispatch, getState);
-      // storageData = await migrate('collectiblesHistory', storageData, dispatch, getState);
-      // storageData = await migrate('history', storageData, dispatch, getState);
-
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
 

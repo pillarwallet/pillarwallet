@@ -76,12 +76,6 @@ Object.defineProperty(mockWallet, 'encrypt', {
 describe('Auth actions', () => {
   let store;
 
-  beforeAll(() => {
-    // const storage = Storage.getInstance('db');
-    // storage.save('user', { user: mockUser });
-    // return storage.save('wallet', { wallet: mockWallet });
-  });
-
   beforeEach(() => {
     store = mockStore({
       assets: { data: {} },
