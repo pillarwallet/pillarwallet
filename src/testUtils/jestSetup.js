@@ -29,11 +29,13 @@ import mocktract from 'mocktract';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { ETH, PLR } from 'constants/assetsConstants';
 
 // mocks
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 import envConfigMock from './envConfigMock';
+import localeConfigMock from './localeConfigMock';
 
 process.env.IS_TEST = 'TEST';
 
@@ -81,7 +83,9 @@ jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
 jest.setMock('@react-native-firebase/app', {
   firebase: {
-    iid: () => {},
+    iid: () => ({
+      delete: () => Promise.resolve(),
+    }),
     auth: () => ({
       signInAnonymously: () => Promise.resolve(),
       currentUser: {
@@ -123,12 +127,6 @@ jest.setMock('@react-native-firebase/app', {
       hasPermission: () => Promise.resolve(1),
       getToken: () => Promise.resolve('12x2342x212'),
     }),
-  },
-});
-
-jest.setMock('cryptocompare', {
-  priceMulti: (tokensArray, priceMulti) => { // eslint-disable-line
-    return Promise.resolve({});
   },
 });
 
@@ -205,6 +203,7 @@ jest.setMock('react-native-intercom', {
   reset: () => { },
   setInAppMessageVisibility: () => { },
   sendTokenToIntercom: () => Promise.resolve(),
+  logout: jest.fn(),
 });
 
 const mockCameraView = mockView;
@@ -223,6 +222,7 @@ jest.mock('react-native-cookies', () => ({
   canOpenURL: jest.fn(),
   getInitialURL: jest.fn(),
   get: () => Promise.resolve(null),
+  clearAll: () => Promise.resolve(),
 }));
 
 jest.setMock('react-native-camera', {
@@ -233,7 +233,7 @@ jest.setMock('react-native-vector-icons', {
   createIconSet: () => mockView,
 });
 
-const mockExchangeRates = {
+export const mockExchangeRates = {
   ETH: {
     EUR: 624.21,
     GBP: 544.57,
@@ -329,6 +329,8 @@ jest.setMock('@smartwallet/sdk', {
       account: mockSmartWalletAccountApiData,
       accountDevice: { device: { address: '0x0' } },
     },
+    getConnectedAccountPayments: () => Promise.resolve([]),
+    getConnectedAccountTransactions: () => Promise.resolve([]),
   }),
 });
 
@@ -363,3 +365,45 @@ jest.setMock('react-native-appearance', {});
 
 jest.setMock('configs/envConfig', envConfigMock);
 
+export const mockSupportedAssets = [
+  {
+    symbol: ETH,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+  {
+    symbol: PLR,
+    name: 'ethereum',
+    balance: 1,
+    address: '',
+    description: '',
+    iconUrl: '',
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+    decimals: 18,
+  },
+];
+
+export const mockUserBadges = [{
+  badgeId: '5c9bda927d7363000673f08c',
+  createdAt: 1553717906,
+  description: 'Badge description',
+  id: 1553717906,
+  imageUrl: 'https://s3.eu-west-2.amazonaws.com/pillar-qa-badges-images-eu-west-2-861741397496/new-wallet_180%403x.png',
+  name: 'To the Moon!',
+  receivedAt: 1601876318,
+  subtitle: 'Wallet created',
+  updatedAt: 1553717968,
+}];
+
+jest.setMock('configs/localeConfig', localeConfigMock);
+
+jest.setMock('services/coinGecko', {
+  getCoinGeckoTokenPrices: () => Promise.resolve(mockExchangeRates),
+});

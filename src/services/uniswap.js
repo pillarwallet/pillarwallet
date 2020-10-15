@@ -19,13 +19,12 @@
 */
 
 import {
-  Token,
-  Pair,
   Route,
   Trade,
   TokenAmount,
   TradeType,
   WETH,
+  Fetcher,
 } from '@uniswap/sdk';
 import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
@@ -64,7 +63,7 @@ import { ETH } from 'constants/assetsConstants';
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
+const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -74,9 +73,9 @@ const getBackupRoute = async (
   let token2;
   let tokenMiddle;
   try {
-    token1 = await Token.fetchData(chainId, fromAssetAddress);
-    token2 = await Token.fetchData(chainId, toAssetAddress);
-    tokenMiddle = await Token.fetchData(chainId, ADDRESSES.WETH);
+    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, ethProvider);
+    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, ethProvider);
+    tokenMiddle = await Fetcher.fetchTokenData(chainId, ADDRESSES.WETH, ethProvider);
   } catch (e) {
     reportLog('Failed to fetch token data', e, 'warning');
     return null;
@@ -85,8 +84,8 @@ const getBackupRoute = async (
   let pair1;
   let pair2;
   try {
-    pair1 = await Pair.fetchData(token1, tokenMiddle);
-    pair2 = await Pair.fetchData(tokenMiddle, token2);
+    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, ethProvider);
+    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, ethProvider);
   } catch (e) {
     reportLog('Pair unsupported', e, 'warning');
     return null;
@@ -105,10 +104,9 @@ const getRoute = async (fromAsset: Asset, toAsset: Asset): Promise<Route> => {
   } = toAsset;
 
   try {
-    const token1 = await Token.fetchData(chainId, fromAddress, undefined, fromSymbol, fromName);
-    const token2 = await Token.fetchData(chainId, toAddress, undefined, toSymbol, toName);
-    const pair = await Pair.fetchData(token1, token2);
-
+    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, ethProvider, fromSymbol, fromName);
+    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, ethProvider, toSymbol, toName);
+    const pair = await Fetcher.fetchPairData(token1, token2, ethProvider);
     const route = new Route([pair], token1);
     return route;
   } catch (e) {
@@ -121,7 +119,7 @@ const getTrade = async (
   fromQuantityInBaseUnits: string,
   route: Route,
 ): Promise<Trade> => {
-  const fromToken = await Token.fetchData(chainId, toChecksumAddress(fromAssetAddress));
+  const fromToken = await Fetcher.fetchTokenData(chainId, toChecksumAddress(fromAssetAddress), ethProvider);
   const fromTokenAmount = new TokenAmount(fromToken, fromQuantityInBaseUnits);
   const trade = new Trade(route, fromTokenAmount, TradeType.EXACT_INPUT);
   return trade;
@@ -129,7 +127,7 @@ const getTrade = async (
 
 const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise<boolean> => {
   if (fromAsset.code === ETH) return true;
-  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider());
+  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
   const allowance: BigNumber = await assetContract.allowance(clientAddress, ADDRESSES.router);
   return allowance.gt(0);
 };
@@ -268,7 +266,7 @@ export const createUniswapOrder = async (
     return null;
   }
 
-  const txCount = await ethProvider().getTransactionCount(clientSendAddress);
+  const txCount = await ethProvider.getTransactionCount(clientSendAddress);
   const txObject = generateTxObject(
     txCount.toString(),
     ADDRESSES.router,
@@ -301,7 +299,7 @@ export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientA
     [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
   );
 
-  const txCount = await ethProvider().getTransactionCount(clientAddress);
+  const txCount = await ethProvider.getTransactionCount(clientAddress);
 
   return {
     nonce: txCount.toString(),

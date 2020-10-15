@@ -84,7 +84,7 @@ const MIN_QUERY_LENGTH = 2;
 
 const ButtonsWrapper = styled.View`
   align-items: flex-start;
-  margin: 22px 20px;
+  margin: 26px 20px 22px;
 `;
 
 const EmptyStateWrapper = styled(Wrapper)`
@@ -291,7 +291,7 @@ class AssetSearch extends React.Component<Props, State> {
       <ListItemWithImage
         label={name}
         itemImageUrl={fullIconUrl}
-        subtext={`${balance} ${symbol}`}
+        subtext={t('tokenValue', { value: balance, token: symbol })}
         fallbackToGenericToken
       >
         <Switcher
@@ -342,6 +342,7 @@ class AssetSearch extends React.Component<Props, State> {
               <Tabs
                 tabs={this.getTabs()}
                 activeTab={activeTab}
+                wrapperStyle={{ paddingTop: 14 }}
               />
             )}
           </>

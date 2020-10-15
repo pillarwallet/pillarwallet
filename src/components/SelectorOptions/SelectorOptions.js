@@ -37,6 +37,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
+import CollectiblesList from 'components/CollectiblesList';
 
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
@@ -396,6 +397,7 @@ class SelectorOptions extends React.Component<Props, State> {
     const activeTabInfo = optionTabs && optionTabs.find(({ id }) => id === activeTab);
     const activeTabOptions = activeTabInfo?.options;
     const relatedOptions = activeTabOptions || options || [];
+    const collectibles = activeTabInfo?.collectibles;
 
     const filteredOptions = isSearching ? getMatchingSortedData(relatedOptions, query) : relatedOptions;
     const filteredHorizontalOptionsData = isSearching && horizontalOptionsData.length
@@ -451,40 +453,47 @@ class SelectorOptions extends React.Component<Props, State> {
             centerItems: [{ title }],
           }}
         >
-          <FlatList
-            stickyHeaderIndices={[0]}
-            data={allFeedListData}
-            renderItem={this.renderOption}
-            keyExtractor={this.optionKeyExtractor}
-            keyboardShouldPersistTaps="always"
-            initialNumToRender={10}
-            viewabilityConfig={viewConfig}
-            ListHeaderComponent={
-              <>
-                <SearchBarWrapper>
-                  <SearchBar
-                    inputProps={{
-                      onChange: this.handleInputChange,
-                      value: query,
-                      autoCapitalize: 'none',
-                      validator: this.validateSearch,
-                    }}
-                    placeholder={searchPlaceholder}
-                    inputRef={ref => { this.searchInput = ref; }}
-                    noClose
-                    marginBottom="0"
-                    iconProps={iconProps}
-                  />
-                </SearchBarWrapper>
-                {!!optionTabs && <Tabs
-                  tabs={updatedOptionTabs}
-                  wrapperStyle={{ paddingTop: 16 }}
-                  activeTab={activeTab || updatedOptionTabs[0].name}
-                />}
-              </>}
-            windowSize={10}
-            hideModalContentWhileAnimating
-          />
+          <SearchBarWrapper>
+            <SearchBar
+              inputProps={{
+                onChange: this.handleInputChange,
+                value: query,
+                autoCapitalize: 'none',
+                validator: this.validateSearch,
+              }}
+              placeholder={searchPlaceholder}
+              inputRef={ref => { this.searchInput = ref; }}
+              noClose
+              marginBottom="0"
+              iconProps={iconProps}
+            />
+          </SearchBarWrapper>
+          {!!optionTabs && <Tabs
+            tabs={updatedOptionTabs}
+            wrapperStyle={{ paddingTop: 22 }}
+            activeTab={activeTab || updatedOptionTabs[0].name}
+          />}
+          {
+            collectibles ? (
+              <CollectiblesList
+                collectibles={filteredOptions}
+                onCollectiblePress={this.selectValue}
+                isSearching={isSearching}
+              />
+            ) : (
+              <FlatList
+                stickyHeaderIndices={[0]}
+                data={allFeedListData}
+                renderItem={this.renderOption}
+                keyExtractor={this.optionKeyExtractor}
+                keyboardShouldPersistTaps="always"
+                initialNumToRender={10}
+                viewabilityConfig={viewConfig}
+                windowSize={10}
+                hideModalContentWhileAnimating
+              />
+            )
+          }
         </ContainerWithHeader>
       </SlideModal>
     );

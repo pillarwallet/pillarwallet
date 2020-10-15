@@ -26,7 +26,6 @@ import t from 'translations/translate';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
-import { DECRYPTING, INVALID_PASSWORD } from 'constants/walletConstants';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
 import { initSmartWalletSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
@@ -62,8 +61,9 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
-  initSmartWalletSdkWithPrivateKeyOrPin: (InitSmartWalletProps) => void,
+  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitSmartWalletProps) => void,
   switchAccount: (accountId: string) => void,
+  isAuthorizing: boolean,
 };
 
 type State = {
@@ -252,20 +252,22 @@ class PinCodeUnlock extends React.Component<Props, State> {
   };
 
   render() {
-    const { walletState } = this.props.wallet;
+    const {
+      wallet: { errorMessage: walletErrorMessage },
+      isAuthorizing,
+    } = this.props;
     const { waitingTime, showPin } = this.state;
-    const pinError = walletState === INVALID_PASSWORD
-      ? t('auth:error.invalidPin.default')
-      : (this.errorMessage || null);
+    const pinError = walletErrorMessage || this.errorMessage || null;
     const showError = pinError ? <ErrorMessage>{pinError}</ErrorMessage> : null;
 
-    if (walletState === DECRYPTING) {
+    if (isAuthorizing) {
       return (
         <Container center>
           <Loader />
         </Container>
       );
     }
+
     if (showPin) {
       return (
         <Container>
@@ -294,9 +296,11 @@ class PinCodeUnlock extends React.Component<Props, State> {
 const mapStateToProps = ({
   wallet,
   appSettings: { data: { useBiometrics } },
+  session: { data: { isAuthorizing } },
 }: RootReducerState): $Shape<Props> => ({
   wallet,
   useBiometrics,
+  isAuthorizing,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -304,8 +308,9 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     loginAction(pin, null, callback, useBiometrics),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
-  initSmartWalletSdkWithPrivateKeyOrPin: ({ privateKey, pin }: InitSmartWalletProps) =>
-    dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction({ privateKey, pin })),
+  initSmartWalletSdkWithPrivateKeyOrPin: (
+    initProps: InitSmartWalletProps,
+  ) => dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction(initProps)),
   switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 

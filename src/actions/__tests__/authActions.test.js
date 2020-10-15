@@ -20,15 +20,15 @@
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
+import merge from 'lodash.merge';
 
 // constants
 import {
-  UPDATE_WALLET_STATE,
-  DECRYPT_WALLET,
-  DECRYPTING,
   UPDATE_PIN_ATTEMPTS,
+  SET_WALLET_IS_DECRYPTING,
+  SET_WALLET,
 } from 'constants/walletConstants';
-import { UPDATE_USER, REGISTERED, SET_USERNAME } from 'constants/userConstants';
+import { UPDATE_USER, SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
@@ -36,6 +36,7 @@ import {
   SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
+import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -43,11 +44,23 @@ import { loginAction } from 'actions/authActions';
 // services
 import PillarSdk from 'services/api';
 
+
 // test utils
 import {
   mockSmartWalletAccount, mockSmartWalletConnectedAccount, registeredMockUser,
 } from 'testUtils/jestSetup';
 
+
+const mockUpdatedUser = {
+  username: 'John Appleseed',
+  walletId: 'walletIdUnique',
+};
+
+jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
+  init: jest.fn(),
+  setUsername: jest.fn(),
+  userInfo: jest.fn(() => mockUpdatedUser),
+})));
 
 const pillarSdk = new PillarSdk();
 const mockStore = configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue]);
@@ -83,45 +96,25 @@ describe('Auth actions', () => {
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
       smartWallet: { upgrade: { status: SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
+      balances: { data: {} },
+      user: { data: {} },
     });
   });
 
-  // TODO need to delete because we can't mock conditional registered/unregistered user ?
-  // it('should expect series of actions with payload to be dispatch on checkPinAction execution', () => {
-  //   const expectedActions = [
-  //     { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
-  //     { type: SET_USERNAME, payload: mockUser.username },
-  //     { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
-  //     { type: UPDATE_USER, payload: { user: mockUser, state: PENDING } },
-  //     {
-  //       type: DECRYPT_WALLET,
-  //       payload: {
-  //         ...mockWallet,
-  //         privateKey: '0x067D674A5D8D0DEBC0B02D4E5DB5166B3FA08384DCE50A574A0D0E370B4534F9',
-  //       },
-  //     },
-  //   ];
-
-  //   const pin = '123456';
-
-  //   return store.dispatch(loginAction(pin))
-  //     .then(() => {
-  //       const actualActions = store.getActions();
-  //       expect(actualActions).toEqual(expectedActions);
-  //     });
-  // });
-
-  it('Should expect a different set of actions for registered users.', async () => {
+  it('Should expect a set of actions for registered users.', async () => {
     const expectedActions = [
-      { type: UPDATE_WALLET_STATE, payload: DECRYPTING },
-      { type: SET_USERNAME, payload: registeredMockUser.username },
-      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
+      { type: UPDATE_SESSION, payload: { isAuthorizing: true } },
+      { type: SET_WALLET_IS_DECRYPTING },
+      { type: SET_USER, payload: registeredMockUser },
+      { type: SET_WALLET, payload: mockWallet },
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },
       { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      { type: UPDATE_USER, payload: merge({}, registeredMockUser, mockUpdatedUser) },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
-      { type: UPDATE_USER, payload: { user: registeredMockUser, state: REGISTERED } },
-      { type: DECRYPT_WALLET, payload: { ...mockWallet, privateKey: undefined } },
+      { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
+      { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
+      { type: UPDATE_SESSION, payload: { fcmToken: '12x2342x212' } },
     ];
 
     const pin = '123456';

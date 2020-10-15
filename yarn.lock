@@ -1048,18 +1048,6 @@
     "@ethersproject/rlp" "^5.0.0"
     bn.js "^4.4.0"
 
-"@ethersproject/address@^5.0.0-beta.134":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@ethersproject/address/-/address-5.0.2.tgz#80d0ddfb7d4bd0d32657747fa4bdd2defef2e00a"
-  integrity sha512-+rz26RKj7ujGfQynys4V9VJRbR+wpC6eL8F22q3raWMH3152Ha31GwJPWzxE/bEA+43M/zTNVwY0R53gn53L2Q==
-  dependencies:
-    "@ethersproject/bignumber" "^5.0.0"
-    "@ethersproject/bytes" "^5.0.0"
-    "@ethersproject/keccak256" "^5.0.0"
-    "@ethersproject/logger" "^5.0.0"
-    "@ethersproject/rlp" "^5.0.0"
-    bn.js "^4.4.0"
-
 "@ethersproject/base64@^5.0.0":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/base64/-/base64-5.0.1.tgz#9f067855f59db94edebb6cd80fbe79033406b317"
@@ -1124,21 +1112,6 @@
 "@ethersproject/contracts@^5.0.0":
   version "5.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ethersproject/contracts/-/contracts-5.0.1.tgz#b11ad52f98f807e13a4bf0a89e45a2c56db19df3"
-  dependencies:
-    "@ethersproject/abi" "^5.0.0"
-    "@ethersproject/abstract-provider" "^5.0.0"
-    "@ethersproject/abstract-signer" "^5.0.0"
-    "@ethersproject/address" "^5.0.0"
-    "@ethersproject/bignumber" "^5.0.0"
-    "@ethersproject/bytes" "^5.0.0"
-    "@ethersproject/constants" "^5.0.0"
-    "@ethersproject/logger" "^5.0.0"
-    "@ethersproject/properties" "^5.0.0"
-
-"@ethersproject/contracts@^5.0.0-beta.143":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@ethersproject/contracts/-/contracts-5.0.2.tgz#f19ed8335ceeb6abb60f5d45641f0a2a62b6fbc5"
-  integrity sha512-Ud3oW8mBNIWE+WHRjvwVEwfvshn7lfYWSSKG0fPSb6baRN9mLOoNguX+VIv3W5Sne9w2utnBmxLF2ESXitw64A==
   dependencies:
     "@ethersproject/abi" "^5.0.0"
     "@ethersproject/abstract-provider" "^5.0.0"
@@ -1223,13 +1196,6 @@
   dependencies:
     "@ethersproject/logger" "^5.0.0"
 
-"@ethersproject/networks@^5.0.0-beta.135":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@ethersproject/networks/-/networks-5.0.2.tgz#a49e82cf071e3618e87e3c5d69fdbcf54dc6766c"
-  integrity sha512-T7HVd62D4izNU2tDHf6xUDo7k4JOGX4Lk7vDmVcDKrepSWwL2OmGWrqSlkRe2a1Dnz4+1VPE6fb6+KsmSRe82g==
-  dependencies:
-    "@ethersproject/logger" "^5.0.0"
-
 "@ethersproject/pbkdf2@^5.0.0":
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/@ethersproject/pbkdf2/-/pbkdf2-5.0.1.tgz#86d4340f88ebb97254c7e0d26830c24fb45b1642"
@@ -1252,28 +1218,6 @@
 "@ethersproject/providers@^5.0.0":
   version "5.0.3"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ethersproject/providers/-/providers-5.0.3.tgz#0181f3ef225365356064dc2015c3756842ca04bc"
-  dependencies:
-    "@ethersproject/abstract-provider" "^5.0.0"
-    "@ethersproject/abstract-signer" "^5.0.0"
-    "@ethersproject/address" "^5.0.0"
-    "@ethersproject/bignumber" "^5.0.0"
-    "@ethersproject/bytes" "^5.0.0"
-    "@ethersproject/constants" "^5.0.0"
-    "@ethersproject/hash" "^5.0.0"
-    "@ethersproject/logger" "^5.0.0"
-    "@ethersproject/networks" "^5.0.0"
-    "@ethersproject/properties" "^5.0.0"
-    "@ethersproject/random" "^5.0.0"
-    "@ethersproject/rlp" "^5.0.0"
-    "@ethersproject/strings" "^5.0.0"
-    "@ethersproject/transactions" "^5.0.0"
-    "@ethersproject/web" "^5.0.0"
-    ws "7.2.3"
-
-"@ethersproject/providers@^5.0.0-beta.153":
-  version "5.0.5"
-  resolved "https://registry.yarnpkg.com/@ethersproject/providers/-/providers-5.0.5.tgz#fa28498ce9683d1d99f6cb11e1a7fe8d4886e0ce"
-  integrity sha512-ZR3yFg/m8qDl7317yXOHE7tKeGfoyZIZ/imhVC4JqAH+SX1rb6bdZcSjhJfet7rLmnJSsnYLTgIiVIT85aVLgg==
   dependencies:
     "@ethersproject/abstract-provider" "^5.0.0"
     "@ethersproject/abstract-signer" "^5.0.0"
@@ -1333,17 +1277,6 @@
 "@ethersproject/solidity@^5.0.0":
   version "5.0.1"
   resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@ethersproject/solidity/-/solidity-5.0.1.tgz#df561603ba1c420e2ea309fca746698c55710a6d"
-  dependencies:
-    "@ethersproject/bignumber" "^5.0.0"
-    "@ethersproject/bytes" "^5.0.0"
-    "@ethersproject/keccak256" "^5.0.0"
-    "@ethersproject/sha2" "^5.0.0"
-    "@ethersproject/strings" "^5.0.0"
-
-"@ethersproject/solidity@^5.0.0-beta.131":
-  version "5.0.2"
-  resolved "https://registry.yarnpkg.com/@ethersproject/solidity/-/solidity-5.0.2.tgz#431cee341ec51e022bd897b93fef04521f414756"
-  integrity sha512-RygurUe1hPW1LDYAPXy4471AklGWNnxgFWc3YUE6H11gzkit26jr6AyZH4Yyjw38eBBL6j0AOfQzMWm+NhxZ9g==
   dependencies:
     "@ethersproject/bignumber" "^5.0.0"
     "@ethersproject/bytes" "^5.0.0"
@@ -2310,10 +2243,10 @@
     openzeppelin-solidity "2.1.2"
     solidity-bytes-utils "0.0.8"
 
-"@smartwallet/sdk@2.2.0":
-  version "2.2.0"
-  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-2.2.0.tgz#0d6370e7d8c43bc432024c8e206f17444c6a383c"
-  integrity sha1-DWNw59jEO8QyAkyOIG8XRExqODw=
+"@smartwallet/sdk@2.3.0":
+  version "2.3.0"
+  resolved "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/@smartwallet/sdk/-/sdk-2.3.0.tgz#04724b4bb0358fd0f97ee28ff3920ff30ef4f0a3"
+  integrity sha1-BHJLS7A1j9D5fuKP85IP8w708KM=
   dependencies:
     "@babel/runtime" "^7.4.4"
     "@netgum/types" "^0.1.8"
@@ -3012,16 +2945,11 @@
     lodash.unescape "4.0.1"
     semver "5.5.0"
 
-"@uniswap/sdk@2.0.5":
-  version "2.0.5"
-  resolved "https://registry.yarnpkg.com/@uniswap/sdk/-/sdk-2.0.5.tgz#ca88c1ac36d75c669950747ffce00677e722832a"
-  integrity sha512-5DSd303KQPi/j7gMp5phHHuC0TNspXOXYAF8OzJ3QFnAfIcNSVRuHiBsEXGL2+XeUDyqBQMJ5ItUJC7rW8Rxnw==
+"@uniswap/sdk@^3.0.3":
+  version "3.0.3"
+  resolved "https://registry.yarnpkg.com/@uniswap/sdk/-/sdk-3.0.3.tgz#8201c7c72215d0030cb99acc7e661eff895c18a9"
+  integrity sha512-t4s8bvzaCFSiqD2qfXIm3rWhbdnXp+QjD3/mRaeVDHK7zWevs6RGEb1ohMiNgOCTZANvBayb4j8p+XFdnMBadQ==
   dependencies:
-    "@ethersproject/address" "^5.0.0-beta.134"
-    "@ethersproject/contracts" "^5.0.0-beta.143"
-    "@ethersproject/networks" "^5.0.0-beta.135"
-    "@ethersproject/providers" "^5.0.0-beta.153"
-    "@ethersproject/solidity" "^5.0.0-beta.131"
     "@uniswap/v2-core" "^1.0.0"
     big.js "^5.2.2"
     decimal.js-light "^2.5.0"

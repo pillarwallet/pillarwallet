@@ -22,8 +22,7 @@
 
 import PouchDB from 'pouchdb-react-native';
 import merge from 'lodash.merge';
-import * as Sentry from '@sentry/react-native';
-import { printLog, reportLog } from 'utils/common';
+import { printLog, reportErrorLog, reportLog } from 'utils/common';
 
 function PouchDBStorage(name: string, opts: ?Object = {}) {
   this.name = name;
@@ -112,7 +111,7 @@ PouchDBStorage.prototype.save = function (id: string, data: Object, forceRewrite
     })
     .catch((err) => {
       if (err.status !== 409) {
-        reportLog('PouchDBStorage Exception', { id, data, err }, Sentry.Severity.Error);
+        reportErrorLog('PouchDBStorage Exception', { id, data, err });
         throw err;
       }
       activeDocs[id] = false;

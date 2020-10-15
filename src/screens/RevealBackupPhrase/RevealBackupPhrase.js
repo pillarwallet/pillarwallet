@@ -85,14 +85,14 @@ class RevealBackupPhrase extends React.Component<Props, State> {
       );
     }
 
-    if (wallet?.mnemonic?.phrase && !showPrivateKey) {
+    if (wallet?.mnemonic && !showPrivateKey) {
       return (
         <Container>
           <Header title={t('title.backupPhrase')} onClose={this.handleScreenDismissal} />
           <ScrollWrapper regularPadding>
             <Paragraph>{t('paragraph.backupPhraseRevealedPurpose')}</Paragraph>
             <Paragraph light>{t('paragraph.doNotShareBackup')}</Paragraph>
-            <MnemonicPhrase phrase={wallet.mnemonic.phrase} />
+            <MnemonicPhrase phrase={wallet.mnemonic} />
           </ScrollWrapper>
         </Container>
       );

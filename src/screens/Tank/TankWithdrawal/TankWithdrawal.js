@@ -20,12 +20,13 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { TouchableOpacity, Keyboard } from 'react-native';
-import t from 'tcomb-form-native';
+import tForm from 'tcomb-form-native';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
+import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -94,6 +95,10 @@ const TextRow = styled.View`
   flex-direction: row;
 `;
 
+const FormWrapper = styled.View`
+  z-index: 10;
+`;
+
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
@@ -114,11 +119,11 @@ type State = {
   inputHasError: boolean,
 };
 
-const { Form } = t.form;
+const { Form } = tForm.form;
 const MIN_TX_AMOUNT = 0.000000000000000001;
 
 class TankWithdrawal extends React.Component<Props, State> {
-  _form: t.form;
+  _form: tForm.form;
   formSubmitted: boolean = false;
   state = {
     value: null,
@@ -261,13 +266,15 @@ class TankWithdrawal extends React.Component<Props, State> {
         minAvoidHeight={200}
       >
         <Wrapper regularPadding>
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formFields}
-            value={value}
-            onChange={this.handleChange}
-          />
+          <FormWrapper>
+            <Form
+              ref={node => { this._form = node; }}
+              type={formStructure}
+              options={formFields}
+              value={value}
+              onChange={this.handleChange}
+            />
+          </FormWrapper>
           <ActionsWrapper>
             <SendTokenDetails>
               <Label small>{t('ppnContent.label.availableBalance')}</Label>

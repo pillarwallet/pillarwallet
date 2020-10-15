@@ -28,8 +28,7 @@ import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
-import { BaseText } from 'components/Typography';
+import ValueInput from 'components/ValueInput';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
@@ -55,7 +54,7 @@ import { fetchStreamBalance } from 'services/sablier';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Assets, Asset, Rates, Balances } from 'models/Asset';
+import type { Assets, Asset, Balances } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
 
 
@@ -64,8 +63,6 @@ type Props = {
   assets: Assets,
   supportedAssets: Asset[],
   navigation: NavigationScreenProp<*>,
-  baseFiatCurrency: ?string,
-  rates: Rates,
   withdrawTransactionEstimate: ?Object,
   isCalculatingWithdrawTransactionEstimate: boolean,
   useGasToken: boolean,
@@ -78,21 +75,23 @@ const FooterWrapper = styled.View`
   width: 100%;
 `;
 
+const InputWrapper = styled.View`
+  padding: 16px 40px 0;
+`;
+
 const Withdraw = (props: Props) => {
   const {
     calculateSablierWithdrawTransactionEstimate,
     navigation,
     assets,
     supportedAssets,
-    baseFiatCurrency,
-    rates,
     withdrawTransactionEstimate,
     isCalculatingWithdrawTransactionEstimate,
     useGasToken,
     balances,
   } = props;
 
-  const [withdrawAmountInWei, setWithdrawAmount] = useState(0);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
   const [maxWithdraw, setMaxWithdraw] = useState(EthersBigNumber.from(0));
   const [isFetchingMaxWithdraw, setIsFetchingMaxWithdraw] = useState(true);
 
@@ -100,9 +99,17 @@ const Withdraw = (props: Props) => {
   const { id: streamId, token, recipient } = stream;
   const assetData = getAssetDataByAddress(getAssetsAsList(assets), supportedAssets, token.id);
 
+  let withdrawAmountInWei = 0;
+  if (withdrawAmount) {
+    withdrawAmountInWei = utils.parseUnits(withdrawAmount, assetData.decimals);
+    if (withdrawAmountInWei.gt(maxWithdraw)) {
+      withdrawAmountInWei = maxWithdraw;
+    }
+  }
+
   useEffect(() => {
     calculateSablierWithdrawTransactionEstimate(stream, withdrawAmountInWei, assetData);
-  }, [withdrawAmountInWei]);
+  }, [withdrawAmount]);
 
   useEffect(() => {
     // the exact max amount to withdraw must be fetched from the blockchain
@@ -122,19 +129,6 @@ const Withdraw = (props: Props) => {
     });
   };
 
-  const onValueChanged = (value: Object) => {
-    if (!value?.input) {
-      setWithdrawAmount(0);
-      return;
-    }
-    const valueInWei = utils.parseUnits(value?.input, assetData.decimals);
-    if (valueInWei.gt(maxWithdraw)) {
-      setWithdrawAmount(maxWithdraw);
-    } else {
-      setWithdrawAmount(valueInWei);
-    }
-  };
-
   const assetOptions = [assetData];
 
   const streamedAssetBalance: Balances = {
@@ -149,7 +143,7 @@ const Withdraw = (props: Props) => {
 
   const isNextButtonDisabled = isCalculatingWithdrawTransactionEstimate
     || isFetchingMaxWithdraw
-    || !withdrawAmountInWei
+    || !withdrawAmount
     || !isEnoughForFee
     || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
   const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? t('label.gettingFee') : t('button.next');
@@ -177,32 +171,24 @@ const Withdraw = (props: Props) => {
       }
       minAvoidHeight={600}
     >
-      <ValueSelectorCard
-        preselectedAsset={assetData.symbol}
-        customOptions={assetOptions}
-        balances={streamedAssetBalance}
-        baseFiatCurrency={baseFiatCurrency}
-        rates={rates}
-        maxLabel={t('button.max')}
-        getFormValue={onValueChanged}
-        isLoading={isFetchingMaxWithdraw}
-      />
-      <BaseText regular secondary center>
-        {t('sablierContent.paragraph.receiveOnWithdrawal', { token: assetData.symbol })}
-      </BaseText>
+      <InputWrapper>
+        <ValueInput
+          value={withdrawAmount}
+          onValueChange={setWithdrawAmount}
+          assetData={assetData}
+          customAssets={assetOptions}
+          customBalances={streamedAssetBalance}
+        />
+      </InputWrapper>
     </ContainerWithHeader>
   );
 };
 
 const mapStateToProps = ({
   assets: { supportedAssets },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
   sablier: { withdrawTransactionEstimate, isCalculatingWithdrawTransactionEstimate },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
-  rates,
-  baseFiatCurrency,
   withdrawTransactionEstimate,
   isCalculatingWithdrawTransactionEstimate,
 });

@@ -21,6 +21,7 @@
 import { firebaseRemoteConfig } from 'services/firebase';
 import { reportOrWarn } from 'utils/common';
 import { log } from 'utils/logger';
+import { isTest } from 'utils/environment';
 
 export const loadFeatureFlagsAction = () => {
   return () => {
@@ -34,6 +35,7 @@ export const loadFeatureFlagsAction = () => {
     firebaseRemoteConfig
       .fetch(__DEV__ ? 0 : 3600) // Are we in dev mode? Don't cache, otherwise 1 hour.
       .then(() => {
+        if (isTest) return; // do not print log on test instance
         log.info('Firebase Config: Fetched the latest remote config values, if any.');
       })
       .catch(e => { reportOrWarn('Failed to fetch feature flags or initialize with defaults', e, 'warning'); });

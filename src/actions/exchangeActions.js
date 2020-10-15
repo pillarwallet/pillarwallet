@@ -20,7 +20,6 @@
 
 import { toChecksumAddress } from '@netgum/utils';
 import uniq from 'lodash.uniq';
-import * as Sentry from '@sentry/react-native';
 import t from 'translations/translate';
 
 // components
@@ -44,7 +43,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { reportLog } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
 import { getAssetsAsList, getAssetData } from 'utils/assets';
 
 // selectors
@@ -87,7 +86,7 @@ export const takeOfferAction = (
     }
 
     if (!fromAsset || !toAsset || !order) {
-      reportLog('Cannot find exchange asset', null, Sentry.Severity.Error);
+      reportErrorLog('Cannot find exchange asset');
       callback({});
       return;
     }
@@ -146,7 +145,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
     const fromAsset = exchangeSupportedAssets.find(a => a.symbol === fromAssetCode);
     const toAsset = exchangeSupportedAssets.find(a => a.symbol === toAssetCode);
     if (!fromAsset || !toAsset) {
-      reportLog('Cannot find exchange asset', { fromAssetCode, toAssetCode }, Sentry.Severity.Error);
+      reportErrorLog('Cannot find exchange asset', { fromAssetCode, toAssetCode });
       return;
     }
 

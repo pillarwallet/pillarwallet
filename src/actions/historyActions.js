@@ -108,6 +108,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     const {
       accounts: { data: accounts },
       smartWallet: { lastSyncedTransactionId, connectedAccount },
+      session: { data: { isOnline } },
     } = getState();
 
     // key based history migration: clean existing
@@ -121,6 +122,8 @@ export const fetchSmartWalletTransactionsAction = () => {
         dispatch({ type: SET_HISTORY, payload: updatedHistory });
       }
     }
+
+    if (!isOnline) return;
 
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount || !connectedAccount) {

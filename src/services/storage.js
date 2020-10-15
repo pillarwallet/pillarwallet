@@ -19,12 +19,9 @@
 */
 import get from 'lodash.get';
 import merge from 'lodash.merge';
-import * as Sentry from '@sentry/react-native';
-import { printLog, reportLog } from 'utils/common';
+import { printLog, reportErrorLog } from 'utils/common';
 import PouchDBStorage from './pouchDBStorage';
 import { firebaseAuth, firebaseDb } from './firebase';
-
-const { Error, Warning } = Sentry.Severity;
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
 
@@ -44,7 +41,7 @@ Storage.prototype.get = async function (id: string) {
       return dbState ? dbState[id] : {};
     })
     .catch(e => {
-      reportLog('Failed to fetch value from Database', e, Warning);
+      reportErrorLog('Failed to fetch value from Database', e);
     });
   return data || {};
 };
@@ -58,15 +55,15 @@ Storage.prototype.save = async function (id: string, data: Object, forceRewrite:
   const newValue = forceRewrite ? data : await this.mergeValue(id, data);
 
   if (this.activeDocs[id]) {
-    reportLog('Race condition spotted', { id, data, forceRewrite }, Error);
+    reportErrorLog('Race condition spotted', { id, data, forceRewrite });
   }
 
   this.activeDocs[id] = true;
 
   return this.db.update({ [id]: newValue })
     .then(() => { this.activeDocs[id] = false; })
-    .catch(e => {
-      reportLog('Failed to update user storage database', e, Warning);
+    .catch(err => {
+      reportErrorLog('AsyncStorage Exception', { id, data, err });
       this.activeDocs[id] = false;
     });
 };
@@ -75,7 +72,7 @@ Storage.prototype.getAll = function () {
   return this.db.once('value')
     .then(snapshot => snapshot.val())
     .catch(e => {
-      reportLog('Failed to load data from database', e, Warning);
+      reportErrorLog('Failed to load data from database', e);
     });
 };
 
@@ -83,7 +80,7 @@ Storage.prototype.removeAll = async function () {
   try {
     await this.db.remove();
   } catch (e) {
-    reportLog('Failed to remove user data from database', e, Error);
+    reportErrorLog('Failed to remove user data from database', e);
   }
 };
 
@@ -114,7 +111,7 @@ Storage.prototype.migrateFromPouchDB = async function (storageData: Object) {
       },
     }, true);
   } catch (e) {
-    reportLog('PouchB migration failed', { error: e }, Error);
+    reportErrorLog('DB migration to AsyncStorage failed', { error: e });
   }
   return Promise.resolve();
 };
@@ -123,7 +120,7 @@ Storage.prototype.set = async function (data: Object) {
   try {
     await this.db.set(data);
   } catch (e) {
-    reportLog('Failed to migrate user storage to firebase', e, Error);
+    reportErrorLog('Failed to migrate user storage to firebase', e);
   }
 };
 
@@ -138,7 +135,7 @@ Storage.getInstance = function (name: string) {
 Storage.prototype.initialize = async function () {
   const timeout = setTimeout(() => {
     // failed to fetch data, likely because user is offline
-    reportLog('Failed to initialize user Firebase storage', null, Warning);
+    reportErrorLog('Failed to initialize user Firebase storage', null);
     // TODO handle
   }, 5000);
   try {
@@ -152,7 +149,7 @@ Storage.prototype.initialize = async function () {
     clearTimeout(timeout);
   } catch (e) {
     clearTimeout(timeout);
-    reportLog('Failed to initialize user Firebase storage', e, Warning);
+    reportErrorLog('Failed to initialize user Firebase storage', e);
   }
 };
 

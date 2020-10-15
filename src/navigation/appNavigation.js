@@ -82,8 +82,7 @@ import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
 import AppSettingsScreen from 'screens/Menu/AppSettings';
 import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
-import RecoverySettingsScreen from 'screens/Menu/RecoverySettings';
-import SecuritySettingsScreen from 'screens/Menu/SecuritySettings';
+import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
 import WalletActivatedScreen from 'screens/WalletActivated';
@@ -129,6 +128,7 @@ import RetryApiRegistration from 'components/RetryApiRegistration';
 import CustomTabBarComponent from 'components/CustomTabBarComponent';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';
+import UsernameFailed from 'components/UsernameFailed';
 
 // actions
 import {
@@ -142,6 +142,8 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { removePrivateKeyFromMemoryAction } from 'actions/walletActions';
 import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
+import { finishOnboardingAction } from 'actions/onboardingActions';
+import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
 
 // constants
 import {
@@ -209,8 +211,7 @@ import {
   REFER_FLOW,
   SERVICES,
   STORYBOOK,
-  SECURITY_SETTINGS,
-  RECOVERY_SETTINGS,
+  WALLET_SETTINGS,
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
@@ -269,7 +270,6 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
-import { PENDING, REGISTERED } from 'constants/userConstants';
 
 // utils
 import { fontSizes } from 'utils/variables';
@@ -277,8 +277,14 @@ import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
 import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
 
+// types
 import type { Theme } from 'models/Theme';
 import type { I18n } from 'models/Translations';
+import type { User } from 'models/User';
+import type { Notification } from 'models/Notification';
+import type { EthereumWallet } from 'models/Wallet';
+import type { BackupStatus } from 'reducers/walletReducer';
+
 
 const SLEEP_TIMEOUT = 20000;
 const ACTIVE_APP_STATE = 'active';
@@ -333,8 +339,7 @@ const assetsFlow = createStackNavigator(
     [COLLECTIBLE]: CollectibleScreen,
     [EXCHANGE]: ExchangeScreen,
     [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
-    [RECOVERY_SETTINGS]: RecoverySettingsScreen,
-    [SECURITY_SETTINGS]: SecuritySettingsScreen,
+    [WALLET_SETTINGS]: WalletSettingsScreen,
     [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
   StackNavigatorConfig,
@@ -398,7 +403,7 @@ const homeFlow = createStackNavigator({
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
   [REFER_FLOW]: referFlow,
   [STORYBOOK]: StorybookScreen,
-  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [WALLET_SETTINGS]: WalletSettingsScreen,
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
@@ -474,7 +479,7 @@ const tabNavigation = createBottomTabNavigator(
       navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: tabBarIcon({
           icon: iconHome,
-          hasIndicator: !navigation.isFocused() && (screenProps.hasUnreadNotifications
+          hasIndicator: !navigation.isFocused() && (screenProps.showHomeUpdateIndicator
             || !!screenProps.intercomNotificationsCount),
           theme: screenProps.theme,
         }),
@@ -632,8 +637,7 @@ tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const menuFlow = createStackNavigator({
   [MENU]: MenuScreen,
-  [SECURITY_SETTINGS]: SecuritySettingsScreen,
-  [RECOVERY_SETTINGS]: RecoverySettingsScreen,
+  [WALLET_SETTINGS]: WalletSettingsScreen,
   [COMMUNITY_SETTINGS]: CommunitySettingsScreen,
   [APP_SETTINGS]: AppSettingsScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
@@ -768,8 +772,7 @@ const AppFlowNavigation = createStackNavigator(
 );
 
 type Props = {
-  userState: ?string,
-  profileImage: ?string,
+  user: ?User,
   fetchAppSettingsAndRedirect: Function,
   startListeningNotifications: Function,
   stopListeningNotifications: Function,
@@ -778,12 +781,12 @@ type Props = {
   initWalletConnect: Function,
   fetchAllAccountsBalances: () => Function,
   checkForMissedAssets: Function,
-  notifications: Object[],
-  hasUnreadNotifications: boolean,
+  notifications: Notification[],
+  showHomeUpdateIndicator: boolean,
   intercomNotificationsCount: number,
   navigation: NavigationScreenProp<*>,
-  wallet: Object,
-  backupStatus: Object,
+  wallet: ?EthereumWallet,
+  backupStatus: BackupStatus,
   isPickingImage: boolean,
   fetchAllCollectiblesData: Function,
   removePrivateKeyFromMemory: Function,
@@ -793,7 +796,14 @@ type Props = {
   theme: Theme,
   handleSystemDefaultThemeChange: () => void,
   i18n: I18n,
-}
+  isRegisteringUser: boolean,
+  finishOnboarding: () => void,
+  onboardingErrorMessage: ?string,
+  onboardingUsernameRegistrationFailed: boolean,
+  handleSystemLanguageChange: () => void,
+  isAuthorizing: boolean,
+  isFinishingOnboarding: boolean,
+};
 
 type State = {
   lastAppState: string,
@@ -815,6 +825,7 @@ class AppFlow extends React.Component<Props, State> {
       fetchAllCollectiblesData,
       initWalletConnect,
       backupStatus,
+      user,
     } = this.props;
 
     /**
@@ -828,33 +839,44 @@ class AppFlow extends React.Component<Props, State> {
 
     startListeningNotifications();
     startListeningIntercomNotifications();
+    addAppStateChangeListener(this.handleAppStateChange);
+
+    if (!user?.walletId) {
+      this.checkIfOnboardingFinished();
+      return;
+    }
+
+    // the following actions are useless if user is not yet registered on back-end
     fetchAllAccountsBalances();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     initWalletConnect();
-    addAppStateChangeListener(this.handleAppStateChange);
   }
 
   componentDidUpdate(prevProps: Props) {
     const {
       notifications,
-      userState,
+      user,
       wallet,
       removePrivateKeyFromMemory,
+      isOnline,
+      isAuthorizing,
     } = this.props;
     const { notifications: prevNotifications } = prevProps;
 
-    if (userState === REGISTERED && wallet.privateKey) {
+    if (user?.walletId && wallet?.privateKey) {
       removePrivateKeyFromMemory();
     }
 
-    if (notifications.length && notifications.length !== prevNotifications.length) {
-      const lastNotification = notifications[notifications.length - 1];
-
-      Toast.show({
-        ...lastNotification,
-      });
+    // do check only on network change or unlock
+    if ((isOnline && prevProps.isOnline !== isOnline)
+      || (!isAuthorizing && prevProps.isAuthorizing !== isAuthorizing)) {
+      this.checkIfOnboardingFinished();
     }
+
+    notifications
+      .slice(prevNotifications.length)
+      .forEach(notification => Toast.show({ ...notification }));
   }
 
   componentWillUnmount() {
@@ -872,6 +894,32 @@ class AppFlow extends React.Component<Props, State> {
     removeAppStateChangeListener(this.handleAppStateChange);
   }
 
+  checkIfOnboardingFinished = () => {
+    const {
+      isOnline,
+      user,
+      isRegisteringUser,
+      finishOnboarding,
+      wallet,
+      onboardingErrorMessage,
+      onboardingUsernameRegistrationFailed,
+      isAuthorizing,
+      isFinishingOnboarding,
+    } = this.props;
+
+    // no user.walletId means user is not yet registered, try to finish this right away when online
+    if (!!wallet?.privateKey
+      && !isAuthorizing
+      && !isFinishingOnboarding
+      && !user?.walletId
+      && !isRegisteringUser
+      && !onboardingErrorMessage
+      && !onboardingUsernameRegistrationFailed
+      && isOnline) {
+      finishOnboarding();
+    }
+  }
+
   handleAppStateChange = (nextAppState: string) => {
     const {
       stopListeningNotifications,
@@ -880,6 +928,7 @@ class AppFlow extends React.Component<Props, State> {
       isBrowsingWebView,
       endWalkthrough,
       handleSystemDefaultThemeChange,
+      handleSystemLanguageChange,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -895,27 +944,31 @@ class AppFlow extends React.Component<Props, State> {
     } else if (APP_LOGOUT_STATES.includes(lastAppState)
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
+      handleSystemLanguageChange();
     }
     this.setState({ lastAppState: nextAppState });
   };
 
   render() {
     const {
-      userState,
-      profileImage,
-      hasUnreadNotifications,
+      user,
+      showHomeUpdateIndicator,
       intercomNotificationsCount,
       navigation,
       backupStatus,
       theme,
       i18n,
+      isOnline,
+      onboardingUsernameRegistrationFailed,
     } = this.props;
 
 
-    // wallet might be created, but recovery is pending and no user assigned yet
-    if (!backupStatus.isRecoveryPending) {
-      if (!userState) return null;
-      if (userState === PENDING) return <RetryApiRegistration />;
+    // wallet might be created, but recovery is pending and no user registered yet
+    if (!backupStatus.isRecoveryPending
+      && !user?.walletId
+      && isOnline) {
+      if (onboardingUsernameRegistrationFailed) return <UsernameFailed />;
+      return <RetryApiRegistration />;
     }
 
     const { isImported, isBackedUp } = backupStatus;
@@ -924,8 +977,8 @@ class AppFlow extends React.Component<Props, State> {
     return (
       <AppFlowNavigation
         screenProps={{
-          profileImage,
-          hasUnreadNotifications,
+          profileImage: user?.profileImage,
+          showHomeUpdateIndicator,
           intercomNotificationsCount,
           isWalletBackedUp,
           theme,
@@ -938,26 +991,36 @@ class AppFlow extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  user: { data: { profileImage }, userState },
+  user: { data: user },
   notifications: {
     data: notifications,
     intercomNotificationsCount,
-    hasUnreadNotifications,
+    showHomeUpdateIndicator,
   },
   wallet: { data: wallet, backupStatus },
   appSettings: { data: { isPickingImage, isBrowsingWebView } },
-  session: { data: { isOnline } },
+  session: { data: { isOnline, isAuthorizing } },
+  onboarding: {
+    isRegisteringUser,
+    errorMessage: onboardingErrorMessage,
+    usernameRegistrationFailed: onboardingUsernameRegistrationFailed,
+    isFinishingOnboarding,
+  },
 }) => ({
-  profileImage,
-  userState,
+  user,
   notifications,
-  hasUnreadNotifications,
+  showHomeUpdateIndicator,
   wallet,
   backupStatus,
   intercomNotificationsCount,
   isPickingImage,
   isBrowsingWebView,
   isOnline,
+  isRegisteringUser,
+  onboardingErrorMessage,
+  onboardingUsernameRegistrationFailed,
+  isAuthorizing,
+  isFinishingOnboarding,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -972,6 +1035,8 @@ const mapDispatchToProps = dispatch => ({
   removePrivateKeyFromMemory: () => dispatch(removePrivateKeyFromMemoryAction()),
   endWalkthrough: () => dispatch(endWalkthroughAction()),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
+  finishOnboarding: () => dispatch(finishOnboardingAction()),
+  handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));
