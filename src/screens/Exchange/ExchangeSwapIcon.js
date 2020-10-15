@@ -26,8 +26,7 @@ import type { Theme } from 'models/Theme';
 
 const Wrapper = styled.View`
   width: 100%;
-  margin-top: 24px;
-  margin-bottom: 24px;
+  margin: 10px 0 20px;
   align-items: center;
 `;
 

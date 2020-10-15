@@ -120,8 +120,6 @@ const AssetButtonsWrapper = styled.View`
 
 const TopPartWrapper = styled.View`
   padding: ${spacing.large}px ${spacing.layoutSides}px;
-  border-bottom-width: 1;
-  border-color: ${themedColors.border};
 `;
 
 const TankBalanceWrapper = styled.View`
@@ -432,7 +430,7 @@ class PPNView extends React.Component<Props, State> {
           {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
             tabs={historyTabs}
-            wrapperStyle={{ paddingTop: 16 }}
+            wrapperStyle={{ paddingTop: 30, paddingBottom: 26 }}
             activeTab={activeTab}
           />
           }

@@ -20,13 +20,21 @@
 import ethers, { Contract, utils, BigNumber as EthersBigNumber } from 'ethers';
 import cryptocompare from 'cryptocompare';
 import { getEnv } from 'configs/envConfig';
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
-import { getEthereumProvider, isCaseInsensitiveMatch, parseTokenBigNumberAmount, reportLog } from 'utils/common';
+import {
+  getEthereumProvider,
+  isCaseInsensitiveMatch,
+  parseTokenBigNumberAmount,
+  reportErrorLog,
+  reportLog,
+} from 'utils/common';
 
 // abis
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -34,6 +42,10 @@ import ERC721_CONTRACT_ABI from 'abi/erc721.json';
 import ERC721_CONTRACT_ABI_SAFE_TRANSFER_FROM from 'abi/erc721_safeTransferFrom.json';
 import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
+
+// services
+import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Asset } from 'models/Asset';
@@ -331,7 +343,7 @@ export async function fetchAddressBalancesFromProxyContract(
   return balances;
 }
 
-export function getExchangeRates(assets: string[]): Promise<?Object> {
+export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
   if (!assets.length) return Promise.resolve({});
   const targetCurrencies = supportedFiatCurrencies.concat(ETH);
 
@@ -343,28 +355,59 @@ export function getExchangeRates(assets: string[]): Promise<?Object> {
     return token;
   });
 
-  return cryptocompare.priceMulti(assets, targetCurrencies)
+  return cryptocompare
+    .priceMulti(assets, targetCurrencies)
     .then(data => {
       // rename HOLO to HOT
       if (data[HOLO]) {
         data[HOT] = { ...data[HOLO] };
         delete data[HOLO];
       }
-      /**
-       * sometimes symbols have different symbol case and mismatch
-       * between our back-end and crypto compare returned result
-       */
-      return Object.keys(data).reduce((mappedData, returnedSymbol) => {
-        const walletSupportedSymbol = assets.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
-        if (walletSupportedSymbol && !mappedData[walletSupportedSymbol]) {
-          mappedData = {
-            ...mappedData,
-            [walletSupportedSymbol]: data[returnedSymbol],
-          };
-        }
-        return mappedData;
-      }, {});
-    }).catch(() => ({}));
+      return data;
+    })
+    .catch(() => {
+      reportErrorLog('getLegacyExchangeRates cryptocompare.cryptocompare failed', { assets });
+      return null;
+    });
+}
+
+export async function getExchangeRates(assetSymbols: string[]): Promise<?Object> {
+  if (isEmpty(assetSymbols)) {
+    reportLog('getExchangeRates received empty assetSymbols array', { assetSymbols });
+    return null;
+  }
+
+  // CryptoCompare is legacy price oracle, however, the change to new one is feature flagged
+  const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
+
+  let rates = useLegacyCryptoCompare
+    ? await getLegacyExchangeRates(assetSymbols)
+    : await getCoinGeckoTokenPrices(assetSymbols);
+
+  // by any mean if CoinGecko failed let's try legacy way
+  if (!useLegacyCryptoCompare && isEmpty(rates)) {
+    rates = await getLegacyExchangeRates(assetSymbols);
+  }
+
+  if (!rates) {
+    reportErrorLog('getExchangeRates failed: no rates data', { rates, useLegacyCryptoCompare, assetSymbols });
+    return null;
+  }
+
+  /**
+   * sometimes symbols have different symbol case and mismatch
+   * between our back-end and crypto compare returned result
+   */
+  return Object.keys(rates).reduce((mappedData, returnedSymbol) => {
+    const walletSupportedSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(symbol, returnedSymbol));
+    if (walletSupportedSymbol && !mappedData[walletSupportedSymbol] && rates) {
+      mappedData = {
+        ...mappedData,
+        [walletSupportedSymbol]: rates[returnedSymbol],
+      };
+    }
+    return mappedData;
+  }, {});
 }
 
 // from the getTransaction() method you'll get the the basic tx info without the status

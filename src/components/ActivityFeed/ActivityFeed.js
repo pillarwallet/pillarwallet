@@ -144,7 +144,6 @@ type State = {|
   showModal: boolean,
   selectedEventData: ?Object | ?Transaction,
   selectedEventItemData: ?EventData,
-  tabIsChanging: boolean,
 |};
 
 const ITEM_TYPE = {
@@ -165,7 +164,6 @@ class ActivityFeed extends React.Component<Props, State> {
     showModal: false,
     selectedEventData: null,
     selectedEventItemData: null,
-    tabIsChanging: false,
   };
 
   generateFeedSections = memoize(
@@ -310,10 +308,6 @@ class ActivityFeed extends React.Component<Props, State> {
     }
   };
 
-  onTabChange = (isChanging?: boolean) => {
-    this.setState({ tabIsChanging: isChanging });
-  };
-
   render() {
     const {
       feedTitle,
@@ -337,7 +331,6 @@ class ActivityFeed extends React.Component<Props, State> {
     const {
       showModal,
       selectedEventData,
-      tabIsChanging,
       selectedEventItemData,
     } = this.state;
 
@@ -363,11 +356,9 @@ class ActivityFeed extends React.Component<Props, State> {
           <Tabs
             tabs={tabsProps}
             wrapperStyle={{ paddingTop: 0 }}
-            onTabChange={this.onTabChange}
             activeTab={activeTab || firstTab}
           />
         }
-        {!tabIsChanging &&
         <ActivityFeedList
           data={formattedFeedData}
           initialNumToRender={initialNumToRender}
@@ -378,7 +369,7 @@ class ActivityFeed extends React.Component<Props, State> {
           contentContainerStyle={[additionalContentContainerStyle, contentContainerStyle]}
           stickyHeaderIndices={[1]}
           {...flatListProps}
-        />}
+        />
         {!!selectedEventData &&
           <EventDetails
             isVisible={showModal}

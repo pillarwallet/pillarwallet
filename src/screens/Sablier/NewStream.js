@@ -30,7 +30,7 @@ import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ValueSelectorCard from 'components/ValueSelectorCard';
+import ValueInput from 'components/ValueInput';
 import TimingInput from 'components/TimingInput';
 import { MediumText, TextLink, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -42,7 +42,6 @@ import ArrowIcon from 'components/ArrowIcon';
 // utils
 import { getThemeColors, getThemeType } from 'utils/themes';
 import { countDownDHMS } from 'utils/common';
-import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
@@ -84,7 +83,7 @@ type State = {
   modalDate: ?Date,
   activeDatePicker: ?string,
   assetValue: number,
-  assetSymbol: ?string,
+  selectedAsset: Option,
   selectedContact: ?Contact,
 };
 
@@ -103,6 +102,7 @@ const PickerWrapper = styled.View`
 
 const InputWrapper = styled.View`
   align-items: center;
+  padding: 24px 40px 0;
 `;
 
 const START_TIME = 'START_TIME';
@@ -111,13 +111,14 @@ const END_TIME = 'END_TIME';
 class NewStream extends React.Component<Props, State> {
   constructor(props) {
     super(props);
+    const daiAsset = props.supportedAssets.find(asset => asset.symbol === DAI);
     this.state = {
       startDate: this.getMinimalDate(),
       endDate: null,
       modalDate: null,
       activeDatePicker: null,
       assetValue: 0,
-      assetSymbol: null,
+      selectedAsset: daiAsset,
       selectedContact: null,
     };
   }
@@ -126,15 +127,6 @@ class NewStream extends React.Component<Props, State> {
     // default to 5 minutes
     const delayInMinutes = firebaseRemoteConfig.getNumber(FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE) || 5;
     return addMinutes(new Date(), delayInMinutes);
-  }
-
-  getFormValue = (value) => {
-    const { input = '0' } = value || {};
-    const newValue = parseFloat(input);
-    this.setState({
-      assetValue: newValue,
-      assetSymbol: value?.selector?.symbol,
-    });
   }
 
   handleReceiverSelect = async (value: Option, onSuccess?: () => void) => {
@@ -160,32 +152,22 @@ class NewStream extends React.Component<Props, State> {
     return Promise.resolve();
   }
 
-  getAssetData = () => {
-    const { assets, supportedAssets } = this.props;
-    const { assetSymbol } = this.state;
-    if (!assetSymbol) return null;
-    return getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
-  }
-
   onSubmit = async () => {
     const {
-      startDate, endDate, assetValue, assetSymbol, selectedContact,
+      startDate, endDate, assetValue, selectedAsset, selectedContact,
     } = this.state;
-
-    const assetData = this.getAssetData();
-    if (!assetData) return;
 
     // The deposit must be a multiple of the difference between the stop time and the start time,
     // or otherwise the contract reverts with a "deposit not multiple of time delta" message.
     const timeDelta = getTimestamp(endDate) - getTimestamp(startDate);
-    const assetValueInWei = utils.parseUnits(assetValue.toString(), assetData.decimals);
+    const assetValueInWei = utils.parseUnits(assetValue.toString(), selectedAsset.decimals);
     const roundedAssetValue = assetValueInWei.sub(assetValueInWei.mod(timeDelta));
 
     this.props.navigation.navigate(SABLIER_NEW_STREAM_REVIEW, {
       startDate,
       endDate,
       assetValue: roundedAssetValue,
-      assetSymbol,
+      assetSymbol: selectedAsset.symbol,
       receiverAddress: selectedContact?.ethAddress,
     });
   }
@@ -282,17 +264,17 @@ class NewStream extends React.Component<Props, State> {
 
   isFormValid = () => {
     const {
-      assetValue, startDate, endDate, assetSymbol, selectedContact,
+      assetValue, startDate, endDate, selectedContact,
     } = this.state;
-    return assetValue && startDate && endDate && assetSymbol && selectedContact;
+    return assetValue && startDate && endDate && selectedContact;
   }
 
   renderStreamSummary = () => {
     const {
-      assetValue, assetSymbol, startDate, endDate,
+      assetValue, selectedAsset, startDate, endDate,
     } = this.state;
 
-    if (!assetValue || !assetSymbol || !startDate || !endDate) {
+    if (!assetValue || !startDate || !endDate) {
       return null;
     }
 
@@ -310,7 +292,7 @@ class NewStream extends React.Component<Props, State> {
       <BaseText regular secondary>
         {t('sablierContent.paragraph.newStreamInformation', {
           value: assetValue,
-          asset: assetSymbol,
+          asset: selectedAsset.symbol,
           duration,
           streamingRate,
         })}
@@ -324,6 +306,8 @@ class NewStream extends React.Component<Props, State> {
       startDate,
       endDate,
       selectedContact,
+      assetValue,
+      selectedAsset,
     } = this.state;
 
     const formValid = this.isFormValid();
@@ -338,12 +322,14 @@ class NewStream extends React.Component<Props, State> {
         keyboardShouldPersistTaps="handled"
       >
         <InputWrapper>
-          <ValueSelectorCard
-            preselectedAsset={DAI}
-            maxLabel={t('button.sendMax')}
-            getFormValue={this.getFormValue}
-            customOptions={assetsOptions}
+          <ValueInput
+            value={assetValue}
+            onValueChange={amount => this.setState({ assetValue: amount })}
+            assetData={selectedAsset}
+            onAssetDataChange={asset => this.setState({ selectedAsset: asset })}
+            customAssets={assetsOptions}
           />
+          <Spacing h={10} />
           <ArrowIcon />
           <Spacing h={20} />
           <Selector
@@ -358,8 +344,7 @@ class NewStream extends React.Component<Props, State> {
             selectedOption={selectedContact}
           />
         </InputWrapper>
-
-        <Spacing h={42} />
+        <Spacing h={28} />
         <ContentWrapper>
           <Row>
             <MediumText regular>{t('sablierContent.label.start')}</MediumText>

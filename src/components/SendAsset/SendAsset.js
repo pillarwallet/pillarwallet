@@ -28,19 +28,14 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
-import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
-import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import { Spacing } from 'components/Layout';
 import SendContainer from 'containers/SendContainer';
 import Toast from 'components/Toast';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 
 // utils
 import { isValidNumber, getEthereumProvider } from 'utils/common';
-import { spacing } from 'utils/variables';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getContactWithEnsName } from 'utils/contacts';
@@ -49,18 +44,17 @@ import { isEnsName } from 'utils/validators';
 // services
 import { buildERC721TransactionData } from 'services/assets';
 import smartWalletService from 'services/smartWallet';
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // selectors
-import { isGasTokenSupportedSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import { useGasTokenSelector } from 'selectors/smartWallet';
 import { activeAccountAddressSelector, contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TokenTransactionPayload, Transaction, TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, Assets } from 'models/Asset';
+import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { Balances } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Option } from 'models/Selector';
@@ -69,7 +63,6 @@ import type { Contact } from 'models/Contact';
 // constants
 import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // actions
 import { addContactAction } from 'actions/contactsActions';
@@ -82,8 +75,6 @@ type Props = {
   balances: Balances,
   session: SessionData,
   activeAccountAddress: string,
-  accountAssets: Assets,
-  accountHistory: Transaction[],
   isGasTokenSupported: boolean,
   useGasToken: boolean,
   assetsWithBalance: Option[],
@@ -92,17 +83,11 @@ type Props = {
   addContact: (contact: Contact) => void,
 };
 
-type FooterProps = {
-  showRelayerMigration: boolean,
-  showFee: boolean,
-  isLoading: boolean,
-  feeError: boolean,
-};
-
 const renderFeeToggle = (
   txFeeInfo: ?TransactionFeeInfo,
   showFee: boolean,
   feeError: boolean,
+  isLoading: boolean,
 ) => {
   if (!showFee || !txFeeInfo) return null;
 
@@ -111,7 +96,7 @@ const renderFeeToggle = (
 
   return (
     <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} />
+      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} notEnoughToken={!!feeError} />
       {!!feeError &&
       <BaseText center secondary>
         {t('error.notEnoughTokenForFeeExtended', { token: gasTokenSymbol })}
@@ -121,15 +106,12 @@ const renderFeeToggle = (
   );
 };
 
-const SendEthereumTokens = ({
+const SendAsset = ({
   source,
   navigation,
   balances,
   session,
   activeAccountAddress,
-  accountAssets,
-  accountHistory,
-  isGasTokenSupported,
   useGasToken,
   assetsWithBalance,
   collectibles,
@@ -137,20 +119,15 @@ const SendEthereumTokens = ({
   addContact,
   defaultContact,
 }: Props) => {
-  const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
-  const hideRelayerMigrationModal = () => setShowRelayerMigrationModal(false);
-
-  useEffect(() => {
-    if (isGasTokenSupported && showRelayerMigrationModal) {
-      hideRelayerMigrationModal(); // hide on update
-    }
-  }, [isGasTokenSupported]);
-
   const defaultAssetData = navigation.getParam('assetData');
-  const [assetData, setAssetData] = useState(defaultAssetData);
-
-  const [amount, setAmount] = useState(null);
-  const [inputHasError, setInputHasError] = useState(false);
+  const defaultAssetOption = defaultAssetData && {
+    ...defaultAssetData,
+    symbol: defaultAssetData.token,
+    value: defaultAssetData.token,
+  };
+  const [assetData, setAssetData] = useState<Option>(defaultAssetOption || assetsWithBalance[0]);
+  const [amount, setAmount] = useState('');
+  const [inputIsValid, setInputIsValid] = useState(false);
   const [txFeeInfo, setTxFeeInfo] = useState(null);
   const [gettingFee, setGettingFee] = useState(true);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
@@ -170,10 +147,10 @@ const SendEthereumTokens = ({
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
     // specified amount is always valid and not necessarily matches input amount
-    if ((!specifiedAmount && !isValidAmount) || value === 0 || !assetData || !selectedContact) {
+    if ((!isCollectible && ((!specifiedAmount && !isValidAmount) || value === 0)) || !assetData || !selectedContact) {
       setGettingFee(false);
       setTxFeeInfo(null);
-      return;
+      return null;
     }
 
     let data;
@@ -198,8 +175,15 @@ const SendEthereumTokens = ({
     }
 
     const transaction = { recipient: selectedContact.ethAddress, value, data };
+
+    const formattedAssetData = {
+      token: assetData.token || '',
+      contractAddress: assetData.address || '',
+      decimals: assetData.decimals || 18,
+    };
+
     const estimated = await smartWalletService
-      .estimateAccountTransaction(transaction, assetData)
+      .estimateAccountTransaction(transaction, formattedAssetData)
       .then(res => buildTxFeeInfo(res, useGasToken))
       .catch(() => null);
 
@@ -211,10 +195,11 @@ const SendEthereumTokens = ({
       });
       setGettingFee(false);
       setTxFeeInfo(null);
-      return;
+      return null;
     }
 
     setTxFeeInfo(estimated);
+    return estimated;
   };
 
   const updateTxFeeDebounced = useCallback(
@@ -293,13 +278,8 @@ const SendEthereumTokens = ({
     }
   };
 
-  const manageFormErrorState = (errorMessage: ?string) => {
-    const newErrorState = !!errorMessage;
-    if (inputHasError !== newErrorState) setInputHasError(newErrorState);
-  };
-
   const handleFormSubmit = async () => {
-    if (submitPressed || !txFeeInfo || !amount || !selectedContact || !assetData) return;
+    if (submitPressed || !txFeeInfo || !selectedContact || !assetData) return;
 
     setSubmitPressed(true);
 
@@ -318,7 +298,7 @@ const SendEthereumTokens = ({
     const transactionPayload: TokenTransactionPayload = {
       to: selectedContact.ethAddress,
       receiverEnsName: selectedContact.ensName,
-      amount,
+      amount: amount || 0,
       txFeeInWei: txFeeInfo.fee,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
@@ -343,46 +323,12 @@ const SendEthereumTokens = ({
     // update fee only on max balance
     if (maxBalance === calculatedBalanceAmount) {
       // not debounced call to make sure it's not cancelled
-      await updateTxFee(calculatedBalanceAmount);
+      return updateTxFee(calculatedBalanceAmount);
     }
-  };
-
-  const renderRelayerMigrationButton = () => (
-    <Button
-      title={t('transactions.button.payFeeWithPillar')}
-      onPress={() => setShowRelayerMigrationModal(true)}
-      secondary
-      small
-    />
-  );
-
-  const renderFee = (props: FooterProps) => {
-    const {
-      showRelayerMigration,
-      showFee,
-      isLoading,
-      feeError,
-    } = props;
-
-    if (isLoading) {
-      return <Spinner width={20} height={20} />;
-    }
-
-    return (
-      <>
-        {renderFeeToggle(txFeeInfo, showFee, feeError)}
-        {showRelayerMigration && (
-          <>
-            <Spacing h={spacing.medium} />
-            {renderRelayerMigrationButton()}
-          </>
-        )}
-      </>
-    );
+    return null;
   };
 
   const token = get(assetData, 'token');
-  const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
   // balance
   const balance = getBalance(balances, token);
@@ -395,13 +341,9 @@ const SendEthereumTokens = ({
   const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
   const showFee = isCollectible ? showFeeForCollectible : showFeeForAsset;
 
-  const showRelayerMigration = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR)
-    && showFee
-    && !isGasTokenSupported;
-
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)
-    : (!inputHasError && !!selectedContact && !!currentValue);
+    : (inputIsValid && !!selectedContact && !!currentValue);
 
   let feeError = false;
   if (txFeeInfo && assetData && isValidAmount) {
@@ -414,7 +356,7 @@ const SendEthereumTokens = ({
     });
   }
 
-  const showNextButton = !gettingFee && hasAllData && !feeError;
+  const showNextButton = hasAllData && !feeError;
 
   const isNextButtonDisabled = !session.isOnline;
 
@@ -449,15 +391,15 @@ const SendEthereumTokens = ({
         },
       }}
       customValueSelectorProps={{
-        getFormValue: handleAmountChange,
-        getError: manageFormErrorState,
+        value: amount,
+        onValueChange: setAmount,
+        assetData,
+        onAssetDataChange: setAssetData,
+        showCollectibles: true,
         txFeeInfo,
-        preselectedAsset: token,
-        preselectedCollectible,
-        showAllAssetTypes: true,
-        gettingFee,
-        hideMaxSend: gettingFee || !selectedContact, // we cannot calculate max if no receiver is set
-        calculateBalancePercentTxFee,
+        hideMaxSend: gettingFee || !selectedContact,
+        updateTxFee: calculateBalancePercentTxFee,
+        onFormValid: setInputIsValid,
       }}
       footerProps={{
         isNextButtonVisible: showNextButton,
@@ -466,22 +408,10 @@ const SendEthereumTokens = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFee({
-          showRelayerMigration,
-          showFee,
-          isLoading: gettingFee,
-          feeError,
-        }),
+        footerTopAddon: !!selectedContact && renderFeeToggle(txFeeInfo, showFee, feeError, gettingFee),
+        isLoading: gettingFee,
       }}
     >
-      {showRelayerMigration &&
-        <RelayerMigrationModal
-          isVisible={showRelayerMigrationModal}
-          onModalHide={hideRelayerMigrationModal}
-          accountAssets={accountAssets}
-          accountHistory={accountHistory}
-        />
-      }
       <ContactDetailsModal
         title={t('title.addNewContact')}
         isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
@@ -505,7 +435,6 @@ const SendEthereumTokens = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  isGasTokenSupported: isGasTokenSupportedSelector,
   useGasToken: useGasTokenSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
@@ -520,4 +449,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendEthereumTokens);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);

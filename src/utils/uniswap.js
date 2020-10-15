@@ -29,12 +29,13 @@ import ROUTER_ABI from 'abi/uniswapRouter.json';
 import { isProdEnv } from 'utils/environment';
 import { encodeContractMethod } from 'services/assets';
 import { ETH } from 'constants/assetsConstants';
+import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 import type { Asset } from 'models/Asset';
 
 const isMainnet = isProdEnv;
 export const chainId = isMainnet ? ChainId.MAINNET : ChainId.KOVAN;
-const ALLOWED_SLIPPAGE = 0.97;
+const UNISWAP_ALLOWED_SLIPPAGE = 1 - (ALLOWED_SLIPPAGE / 100);
 const DEADLINE_FROM_NOW = 60 * 15; // seconds
 export const ADDRESSES = isMainnet ?
   {
@@ -79,7 +80,7 @@ export const getExpectedOutput = (
 };
 
 export const applyAllowedSlippage = (output: BigNumber, outputDecimals: BigNumber): BigNumber => {
-  return new BigNumber(output.multipliedBy(ALLOWED_SLIPPAGE).toFixed(outputDecimals.toNumber()));
+  return new BigNumber(output.multipliedBy(UNISWAP_ALLOWED_SLIPPAGE).toFixed(outputDecimals.toNumber()));
 };
 
 export const getDeadline = (): number => {

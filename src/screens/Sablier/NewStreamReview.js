@@ -19,40 +19,41 @@
 */
 
 import * as React from 'react';
-import { utils } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { format as formatDate } from 'date-fns';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
-import FeeLabelToggle from 'components/FeeLabelToggle';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
+import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
+import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
+
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
 import { getCreateStreamFeeAndTransaction } from 'services/sablier';
 import {
   countDownDHMS,
-  formatFiat,
-  formatAmount,
+  formatUnits,
 } from 'utils/common';
-import { getRate, getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
+import { themedColors } from 'utils/themes';
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountBalancesSelector } from 'selectors/balances';
 
-import type { Rates, Assets, Asset, Balances } from 'models/Asset';
+import type { Assets, Asset, Balances } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { GasToken } from 'models/Transaction';
-
-import NewStreamReviewScheme from './NewStreamReviewScheme';
 
 
 type Props = {
@@ -61,8 +62,6 @@ type Props = {
   assets: Assets,
   supportedAssets: Asset[],
   useGasToken: boolean,
-  baseFiatCurrency: ?string,
-  rates: Rates,
   ensRegistry: EnsRegistry,
   balances: Balances,
 };
@@ -75,13 +74,12 @@ type State = {
 };
 
 const RootContainer = styled.View`
-  padding: 45px 0;
-  align-items: center;
+  padding: 16px 20px;
 `;
 
-const ButtonWrapper = styled.View`
-  padding: 0 20px;
-  align-self: stretch; 
+const ClockIcon = styled(Icon)`
+  color: ${themedColors.labelTertiary};
+  font-size: 14px;
 `;
 
 class NewStreamReview extends React.Component<Props, State> {
@@ -136,7 +134,7 @@ class NewStreamReview extends React.Component<Props, State> {
 
   render() {
     const {
-      baseFiatCurrency, rates, navigation, ensRegistry, balances, assets, supportedAssets,
+      navigation, ensRegistry, balances, assets, supportedAssets,
     } = this.props;
     const { isFetchingTransactionFee, txFeeInWei, gasToken } = this.state;
     const {
@@ -144,12 +142,6 @@ class NewStreamReview extends React.Component<Props, State> {
     } = navigation.state.params;
     const assetData = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
     const { days, hours, minutes } = countDownDHMS(endDate.getTime() - startDate.getTime());
-
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    const rate = getRate(rates, assetSymbol, fiatCurrency);
-    const assetValueFiat = formatFiat(utils.formatUnits(assetValue, assetData?.decimals) * rate, fiatCurrency);
-
-    const receiverUsername = ensRegistry[receiverAddress] || receiverAddress;
 
     const startStreamButtonTitle = isFetchingTransactionFee
       ? t('label.gettingFee')
@@ -172,29 +164,51 @@ class NewStreamReview extends React.Component<Props, State> {
         putContentInScrollView
       >
         <RootContainer>
-          <NewStreamReviewScheme
-            assetValue={formatAmount(utils.formatUnits(assetValue, 18))}
-            assetValueFiat={assetValueFiat}
+          <TokenReviewSummary
             assetSymbol={assetSymbol}
-            time={t('timeDaysHoursMinutes', { days, hours, minutes })}
-            receiver={receiverUsername}
+            text={t('sablierContent.label.youAreStreaming')}
+            amount={formatUnits(assetValue, assetData.decimals)}
           />
-          <Spacing h={70} />
-          <FeeLabelToggle
-            labelText={t('label.fee')}
-            txFeeInWei={txFeeInWei}
-            gasToken={gasToken}
-            showFiatDefault
-            isLoading={isFetchingTransactionFee}
+          <Spacing h={36} />
+          <Table title={t('sablierContent.label.streamDetails')}>
+            <TableRow>
+              <TableLabel>{t('transactions.label.recipient')}</TableLabel>
+              <TableUser ensName={ensRegistry[receiverAddress]} address={receiverAddress} />
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('sablierContent.label.startTime')}</TableLabel>
+              <BaseText regular>{formatDate(startDate, 'ddd D, MMMM H:mm')}</BaseText>
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('sablierContent.label.endTime')}</TableLabel>
+              <BaseText regular>{formatDate(endDate, 'ddd D, MMMM H:mm')}</BaseText>
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('sablierContent.label.estStreamTime')}</TableLabel>
+              <BaseText><ClockIcon name="pending" /> {t('timeDaysHoursMinutes', { days, hours, minutes })}</BaseText>
+            </TableRow>
+          </Table>
+          <Spacing h={38} />
+          <Table title={t('transactions.label.fees')}>
+            <TableRow>
+              <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+            </TableRow>
+            <TableRow>
+              <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+              <TableAmount amount={0} />
+            </TableRow>
+            <TableRow>
+              <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+            </TableRow>
+          </Table>
+          <Spacing h={50} />
+          <Button
+            title={startStreamButtonTitle}
+            onPress={this.onSubmit}
+            disabled={isStartStreamButtonDisabled}
           />
-          <Spacing h={16} />
-          <ButtonWrapper>
-            <Button
-              title={startStreamButtonTitle}
-              onPress={this.onSubmit}
-              disabled={isStartStreamButtonDisabled}
-            />
-          </ButtonWrapper>
         </RootContainer>
       </ContainerWithHeader>
     );
@@ -202,13 +216,9 @@ class NewStreamReview extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
   assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
   supportedAssets,
   ensRegistry,
 });

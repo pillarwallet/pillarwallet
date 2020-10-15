@@ -22,7 +22,7 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 
 // components
-import SendEthereumTokens from 'components/SendTokens/EthereumTokens';
+import SendAsset from 'components/SendAsset';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
@@ -57,7 +57,7 @@ const SendTokenAmount = ({
   const source = navigation.getParam('source', '');
 
   return (
-    <SendEthereumTokens
+    <SendAsset
       navigation={navigation}
       assetData={assetData}
       defaultContact={defaultContact}

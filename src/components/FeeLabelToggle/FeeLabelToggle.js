@@ -24,22 +24,35 @@ import { connect } from 'react-redux';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import { useState } from 'react';
+import Emoji from 'react-native-emoji';
+import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // components
-import { Label } from 'components/Typography';
+import { Label, BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
+import { Spacing } from 'components/Layout';
+import RelayerMigrationModal from 'components/RelayerMigrationModal';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // utils
 import { formatTransactionFee, getCurrencySymbol } from 'utils/common';
 import { getRate } from 'utils/assets';
 
+// selectors
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
+import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // types
-import type { Rates } from 'models/Asset';
-import type { GasToken } from 'models/Transaction';
+import type { Rates, Assets } from 'models/Asset';
+import type { GasToken, Transaction } from 'models/Transaction';
 import type { RootReducerState } from 'reducers/rootReducer';
 
 
@@ -51,10 +64,24 @@ type Props = {
   isLoading?: boolean,
   labelText?: string,
   showFiatDefault?: boolean,
+  isGasTokenSupported: boolean,
+  accountAssets: Assets,
+  accountHistory: Transaction[],
+  showRelayerMigration?: boolean,
+  notEnoughToken?: boolean,
 };
 
-const LabelWrapper = styled.TouchableOpacity`
+const LabelWrapper = styled.View`
   flex-direction: row;
+  align-items: center;
+`;
+
+const FeePill = styled.TouchableOpacity`
+  background-color: ${({ notEnoughToken, theme }) =>
+    notEnoughToken ? theme.colors.negative : theme.colors.labelTertiary};
+  padding: 0 8px;
+  border-radius: 12px;
+  justify-content: center;
 `;
 
 const FeeLabelToggle = ({
@@ -65,8 +92,14 @@ const FeeLabelToggle = ({
   isLoading,
   labelText,
   showFiatDefault,
+  showRelayerMigration = true,
+  accountAssets,
+  accountHistory,
+  isGasTokenSupported,
+  notEnoughToken,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
+  const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
 
   if (isLoading) {
     return <Spinner width={20} height={20} />;
@@ -81,10 +114,29 @@ const FeeLabelToggle = ({
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
+  showRelayerMigration = showRelayerMigration &&
+    firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR) &&
+    !isGasTokenSupported;
+
   return (
-    <LabelWrapper onPress={() => setIsFiatValueVisible(!isFiatValueVisible)}>
+    <LabelWrapper >
       <Label>{labelText || t('label.estimatedFee')}&nbsp;</Label>
-      <Label>{labelValue}</Label>
+      <Spacing w={8} />
+      <FeePill onPress={() => setIsFiatValueVisible(!isFiatValueVisible)} notEnoughToken={notEnoughToken}>
+        <BaseText small color="#ffffff">{labelValue}</BaseText>
+      </FeePill>
+      <Spacing w={8} />
+      {showRelayerMigration && (
+        <BaseText small link onPress={() => setShowRelayerMigrationModal(true)}>
+          {t('label.payWithPLR')} <Emoji name="ok_hand" style={{ fontSize: 12 }} />
+        </BaseText>
+      )}
+      <RelayerMigrationModal
+        isVisible={showRelayerMigrationModal}
+        onModalHide={() => setShowRelayerMigrationModal(false)}
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+      />
     </LabelWrapper>
   );
 };
@@ -97,4 +149,15 @@ const mapStateToProps = ({
   rates,
 });
 
-export default connect(mapStateToProps)(FeeLabelToggle);
+const structuredSelector = createStructuredSelector({
+  accountAssets: accountAssetsSelector,
+  accountHistory: accountHistorySelector,
+  isGasTokenSupported: isGasTokenSupportedSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default connect(combinedMapStateToProps)(FeeLabelToggle);
