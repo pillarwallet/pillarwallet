@@ -25,6 +25,9 @@ import CenterView from '../../../storybook/CenterView';
 import { TokenReviewSummaryComponent } from './TokenReviewSummary';
 import CollectibleReviewSummary from './CollectibleReviewSummary';
 
+const PLR_SYMBOL = 'PLR';
+const EUR_CURRENCY = 'EUR';
+
 const plrAsset = {
   isPreferred: false,
   address: '0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75',
@@ -52,8 +55,12 @@ const plrAsset = {
 
 const reduxMock = {
   supportedAssets: [plrAsset],
-  rates: {},
-  baseFiatCurrency: null,
+  rates: {
+    [PLR_SYMBOL]: {
+      [EUR_CURRENCY]: 0.25,
+    },
+  },
+  baseFiatCurrency: EUR_CURRENCY,
 };
 
 const collectible = {
