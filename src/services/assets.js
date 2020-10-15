@@ -390,7 +390,7 @@ export async function getExchangeRates(assetSymbols: string[]): Promise<?Object>
   }
 
   if (!rates) {
-    reportErrorLog('getExchangeRates failed: no rates data', { rates });
+    reportErrorLog('getExchangeRates failed: no rates data', { rates, useLegacyCryptoCompare, assetSymbols });
     return null;
   }
 
