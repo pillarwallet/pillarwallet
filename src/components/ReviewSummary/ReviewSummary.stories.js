@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
+import { withTheme } from 'styled-components/native';
 import CenterView from '../../../storybook/CenterView';
 
 import { TokenReviewSummaryComponent } from './TokenReviewSummary';
@@ -75,10 +76,12 @@ const collectible = {
   description: '',
 };
 
+const TokenReviewSummaryComponentWithTheme = withTheme(TokenReviewSummaryComponent);
+
 storiesOf('ReviewSummary', module)
   .add('token', () => (
     <CenterView>
-      <TokenReviewSummaryComponent assetSymbol="PLR" text="You are sending" amount={102.1} {...reduxMock} />
+      <TokenReviewSummaryComponentWithTheme assetSymbol="PLR" text="You are sending" amount={102.1} {...reduxMock} />
     </CenterView>
   ))
   .add('collectible', () => (
