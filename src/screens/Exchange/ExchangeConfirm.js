@@ -393,7 +393,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
                 </TableRow>
                 <TableRow>
                   <TableLabel>{t('exchangeContent.label.maxSlippage')}</TableLabel>
-                  <BaseText regular primary> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
+                  <BaseText regular> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
                 </TableRow>
               </Table>
               <Spacing h={20} />
