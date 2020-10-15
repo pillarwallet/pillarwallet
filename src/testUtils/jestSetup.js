@@ -376,3 +376,7 @@ export const mockUserBadges = [{
 }];
 
 jest.setMock('configs/localeConfig', localeConfigMock);
+
+jest.setMock('services/coinGecko', {
+  getCoinGeckoTokenPrices: () => Promise.resolve(mockExchangeRates),
+});
