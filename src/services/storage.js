@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import AsyncStorage from '@react-native-community/async-storage';
 import get from 'lodash.get';
 import merge from 'lodash.merge';
 import { printLog, reportErrorLog } from 'utils/common';
@@ -31,6 +32,7 @@ function Storage(name: string) {
   this.name = name;
   this.activeDocs = {};
   this.db = getDb(firebaseAuth?.currentUser?.uid);
+  this.prefix = `wallet-storage:${this.name}:`; // eslint-disable-line i18next/no-literal-string
 }
 
 Storage.prototype.get = async function (id: string) {
@@ -134,9 +136,7 @@ Storage.getInstance = function (name: string) {
 
 Storage.prototype.initialize = async function () {
   const timeout = setTimeout(() => {
-    // failed to fetch data, likely because user is offline
     reportErrorLog('Failed to initialize user Firebase storage', null);
-    // TODO handle
   }, 5000);
   try {
     const dbState = await this.getAll();
@@ -144,13 +144,35 @@ Storage.prototype.initialize = async function () {
       const userUID = firebaseAuth?.currentUser?.uid;
       this.db = getDb(userUID);
       // TODO - rather migrate user straight away
-      await this.set({ });
+      await this.migrateUserStorage();
     }
     clearTimeout(timeout);
   } catch (e) {
     clearTimeout(timeout);
     reportErrorLog('Failed to initialize user Firebase storage', e);
   }
+};
+
+// TODO CHECK
+Storage.prototype.migrateUserStorage = async function () {
+  AsyncStorage
+    .getAllKeys()
+    .then(keys => keys.filter(key => key.startsWith(this.prefix)))
+    .then(filteredKeys => AsyncStorage.multiGet(filteredKeys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
+    .then(values => {
+      const localStorage = values.reduce((memo, [_key, _value]) => {
+        const key = _key.replace(this.prefix, '');
+        return {
+          ...memo,
+          [key]: JSON.parse(_value),
+        };
+      }, {}); // { user: 'userValue', ... }
+      debugger
+      // if (!localStorage) { await this.set({ }) } else {
+      // await this.set({ ...localStorage })
+      // delete from asyncstorage
+    })
+    .catch(() => []);
 };
 
 export default Storage;
