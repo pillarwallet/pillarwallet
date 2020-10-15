@@ -356,7 +356,7 @@ const SendAsset = ({
     });
   }
 
-  const showNextButton = !gettingFee && hasAllData && !feeError;
+  const showNextButton = hasAllData && !feeError;
 
   const isNextButtonDisabled = !session.isOnline;
 
@@ -409,6 +409,7 @@ const SendAsset = ({
           disabled: isNextButtonDisabled,
         },
         footerTopAddon: !!selectedContact && renderFeeToggle(txFeeInfo, showFee, feeError, gettingFee),
+        isLoading: gettingFee,
       }}
     >
       <ContactDetailsModal

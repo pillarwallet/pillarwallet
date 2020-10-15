@@ -19,24 +19,28 @@
 */
 import React from 'react';
 import { connect } from 'react-redux';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { getEnv } from 'configs/envConfig';
 import { CachedImage } from 'react-native-cached-image';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import { formatAmount } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
+import { images } from 'utils/images';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import type { Rates, Asset } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
   amount: number,
-  asset: Asset,
+  assetSymbol: string,
   text: string,
   rates: Rates,
   baseFiatCurrency: ?string,
+  supportedAssets: Asset[],
+  theme: Theme,
 };
 
 const Container = styled.View`
@@ -48,16 +52,20 @@ const TokenImage = styled(CachedImage)`
   height: 64px;
 `;
 
-const TokenReivewSummary = ({
-  asset, amount, rates, baseFiatCurrency, text,
-}) => {
+export const TokenReviewSummaryComponent = ({
+  assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets, theme,
+}: Props) => {
+  const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
+  if (!asset) return null;
   const assetIcon = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
   const formattedAmount = formatAmount(amount);
   const fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
 
+  const { genericToken } = images(theme);
+
   return (
     <Container>
-      <TokenImage source={{ uri: assetIcon }} />
+      <TokenImage source={{ uri: assetIcon }} fallbackSource={genericToken} />
       <Spacing h={16} />
       <BaseText regular>{text}</BaseText>
       <Spacing h={16} />
@@ -71,9 +79,11 @@ const TokenReivewSummary = ({
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
+  assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
+  supportedAssets,
 });
 
-export default connect(mapStateToProps)(TokenReivewSummary);
+export default withTheme(connect(mapStateToProps)(TokenReviewSummaryComponent));

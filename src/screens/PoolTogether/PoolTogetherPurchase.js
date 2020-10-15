@@ -217,6 +217,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             feeSymbol,
             feeDisplayValue,
             isDisabled,
+            txFeeInWei,
+            gasToken,
           };
           this.setState({ purchasePayload });
         }

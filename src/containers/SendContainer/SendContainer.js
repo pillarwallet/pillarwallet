@@ -46,6 +46,7 @@ type FooterProps = {
   isNextButtonVisible?: boolean,
   buttonProps?: ButtonWithoutTitle,
   footerTopAddon?: React.Node,
+  isLoading?: boolean,
 };
 
 type Props = {
@@ -73,8 +74,17 @@ const Wrapper = styled.View`
 `;
 
 const SendFooter = (props: FooterProps) => {
-  const { isNextButtonVisible, buttonProps = {}, footerTopAddon } = props;
+  const {
+    isNextButtonVisible, buttonProps = {}, footerTopAddon, isLoading,
+  } = props;
   if (!footerTopAddon && !isNextButtonVisible) return null;
+  if (isLoading) {
+    return (
+      <FooterInner>
+        <Spinner style={{ alignSelf: 'center' }} />
+      </FooterInner>
+    );
+  }
   return (
     <FooterInner>
       {footerTopAddon}
