@@ -31,9 +31,13 @@ const KEY_PREFIX = 'wallet-storage:db:';
 
 const getDb = (uid: string) => firebaseDb.ref(`/users/${uid}`); // eslint-disable-line i18next/no-literal-string
 
-export const shouldMigrateToFirebaseStorage = (storageData: Object): boolean => {
+export const shouldMigrateToFirebaseStorage = (storageData: ?Object): boolean => {
+  if (!storageData) return true;
+  const keys = Object.keys(storageData);
+  // TODO - find a smarter way to check this
   // one key - 'environment' - is set before this check
-  return !storageData || Object.keys(storageData).length < 2;
+  // app_settings is set as only key on signout for migrated users. don't migrate
+  return keys.length < 2 && !keys.includes('app_settings');
 };
 
 function Storage(name: string) {
