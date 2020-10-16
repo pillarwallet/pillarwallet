@@ -193,12 +193,12 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
               }
             >
               <View
-                noHorizonatalPadding={true}
+                noHorizontalPadding={true}
                 style={
                   Array [
                     Object {
-                      "height": 52,
-                      "paddingVertical": 14,
+                      "height": 58,
+                      "paddingVertical": 10,
                       "width": "100%",
                     },
                     undefined,
@@ -228,7 +228,7 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                           "flexDirection": "row",
                           "flexGrow": 4,
                           "flexShrink": 1,
-                          "height": 24,
+                          "height": 36,
                           "justifyContent": "flex-start",
                         },
                         Object {},
@@ -245,6 +245,8 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     >
                       <Text
                         centerText={false}
+                        ellipsizeMode="tail"
+                        numberOfLines={2}
                         style={
                           Array [
                             Object {
@@ -279,13 +281,14 @@ exports[`Slide Modal should render SlideModal correctly 1`] = `
                     style={
                       Array [
                         Object {
+                          "alignContent": "center",
                           "alignItems": "center",
                           "flexBasis": 0,
                           "flexDirection": "row",
                           "flexGrow": 1,
                           "flexShrink": 1,
                           "flexWrap": "wrap",
-                          "height": 24,
+                          "height": 36,
                           "justifyContent": "flex-end",
                         },
                         undefined,
