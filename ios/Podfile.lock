@@ -432,41 +432,41 @@ PODS:
     - React
     - SDWebImage (~> 5.0)
     - SDWebImageWebPCoder (~> 0.4.1)
-  - RNFBAnalytics (7.6.4):
+  - RNFBAnalytics (7.6.7):
     - Firebase/Analytics (~> 6.30.0)
     - React-Core
     - RNFBApp
-  - RNFBApp (8.4.3):
+  - RNFBApp (8.4.5):
     - Firebase/CoreOnly (~> 6.30.0)
     - React-Core
-  - RNFBAuth (9.2.3):
+  - RNFBAuth (9.3.0):
     - Firebase/Auth (~> 6.30.0)
     - React-Core
     - RNFBApp
-  - RNFBCrashlytics (8.4.5):
+  - RNFBCrashlytics (8.4.9):
     - Firebase/Crashlytics (~> 6.30.0)
     - React-Core
     - RNFBApp
-  - RNFBDatabase (7.5.7):
+  - RNFBDatabase (7.5.11):
     - Firebase/Database (~> 6.30.0)
     - React-Core
     - RNFBApp
-  - RNFBIid (7.4.4):
+  - RNFBIid (7.4.8):
     - Firebase/CoreOnly (~> 6.30.0)
     - FirebaseInstanceID
     - React-Core
     - RNFBApp
-  - RNFBMessaging (7.8.6):
+  - RNFBMessaging (7.9.0):
     - Firebase/Messaging (~> 6.30.0)
-    - React
+    - React-Core
     - RNFBApp
-  - RNFBPerf (7.4.3):
+  - RNFBPerf (7.4.8):
     - Firebase/Performance (~> 6.30.0)
-    - React
+    - React-Core
     - RNFBApp
-  - RNFBRemoteConfig (9.0.5):
+  - RNFBRemoteConfig (9.0.10):
     - Firebase/RemoteConfig (~> 6.30.0)
-    - React
+    - React-Core
     - RNFBApp
   - RNGestureHandler (1.6.1):
     - React
@@ -860,15 +860,15 @@ SPEC CHECKSUMS:
   RNColorMatrixImageFilters: c120b5bff0d3c39f0eb3ba1751a4d70ed7f4b56a
   RNDeviceInfo: b6e650fbd234732c759544218657d549b4339038
   RNFastImage: 35ae972d6727c84ee3f5c6897e07f84d0a3445e9
-  RNFBAnalytics: 66f1008f38c9ed5f3953a7224b82246ef2a88403
-  RNFBApp: a74d8259d827c8bf55100e759cffa2e50ba6fe30
-  RNFBAuth: ccae9605207f4a3bc6e03cd0adb5433872ef4418
-  RNFBCrashlytics: 4039c6b27a35dd6cbbb0c111d4f668ce513a2881
-  RNFBDatabase: c82e5e9d842f4f40c5bfaa2bb67c5af5f52a45b1
-  RNFBIid: 6d2f7bb1d8068d47c1c692210ee7b27a2d71d7f2
-  RNFBMessaging: c69238917a8672f5aed2c8a6ee124efa8f962677
-  RNFBPerf: cf6720eb30e6d363627c46b87a03eb9ba59fee14
-  RNFBRemoteConfig: 044387dc66fcada0f32a0a1529dca57e62b3be9e
+  RNFBAnalytics: 6fe130045b06fb4173d6f44058894007bb30b9a2
+  RNFBApp: 570b136767f588b7eef0ab918284e9fe364d0c3e
+  RNFBAuth: 7fb279b3d3dfbe1499b92c842722d9343fb522c1
+  RNFBCrashlytics: 7b60463c742f830255fa76f13a837f95c6581700
+  RNFBDatabase: f4d2ff8a7dc534ef88ac0e1e896214918642ca97
+  RNFBIid: 6681b7f56a743d4b2c82185678b8d304b106940d
+  RNFBMessaging: dc3849747c2c61bfcd3c1ce6b5390f27ff4f7756
+  RNFBPerf: 858a05819c7224723b5ecaa6cd524b69cf9ca992
+  RNFBRemoteConfig: a58c19343f9d8d348b43c4e195224e3ae8295273
   RNGestureHandler: 8f09cd560f8d533eb36da5a6c5a843af9f056b38
   RNImageCropPicker: 9d1a7eea4f8368fc479cbd2bf26459bd3c74d9aa
   RNInAppBrowser: c1a0dad2734458d79bcb6c8f4297ba8658a1da9f
