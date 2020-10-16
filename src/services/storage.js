@@ -31,6 +31,11 @@ const KEY_PREFIX = 'wallet-storage:db:';
 
 const getDb = (uid: string) => firebaseDb.ref(`/users/${uid}`); // eslint-disable-line i18next/no-literal-string
 
+export const shouldMigrateToFirebaseStorage = (storageData: Object): boolean => {
+  // one key - 'environment' - is set before this check
+  return !storageData || Object.keys(storageData).length < 2;
+};
+
 function Storage(name: string) {
   this.name = name;
   this.activeDocs = {};
@@ -156,32 +161,29 @@ Storage.prototype.initialize = async function () {
   }
 };
 
-// TODO CHECK
 Storage.prototype.migrateUserStorage = async function () {
   try {
-    let localStorage = {};
-    await AsyncStorage.getAllKeys((err, keys) => {
+    await AsyncStorage.getAllKeys((err, keys = []) => {
+      // filter out non-user-storage related keys
       const filteredKeys = keys.filter(key => key.startsWith(KEY_PREFIX));
-      AsyncStorage.multiGet(filteredKeys, (errors, values) => {
-        localStorage = values.reduce((memo, [_key, _value]) => {
+      // get user data from AsyncStorage
+      AsyncStorage.multiGet(filteredKeys, async (errors, values = []) => {
+        // parse into object
+        const localStorage = values.reduce((memo, [_key, _value]) => {
           const key = _key.replace(KEY_PREFIX, '');
           return {
             ...memo,
             [key]: JSON.parse(_value),
           };
-        }, {}); // { user: 'userValue', ... }
+        }, {});
+        // upload user data object to DB
+        await this.set(localStorage ? { ...localStorage } : {});
+        // remove redundant user data from local storage
+        await AsyncStorage.multiRemove(filteredKeys);
       });
-      // clear redundant data from local storage
-      // AsyncStorage.multiRemove(filteredKeys);
     });
-    // upload migrated data to the DB
-    this.set({ ...localStorage });
-    debugger
-    return localStorage;
   } catch (e) {
-    debugger
     reportErrorLog('Failed to migrate user to Firebase storage', e);
-    return {};
   }
 };
 

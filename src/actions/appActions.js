@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import SplashScreen from 'react-native-splash-screen';
 
 // services
-import Storage from 'services/storage';
+import Storage, { shouldMigrateToFirebaseStorage } from 'services/storage';
 import { navigate } from 'services/navigation';
 import { firebaseAuth, firebaseDb } from 'services/firebase';
 
@@ -85,9 +85,9 @@ export const initAppAndRedirectAction = () => {
 
     let storageData = await storage.getAll();
 
-    if (!storageData || Object.keys(storageData).length < 2) { // env info is saved before code reaches this place
-      const localStorage = await storage.migrateUserStorage();
-      storageData = localStorage;
+    if (shouldMigrateToFirebaseStorage(storageData)) {
+      await storage.migrateUserStorage();
+      storageData = await storage.getAll();
     }
 
     await storage.migrateFromPouchDB(storageData);
@@ -96,7 +96,6 @@ export const initAppAndRedirectAction = () => {
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
-    debugger
     if (walletTimestamp) {
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
