@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { storiesOf } from '@storybook/react-native';
 import { getColorByTheme } from 'utils/themes';
 
-import withTheme from '../../../storybook/withTheme';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import HeaderBlock from './HeaderBlock';
 
 
@@ -47,7 +47,7 @@ const BackgroundDecorator = (story) => {
 
 storiesOf('HeaderBlock', module)
   .addDecorator(BackgroundDecorator)
-  .addDecorator(withTheme)
+  .addDecorator(WithThemeDecorator)
   .add('with items on all sides', () => (
     <HeaderBlock
       navigation={navigationMock}

@@ -20,9 +20,10 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import CenterView from '../../../storybook/CenterView';
 
 import Selector from './Selector';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 const aliceImage = 'https://picsum.photos/201';
 const bobImage = 'https://picsum.photos/202';
@@ -46,66 +47,58 @@ const options = [
 ];
 
 storiesOf('Selector', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <CenterView>
-      <Selector
-        options={options}
-        onOptionSelect={() => {}}
-      />
-    </CenterView>
+    <Selector
+      options={options}
+      onOptionSelect={() => {}}
+    />
   ))
   .add('with custom wording', () => (
-    <CenterView>
-      <Selector
-        label="To"
-        placeholder="Choose contact"
-        searchPlaceholder="Username or wallet address"
-        options={options}
-        onOptionSelect={() => {}}
-      />
-    </CenterView>
+    <Selector
+      label="To"
+      placeholder="Choose contact"
+      searchPlaceholder="Username or wallet address"
+      options={options}
+      onOptionSelect={() => {}}
+    />
   ))
   .add('selected option', () => (
-    <CenterView>
-      <Selector
-        label="To"
-        placeholder="Choose contact"
-        options={options}
-        onOptionSelect={() => {}}
-        selectedOption={options[0]}
-      />
-    </CenterView>
+    <Selector
+      label="To"
+      placeholder="Choose contact"
+      options={options}
+      onOptionSelect={() => {}}
+      selectedOption={options[0]}
+    />
   ))
   .add('with horizontal options', () => (
-    <CenterView>
-      <Selector
-        horizontalOptionsData={[
-          {
-            title: '',
-            data: [
-              {
-                value: 'Source Item',
-                name: 'Source Item',
-                imageSource: smartWalletIcon,
-              },
-              {
-                value: 'Url item',
-                name: 'Url item',
-                imageUrl: horizontalOpt,
-              },
-            ],
-          },
-        ]}
-        options={options}
-        onOptionSelect={() => {}}
-      />
-    </CenterView>
+    <Selector
+      horizontalOptionsData={[
+        {
+          title: '',
+          data: [
+            {
+              value: 'Source Item',
+              name: 'Source Item',
+              imageSource: smartWalletIcon,
+            },
+            {
+              value: 'Url item',
+              name: 'Url item',
+              imageUrl: horizontalOpt,
+            },
+          ],
+        },
+      ]}
+      options={options}
+      onOptionSelect={() => {}}
+    />
   ))
   .add('no options', () => (
-    <CenterView>
-      <Selector
-        options={[]}
-        onOptionSelect={() => {}}
-      />
-    </CenterView>
+    <Selector
+      options={[]}
+      onOptionSelect={() => {}}
+    />
   ));

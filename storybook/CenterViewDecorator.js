@@ -17,13 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import React from 'react';
 import styled from 'styled-components/native';
 
-const CenterView = styled.View`
+const CenterViewDecorator = styled.View`
   flex: 1;
+  width: 100%;
   justify-content: center;
-  align-items: center;
-  margin: 20px;
+  align-items: stretch;
+  padding: 20px;
 `;
 
-export default CenterView;
+export default (story: Function) => (
+  <CenterViewDecorator>
+    {story()}
+  </CenterViewDecorator>
+);
+

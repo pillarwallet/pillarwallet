@@ -20,15 +20,11 @@
 
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import styled from 'styled-components/native';
-
-import CenterView from '../../../storybook/CenterView';
 
 import ToastCard from './ToastCard';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
-const Wrapper = styled(CenterView)`
-  align-items: stretch;
-`;
 
 const normalText = 'Magna culpa aliquip nisi in eu';
 
@@ -36,32 +32,25 @@ const longText = 'Magna culpa aliquip nisi in eu Lorem reprehenderit laborum ' +
   'duis. In exercitation exercitation ex irure. Lorem non nostrud laboris ' +
   'consectetur culpa aliquip sunt pariatur velit cillum magna dolor.';
 
-const toastStories = storiesOf('ToastCard', module);
-
-toastStories.add('default', () => (
-  <Wrapper>
+storiesOf('ToastCard', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
     <ToastCard
       message={normalText}
       emoji="hash"
     />
-  </Wrapper>
-));
-
-toastStories.add('long text', () => (
-  <Wrapper>
+  ))
+  .add('long text', () => (
     <ToastCard
       message={longText}
       emoji="hash"
     />
-  </Wrapper>
-));
-
-toastStories.add('link', () => (
-  <Wrapper>
+  ))
+  .add('link', () => (
     <ToastCard
       message={normalText}
       emoji="hash"
       link="toast link"
     />
-  </Wrapper>
-));
+  ));

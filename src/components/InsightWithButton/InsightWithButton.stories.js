@@ -19,8 +19,9 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import CenterView from '../../../storybook/CenterView';
 import InsightWithButton from './InsightWithButton';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 const itemsList = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
@@ -28,23 +29,21 @@ const itemsList = [
 ];
 
 storiesOf('InsightWithButton', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
   .add('with list', () => (
-    <CenterView>
-      <InsightWithButton
-        title="Some short title"
-        itemsList={itemsList}
-        buttonTitle="Wow, press me!"
-        onButtonPress={() => {}}
-      />
-    </CenterView>
+    <InsightWithButton
+      title="Some short title"
+      itemsList={itemsList}
+      buttonTitle="Wow, press me!"
+      onButtonPress={() => {}}
+    />
   ))
   .add('without list', () => (
-    <CenterView>
-      <InsightWithButton
-        buttonTitle="Wow, press me!"
-        description={itemsList[0]}
-        buttonProps={{ positive: true }}
-        onButtonPress={() => {}}
-      />
-    </CenterView>
+    <InsightWithButton
+      buttonTitle="Wow, press me!"
+      description={itemsList[0]}
+      buttonProps={{ positive: true }}
+      onButtonPress={() => {}}
+    />
   ));

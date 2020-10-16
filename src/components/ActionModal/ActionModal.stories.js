@@ -21,6 +21,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
 import ActionModal from './ActionModal';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const items = [
   {
@@ -38,23 +39,29 @@ const items = [
 
 const Wrapper = styled.View`
   flex: 1;
-  background-color: #000000;
   justify-content: flex-end;
   padding: 0 16px;
+  background-color: #dedede;
 `;
 
 const ModalWrapper = styled.View`
   width: 100%;
-  background-color: #FFFFFF;
+  background-color: ${({ theme }) => theme.colors.basic070};
   border-top-left-radius: 30px;
   border-top-right-radius: 30px;
-  flex: 1;
 `;
 
-storiesOf('ActionModal', module).add('default', () => (
-  <Wrapper>
-    <ModalWrapper>
-      <ActionModal items={items} isVisible onModalClose={() => {}} storybook />
-    </ModalWrapper>
-  </Wrapper>
-));
+const ModalWrapperDecorator = (story: () => void) => {
+  return (
+    <Wrapper>
+      <ModalWrapper>{story()}</ModalWrapper>
+    </Wrapper>
+  );
+};
+
+storiesOf('ActionModal', module)
+  .addDecorator(ModalWrapperDecorator)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
+    <ActionModal items={items} isVisible onModalClose={() => {}} storybook />
+  ));

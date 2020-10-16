@@ -23,6 +23,7 @@ import { storiesOf } from '@storybook/react-native';
 import { PLR, GBP } from 'constants/assetsConstants';
 
 import { ValueSelectorCard as ValueSelectorCardElement } from 'components/ValueSelectorCard';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const reduxMock = {
   assets: [
@@ -104,6 +105,7 @@ const reduxMock = {
 };
 
 storiesOf('Value Selector Card', module)
+  .addDecorator(WithThemeDecorator)
   .add('Selector without preselected asset', () => (
     <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} />
   ))

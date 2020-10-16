@@ -20,7 +20,10 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import SWActivationCard from './SWActivationCard';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-storiesOf('SWActivationCard', module).add('default', () => (
-  <SWActivationCard navigation={{}} />
-));
+storiesOf('SWActivationCard', module)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
+    <SWActivationCard navigation={{}} />
+  ));

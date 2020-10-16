@@ -25,7 +25,6 @@ import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 
 import { loadStories } from './storyLoader';
-import withTheme from './withTheme';
 import './rn-addons';
 
 
@@ -34,7 +33,6 @@ i18n
   .init();
 
 configure(loadStories, module);
-addDecorator(withTheme);
 addDecorator(withI18next({
   i18n,
 }));
