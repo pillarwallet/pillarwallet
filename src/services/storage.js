@@ -26,13 +26,15 @@ import { firebaseAuth, firebaseDb } from './firebase';
 
 const STORAGE_SETTINGS_KEY = 'storageSettings';
 
+// prefix of keys stored in AsyncStorage before migration
+const KEY_PREFIX = 'wallet-storage:db:';
+
 const getDb = (uid: string) => firebaseDb.ref(`/users/${uid}`); // eslint-disable-line i18next/no-literal-string
 
 function Storage(name: string) {
   this.name = name;
   this.activeDocs = {};
   this.db = getDb(firebaseAuth?.currentUser?.uid);
-  this.prefix = `wallet-storage:${this.name}:`; // eslint-disable-line i18next/no-literal-string
 }
 
 Storage.prototype.get = async function (id: string) {
@@ -134,6 +136,7 @@ Storage.getInstance = function (name: string) {
   return this._instances[name];
 };
 
+// called when user signs out - to initialize a new DB for them
 Storage.prototype.initialize = async function () {
   const timeout = setTimeout(() => {
     reportErrorLog('Failed to initialize user Firebase storage', null);
@@ -144,7 +147,7 @@ Storage.prototype.initialize = async function () {
       const userUID = firebaseAuth?.currentUser?.uid;
       this.db = getDb(userUID);
       // TODO - rather migrate user straight away
-      await this.migrateUserStorage();
+      await this.set({ });
     }
     clearTimeout(timeout);
   } catch (e) {
@@ -155,24 +158,31 @@ Storage.prototype.initialize = async function () {
 
 // TODO CHECK
 Storage.prototype.migrateUserStorage = async function () {
-  AsyncStorage
-    .getAllKeys()
-    .then(keys => keys.filter(key => key.startsWith(this.prefix)))
-    .then(filteredKeys => AsyncStorage.multiGet(filteredKeys)) // [ ['user', 'userValue'], ['key', 'keyValue'] ]
-    .then(values => {
-      const localStorage = values.reduce((memo, [_key, _value]) => {
-        const key = _key.replace(this.prefix, '');
-        return {
-          ...memo,
-          [key]: JSON.parse(_value),
-        };
-      }, {}); // { user: 'userValue', ... }
-      debugger
-      // if (!localStorage) { await this.set({ }) } else {
-      // await this.set({ ...localStorage })
-      // delete from asyncstorage
-    })
-    .catch(() => []);
+  try {
+    let localStorage = {};
+    await AsyncStorage.getAllKeys((err, keys) => {
+      const filteredKeys = keys.filter(key => key.startsWith(KEY_PREFIX));
+      AsyncStorage.multiGet(filteredKeys, (errors, values) => {
+        localStorage = values.reduce((memo, [_key, _value]) => {
+          const key = _key.replace(KEY_PREFIX, '');
+          return {
+            ...memo,
+            [key]: JSON.parse(_value),
+          };
+        }, {}); // { user: 'userValue', ... }
+      });
+      // clear redundant data from local storage
+      // AsyncStorage.multiRemove(filteredKeys);
+    });
+    // upload migrated data to the DB
+    this.set({ ...localStorage });
+    debugger
+    return localStorage;
+  } catch (e) {
+    debugger
+    reportErrorLog('Failed to migrate user to Firebase storage', e);
+    return {};
+  }
 };
 
 export default Storage;

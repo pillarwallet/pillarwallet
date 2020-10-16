@@ -83,14 +83,20 @@ export const initAppAndRedirectAction = () => {
     await firebaseDb.setPersistenceEnabled(true);
     const storage = await Storage.getInstance('db');
 
-    const storageData = await storage.getAll();
+    let storageData = await storage.getAll();
+
+    if (!storageData || Object.keys(storageData).length < 2) { // env info is saved before code reaches this place
+      const localStorage = await storage.migrateUserStorage();
+      storageData = localStorage;
+    }
+
     await storage.migrateFromPouchDB(storageData);
 
     const { appSettings = {} } = get(storageData, 'app_settings', {});
 
     // $FlowFixMe
     const { wallet, walletTimestamp } = await getWalletFromStorage(storageData, dispatch, api);
-
+    debugger
     if (walletTimestamp) {
       const { accounts = [] } = get(storageData, 'accounts', {});
       dispatch({ type: UPDATE_ACCOUNTS, payload: accounts });
