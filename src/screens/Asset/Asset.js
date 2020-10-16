@@ -238,7 +238,7 @@ class AssetScreen extends React.Component<Props, State> {
     this.props.navigation.navigate(SEND_TOKEN_FROM_ASSET_FLOW, { assetData });
   };
 
-  goToExchangeFlow = (fromAssetCode: string, toAssetCode?: string) => {
+  goToExchangeFlow = (fromAssetCode: ?string, toAssetCode?: string) => {
     this.props.navigation.navigate(EXCHANGE, { fromAssetCode, toAssetCode });
   };
 
@@ -252,30 +252,18 @@ class AssetScreen extends React.Component<Props, State> {
   };
 
   handleBuyTokens = () => {
-    // wait for the modal to be completely hidden and then navigate to exchange
-    // navigating while the modal is hiding leads to keyboard flickering etc.
-    this.isNavigatingToServices = true;
-    this.setState({ activeModal: activeModalResetState });
-  };
-
-  handleModalHidden = () => {
-    if (this.isNavigatingToServices) {
-      this.isNavigatingToServices = false;
-      this.props.navigation.navigate(SERVICES);
-    }
+    this.props.navigation.navigate(SERVICES);
   };
 
   getModalActionOptions = () => {
     const {
       navigation,
-      baseFiatCurrency,
       rewardActive,
       goToInvitationFlow,
       balances,
       exchangeSupportedAssets,
     } = this.props;
     const { assetData } = navigation.state.params;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const { token } = assetData;
     const balance = getBalance(balances, token);
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
@@ -284,7 +272,7 @@ class AssetScreen extends React.Component<Props, State> {
         key: 'buy',
         label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
         iconName: 'wallet',
-        onPress: () => this.goToExchangeFlow(fiatCurrency, token),
+        onPress: this.handleBuyTokens,
       },
       {
         key: 'receive',
@@ -296,7 +284,7 @@ class AssetScreen extends React.Component<Props, State> {
         key: 'exchange',
         label: t('button.exchange'),
         iconName: 'flip',
-        onPress: () => this.goToExchangeFlow(token),
+        onPress: () => this.goToExchangeFlow(null, token),
         hide: !isSupportedByExchange,
       },
       {
@@ -476,7 +464,6 @@ class AssetScreen extends React.Component<Props, State> {
           address={assetData.address}
           token={assetData.token}
           tokenName={assetData.name}
-          onModalHidden={this.handleModalHidden}
           showErc20Note={assetData.token !== ETH}
         />
         <SlideModal
