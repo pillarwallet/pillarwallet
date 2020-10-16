@@ -33,7 +33,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import { Banner } from 'components/Banner';
-import IconButton from 'components/IconButton';
 import CollapsibleSection from 'components/CollapsibleSection';
 import ButtonText from 'components/ButtonText';
 import Requests from 'screens/WalletConnect/Requests';
@@ -431,20 +430,9 @@ class HomeScreen extends React.Component<Props> {
           headerProps={{
             leftItems: [
               {
-                custom: (
-                  <IconButton
-                    icon="hamburger"
-                    onPress={() => navigation.navigate(MENU)}
-                    fontSize={fontSizes.large}
-                    secondary
-                    style={{
-                      width: 40,
-                      height: 40,
-                      marginLeft: -10,
-                      marginTop: -6,
-                    }}
-                  />
-                ),
+                icon: 'hamburger',
+                onPress: () => navigation.navigate(MENU),
+                iconProps: { secondary: true, style: { marginLeft: -4 } },
               },
             ],
             centerItems: [{ custom: <UserNameAndImage user={user} /> }],
