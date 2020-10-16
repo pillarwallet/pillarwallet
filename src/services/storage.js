@@ -50,7 +50,6 @@ Storage.prototype.get = async function (id: string) {
   const data = await this.db.once('value')
     .then(snapshot => {
       const dbState = snapshot.val();
-      // TODO is this safe?
       return dbState ? dbState[id] : {};
     })
     .catch(e => {
@@ -155,7 +154,6 @@ Storage.prototype.initialize = async function () {
     if (!dbState) {
       const userUID = firebaseAuth?.currentUser?.uid;
       this.db = getDb(userUID);
-      // TODO - rather migrate user straight away
       await this.set({ });
     }
     clearTimeout(timeout);

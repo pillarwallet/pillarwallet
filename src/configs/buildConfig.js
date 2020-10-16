@@ -28,8 +28,8 @@ export const buildEnvironment = {
   BUILD_NUMBER: '_build_number_',
   BUILD_TYPE: buildType,
   OPEN_SEA_API_KEY: '_open_sea_api_key_',
-  INFURA_PROJECT_ID: '70a41b121c6a4cce92d8a46ddc14b55a',
-  ETHPLORER_API_KEY: 'freekey',
+  INFURA_PROJECT_ID: '_infura_project_id_',
+  ETHPLORER_API_KEY: '_ethplorer_api_key_',
   RAMPNETWORK_API_KEY: '_rampnetwork_api_key_',
 };
 
