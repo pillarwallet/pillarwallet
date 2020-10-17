@@ -48,7 +48,7 @@ import { getCoinGeckoTokenPrices } from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Asset } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 
 
 type Address = string;
@@ -371,7 +371,9 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
     });
 }
 
-export async function getExchangeRates(assetSymbols: string[]): Promise<?Object> {
+export async function getExchangeRates(assets: Assets): Promise<?Object> {
+  const assetSymbols = Object.keys(assets);
+
   if (isEmpty(assetSymbols)) {
     reportLog('getExchangeRates received empty assetSymbols array', { assetSymbols });
     return null;
@@ -382,7 +384,7 @@ export async function getExchangeRates(assetSymbols: string[]): Promise<?Object>
 
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
-    : await getCoinGeckoTokenPrices(assetSymbols);
+    : await getCoinGeckoTokenPrices(assets);
 
   // by any mean if CoinGecko failed let's try legacy way
   if (!useLegacyCryptoCompare && isEmpty(rates)) {
