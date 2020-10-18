@@ -390,9 +390,9 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
     if (isEmpty(rates)) {
       // by any mean if CoinGecko failed let's try legacy way
       rates = await getLegacyExchangeRates(assetSymbols);
-    } else {
+    } else if (assetSymbols.includes(ETH)) {
       /**
-       * if CoinGecko didn't fail, fill rest of CoinGecko rates with ether
+       * if CoinGecko didn't fail, fill rest of CoinGecko rates with ether (if requested)
        * because ether price doesn't fit into CoinGecko token price endpoint
        */
       const etherPrice = await getCoinGeckoEtherPrice();
