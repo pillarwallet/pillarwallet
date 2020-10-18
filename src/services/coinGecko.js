@@ -18,15 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import axios, { AxiosResponse } from 'axios';
+
+// utils
+import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+
+// constants
 import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
 
+// types
+import type { Asset, Assets } from 'models/Asset';
 
-type CoinGeckoAsset = {
-  id: string,
-  symbol: string,
-  name: string,
-};
 
 type CoinGeckoAssetsPrices = {
   [coinGeckoAssetId: string]: {
@@ -43,31 +45,6 @@ const requestConfig = {
     Accept: 'application/json',
     'Content-Type': 'application/json',
   },
-};
-
-let cachedCoinGeckoAssets = null;
-
-// note: there is no pagination for /coins/list endpoint
-export const getCoinGeckoAssets = async (assetSymbols: string[]): Promise<?CoinGeckoAsset[]> => {
-  if (!cachedCoinGeckoAssets) {
-    // cache for current running instance as it's huge list that changes rarely
-    cachedCoinGeckoAssets = await axios
-      .get(`${COINGECKO_API_URL}/coins/list`, requestConfig)
-      .then(({ data: responseData }: AxiosResponse) => responseData)
-      .catch((error) => {
-        reportErrorLog('getCoinGeckoAssets failed: API request error', { error, assetSymbols });
-        return null;
-      });
-  }
-
-  if (!cachedCoinGeckoAssets || !Array.isArray(cachedCoinGeckoAssets)) {
-    reportErrorLog('getCoinGeckoAssets failed: unexpected data', { data: cachedCoinGeckoAssets, assetSymbols });
-    return null;
-  }
-
-  return cachedCoinGeckoAssets.filter((coinGeckoAsset: CoinGeckoAsset) => assetSymbols.find(
-    (assetSymbol) => isCaseInsensitiveMatch(assetSymbol, coinGeckoAsset.symbol)),
-  );
 };
 
 const mapWalletAndCoinGeckoCurrencies = (
@@ -87,53 +64,80 @@ const mapWalletAndCoinGeckoCurrencies = (
 
 const mapWalletAndCoinGeckoAssetsPrices = (
   responseData: CoinGeckoAssetsPrices,
-  assetSymbols: string[],
+  assetsList: Asset[],
   walletCurrencies: string[],
-  coinGeckoAssets: CoinGeckoAsset[],
-) => Object.keys(responseData).reduce((mappedResponseData, coinGeckoAssetId) => {
-  const coinGeckoAsset = coinGeckoAssets.find(({ id }) => id === coinGeckoAssetId);
-
-  // map asset symbol
-  if (coinGeckoAsset) {
-    const assetSymbol = assetSymbols.find((symbol) => isCaseInsensitiveMatch(coinGeckoAsset.symbol, symbol));
-    if (assetSymbol) {
-      // map currencies
-      mappedResponseData[assetSymbol] = mapWalletAndCoinGeckoCurrencies(
-        responseData[coinGeckoAssetId],
-        walletCurrencies,
-      );
-    }
+) => Object.keys(responseData).reduce((mappedResponseData, contractAddress) => {
+  const walletAsset = assetsList.find(({ address }) => isCaseInsensitiveMatch(address, contractAddress));
+  if (walletAsset) {
+    const { symbol } = walletAsset;
+    // map currencies
+    mappedResponseData[symbol] = mapWalletAndCoinGeckoCurrencies(
+      responseData[contractAddress],
+      walletCurrencies,
+    );
   }
-
   return mappedResponseData;
 }, {});
 
-export const getCoinGeckoTokenPrices = async (assetSymbols: string[]): Promise<?Object> => {
-  const coinGeckoAssets = await getCoinGeckoAssets(assetSymbols);
-  if (!coinGeckoAssets) {
-    // report not needed
-    return null;
-  }
+export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> => {
+  const assetsList = getAssetsAsList(assets);
+
+  // ether does not fit into token price endpoint
+  const assetsListWithoutEther = assetsList.filter(({ symbol }) => symbol !== ETH);
+
+  const assetsContractAddresses = assetsListWithoutEther.map(({ address }) => address);
 
   const walletCurrencies = supportedFiatCurrencies.concat(ETH);
 
-  const coinGeckoAssetIdsQuery = coinGeckoAssets.map(({ id }) => id).join(',');
+  const contractAddressesQuery = assetsContractAddresses.join(',');
   const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
 
   return axios.get(
-    `${COINGECKO_API_URL}/simple/price?ids=${coinGeckoAssetIdsQuery}&vs_currencies=${vsCurrenciesQuery}`,
+    `${COINGECKO_API_URL}/simple/token_price/ethereum`
+    + `?contract_addresses=${contractAddressesQuery}`
+    + `&vs_currencies=${vsCurrenciesQuery}`,
     requestConfig,
   )
     .then(({ data: responseData }: AxiosResponse) => {
       if (!responseData) {
-        reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', { response: responseData, assetSymbols });
+        reportErrorLog('getCoinGeckoTokenPrices failed: unexpected response', {
+          response: responseData,
+          assetsContractAddresses,
+        });
         return null;
       }
 
-      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetSymbols, walletCurrencies, coinGeckoAssets);
+      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsListWithoutEther, walletCurrencies);
     })
     .catch((error) => {
-      reportErrorLog('getCoinGeckoTokenPrices failed: API request error', { error, assetSymbols });
+      reportErrorLog('getCoinGeckoTokenPrices failed: API request error', {
+        error,
+        assetsContractAddresses,
+      });
+      return null;
+    });
+};
+
+export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
+  const coinGeckoEtherAssetId = 'ethereum'; // eslint-disable-line i18next/no-literal-string
+  const walletCurrencies = supportedFiatCurrencies.concat(ETH); // for consistency, price returned is 1:1
+  const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
+  return axios.get(
+    `${COINGECKO_API_URL}/simple/price`
+    + `?ids=${coinGeckoEtherAssetId}`
+    + `&vs_currencies=${vsCurrenciesQuery}`,
+    requestConfig,
+  )
+    .then(({ data: responseData }: AxiosResponse) => {
+      if (!responseData) {
+        reportErrorLog('getCoinGeckoEtherPrice failed: unexpected response', { response: responseData });
+        return null;
+      }
+
+      return mapWalletAndCoinGeckoCurrencies(responseData[coinGeckoEtherAssetId], walletCurrencies);
+    })
+    .catch((error) => {
+      reportErrorLog('getCoinGeckoEtherPrice failed: API request error', { error });
       return null;
     });
 };
