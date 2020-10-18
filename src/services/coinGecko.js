@@ -120,7 +120,7 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
 
 export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
   const coinGeckoEtherAssetId = 'ethereum'; // eslint-disable-line i18next/no-literal-string
-  const walletCurrencies = supportedFiatCurrencies.concat(ETH);
+  const walletCurrencies = supportedFiatCurrencies.concat(ETH); // for consistency, price returned is 1:1
   const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
   return axios.get(
     `${COINGECKO_API_URL}/simple/price`
