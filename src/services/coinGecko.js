@@ -130,14 +130,14 @@ export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
   )
     .then(({ data: responseData }: AxiosResponse) => {
       if (!responseData) {
-        reportErrorLog('getCoinGeckoEthereumPrice failed: unexpected response', { response: responseData });
+        reportErrorLog('getCoinGeckoEtherPrice failed: unexpected response', { response: responseData });
         return null;
       }
 
       return mapWalletAndCoinGeckoCurrencies(responseData[coinGeckoEtherAssetId], walletCurrencies);
     })
     .catch((error) => {
-      reportErrorLog('getCoinGeckoEthereumPrice failed: API request error', { error });
+      reportErrorLog('getCoinGeckoEtherPrice failed: API request error', { error });
       return null;
     });
 };
