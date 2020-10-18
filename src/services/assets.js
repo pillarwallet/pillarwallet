@@ -44,7 +44,7 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
 
 // services
-import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+import { getCoinGeckoEtherPrice, getCoinGeckoTokenPrices } from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
@@ -385,6 +385,12 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
     : await getCoinGeckoTokenPrices(assets);
+
+  // ether price fetched separately as it doesn't fit into CoinGecko token price endpoint
+  const etherPrice = await getCoinGeckoEtherPrice();
+  if (etherPrice) {
+    rates = { ...rates, [ETH]: etherPrice };
+  }
 
   // by any mean if CoinGecko failed let's try legacy way
   if (!useLegacyCryptoCompare && isEmpty(rates)) {

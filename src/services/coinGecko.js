@@ -81,7 +81,11 @@ const mapWalletAndCoinGeckoAssetsPrices = (
 
 export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> => {
   const assetsList = getAssetsAsList(assets);
-  const assetsContractAddresses = assetsList.map(({ address }) => address);
+
+  // ether does not fit into token price endpoint
+  const assetsListWithoutEther = assetsList.filter(({ symbol }) => symbol !== ETH);
+
+  const assetsContractAddresses = assetsListWithoutEther.map(({ address }) => address);
 
   const walletCurrencies = supportedFiatCurrencies.concat(ETH);
 
@@ -103,13 +107,37 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
         return null;
       }
 
-      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsList, walletCurrencies);
+      return mapWalletAndCoinGeckoAssetsPrices(responseData, assetsListWithoutEther, walletCurrencies);
     })
     .catch((error) => {
       reportErrorLog('getCoinGeckoTokenPrices failed: API request error', {
         error,
         assetsContractAddresses,
       });
+      return null;
+    });
+};
+
+export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
+  const coinGeckoEtherAssetId = 'ethereum'; // eslint-disable-line i18next/no-literal-string
+  const walletCurrencies = supportedFiatCurrencies.concat(ETH);
+  const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
+  return axios.get(
+    `${COINGECKO_API_URL}/simple/price`
+    + `?ids=${coinGeckoEtherAssetId}`
+    + `&vs_currencies=${vsCurrenciesQuery}`,
+    requestConfig,
+  )
+    .then(({ data: responseData }: AxiosResponse) => {
+      if (!responseData) {
+        reportErrorLog('getCoinGeckoEthereumPrice failed: unexpected response', { response: responseData });
+        return null;
+      }
+
+      return mapWalletAndCoinGeckoCurrencies(responseData[coinGeckoEtherAssetId], walletCurrencies);
+    })
+    .catch((error) => {
+      reportErrorLog('getCoinGeckoEthereumPrice failed: API request error', { error });
       return null;
     });
 };
