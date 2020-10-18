@@ -386,15 +386,18 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
     ? await getLegacyExchangeRates(assetSymbols)
     : await getCoinGeckoTokenPrices(assets);
 
-  // ether price fetched separately as it doesn't fit into CoinGecko token price endpoint
-  const etherPrice = await getCoinGeckoEtherPrice();
-  if (etherPrice) {
-    rates = { ...rates, [ETH]: etherPrice };
-  }
-
-  // by any mean if CoinGecko failed let's try legacy way
-  if (!useLegacyCryptoCompare && isEmpty(rates)) {
-    rates = await getLegacyExchangeRates(assetSymbols);
+  if (!useLegacyCryptoCompare) {
+    if (isEmpty(rates)) {
+      // by any mean if CoinGecko failed let's try legacy way
+      rates = await getLegacyExchangeRates(assetSymbols);
+    } else {
+      /**
+       * if CoinGecko didn't fail, fill rest of CoinGecko rates with ether
+       * because ether price doesn't fit into CoinGecko token price endpoint
+       */
+      const etherPrice = await getCoinGeckoEtherPrice();
+      rates = { ...rates, [ETH]: etherPrice };
+    }
   }
 
   if (!rates) {
