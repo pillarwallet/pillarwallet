@@ -236,7 +236,6 @@
     "receive": "Receive",
     "seeOnEtherscan": "See on Etherscan",
     "selectAll": "Select all",
-    "selectContacts": "Select contacts",
     "send": "Send",
     "sendAll": "Send all",
     "sendBack": "Send back",
@@ -933,14 +932,14 @@
       "phoneVerified": "Your email has been verified"
     },
     "label": {
-      "invitesCount": "Your invites ({{amountText}} available today)",
-      "referralsCount": "Your referrals ({{amountText}} available today)",
+      "selectedInvitesCount": "{{selectedCount}} selected ({{amountText}} available today)",
       "remainingCount": "{{amount}} more",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
       "claiming": "Claiming...",
       "inviteFriends": "Invite friends to Pillar",
-      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more."
+      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more.",
+      "noMoreDailyInvitesAvailable": "No more invites available today"
     }
   },
 
