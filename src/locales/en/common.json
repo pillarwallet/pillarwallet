@@ -25,6 +25,7 @@
   "positiveTokenValue": "+ {{value}} {{token}}",
   "negativeTokenValue": "- {{value}} {{token}}",
   "positivePercentValue": "+ {{value}} %",
+  "negativePercentValue": "- {{value}} %",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
   "percentValue": "{{value}} %",
@@ -1187,6 +1188,10 @@
       "title": "Buy with Altalix",
       "description": "Buy Now"
     },
+    "rari": {
+      "title": "Rari Capital",
+      "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
+    },
     "label": {
       "requiresActivation": "Requires activation",
       "forSmartWallet": "For Smart Wallet",
@@ -1410,6 +1415,53 @@
       "noOffers": {
         "title": "No live offers",
         "paragraph": "Currently no matching offers from exchange services are provided.\nNew offers may appear at any time — don’t miss it."
+      }
+    }
+  },
+
+  "rariContent": {
+    "title": {
+      "depositScreen": "Your deposit",
+      "infoScreen": "Rari Capital"
+    },
+    "label": {
+      "currentAPY": "Current APY",
+      "earned": "Earned",
+      "totalSupply": "Total supply"
+    },
+    "button": {
+      "withdraw": "Withdraw",
+      "deposit": "Deposit",
+      "transfer": "Transfer"
+    },
+    "infoContent": {
+      "subtitle": {
+        "keyFacts": "Key facts",
+        "generatingYield": "Generating yield",
+        "RSPT": "RSPT (Rari Stable Pool Token)",
+        "performanceFee": "Performance Fee",
+        "COMP": "COMP",
+        "deposits": "Deposits",
+        "withdrawals": "Withdrawals"
+      },
+      "paragraph": {
+        "generatingYield": "Currently, the Rari Stable Pool generates yield by depositing a combination of:",
+        "exchangingAssets": "Rari optimizes yield not only by allocating assets to the pools with the highest interest rates, but also by exchanging assets to the stablecoins with the highest interest rates via a combination of:",
+        "RSPT": "Each user's share of the Rari Stable Pool is represented by their RSPT (Rari Stable Pool Token) balance. When you deposit funds to the Stable Pool, an equivalent amount of RSPT is minted to your account. When you withdraw funds from the Stable Pool, the equivalent amount of RSPT is burned from your account. As soon as you deposit, you start earning yield. Essentially, Rari Stable Pool holdings and yield are split up across RSPT holders proportionally to their balances.",
+        "performanceFee": "A 20% performance fee is deducted from all interest earned by RSPT holders. This fee is liable to change in the future (but fees on past interest cannot be changed).",
+        "COMP": "All COMP (Compound's governance token) earned by the fund is liquidated into additional interest for RSPT holders approximately every 3 days.",
+        "deposits": "Only certain stablecoins are accepted for direct deposits (direct meaning without exchange to an accepted currency). To deposit another currency, you must exchange your funds before depositing. Fortunately, Rari can exchange and deposit your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to deposit via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
+        "withdrawals": "Only the stablecoins currently held by the Rari Stable Pool are available for direct withdrawals. To withdraw another currency, you must exchange your funds after withdrawing. Fortunately, Rari can withdraw and exchange your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to withdraw via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage."
+      },
+      "insight": {
+        "dYdX": "DAI and USDC to the lending protocol dYdX",
+        "compound": "DAI, USDC, and USDT to the lending protocol Compound",
+        "aave": "DAI, USDC, USDT, TUSD, BUSD, and sUSD to the lending protocol Aave",
+        "mStable": "mUSD to the savings protocol from mStable" 
+      },
+      "maximizeYieldInsight": {
+        "title": "Maximize yield in DeFi",
+        "button": "Deposit now"
       }
     }
   },

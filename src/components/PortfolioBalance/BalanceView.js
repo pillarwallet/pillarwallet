@@ -30,7 +30,7 @@ type Props = {
   balance: number,
   fiatCurrency: string,
   label?: string,
-  style: Object,
+  style?: Object,
 };
 
 

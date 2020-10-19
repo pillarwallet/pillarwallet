@@ -54,6 +54,7 @@ type Props = {
   wrapperPadding?: number | string,
   theme: Theme,
   titleStyle?: Object,
+  borderRadius?: number,
 };
 
 
@@ -193,6 +194,7 @@ const Insight = (props: Props) => {
     wrapperPadding,
     theme,
     titleStyle,
+    borderRadius,
   } = props;
 
   const colors = getThemeColors(theme);
@@ -203,6 +205,7 @@ const Insight = (props: Props) => {
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10, width: '100%' }}
         contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}
+        borderRadius={borderRadius}
       >
         {!!onClose &&
         <Close
