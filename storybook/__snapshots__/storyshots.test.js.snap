@@ -41935,6 +41935,1137 @@ exports[`Storyshots Selector with horizontal options 1`] = `
 </View>
 `;
 
+exports[`Storyshots SettingsItemCarded active card 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "paddingBottom": 20,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 20,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "stretch",
+              "flexDirection": "row",
+              "marginBottom": 12,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "opacity": 1,
+                "position": "relative",
+              },
+              Object {
+                "flexGrow": 1,
+                "transform": Array [
+                  Object {
+                    "scaleY": 1,
+                  },
+                ],
+              },
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            borderRadius={6}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            opacity={1}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "flexDirection": "column",
+                  "justifyContent": "flex-start",
+                  "opacity": 1,
+                  "width": "100%",
+                },
+                Object {},
+              ]
+            }
+          >
+            <View
+              onLayout={[Function]}
+              style={
+                Object {
+                  "borderColor": "#007AFF",
+                  "borderRadius": 6,
+                  "borderWidth": 2,
+                  "flexWrap": "wrap",
+                  "justifyContent": "center",
+                  "minHeight": 168,
+                  "paddingHorizontal": 32,
+                  "paddingVertical": 6,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "marginRight": 32,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "paddingRight": 6,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 18,
+                              "lineHeight": 24,
+                            },
+                            undefined,
+                          ],
+                        ],
+                      ]
+                    }
+                  >
+                    This is card's title
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 16,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    And this - subtitle
+                  </Text>
+                </View>
+                <View
+                  name="check"
+                  style={
+                    Array [
+                      Object {
+                        "alignSelf": "flex-start",
+                        "color": "#007AFF",
+                        "fontSize": 24,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots SettingsItemCarded default 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "paddingBottom": 20,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 20,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "stretch",
+              "flexDirection": "row",
+              "marginBottom": 12,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "opacity": 1,
+                "position": "relative",
+              },
+              Object {
+                "flexGrow": 1,
+                "transform": Array [
+                  Object {
+                    "scaleY": 1,
+                  },
+                ],
+              },
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            borderRadius={6}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            opacity={1}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "flexDirection": "column",
+                  "justifyContent": "flex-start",
+                  "opacity": 1,
+                  "width": "100%",
+                },
+                Object {},
+              ]
+            }
+          >
+            <View
+              onLayout={[Function]}
+              style={
+                Object {
+                  "borderColor": "transparent",
+                  "borderRadius": 6,
+                  "borderWidth": 2,
+                  "flexWrap": "wrap",
+                  "justifyContent": "center",
+                  "minHeight": 168,
+                  "paddingHorizontal": 32,
+                  "paddingVertical": 6,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "marginRight": 32,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "paddingRight": 6,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 18,
+                              "lineHeight": 24,
+                            },
+                            undefined,
+                          ],
+                        ],
+                      ]
+                    }
+                  >
+                    This is card's title
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots SettingsItemCarded edge cases 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "paddingBottom": 20,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 20,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "stretch",
+              "flexDirection": "row",
+              "marginBottom": 12,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "opacity": 1,
+                "position": "relative",
+              },
+              Object {
+                "flexGrow": 1,
+                "transform": Array [
+                  Object {
+                    "scaleY": 1,
+                  },
+                ],
+              },
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            borderRadius={6}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            opacity={1}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "flexDirection": "column",
+                  "justifyContent": "flex-start",
+                  "opacity": 1,
+                  "width": "100%",
+                },
+                Object {},
+              ]
+            }
+          >
+            <View
+              onLayout={[Function]}
+              style={
+                Object {
+                  "borderColor": "transparent",
+                  "borderRadius": 6,
+                  "borderWidth": 2,
+                  "flexWrap": "wrap",
+                  "justifyContent": "center",
+                  "minHeight": 168,
+                  "paddingHorizontal": 32,
+                  "paddingVertical": 6,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "marginRight": 32,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "paddingRight": 6,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 18,
+                              "lineHeight": 24,
+                            },
+                            undefined,
+                          ],
+                        ],
+                      ]
+                    }
+                  >
+                    This is longer card's title. To test layout on edge cases
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 16,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    And longer subtitle for the same reason
+                  </Text>
+                </View>
+                <View
+                  style={
+                    Array [
+                      Object {},
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                          "paddingBottom": 10,
+                          "paddingLeft": 10,
+                          "paddingRight": 10,
+                          "paddingTop": 10,
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "aspectRatio": 1,
+                        },
+                        undefined,
+                        Object {
+                          "height": 24,
+                          "width": 24,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      autoPlay={false}
+                      enableMergePathsAndroidForKitKatAndAbove={false}
+                      loop={true}
+                      onAnimationFinish={[Function]}
+                      onLayout={[Function]}
+                      progress={0}
+                      resizeMode="contain"
+                      sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
+                      speed={1}
+                      style={
+                        Object {
+                          "aspectRatio": 1,
+                          "height": 24,
+                          "width": 24,
+                        }
+                      }
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots SettingsItemCarded loading card 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "paddingBottom": 20,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 20,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "stretch",
+              "flexDirection": "row",
+              "marginBottom": 12,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "opacity": 1,
+                "position": "relative",
+              },
+              Object {
+                "flexGrow": 1,
+                "transform": Array [
+                  Object {
+                    "scaleY": 1,
+                  },
+                ],
+              },
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            borderRadius={6}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            opacity={1}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "flexDirection": "column",
+                  "justifyContent": "flex-start",
+                  "opacity": 1,
+                  "width": "100%",
+                },
+                Object {},
+              ]
+            }
+          >
+            <View
+              onLayout={[Function]}
+              style={
+                Object {
+                  "borderColor": "transparent",
+                  "borderRadius": 6,
+                  "borderWidth": 2,
+                  "flexWrap": "wrap",
+                  "justifyContent": "center",
+                  "minHeight": 168,
+                  "paddingHorizontal": 32,
+                  "paddingVertical": 6,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "marginRight": 32,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "paddingRight": 6,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 18,
+                              "lineHeight": 24,
+                            },
+                            undefined,
+                          ],
+                        ],
+                      ]
+                    }
+                  >
+                    This is card's title
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 16,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    And this - subtitle
+                  </Text>
+                </View>
+                <View
+                  style={
+                    Array [
+                      Object {},
+                      Array [
+                        Object {
+                          "alignItems": "center",
+                          "justifyContent": "center",
+                          "paddingBottom": 10,
+                          "paddingLeft": 10,
+                          "paddingRight": 10,
+                          "paddingTop": 10,
+                        },
+                        undefined,
+                      ],
+                    ]
+                  }
+                >
+                  <View
+                    style={
+                      Array [
+                        Object {
+                          "aspectRatio": 1,
+                        },
+                        undefined,
+                        Object {
+                          "height": 24,
+                          "width": 24,
+                        },
+                      ]
+                    }
+                  >
+                    <View
+                      autoPlay={false}
+                      enableMergePathsAndroidForKitKatAndAbove={false}
+                      loop={true}
+                      onAnimationFinish={[Function]}
+                      onLayout={[Function]}
+                      progress={0}
+                      resizeMode="contain"
+                      sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
+                      speed={1}
+                      style={
+                        Object {
+                          "aspectRatio": 1,
+                          "height": 24,
+                          "width": 24,
+                        }
+                      }
+                    />
+                  </View>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots SettingsItemCarded with subtitle 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "stretch",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "paddingBottom": 20,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 20,
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "alignItems": "stretch",
+              "flexDirection": "row",
+              "marginBottom": 12,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "opacity": 1,
+                "position": "relative",
+              },
+              Object {
+                "flexGrow": 1,
+                "transform": Array [
+                  Object {
+                    "scaleY": 1,
+                  },
+                ],
+              },
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            borderRadius={6}
+            focusable={false}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            opacity={1}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderRadius": 6,
+                  "flexDirection": "column",
+                  "justifyContent": "flex-start",
+                  "opacity": 1,
+                  "width": "100%",
+                },
+                Object {},
+              ]
+            }
+          >
+            <View
+              onLayout={[Function]}
+              style={
+                Object {
+                  "borderColor": "transparent",
+                  "borderRadius": 6,
+                  "borderWidth": 2,
+                  "flexWrap": "wrap",
+                  "justifyContent": "center",
+                  "minHeight": 168,
+                  "paddingHorizontal": 32,
+                  "paddingVertical": 6,
+                }
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "width": "100%",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "justifyContent": "center",
+                        "marginRight": 32,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "column",
+                        "flexGrow": 1,
+                        "paddingRight": 6,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontFamily": "EuclidCircularB-Medium",
+                            "textAlignVertical": "center",
+                          },
+                          Array [
+                            Object {
+                              "color": "#0A1427",
+                              "fontSize": 18,
+                              "lineHeight": 24,
+                            },
+                            undefined,
+                          ],
+                        ],
+                      ]
+                    }
+                  >
+                    This is card's title
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#8B939E",
+                            "fontSize": 16,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    And this - subtitle
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots ToastCard default 1`] = `
 <View
   style={
