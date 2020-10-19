@@ -9854,6 +9854,2917 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
 </View>
 `;
 
+exports[`Storyshots DetailModal Layout L 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "rgba(0,0,0,0.7)",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 0,
+        "position": "relative",
+        "zIndex": 10,
+      }
+    }
+  >
+    <View
+      bgColor="#FAFAFA"
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Array [
+            Object {
+              "height": "100%",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+      />
+      <View
+        customTheme={
+          Object {
+            "borderRadius": "30px",
+            "padding": 0,
+          }
+        }
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderTopLeftRadius": 30,
+              "borderTopRightRadius": 30,
+              "elevation": 1,
+              "marginHorizontal": 0,
+              "marginTop": "auto",
+              "overflow": "hidden",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "shadowColor": "rgba(0,0,0,.1)",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 7,
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
+              ],
+            ]
+          }
+        >
+          Actvate Smart Wallet
+        </Text>
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          bottomSpacingCut={0}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "alignSelf": "stretch",
+                "marginBottom": 32,
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                    "textAlign": "center",
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Enable better security and free instant transactions via Pillar Network. You will get a new badge too.
+          </Text>
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "marginBottom": 16,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          Fee $0.16
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "alignSelf": "stretch",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            last={false}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 8,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+          <View
+            last={false}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 8,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+          <View
+            last={true}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots DetailModal Layout M 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "rgba(0,0,0,0.7)",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 0,
+        "position": "relative",
+        "zIndex": 10,
+      }
+    }
+  >
+    <View
+      bgColor="#FAFAFA"
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Array [
+            Object {
+              "height": "100%",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+      />
+      <View
+        customTheme={
+          Object {
+            "borderRadius": "30px",
+            "padding": 0,
+          }
+        }
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderTopLeftRadius": 30,
+              "borderTopRightRadius": 30,
+              "elevation": 1,
+              "marginHorizontal": 0,
+              "marginTop": "auto",
+              "overflow": "hidden",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "shadowColor": "rgba(0,0,0,.1)",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 7,
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 10,
+                  "lineHeight": 14,
+                  "marginBottom": 8,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          September 20, 2020 15:24
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
+              ],
+            ]
+          }
+        >
+          Subject
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          from Areya Juntasa
+        </Text>
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          name="scan"
+          style={
+            Object {
+              "fontSize": 64,
+            }
+          }
+        />
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          bottomSpacingCut={4}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "alignSelf": "stretch",
+                "marginBottom": 28,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-start",
+                  "flexDirection": "row",
+                  "marginBottom": 4,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 24,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              - 0.218 ETH
+            </Text>
+          </View>
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-start",
+                  "flexDirection": "row",
+                  "marginBottom": 4,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              color={[Function]}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#2AA057",
+                        "fontSize": 24,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              + 2,500 PLR
+            </Text>
+          </View>
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "marginBottom": 16,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          Fee $0.16
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "alignSelf": "stretch",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            last={false}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 8,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#007AFF",
+                  "borderColor": "#007AFF",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "elevation": 1,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.12)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": true,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#007AFF",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#007AFF",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+          <View
+            last={true}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots DetailModal Layout S 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "rgba(0,0,0,0.7)",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 0,
+        "position": "relative",
+        "zIndex": 10,
+      }
+    }
+  >
+    <View
+      bgColor="#FAFAFA"
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Array [
+            Object {
+              "height": "100%",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+      />
+      <View
+        customTheme={
+          Object {
+            "borderRadius": "30px",
+            "padding": 0,
+          }
+        }
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderTopLeftRadius": 30,
+              "borderTopRightRadius": 30,
+              "elevation": 1,
+              "marginHorizontal": 0,
+              "marginTop": "auto",
+              "overflow": "hidden",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "shadowColor": "rgba(0,0,0,.1)",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 7,
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 10,
+                  "lineHeight": 14,
+                  "marginBottom": 8,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          September 20, 2020 15:24
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
+              ],
+            ]
+          }
+        >
+          Subject
+        </Text>
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          name="scan"
+          style={
+            Object {
+              "fontSize": 64,
+            }
+          }
+        />
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          bottomSpacingCut={4}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "alignSelf": "stretch",
+                "marginBottom": 28,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-start",
+                  "flexDirection": "row",
+                  "marginBottom": 4,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 24,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              5,206.78 PLR
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "alignSelf": "stretch",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            last={false}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 8,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#007AFF",
+                  "borderColor": "#007AFF",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "elevation": 1,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.12)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": true,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#007AFF",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#007AFF",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+          <View
+            last={true}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots DetailModal Paragraph Child 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "rgba(0,0,0,0.7)",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 0,
+        "position": "relative",
+        "zIndex": 10,
+      }
+    }
+  >
+    <View
+      bgColor="#FAFAFA"
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Array [
+            Object {
+              "height": "100%",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+      />
+      <View
+        customTheme={
+          Object {
+            "borderRadius": "30px",
+            "padding": 0,
+          }
+        }
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderTopLeftRadius": 30,
+              "borderTopRightRadius": 30,
+              "elevation": 1,
+              "marginHorizontal": 0,
+              "marginTop": "auto",
+              "overflow": "hidden",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "shadowColor": "rgba(0,0,0,.1)",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 7,
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 10,
+                  "lineHeight": 14,
+                  "marginBottom": 8,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          May 21, 2020 15:24
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
+              ],
+            ]
+          }
+        >
+          Pillar Pay
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          Withdraw
+        </Text>
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          bottomSpacingCut={0}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "alignSelf": "stretch",
+                "marginBottom": 32,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-start",
+                  "flexDirection": "row",
+                  "marginBottom": 4,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 24,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              + 1,500 ETH
+            </Text>
+          </View>
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                    "textAlign": "center",
+                  },
+                  undefined,
+                ],
+              ]
+            }
+          >
+            Transaction failed
+          </Text>
+        </View>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 14,
+                  "lineHeight": 22,
+                  "marginBottom": 16,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          Fee $1.6
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "alignSelf": "stretch",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            last={true}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#e6f1f9",
+                  "borderColor": "#EDEDED",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": false,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#007AFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#EDEDED",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#e6f1f9",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#007AFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Withdraw again
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots DetailModal Pending Fee 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "rgba(0,0,0,0.7)",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 0,
+        "position": "relative",
+        "zIndex": 10,
+      }
+    }
+  >
+    <View
+      bgColor="#FAFAFA"
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Array [
+            Object {
+              "height": "100%",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+      />
+      <View
+        customTheme={
+          Object {
+            "borderRadius": "30px",
+            "padding": 0,
+          }
+        }
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderTopLeftRadius": 30,
+              "borderTopRightRadius": 30,
+              "elevation": 1,
+              "marginHorizontal": 0,
+              "marginTop": "auto",
+              "overflow": "hidden",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "shadowColor": "rgba(0,0,0,.1)",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 7,
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 10,
+                  "lineHeight": 14,
+                  "marginBottom": 8,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          May 21, 2020 15:24
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
+              ],
+            ]
+          }
+        >
+          Subject
+        </Text>
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          name="scan"
+          style={
+            Object {
+              "fontSize": 64,
+            }
+          }
+        />
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          bottomSpacingCut={4}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "alignSelf": "stretch",
+                "marginBottom": 28,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-start",
+                  "flexDirection": "row",
+                  "marginBottom": 4,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 24,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Text
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {},
+              Array [
+                Object {
+                  "marginBottom": 16,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "aspectRatio": 1,
+                },
+                undefined,
+                Object {
+                  "height": 20,
+                  "width": 20,
+                },
+              ]
+            }
+          >
+            <View
+              autoPlay={false}
+              enableMergePathsAndroidForKitKatAndAbove={false}
+              loop={true}
+              onAnimationFinish={[Function]}
+              onLayout={[Function]}
+              progress={0}
+              resizeMode="contain"
+              sourceJson="{\\"v\\":\\"4.8.0\\",\\"fr\\":29.9700012207031,\\"ip\\":0,\\"op\\":71.0000028918893,\\"w\\":160,\\"h\\":160,\\"nm\\":\\"loading 2 dark\\",\\"ddd\\":0,\\"assets\\":[],\\"layers\\":[{\\"ddd\\":0,\\"ind\\":1,\\"ty\\":4,\\"nm\\":\\"Shape Layer 1\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.478,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.003]},\\"n\\":[\\"0p176_0p988_0p762_0p003\\"],\\"t\\":23,\\"s\\":[0],\\"e\\":[45]},{\\"i\\":{\\"x\\":[0.319],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.581],\\"y\\":[0.016]},\\"n\\":[\\"0p319_1_0p581_0p016\\"],\\"t\\":35,\\"s\\":[45],\\"e\\":[99.9]},{\\"t\\":67.0000027289659}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.289],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.566],\\"y\\":[0]},\\"n\\":[\\"0p289_1_0p566_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[100]},{\\"t\\":44.0000017921567}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":-1,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":67.0000027289659}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":-1.00000004073083,\\"op\\":299.00001217852,\\"st\\":-1.00000004073083,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":2,\\"ty\\":4,\\"nm\\":\\"Shape Layer 2\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.176],\\"y\\":[0.99]},\\"o\\":{\\"x\\":[0.762],\\"y\\":[0.002]},\\"n\\":[\\"0p176_0p99_0p762_0p002\\"],\\"t\\":26,\\"s\\":[0],\\"e\\":[46]},{\\"i\\":{\\"x\\":[0.787],\\"y\\":[0.908]},\\"o\\":{\\"x\\":[0.647],\\"y\\":[0.014]},\\"n\\":[\\"0p787_0p908_0p647_0p014\\"],\\"t\\":37,\\"s\\":[46],\\"e\\":[80]},{\\"i\\":{\\"x\\":[0.392],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.171],\\"y\\":[0.125]},\\"n\\":[\\"0p392_1_0p171_0p125\\"],\\"t\\":53,\\"s\\":[80],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.443],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.637],\\"y\\":[0]},\\"n\\":[\\"0p443_0p887_0p637_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[33.78]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.276],\\"y\\":[0.032]},\\"n\\":[\\"0p833_1_0p276_0p032\\"],\\"t\\":37,\\"s\\":[33.78],\\"e\\":[61]},{\\"i\\":{\\"x\\":[0.833],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.167],\\"y\\":[0]},\\"n\\":[\\"0p833_1_0p167_0\\"],\\"t\\":53,\\"s\\":[61],\\"e\\":[100]},{\\"t\\":69.0000028104276}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":2,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":69.0000028104276}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":2.00000008146167,\\"op\\":302.000012300712,\\"st\\":2.00000008146167,\\"bm\\":0,\\"sr\\":1},{\\"ddd\\":0,\\"ind\\":3,\\"ty\\":4,\\"nm\\":\\"Shape Layer 3\\",\\"ks\\":{\\"o\\":{\\"a\\":0,\\"k\\":100},\\"r\\":{\\"a\\":0,\\"k\\":0},\\"p\\":{\\"a\\":0,\\"k\\":[80,80,0]},\\"a\\":{\\"a\\":0,\\"k\\":[0,0,0]},\\"s\\":{\\"a\\":0,\\"k\\":[100,100,100]}},\\"ao\\":0,\\"shapes\\":[{\\"ty\\":\\"gr\\",\\"it\\":[{\\"d\\":1,\\"ty\\":\\"el\\",\\"s\\":{\\"a\\":0,\\"k\\":[160,160]},\\"p\\":{\\"a\\":0,\\"k\\":[0,0]},\\"nm\\":\\"Ellipse Path 1\\",\\"mn\\":\\"ADBE Vector Shape - Ellipse\\"},{\\"ty\\":\\"st\\",\\"c\\":{\\"a\\":0,\\"k\\":[0,0.749,1,1]},\\"o\\":{\\"a\\":0,\\"k\\":100},\\"w\\":{\\"a\\":0,\\"k\\":20},\\"lc\\":2,\\"lj\\":1,\\"ml\\":4,\\"nm\\":\\"Stroke 1\\",\\"mn\\":\\"ADBE Vector Graphic - Stroke\\"},{\\"ty\\":\\"tr\\",\\"p\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":2},\\"a\\":{\\"a\\":0,\\"k\\":[0,0],\\"ix\\":1},\\"s\\":{\\"a\\":0,\\"k\\":[76.473,76.473],\\"ix\\":3},\\"r\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":6},\\"o\\":{\\"a\\":0,\\"k\\":100,\\"ix\\":7},\\"sk\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":4},\\"sa\\":{\\"a\\":0,\\"k\\":0,\\"ix\\":5},\\"nm\\":\\"Transform\\"}],\\"nm\\":\\"Ellipse 1\\",\\"np\\":3,\\"cix\\":2,\\"ix\\":1,\\"mn\\":\\"ADBE Vector Group\\"},{\\"ty\\":\\"tm\\",\\"s\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.713],\\"y\\":[0.988]},\\"o\\":{\\"x\\":[0.382],\\"y\\":[0.001]},\\"n\\":[\\"0p713_0p988_0p382_0p001\\"],\\"t\\":29,\\"s\\":[0],\\"e\\":[36]},{\\"i\\":{\\"x\\":[0.84],\\"y\\":[0.887]},\\"o\\":{\\"x\\":[0.624],\\"y\\":[0.05]},\\"n\\":[\\"0p84_0p887_0p624_0p05\\"],\\"t\\":39,\\"s\\":[36],\\"e\\":[59.495]},{\\"i\\":{\\"x\\":[0.381],\\"y\\":[0.884]},\\"o\\":{\\"x\\":[0.234],\\"y\\":[0.157]},\\"n\\":[\\"0p381_0p884_0p234_0p157\\"],\\"t\\":52,\\"s\\":[59.495],\\"e\\":[80.321]},{\\"i\\":{\\"x\\":[0.568],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.247],\\"y\\":[0.036]},\\"n\\":[\\"0p568_1_0p247_0p036\\"],\\"t\\":63,\\"s\\":[80.321],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":1},\\"e\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.72],\\"y\\":[0.909]},\\"o\\":{\\"x\\":[0.391],\\"y\\":[0]},\\"n\\":[\\"0p72_0p909_0p391_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[32]},{\\"i\\":{\\"x\\":[0.71],\\"y\\":[0.925]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.065]},\\"n\\":[\\"0p71_0p925_0p379_0p065\\"],\\"t\\":39,\\"s\\":[32],\\"e\\":[54.957]},{\\"i\\":{\\"x\\":[0.709],\\"y\\":[0.882]},\\"o\\":{\\"x\\":[0.379],\\"y\\":[0.097]},\\"n\\":[\\"0p709_0p882_0p379_0p097\\"],\\"t\\":52,\\"s\\":[54.957],\\"e\\":[74.645]},{\\"i\\":{\\"x\\":[0.722],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.397],\\"y\\":[0.091]},\\"n\\":[\\"0p722_1_0p397_0p091\\"],\\"t\\":63,\\"s\\":[74.645],\\"e\\":[100]},{\\"t\\":71.0000028918893}],\\"ix\\":2},\\"o\\":{\\"a\\":1,\\"k\\":[{\\"i\\":{\\"x\\":[0.667],\\"y\\":[1]},\\"o\\":{\\"x\\":[0.333],\\"y\\":[0]},\\"n\\":[\\"0p667_1_0p333_0\\"],\\"t\\":5,\\"s\\":[0],\\"e\\":[360]},{\\"t\\":71.0000028918893}],\\"ix\\":3},\\"m\\":1,\\"ix\\":2,\\"nm\\":\\"Trim Paths 1\\",\\"mn\\":\\"ADBE Vector Filter - Trim\\"}],\\"ip\\":5.00000020365417,\\"op\\":305.000012422905,\\"st\\":5.00000020365417,\\"bm\\":0,\\"sr\\":1}]}"
+              speed={1}
+              style={
+                Object {
+                  "aspectRatio": 1,
+                  "height": 20,
+                  "width": 20,
+                }
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "alignSelf": "stretch",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            last={true}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#007AFF",
+                  "borderColor": "#007AFF",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "elevation": 1,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.12)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": true,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#007AFF",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#007AFF",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots DetailModal Plain Text Child 1`] = `
+<View
+  style={
+    Array [
+      Object {
+        "backgroundColor": "rgba(0,0,0,0.7)",
+        "flexBasis": 0,
+        "flexGrow": 1,
+        "flexShrink": 1,
+        "justifyContent": "center",
+      },
+      undefined,
+    ]
+  }
+>
+  <View
+    style={
+      Object {
+        "margin": 0,
+        "position": "relative",
+        "zIndex": 10,
+      }
+    }
+  >
+    <View
+      bgColor="#FAFAFA"
+      style={
+        Array [
+          Object {
+            "height": "100%",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Array [
+            Object {
+              "height": "100%",
+              "width": "100%",
+            },
+            undefined,
+          ]
+        }
+      />
+      <View
+        customTheme={
+          Object {
+            "borderRadius": "30px",
+            "padding": 0,
+          }
+        }
+        onLayout={[Function]}
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#FFFFFF",
+              "borderTopLeftRadius": 30,
+              "borderTopRightRadius": 30,
+              "elevation": 1,
+              "marginHorizontal": 0,
+              "marginTop": "auto",
+              "overflow": "hidden",
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "shadowColor": "rgba(0,0,0,.1)",
+              "shadowOffset": Object {
+                "height": 2,
+                "width": 0,
+              },
+              "shadowOpacity": 1,
+              "shadowRadius": 7,
+            },
+            undefined,
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#8B939E",
+                  "fontSize": 10,
+                  "lineHeight": 14,
+                  "marginBottom": 8,
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          May 21, 2020 15:24
+        </Text>
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Medium",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                  },
+                  undefined,
+                ],
+              ],
+            ]
+          }
+        >
+          Subject
+        </Text>
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          name="scan"
+          style={
+            Object {
+              "fontSize": 64,
+            }
+          }
+        />
+        <View
+          h={20}
+          style={
+            Array [
+              Object {
+                "height": 20,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          bottomSpacingCut={4}
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "alignSelf": "stretch",
+                "marginBottom": 28,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "flex-start",
+                  "flexDirection": "row",
+                  "marginBottom": 4,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontSize": 24,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Text child
+            </Text>
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "alignSelf": "stretch",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            last={true}
+            style={
+              Array [
+                Object {
+                  "marginBottom": 0,
+                },
+                undefined,
+              ]
+            }
+          >
+            <View
+              accessible={true}
+              focusable={true}
+              isTVSelectable={true}
+              onClick={[Function]}
+              onResponderGrant={[Function]}
+              onResponderMove={[Function]}
+              onResponderRelease={[Function]}
+              onResponderTerminate={[Function]}
+              onResponderTerminationRequest={[Function]}
+              onStartShouldSetResponder={[Function]}
+              style={
+                Object {
+                  "alignItems": "center",
+                  "alignSelf": "auto",
+                  "backgroundColor": "#007AFF",
+                  "borderColor": "#007AFF",
+                  "borderRadius": 6,
+                  "borderStyle": "solid",
+                  "borderWidth": 0,
+                  "elevation": 1,
+                  "flexDirection": "row",
+                  "height": 48,
+                  "justifyContent": "center",
+                  "marginBottom": 0,
+                  "marginLeft": 0,
+                  "marginRight": 0,
+                  "marginTop": 0,
+                  "opacity": 1,
+                  "paddingBottom": 0,
+                  "paddingLeft": 19,
+                  "paddingRight": 19,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.12)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                  "width": "auto",
+                }
+              }
+            >
+              <Text
+                customTheme={
+                  Object {
+                    "borderWidth": 0,
+                    "shadow": true,
+                  }
+                }
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 18,
+                        "lineHeight": 18,
+                        "marginBottom": 0,
+                        "marginTop": 3.2399999999999998,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+                theme={
+                  Object {
+                    "colors": Object {
+                      "PPNSurface": "#0a0c78",
+                      "PPNText": "#f33726",
+                      "accent": "#818EB3",
+                      "activeTabBarIcon": "#007AFF",
+                      "avatarPlaceholderBackground": "#e0eeff",
+                      "avatarPlaceholderText": "#6690eb",
+                      "border": "#007AFF",
+                      "buttonSecondaryBackground": "#e6f1f9",
+                      "card": "#FFFFFF",
+                      "control": "#FCFDFF",
+                      "danger": "#ff0005",
+                      "helpIcon": "#f7931a",
+                      "iconBackground": "#ebf0f5",
+                      "inactiveTabBarIcon": "#D4D9DB",
+                      "indicator": "#F8E71C",
+                      "labelTertiary": "#818eb3",
+                      "legacyWallet": "#FA574F",
+                      "link": "#007aff",
+                      "negative": "#BD573A",
+                      "notice": "#ea480e",
+                      "orange": "#f57c00",
+                      "poolTogetherPink": "#e51fff",
+                      "positive": "#2AA057",
+                      "primary": "#007AFF",
+                      "progressBarEnd": "#f04cfa",
+                      "progressBarStart": "#ca17e1",
+                      "secondaryAccent": "#EBF0F5",
+                      "secondaryText": "#8B939E",
+                      "smartWallet": "#3C71FE",
+                      "smartWalletSurface": "#f3f7ff",
+                      "smartWalletText": "#1D24D8",
+                      "surface": "#007AFF",
+                      "synthetic": "#2329d6",
+                      "tertiary": "#EBF0F6",
+                      "text": "#FCFDFF",
+                      "toastCloseIcon": "#ededed",
+                      "transactionReceivedIcon": "#497391",
+                      "userAvatar": "#d1d9e4",
+                      "warning": "#ECA93A",
+                    },
+                    "current": "lightTheme",
+                  }
+                }
+              >
+                Label
+              </Text>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
 <View
   style={
