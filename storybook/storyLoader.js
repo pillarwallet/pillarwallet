@@ -10,6 +10,7 @@ function loadStories() {
 	require('../src/components/HeaderBlock/HeaderBlock.stories');
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
 	require('../src/components/ListItem/ListCard.stories');
+	require('../src/components/ListItem/ListItemChevron.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/Selector/Selector.stories');
 	require('../src/components/Toast/ToastCard.stories');
@@ -23,6 +24,7 @@ const stories = [
 	'../src/components/HeaderBlock/HeaderBlock.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',
 	'../src/components/ListItem/ListCard.stories',
+	'../src/components/ListItem/ListItemChevron.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/Selector/Selector.stories',
 	'../src/components/Toast/ToastCard.stories',
