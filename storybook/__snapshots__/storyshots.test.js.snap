@@ -33238,7 +33238,7 @@ exports[`Storyshots ListCard default 1`] = `
               "position": "relative",
             },
             Object {
-              "marginBottom": 16,
+              "marginBottom": 8,
               "transform": Array [
                 Object {
                   "scaleY": 1,
@@ -33413,7 +33413,7 @@ exports[`Storyshots ListCard with custom icon 1`] = `
               "position": "relative",
             },
             Object {
-              "marginBottom": 16,
+              "marginBottom": 8,
               "transform": Array [
                 Object {
                   "scaleY": 1,
@@ -33598,7 +33598,7 @@ exports[`Storyshots ListCard with label 1`] = `
               "position": "relative",
             },
             Object {
-              "marginBottom": 16,
+              "marginBottom": 8,
               "transform": Array [
                 Object {
                   "scaleY": 1,
@@ -33835,7 +33835,7 @@ exports[`Storyshots ListCard with labelText 1`] = `
               "position": "relative",
             },
             Object {
-              "marginBottom": 16,
+              "marginBottom": 8,
               "transform": Array [
                 Object {
                   "scaleY": 1,
@@ -34044,7 +34044,7 @@ exports[`Storyshots ListCard with note 1`] = `
               "position": "relative",
             },
             Object {
-              "marginBottom": 16,
+              "marginBottom": 8,
               "transform": Array [
                 Object {
                   "scaleY": 1,
@@ -34285,7 +34285,7 @@ exports[`Storyshots ListCard with subtitle 1`] = `
               "position": "relative",
             },
             Object {
-              "marginBottom": 16,
+              "marginBottom": 8,
               "transform": Array [
                 Object {
                   "scaleY": 1,
