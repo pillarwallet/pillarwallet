@@ -57,6 +57,7 @@ import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
+import Intercom from 'react-native-intercom';
 
 
 type Props = {
@@ -76,6 +77,7 @@ type Props = {
   sendInvitation: (invitations: ReferralContact[]) => void,
   isSendingInvite: boolean,
   isPillarRewardCampaignActive: boolean,
+  hasAllowedToAccessContacts: boolean,
 };
 
 type State = {
@@ -283,6 +285,7 @@ class ReferralContacts extends React.PureComponent<Props, State> {
       isPhoneVerified,
       navigation,
       sentInvitationsCount,
+      isPillarRewardCampaignActive,
     } = this.props;
 
     const allowedContacts = filterAllowedContacts(phoneContacts, isPhoneVerified, isEmailVerified);
@@ -301,7 +304,20 @@ class ReferralContacts extends React.PureComponent<Props, State> {
 
     return (
       <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: t('referralsContent.title.inviteMain') }] }}
+        headerProps={{
+          centerItems: [{
+            title: isPillarRewardCampaignActive
+              ? t('referralsContent.title.referMain')
+              : t('referralsContent.title.inviteMain'),
+          }],
+          rightItems: [
+            {
+              link: t('button.support'),
+              onPress: () => Intercom.displayMessenger(),
+            },
+          ],
+          sideFlex: 2,
+        }}
         inset={{ bottom: 0 }}
         footerContainerInset={{ bottom: 'always' }}
         footer={this.renderFooter(availableInvites)}
@@ -380,6 +396,7 @@ const mapStateToProps = ({
     sentInvitationsCount,
     isPillarRewardCampaignActive,
     isSendingInvite,
+    hasAllowedToAccessContacts,
   },
   phoneContacts: {
     data: phoneContacts,
@@ -400,6 +417,7 @@ const mapStateToProps = ({
   userEmail,
   isPillarRewardCampaignActive,
   isSendingInvite,
+  hasAllowedToAccessContacts,
 });
 
 

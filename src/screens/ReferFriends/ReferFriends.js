@@ -19,116 +19,44 @@
 */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
-import Intercom from 'react-native-intercom';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import t from 'translations/translate';
 
 // actions
-import { sendReferralInvitationsAction } from 'actions/referralsActions';
-
-// components
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Insight from 'components/Insight';
-
-// utils
-import { spacing } from 'utils/variables';
+import { allowToAccessPhoneContactsAction } from 'actions/referralsActions';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { ReferralContact } from 'reducers/referralsReducer';
 
-// constants
-import { ADDRESS_BOOK_PERMISSION, REFERRAL_CONTACTS } from 'constants/navigationConstants';
+// screens
+import ReferralContacts from './ReferralContacts';
+import AccessToAddressBook from './AccessToAddressBook';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  inviteByEmail: (email: string) => void,
-  removeContactForReferral: (id: string) => void,
-  sendInvitation: (invitations: ReferralContact[]) => void,
   hasAllowedToAccessContacts: boolean,
-  isPillarRewardCampaignActive: boolean,
+  allowToAccessPhoneContacts: () => void,
 };
 
 class ReferFriends extends React.PureComponent<Props> {
-  proceedToSelectContacts = () => {
-    const { navigation, hasAllowedToAccessContacts } = this.props;
-    if (hasAllowedToAccessContacts) {
-      navigation.navigate(REFERRAL_CONTACTS);
-    } else {
-      navigation.navigate(ADDRESS_BOOK_PERMISSION);
-    }
-  };
-
   render() {
-    const {
-      isPillarRewardCampaignActive,
-    } = this.props;
+    const { hasAllowedToAccessContacts, navigation, allowToAccessPhoneContacts } = this.props;
 
-    const commonSteps = [
-      {
-        title: t('referralsContent.instruction.shareLink.title'),
-        body: t('referralsContent.instruction.shareLink.paragraph'),
-      },
-      {
-        title: t('referralsContent.instruction.giveSmartWallet.title'),
-        body: t('referralsContent.instruction.giveSmartWallet.paragraph'),
-      },
-    ];
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{
-            title: isPillarRewardCampaignActive
-              ? t('referralsContent.title.referMain')
-              : t('referralsContent.title.inviteMain'),
-          }],
-          rightItems: [
-            {
-              link: t('button.support'),
-              onPress: () => Intercom.displayMessenger(),
-            },
-          ],
-          sideFlex: 2,
-        }}
-      >
-        <ScrollView contentContainerStyle={{ paddingTop: 24, paddingHorizontal: spacing.layoutSides }}>
-          <Insight
-            isVisible
-            insightNumberedList={isPillarRewardCampaignActive
-              ? [
-                  ...commonSteps,
-                  {
-                    title: t('referralsContent.instruction.getTokens.title'),
-                    body: t('referralsContent.instruction.getTokens.paragraph'),
-                  },
-                ]
-              : commonSteps
-            }
-            wrapperPadding={0}
-          />
-        </ScrollView>
-      </ContainerWithHeader>
-    );
+    if (hasAllowedToAccessContacts) {
+      return <ReferralContacts navigation={navigation} />;
+    }
+    return <AccessToAddressBook allowToAccessPhoneContacts={allowToAccessPhoneContacts} />;
   }
 }
 
 const mapStateToProps = ({
-  referrals: {
-    hasAllowedToAccessContacts,
-    isPillarRewardCampaignActive,
-  },
+  referrals: { hasAllowedToAccessContacts },
 }: RootReducerState): $Shape<Props> => ({
   hasAllowedToAccessContacts,
-  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  sendInvitation: (invitations: ReferralContact[]) => dispatch(
-    sendReferralInvitationsAction(invitations),
-  ),
+  allowToAccessPhoneContacts: () => dispatch(allowToAccessPhoneContactsAction()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReferFriends);
