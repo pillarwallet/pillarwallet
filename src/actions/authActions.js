@@ -210,6 +210,24 @@ export const loginAction = (
         return;
       }
 
+      /**
+       * Important!
+       * SDK must be initiated before onLoginSuccess in case OAuth tokens fail/expire
+       * since it's used to update front-end with new tokens
+       */
+      if (user?.walletId) {
+        // oauth fallback method for expired access token
+        const updateOAuth = updateOAuthTokensCB(dispatch);
+
+        // oauth fallback method for all tokens expired or invalid
+        const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
+
+        // init API
+        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
+      } else {
+        api.init();
+      }
+
       // execute login success callback
       if (onLoginSuccess) {
         const rawPrivateKey = decryptedPrivateKey.indexOf('0x') === 0
@@ -261,15 +279,6 @@ export const loginAction = (
 
       // user is registered
       if (user?.walletId) {
-        // oauth fallback method for expired access token
-        const updateOAuth = updateOAuthTokensCB(dispatch);
-
-        // oauth fallback method for all tokens expired or invalid
-        const onOAuthTokensFailed = onOAuthTokensFailedCB(dispatch);
-
-        // init API
-        api.init(updateOAuth, oAuthTokens, onOAuthTokensFailed);
-
         // set API username (local method)
         api.setUsername(user.username);
 
@@ -293,8 +302,6 @@ export const loginAction = (
 
           firebaseCrashlytics.setUserId(user.username);
         }
-      } else {
-        api.init();
       }
 
       dispatch(updatePinAttemptsAction(false));
