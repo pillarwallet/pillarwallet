@@ -54,6 +54,7 @@ import {
   getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
+import { fetchSynthetixSupportedAssets } from 'services/synthetix';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -323,12 +324,16 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 
     const oneInchAssetsSymbols = fetch1inchSupportedTokens();
     const uniswapAssetsSymbols = fetchUniswapSupportedTokens(supportedAssets.map(({ symbol }) => symbol));
+    const synthetixAssetsSymbols = fetchSynthetixSupportedAssets();
 
-    const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
+    const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols, synthetixAssetsSymbols]);
 
-    const fetchSuccess = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
+    const fetchSuccess: boolean =
+      Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]) && Array.isArray(assetsSymbols[2]);
 
-    const fetchedAssetsSymbols: string[] = fetchSuccess ? uniq(assetsSymbols[0].concat(assetsSymbols[1])) : [];
+    const fetchedAssetsSymbols: string[] = fetchSuccess
+      ? uniq(assetsSymbols[0].concat(assetsSymbols[1]).concat(assetsSymbols[2]))
+      : [];
 
     const exchangeSupportedAssets = fetchSuccess
       ? supportedAssets.filter(({ symbol }) => fetchedAssetsSymbols.includes(symbol))

@@ -40,6 +40,7 @@ export type Asset = {
   decimals: number,
   amount?: number,
   code?: string,
+  isSynthetixAsset: boolean,
 };
 
 export type Assets = {
