@@ -36,6 +36,8 @@ import { MediumText, Paragraph, BaseText } from 'components/Typography';
 import Modal from 'components/Modal';
 import ButtonText from 'components/ButtonText';
 import HyperLink from 'components/HyperLink';
+import SelectorList from 'components/SelectorList';
+import TitleWithIcon from 'components/Title/TitleWithIcon';
 import Spinner from 'components/Spinner';
 
 // constants
@@ -89,7 +91,7 @@ import { isActiveAccountSmartWalletSelector, useGasTokenSelector } from 'selecto
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
-import ExchangeSpeedModal from './ExchangeSpeedModal';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -112,6 +114,7 @@ type Props = {
 };
 
 type State = {
+  showFeeModal: boolean,
   transactionSpeed: string,
   gasLimit: number,
   txFeeInfo: ?TransactionFeeInfo,
@@ -150,6 +153,10 @@ const SettingsWrapper = styled.View`
   justify-content: center;
 `;
 
+const SliderContentWrapper = styled.View`
+  margin: 30px 0;
+`;
+
 const SafeArea = styled.SafeAreaView`
   width: 100%;
   justify-content: center;
@@ -166,6 +173,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   transactionPayload: TokenTransactionPayload;
 
   state = {
+    showFeeModal: false,
     transactionSpeed: NORMAL,
     txFeeInfo: null,
     gasLimit: 0,
@@ -275,17 +283,17 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     };
   };
 
-  getSpeedOptions = () => {
+  renderTxSpeedButtons = () => {
     const { rates, baseFiatCurrency, isSmartAccount } = this.props;
     if (isSmartAccount) return null;
 
+    const { transactionSpeed } = this.state;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-    return Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
+    const speedOptions = Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
       const feeInEth = formatAmount(utils.formatEther(this.getKeyWalletTxFee(txSpeed).fee));
       const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
       const speedTitle = SPEED_TYPE_LABELS[txSpeed];
-
       return {
         id: speedTitle,
         label: speedTitle,
@@ -296,21 +304,24 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
         value: txSpeed,
       };
     });
-  }
 
-  openFeeModal = () => {
-    const speedOptions = this.getSpeedOptions();
-
-    Modal.open(() => (
-      <ExchangeSpeedModal
-        speedOptions={speedOptions}
-        initialSpeed={this.state.transactionSpeed}
-        onSpeedChange={transactionSpeed => {
-          this.setState({ transactionSpeed });
-        }}
+    return (
+      <SelectorList
+        onSelect={(selectedValue) => this.handleGasPriceChange(selectedValue.toString())}
+        options={speedOptions}
+        selectedValue={transactionSpeed}
+        numColumns={3}
+        minItemWidth={90}
       />
-    ));
-  }
+    );
+  };
+
+  handleGasPriceChange = (txSpeed: string) => {
+    this.setState({
+      transactionSpeed: txSpeed,
+      showFeeModal: false,
+    });
+  };
 
   onConfirmTransactionPress = (offerOrder) => {
     const { navigation, isSmartAccount } = this.props;
@@ -372,7 +383,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { txFeeInfo, gettingFee } = this.state;
+    const { showFeeModal, txFeeInfo, gettingFee } = this.state;
     const {
       navigation,
       session,
@@ -477,7 +488,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
                     name: 'options', // eslint-disable-line i18next/no-literal-string
                     style: { fontSize: 16 },
                   }}
-                  onPress={this.openFeeModal}
+                  onPress={() => this.setState({ showFeeModal: true })}
                 />
               }
             </SettingsWrapper>
@@ -507,6 +518,16 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
             />
           </ButtonWrapper>
         </SafeArea>
+        <SlideModal
+          isVisible={showFeeModal}
+          onModalHide={() => { this.setState({ showFeeModal: false }); }}
+          hideHeader
+        >
+          <SliderContentWrapper>
+            <TitleWithIcon iconName="lightning" title={t('transactions.label.speed')} />
+            {this.renderTxSpeedButtons()}
+          </SliderContentWrapper>
+        </SlideModal>
       </ContainerWithHeader>
     );
   }
