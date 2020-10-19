@@ -54,7 +54,7 @@ import {
   getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
-import { fetchSynthetixSupportedAssets } from 'services/synthetix';
+import { fetchSynthetixSupportedAssets, getSynthetixOffer } from 'services/synthetix';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -126,6 +126,13 @@ const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number,
   };
 };
 
+const estimateSynthetixTxAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+  return async (dispatch: Dispatch) => {
+    const offer = await getSynthetixOffer(fromAsset, toAsset, fromAmount, clientAddress);
+    if (offer) dispatch({ type: ADD_OFFER, payload: offer });
+  };
+};
+
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -152,8 +159,12 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
 
-    dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));
-    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, clientAddress));
+    if (fromAsset.isSynthetixAsset && toAsset.isSynthetixAsset) {
+      dispatch(estimateSynthetixTxAction(fromAsset, toAsset, fromAmount, clientAddress));
+    } else {
+      dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));
+      dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, clientAddress));
+    }
   };
 };
 

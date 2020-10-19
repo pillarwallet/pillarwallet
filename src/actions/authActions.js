@@ -71,7 +71,6 @@ import Storage from 'services/storage';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
-import Synthetix from 'services/synthetix';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -185,8 +184,6 @@ export const loginAction = (
         reportLog('Unable to get wallet private key', { user });
         throw new Error();
       }
-
-      new Synthetix().init(decryptedPrivateKey);
 
       dispatch({ type: SET_USER, payload: user });
 
