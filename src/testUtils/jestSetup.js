@@ -233,12 +233,23 @@ jest.setMock('react-native-vector-icons', {
   createIconSet: () => mockView,
 });
 
-export const mockExchangeRates = {
-  ETH: {
-    EUR: 624.21,
-    GBP: 544.57,
-    USD: 748.92,
+const mockTokensExchangeRates = {
+  PLR: {
+    EUR: 1.21,
+    GBP: 1.10,
+    USD: 1.42,
   },
+};
+
+const mockEtherExchangeRates = {
+  EUR: 624.21,
+  GBP: 544.57,
+  USD: 748.92,
+};
+
+export const mockExchangeRates = {
+  ...mockTokensExchangeRates,
+  ETH: mockEtherExchangeRates,
 };
 
 jest.setMock('cryptocompare', {
@@ -405,5 +416,6 @@ export const mockUserBadges = [{
 jest.setMock('configs/localeConfig', localeConfigMock);
 
 jest.setMock('services/coinGecko', {
-  getCoinGeckoTokenPrices: () => Promise.resolve(mockExchangeRates),
+  getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
+  getCoinGeckoEtherPrice: () => Promise.resolve(mockEtherExchangeRates),
 });

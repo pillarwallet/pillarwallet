@@ -243,7 +243,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
     // user might not be registered at this point
     if (walletId) {
-      const rates = await getExchangeRates(Object.keys(defaultInitialAssets));
+      const rates = await getExchangeRates(defaultInitialAssets);
       dispatch(setRatesAction(rates));
       dispatch(fetchBadgesAction(false));
       dispatch(fetchReferralRewardAction());
