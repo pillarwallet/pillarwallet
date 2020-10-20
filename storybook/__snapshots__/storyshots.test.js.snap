@@ -10898,6 +10898,334 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
 </View>
 `;
 
+exports[`Storyshots Banner default 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {},
+          Object {
+            "padding": 16,
+          },
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderColor": "#EDEDED",
+            "borderRadius": 6,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "opacity": 1,
+            "overflow": "hidden",
+            "position": "relative",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "flexShrink": 1,
+                "paddingBottom": 12,
+                "paddingLeft": 16,
+                "paddingRight": 26,
+                "paddingTop": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            small={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 12,
+                  "lineHeight": 18,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "flexWrap": "wrap",
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                    "marginBottom": 5,
+                    "textAlign": "left",
+                  },
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 8,
+                    },
+                    undefined,
+                  ],
+                ],
+              ]
+            }
+          >
+            Banner text that takes up at least two lines
+          </Text>
+        </View>
+        <View
+          accessible={true}
+          focusable={false}
+          hitSlop={
+            Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 8,
+              "top": 8,
+            }
+          }
+          isTVSelectable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "alignItems": "flex-end",
+              "height": 16,
+              "justifyContent": "center",
+              "opacity": 1,
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "position": "absolute",
+              "right": 8,
+              "top": 6,
+              "width": 16,
+            }
+          }
+        >
+          <View
+            name="rounded-close"
+            style={
+              Object {
+                "color": "#818EB3",
+                "fontSize": 12,
+                "marginBottom": undefined,
+                "marginLeft": undefined,
+                "marginRight": undefined,
+                "marginTop": undefined,
+                "paddingTop": 0,
+              }
+            }
+          />
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots Banner with image 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {},
+          Object {
+            "padding": 16,
+          },
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#FFFFFF",
+            "borderColor": "#EDEDED",
+            "borderRadius": 6,
+            "borderStyle": "solid",
+            "borderWidth": 1,
+            "flexDirection": "row",
+            "justifyContent": "space-between",
+            "opacity": 1,
+            "overflow": "hidden",
+            "position": "relative",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "flexShrink": 1,
+                "paddingBottom": 12,
+                "paddingLeft": 16,
+                "paddingRight": 26,
+                "paddingTop": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            small={true}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "fontSize": 12,
+                  "lineHeight": 18,
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "flexWrap": "wrap",
+                    "fontSize": 16,
+                    "lineHeight": 24,
+                    "marginBottom": 5,
+                    "textAlign": "left",
+                  },
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 8,
+                    },
+                    undefined,
+                  ],
+                ],
+              ]
+            }
+          >
+            Banner text that takes up at least two lines
+          </Text>
+        </View>
+        <View
+          accessible={true}
+          focusable={false}
+          hitSlop={
+            Object {
+              "bottom": 10,
+              "left": 10,
+              "right": 8,
+              "top": 8,
+            }
+          }
+          isTVSelectable={true}
+          onClick={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderRelease={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          style={
+            Object {
+              "alignItems": "flex-end",
+              "height": 16,
+              "justifyContent": "center",
+              "opacity": 1,
+              "paddingBottom": 0,
+              "paddingLeft": 0,
+              "paddingRight": 0,
+              "paddingTop": 0,
+              "position": "absolute",
+              "right": 8,
+              "top": 6,
+              "width": 16,
+            }
+          }
+        >
+          <View
+            name="rounded-close"
+            style={
+              Object {
+                "color": "#818EB3",
+                "fontSize": 12,
+                "marginBottom": undefined,
+                "marginLeft": undefined,
+                "marginRight": undefined,
+                "marginTop": undefined,
+                "paddingTop": 0,
+              }
+            }
+          />
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
 <View
   style={
