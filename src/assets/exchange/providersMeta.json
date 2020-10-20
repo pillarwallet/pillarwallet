@@ -42,16 +42,16 @@
       "name":"Synthetix",
       "img":{
           "vertical":{
-             "light":"uniswapLightVertical",
-             "dark":"uniswapDarkVertical"
+             "light":"synthetixLightVertical",
+             "dark":"synthetixDarkVertical"
           },
           "horizontal":{
-             "light":"uniswapLightHorizontal",
-             "dark":"uniswapDarkHorizontal"
+             "light":"synthetixLightHorizontal",
+             "dark":"synthetixDarkHorizontal"
           },
           "monochrome":{
-             "light":"uniswapLightMonochrome",
-             "dark":"uniswapDarkMonochrome"
+             "light":"synthetixLightMonochrome",
+             "dark":"synthetixDarkMonochrome"
           }
       }
     }
