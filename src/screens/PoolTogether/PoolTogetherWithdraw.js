@@ -45,7 +45,7 @@ import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
+import ValueInput from 'components/ValueInput';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
@@ -121,7 +121,8 @@ type Props = {
 
 type State = {
   poolToken: string,
-  tokenValue: number,
+  tokenValue: string,
+  ticketsCount: number,
   userTickets: number,
   totalPoolTicketsCount: number,
   isAllowModalVisible: boolean,
@@ -145,7 +146,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     super(props);
     this.state = {
       poolToken,
-      tokenValue: poolTicketsCount,
+      tokenValue: poolTicketsCount.toString(),
+      ticketsCount: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible: false,
@@ -185,7 +187,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
   }
 
   updateWithdrawFeeAndTransaction = () => {
-    const { poolToken, tokenValue } = this.state;
+    const { poolToken, ticketsCount } = this.state;
     const {
       useGasToken,
       poolAllowance,
@@ -201,7 +203,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
           txFeeInWei,
           gasToken,
           transactionPayload,
-        } = await getWithdrawTicketFeeAndTransaction(tokenValue, poolToken, useGasToken) || {};
+        } = await getWithdrawTicketFeeAndTransaction(ticketsCount, poolToken, useGasToken) || {};
         if (txFeeInWei) {
           const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
           const feeSymbol = get(gasToken, 'symbol', ETH);
@@ -210,7 +212,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
           const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
           const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
           const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
-          const tokenValueInFiat = formatFiat(tokenValue * getRate(rates, poolToken, fiatCurrency), fiatCurrency);
+          const tokenValueInFiat = formatFiat(ticketsCount * getRate(rates, poolToken, fiatCurrency), fiatCurrency);
 
           const withdrawPayload = {
             transactionPayload,
@@ -219,6 +221,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             feeDisplayValue,
             isDisabled,
             tokenValueInFiat,
+            txFeeInWei,
+            gasToken,
           };
           this.setState({ withdrawPayload });
         }
@@ -226,13 +230,13 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     }
   }
 
-  getFormValue = (value) => {
-    const { input = '0' } = value || {};
-    const newValue = Math.floor(parseFloat(input));
+  onValueChange = (value) => {
+    const ticketsCount = Math.floor(parseFloat(value)) || 0;
     this.setState({
-      tokenValue: newValue,
+      tokenValue: value,
+      ticketsCount,
     }, () => {
-      if (newValue > 0) {
+      if (ticketsCount > 0) {
         this.updateWithdrawFeeAndTransaction();
       }
     });
@@ -273,6 +277,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
+      ticketsCount,
       userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible,
@@ -288,7 +293,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
 
     const isLoading = (!allowPayload && !hasAllowance) || (!withdrawPayload && hasAllowance) || isApprovalExecuting;
 
-    const withdrawDisabled = hasAllowance && (tokenValue === 0 || (withdrawPayload && withdrawPayload.isDisabled));
+    const withdrawDisabled = hasAllowance && (ticketsCount === 0 || (withdrawPayload && withdrawPayload.isDisabled));
 
     let allowData;
     if (allowPayload) {
@@ -315,7 +320,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
         navigation.navigate(POOLTOGETHER_WITHDRAW_CONFIRM,
           {
             poolToken,
-            tokenValue,
+            tokenValue: ticketsCount,
             totalPoolTicketsCount,
             userTickets,
             ...withdrawPayload,
@@ -354,25 +359,17 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
           keyboardShouldPersistTaps="always"
         >
           <ContentWrapper>
-            <ContentRow>
-              <Text label center>{t('poolTogetherContent.paragraph.withdrawalNote')}</Text>
-            </ContentRow>
-            <ContentRow style={{ paddingLeft: 4, paddingRight: 4 }}>
-              <ValueSelectorCard
-                preselectedAsset={poolToken}
-                getFormValue={this.getFormValue}
-                maxLabel={t('button.withdrawAll')}
-                customOptions={assetOptions}
-                balances={balanceOptions}
-                baseFiatCurrency={baseFiatCurrency}
-                rates={rates}
-                txFeeInfo={null}
+            <ContentRow style={{ paddingLeft: 40, paddingRight: 40, zIndex: 10 }}>
+              <ValueInput
+                value={tokenValue}
+                onValueChange={this.onValueChange}
+                assetData={poolTokenItem}
+                customAssets={assetOptions}
+                customBalances={balanceOptions}
               />
             </ContentRow>
             <ContentRow>
-              <Text label center>
-                {t('poolTogetherContent.paragraph.receiveOnWithdrawal', { token: poolToken })}
-              </Text>
+              <Text label center>{t('poolTogetherContent.paragraph.withdrawalNote')}</Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 22 }}>
               {(!hasAllowance && !isApprovalExecuting) &&

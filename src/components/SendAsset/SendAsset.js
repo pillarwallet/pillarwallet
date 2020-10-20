@@ -99,7 +99,7 @@ const renderFeeToggle = (
   );
 };
 
-const SendEthereumTokens = ({
+const SendAsset = ({
   source,
   navigation,
   balances,
@@ -117,10 +117,14 @@ const SendEthereumTokens = ({
   resetEstimateTransaction,
 }: Props) => {
   const defaultAssetData = navigation.getParam('assetData');
-  const [assetData, setAssetData] = useState(defaultAssetData);
-
-  const [amount, setAmount] = useState(null);
-  const [inputHasError, setInputHasError] = useState(false);
+  const defaultAssetOption = defaultAssetData && {
+    ...defaultAssetData,
+    symbol: defaultAssetData.token,
+    value: defaultAssetData.token,
+  };
+  const [assetData, setAssetData] = useState<Option>(defaultAssetOption || assetsWithBalance[0]);
+  const [amount, setAmount] = useState('');
+  const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
@@ -135,9 +139,10 @@ const SendEthereumTokens = ({
 
   const updateTxFee = () => {
     const value = Number(amount || 0);
+    const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
     // specified amount is always valid and not necessarily matches input amount
-    if (!isValidAmount || value === 0 || !assetData || !selectedContact) {
+    if ((!isCollectible && (!isValidAmount || value === 0)) || !assetData || !selectedContact) {
       return;
     }
 
@@ -220,13 +225,8 @@ const SendEthereumTokens = ({
     }
   };
 
-  const manageFormErrorState = (errorMessage: ?string) => {
-    const newErrorState = !!errorMessage;
-    if (inputHasError !== newErrorState) setInputHasError(newErrorState);
-  };
-
   const handleFormSubmit = async () => {
-    if (submitPressed || !feeInfo || !amount || !selectedContact || !assetData) return;
+    if (submitPressed || !feeInfo || !selectedContact || !assetData) return;
 
     setSubmitPressed(true);
 
@@ -245,7 +245,7 @@ const SendEthereumTokens = ({
     const transactionPayload: TokenTransactionPayload = {
       to: selectedContact.ethAddress,
       receiverEnsName: selectedContact.ensName,
-      amount,
+      amount: amount || 0,
       txFeeInWei: feeInfo.fee,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
@@ -269,12 +269,13 @@ const SendEthereumTokens = ({
     // update fee only on max balance
     if (maxBalance === calculatedBalanceAmount && selectedContact) {
       // await needed for initial max available send calculation to get estimate before showing max available after fees
+      // TODO: check if value needs to be returned (conflict solve)
       await estimateTransaction(selectedContact.ethAddress, Number(calculatedBalanceAmount), assetData);
     }
+    return null;
   };
 
   const token = get(assetData, 'token');
-  const preselectedCollectible = get(assetData, 'tokenType') === COLLECTIBLES ? get(assetData, 'id') : '';
 
   // balance
   const balance = getBalance(balances, token);
@@ -289,7 +290,7 @@ const SendEthereumTokens = ({
 
   const hasAllData = isCollectible
     ? (!!selectedContact && !!assetData)
-    : (!inputHasError && !!selectedContact && !!currentValue);
+    : (inputIsValid && !!selectedContact && !!currentValue);
 
   // perform actual balance check only if all values set
   let enoughBalanceForTransaction = true;
@@ -307,7 +308,7 @@ const SendEthereumTokens = ({
     ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
 
-  const showNextButton = !isEstimating && hasAllData && enoughBalanceForTransaction && !!feeInfo;
+  const showNextButton = hasAllData && !errorMessage;
 
   const isNextButtonDisabled = !session.isOnline;
 
@@ -342,15 +343,15 @@ const SendEthereumTokens = ({
         },
       }}
       customValueSelectorProps={{
-        getFormValue: handleAmountChange,
-        getError: manageFormErrorState,
+        value: amount,
+        onValueChange: setAmount,
+        assetData,
+        onAssetDataChange: setAssetData,
+        showCollectibles: true,
         txFeeInfo: feeInfo,
-        preselectedAsset: token,
-        preselectedCollectible,
-        showAllAssetTypes: true,
-        gettingFee: isEstimating,
-        hideMaxSend: isEstimating || !selectedContact, // we cannot calculate max if no receiver is set
-        calculateBalancePercentTxFee,
+        hideMaxSend: isEstimating || !selectedContact,
+        updateTxFee: calculateBalancePercentTxFee,
+        onFormValid: setInputIsValid,
       }}
       footerProps={{
         isNextButtonVisible: showNextButton,
@@ -366,6 +367,7 @@ const SendEthereumTokens = ({
           isEstimating,
           enoughBalanceForTransaction,
         ),
+        isLoading: isEstimating,
       }}
     >
       <ContactDetailsModal
@@ -423,4 +425,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(SendEthereumTokens);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);

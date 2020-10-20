@@ -101,54 +101,57 @@ const Tooltip = (props: Props) => {
   const [wrapperLayout, setWrapperLayout] = React.useState<Layout>({
     width: 0, height: 0, x: 0, y: 0,
   });
+
   const [tooltipLayout, setTooltipLayout] = React.useState<Layout>({
     x: 0, y: 0, width: 0, height: 0,
   });
   const [wrapperX, setWrapperX] = React.useState(0);
-  const [ballonWidth, setBallonWidth] = React.useState(0);
+  const [balloonWidth, setBalloonWidth] = React.useState(0);
 
-  const ballonRef = React.useRef(null);
+  const balloonRef = React.useRef(null);
 
   // for fade-out animation
   const [visibilityState, setVisibilityState] = React.useState<boolean>(false);
 
   const opacityAnim = React.useRef<Animated.Value>(new Animated.Value(0)).current;
   React.useEffect(() => {
-    Animated.timing(opacityAnim, {
-      toValue: isVisible ? 1 : 0,
-      duration: 200,
-      useNativeDriver: true,
-    }).start(() => !isVisible && setVisibilityState(false));
+    if (tooltipLayout.height) {
+      Animated.timing(opacityAnim, {
+        toValue: isVisible ? 1 : 0,
+        duration: 200,
+        useNativeDriver: true,
+      }).start(() => !isVisible && setVisibilityState(false));
+    }
     if (isVisible) {
       setVisibilityState(true);
     }
-  }, [isVisible]);
+  }, [isVisible, tooltipLayout]);
 
-  const measureBallonPosition = () => {
-    measure(ballonRef.current)
+  const measureBalloonPosition = () => {
+    measure(balloonRef.current)
       .then(({ x }) => setWrapperX(x))
       .catch((error) => {
         reportLog('Can\'t measure tooltip component.', { error });
       });
   };
 
-  React.useEffect(measureBallonPosition, [isVisible]);
+  React.useEffect(measureBalloonPosition, [isVisible]);
 
   const onWrapperLayout = ({ nativeEvent: { layout } }) => {
     setWrapperLayout(layout);
-    measureBallonPosition();
+    measureBalloonPosition();
   };
 
   const onTooltipLayout = ({ nativeEvent: { layout } }) => {
     setTooltipLayout(layout);
   };
 
-  const onBallonLayout = ({ nativeEvent: { layout } }) => {
-    setBallonWidth(layout.width);
+  const onBalloonLayout = ({ nativeEvent: { layout } }) => {
+    setBalloonWidth(layout.width);
   };
 
-  let wrapperPosition = {};
-  let arrowHolderPosition = {};
+  let wrapperPosition = { left: 0 };
+  let arrowHolderPosition = { left: 0 };
 
   if (wrapperLayout.width) {
     wrapperPosition = {
@@ -163,8 +166,8 @@ const Tooltip = (props: Props) => {
   }
 
   let edgeOffset = 0;
-  const leftEdge = wrapperX + wrapperPosition.left + ((TOOLTIP_WIDTH - ballonWidth) / 2);
-  const rightEdge = leftEdge + ballonWidth;
+  const leftEdge = wrapperX + wrapperPosition.left + ((TOOLTIP_WIDTH - balloonWidth) / 2);
+  const rightEdge = leftEdge + balloonWidth;
   if (leftEdge < SIDE_MARGIN) {
     edgeOffset = SIDE_MARGIN - leftEdge;
   } else if (rightEdge > screenWidth - SIDE_MARGIN) {
@@ -179,15 +182,15 @@ const Tooltip = (props: Props) => {
   };
 
   return (
-    <View onLayout={onWrapperLayout} style={wrapperStyle} ref={ballonRef}>
+    <View onLayout={onWrapperLayout} style={wrapperStyle} ref={balloonRef}>
       {children}
       {visibilityState && (
         <TooltipWrapper onLayout={onTooltipLayout} {...wrapperPosition} style={{ opacity: opacityAnim }}>
           <TooltipArrowHolder {...arrowHolderPosition}>
             <TooltipArrow {...arrowPosition} />
           </TooltipArrowHolder>
-          <BalloonWrapper >
-            <TooltipBalloon onLayout={onBallonLayout}>
+          <BalloonWrapper>
+            <TooltipBalloon onLayout={onBalloonLayout}>
               <TooltipParagraph>{body}</TooltipParagraph>
             </TooltipBalloon>
           </BalloonWrapper>

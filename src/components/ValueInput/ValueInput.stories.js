@@ -20,9 +20,18 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import { PLR, GBP } from 'constants/assetsConstants';
+import styled, { withTheme } from 'styled-components/native';
+import { GBP } from 'constants/assetsConstants';
 
-import { ValueSelectorCard as ValueSelectorCardElement } from 'components/ValueSelectorCard';
+import { ValueInputComponent } from 'components/ValueInput';
+
+
+const Wrapper = styled.View`
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  flex: 1;
+`;
 
 const reduxMock = {
   assets: [
@@ -101,15 +110,21 @@ const reduxMock = {
     },
   },
   baseFiatCurrency: GBP,
+  collectibles: [],
 };
 
-storiesOf('Value Selector Card', module)
-  .add('Selector without preselected asset', () => (
-    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} />
-  ))
-  .add('Selector with preselected asset', () => (
-    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} preselectedAsset={PLR} />
-  ))
-  .add('Selector with custom max label', () => (
-    <ValueSelectorCardElement {...reduxMock} getFormValue={() => {}} maxLabel="Use Max" />
+const ValueInputWithTheme = withTheme(ValueInputComponent);
+
+storiesOf('Value Input', module)
+  .add('default', () => (
+    <Wrapper>
+      <ValueInputWithTheme
+        {...reduxMock}
+        value=""
+        onValueChange={() => {}}
+        assetData={reduxMock.assets[0]}
+        onAssetPress={() => {}}
+        onAssetDataChange={() => {}}
+      />
+    </Wrapper>
   ));

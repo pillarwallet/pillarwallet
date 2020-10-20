@@ -76,6 +76,7 @@ const ContentWrapper = styled.View`
 const StyledWrapper = styled.View`
   flex-grow: 1;
   padding: 32px ${spacing.layoutSides}px ${spacing.layoutSides}px;
+  min-height: 180px; ${''/* to add screen estate for error toast */}
 `;
 
 const CheckboxText = styled(BaseText)`
@@ -219,6 +220,7 @@ const NewProfile = ({
             autoFocus: true,
             onChange: setUsernameValue,
           }}
+          inputWrapperStyle={{ zIndex: 10 }}
         />
         <BaseText regular>{t('auth:label.cannotBeChanged')}</BaseText>
       </StyledWrapper>

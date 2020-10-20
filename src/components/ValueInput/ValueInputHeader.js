@@ -27,8 +27,10 @@ import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
 import { themedColors } from 'utils/themes';
-import { BaseText, MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
+import { BaseText, MediumText } from 'components/Typography';
+import { Spacing } from 'components/Layout';
+
 
 type Props = {
   theme: Theme,
@@ -36,6 +38,7 @@ type Props = {
   labelText: string,
   onLabelPress: () => void,
   onAssetPress: () => void,
+  disableAssetSelection: boolean,
 };
 
 const Wrapper = styled.View`
@@ -73,23 +76,25 @@ const ChevronWrapper = styled.View`
 const AssetName = styled(MediumText)`
   ${fontStyles.medium};
   ${({ theme }) => `color: ${theme.colors.text};`}
+  flex: 1;
 `;
 
 const LabelText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.link}
+  color: ${themedColors.link};
+  margin-top: 1px;
 `;
 
-const ExchangeInputHeader = (props: Props) => {
+const ValueInputHeader = (props: Props) => {
   const {
-    asset, labelText, onLabelPress, onAssetPress, theme,
+    asset, labelText, onLabelPress, onAssetPress, theme, disableAssetSelection,
   } = props;
   const { id, name, imageUrl } = asset;
   const optionImageSource = resolveAssetSource(imageUrl);
   const { genericToken } = images(theme);
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} >
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection}>
         <Image
           key={id}
           source={optionImageSource}
@@ -100,13 +105,12 @@ const ExchangeInputHeader = (props: Props) => {
         <ChevronWrapper>
           <SelectorChevron name="selector" />
         </ChevronWrapper>
-        <AssetName>{name}</AssetName>
       </SideWrapper>
-      <SideWrapper onPress={onLabelPress} >
-        <LabelText>{labelText}</LabelText>
-      </SideWrapper>
+      <AssetName onPress={onAssetPress} numberOfLines={1}>{name}</AssetName>
+      <Spacing w={8} />
+      <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>
   );
 };
 
-export default withTheme(ExchangeInputHeader);
+export default withTheme(ValueInputHeader);
