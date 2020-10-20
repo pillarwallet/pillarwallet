@@ -20,9 +20,8 @@
 import * as React from 'react';
 import QRCode from 'react-native-qrcode-svg';
 import { withTheme } from 'styled-components/native/index';
-import { getThemeColors, getThemeType } from 'utils/themes';
+import { getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
-import { DARK_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
   value: string,
@@ -39,14 +38,13 @@ const QRCodeWithTheme = (props: Props) => {
     getRef,
   } = props;
   const colors = getThemeColors(theme);
-  const themeType = getThemeType(theme);
   return (
     <QRCode
       getRef={getRef}
       value={value}
       size={size}
-      color={themeType === DARK_THEME ? '#FFFFFF' : colors.text}
-      backgroundColor={colors.card}
+      color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkCustom: '#FFFFFF' })}
+      backgroundColor={colors.basic050}
     />
   );
 };
