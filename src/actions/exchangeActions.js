@@ -85,6 +85,8 @@ export const takeOfferAction = (
       order = await createUniswapOrder(fromAsset, toAsset, fromAmount, clientAddress);
     } else if (provider === PROVIDER_1INCH) {
       order = await create1inchOrder(fromAsset, toAsset, fromAmount, clientAddress);
+    } else if (provider === PROVIDER_SYNTHETIX) {
+      // TODO: synth exchange handled by lib, so no tx object created
     }
 
     if (!fromAsset || !toAsset || !order) {

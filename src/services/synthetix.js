@@ -29,7 +29,7 @@ import { getEnv } from 'configs/envConfig';
 import { getContract } from 'services/assets';
 
 // utils
-import { getEthereumProvider, parseTokenBigNumberAmount } from 'utils/common';
+import { getEthereumProvider, parseTokenBigNumberAmount, reportOrWarn } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
@@ -45,15 +45,25 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
 const network = isProdEnv ? 'mainnet' : 'kovan';
 const { address: exchangeAddress } = getTarget({ network, contract: 'ProxyERC20' });
-// const { abi: exchangeAbi } = getSource({ network, contract: 'Synthetix' });
+const { abi: exchangeAbi } = getSource({ network, contract: 'Synthetix' });
 
 const { address: ratesAddress } = getTarget({ network, contract: 'ExchangeRates' });
 const { abi: ratesAbi } = getSource({ network, contract: 'ExchangeRates' });
 
 export const fetchSynthetixSupportedAssets = () => getTokens({ network }).map(token => token.symbol);
 
-export const exchange = async () => {
-  //
+export const exchange = async (fromAsset: Asset, toAsset: Asset, amount: string | number) => {
+  const exchangeContract = new Contract(exchangeAddress, exchangeAbi, ethProvider);
+  try {
+    const txn = await exchangeContract.exchange(
+      toBytes32(fromAsset.symbol),
+      parseTokenBigNumberAmount(amount, fromAsset.decimals),
+      toBytes32(toAsset.symbol),
+    );
+    await txn.wait();
+  } catch (e) {
+    reportOrWarn(`Synthetix exchange failed for pair ${fromAsset.symbol}-${toAsset.symbol}`, e, 'warning');
+  }
 };
 
 const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: string) => {
@@ -65,23 +75,27 @@ const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: st
 export const getSynthetixOffer = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientAddress: string,
 ): Promise<Offer | null> => {
-  const contract = getContract(ratesAddress, ratesAbi);
-  if (!contract) return null;
-  const toValue = await contract.effectiveValue(
-    toBytes32(fromAsset),
-    parseTokenBigNumberAmount(amount, fromAsset.decimals),
-    toBytes32(toAsset),
-  );
-  const toAmount = utils.formatUnits(toValue.toString(), toAsset.decimals);
-  const allowanceSet = await getSynthetixAllowance(clientAddress, fromAsset.address);
-  const amountBN = new BigNumber(amount.toString());
-  const toAmountBN = new BigNumber(toAmount.toString());
-  const askRate = toAmountBN.dividedBy(amountBN);
+  try {
+    const contract = getContract(ratesAddress, ratesAbi);
+    if (!contract) return null;
+    const toValue = await contract.effectiveValue(
+      toBytes32(fromAsset.symbol),
+      parseTokenBigNumberAmount(amount, fromAsset.decimals),
+      toBytes32(toAsset.symbol),
+    );
+    const toAmount = utils.formatUnits(toValue.toString(), toAsset.decimals);
+    const allowanceSet = await getSynthetixAllowance(clientAddress, fromAsset.address);
+    const amountBN = new BigNumber(amount.toString());
+    const toAmountBN = new BigNumber(toAmount.toString());
+    const askRate = toAmountBN.dividedBy(amountBN).toNumber().toFixed(5);
 
-  return parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_SYNTHETIX);
+    return parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_SYNTHETIX);
+  } catch (e) {
+    reportOrWarn(`Synthetix estimate failed for pair ${fromAsset.symbol}-${toAsset.symbol}`, e, 'warning');
+    return null;
+  }
 };
 
-// to be used in exchangeActions: setTokenAllowanceAction
 export const createSynthetixAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
   const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
   return allowanceTx;
