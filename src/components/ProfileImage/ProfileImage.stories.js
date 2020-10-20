@@ -17,51 +17,36 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import Emoji from 'react-native-emoji';
 
+import ProfileImage from './ProfileImage';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
-import { ListCard } from './ListCard';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
-const TITLE = 'Long list title to check layout on edge cases';
+const userImage = 'https://picsum.photos/200';
+const usdcIcon = require('assets/images/usdc_color.png');
 
-storiesOf('ListCard', module)
-  .addDecorator(CenterViewStretchDecorator)
+storiesOf('ProfileImage', module)
+  .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ListCard title="List title" />
+    <ProfileImage userName="Username" uri={userImage} />
   ))
-  .add('with custom icon', () => (
-    <ListCard
-      title={TITLE}
-      customIcon={<Emoji name="gear" style={{ marginRight: 10 }} />}
+  .add('with border', () => (
+    <ProfileImage userName="Username" uri={userImage} borderWidth={2} />
+  ))
+  .add('with addon image', () => (
+    <ProfileImage
+      userName="Username"
+      uri={userImage}
+      cornerIcon={usdcIcon}
+      cornerIconSize={16}
     />
   ))
-  .add('with label', () => (
-    <ListCard
-      title={TITLE}
-      labelBadge={{ label: 'label badge' }}
-    />
+  .add('just initials', () => (
+    <ProfileImage userName="Username" />
   ))
-  .add('with labelText', () => (
-    <ListCard
-      title={TITLE}
-      label="label text"
-    />
-  ))
-  .add('with note', () => (
-    <ListCard
-      title={TITLE}
-      note={{ note: 'Note text that takes up at least two lines' }}
-    />
-  ))
-  .add('with subtitle', () => (
-    <ListCard
-      title={TITLE}
-      subtitle="Longer subtitle text to check how lines wrap"
-      label="Label text"
-    />
+  .add('custom diameter', () => (
+    <ProfileImage userName="Username" diameter={64} initialsSize={26} />
   ));

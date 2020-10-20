@@ -2076,8 +2076,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#d1d9e4",
-                      "borderColor": "#FFFFFF",
+                      "backgroundColor": "#e0eeff",
+                      "borderColor": "#e0eeff",
                       "borderRadius": 24,
                       "borderStyle": "solid",
                       "borderWidth": 0,

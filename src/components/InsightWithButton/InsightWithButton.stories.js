@@ -21,7 +21,7 @@ import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import InsightWithButton from './InsightWithButton';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
 const itemsList = [
   'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
@@ -29,7 +29,7 @@ const itemsList = [
 ];
 
 storiesOf('InsightWithButton', module)
-  .addDecorator(CenterViewDecorator)
+  .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('with list', () => (
     <InsightWithButton

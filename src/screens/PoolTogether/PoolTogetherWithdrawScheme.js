@@ -91,8 +91,6 @@ const PoolTogetherWithdrawScheme = (props: Props) => {
         uri={userImageUri}
         userName={username}
         diameter={64}
-        noShadow
-        borderWidth={0}
       />
       <Spacing h={8} />
       <BaseText medium>{user.username}</BaseText>

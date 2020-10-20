@@ -30,14 +30,14 @@ import { MANAGE_USERS_FLOW } from 'constants/navigationConstants';
 import { spacing } from 'utils/variables';
 
 import type { NavigationScreenProp } from 'react-navigation';
-import type { ExternalProfileImageProps } from 'components/ProfileImage';
+import type { ProfileImageProps } from 'components/ProfileImage';
 import type { User } from 'models/User';
 
 
 type Props = {
   user: User,
   navigation: NavigationScreenProp<*>,
-  userProps: ExternalProfileImageProps,
+  userProps: ProfileImageProps,
   profileImageWidth?: number,
 };
 
@@ -71,7 +71,6 @@ const UserNameAndImage = (props: Props) => {
         userName={username}
         diameter={profileImageWidth}
         noShadow
-        borderWidth={0}
         {...userProps}
       />
       {!!username && <UserName>{username}</UserName>}

@@ -20,16 +20,17 @@
 import React from 'react';
 import styled from 'styled-components/native';
 
-const CenterViewDecorator = styled.View`
+const CenterViewStretchDecorator = styled.View`
   flex: 1;
   width: 100%;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
+  padding: 20px;
 `;
 
 export default (story: Function) => (
-  <CenterViewDecorator>
+  <CenterViewStretchDecorator>
     {story()}
-  </CenterViewDecorator>
+  </CenterViewStretchDecorator>
 );
 

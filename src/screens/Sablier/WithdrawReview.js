@@ -123,8 +123,6 @@ const WithdrawReview = ({
         <ProfileImage
           userName={username}
           diameter={64}
-          noShadow
-          borderWidth={0}
         />
         <Spacing h={8} />
         <BaseText medium>{username}</BaseText>

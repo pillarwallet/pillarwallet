@@ -172,8 +172,6 @@ class NewStreamReviewScheme extends React.Component<Props, State> {
           <ProfileImage
             userName={receiver}
             diameter={64}
-            noShadow
-            borderWidth={0}
           />
           <Spacing h={7} />
           <MediumText big>{receiver}</MediumText>

@@ -23,7 +23,7 @@ import { storiesOf } from '@storybook/react-native';
 
 import Selector from './Selector';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
 const aliceImage = 'https://picsum.photos/201';
 const bobImage = 'https://picsum.photos/202';
@@ -47,7 +47,7 @@ const options = [
 ];
 
 storiesOf('Selector', module)
-  .addDecorator(CenterViewDecorator)
+  .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
     <Selector

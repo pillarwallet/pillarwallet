@@ -1266,8 +1266,6 @@ export class EventDetail extends React.Component<Props, State> {
           userName={label}
           diameter={64}
           textStyle={{ fontSize: fontSizes.big }}
-          noShadow
-          borderWidth={0}
           cornerIcon={cornerIcon}
           cornerIconSize={22}
         />

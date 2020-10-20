@@ -171,8 +171,6 @@ class ReceiveModal extends React.Component<Props, *> {
               uri={profileImageURI}
               userName={username}
               diameter={48}
-              borderWidth={0}
-              noShadow
             />
           </ImageWrapper>
         }

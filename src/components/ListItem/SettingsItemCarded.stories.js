@@ -24,14 +24,14 @@ import { storiesOf } from '@storybook/react-native';
 import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 import SettingsItemCarded from './SettingsItemCarded';
 
 
 const { smartWalletIcon } = images({ current: LIGHT_THEME, colors: {} });
 
 storiesOf('SettingsItemCarded', module)
-  .addDecorator(CenterViewDecorator)
+  .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
     <SettingsItemCarded

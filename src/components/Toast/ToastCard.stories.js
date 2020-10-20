@@ -23,7 +23,7 @@ import { storiesOf } from '@storybook/react-native';
 
 import ToastCard from './ToastCard';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
 
 const normalText = 'Magna culpa aliquip nisi in eu';
@@ -33,7 +33,7 @@ const longText = 'Magna culpa aliquip nisi in eu Lorem reprehenderit laborum ' +
   'consectetur culpa aliquip sunt pariatur velit cillum magna dolor.';
 
 storiesOf('ToastCard', module)
-  .addDecorator(CenterViewDecorator)
+  .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
     <ToastCard

@@ -9795,8 +9795,8 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#d1d9e4",
-                "borderColor": "#FFFFFF",
+                "backgroundColor": "#e0eeff",
+                "borderColor": "#e0eeff",
                 "borderRadius": 24,
                 "borderStyle": "solid",
                 "borderWidth": 0,
@@ -9839,7 +9839,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#FCFDFF",
+                          "color": "#007AFF",
                           "fontSize": 16,
                         },
                         undefined,
@@ -10105,8 +10105,8 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#d1d9e4",
-                "borderColor": "#FFFFFF",
+                "backgroundColor": "#e0eeff",
+                "borderColor": "#e0eeff",
                 "borderRadius": 24,
                 "borderStyle": "solid",
                 "borderWidth": 0,
@@ -10149,7 +10149,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#FCFDFF",
+                          "color": "#007AFF",
                           "fontSize": 16,
                         },
                         undefined,
@@ -10415,8 +10415,8 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
             style={
               Object {
                 "alignItems": "center",
-                "backgroundColor": "#d1d9e4",
-                "borderColor": "#FFFFFF",
+                "backgroundColor": "#e0eeff",
+                "borderColor": "#e0eeff",
                 "borderRadius": 24,
                 "borderStyle": "solid",
                 "borderWidth": 0,
@@ -10459,7 +10459,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#FCFDFF",
+                          "color": "#007AFF",
                           "fontSize": 16,
                         },
                         undefined,
@@ -35332,6 +35332,430 @@ exports[`Storyshots ListItemChevron with subtext 1`] = `
 </View>
 `;
 
+exports[`Storyshots ProfileImage custom diameter 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#e0eeff",
+            "borderColor": "#e0eeff",
+            "borderRadius": 32,
+            "borderStyle": "solid",
+            "borderWidth": 0,
+            "display": "flex",
+            "height": 64,
+            "justifyContent": "center",
+            "opacity": 1,
+            "position": "relative",
+            "width": 64,
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "height": "100%",
+                "justifyContent": "center",
+                "position": "absolute",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            initialsSize={26}
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 26,
+                    },
+                    undefined,
+                  ],
+                ],
+              ]
+            }
+          >
+            U
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ProfileImage default 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "borderColor": "#e0eeff",
+            "borderRadius": 25,
+            "borderStyle": "solid",
+            "borderWidth": 0,
+            "display": "flex",
+            "height": 50,
+            "justifyContent": "center",
+            "opacity": 1,
+            "position": "relative",
+            "width": 50,
+          }
+        }
+      />
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ProfileImage just initials 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "backgroundColor": "#e0eeff",
+            "borderColor": "#e0eeff",
+            "borderRadius": 25,
+            "borderStyle": "solid",
+            "borderWidth": 0,
+            "display": "flex",
+            "height": 50,
+            "justifyContent": "center",
+            "opacity": 1,
+            "position": "relative",
+            "width": 50,
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "height": "100%",
+                "justifyContent": "center",
+                "position": "absolute",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <Text
+            style={
+              Array [
+                Object {
+                  "color": "#0A1427",
+                  "fontFamily": "EuclidCircularB-Regular",
+                  "textAlignVertical": "center",
+                },
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#007AFF",
+                      "fontSize": 16,
+                    },
+                    undefined,
+                  ],
+                ],
+              ]
+            }
+          >
+            U
+          </Text>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ProfileImage with addon image 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "borderColor": "#e0eeff",
+            "borderRadius": 25,
+            "borderStyle": "solid",
+            "borderWidth": 0,
+            "display": "flex",
+            "height": 50,
+            "justifyContent": "center",
+            "opacity": 1,
+            "position": "relative",
+            "width": 50,
+          }
+        }
+      />
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ProfileImage with border 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={false}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "borderColor": "#e0eeff",
+            "borderRadius": 27,
+            "borderStyle": "solid",
+            "borderWidth": 2,
+            "display": "flex",
+            "height": 54,
+            "justifyContent": "center",
+            "opacity": 1,
+            "position": "relative",
+            "width": 54,
+          }
+        }
+      />
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots SWActivationCard default 1`] = `
 <View
   style={
@@ -38473,7 +38897,7 @@ exports[`Storyshots Selector selected option 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "borderColor": "#FFFFFF",
+                      "borderColor": "#e0eeff",
                       "borderRadius": 26,
                       "borderStyle": "solid",
                       "borderWidth": 0,
@@ -41710,7 +42134,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                       style={
                                         Object {
                                           "alignItems": "center",
-                                          "borderColor": "#FFFFFF",
+                                          "borderColor": "#e0eeff",
                                           "borderRadius": 32,
                                           "borderStyle": "solid",
                                           "borderWidth": 0,
@@ -44984,8 +45408,8 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                               style={
                                                 Object {
                                                   "alignItems": "center",
-                                                  "backgroundColor": "#d1d9e4",
-                                                  "borderColor": "#FFFFFF",
+                                                  "backgroundColor": "#e0eeff",
+                                                  "borderColor": "#e0eeff",
                                                   "borderRadius": 26,
                                                   "borderStyle": "solid",
                                                   "borderWidth": 0,
@@ -45185,8 +45609,8 @@ exports[`Storyshots Value Selector Card Selector with custom max label 1`] = `
                                               style={
                                                 Object {
                                                   "alignItems": "center",
-                                                  "backgroundColor": "#d1d9e4",
-                                                  "borderColor": "#FFFFFF",
+                                                  "backgroundColor": "#e0eeff",
+                                                  "borderColor": "#e0eeff",
                                                   "borderRadius": 26,
                                                   "borderStyle": "solid",
                                                   "borderWidth": 0,
@@ -46573,8 +46997,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                               style={
                                                 Object {
                                                   "alignItems": "center",
-                                                  "backgroundColor": "#d1d9e4",
-                                                  "borderColor": "#FFFFFF",
+                                                  "backgroundColor": "#e0eeff",
+                                                  "borderColor": "#e0eeff",
                                                   "borderRadius": 26,
                                                   "borderStyle": "solid",
                                                   "borderWidth": 0,
@@ -46774,8 +47198,8 @@ exports[`Storyshots Value Selector Card Selector with preselected asset 1`] = `
                                               style={
                                                 Object {
                                                   "alignItems": "center",
-                                                  "backgroundColor": "#d1d9e4",
-                                                  "borderColor": "#FFFFFF",
+                                                  "backgroundColor": "#e0eeff",
+                                                  "borderColor": "#e0eeff",
                                                   "borderRadius": 26,
                                                   "borderStyle": "solid",
                                                   "borderWidth": 0,
@@ -48022,8 +48446,8 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                               style={
                                                 Object {
                                                   "alignItems": "center",
-                                                  "backgroundColor": "#d1d9e4",
-                                                  "borderColor": "#FFFFFF",
+                                                  "backgroundColor": "#e0eeff",
+                                                  "borderColor": "#e0eeff",
                                                   "borderRadius": 26,
                                                   "borderStyle": "solid",
                                                   "borderWidth": 0,
@@ -48223,8 +48647,8 @@ exports[`Storyshots Value Selector Card Selector without preselected asset 1`] =
                                               style={
                                                 Object {
                                                   "alignItems": "center",
-                                                  "backgroundColor": "#d1d9e4",
-                                                  "borderColor": "#FFFFFF",
+                                                  "backgroundColor": "#e0eeff",
+                                                  "borderColor": "#e0eeff",
                                                   "borderRadius": 26,
                                                   "borderStyle": "solid",
                                                   "borderWidth": 0,

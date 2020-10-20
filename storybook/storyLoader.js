@@ -13,6 +13,7 @@ function loadStories() {
 	require('../src/components/ListItem/ListCard.stories');
 	require('../src/components/ListItem/ListItemChevron.stories');
 	require('../src/components/ListItem/SettingsItemCarded.stories');
+	require('../src/components/ProfileImage/ProfileImage.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/Selector/Selector.stories');
 	require('../src/components/Toast/ToastCard.stories');
@@ -29,6 +30,7 @@ const stories = [
 	'../src/components/ListItem/ListCard.stories',
 	'../src/components/ListItem/ListItemChevron.stories',
 	'../src/components/ListItem/SettingsItemCarded.stories',
+	'../src/components/ProfileImage/ProfileImage.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/Selector/Selector.stories',
 	'../src/components/Toast/ToastCard.stories',

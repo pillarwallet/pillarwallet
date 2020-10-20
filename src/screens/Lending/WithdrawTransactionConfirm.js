@@ -192,8 +192,6 @@ const WithdrawTransactionConfirm = ({
           uri={userImageUri}
           userName={username}
           diameter={64}
-          noShadow
-          borderWidth={0}
         />
         <BaseText fontSize={15}>{username}</BaseText>
         <TokenValueWrapper>

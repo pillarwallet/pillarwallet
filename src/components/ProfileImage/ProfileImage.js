@@ -19,15 +19,13 @@
 */
 import * as React from 'react';
 import { ImageBackground } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import { fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/accounts';
-import { getThemeType, themedColors } from 'utils/themes';
+import { getColorByTheme } from 'utils/themes';
 import { MediumText } from 'components/Typography';
-import { Shadow } from 'components/Shadow';
-import type { Theme } from 'models/Theme';
-import { DARK_THEME } from 'constants/appSettingsConstants';
+
 
 const CircleImage = styled(CachedImage)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
@@ -43,10 +41,13 @@ const ImageTouchable = styled.TouchableOpacity`
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
   display: flex;
-  ${({ needBackground, theme }) => needBackground && `background-color: ${theme.colors.userAvatar}`};
+  ${({ needBackground }) => needBackground
+    && css`background-color: ${getColorByTheme({ lightCustom: '#e0eeff', darkKey: 'basic040' })};`}
   ${props => (props.additionalContainerStyle)};
   position: relative;
-  border: ${({ borderWidth, borderColor, theme }) => `${borderWidth}px solid ${borderColor || theme.colors.card}`};
+  border: ${({ borderWidth, borderColor }) =>
+    css`${borderWidth}px solid ${borderColor
+    || getColorByTheme({ lightCustom: '#e0eeff', darkKey: 'basic040' })}`};
   justify-content: center;
   align-items: center;
 `;
@@ -61,7 +62,7 @@ const InnerBackground = styled.View`
 
 const InnerUsername = styled(MediumText)`
   font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
-  color: ${themedColors.control};
+  color: ${({ theme }) => theme.colors.primaryAccent130};
 `;
 
 const CornerIcon = styled(CachedImage)`
@@ -72,48 +73,21 @@ const CornerIcon = styled(CachedImage)`
   right: 0;
 `;
 
-export type ExternalProfileImageProps = {
-  uri?: string,
+export type ProfileImageProps = {
+  uri?: ?string,
   userName?: string,
   containerStyle?: Object,
   imageStyle?: Object,
   onPress?: ?Function,
   diameter?: number,
   borderWidth?: number,
-  borderSpacing?: number,
   borderColor?: string,
   style?: Object,
   children?: React.Node,
   initialsSize?: number,
-  noShadow?: boolean,
-  showProfileImage?: boolean,
   fallbackImage?: string,
   cornerIcon?: Object,
   cornerIconSize?: number,
-}
-
-type Props = ExternalProfileImageProps & {
-  theme: Theme,
-}
-
-const Wrapper = (props: { children: React.Node, noShadow?: boolean, diameter: number }) => {
-  const { children, noShadow, diameter } = props;
-
-  if (!noShadow) {
-    return (
-      <Shadow
-        widthAndroid={diameter}
-        heightAndroid={diameter}
-        widthIOS={diameter}
-        heightIOS={diameter}
-        shadowRadius={diameter / 2}
-      >
-        { children }
-      </Shadow>
-    );
-  }
-
-  return children;
 };
 
 const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node, initialsSize?: number }) => {
@@ -141,7 +115,7 @@ const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node,
 const CACHED_IMAGE_REF = 'cachedImage';
 const IMAGE_LOAD_FAILED = 'image_load_failed';
 
-const ProfileImage = (props: Props) => {
+const ProfileImage = (props: ProfileImageProps) => {
   const {
     uri,
     containerStyle,
@@ -150,21 +124,16 @@ const ProfileImage = (props: Props) => {
     style,
     diameter = 50,
     borderColor,
-    borderWidth = 2,
-    borderSpacing = 0,
+    borderWidth = 0,
     children,
     userName,
     initialsSize,
-    noShadow,
-    showProfileImage = true,
-    theme,
     fallbackImage,
     cornerIcon,
     cornerIconSize = 22,
   } = props;
 
-  const themeType = getThemeType(theme);
-  const diameterWithBorder = diameter + (borderWidth * 2) + (borderSpacing * 2);
+  const diameterWithBorder = diameter + (borderWidth * 2);
 
   const renderDefaultImage = () => {
     if (fallbackImage) {
@@ -181,36 +150,32 @@ const ProfileImage = (props: Props) => {
   };
 
   return (
-    <Wrapper noShadow={noShadow || themeType === DARK_THEME} diameter={diameterWithBorder}>
-      {showProfileImage &&
-        <ImageTouchable
-          additionalContainerStyle={containerStyle}
-          diameter={diameterWithBorder}
-          disabled={!onPress}
-          onPress={onPress}
-          transparent={uri}
-          style={style}
-          hasChildren={children}
-          borderWidth={borderWidth}
-          borderColor={borderColor}
-          needBackground={!uri}
-        >
-          {!uri && renderDefaultImage()}
-          {!!uri &&
-          <CircleImage
-            useQueryParamsInCacheKey
-            additionalImageStyle={imageStyle}
-            diameter={diameter}
-            renderImage={renderImage}
-            fallbackSource={IMAGE_LOAD_FAILED}
-            source={{ uri }}
-          />
-          }
-          {cornerIcon && <CornerIcon source={cornerIcon} size={cornerIconSize} />}
-        </ImageTouchable>
+    <ImageTouchable
+      additionalContainerStyle={containerStyle}
+      diameter={diameterWithBorder}
+      disabled={!onPress}
+      onPress={onPress}
+      transparent={uri}
+      style={style}
+      hasChildren={children}
+      borderWidth={borderWidth}
+      borderColor={borderColor}
+      needBackground={!uri}
+    >
+      {!uri && renderDefaultImage()}
+      {!!uri &&
+      <CircleImage
+        useQueryParamsInCacheKey
+        additionalImageStyle={imageStyle}
+        diameter={diameter}
+        renderImage={renderImage}
+        fallbackSource={IMAGE_LOAD_FAILED}
+        source={{ uri }}
+      />
       }
-    </Wrapper>
+      {cornerIcon && <CornerIcon source={cornerIcon} size={cornerIconSize} />}
+    </ImageTouchable>
   );
 };
 
-export default withTheme(ProfileImage);
+export default ProfileImage;

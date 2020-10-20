@@ -692,8 +692,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
                       uri={updatedProfileImage}
                       userName={username}
                       diameter={96}
-                      borderWidth={0}
-                      noShadow
                     />}
                     {!profileImage &&
                     <ProfileImagePlaceholder>
