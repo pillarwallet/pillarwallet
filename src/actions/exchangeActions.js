@@ -38,6 +38,7 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
+  PROVIDER_SYNTHETIX,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -54,7 +55,7 @@ import {
   getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
-import { fetchSynthetixSupportedAssets, getSynthetixOffer } from 'services/synthetix';
+import { fetchSynthetixSupportedAssets, getSynthetixOffer, createSynthetixAllowanceTx } from 'services/synthetix';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -192,6 +193,8 @@ export const setTokenAllowanceAction = (
       txData = await createUniswapAllowanceTx(fromAssetAddress, clientAddress || '');
     } else if (provider === PROVIDER_1INCH) {
       txData = await create1inchAllowanceTx(fromAssetAddress, clientAddress || '');
+    } else if (provider === PROVIDER_SYNTHETIX) {
+      txData = await createSynthetixAllowanceTx(fromAssetAddress, clientAddress || '');
     }
 
     if (!txData) {

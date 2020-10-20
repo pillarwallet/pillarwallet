@@ -24,7 +24,7 @@ import axios from 'axios';
 import { getEnv } from 'configs/envConfig';
 
 // utils
-import { getEthereumProvider, convertToNominalUnits, reportOrWarn } from 'utils/common';
+import { getEthereumProvider, convertToNominalUnits } from 'utils/common';
 import {
   EXCHANGE_URL,
   EXCHANGE_ADDRESS,
@@ -32,10 +32,7 @@ import {
   getResponseData,
   parseAssets,
 } from 'utils/1inch';
-import { parseOffer } from 'utils/exchange';
-
-// services
-import { encodeContractMethod } from 'services/assets';
+import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
 // constants
 import { PROVIDER_1INCH, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
@@ -134,38 +131,8 @@ export const create1inchOrder = async (
 };
 
 export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  if (!clientAddress) {
-    reportOrWarn('Unable to set allowance', null, 'error');
-    return null;
-  }
-
-  const abiFunction = [{
-    name: 'approve',
-    outputs: [{ type: 'bool', name: 'out' }],
-    inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
-    constant: false,
-    payable: false,
-    type: 'function',
-    gas: 38769,
-  }];
-
-  const encodedContractFunction = encodeContractMethod(
-    abiFunction,
-    'approve',
-    [EXCHANGE_ADDRESS, ethers.constants.MaxUint256.toString()],
-  );
-
-  const txCount = await ethProvider().getTransactionCount(clientAddress);
-
-  return {
-    nonce: txCount.toString(),
-    to: fromAssetAddress,
-    gasLimit: '0',
-    gasPrice: '0',
-    chainId: '1',
-    value: '0',
-    data: encodedContractFunction,
-  };
+  const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, EXCHANGE_ADDRESS);
+  return allowanceTx;
 };
 
 export const fetch1inchSupportedTokens = async (): Promise<string[]> => {

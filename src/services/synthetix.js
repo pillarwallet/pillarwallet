@@ -31,7 +31,7 @@ import { getContract } from 'services/assets';
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount } from 'utils/common';
 import { isProdEnv } from 'utils/environment';
-import { parseOffer } from 'utils/exchange';
+import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
 import { PROVIDER_SYNTHETIX } from 'constants/exchangeConstants';
 
@@ -82,7 +82,8 @@ export const getSynthetixOffer = async (
 };
 
 // to be used in exchangeActions: setTokenAllowanceAction
-export const createSynthetixAllowanceTx = async () => {
-
+export const createSynthetixAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
+  const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
+  return allowanceTx;
 };
 

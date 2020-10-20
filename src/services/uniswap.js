@@ -46,10 +46,9 @@ import {
   swapExactEthToTokens,
   generateTxObject,
 } from 'utils/uniswap';
-import { parseOffer } from 'utils/exchange';
+import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
 // services
-import { encodeContractMethod } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 
 // models
@@ -281,37 +280,10 @@ export const createUniswapOrder = async (
   };
 };
 
-/* eslint-disable i18next/no-literal-string */
 export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  const abiFunction = [{
-    name: 'approve',
-    outputs: [{ type: 'bool', name: 'out' }],
-    inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
-    constant: false,
-    payable: false,
-    type: 'function',
-    gas: 38769,
-  }];
-
-  const encodedContractFunction = encodeContractMethod(
-    abiFunction,
-    'approve',
-    [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
-  );
-
-  const txCount = await ethProvider.getTransactionCount(clientAddress);
-
-  return {
-    nonce: txCount.toString(),
-    to: fromAssetAddress,
-    gasLimit: '0',
-    gasPrice: '0',
-    chainId: chainId.toString(),
-    value: '0',
-    data: encodedContractFunction,
-  };
+  const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, ADDRESSES.router);
+  return allowanceTx;
 };
-/* eslint-enable i18next/no-literal-string */
 
 export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
   let finished = false;
