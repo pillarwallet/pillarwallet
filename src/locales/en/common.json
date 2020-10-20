@@ -902,12 +902,6 @@
       "claimTokens": "Claim tokens",
       "claimTokensError": "Error"
     },
-    "instruction": {
-      "getTokens": {
-        "title": "Get free PLR",
-        "paragraph": "Earn meta-tokens for referring friends."
-      }
-    },
     "paragraph": {
       "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
       "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",

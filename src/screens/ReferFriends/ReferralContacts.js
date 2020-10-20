@@ -24,6 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import isEmpty from 'lodash.isempty';
 import { connect } from 'react-redux';
+import Intercom from 'react-native-intercom';
 import t from 'translations/translate';
 
 import { Wrapper } from 'components/Layout';
@@ -57,7 +58,6 @@ import { fetchPhoneContactsAction } from 'actions/phoneContactsActions';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 import { ALLOWED_DAILY_INVITES } from 'constants/referralsConstants';
-import Intercom from 'react-native-intercom';
 
 
 type Props = {
