@@ -55,7 +55,9 @@ import {
   getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
-import { fetchSynthetixSupportedAssets, getSynthetixOffer, createSynthetixAllowanceTx } from 'services/synthetix';
+import {
+  fetchSynthetixSupportedAssets, getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder,
+} from 'services/synthetix';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -86,7 +88,7 @@ export const takeOfferAction = (
     } else if (provider === PROVIDER_1INCH) {
       order = await create1inchOrder(fromAsset, toAsset, fromAmount, clientAddress);
     } else if (provider === PROVIDER_SYNTHETIX) {
-      // TODO: synth exchange handled by lib, so no tx object created
+      order = await createSynthetixOrder(fromAsset, toAsset, fromAmount, clientAddress);
     }
 
     if (!fromAsset || !toAsset || !order) {

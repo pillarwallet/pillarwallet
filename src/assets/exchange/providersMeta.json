@@ -36,5 +36,24 @@
                "dark":"uniswapDarkMonochrome"
             }
         }
+    },
+    {
+      "shim":"SYNTHETIX",
+      "name":"Synthetix",
+      "img":{
+          "vertical":{
+             "light":"uniswapLightVertical",
+             "dark":"uniswapDarkVertical"
+          },
+          "horizontal":{
+             "light":"uniswapLightHorizontal",
+             "dark":"uniswapDarkHorizontal"
+          },
+          "monochrome":{
+             "light":"uniswapLightMonochrome",
+             "dark":"uniswapDarkMonochrome"
+          }
+      }
     }
+
 ]

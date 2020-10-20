@@ -375,7 +375,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = offer;
     let { allowanceSet = true } = offer;
 
-    const { code: toAssetCode } = toAsset;
+    const { code: toAssetCode, symbol: toAssetSymbol } = toAsset;
     const { code: fromAssetCode } = fromAsset;
 
     let storedAllowance;
@@ -426,7 +426,7 @@ class ExchangeOffers extends React.Component<Props, State> {
           labelBottom={t('exchangeContent.label.availableAmount')}
           valueBottom={available}
           cardButton={{
-            title: t('tokenValue', { value: amountToBuyString, token: toAssetCode }),
+            title: t('tokenValue', { value: amountToBuyString, token: toAssetCode || toAssetSymbol }),
             onPress: () => this.onOfferPress(offer),
             disabled: isTakeButtonDisabled || disableNonFiatExchange,
             isLoading: isTakeOfferPressed,
