@@ -26,7 +26,7 @@ import { BigNumber } from 'bignumber.js';
 
 import { getEnv } from 'configs/envConfig';
 
-import { getContract } from 'services/assets';
+import { getContract, encodeContractMethod } from 'services/assets';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, reportOrWarn } from 'utils/common';
@@ -52,17 +52,40 @@ const { abi: ratesAbi } = getSource({ network, contract: 'ExchangeRates' });
 
 export const fetchSynthetixSupportedAssets = () => getTokens({ network }).map(token => token.symbol);
 
-export const exchange = async (fromAsset: Asset, toAsset: Asset, amount: string | number) => {
-  const exchangeContract = new Contract(exchangeAddress, exchangeAbi, ethProvider);
+export const createSynthetixOrder = async (
+  fromAsset: Asset, toAsset: Asset, amount: string | number, clientSendAddress: string,
+): Promise<Object> => {
   try {
-    const txn = await exchangeContract.exchange(
-      toBytes32(fromAsset.symbol),
-      parseTokenBigNumberAmount(amount, fromAsset.decimals),
-      toBytes32(toAsset.symbol),
+    const data = encodeContractMethod(
+      exchangeAbi,
+      'exchange',
+      [
+        toBytes32(fromAsset.symbol),
+        parseTokenBigNumberAmount(amount, fromAsset.decimals).toString(),
+        toBytes32(toAsset.symbol),
+      ],
     );
-    await txn.wait();
+
+    if (!data) throw new Error();
+
+    const txCount = await ethProvider.getTransactionCount(clientSendAddress);
+    const value = parseTokenBigNumberAmount(amount, fromAsset.decimals).toString();
+
+    const txObject = {
+      data,
+      nonce: txCount.toString(),
+      to: exchangeAddress,
+      value,
+    };
+
+    return {
+      orderId: '-',
+      sendToAddress: exchangeAddress,
+      transactionObj: txObject,
+    };
   } catch (e) {
     reportOrWarn(`Synthetix exchange failed for pair ${fromAsset.symbol}-${toAsset.symbol}`, e, 'warning');
+    return null;
   }
 };
 
