@@ -148,6 +148,8 @@ export const ValueInputComponent = (props: Props) => {
 
   const handleValueChange = (newValue: string) => {
     let errorMessage = null;
+    // ethers will crash with commas, TODO: we need a proper localisation
+    newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
       setValueInFiat(newValue);
       const convertedValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, rates, assetSymbol).toString();

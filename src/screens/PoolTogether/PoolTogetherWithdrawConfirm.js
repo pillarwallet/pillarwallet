@@ -19,11 +19,12 @@
 */
 
 import * as React from 'react';
-import { RefreshControl, Platform } from 'react-native';
+import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
+import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
 // actions
@@ -35,45 +36,23 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // components
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
+import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
+import type { GasToken } from 'models/Transaction';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 
-// utils
-import { themedColors } from 'utils/themes';
-import { fontStyles } from 'utils/variables';
-
-// local components
-import PoolTogetherWithdrawScheme from './PoolTogetherWithdrawScheme';
-
 
 const ContentWrapper = styled.View`
-  padding-top: ${Platform.select({
-    ios: '25px',
-    android: '19px',
-  })};
-  flex: 1;
-  justify-content: center;
-`;
-
-const Text = styled(BaseText)`
-  ${({ label }) => label ? fontStyles.regular : fontStyles.large};
-  letter-spacing: 0.18px;
-  color: ${({ label }) => label ? themedColors.secondaryText : themedColors.text};
-`;
-
-const ContentRow = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  padding: 8px 20px 8px 20px;
+  padding: 16px 20px;
 `;
 
 type Props = {
@@ -89,14 +68,11 @@ type Props = {
 type State = {
   poolToken: string,
   tokenValue: number,
-  tokenValueInFiat: string,
   transactionPayload: Object,
-  feeInFiat: string,
-  feeDisplayValue: string,
   isDisabled: boolean,
+  txFeeInWei: BigNumber | number,
+  gasToken: ?GasToken,
 };
-
-const poolTogetherLogo = require('assets/images/pool_together.png');
 
 class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
   scroll: Object;
@@ -106,21 +82,19 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
-      tokenValueInFiat,
       transactionPayload,
-      feeInFiat,
-      feeDisplayValue,
       isDisabled,
+      txFeeInWei,
+      gasToken,
     } = navigation.state.params || {};
     super(props);
     this.state = {
       poolToken,
       tokenValue,
-      tokenValueInFiat,
       transactionPayload,
-      feeInFiat,
-      feeDisplayValue,
       isDisabled,
+      txFeeInWei,
+      gasToken,
     };
   }
 
@@ -143,15 +117,13 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
   render() {
     const {
       fetchPoolStats,
-      user,
     } = this.props;
 
     const {
       poolToken,
       tokenValue,
-      tokenValueInFiat,
-      feeDisplayValue,
-      feeInFiat,
+      txFeeInWei,
+      gasToken,
       isDisabled,
     } = this.state;
 
@@ -172,26 +144,35 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
           innerRef={ref => { this.scroll = ref; }}
         >
           <ContentWrapper>
-            <PoolTogetherWithdrawScheme
-              toValue={tokenValue}
-              toValueInFiat={tokenValueInFiat}
-              toAssetCode={poolToken}
-              imageSource={poolTogetherLogo}
-              user={user}
+            <TokenReviewSummary
+              assetSymbol={poolToken}
+              text={t('poolTogetherContent.label.youAreWithdrawing')}
+              amount={tokenValue}
             />
-            <ContentRow style={{ paddingTop: 64 }}>
-              <Text label>{t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}</Text>
-            </ContentRow>
-            <ContentRow style={{ paddingTop: 16 }}>
-              <Button
-                title={t('button.confirmWithdraw')}
-                onPress={() => {
-                  this.withdrawPoolAsset();
-                }}
-                style={{ marginBottom: 13, width: '100%' }}
-                disabled={isDisabled}
-              />
-            </ContentRow>
+            <Spacing h={42} />
+            <Table>
+              <TableRow>
+                <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+                <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+              </TableRow>
+              <TableRow>
+                <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+                <TableAmount amount={0} />
+              </TableRow>
+              <TableRow>
+                <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+                <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+              </TableRow>
+            </Table>
+            <Spacing h={50} />
+            <Button
+              title={t('poolTogetherContent.button.confirmWithdraw')}
+              onPress={() => {
+                this.withdrawPoolAsset();
+              }}
+              style={{ marginBottom: 13, width: '100%' }}
+              disabled={isDisabled}
+            />
           </ContentWrapper>
         </ScrollWrapper>
       </ContainerWithHeader>

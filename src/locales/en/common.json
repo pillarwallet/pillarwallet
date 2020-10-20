@@ -673,11 +673,13 @@
     "label": {
       "currentAPY": "Current APY",
       "currentAPYPercentage": "Current APY {{rate}} %",
-      "earned": "Earned"
+      "earned": "Earned",
+      "youAreAdding": "You are adding",
+      "youAreWithdrawing": "You are withdrawing"
     },
     "button": {
-      "confirmDeposit": "Confirm deposit",
-      "confirmWithdrawal": "Confirm withdraw"
+      "confirmDeposit": "Deposit",
+      "confirmWithdrawal": "Withdraw"
     }
   },
 
@@ -986,7 +988,12 @@
       "winningChance": "<0>{{primaryText}}</0> chance of win",
       "purchaseTickets": "Purchase tickets for pool",
       "daiPool": "DAI Pool",
-      "usdcPool": "USDC Pool"
+      "usdcPool": "USDC Pool",
+      "youArePurchasing": "You are purchasing",
+      "ticketsReview": "{{count}} <0>ticket</0>",
+      "ticketsReview_plural": "{{count}} <0>tickets</0>",
+      "chanceOfWin": "Chance of win",
+      "youAreWithdrawing": "You are withdrawing"
     },
     "ticketsList": {
       "title": "PoolTogether savings game"
@@ -1002,7 +1009,8 @@
     },
     "button": {
       "joinPool": "Join Pool",
-      "purchaseTickets": "Purchase tickets"
+      "purchaseTickets": "Purchase",
+      "confirmWithdraw": "Withdraw"
     },
     "paragraph": {
       "purchasedTicketsEligibleDate": "Tickets purchased today will be eligible for prizes starting {{date}}",
@@ -1040,7 +1048,13 @@
       "withdrawn": "withdrawn",
       "start": "Start",
       "end": "End",
-      "ofTokenValueStream": "of {{value}} {{token}} stream"
+      "ofTokenValueStream": "of {{value}} {{token}} stream",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "estStreamTime": "Est. stream time",
+      "youAreStreaming": "You are streaming",
+      "streamDetails": "Stream details",
+      "youAreWithdrawing": "You are withdrawing"
     },
     "button": {
       "startImmediately": "Start immediately",
@@ -1052,7 +1066,7 @@
       "confirmStreamCancellation": "Confirm cancellation",
       "cancelStreamCancellation": "Do not cancel",
       "newStream": "New stream",
-      "confirmWithdraw": "Confirm withdraw"
+      "confirmWithdraw": "Withdraw"
     },
     "paragraph": {
       "allowanceMissing": "In order to create a stream you will need to allow Sablier to send {{asset}} transactions on your behalf",
@@ -1199,6 +1213,7 @@
     "title": {
       "sendScreen": "Send",
       "valueSelectorModal": "Choose asset",
+      "review": "Review",
       "reviewAndConfirmScreen": "Review and confirm",
       "allowanceTransactionSuccess": "Transaction is on its way",
       "exchangeTransactionSuccess": "Swapping tokens...",
@@ -1216,36 +1231,39 @@
       "payFeeWithPillar": "Pay fees with PLR",
       "confirmTransaction": "Confirm Transaction",
       "cancelUnsent": "Cancel unsent",
-      "speedSettings": "Speed settings"
+      "send": "Send"
     },
     "label": {
       "amount": "Amount",
       "receiver": "Receiver",
       "recipient": "Recipient",
+      "sender": "Sender",
       "recipientEnsName": "Recipient ENS name",
       "recipientAddress": "Recipient Address",
       "transactionFee": "Est. Fee",
       "assetsToSettle": "Assets to settle",
       "recipientGet": "Recipient will get",
       "youPay": "You will pay",
-      "collectibleName": "Collectible",
       "noAssetsFound": "No assets found",
       "noCollectiblesFound": "No collectibles found",
       "fromKeyWallet": "From Key based wallet",
       "toSmartWallet": "To Smart Wallet",
       "tokensToTransfer": "Tokens to transfer",
       "collectiblesToTransfer": "Collectibles to transfer",
-      "speed": "Speed",
       "data": "Data",
       "message": "Message",
-      "address": "Address"
+      "address": "Address",
+      "ethFee": "Ethereum fee",
+      "pillarFee": "Pillar fee",
+      "totalFee": "Total fee",
+      "youAreSending": "You are sending",
+      "fees": "Fees"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
       "poolTogetherDepositTransactionSuccess": "Watch the pool and let luck be with you",
       "sablierStreamTransactionSuccess": "Now you can watch how the funds go to {{address}}",
-      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load",
-      "finalFeeInformation": "Final rate may be slightly higher or lower at the end of the transaction."
+      "transactionSuccess": "It will be settled in a few moments, depending on your gas price settings and Ethereum network load"
     },
     "emptyState": {
       "assetsList": {
@@ -1392,15 +1410,16 @@
       "allowExchange": "Allow this exchange"
     },
     "paragraph": {
-      "tokenAllowanceInReviewScreen": "Review the details and enable asset as well as confirm the cost of data transaction.",
       "ruleToGetExchangedTokensIntoSmartWallet": "Activate Smart Wallet \n in order to receive exchanged tokens into"
     },
     "label": {
-      "assetToEnable": "Asset to enable",
       "enabledAssets": "Enabled exchange assets:",
       "exchangeRate": "Exchange rate",
+      "exchangeRateLayout": "{{rate}} {{toAssetCode}}/{{fromAssetCode}}",
       "availableAmount": "Available",
-      "updatedRealTime": "Updated in realtime"
+      "updatedRealTime": "Updated in realtime",
+      "exchangeDetails": "Exchange details",
+      "maxSlippage": "Max. slippage"
     },
     "emptyState": {
       "noOffers": {

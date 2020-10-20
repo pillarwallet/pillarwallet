@@ -27,10 +27,14 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 import { getExchangeRates } from 'services/assets';
 
 // selectors
-import { accountAssetsSelector, allAccountsAssetsSelector } from 'selectors/assets';
+import { accountAssetsSelector } from 'selectors/assets';
+import { assetsSelector } from 'selectors';
+
+// utils
+import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
 // models, types
-import type { Rates } from 'models/Asset';
+import type { Assets, Rates } from 'models/Asset';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
@@ -50,14 +54,31 @@ export const setRatesAction = (newRates: Rates) => {
 export const fetchAccountAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const accountAssets = accountAssetsSelector(getState());
-    const rates = await getExchangeRates(Object.keys(accountAssets));
+    const rates = await getExchangeRates(accountAssets);
     dispatch(setRatesAction(rates));
   };
 };
 
 export const fetchAllAccountsAssetsRatesAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const allAssets = allAccountsAssetsSelector(getState());
+    const allAccountsAssets = assetsSelector(getState());
+
+    // check if not empty just in case
+    if (isEmpty(allAccountsAssets)) {
+      reportErrorLog('fetchAllAccountsAssetsRatesAction failed: empty all account assets', { allAccountsAssets });
+      return;
+    }
+
+    const allAssets = (Object.values(allAccountsAssets): any).reduce((allAssetsCombined, accountAssets: Assets) => {
+      // check if not empty just in case
+      if (accountAssets) {
+        Object.keys(accountAssets).forEach((assetSymbol) => {
+          if (!allAssetsCombined[assetSymbol]) allAssetsCombined[assetSymbol] = accountAssets[assetSymbol];
+        });
+      }
+      return allAssetsCombined;
+    }, {});
+
     const rates = await getExchangeRates(allAssets);
     dispatch(setRatesAction(rates));
   };
@@ -65,8 +86,16 @@ export const fetchAllAccountsAssetsRatesAction = () => {
 
 export const fetchSingleAssetRatesAction = (assetCode: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const rates = await getExchangeRates([assetCode]);
+    const asset = getState().assets.supportedAssets.find(({ symbol }) => isCaseInsensitiveMatch(assetCode, symbol));
+    if (!asset) {
+      reportErrorLog('fetchSingleAssetRatesAction failed: cannot find asset', { assetCode });
+      return;
+    }
+
+    const rates = await getExchangeRates({ [asset.symbol]: asset });
+
     if (isEmpty(rates)) return;
+
     const { rates: { data: currentRates } } = getState();
     const updatedRates = { ...currentRates, ...rates };
     dispatch(setRatesAction(updatedRates));

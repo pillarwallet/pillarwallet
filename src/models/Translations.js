@@ -32,6 +32,7 @@ export type TranslationOptions = {
   capitalize?: boolean,
   linkedText?: string,
   primaryText?: string,
+  mediumText?: boolean,
   onPress?: () => void,
 };
 

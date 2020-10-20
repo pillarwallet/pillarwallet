@@ -220,6 +220,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             feeDisplayValue,
             isDisabled,
             tokenValueInFiat,
+            txFeeInWei,
+            gasToken,
           };
           this.setState({ withdrawPayload });
         }
@@ -367,7 +369,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
           keyboardShouldPersistTaps="always"
         >
           <ContentWrapper>
-            <ContentRow style={{ paddingLeft: 40, paddingRight: 40 }}>
+            <ContentRow style={{ paddingLeft: 40, paddingRight: 40, zIndex: 10 }}>
               <ValueInput
                 value={tokenValue}
                 onValueChange={this.onValueChange}

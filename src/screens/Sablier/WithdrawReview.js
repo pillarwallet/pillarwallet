@@ -22,28 +22,25 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
-import ProfileImage from 'components/ProfileImage';
 import { Spacing } from 'components/Layout';
-import FeeLabelToggle from 'components/FeeLabelToggle';
-import { lineHeights } from 'utils/variables';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
+import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
+
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { formatAmount, formatFiat, findEnsNameCaseInsensitive, formatUnits, getDecimalPlaces } from 'utils/common';
-import { getRate, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
+import { findEnsNameCaseInsensitive, formatUnits } from 'utils/common';
+import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { getSablierWithdrawTransaction } from 'services/sablier';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { Assets, Asset, Rates } from 'models/Asset';
+import type { Assets, Asset } from 'models/Asset';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 
@@ -51,8 +48,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   useGasToken: boolean,
   withdrawTransactionEstimate: ?Object,
-  baseFiatCurrency: ?string,
-  rates: Rates,
   accountAddress: string,
   ensRegistry: EnsRegistry,
   assets: Assets,
@@ -61,18 +56,13 @@ type Props = {
 };
 
 const MainContainer = styled.View`
-  align-items: center;
-  padding: 45px 20px;
+  padding: 16px 20px;
 `;
-
-const arrowDownGrey = require('assets/icons/arrow_down_grey.png');
 
 const WithdrawReview = ({
   navigation,
   useGasToken,
   withdrawTransactionEstimate,
-  baseFiatCurrency,
-  rates,
   accountAddress,
   ensRegistry,
   assets,
@@ -105,51 +95,38 @@ const WithdrawReview = ({
     });
   };
 
-  const decimalPlaces = getDecimalPlaces(assetData.symbol);
   const withdrawAmount = formatUnits(withdrawAmountInWei, assetData.decimals);
-  const formattedAmount = formatAmount(withdrawAmount, decimalPlaces);
-
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const valueInFiat = parseFloat(withdrawAmount) * getRate(rates, assetData.symbol, fiatCurrency);
-  const formattedFiatAmount = formatFiat(valueInFiat, fiatCurrency);
-
-  const username = findEnsNameCaseInsensitive(ensRegistry, stream.sender) || stream.sender;
 
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('sablierContent.title.withdrawReviewScreen') }] }}
     >
       <MainContainer>
-        <ProfileImage
-          userName={username}
-          diameter={64}
-          noShadow
-          borderWidth={0}
+        <TokenReviewSummary
+          assetSymbol={assetData.symbol}
+          text={t('sablierContent.label.youAreWithdrawing')}
+          amount={withdrawAmount}
         />
-        <Spacing h={8} />
-        <BaseText medium>{username}</BaseText>
-        <Spacing h={16} />
-        <CachedImage
-          style={{ width: 17, height: 41 }}
-          source={arrowDownGrey}
-          resizeMode="contain"
-        />
-        <Spacing h={24} />
-        <MediumText giant>
-          {formattedAmount}
-          <MediumText big secondary style={{ lineHeight: lineHeights.giant }}> {assetData.symbol}</MediumText>
-        </MediumText>
-        <Spacing h={8} />
-        <BaseText small secondary>{formattedFiatAmount}</BaseText>
-
-        <Spacing h={60} />
-        <FeeLabelToggle
-          labelText={t('label.fee')}
-          txFeeInWei={txFeeInfo?.fee}
-          gasToken={txFeeInfo?.gasToken}
-          showFiatDefault
-        />
-        <Spacing h={16} />
+        <Spacing h={42} />
+        <Table>
+          <TableRow>
+            <TableLabel>{t('transactions.label.sender')}</TableLabel>
+            <TableUser ensName={findEnsNameCaseInsensitive(ensRegistry, stream.sender)} address={stream.sender} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+            <TableAmount amount={0} />
+          </TableRow>
+          <TableRow>
+            <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+          </TableRow>
+        </Table>
+        <Spacing h={50} />
         <Button title={t('sablierContent.button.confirmWithdraw')} block onPress={onNextButtonPress} />
       </MainContainer>
     </ContainerWithHeader>
@@ -157,14 +134,10 @@ const WithdrawReview = ({
 };
 
 const mapStateToProps = ({
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
   sablier: { withdrawTransactionEstimate, isCalculatingWithdrawTransactionEstimate },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
   withdrawTransactionEstimate,
   isCalculatingWithdrawTransactionEstimate,
   ensRegistry,

@@ -29,32 +29,25 @@ import get from 'lodash.get';
 import t from 'translations/translate';
 
 // components
-import { ScrollWrapper } from 'components/Layout';
+import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
-import { MediumText, Paragraph, BaseText } from 'components/Typography';
-import Modal from 'components/Modal';
-import ButtonText from 'components/ButtonText';
-import HyperLink from 'components/HyperLink';
-import SelectorList from 'components/SelectorList';
-import TitleWithIcon from 'components/Title/TitleWithIcon';
-import Spinner from 'components/Spinner';
+import { BaseText } from 'components/Typography';
+import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
+import Icon from 'components/Icon';
 
 // constants
-import { defaultFiatCurrency, ETH, SPEED_TYPE_LABELS, SPEED_TYPES } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, SPEED_TYPES } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { EXCHANGE, NORMAL } from 'constants/exchangeConstants';
+import { EXCHANGE, NORMAL, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
 import { setDismissTransactionAction } from 'actions/exchangeActions';
 
 // utils
-import { fontSizes, spacing } from 'utils/variables';
 import {
-  formatAmount,
   formatAmountDisplay,
-  formatTransactionFee,
   formatFiat,
 } from 'utils/common';
 import {
@@ -114,7 +107,6 @@ type Props = {
 };
 
 type State = {
-  showFeeModal: boolean,
   transactionSpeed: string,
   gasLimit: number,
   txFeeInfo: ?TransactionFeeInfo,
@@ -123,57 +115,29 @@ type State = {
 
 
 const MainWrapper = styled.View`
-  background-color: ${themedColors.card};
-  padding: 55px 0 64px;
+  padding: 48px 0 64px;
   flex: 1;
   justify-content: center;
 `;
 
-const FooterWrapper = styled.View`
-  justify-content: center;
+const TableWrapper = styled.View`
+  padding: 0 20px;
+`;
+
+const ExchangeIcon = styled(Icon)`
+  color: ${themedColors.primary};
+  font-size: 16px;
+`;
+
+const Row = styled.View`
+  flex-direction: row;
   align-items: center;
-  padding: ${spacing.large}px ${spacing.layoutSides}px 100px;
-  width: 100%;
-  background-color: ${themedColors.surface};
-  border-top-color: ${themedColors.border};
-  border-top-width: 1px;
-`;
-
-const LabeledRow = styled.View`
-  margin: 10px 0;
-`;
-
-const AllowanceWrapper = styled.View`
-  flex: 1;
-  padding: ${spacing.large}px ${spacing.layoutSides}px;
-`;
-
-const SettingsWrapper = styled.View`
-  padding: 32px ${spacing.layoutSides}px 0;
-  justify-content: center;
-`;
-
-const SliderContentWrapper = styled.View`
-  margin: 30px 0;
-`;
-
-const SafeArea = styled.SafeAreaView`
-  width: 100%;
-  justify-content: center;
-  position: absolute;
-  left: 0;
-  bottom: 0;
-`;
-
-const ButtonWrapper = styled.SafeAreaView`
-  margin: ${spacing.large}px ${spacing.layoutSides}px;
 `;
 
 class ExchangeConfirmScreen extends React.Component<Props, State> {
   transactionPayload: TokenTransactionPayload;
 
   state = {
-    showFeeModal: false,
     transactionSpeed: NORMAL,
     txFeeInfo: null,
     gasLimit: 0,
@@ -283,46 +247,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     };
   };
 
-  renderTxSpeedButtons = () => {
-    const { rates, baseFiatCurrency, isSmartAccount } = this.props;
-    if (isSmartAccount) return null;
-
-    const { transactionSpeed } = this.state;
-    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-    const speedOptions = Object.keys(SPEED_TYPE_LABELS).map(txSpeed => {
-      const feeInEth = formatAmount(utils.formatEther(this.getKeyWalletTxFee(txSpeed).fee));
-      const feeInFiat = parseFloat(feeInEth) * getRate(rates, ETH, fiatCurrency);
-      const speedTitle = SPEED_TYPE_LABELS[txSpeed];
-      return {
-        id: speedTitle,
-        label: speedTitle,
-        valueToShow: t('tokenFiatValue', {
-          tokenValue: t('tokenValue', { value: feeInEth, token: ETH }),
-          fiatValue: feeInFiat.toFixed(2),
-        }),
-        value: txSpeed,
-      };
-    });
-
-    return (
-      <SelectorList
-        onSelect={(selectedValue) => this.handleGasPriceChange(selectedValue.toString())}
-        options={speedOptions}
-        selectedValue={transactionSpeed}
-        numColumns={3}
-        minItemWidth={90}
-      />
-    );
-  };
-
-  handleGasPriceChange = (txSpeed: string) => {
-    this.setState({
-      transactionSpeed: txSpeed,
-      showFeeModal: false,
-    });
-  };
-
   onConfirmTransactionPress = (offerOrder) => {
     const { navigation, isSmartAccount } = this.props;
     const { txFeeInfo } = this.state;
@@ -383,7 +307,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   };
 
   render() {
-    const { showFeeModal, txFeeInfo, gettingFee } = this.state;
+    const { txFeeInfo, gettingFee } = this.state;
     const {
       navigation,
       session,
@@ -391,7 +315,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       theme,
-      isSmartAccount,
     } = this.props;
 
     const offerOrder: OfferOrder = navigation.getParam('offerOrder', {});
@@ -400,7 +323,6 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       payQuantity,
       toAsset,
       fromAsset,
-      setTokenAllowance,
       provider,
     } = offerOrder;
 
@@ -412,11 +334,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     const { decimals, amount, symbol } = this.transactionPayload;
 
     let isEnoughForFee = true;
-    let feeDisplayValue = '';
-    let feeInFiat = 0;
     if (txFeeInfo) {
-      feeDisplayValue = formatTransactionFee(txFeeInfo.fee, txFeeInfo.gasToken);
-      feeInFiat = parseFloat(feeDisplayValue) * getRate(rates, feeSymbol, fiatCurrency);
       isEnoughForFee = isEnoughBalanceForTransactionFee(balances, {
         amount,
         decimals,
@@ -432,9 +350,11 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
     });
     const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
 
+    const receiveAmountInFiat = parseFloat(receiveQuantity) * getRate(rates, toAssetCode, fiatCurrency);
+    const formattedReceiveAmountInFiat = formatFiat(receiveAmountInFiat, fiatCurrency);
+
     const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
-    const confirmButtonTitleDefault = setTokenAllowance ? t('exchangeContent.button.enableAsset') : t('button.confirm');
-    const confirmButtonTitle = gettingFee ? t('label.gettingFee') : confirmButtonTitleDefault;
+    const confirmButtonTitle = gettingFee ? t('label.gettingFee') : t('button.confirm');
 
     return (
       <ContainerWithHeader
@@ -442,92 +362,64 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
           centerItems: [{ title: t('exchangeContent.title.confirmScreen') }],
           customOnBack: this.handleBack,
         }}
+        inset={{ bottom: 'never' }}
       >
         <ScrollWrapper contentContainerStyle={{ minHeight: '100%' }}>
           <MainWrapper>
-            {!setTokenAllowance &&
-              <ExchangeScheme
-                fromValue={payQuantity}
-                fromAssetCode={fromAssetCode}
-                toValue={formattedReceiveAmount}
-                toAssetCode={toAssetCode}
-                imageSource={providerLogo}
-              />
-            }
-            {!!setTokenAllowance &&
-              <AllowanceWrapper>
-                <Paragraph small style={{ marginVertical: spacing.medium }}>
-                  {t('exchangeContent.paragraph.tokenAllowanceInReviewScreen')}
-                </Paragraph>
-                <LabeledRow>
-                  <BaseText medium secondary>{t('exchangeContent.label.assetToEnable')}</BaseText>
-                  <MediumText big>{fromAssetCode}</MediumText>
-                </LabeledRow>
-
-              </AllowanceWrapper>
-            }
-            <SettingsWrapper>
-              {!gettingFee &&
-                <BaseText secondary regular center style={{ marginBottom: 4 }}>
-                  {t('label.feeTokenFiat', {
-                    tokenValue: feeDisplayValue,
-                    fiatValue: formatFiat(feeInFiat, fiatCurrency),
-                  })}
-                </BaseText>
-              }
-              {!!gettingFee && <Spinner style={{ marginTop: 5, alignSelf: 'center' }} width={20} height={20} />}
-              {!!errorMessage &&
-                <BaseText negative regular center style={{ marginBottom: 4 }}>
-                  {errorMessage}
-                </BaseText>
-              }
-              {!gettingFee && !isSmartAccount &&
-                <ButtonText
-                  buttonText={t('transactions.button.speedSettings')}
-                  leftIconProps={{
-                    name: 'options', // eslint-disable-line i18next/no-literal-string
-                    style: { fontSize: 16 },
-                  }}
-                  onPress={() => this.setState({ showFeeModal: true })}
-                />
-              }
-            </SettingsWrapper>
-          </MainWrapper>
-          <FooterWrapper>
-            {!setTokenAllowance &&
-            <React.Fragment>
-              <BaseText small center style={{ maxWidth: 242 }}>
-                {t('transactions.paragraph.finalFeeInformation')}
-              </BaseText>
-              <HyperLink
-                style={{ fontSize: fontSizes.small }}
-                url="https://help.pillarproject.io/en/articles/3487702-why-did-i-receive-less-tokens"
-              >
-                {t('button.readMore')}
-              </HyperLink>
-            </React.Fragment>}
-          </FooterWrapper>
-        </ScrollWrapper>
-        <SafeArea>
-          <ButtonWrapper>
-            <Button
-              block
-              disabled={!session.isOnline || !!errorMessage || gettingFee}
-              onPress={() => this.onConfirmTransactionPress(offerOrder)}
-              title={confirmButtonTitle}
+            <ExchangeScheme
+              fromValue={payQuantity}
+              fromAssetCode={fromAssetCode}
+              toValue={formattedReceiveAmount}
+              toValueInFiat={formattedReceiveAmountInFiat}
+              toAssetCode={toAssetCode}
+              imageSource={providerLogo}
             />
-          </ButtonWrapper>
-        </SafeArea>
-        <SlideModal
-          isVisible={showFeeModal}
-          onModalHide={() => { this.setState({ showFeeModal: false }); }}
-          hideHeader
-        >
-          <SliderContentWrapper>
-            <TitleWithIcon iconName="lightning" title={t('transactions.label.speed')} />
-            {this.renderTxSpeedButtons()}
-          </SliderContentWrapper>
-        </SlideModal>
+            <Spacing h={36} />
+            <TableWrapper>
+              <Table title={t('exchangeContent.label.exchangeDetails')}>
+                <TableRow>
+                  <TableLabel>{t('exchangeContent.label.exchangeRate')}</TableLabel>
+                  <Row>
+                    <ExchangeIcon name="exchange" />
+                    <Spacing w={4} />
+                    <BaseText regular>
+                      {t('exchangeContent.label.exchangeRateLayout', {
+                        rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
+                        toAssetCode,
+                        fromAssetCode,
+                      })}
+                    </BaseText>
+                  </Row>
+                </TableRow>
+                <TableRow>
+                  <TableLabel>{t('exchangeContent.label.maxSlippage')}</TableLabel>
+                  <BaseText regular> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
+                </TableRow>
+              </Table>
+              <Spacing h={20} />
+              <Table title={t('transactions.label.fees')}>
+                <TableRow>
+                  <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+                  <TableFee txFeeInWei={txFeeInfo?.fee} gasToken={txFeeInfo?.gasToken} />
+                </TableRow>
+                <TableRow>
+                  <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+                  <TableAmount amount={0} />
+                </TableRow>
+                <TableRow>
+                  <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
+                  <TableFee txFeeInWei={txFeeInfo?.fee} gasToken={txFeeInfo?.gasToken} />
+                </TableRow>
+              </Table>
+              <Spacing h={48} />
+              <Button
+                disabled={!session.isOnline || !!errorMessage || gettingFee}
+                onPress={() => this.onConfirmTransactionPress(offerOrder)}
+                title={confirmButtonTitle}
+              />
+            </TableWrapper>
+          </MainWrapper>
+        </ScrollWrapper>
       </ContainerWithHeader>
     );
   }

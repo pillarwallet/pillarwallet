@@ -206,7 +206,7 @@ class ServicesScreen extends React.Component<Props> {
         action: () => {
           const email = user?.email;
           const address = this.getCryptoPurchaseAddress();
-          if (address === null || !email) return;
+          if (address === null) return;
 
           Alert.alert(
             t('servicesContent.ramp.assetDecisionAlert.title'),

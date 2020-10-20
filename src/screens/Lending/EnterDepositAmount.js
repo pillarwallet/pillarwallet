@@ -186,7 +186,7 @@ const EnterDepositAmount = ({
       minAvoidHeight={600}
     >
       {isFetchingAssetsToDeposit && <Spinner style={{ marginTop: spacing.large, alignSelf: 'center' }} />}
-      {!isFetchingAssetsToDeposit && (
+      {!isFetchingAssetsToDeposit && assetToDeposit && (
         <InputWrapper>
           <ValueInput
             value={depositAmount}

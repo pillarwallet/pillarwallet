@@ -44,11 +44,11 @@ import ERC721_CONTRACT_ABI_TRANSFER_FROM from 'abi/erc721_transferFrom.json';
 import BALANCE_CHECKER_CONTRACT_ABI from 'abi/balanceChecker.json';
 
 // services
-import { getCoinGeckoTokenPrices } from 'services/coinGecko';
+import { getCoinGeckoEtherPrice, getCoinGeckoTokenPrices } from 'services/coinGecko';
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Asset } from 'models/Asset';
+import type { Asset, Assets } from 'models/Asset';
 
 
 type Address = string;
@@ -371,7 +371,9 @@ export function getLegacyExchangeRates(assets: string[]): Promise<?Object> {
     });
 }
 
-export async function getExchangeRates(assetSymbols: string[]): Promise<?Object> {
+export async function getExchangeRates(assets: Assets): Promise<?Object> {
+  const assetSymbols = Object.keys(assets);
+
   if (isEmpty(assetSymbols)) {
     reportLog('getExchangeRates received empty assetSymbols array', { assetSymbols });
     return null;
@@ -382,11 +384,20 @@ export async function getExchangeRates(assetSymbols: string[]): Promise<?Object>
 
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)
-    : await getCoinGeckoTokenPrices(assetSymbols);
+    : await getCoinGeckoTokenPrices(assets);
 
-  // by any mean if CoinGecko failed let's try legacy way
-  if (!useLegacyCryptoCompare && isEmpty(rates)) {
-    rates = await getLegacyExchangeRates(assetSymbols);
+  if (!useLegacyCryptoCompare) {
+    if (isEmpty(rates)) {
+      // by any mean if CoinGecko failed let's try legacy way
+      rates = await getLegacyExchangeRates(assetSymbols);
+    } else if (assetSymbols.includes(ETH)) {
+      /**
+       * if CoinGecko didn't fail, fill rest of CoinGecko rates with ether (if requested)
+       * because ether price doesn't fit into CoinGecko token price endpoint
+       */
+      const etherPrice = await getCoinGeckoEtherPrice();
+      rates = { ...rates, [ETH]: etherPrice };
+    }
   }
 
   if (!rates) {
