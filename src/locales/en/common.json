@@ -236,7 +236,6 @@
     "receive": "Receive",
     "seeOnEtherscan": "See on Etherscan",
     "selectAll": "Select all",
-    "selectContacts": "Select contacts",
     "send": "Send",
     "sendAll": "Send all",
     "sendBack": "Send back",
@@ -903,20 +902,6 @@
       "claimTokens": "Claim tokens",
       "claimTokensError": "Error"
     },
-    "instruction": {
-      "shareLink": {
-        "title": "Share your link",
-        "paragraph": "Invite your friends to join Pillar."
-      },
-      "giveSmartWallet": {
-        "title": "Give Smart Wallet for free",
-        "paragraph": "Friends who install Pillar with your link will get free Smart Wallet activation."
-      },
-      "getTokens": {
-        "title": "Get free PLR",
-        "paragraph": "Earn meta-tokens for referring friends."
-      }
-    },
     "paragraph": {
       "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
       "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",
@@ -933,14 +918,14 @@
       "phoneVerified": "Your email has been verified"
     },
     "label": {
-      "invitesCount": "Your invites ({{amountText}} available today)",
-      "referralsCount": "Your referrals ({{amountText}} available today)",
+      "selectedInvitesCount": "{{selectedCount}} selected ({{amountText}} available today)",
       "remainingCount": "{{amount}} more",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
       "claiming": "Claiming...",
       "inviteFriends": "Invite friends to Pillar",
-      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more."
+      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more.",
+      "noMoreDailyInvitesAvailable": "No more invites available today"
     }
   },
 
