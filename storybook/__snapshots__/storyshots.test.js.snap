@@ -34170,7 +34170,7 @@ exports[`Storyshots ListCard with note 1`] = `
                 Array [
                   Object {
                     "backgroundColor": "#FFFFFF",
-                    "borderColor": "#EDEDED",
+                    "borderColor": "#EBF0F6",
                     "borderRadius": 4,
                     "borderStyle": "solid",
                     "borderWidth": 1,
