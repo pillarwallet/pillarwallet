@@ -34,7 +34,7 @@ import {
   setTokenAllowanceAction,
   takeOfferAction,
 } from 'actions/exchangeActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -106,6 +106,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => void,
+  resetEstimateTransaction: () => void,
 };
 
 type State = {
@@ -205,6 +206,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       setExecutingTransaction,
       isEstimating,
       estimateTransaction,
+      resetEstimateTransaction,
     } = this.props;
 
     if (isEstimating) return;
@@ -228,6 +230,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
     const providerName = getCryptoProviderName(provider);
 
+    resetEstimateTransaction();
     estimateTransaction(payToAddress, 0, data);
 
     const transactionPayload = {
@@ -519,6 +522,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
     takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
   ),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => dispatch(
     estimateTransactionAction(recipientAddress, value, data, assetData),
   ),

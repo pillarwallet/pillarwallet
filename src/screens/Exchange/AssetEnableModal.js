@@ -91,8 +91,6 @@ const AssetEnableModal = (props: Props) => {
 
   const {
     providerName,
-    // feeDisplayValue,
-    // feeInFiat,
     assetSymbol,
     assetIcon,
   } = enableData;

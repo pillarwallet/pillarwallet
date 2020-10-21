@@ -94,20 +94,27 @@ const renderFeeToggle = (
   return (
     <>
       <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} hasError={!enoughBalance} />
-      {!!feeError && <BaseText center secondary>{feeError}</BaseText>}
+      {!!feeError && <BaseText style={{ marginTop: 15 }} center secondary>{feeError}</BaseText>}
     </>
   );
 };
 
 // TODO: map collectible params
 const mapToAssetDataType = ({
-  address: contractAddress,
+  contractAddress,
+  address,
   symbol: token,
   decimals,
+  tokenType,
+  tokenId,
+  name,
 }: Object): AssetData => ({
-  contractAddress,
+  contractAddress: address || contractAddress,
   token,
   decimals,
+  tokenType,
+  id: tokenId,
+  name,
 });
 
 const SendAsset = ({
@@ -156,6 +163,7 @@ const SendAsset = ({
     if ((!isCollectible && (!isValidAmount || value === 0)) || !assetData || !selectedContact) {
       return;
     }
+
     estimateTransaction(selectedContact.ethAddress, value, mapToAssetDataType(assetData));
   };
 
@@ -294,7 +302,7 @@ const SendAsset = ({
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
-  const hasAllFeeData = !isEstimating && !estimateErrorMessage && !!selectedContact;
+  const hasAllFeeData = !isEstimating && !!selectedContact;
 
   const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
@@ -321,9 +329,9 @@ const SendAsset = ({
     ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
 
-  const showNextButton = hasAllData && !errorMessage;
+  const showNextButton = hasAllData;
 
-  const isNextButtonDisabled = !session.isOnline;
+  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage;
 
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
   const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
