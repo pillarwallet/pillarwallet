@@ -92,7 +92,6 @@ export const estimateTransactionAction = (
       };
       data = await buildERC721TransactionData(collectibleTransaction, provider);
     }
-
     if (data) {
       transaction = { ...transaction, data };
     }
@@ -103,7 +102,7 @@ export const estimateTransactionAction = (
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
       .catch((sdkError) => {
-        console.log('estimateAccountTransaction sdkError: ', sdkError);
+        console.log('estimateAccountTransaction sdkError: ', sdkError); // eslint-disable-line
         errorMessage = sdkError || t('toast.transactionFeeEstimationFailed');
         return null;
       });
@@ -113,21 +112,26 @@ export const estimateTransactionAction = (
       feeInfo = buildTxFeeInfo(estimated, useGasToken);
     }
 
-    if (feeInfo && !feeInfo.fee.gt(0)) {
-      errorMessage = 'estimate below 0';
+    // feeInfo.fee = new BigNumber(0)
+
+    if (!errorMessage && feeInfo && !feeInfo.fee.gt(0)) {
+      errorMessage = t('toast.transactionFeeEstimationFailed');
     }
 
+    const currentErrorMessage = getState().transactionEstimate.errorMessage;
     if (errorMessage) {
-      console.log('errorMessage!!!!', errorMessage)
+      dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
+      // TODO: Toast is temporary solution
+      if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
       Toast.show({
         message: errorMessage,
         emoji: 'woman-shrugging',
         supportLink: true,
       });
-      dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
       return;
     }
 
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
   };

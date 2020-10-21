@@ -1365,7 +1365,8 @@
     "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again.",
     "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
     "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
-    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again."
+    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
+    "cannotEnableAsset": "Cannot enable asset. Please try again."
   },
 
   "exchangeContent": {

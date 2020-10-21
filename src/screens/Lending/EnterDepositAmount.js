@@ -163,6 +163,7 @@ const EnterDepositAmount = ({
                 txFeeInWei={txFeeInfo?.fee}
                 gasToken={txFeeInfo?.gasToken}
                 isLoading={isCalculatingDepositTransactionEstimate}
+                hasError={!isCalculatingDepositTransactionEstimate && !isEnoughForFee}
                 showFiatDefault
               />
               {!isCalculatingDepositTransactionEstimate && !isEnoughForFee && (

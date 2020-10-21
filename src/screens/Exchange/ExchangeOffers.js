@@ -23,9 +23,7 @@ import { FlatList } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { BigNumber } from 'bignumber.js';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { utils } from 'ethers';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -36,18 +34,16 @@ import {
   setTokenAllowanceAction,
   takeOfferAction,
 } from 'actions/exchangeActions';
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import OfferCard from 'components/OfferCard/OfferCard';
+import Toast from 'components/Toast';
 
 // constants
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { EXCHANGE_CONFIRM, SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-
-// services
-import smartWalletService from 'services/smartWallet';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -55,12 +51,7 @@ import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type {
-  Asset,
-  AssetData,
-  Balances,
-  Rates,
-} from 'models/Asset';
+import type { Asset, AssetData, Balances, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
 
 //  selectors
@@ -70,16 +61,13 @@ import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
 import { getOfferProviderLogo, getCryptoProviderName } from 'utils/exchange';
-import { formatAmountDisplay, formatFiat, formatTransactionFee } from 'utils/common';
+import { formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
-import { getRate, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
 import { calculateAmountToBuy, getAvailable } from './utils';
 import AssetEnableModal from './AssetEnableModal';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 
 export type EnableData = {
@@ -125,7 +113,7 @@ type State = {
   pressedTokenAllowanceId: string,
   isEnableAssetModalVisible: boolean,
   enableData?: ?EnableData,
-  enablePayload: ?TokenTransactionPayload,
+  enablePayload: ?$Shape<TokenTransactionPayload>,
 };
 
 
@@ -214,11 +202,7 @@ class ExchangeOffers extends React.Component<Props, State> {
   setTokenAllowanceCallback = async (response: Object, offer: Offer) => {
     const {
       exchangeSupportedAssets,
-      baseFiatCurrency,
       setExecutingTransaction,
-      rates,
-      balances,
-      feeInfo,
       isEstimating,
       estimateTransaction,
     } = this.props;
@@ -244,7 +228,9 @@ class ExchangeOffers extends React.Component<Props, State> {
     const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
     const providerName = getCryptoProviderName(provider);
 
-    let transactionPayload = {
+    estimateTransaction(payToAddress, 0, data);
+
+    const transactionPayload = {
       amount: 0,
       to: payToAddress,
       symbol: fromAssetCode,
@@ -260,8 +246,6 @@ class ExchangeOffers extends React.Component<Props, State> {
       },
     };
 
-    estimateTransaction();
-
     this.setState({
       pressedTokenAllowanceId: '',
       isEnableAssetModalVisible: true,
@@ -269,29 +253,9 @@ class ExchangeOffers extends React.Component<Props, State> {
         providerName,
         assetSymbol,
         assetIcon,
-        // feeDisplayValue,
-        // feeInFiat,
-        // isDisabled,
       },
       enablePayload: { ...transactionPayload },
     });
-
-    // const { fee: txFeeInWei, gasToken } = feeInfo;
-
-    // if (gasToken) {
-    //   transactionPayload = { ...transactionPayload, gasToken };
-    // }
-
-    // transactionPayload = { ...transactionPayload, txFeeInWei };
-
-    // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-    // const feeSymbol = get(gasToken, 'symbol', ETH);
-    // const feeDecimals = get(gasToken, 'decimals', 'ether');
-    // const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-    // const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-    // const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-    // const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
-
   };
 
   hideEnableAssetModal = () => {
@@ -302,11 +266,31 @@ class ExchangeOffers extends React.Component<Props, State> {
 
   enableAsset = () => {
     const { enablePayload } = this.state;
-    const { navigation } = this.props;
+    const { navigation, feeInfo } = this.props;
     this.hideEnableAssetModal();
 
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotEnableAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { fee: txFeeInWei, gasToken } = feeInfo;
+
+    let transactionPayload = {
+      ...enablePayload,
+      txFeeInWei,
+    };
+
+    if (gasToken) {
+      transactionPayload = { ...transactionPayload, gasToken };
+    }
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload: enablePayload,
+      transactionPayload,
       goBackDismiss: true,
       transactionType: EXCHANGE,
     });
@@ -482,8 +466,8 @@ class ExchangeOffers extends React.Component<Props, State> {
           onEnable={this.enableAsset}
           enableData={enableData}
           feeInfo={feeInfo}
-          isLoading={isEstimating}
-          errorMessage={estimateErrorMessage}
+          isEstimating={isEstimating}
+          estimateErrorMessage={estimateErrorMessage}
         />
       </React.Fragment>
     );

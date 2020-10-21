@@ -77,7 +77,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (recipient: string, value: number, assetData?: AssetData) => void,
+  estimateTransaction: (recipient: string, value: number, assetData: AssetData) => void,
 };
 
 const renderFeeToggle = (
@@ -93,11 +93,22 @@ const renderFeeToggle = (
 
   return (
     <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} notEnoughToken={!enoughBalance} />
+      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} hasError={!enoughBalance} />
       {!!feeError && <BaseText center secondary>{feeError}</BaseText>}
     </>
   );
 };
+
+// TODO: map collectible params
+const mapToAssetDataType = ({
+  address: contractAddress,
+  symbol: token,
+  decimals,
+}: Object): AssetData => ({
+  contractAddress,
+  token,
+  decimals,
+});
 
 const SendAsset = ({
   source,
@@ -145,9 +156,7 @@ const SendAsset = ({
     if ((!isCollectible && (!isValidAmount || value === 0)) || !assetData || !selectedContact) {
       return;
     }
-
-    // await needed for initial max available send calculation to get estimate before showing max available after fees
-    estimateTransaction(selectedContact.ethAddress, value, assetData);
+    estimateTransaction(selectedContact.ethAddress, value, mapToAssetDataType(assetData));
   };
 
   const updateTxFeeDebounced = useCallback(
@@ -270,7 +279,11 @@ const SendAsset = ({
     if (maxBalance === calculatedBalanceAmount && selectedContact) {
       // await needed for initial max available send calculation to get estimate before showing max available after fees
       // TODO: check if value needs to be returned (conflict solve)
-      await estimateTransaction(selectedContact.ethAddress, Number(calculatedBalanceAmount), assetData);
+      await estimateTransaction(
+        selectedContact.ethAddress,
+        Number(calculatedBalanceAmount),
+        mapToAssetDataType(assetData),
+      );
     }
     return null;
   };
@@ -421,7 +434,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   estimateTransaction: (
     recipient: string,
     value: number,
-    assetData?: AssetData,
+    assetData: AssetData,
   ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
 });
 

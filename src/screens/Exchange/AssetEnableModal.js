@@ -25,14 +25,12 @@ import { getEnv } from 'configs/envConfig';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 
-// constants
-import { ETH } from 'constants/assetsConstants';
-
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -51,7 +49,7 @@ type Props = {
   onEnable: () => void,
   enableData: EnableData,
   theme: Theme,
-  isLoading: boolean,
+  isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
 };
@@ -82,6 +80,9 @@ const AssetEnableModal = (props: Props) => {
     isVisible,
     enableData,
     theme,
+    estimateErrorMessage,
+    feeInfo,
+    isEstimating,
   } = props;
 
   if (!enableData) {
@@ -98,6 +99,9 @@ const AssetEnableModal = (props: Props) => {
   const fullIconUrl = `${getEnv().SDK_PROVIDER}/${assetIcon}?size=3`;
 
   const { genericToken: fallbackSource } = images(theme);
+
+  const isDisabled = !!estimateErrorMessage || isEstimating;
+
   return (
     <SlideModal
       isVisible={isVisible}
@@ -117,22 +121,22 @@ const AssetEnableModal = (props: Props) => {
         <Paragraph>
           {t('exchangeContent.modal.enableAsset.paragraph', { providerName })}
         </Paragraph>
+        <FeeLabelToggle
+          txFeeInWei={feeInfo?.fee}
+          gasToken={feeInfo?.gasToken}
+          isLoading={isEstimating}
+          hasError={!!estimateErrorMessage}
+        />
         <Button
           secondary
-          title={isDisabled
-            ? t('label.notEnoughToken', { token: ETH })
-            : t('exchangeContent.modal.enableAsset.button.enable')
-          }
+          title={estimateErrorMessage || t('exchangeContent.modal.enableAsset.button.enable')}
           onPress={onEnable}
           regularText
-          style={{ marginBottom: 28 }}
+          style={{ marginTop: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
           block
           disabled={isDisabled}
         />
-        <BaseText secondary>
-          {t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
-        </BaseText>
       </ContentWrapper>
     </SlideModal>
   );

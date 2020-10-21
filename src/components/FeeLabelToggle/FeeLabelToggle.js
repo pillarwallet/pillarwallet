@@ -68,7 +68,7 @@ type Props = {
   accountAssets: Assets,
   accountHistory: Transaction[],
   showRelayerMigration?: boolean,
-  notEnoughToken?: boolean,
+  hasError?: boolean,
 };
 
 const LabelWrapper = styled.View`
@@ -77,8 +77,9 @@ const LabelWrapper = styled.View`
 `;
 
 const FeePill = styled.TouchableOpacity`
-  background-color: ${({ notEnoughToken, theme }) =>
-    notEnoughToken ? theme.colors.negative : theme.colors.labelTertiary};
+  ${({ hasError, theme: { colors: { negative, labelTertiary } } }) => `
+    background-color: ${hasError ? negative : labelTertiary};
+  `}
   padding: 0 8px;
   border-radius: 12px;
   justify-content: center;
@@ -96,7 +97,7 @@ const FeeLabelToggle = ({
   accountAssets,
   accountHistory,
   isGasTokenSupported,
-  notEnoughToken,
+  hasError,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
   const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
@@ -122,7 +123,7 @@ const FeeLabelToggle = ({
     <LabelWrapper >
       <Label>{labelText || t('label.estimatedFee')}&nbsp;</Label>
       <Spacing w={8} />
-      <FeePill onPress={() => setIsFiatValueVisible(!isFiatValueVisible)} notEnoughToken={notEnoughToken}>
+      <FeePill onPress={() => setIsFiatValueVisible(!isFiatValueVisible)} hasError={hasError}>
         <BaseText small color="#ffffff">{labelValue}</BaseText>
       </FeePill>
       <Spacing w={8} />

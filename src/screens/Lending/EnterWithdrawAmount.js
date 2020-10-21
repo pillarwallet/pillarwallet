@@ -144,6 +144,7 @@ const EnterWithdrawAmount = ({
                 txFeeInWei={txFeeInfo?.fee}
                 gasToken={txFeeInfo?.gasToken}
                 isLoading={isCalculatingWithdrawTransactionEstimate}
+                hasError={!isCalculatingWithdrawTransactionEstimate && !isEnoughForFee}
                 showFiatDefault
               />
               {!isCalculatingWithdrawTransactionEstimate && !isEnoughForFee && (
