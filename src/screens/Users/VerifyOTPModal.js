@@ -109,6 +109,8 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
       verifyingField,
     } = this.props;
 
+    if (!walletId) return;
+
     createOneTimePassword(walletId, {
       smsNotification: verifyingField === 'phone',
     });
@@ -121,6 +123,8 @@ class VerifyOTPModal extends React.PureComponent<Props, State> {
       user: { walletId },
       verifyingField,
     } = this.props;
+
+    if (!walletId) return;
 
     switch (verifyingField) {
       case 'email':

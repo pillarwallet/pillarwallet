@@ -139,10 +139,12 @@ class SablierStreams extends React.Component<Props, State> {
 
     return (
       <>
+        <Spacing h={14} />
         <Tabs
           tabs={tabs}
           activeTab={activeTab}
         />
+        <Spacing h={15} />
         <FlatList
           data={activeTab === OUTGOING ? outgoingStreams : incomingStreams}
           renderItem={this.renderStream}

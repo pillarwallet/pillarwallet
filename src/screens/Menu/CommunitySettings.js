@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { Linking } from 'react-native';
-import * as Sentry from '@sentry/react-native';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -29,7 +28,7 @@ import TextInput from 'components/TextInput';
 import Toast from 'components/Toast';
 import { spacing } from 'utils/variables';
 import { isValidEmail } from 'utils/validators';
-import { reportLog } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
 import { subscribeToNewsletter } from 'services/newsletter';
 import {
   TWITTER_SOCIAL_ADDRESS,
@@ -48,6 +47,7 @@ type State = {
 
 const NewsletterWrapper = styled.View`
   margin: 0 ${spacing.layoutSides}px;
+  z-index: 10;
 `;
 
 
@@ -115,7 +115,7 @@ class CommunitySettings extends React.Component<{}, State> {
             emoji: 'hushed',
             supportLink: true,
           });
-          reportLog('Subscription to newsletter failed', { error: data.msg }, Sentry.Severity.Error);
+          reportErrorLog('Subscription to newsletter failed', { error: data.msg });
         }
       })
       .catch(e => {
@@ -124,7 +124,7 @@ class CommunitySettings extends React.Component<{}, State> {
           emoji: 'hushed',
           supportLink: true,
         });
-        reportLog('Subscription to newsletter failed', { error: e }, Sentry.Severity.Error);
+        reportErrorLog('Subscription to newsletter failed', { error: e });
       });
   };
 

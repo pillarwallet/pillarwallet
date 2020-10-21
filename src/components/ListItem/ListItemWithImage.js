@@ -22,7 +22,6 @@ import * as React from 'react';
 import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
-import isEqualWith from 'lodash.isequalwith';
 import Icon from 'components/Icon';
 import t from 'translations/translate';
 
@@ -576,99 +575,89 @@ const getType = (props: Props) => {
   return DEFAULT;
 };
 
-class ListItemWithImage extends React.Component<Props, {}> {
-  shouldComponentUpdate(nextProps: Props) {
-    const isEq = isEqualWith(this.props, nextProps, (val1, val2) => {
-      if (typeof val1 === 'function' && typeof val2 === 'function') return true;
-      return undefined;
-    });
-    return !isEq;
-  }
+const ListItemWithImage = (props: Props) => {
+  const {
+    label,
+    subtext,
+    paragraph,
+    paragraphLines = 2,
+    customAddon,
+    onPress,
+    children,
+    imageAddonUrl,
+    imageAddonIconName,
+    imageAddonName,
+    rightColumnInnerStyle,
+    customAddonFullWidth,
+    innerWrapperHorizontalAlign,
+    wrapperOpacity,
+    customAddonAlignLeft,
+    hasShadow,
+    imageWrapperStyle,
+    theme,
+    badge,
+    customLabel,
+    padding,
+  } = props;
 
-  render() {
-    const {
-      label,
-      subtext,
-      paragraph,
-      paragraphLines = 2,
-      customAddon,
-      onPress,
-      children,
-      imageAddonUrl,
-      imageAddonIconName,
-      imageAddonName,
-      rightColumnInnerStyle,
-      customAddonFullWidth,
-      innerWrapperHorizontalAlign,
-      wrapperOpacity,
-      customAddonAlignLeft,
-      hasShadow,
-      imageWrapperStyle,
-      theme,
-      badge,
-      customLabel,
-      padding,
-    } = this.props;
+  const type = getType(props);
+  const colors = getThemeColors(theme);
+  const hasImageAddon = !!(imageAddonUrl || imageAddonIconName || imageAddonName);
 
-    const type = getType(this.props);
-    const colors = getThemeColors(theme);
-    const hasImageAddon = !!(imageAddonUrl || imageAddonIconName || imageAddonName);
-
-    return (
-      <ItemWrapper wrapperOpacity={wrapperOpacity}>
-        <InnerWrapper
-          type={type}
-          onPress={onPress}
-          disabled={!onPress}
-          horizontalAlign={innerWrapperHorizontalAlign}
-          padding={padding}
-        >
-          <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
-            <ItemImage {...this.props} />
-            {hasImageAddon && <ImageAddon {...this.props} />}
-          </ImageWrapper>
-          <View style={{ flex: 1 }}>
-            <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
-              <Column type={type} style={{ flexGrow: 1 }}>
-                {(!!label || !!customLabel) &&
-                <Row>
-                  {!!customLabel && customLabel}
-                  {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
-                </Row>
-                }
-                {!!paragraph &&
-                <Row>
-                  <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
-                </Row>
-                }
-                {!!subtext &&
-                <React.Fragment>
-                  <Spacing h={2} />
-                  <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
-                </React.Fragment>
-                }
-                {!!badge &&
-                <React.Fragment>
-                  <Spacing h={4} />
-                  <LabelBadge label={badge} primary labelStyle={fontStyles.tiny} />
-                </React.Fragment>
-                }
-              </Column>
-              <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
-                <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
-                  {!!customAddonAlignLeft && customAddon}
-                  <Addon {...this.props} type={type} colors={colors} />
-                  {!customAddonAlignLeft && customAddon}
-                  {children}
-                </View>
-              </Column>
-            </InfoWrapper>
-          </View>
-        </InnerWrapper>
-        {customAddonFullWidth}
-      </ItemWrapper>
-    );
-  }
-}
+  return (
+    <ItemWrapper wrapperOpacity={wrapperOpacity}>
+      <InnerWrapper
+        type={type}
+        onPress={onPress}
+        disabled={!onPress}
+        horizontalAlign={innerWrapperHorizontalAlign}
+        padding={padding}
+      >
+        <ImageWrapper hasShadow={hasShadow} imageWrapperStyle={imageWrapperStyle}>
+          <ItemImage {...props} />
+          {hasImageAddon && <ImageAddon {...props} />}
+        </ImageWrapper>
+        <View style={{ flex: 1 }}>
+          <InfoWrapper type={type} horizontalAlign={innerWrapperHorizontalAlign}>
+            <Column type={type} style={{ flexGrow: 1 }}>
+              {(!!label || !!customLabel) &&
+              <Row>
+                {!!customLabel && customLabel}
+                {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
+              </Row>
+              }
+              {!!paragraph &&
+              <Row>
+                <ItemParagraph numberOfLines={paragraphLines}>{paragraph}</ItemParagraph>
+              </Row>
+              }
+              {!!subtext &&
+              <React.Fragment>
+                <Spacing h={2} />
+                <ItemSubText numberOfLines={2}>{subtext}</ItemSubText>
+              </React.Fragment>
+              }
+              {!!badge &&
+              <React.Fragment>
+                <Spacing h={4} />
+                <LabelBadge label={badge} primary labelStyle={fontStyles.tiny} />
+              </React.Fragment>
+              }
+            </Column>
+            <Column rightColumn type={type} style={{ maxWidth: '50%' }}>
+              <View style={[rightColumnInnerStyle, { flexWrap: 'wrap' }]}>
+                {!!customAddonAlignLeft && customAddon}
+                <Addon {...props} type={type} colors={colors} />
+                {!customAddonAlignLeft && customAddon}
+                {children}
+              </View>
+            </Column>
+          </InfoWrapper>
+        </View>
+      </InnerWrapper>
+      {customAddonFullWidth}
+    </ItemWrapper>
+  );
+};
 
 export default withTheme(ListItemWithImage);

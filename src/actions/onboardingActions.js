@@ -18,418 +18,416 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { ethers } from 'ethers';
-import get from 'lodash.get';
 import { NavigationActions } from 'react-navigation';
 import Intercom from 'react-native-intercom';
-import { ImageCacheManager } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 // constants
-import {
-  GENERATING,
-  UPDATE_WALLET_STATE,
-  REGISTERING,
-  USERNAME_OK,
-  CHECKING_USERNAME,
-  SET_API_USER,
-  USERNAME_FAILED,
-  DECRYPTED,
-  SET_USERNAME_CHECK_ERROR_MESSAGE,
-} from 'constants/walletConstants';
+import { SET_WALLET, UPDATE_WALLET_BACKUP_STATUS, SDK_REASON_USERNAME_FAILED } from 'constants/walletConstants';
 import {
   APP_FLOW,
   NEW_WALLET,
   HOME,
   REFERRAL_INCOMING_REWARD,
+  NEW_PROFILE,
   RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
-import { UPDATE_ASSETS, UPDATE_BALANCES } from 'constants/assetsConstants';
-import { RESET_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { PENDING, REGISTERED, SET_USER } from 'constants/userConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
-import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
+import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { SET_COLLECTIBLES_TRANSACTION_HISTORY, UPDATE_COLLECTIBLES } from 'constants/collectiblesConstants';
-import { RESET_SMART_WALLET } from 'constants/smartWalletConstants';
-import { RESET_PAYMENT_NETWORK } from 'constants/paymentNetworkConstants';
-import { UPDATE_BADGES } from 'constants/badgesConstants';
-import { SET_USER_SETTINGS } from 'constants/userSettingsConstants';
-import { SET_USER_EVENTS } from 'constants/userEventsConstants';
+import {
+  RESET_ONBOARDING,
+  SET_FINISHING_ONBOARDING,
+  SET_IMPORTING_WALLET,
+  SET_ONBOARDING_ERROR,
+  SET_ONBOARDING_PIN_CODE,
+  SET_ONBOARDING_USER,
+  SET_ONBOARDING_USERNAME_REGISTRATION_FAILED,
+  SET_ONBOARDING_WALLET,
+  SET_REGISTERING_USER,
+} from 'constants/onboardingConstants';
+import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY, UPDATE_ASSETS } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
 
 // utils
 import { generateMnemonicPhrase } from 'utils/wallet';
-import { delay, isCaseInsensitiveMatch } from 'utils/common';
+import { isCaseInsensitiveMatch, reportErrorLog, reportLog } from 'utils/common';
 import { updateOAuthTokensCB } from 'utils/oAuth';
+import { transformAssetsToObject } from 'utils/assets';
 
 // services
-import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging } from 'services/firebase';
-import smartWalletService from 'services/smartWallet';
 
 // actions
-import {
-  importSmartWalletAccountsAction,
-  managePPNInitFlagAction,
-} from 'actions/smartWalletActions';
+import { importSmartWalletAccountsAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
-import {
-  checkForWalletBackupToastAction,
-  encryptAndSaveWalletAction,
-  generateWalletMnemonicAction,
-} from 'actions/walletActions';
+import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
-import { setAppThemeAction } from 'actions/appSettingsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
 import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
 import { setRatesAction } from 'actions/ratesActions';
-import { resetAppState } from 'actions/authActions';
+import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
-import { checkIfRecoveredSmartWalletFinishedAction } from 'actions/recoveryPortalActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
+import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
+
+// other
+import { initialAssets } from 'fixtures/assets';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 
 
-const storage = Storage.getInstance('db');
-
-export const getTokenWalletAndRegister = async (
-  privateKey: string,
-  api: SDKWrapper,
-  user?: Object,
-  dispatch: Dispatch,
-  recover?: {
-    accountAddress: string,
-    deviceAddress: string,
-  },
-): Promise<Object> => {
-  // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
-  await firebaseMessaging.registerForRemoteNotifications().catch(() => {});
-  await firebaseMessaging.requestPermission().catch(() => {});
-  const fcmToken = await firebaseMessaging.getToken().catch(() => null);
-
-  if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
-
-  const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, user?.username, recover);
-
-  const registrationSucceed = !sdkWallet.error && sdkWallet.walletId;
-  const userInfo = registrationSucceed ? await api.userInfo(sdkWallet.walletId) : {};
-  const userState = !isEmpty(userInfo) ? REGISTERED : PENDING;
-
-  if (userState === REGISTERED) {
-    dispatch(saveDbAction('user', { user: userInfo }, true));
-  }
-
-  const oAuthTokens = {
-    refreshToken: sdkWallet.refreshToken,
-    accessToken: sdkWallet.accessToken,
-  };
-
-  const updateOAuth = updateOAuthTokensCB(dispatch);
-  await updateOAuth(oAuthTokens);
-
-  dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
-  dispatch({
-    type: SET_USER,
-    payload: {
-      user: userInfo,
-      state: userState,
-    },
-  });
-
-  if (registrationSucceed) {
-    dispatch(logEventAction('wallet_created'));
-  } else {
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: sdkWallet.reason,
-    });
-  }
-
-  // invalidate image cache
-  ImageCacheManager().clearCache().catch(() => null);
-
-  return Promise.resolve({
-    sdkWallet,
-    userInfo,
-    userState,
-    fcmToken,
-    registrationSucceed,
-    oAuthTokens,
-  });
-};
-
-export const finishRegistration = async ({
-  api,
-  dispatch,
-  userInfo,
-  privateKey,
-}: {
-  api: SDKWrapper,
-  dispatch: Dispatch,
-  userInfo: Object, // TODO: add back-end authenticated user model (not people related ApiUser),
-  privateKey: string,
-}) => {
-  // set API username (local method)
-  api.setUsername(userInfo.username);
-
-  // get & store initial assets
-  const initialAssets = await api.fetchInitialAssets(userInfo.walletId);
-  const rates = await getExchangeRates(Object.keys(initialAssets));
-  dispatch(setRatesAction(rates));
-
-  // create smart wallet account only for new wallets
-  await smartWalletService.reset();
-  await dispatch(importSmartWalletAccountsAction(privateKey));
-
-  dispatch(fetchBadgesAction(false));
-
-  dispatch(loadFeatureFlagsAction());
-
-  await dispatch(fetchSmartWalletTransactionsAction());
-
-  dispatch(managePPNInitFlagAction());
-
-  await dispatch({
-    type: UPDATE_WALLET_STATE,
-    payload: DECRYPTED,
-  });
-
-  dispatch(fetchReferralRewardAction());
-};
-
-export const navigateToAppFlow = (showIncomingReward?: boolean) => {
-  const navigateToHomeScreen = NavigationActions.navigate({
-    routeName: APP_FLOW,
-    params: {},
-    action: NavigationActions.navigate({ routeName: HOME }),
-  });
-
-  const navigateToIncomingRewardScreen = NavigationActions.navigate({
-    routeName: APP_FLOW,
-    params: {},
-    action: NavigationActions.navigate({ routeName: REFERRAL_INCOMING_REWARD }),
-  });
-
-  if (showIncomingReward) {
-    navigate(navigateToIncomingRewardScreen);
-  } else {
-    navigate(navigateToHomeScreen);
-  }
-};
-
-export const registerWalletAction = (enableBiometrics?: boolean, themeToStore?: string) => {
+export const setupUserAction = (username: ?string, recoveryData?: Object) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const mnemonic = getState()?.wallet?.onboarding?.mnemonic;
-    // in case mnemonic is null (new user) then it will generate new, otherwise will take imported from state
-    const mnemonicPhrase = mnemonic?.original || generateMnemonicPhrase();
-    if (!mnemonic) dispatch(generateWalletMnemonicAction(mnemonicPhrase));
+    if (!username) {
+      reportLog('setupUserAction failed: no username', { recoveryData });
+      return;
+    }
 
-    const currentState = getState();
+    dispatch({ type: SET_REGISTERING_USER, payload: true });
+    dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: false }); // reset
+
+    const {
+      wallet: { data: wallet },
+      session: { data: { isOnline } },
+    } = getState();
+
+    // save for future onboarding retry in case anything fails or is offline
+    let userInfo = { username };
+    await dispatch(saveDbAction('user', { user: userInfo }, true));
+
+    const privateKey = wallet?.privateKey;
+    if (!privateKey) {
+      reportLog('setupUserAction failed: no privateKey', { recoveryData });
+      dispatch({ type: SET_REGISTERING_USER, payload: false });
+      return;
+    }
+
+    if (isOnline) {
+      api.init();
+      // we us FCM notifications so we must register for FCM, not regular native Push-Notifications
+      await firebaseMessaging.registerForRemoteNotifications().catch((error) => {
+        reportErrorLog('firebaseMessaging.registerForRemoteNotifications failed', { error });
+      });
+      await firebaseMessaging.requestPermission().catch(() => null);
+      const fcmToken = await firebaseMessaging.getToken().catch((error) => {
+        reportErrorLog('firebaseMessaging.getToken failed', { error });
+        return null;
+      });
+
+      if (fcmToken) await Intercom.sendTokenToIntercom(fcmToken).catch(() => null);
+
+      const sdkWallet: Object = await api.registerOnAuthServer(privateKey, fcmToken, username, recoveryData);
+
+      if (!!sdkWallet?.error || !sdkWallet?.walletId) {
+        const usernameFailed = sdkWallet?.reason === SDK_REASON_USERNAME_FAILED;
+        const error = usernameFailed
+          ? t('auth:error.registrationApiUsernameFailed')
+          : t('auth:error.registrationApiFailedWithNoReason');
+        reportErrorLog('setupUserAction user registration failed', { error, username, recoveryData });
+        if (usernameFailed) {
+          dispatch({ type: SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, payload: true });
+        }
+        dispatch({ type: SET_ONBOARDING_ERROR, payload: error });
+        return;
+      }
+
+      const { walletId } = sdkWallet;
+      userInfo = { ...userInfo, walletId };
+
+      const oAuthTokens = {
+        refreshToken: sdkWallet.refreshToken,
+        accessToken: sdkWallet.accessToken,
+      };
+
+      const updateOAuth = updateOAuthTokensCB(dispatch);
+      api.init(updateOAuth, oAuthTokens);
+      await updateOAuth(oAuthTokens);
+
+      const updatedUserInfo = await api.userInfo(walletId);
+      if (!isEmpty(updatedUserInfo)) {
+        userInfo = { ...userInfo, ...updatedUserInfo };
+      }
+
+      api.setUsername(userInfo.username);
+
+      // save updated
+      dispatch(saveDbAction('user', { user: userInfo }, true));
+
+      dispatch({ type: UPDATE_SESSION, payload: { fcmToken } });
+
+      dispatch(logEventAction('wallet_created'));
+    }
+
+    dispatch({ type: SET_USER, payload: userInfo });
+
+    dispatch({ type: SET_REGISTERING_USER, payload: false });
+  };
+};
+
+export const setupWalletAction = (enableBiometrics?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     const {
       onboarding: {
-        pin,
-        importedWallet,
-        apiUser,
+        pinCode,
+        wallet: importedWallet, // wallet was already added in import step
+        isPortalRecovery,
       },
-      backupStatus: {
-        isBackedUp,
-        isImported,
-        isRecoveryPending,
-      },
-    } = currentState.wallet;
+    } = getState();
 
-    // STEP 0: Clear local storage and reset app state except env if setup
-    const env = await storage.get('environment');
-    if (isImported) {
-      await resetAppState();
-    } else {
-      await storage.removeAll();
-    }
-    if (env) {
-      await storage.save('environment', env, true);
+    if (!pinCode) {
+      reportLog('setupWalletAction failed: no pinCode');
+      return;
     }
 
-    dispatch({ type: UPDATE_ACCOUNTS, payload: [] });
-    dispatch({ type: UPDATE_ASSETS, payload: {} });
-    dispatch({ type: RESET_APP_SETTINGS, payload: {} });
+    const isImported = !!importedWallet;
 
-    // manage theme as appSettings gets overwritten
-    if (themeToStore) dispatch(setAppThemeAction(themeToStore));
+    // will return new mnemonic if importedWallet is not present
+    const mnemonic = importedWallet?.mnemonic || generateMnemonicPhrase();
 
-    dispatch({ type: SET_HISTORY, payload: {} });
-    dispatch({ type: UPDATE_BALANCES, payload: {} });
-    dispatch({ type: UPDATE_COLLECTIBLES, payload: {} });
-    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: {} });
-    dispatch({ type: UPDATE_BADGES, payload: [] });
-    dispatch({ type: RESET_SMART_WALLET });
-    dispatch({ type: RESET_PAYMENT_NETWORK });
-    dispatch({ type: SET_USER_SETTINGS, payload: {} });
-    dispatch({ type: SET_USER_EVENTS, payload: [] });
+    // create wallet object
+    const ethersWallet = ethers.Wallet.fromMnemonic(mnemonic);
 
-    // STEP 1: navigate to the new wallet screen
-    navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
-    await delay(50);
+    // raw private key will be removed from reducer once registration finishes
+    const { address, privateKey } = ethersWallet;
+    dispatch({ type: SET_WALLET, payload: { address, privateKey } });
 
-    // STEP 2: check if wallet was imported or create it from the mnemonic phrase otherwise
-    let wallet = importedWallet;
-    if (!wallet) {
-      dispatch({
-        type: UPDATE_WALLET_STATE,
-        payload: GENERATING,
-      });
-      await delay(50);
-      wallet = ethers.Wallet.fromMnemonic(mnemonicPhrase);
-    }
+    const isRecoveryPending = !!isPortalRecovery;
+    const backupStatus = { isImported, isBackedUp: !!isImported, isRecoveryPending };
 
-    // STEP 3: encrypt the wallet
-    const backupStatus = { isImported: !!importedWallet, isBackedUp, isRecoveryPending };
-    await dispatch(encryptAndSaveWalletAction(pin, wallet, backupStatus, enableBiometrics));
+    // dispatch to reducer only, will be stored with encryptAndSaveWalletAction
+    dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: backupStatus });
+
+    // encrypt and store
+    await dispatch(encryptAndSaveWalletAction(pinCode, ethersWallet, backupStatus, enableBiometrics));
+
     dispatch(saveDbAction('app_settings', { appSettings: { wallet: +new Date() } }));
+  };
+};
+
+export const setupAppServicesAction = (privateKey: ?string) => {
+  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+    const {
+      wallet: { backupStatus },
+      user: { data: { walletId } },
+      session: { data: { isOnline } },
+    } = getState();
+
+    if (!privateKey) {
+      reportLog('setupAppServicesAction failed: no privateKey');
+      return;
+    }
+
+    // set default in case account cannot be created offline
+    const defaultInitialAssets = isOnline && walletId ?
+      await api.fetchInitialAssets(walletId)
+      : transformAssetsToObject(initialAssets);
+
+    const defaultAssets = { [DEFAULT_ACCOUNTS_ASSETS_DATA_KEY]: defaultInitialAssets };
+    dispatch({ type: UPDATE_ASSETS, payload: defaultAssets });
+
+    dispatch(saveDbAction('assets', { assets: defaultAssets }, true));
+
+    // all the calls below require user to be online
+    if (!isOnline) return;
+
+    dispatch(loadFeatureFlagsAction());
+
+    // user might not be registered at this point
+    if (walletId) {
+      const rates = await getExchangeRates(defaultInitialAssets);
+      dispatch(setRatesAction(rates));
+      dispatch(fetchBadgesAction(false));
+      dispatch(fetchReferralRewardAction());
+
+      // create smart wallet account only for new wallets
+      await dispatch(importSmartWalletAccountsAction(privateKey));
+      await dispatch(fetchSmartWalletTransactionsAction());
+      dispatch(managePPNInitFlagAction());
+
+      // add wallet created / imported events
+      dispatch(getWalletsCreationEventsAction());
+    }
+
+    // if wallet was imported let's check its balance for key based assets migration
+    if (backupStatus.isImported) {
+      dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
+    }
+
+    // check if wallet backup warning toast needed, balance can only be retrieved online
+    dispatch(checkForWalletBackupToastAction());
+  };
+};
+
+export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    dispatch({ type: SET_FINISHING_ONBOARDING, payload: true });
+
+    // reset on retry
+    if (retry) {
+      dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
+    }
+
+    const {
+      onboarding: { user: onboardingUser },
+      user: { data: user },
+      wallet: { backupStatus: { isRecoveryPending }, data: walletData },
+    } = getState();
+
+    // either retry during onboarding or previously stored username during onboarding
+    if (!user?.walletId) await dispatch(setupUserAction(onboardingUser?.username || user?.username, recoveryData));
+
+
+    await dispatch(setupAppServicesAction(walletData?.privateKey));
+
+    const { errorMessage, usernameRegistrationFailed } = getState().onboarding;
+
+    // do not reset onboarding in case there were errors as retry will happen in app flow
+    if (!errorMessage && !usernameRegistrationFailed) dispatch({ type: RESET_ONBOARDING });
+
+    // reset if recovery was pending as it's successful recover by this step
+    if (isRecoveryPending) {
+      dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: { isRecoveryPending: false } });
+      dispatch(saveDbAction('wallet', { wallet: { backupStatus: { isRecoveryPending: false } } }));
+    }
+
+    // check if user was referred to install the app and navigate accordingly
+    const routeName = getState()?.referrals?.referralToken ? REFERRAL_INCOMING_REWARD : HOME;
+    navigate(NavigationActions.navigate({
+      routeName: APP_FLOW,
+      params: {},
+      action: NavigationActions.navigate({ routeName }),
+    }));
+
+    dispatch({ type: SET_FINISHING_ONBOARDING, payload: false });
+  };
+};
+
+export const beginOnboardingAction = (enableBiometrics?: boolean) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // pass current onboarding, referrals and session network state to keep after redux state reset
+    const {
+      onboarding,
+      referrals,
+      session: { data: { isOnline } },
+    } = getState();
+
+    dispatch(resetAppStateAction({
+      onboarding,
+      referrals,
+      session: { data: { isOnline } },
+    }));
+
+    navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));
+
+    await dispatch(resetAppServicesAction());
+
+    await dispatch(setupWalletAction(enableBiometrics));
 
     // checks if wallet import is pending and in this state we don't want to auth any users yet
-    if (isRecoveryPending) {
+    if (onboarding.isPortalRecovery) {
       navigate(NavigationActions.navigate({
         routeName: APP_FLOW,
         params: {},
         action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
       }));
-      dispatch(checkIfRecoveredSmartWalletFinishedAction(wallet));
+      dispatch(checkAndFinishSmartWalletRecoveryAction());
       return;
     }
 
-    // STEP 4: Initialize SDK and register user
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: REGISTERING,
-    });
-
-    const user = apiUser?.username ? { username: apiUser.username } : {};
-    dispatch(saveDbAction('user', { user }));
-
-    api.init();
-    const {
-      userInfo,
-      registrationSucceed,
-      oAuthTokens,
-    } = await getTokenWalletAndRegister(wallet.privateKey, api, user, dispatch);
-
-    if (!registrationSucceed) { return; }
-
-    // re-init API with OAuth update callback
-    const updateOAuth = updateOAuthTokensCB(dispatch);
-    api.init(updateOAuth, oAuthTokens);
-    // STEP 5: finish registration
-    await finishRegistration({
-      api,
-      dispatch,
-      userInfo,
-      privateKey: wallet.privateKey,
-    });
-
-    // STEP 6: add wallet created / imported events
-    dispatch(getWalletsCreationEventsAction());
-
-    // STEP 7: check if user ir referred to install the app
-    const referralToken = get(getState(), 'referrals.referralToken');
-
-    // STEP 8: check if wallet backup warning toast needed
-    dispatch(checkForWalletBackupToastAction());
-
-    // STEP 9: if wallet is imported let's check its balance for key based assets migration
-    if (backupStatus.isImported) dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
-
-    // STEP 10: all done, navigate to the home screen or incoming reward screen
-    navigateToAppFlow(!!referralToken);
+    dispatch(finishOnboardingAction());
   };
 };
 
-/*
-  We call this action in various cases when we fail to register user wallet:
-  1) during import
-  2) during new wallet creation
-  3) when user re-opened the app and sees RetryApiRegistration screen
- */
-export const registerOnBackendAction = () => {
+export const importWalletFromMnemonicAction = (mnemonicInput: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      wallet: {
-        data: walletData,
-        onboarding: {
-          apiUser,
-          privateKey,
-          importedWallet,
-        },
-      },
-    } = getState();
+    dispatch({ type: SET_IMPORTING_WALLET });
 
-    const walletPrivateKey = get(importedWallet, 'privateKey') || privateKey || get(walletData, 'privateKey');
-    dispatch({
-      type: UPDATE_WALLET_STATE,
-      payload: REGISTERING,
-    });
-    let { user = {} } = await storage.get('user');
-    if (apiUser?.username) {
-      user = { ...apiUser };
+    let importedWallet;
+    try {
+      importedWallet = ethers.Wallet.fromMnemonic(mnemonicInput);
+    } catch (e) {
+      // keep error unsent in case it contains mnemonic phrase
     }
-    await delay(1000);
 
-    const { registrationSucceed, userInfo } = await getTokenWalletAndRegister(
-      walletPrivateKey,
-      api,
-      user,
-      dispatch,
-    );
-    if (!registrationSucceed) return;
+    if (!importedWallet) {
+      dispatch({ type: SET_ONBOARDING_ERROR, payload: t('auth:error.incorrectBackupPhrase.default') });
+      return;
+    }
 
-    dispatch(logEventAction('user_created'));
+    api.init();
+    const registeredWalletUser = await api.validateAddress(importedWallet.address);
+    if (registeredWalletUser?.walletId) {
+      const {
+        walletId,
+        username,
+        profileImage,
+      } = registeredWalletUser;
+      dispatch({ type: SET_ONBOARDING_USER, payload: { walletId, username, profileImage } });
+    }
 
-    await finishRegistration({
-      api,
-      dispatch,
-      userInfo,
-      privateKey: walletPrivateKey,
-    });
+    const {
+      mnemonic: { phrase: mnemonic },
+      address,
+      privateKey,
+    } = importedWallet;
+    dispatch({ type: SET_ONBOARDING_WALLET, payload: { mnemonic, address, privateKey } });
 
-    dispatch(checkForWalletBackupToastAction());
-    const referralToken = get(getState(), 'referrals.referralToken');
+    dispatch(logEventAction('wallet_imported', { method: 'Words Phrase' }));
 
-    navigateToAppFlow(!!referralToken);
+    navigate(NavigationActions.navigate({ routeName: NEW_PROFILE }));
+  };
+};
+
+let usernameCheckOfflineToastShown = false;
+
+export const resetUsernameCheckAction = (resetOfflineToast?: boolean) => {
+  return (dispatch: Dispatch) => {
+    if (resetOfflineToast) usernameCheckOfflineToastShown = false;
+    dispatch({ type: SET_ONBOARDING_USER, payload: null });
+    dispatch({ type: SET_ONBOARDING_ERROR, payload: null });
+  };
+};
+
+export const resetOnboardingAction = () => ({ type: RESET_ONBOARDING });
+
+export const resetOnboardingAndNavigateAction = (routeName: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch(resetOnboardingAction());
+    navigate(NavigationActions.navigate({ routeName }));
   };
 };
 
 export const checkUsernameAvailabilityAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    let newWalletState;
+    dispatch(resetUsernameCheckAction());
 
     // if user is offline then proceed with local registration
     if (!getState()?.session?.data?.isOnline) {
-      Toast.show({
-        message: t('auth:toast.userIsOffline'),
-        emoji: 'satellite_antenna',
-      });
+      if (!usernameCheckOfflineToastShown) {
+        Toast.closeAll(); // just in case another offline toast is showing from welcome screen
+        Toast.show({
+          message: t('auth:toast.userIsOffline'),
+          emoji: 'satellite_antenna',
+        });
+        usernameCheckOfflineToastShown = true;
+      }
       dispatch({
-        type: SET_API_USER,
+        type: SET_ONBOARDING_USER,
         payload: { username },
       });
-      dispatch({ type: UPDATE_WALLET_STATE, payload: USERNAME_OK });
       return;
     }
 
-    dispatch({ type: UPDATE_WALLET_STATE, payload: CHECKING_USERNAME });
-    dispatch({ type: SET_USERNAME_CHECK_ERROR_MESSAGE, payload: null });
-
     api.init();
-
     const result: {
       status?: number,
       username?: string,
@@ -441,18 +439,22 @@ export const checkUsernameAvailabilityAction = (username: string) => {
     if (result?.status === 400 || usernameTaken) {
       const errorMessage = result?.message || t('auth:error.invalidUsername.default');
       dispatch({
-        type: SET_USERNAME_CHECK_ERROR_MESSAGE,
+        type: SET_ONBOARDING_ERROR,
         payload: usernameTaken ? t('auth:error.invalidUsername.taken') : errorMessage,
       });
-      newWalletState = USERNAME_FAILED;
-    } else {
-      dispatch({
-        type: SET_API_USER,
-        payload: { username },
-      });
-      newWalletState = USERNAME_OK;
+      return;
     }
 
-    dispatch({ type: UPDATE_WALLET_STATE, payload: newWalletState });
+    dispatch({
+      type: SET_ONBOARDING_USER,
+      payload: { username },
+    });
   };
 };
+
+export const setOnboardingPinCodeAction = (pinCode: string) => ({
+  type: SET_ONBOARDING_PIN_CODE,
+  payload: pinCode,
+});
+
+export const resetWalletImportErrorAction = () => ({ type: SET_ONBOARDING_ERROR, payload: null });

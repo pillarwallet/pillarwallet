@@ -38,7 +38,7 @@ import { parseOffer } from 'utils/exchange';
 import { encodeContractMethod } from 'services/assets';
 
 // constants
-import { PROVIDER_1INCH } from 'constants/exchangeConstants';
+import { PROVIDER_1INCH, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 
 // assets
@@ -109,7 +109,7 @@ export const create1inchOrder = async (
 
   const url =
     `${EXCHANGE_URL}/swap?fromTokenAddress=${safeFromAddress}&toTokenAddress=${safeToAddress}` +
-    `&amount=${amount}&disableEstimate=true&slippage=3&fromAddress=${clientSendAddress}`;
+    `&amount=${amount}&disableEstimate=true&slippage=${ALLOWED_SLIPPAGE}&fromAddress=${clientSendAddress}`;
 
   const response = await getResponseData(url, 'Failed to create 1inch order', t('toast.failedToCreateOrder'));
 

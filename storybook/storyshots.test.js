@@ -44,4 +44,6 @@ jest.mock('react-navigation-redux-helpers', () => ({
   createReactNavigationReduxMiddleware: () => () => () => () => {},
 }));
 
+jest.useFakeTimers();
+
 initStoryshots({ /* configuration options */ });

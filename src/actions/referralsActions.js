@@ -41,8 +41,6 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import {
   SENDING_INVITE,
   INVITE_SENT,
-  SET_CONTACTS_FOR_REFERRAL,
-  REMOVE_CONTACT_FOR_REFERRAL,
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
@@ -68,7 +66,7 @@ import { logEvent, getUserReferralLink } from 'services/branchIo';
 import { navigate } from 'services/navigation';
 
 // utils
-import { printLog } from 'utils/common';
+import { printLog, reportLog } from 'utils/common';
 
 
 export type ClaimTokenAction = {
@@ -113,8 +111,6 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
           ? t('toast.referralInviteCantBeSent.allInvites')
           : t('toast.referralInviteCantBeSent.notAllInvites'),
         emoji: 'hushed',
-        messageType: 'warning',
-        autoClose: false,
       },
     });
     dispatch({
@@ -126,11 +122,18 @@ const inviteErrorAction = (errorMessage?: string, isAllInvitesNotSent: boolean) 
 export const completeReferralsEventAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       referrals: { referralToken, isRewardClaimed },
+      session: { data: { isOnline } },
     } = getState();
 
-    if (!referralToken || isRewardClaimed) {
+    if (!referralToken || isRewardClaimed || !isOnline) {
+      return;
+    }
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('completeReferralsEventAction failed: unable to get walletId', { user });
       return;
     }
 
@@ -260,22 +263,11 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
         payload: {
           message: t('toast.cantVerifyCode'),
           emoji: 'hushed',
-          messageType: 'warning',
         },
       });
     }
   };
 };
-
-export const setContactsForReferralAction = (contacts: ReferralContact[]) => ({
-  type: SET_CONTACTS_FOR_REFERRAL,
-  payload: contacts,
-});
-
-export const removeContactForReferralAction = (id: string) => ({
-  type: REMOVE_CONTACT_FOR_REFERRAL,
-  payload: id,
-});
 
 export const allowToAccessPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {
@@ -307,8 +299,18 @@ export const goToInvitationFlowAction = () => {
 export const fetchSentReferralInvitationsAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
+      session: { data: { isOnline } },
     } = getState();
+
+    // cannot be done while offline
+    if (!isOnline) return;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('fetchSentReferralInvitationsAction failed: unable to get walletId', { user });
+      return;
+    }
 
     const sentInvitations = await api.getSentReferralInvites(walletId);
 
@@ -323,9 +325,19 @@ export const fetchSentReferralInvitationsAction = () => {
 export const fetchReferralRewardAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       referrals: { referralToken },
+      session: { data: { isOnline } },
     } = getState();
+
+    // cannot be done while offline
+    if (!isOnline) return;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('fetchReferralRewardAction failed: unable to get walletId', { user });
+      return;
+    }
 
     dispatch({
       type: FETCHING_REFERRAL_REWARD_AMOUNT,
@@ -364,9 +376,19 @@ export const fetchReferralRewardAction = () => {
 export const fetchReferralRewardsIssuerAddressesAction = () => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      user: { data: { walletId } },
+      user: { data: user },
       referrals: { referralToken },
+      session: { data: { isOnline } },
     } = getState();
+
+    // cannot be done while offline
+    if (!isOnline) return;
+
+    const walletId = user?.walletId;
+    if (!walletId) {
+      reportLog('fetchReferralRewardsIssuerAddressesAction failed: unable to get walletId', { user });
+      return;
+    }
 
     const addresses = await api.getReferralRewardIssuerAddress(walletId, referralToken);
 

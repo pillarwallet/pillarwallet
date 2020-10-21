@@ -71,9 +71,8 @@ export const getFormattedBalanceInFiat = (
   rates: Rates,
   symbol: string): string => {
   const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-  if (!assetBalanceInFiat) return '';
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
+  return formatFiat(assetBalanceInFiat, fiatCurrency);
 };
 
 export const getAvailable = (_min: string, _max: string, rate: string) => {
@@ -113,19 +112,12 @@ export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string
   return calculateAmountToBuy(bestRate, fromAmount);
 };
 
-export const getFormattedSellMax = (asset: Option): string => {
-  const { assetBalance, symbol, formattedBalanceInFiat } = asset;
-  if (!(assetBalance && symbol && formattedBalanceInFiat)) return '';
-  return `${formatAmount(assetBalance, 2)} ${symbol} (${formattedBalanceInFiat.replace(' ', '')})`;
-};
-
 export const validateInput = (
   fromAmount: string,
   fromAsset: ?Option,
   toAsset: ?Option,
-  errorMessage: string,
 ): boolean =>
-  !errorMessage && !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
+  !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
 
 const generateAssetsOptions = (
   assets: Assets,

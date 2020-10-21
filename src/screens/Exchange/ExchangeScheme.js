@@ -24,8 +24,9 @@ import styled from 'styled-components/native';
 import { AnimatedSVGPath } from 'react-native-svg-animations';
 
 // components
-import { MediumText } from 'components/Typography';
+import { MediumText, BaseText } from 'components/Typography';
 import DynamicSizeImage from 'components/DynamicSizeImage';
+import { Spacing } from 'components/Layout';
 
 // utils
 import { fontSizes } from 'utils/variables';
@@ -42,6 +43,7 @@ type Props = {
   fromAssetCode: string,
   toValue: number | string,
   toAssetCode: string,
+  toValueInFiat: string,
   imageSource: ?string | ImageObject,
 };
 
@@ -157,6 +159,7 @@ class ExchangeScheme extends React.Component<Props, State> {
       toValue,
       toAssetCode,
       imageSource,
+      toValueInFiat,
     } = this.props;
 
     return (
@@ -208,6 +211,8 @@ class ExchangeScheme extends React.Component<Props, State> {
             <SymbolText> {toAssetCode}</SymbolText>
           </ValueText>
         </ValueWrapper>
+        <Spacing h={8} />
+        <BaseText secondary small>{toValueInFiat}</BaseText>
       </SchemeWrapper>
     );
   }

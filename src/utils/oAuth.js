@@ -32,11 +32,8 @@ export type OAuthTokens = {
 };
 
 export const updateOAuthTokensCB = (dispatch: Dispatch) => {
-  return async (oAuthTokens: OAuthTokens) => {
-    dispatch({
-      type: UPDATE_OAUTH_TOKENS,
-      payload: oAuthTokens,
-    });
+  return (oAuthTokens: OAuthTokens) => {
+    dispatch({ type: UPDATE_OAUTH_TOKENS, payload: oAuthTokens });
     dispatch(saveDbAction('oAuthTokens', { oAuthTokens }, true));
   };
 };

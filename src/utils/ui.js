@@ -17,7 +17,8 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { Dimensions, Platform, PixelRatio } from 'react-native';
+import { Dimensions, Platform, PixelRatio, View } from 'react-native';
+import type { Measurements } from 'reducers/walkthroughsReducer';
 
 const {
   width: SCREEN_WIDTH,
@@ -71,3 +72,8 @@ export function hexToRgba(hex: string, opacity: ?number) {
     ? `rgba(${parseInt(result[1], 16)}, ${parseInt(result[2], 16)}, ${parseInt(result[3], 16)}, ${op})`
     : null;
 }
+
+export const measure = (ref: View): Promise<Measurements> =>
+  new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
+    x, y, w, h,
+  })));

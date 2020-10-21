@@ -24,7 +24,7 @@ import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
-import { HOME, REFERRAL_CONTACTS } from 'constants/navigationConstants';
+import { HOME, REFER_FLOW } from 'constants/navigationConstants';
 import { DARK_CONTENT, LIGHT_THEME } from 'constants/appSettingsConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -113,7 +113,7 @@ class ReferralSent extends React.PureComponent<Props> {
               title={t('button.inviteMoreFriends')}
               block
               regularText
-              onPress={() => navigation.navigate(REFERRAL_CONTACTS)}
+              onPress={() => navigation.navigate(REFER_FLOW)}
             />
             <Button
               title={t('button.close')}

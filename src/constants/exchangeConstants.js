@@ -41,3 +41,5 @@ export const FAST = 'max';
 
 // mainnet only
 export const UNISWAP_SUBGRAPH_NAME = 'uniswap/uniswap-v2';
+
+export const ALLOWED_SLIPPAGE = 3; // 3%

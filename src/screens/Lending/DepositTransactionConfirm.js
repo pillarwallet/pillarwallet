@@ -22,95 +22,47 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
-import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import FeeLabelToggle from 'components/FeeLabelToggle';
 import Button from 'components/Button';
-import { BaseText, MediumText } from 'components/Typography';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
+import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
+import { Spacing } from 'components/Layout';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { fontStyles, spacing } from 'utils/variables';
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { formatAmountDisplay, formatFiat } from 'utils/common';
 import { getAaveDepositTransactions } from 'utils/aave';
-import { getRate } from 'utils/assets';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { AssetToDeposit, Rates } from 'models/Asset';
+import type { AssetToDeposit } from 'models/Asset';
 
 
 type Props = {
-  baseFiatCurrency: ?string,
-  rates: Rates,
   navigation: NavigationScreenProp<*>,
   depositTransactionEstimate: ?Object,
   useGasToken: boolean,
   accountAddress: string,
 };
 
-const FeeInfo = styled.View`
-  align-items: center;
-  margin-bottom: ${spacing.large}px;
-`;
-
-const BottomWrapper = styled.View`
-  padding: ${spacing.large}px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-`;
-
 const DepositWrapper = styled.View`
-  padding: 64px ${spacing.large}px ${spacing.large}px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+  padding: 16px 20px;
 `;
-
-const TokenValueWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const TokenValue = styled(MediumText)`
-  ${fontStyles.giant};
-`;
-
-const TokenSymbol = styled(MediumText)`
-  ${fontStyles.medium};
-  margin-top: 14px;
-  margin-left: ${spacing.small}px;
-`;
-
-const ValueInFiat = styled(BaseText)`
-  ${fontStyles.small};
-  text-align: center;
-  margin-bottom: ${spacing.rhythm}px;
-`;
-
-const aaveImage = require('assets/images/apps/aave.png');
-const arrowDownGrey = require('assets/icons/arrow_down_grey.png');
 
 const DepositTransactionConfirm = ({
   navigation,
-  rates,
   depositTransactionEstimate,
   useGasToken,
-  baseFiatCurrency,
   accountAddress,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -118,10 +70,6 @@ const DepositTransactionConfirm = ({
   const depositAmount: number = navigation.getParam('amount');
   const depositAsset: AssetToDeposit = navigation.getParam('asset');
   const { symbol: depositAssetSymbol } = depositAsset;
-
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const valueInFiat = parseFloat(depositAmount) * getRate(rates, depositAssetSymbol, fiatCurrency);
-  const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);
 
   const txFeeInfo = buildTxFeeInfo(depositTransactionEstimate, useGasToken);
   const onNextButtonPress = async () => {
@@ -155,45 +103,38 @@ const DepositTransactionConfirm = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: t('aaveContent.title.depositConfirmationScreen') }] }}
-      footer={
-        <BottomWrapper>
-          <FeeInfo alignItems="center">
-            <FeeLabelToggle
-              labelText={t('label.fee')}
-              txFeeInWei={txFeeInfo?.fee}
-              gasToken={txFeeInfo?.gasToken}
-              showFiatDefault
-            />
-          </FeeInfo>
-          <Button
-            regularText
-            block
-            disabled={isSubmitted}
-            isLoading={isSubmitted}
-            title={t('aaveContent.button.confirmDeposit')}
-            onPress={onNextButtonPress}
-          />
-        </BottomWrapper>
-      }
       minAvoidHeight={200}
     >
       <DepositWrapper>
-        <TokenValueWrapper>
-          <TokenValue>{formatAmountDisplay(depositAmount)}</TokenValue>
-          <TokenSymbol>{depositAssetSymbol}</TokenSymbol>
-        </TokenValueWrapper>
-        <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
-        <CachedImage
-          style={{ width: 17, height: 41, marginBottom: spacing.small }}
-          source={arrowDownGrey}
-          resizeMode="contain"
+        <TokenReviewSummary
+          assetSymbol={depositAssetSymbol}
+          text={t('aaveContent.label.youAreAdding')}
+          amount={depositAmount}
         />
-        <CachedImage
-          style={{ width: 64, height: 64, marginBottom: spacing.large }}
-          source={aaveImage}
-          resizeMode="contain"
+        <Spacing h={42} />
+        <Table>
+          <TableRow>
+            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+            <TableAmount amount={0} />
+          </TableRow>
+          <TableRow>
+            <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+          </TableRow>
+        </Table>
+        <Spacing h={50} />
+        <Button
+          regularText
+          block
+          disabled={isSubmitted}
+          isLoading={isSubmitted}
+          title={t('aaveContent.button.confirmDeposit')}
+          onPress={onNextButtonPress}
         />
-        <BaseText fontSize={15}>{t('aaveDeposit')}</BaseText>
       </DepositWrapper>
     </ContainerWithHeader>
   );
@@ -201,11 +142,7 @@ const DepositTransactionConfirm = ({
 
 const mapStateToProps = ({
   lending: { depositTransactionEstimate },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
   depositTransactionEstimate,
 });
 

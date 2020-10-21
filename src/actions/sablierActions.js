@@ -17,14 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as Sentry from '@sentry/react-native';
 import {
   fetchUserStreams,
   getSablierWithdrawTransaction,
 } from 'services/sablier';
 import smartWalletService from 'services/smartWallet';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
-import { reportLog } from 'utils/common';
+import { reportErrorLog } from 'utils/common';
 import {
   SET_STREAMS,
   SET_FETCHING_STREAMS,
@@ -80,9 +79,7 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
     const estimate = await smartWalletService
       .estimateAccountTransaction({ recipient, value, data })
       .catch((e) => {
-        reportLog('Error getting sablier withdraw transaction estimate', {
-          message: e.message,
-        }, Sentry.Severity.Error);
+        reportErrorLog('Error getting sablier withdraw transaction estimate', { message: e.message });
         return null;
       });
 

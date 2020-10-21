@@ -32,6 +32,7 @@ export const FEATURE_FLAGS = {
   ALTALIX: 'feature_services_altalix',
   SMART_WALLET_ACTIVATION_PAID_BY_PILLAR: 'app_smart_wallet_paid_for_by_pillar',
   APP_FEES_PAID_WITH_PLR: 'app_fees_paid_with_plr',
+  USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES: 'use_legacy_cryptocompare_token_prices',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -47,4 +48,5 @@ export const INITIAL_FEATURE_FLAGS = {
   [FEATURE_FLAGS.SABLIER]: true,
   [FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE]: 5,
   [FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR]: false,
+  [FEATURE_FLAGS.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES]: false,
 };

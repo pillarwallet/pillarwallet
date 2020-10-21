@@ -45,7 +45,7 @@ import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 // components
 import { ScrollWrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ValueSelectorCard } from 'components/ValueSelectorCard';
+import ValueInput from 'components/ValueInput';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
@@ -120,7 +120,8 @@ type Props = {
 
 type State = {
   poolToken: string,
-  tokenValue: number,
+  tokenValue: string,
+  numberOfTickets: number,
   userTickets: number,
   totalPoolTicketsCount: number,
   isAllowModalVisible: boolean,
@@ -144,7 +145,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     super(props);
     this.state = {
       poolToken,
-      tokenValue: poolTicketsCount,
+      tokenValue: poolTicketsCount.toString(),
+      numberOfTickets: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible: false,
@@ -184,7 +186,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
   }
 
   updatePurchaseFeeAndTransaction = () => {
-    const { poolToken, tokenValue } = this.state;
+    const { poolToken, numberOfTickets } = this.state;
     const {
       useGasToken,
       poolAllowance,
@@ -200,7 +202,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
           txFeeInWei,
           gasToken,
           transactionPayload,
-        } = await getPurchaseTicketFeeAndTransaction(tokenValue, poolToken, useGasToken) || {};
+        } = await getPurchaseTicketFeeAndTransaction(numberOfTickets, poolToken, useGasToken) || {};
         if (txFeeInWei) {
           const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
           const feeSymbol = get(gasToken, 'symbol', ETH);
@@ -215,6 +217,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             feeSymbol,
             feeDisplayValue,
             isDisabled,
+            txFeeInWei,
+            gasToken,
           };
           this.setState({ purchasePayload });
         }
@@ -222,13 +226,13 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     }
   }
 
-  getFormValue = (value) => {
-    const { input = '0' } = value || {};
-    const newValue = Math.floor(parseFloat(input));
+  onValueChange = (value) => {
+    const numberOfTickets = Math.floor(parseFloat(value)) || 0;
     this.setState({
-      tokenValue: newValue,
+      tokenValue: value,
+      numberOfTickets,
     }, () => {
-      if (newValue > 0) {
+      if (numberOfTickets > 0) {
         this.updatePurchaseFeeAndTransaction();
       }
     });
@@ -269,6 +273,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
+      numberOfTickets,
       userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible,
@@ -280,13 +285,13 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const hasAllowance = poolAllowance[poolToken];
 
-    const winChance = getWinChance(tokenValue + userTickets, totalPoolTicketsCount);
+    const winChance = getWinChance(numberOfTickets + userTickets, totalPoolTicketsCount);
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
     const isLoading = (!allowPayload && !hasAllowance) || (!purchasePayload && hasAllowance) || isApprovalExecuting;
 
-    const purchaseDisabled = hasAllowance && (tokenValue === 0 || (purchasePayload && purchasePayload.isDisabled));
+    const purchaseDisabled = hasAllowance && (numberOfTickets === 0 || (purchasePayload && purchasePayload.isDisabled));
 
     let allowData;
     if (allowPayload) {
@@ -313,7 +318,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
         navigation.navigate(POOLTOGETHER_PURCHASE_CONFIRM,
           {
             poolToken,
-            tokenValue,
+            tokenValue: numberOfTickets,
             totalPoolTicketsCount,
             userTickets,
             ...purchasePayload,
@@ -345,17 +350,12 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
           keyboardShouldPersistTaps="always"
         >
           <ContentWrapper>
-            <ContentRow style={{ paddingLeft: 4, paddingRight: 4 }}>
-              <ValueSelectorCard
-                preselectedAsset={poolToken}
-                getFormValue={this.getFormValue}
-                maxLabel={t('button.spendMax')}
-                customOptions={assetOptions}
-                balances={balances}
-                baseFiatCurrency={baseFiatCurrency}
-                rates={rates}
-                txFeeInfo={null}
-                preselectedValue={tokenValue}
+            <ContentRow style={{ paddingLeft: 40, paddingRight: 40 }}>
+              <ValueInput
+                value={tokenValue}
+                onValueChange={this.onValueChange}
+                assetData={poolTokenItem}
+                customAssets={assetOptions}
               />
             </ContentRow>
             <ContentRow>
