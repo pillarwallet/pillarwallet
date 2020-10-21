@@ -69,9 +69,9 @@ const oneinchDarkMonochrome = require('assets/images/exchangeProviders/oneinchDa
 const synthetixLightVertical = require('assets/images/exchangeProviders/synthetixLightVertical.png');
 const synthetixLightHorizontal = require('assets/images/exchangeProviders/synthetixLightHorizontal.png');
 const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthetixLightMonochrome.png');
-// const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
-// const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
-// const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
+const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
+const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
+const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
 
 // patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
@@ -170,9 +170,9 @@ export const staticImages = {
   synthetixLightVertical,
   synthetixLightHorizontal,
   synthetixLightMonochrome,
-  // synthetixDarkVertical,
-  // synthetixDarkHorizontal,
-  // synthetixDarkMonochrome,
+  synthetixDarkVertical,
+  synthetixDarkHorizontal,
+  synthetixDarkMonochrome,
 };
 
 export const isSvgImage = (uri: ?string) => {
