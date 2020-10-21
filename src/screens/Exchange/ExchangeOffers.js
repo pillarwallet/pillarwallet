@@ -234,7 +234,9 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = this.props;
 
     const { provider, fromAsset, toAsset } = offer;
-    const { address: fromAssetAddress, code: fromAssetCode, decimals } = fromAsset;
+    const {
+      address: fromAssetAddress, code: fromAssetCode, symbol: fromAssetSymbol, decimals,
+    } = fromAsset;
     const { code: toAssetCode } = toAsset;
 
     if (isEmpty(response)) {
@@ -247,7 +249,8 @@ class ExchangeOffers extends React.Component<Props, State> {
       transactionObj: { data } = {},
     } = response;
 
-    const assetToEnable = exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode) || {};
+    const assetToEnable =
+      exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode || fromAssetSymbol) || {};
     const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
     const providerName = getCryptoProviderName(provider);
 

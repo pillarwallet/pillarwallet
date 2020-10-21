@@ -39,7 +39,7 @@ import Icon from 'components/Icon';
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { EXCHANGE, NORMAL, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
+import { EXCHANGE, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 // actions
 import { fetchGasInfoAction } from 'actions/historyActions';
@@ -137,9 +137,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   transactionPayload: TokenTransactionPayload;
 
   state = {
-    transactionSpeed: NORMAL,
     txFeeInfo: null,
-    gasLimit: 0,
     gettingFee: true,
   };
 
@@ -218,7 +216,7 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
   };
 
   onConfirmTransactionPress = (offerOrder) => {
-    const { navigation, isSmartAccount } = this.props;
+    const { navigation } = this.props;
     const { txFeeInfo } = this.state;
     if (!txFeeInfo) return;
 
@@ -229,21 +227,10 @@ class ExchangeConfirmScreen extends React.Component<Props, State> {
       provider,
     } = offerOrder;
 
-    let transactionPayload = { ...this.transactionPayload };
+    const transactionPayload = { ...this.transactionPayload };
 
     transactionPayload.txFeeInWei = txFeeInfo.fee;
     if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
-
-    if (!isSmartAccount) {
-      const { gasLimit, transactionSpeed } = this.state;
-      const gasPrice = txFeeInfo.fee.div(gasLimit).toNumber();
-      transactionPayload = {
-        ...transactionPayload,
-        gasPrice,
-        gasLimit,
-        txSpeed: transactionSpeed,
-      };
-    }
 
     if (setTokenAllowance) {
       transactionPayload.extra = {
