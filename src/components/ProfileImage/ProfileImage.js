@@ -75,7 +75,7 @@ const CornerIcon = styled(CachedImage)`
 
 export type ProfileImageProps = {
   uri?: ?string,
-  userName?: string,
+  userName?: ?string,
   containerStyle?: Object,
   imageStyle?: Object,
   onPress?: ?Function,
@@ -90,7 +90,7 @@ export type ProfileImageProps = {
   cornerIconSize?: number,
 };
 
-const DefaultPicture = (props: { userName?: string, innerComponent?: React.Node, initialsSize?: number }) => {
+const DefaultPicture = (props: { userName?: ?string, innerComponent?: React.Node, initialsSize?: number }) => {
   const { userName, innerComponent, initialsSize } = props;
   const initials = userName && getInitials(userName);
 

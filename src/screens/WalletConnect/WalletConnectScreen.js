@@ -20,6 +20,8 @@
 
 import * as React from 'react';
 import { ScrollView } from 'react-native';
+import { connect } from 'react-redux';
+import type { RootReducerState } from 'reducers/rootReducer';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -29,7 +31,11 @@ import ActiveConnections from './ActiveConnections';
 import Requests from './Requests';
 
 
-const WalletConnectScreen = () => (
+type Props = {
+  sessionLanguageCode: ?string, // important for re-rendering on language change
+};
+
+const WalletConnectScreen = ({ sessionLanguageCode }: Props) => (
   <ContainerWithHeader
     headerProps={{ noBack: true, leftItems: [{ title: t('walletConnectContent.title.connect') }] }}
     inset={{ bottom: 0 }}
@@ -37,13 +43,20 @@ const WalletConnectScreen = () => (
   >
     {onScroll => (
       <ScrollView onScroll={onScroll} scrollEventThrottle={16}>
-        <PromoCard />
-        <Requests />
-        <QRCodeScanButton />
-        <ActiveConnections />
+        <PromoCard sessionLanguageCode={sessionLanguageCode} />
+        <Requests sessionLanguageCode={sessionLanguageCode} />
+        <QRCodeScanButton sessionLanguageCode={sessionLanguageCode} />
+        <ActiveConnections sessionLanguageCode={sessionLanguageCode} />
       </ScrollView>
     )}
   </ContainerWithHeader>
 );
 
-export default WalletConnectScreen;
+
+const mapStateToProps = ({
+  session: { data: { sessionLanguageCode } },
+}: RootReducerState): $Shape<Props> => ({
+  sessionLanguageCode,
+});
+
+export default connect(mapStateToProps)(WalletConnectScreen);

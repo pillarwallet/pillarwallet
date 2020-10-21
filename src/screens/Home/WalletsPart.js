@@ -49,6 +49,7 @@ type Props = {
   hideBalance: boolean,
   toggleBalance: () => void,
   rewardActive?: boolean,
+  sessionLanguageCode: ?string, // important for re-rendering on language change
 };
 
 const Wrapper = styled.View`
@@ -63,22 +64,26 @@ const WalletsPart = ({
   toggleBalance,
   hideBalance,
   rewardActive,
+  sessionLanguageCode,
 }: Props) => (
   <Wrapper>
     <PortfolioBalance
       fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
       showBalance={!hideBalance}
       toggleBalanceVisibility={toggleBalance}
+      sessionLanguageCode={sessionLanguageCode}
     />
-    <ActionButtons rewardActive={rewardActive} />
+    <ActionButtons rewardActive={rewardActive} sessionLanguageCode={sessionLanguageCode} />
   </Wrapper>
 );
 
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency, hideBalance } },
+  session: { data: { sessionLanguageCode } },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   hideBalance,
+  sessionLanguageCode,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

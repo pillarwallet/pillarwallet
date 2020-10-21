@@ -39,7 +39,14 @@ export type Option = {
   symbol?: string,
   assetBalance?: string,
   formattedBalanceInFiat?: string,
-  id?: string
+  id?: string,
+  decimals?: number,
+  tokenType?: string,
+  contractAddress?: string,
+  address?: string,
+  balance?: {
+    syntheticBalance?: string,
+  },
 };
 
 export type HorizontalOption = {
@@ -51,4 +58,5 @@ export type OptionTabs = {
   name: string,
   id: string,
   options?: Option[],
+  collectibles?: boolean,
 }

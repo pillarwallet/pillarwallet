@@ -57,7 +57,6 @@ storiesOf('Selector', module)
   ))
   .add('with custom wording', () => (
     <Selector
-      label="To"
       placeholder="Choose contact"
       searchPlaceholder="Username or wallet address"
       options={options}
@@ -66,7 +65,6 @@ storiesOf('Selector', module)
   ))
   .add('selected option', () => (
     <Selector
-      label="To"
       placeholder="Choose contact"
       options={options}
       onOptionSelect={() => {}}

@@ -29,7 +29,6 @@ import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // components
@@ -44,6 +43,7 @@ import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
 import Spinner from 'components/Spinner';
 import ProfileImage from 'components/ProfileImage';
+import Toast from 'components/Toast';
 
 // utils
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
@@ -70,6 +70,9 @@ import { findTransactionAcrossAccounts } from 'utils/history';
 import { isAaveTransactionTag } from 'utils/aave';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
+
+// services
+import smartWalletInstance from 'services/smartWallet';
 
 // constants
 import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
@@ -192,7 +195,7 @@ type Props = {
   isSmartAccount: boolean,
   depositedAssets: DepositedAsset[],
   poolStats: PoolPrizeInfo,
-  keyBasedWalletAddress: string,
+  keyBasedWalletAddress: ?string,
   incomingStreams: Stream[],
   outgoingStreams: Stream[],
 };
@@ -472,8 +475,28 @@ export class EventDetail extends React.Component<Props, State> {
 
   viewOnTheBlockchain = () => {
     const { hash } = this.props.event;
-    const url = getEnv().TX_DETAILS_URL + hash;
-    Linking.openURL(url);
+    if (!hash) {
+      Toast.show({
+        message: t('toast.cannotFindTransactionHash'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    const explorerLink = smartWalletInstance.getConnectedAccountTransactionExplorerLink(hash);
+    if (!explorerLink) {
+      Toast.show({
+        message: t('toast.cannotGetBlockchainExplorerLink'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+        autoClose: false,
+      });
+      return;
+    }
+
+    Linking.openURL(explorerLink);
   };
 
   viewBadge = () => {
@@ -1528,7 +1551,7 @@ const mapStateToProps = ({
   collectibles: { updatingTransaction: updatingCollectibleTransaction },
   lending: { depositedAssets },
   poolTogether: { poolStats },
-  wallet: { data: { address: keyBasedWalletAddress } },
+  wallet: { data: walletData },
   sablier: { incomingStreams, outgoingStreams },
 }: RootReducerState): $Shape<Props> => ({
   rates,
@@ -1544,7 +1567,7 @@ const mapStateToProps = ({
   updatingCollectibleTransaction,
   depositedAssets,
   poolStats,
-  keyBasedWalletAddress,
+  keyBasedWalletAddress: walletData?.address,
   incomingStreams,
   outgoingStreams,
 });

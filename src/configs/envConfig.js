@@ -20,14 +20,13 @@
 /* eslint-disable i18next/no-literal-string */
 
 import { Alert } from 'react-native';
-import * as Sentry from '@sentry/react-native';
 import Intercom from 'react-native-intercom';
 import AsyncStorage from '@react-native-community/async-storage';
 import Storage from 'services/storage';
 import isEmpty from 'lodash.isempty';
 import RNRestart from 'react-native-restart';
 import { clearWebViewCookies } from 'utils/exchange';
-import { reportLog } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 import { firebaseIid } from 'services/firebase';
 import { DEVELOPMENT, STAGING, PRODUCTION } from 'constants/envConstants';
 
@@ -113,7 +112,7 @@ export const setupEnv = () => {
     return storedEnv;
   })
     .catch(() => {
-      reportLog('Error getting environment storage value', { buildType }, Sentry.Severity.Error);
+      reportErrorLog('Error getting environment storage value', { buildType });
       return null;
     });
 };

@@ -22,111 +22,54 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
-import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import FeeLabelToggle from 'components/FeeLabelToggle';
 import Button from 'components/Button';
-import { BaseText, MediumText } from 'components/Typography';
-import ProfileImage from 'components/ProfileImage';
+import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
+import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
+import { Spacing } from 'components/Layout';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { fontStyles, spacing } from 'utils/variables';
 import { buildTxFeeInfo } from 'utils/smartWallet';
-import { formatAmountDisplay, formatFiat } from 'utils/common';
 import { getAaveWithdrawTransaction } from 'utils/aave';
-import { getRate } from 'utils/assets';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
-import type { DepositedAsset, Rates } from 'models/Asset';
-import type { User } from 'models/User';
+import type { DepositedAsset } from 'models/Asset';
 
 
 type Props = {
-  baseFiatCurrency: ?string,
-  rates: Rates,
   navigation: NavigationScreenProp<*>,
   withdrawTransactionEstimate: ?Object,
   useGasToken: boolean,
   accountAddress: string,
-  user: User,
 };
 
-const FeeInfo = styled.View`
-  align-items: center;
-  margin-bottom: ${spacing.large}px;
-`;
-
-const BottomWrapper = styled.View`
-  padding: ${spacing.large}px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
-`;
-
 const DepositWrapper = styled.View`
-  padding: 64px ${spacing.large}px ${spacing.large}px;
-  width: 100%;
-  justify-content: center;
-  align-items: center;
+  padding: 16px 10px;
 `;
-
-const TokenValueWrapper = styled.View`
-  margin-top: ${spacing.large}px;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-`;
-
-const TokenValue = styled(MediumText)`
-  ${fontStyles.giant};
-`;
-
-const TokenSymbol = styled(MediumText)`
-  ${fontStyles.medium};
-  margin-top: 14px;
-  margin-left: ${spacing.small}px;
-`;
-
-const ValueInFiat = styled(BaseText)`
-  ${fontStyles.small};
-  text-align: center;
-  margin-bottom: ${spacing.rhythm}px;
-`;
-
-const aaveImage = require('assets/images/apps/aave.png');
-const arrowDownGrey = require('assets/icons/arrow_down_grey.png');
 
 const WithdrawTransactionConfirm = ({
   navigation,
-  rates,
   withdrawTransactionEstimate,
   useGasToken,
-  baseFiatCurrency,
   accountAddress,
-  user,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const withdrawAmount: number = navigation.getParam('amount');
   const depositedAsset: DepositedAsset = navigation.getParam('asset');
   const { symbol: depositedAssetSymbol } = depositedAsset;
-
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const valueInFiat = parseFloat(withdrawAmount) * getRate(rates, depositedAssetSymbol, fiatCurrency);
-  const valueInFiatFormatted = formatFiat(valueInFiat, fiatCurrency);
 
   const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate, useGasToken);
   const onNextButtonPress = async () => {
@@ -146,59 +89,42 @@ const WithdrawTransactionConfirm = ({
     setIsSubmitted(false);
   };
 
-  const { profileImage, lastUpdateTime, username } = user;
-  const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
-
   return (
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: t('aaveContent.title.withdrawConfirmationScreen') }] }}
-      footer={
-        <BottomWrapper>
-          <FeeInfo alignItems="center">
-            <FeeLabelToggle
-              labelText={t('label.fee')}
-              txFeeInWei={txFeeInfo?.fee}
-              gasToken={txFeeInfo?.gasToken}
-              showFiatDefault
-            />
-          </FeeInfo>
-          <Button
-            regularText
-            block
-            disabled={isSubmitted}
-            isLoading={isSubmitted}
-            title={t('aaveContent.button.confirmWithdrawal')}
-            onPress={onNextButtonPress}
-          />
-        </BottomWrapper>
-      }
       minAvoidHeight={200}
     >
       <DepositWrapper>
-        <CachedImage
-          style={{ width: 64, height: 64, marginBottom: spacing.small }}
-          source={aaveImage}
-          resizeMode="contain"
+        <TokenReviewSummary
+          assetSymbol={depositedAssetSymbol}
+          text={t('aaveContent.label.youAreWithdrawing')}
+          amount={withdrawAmount}
         />
-        <BaseText fontSize={15}>{t('aaveDeposit')}</BaseText>
-        <CachedImage
-          style={{ width: 17, height: 41, marginTop: spacing.small }}
-          source={arrowDownGrey}
-          resizeMode="contain"
+        <Spacing h={42} />
+        <Table>
+          <TableRow>
+            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+            <TableAmount amount={0} />
+          </TableRow>
+          <TableRow>
+            <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
+            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+          </TableRow>
+        </Table>
+        <Spacing h={50} />
+        <Button
+          regularText
+          block
+          disabled={isSubmitted}
+          isLoading={isSubmitted}
+          title={t('aaveContent.button.confirmWithdrawal')}
+          onPress={onNextButtonPress}
         />
-        <ProfileImage
-          style={{ marginTop: spacing.large, marginBottom: spacing.small }}
-          uri={userImageUri}
-          userName={username}
-          diameter={64}
-        />
-        <BaseText fontSize={15}>{username}</BaseText>
-        <TokenValueWrapper>
-          <TokenValue>{formatAmountDisplay(withdrawAmount)}</TokenValue>
-          <TokenSymbol>{depositedAssetSymbol}</TokenSymbol>
-        </TokenValueWrapper>
-        <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
       </DepositWrapper>
     </ContainerWithHeader>
   );
@@ -206,14 +132,8 @@ const WithdrawTransactionConfirm = ({
 
 const mapStateToProps = ({
   lending: { withdrawTransactionEstimate },
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
-  user: { data: user },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
   withdrawTransactionEstimate,
-  user,
 });
 
 const structuredSelector = createStructuredSelector({

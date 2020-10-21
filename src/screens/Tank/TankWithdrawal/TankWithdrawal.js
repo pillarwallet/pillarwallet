@@ -95,6 +95,10 @@ const TextRow = styled.View`
   flex-direction: row;
 `;
 
+const FormWrapper = styled.View`
+  z-index: 10;
+`;
+
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
@@ -262,13 +266,15 @@ class TankWithdrawal extends React.Component<Props, State> {
         minAvoidHeight={200}
       >
         <Wrapper regularPadding>
-          <Form
-            ref={node => { this._form = node; }}
-            type={formStructure}
-            options={formFields}
-            value={value}
-            onChange={this.handleChange}
-          />
+          <FormWrapper>
+            <Form
+              ref={node => { this._form = node; }}
+              type={formStructure}
+              options={formFields}
+              value={value}
+              onChange={this.handleChange}
+            />
+          </FormWrapper>
           <ActionsWrapper>
             <SendTokenDetails>
               <Label small>{t('ppnContent.label.availableBalance')}</Label>

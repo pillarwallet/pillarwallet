@@ -43,8 +43,7 @@ import HTMLContentModal from 'components/Modals/HTMLContentModal';
 
 // constants
 import {
-  SECURITY_SETTINGS,
-  RECOVERY_SETTINGS,
+  WALLET_SETTINGS,
   APP_SETTINGS,
   COMMUNITY_SETTINGS,
   ADD_EDIT_USER,
@@ -194,20 +193,10 @@ const Menu = ({
 
   const menuItems = [
     {
-      key: 'securitySettings',
-      title: t('settingsContent.settingsItem.securitySettings.title'),
-      emoji: 'rotating_light',
-      action: () => navigation.navigate(SECURITY_SETTINGS),
-    },
-    {
-      key: 'recoverySettings',
-      title: t('settingsContent.settingsItem.recoverySettings.title'),
-      labelBadge: !isBackedUp && {
-        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
-        color: colors.negative,
-      },
-      emoji: 'mage',
-      action: () => navigation.navigate(RECOVERY_SETTINGS),
+      key: 'appSettings',
+      title: t('settingsContent.settingsItem.appSettings.title'),
+      emoji: 'gear',
+      action: () => navigation.navigate(APP_SETTINGS),
     },
     {
       key: 'userProfile',
@@ -216,16 +205,20 @@ const Menu = ({
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
-      key: 'appSettings',
-      title: t('settingsContent.settingsItem.appSettings.title'),
-      emoji: 'gear',
-      action: () => navigation.navigate(APP_SETTINGS),
-    },
-    {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
       action: () => navigation.navigate(CONTACTS_FLOW),
+    },
+    {
+      key: 'walletSettings',
+      title: t('settingsContent.settingsItem.walletSettings.title'),
+      emoji: 'moneybag',
+      action: () => navigation.navigate(WALLET_SETTINGS),
+      labelBadge: !isBackedUp && {
+        label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
+        color: colors.negative,
+      },
     },
     {
       key: 'referFriends',
@@ -320,7 +313,7 @@ const Menu = ({
           { text: t('alert.attemptToLogOutWithoutBackup.button.cancel') },
           {
             text: t('alert.attemptToLogOutWithoutBackup.button.backup'),
-            onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW, { backupViaSettings: true }),
+            onPress: () => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW),
           },
         ],
       );

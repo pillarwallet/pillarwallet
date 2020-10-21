@@ -32,12 +32,11 @@ describe('Exchange Utility function tests', () => {
     expect(isFiatCurrency('')).toBeFalsy();
   });
   it('Should validate exchange input field correctly', () => {
-    expect(validateInput('42.42', assetEth, assetPlr, '')).toBeTruthy();
-    expect(validateInput('0', assetEth, assetPlr, '')).toBeFalsy();
-    expect(validateInput('10.', assetEth, assetPlr, '')).toBeFalsy();
-    expect(validateInput('test', assetEth, assetPlr, '')).toBeFalsy();
-    expect(validateInput('10', null, assetPlr, '')).toBeFalsy();
-    expect(validateInput('10', assetEth, assetPlr, 'error')).toBeFalsy();
+    expect(validateInput('42.42', assetEth, assetPlr)).toBeTruthy();
+    expect(validateInput('0', assetEth, assetPlr)).toBeFalsy();
+    expect(validateInput('10.', assetEth, assetPlr)).toBeFalsy();
+    expect(validateInput('test', assetEth, assetPlr)).toBeFalsy();
+    expect(validateInput('10', null, assetPlr)).toBeFalsy();
   });
   it('Should trigger search under certain conditions', () => {
     expect(shouldTriggerSearch(assetEth, assetPlr, 10)).toBeTruthy();

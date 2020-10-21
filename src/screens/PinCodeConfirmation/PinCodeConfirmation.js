@@ -17,14 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { confirmPinForNewWalletAction } from 'actions/walletActions';
+import { beginOnboardingAction, setOnboardingPinCodeAction } from 'actions/onboardingActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -33,7 +33,7 @@ import ErrorMessage from 'components/ErrorMessage';
 import { MediumText } from 'components/Typography';
 
 // constants
-import { BIOMETRICS_PROMPT, PIN_CODE_CONFIRMATION } from 'constants/navigationConstants';
+import { BIOMETRICS_PROMPT } from 'constants/navigationConstants';
 
 // utils
 import { validatePin } from 'utils/validators';
@@ -41,17 +41,14 @@ import { fontStyles, spacing } from 'utils/variables';
 import { getSupportedBiometryType } from 'utils/keychain';
 
 // types
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 
 
 type Props = {
-  confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => void,
+  beginOnboarding: () => void,
+  setOnboardingPinCode: (pinCode: string) => void,
   navigation: NavigationScreenProp<*>,
   wallet: Object,
-};
-
-type State = {
-  errorMessage: string,
 };
 
 const ContentWrapper = styled.ScrollView`
@@ -64,87 +61,61 @@ const HeaderText = styled(MediumText)`
   margin: ${spacing.large}px 0;
 `;
 
+const PinCodeConfirmation = ({
+  setOnboardingPinCode,
+  beginOnboarding,
+  navigation,
+}) => {
+  const [errorMessage, setErrorMessage] = useState(null);
 
-class PinCodeConfirmation extends React.Component<Props, State> {
-  state = {
-    errorMessage: '',
-  };
+  const previousPinCode = navigation.getParam('pinCode');
 
-  constructor(props) {
-    super(props);
-    this.props.navigation.state.key = PIN_CODE_CONFIRMATION;
-  }
-
-  handlePinSubmit = (pin: string) => {
-    const { wallet: { onboarding: wallet }, confirmPinForNewWallet } = this.props;
-    const previousPin = wallet.pin;
-    const validationError = validatePin(pin, previousPin);
+  const handlePinSubmit = (pinCode: string) => {
+    const validationError = validatePin(pinCode, previousPinCode);
 
     if (validationError) {
-      this.setState({
-        errorMessage: validationError,
-      });
+      setErrorMessage(validationError);
       return;
     }
 
-    getSupportedBiometryType(biometryType => this.handleBiometryType(pin, biometryType),
-      () => { confirmPinForNewWallet(pin, true); });
-  }
-
-  handleBiometryType = (pin: string, biometryType?: string) => {
-    const { confirmPinForNewWallet, navigation } = this.props;
-    if (biometryType) {
-      navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
-      confirmPinForNewWallet(pin);
-    } else {
-      confirmPinForNewWallet(pin, true);
-    }
-  }
-
-  handlePinChange = () => {
-    this.setState({
-      errorMessage: '',
+    getSupportedBiometryType((biometryType) => {
+      setOnboardingPinCode(pinCode);
+      if (biometryType) {
+        navigation.navigate(BIOMETRICS_PROMPT, { biometryType });
+      } else {
+        beginOnboarding();
+      }
     });
   };
 
-  render() {
-    const { errorMessage } = this.state;
-    return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: t('auth:title.confirmPin') }] }}
-      >
-        {!!errorMessage &&
+  return (
+    <ContainerWithHeader
+      headerProps={{ centerItems: [{ title: t('auth:title.confirmPin') }] }}
+    >
+      {!!errorMessage && (
         <ErrorMessage wrapperStyle={{ marginTop: 0 }}>
-          {this.state.errorMessage}
+          {errorMessage}
         </ErrorMessage>
-        }
-        <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
-          <HeaderText>
-            {t('auth:label.reenterToConfirm')}
-          </HeaderText>
-          <PinCode
-            onPinEntered={this.handlePinSubmit}
-            onPinChanged={this.handlePinChange}
-            showForgotButton={false}
-            pinError={!!errorMessage}
-            flex={false}
-          />
-        </ContentWrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
-
-const mapStateToProps = ({
-  wallet,
-}: RootReducerState): $Shape<Props> => ({
-  wallet,
-});
+      )}
+      <ContentWrapper contentContainerStyle={{ padding: spacing.large, flexGrow: 1 }}>
+        <HeaderText>
+          {t('auth:label.reenterToConfirm')}
+        </HeaderText>
+        <PinCode
+          onPinEntered={handlePinSubmit}
+          onPinChanged={() => setErrorMessage(null)}
+          showForgotButton={false}
+          pinError={!!errorMessage}
+          flex={false}
+        />
+      </ContentWrapper>
+    </ContainerWithHeader>
+  );
+};
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  confirmPinForNewWallet: (pin: string, shouldRegisterWallet?: boolean) => {
-    dispatch(confirmPinForNewWalletAction(pin, shouldRegisterWallet));
-  },
+  setOnboardingPinCode: (pinCode: string) => dispatch(setOnboardingPinCodeAction(pinCode)),
+  beginOnboarding: () => dispatch(beginOnboardingAction()),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(PinCodeConfirmation);
+export default connect(null, mapDispatchToProps)(PinCodeConfirmation);

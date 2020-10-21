@@ -25,12 +25,15 @@ import t from 'translations/translate';
 // components
 import Selector from 'components/Selector';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ValueSelectorCard from 'components/ValueSelectorCard';
+import ValueInput from 'components/ValueInput';
 import Button from 'components/Button';
+import Spinner from 'components/Spinner';
+import ArrowIcon from 'components/ArrowIcon';
+import { Spacing } from 'components/Layout';
 
 // types
 import type { Props as SelectorProps } from 'components/Selector';
-import type { ExternalProps as ValueSelectorProps } from 'components/ValueSelectorCard';
+import type { ExternalProps as ValueSelectorProps } from 'components/ValueInput';
 import type { ExternalButtonProps as ButtonProps } from 'components/Button';
 
 // utils
@@ -43,6 +46,7 @@ type FooterProps = {
   isNextButtonVisible?: boolean,
   buttonProps?: ButtonWithoutTitle,
   footerTopAddon?: React.Node,
+  isLoading?: boolean,
 };
 
 type Props = {
@@ -50,6 +54,7 @@ type Props = {
   customValueSelectorProps?: ValueSelectorProps,
   footerProps?: FooterProps,
   children?: React.Node,
+  isLoading?: boolean,
 };
 
 const FooterInner = styled.View`
@@ -58,9 +63,28 @@ const FooterInner = styled.View`
   padding: ${spacing.large}px;
 `;
 
+const InputWrapper = styled.View`
+  padding: 24px 40px 10px;
+  align-items: center;
+  z-index: 10;
+`;
+
+const Wrapper = styled.View`
+  align-items: center;
+`;
+
 const SendFooter = (props: FooterProps) => {
-  const { isNextButtonVisible, buttonProps = {}, footerTopAddon } = props;
+  const {
+    isNextButtonVisible, buttonProps = {}, footerTopAddon, isLoading,
+  } = props;
   if (!footerTopAddon && !isNextButtonVisible) return null;
+  if (isLoading) {
+    return (
+      <FooterInner>
+        <Spinner style={{ alignSelf: 'center' }} />
+      </FooterInner>
+    );
+  }
   return (
     <FooterInner>
       {footerTopAddon}
@@ -82,6 +106,7 @@ const SendContainer = (props: Props) => {
     customValueSelectorProps = {},
     footerProps = {},
     children,
+    isLoading,
   } = props;
 
   return (
@@ -90,23 +115,22 @@ const SendContainer = (props: Props) => {
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
     >
-      <Selector
-        label={t('label.to')}
-        placeholder={t('label.chooseReceiver')}
-        searchPlaceholder={t('label.walletAddress')}
-        wrapperStyle={{ marginTop: spacing.medium }}
-        noOptionImageFallback
-        hasQRScanner
-        disableSelfSelect
-        allowEnteringCustomAddress
-        {...customSelectorProps}
-      />
-      <ValueSelectorCard
-        selectorModalTitle={t('transactions.title.valueSelectorModal')}
-        maxLabel={t('button.sendMax')}
-        wrapperStyle={{ paddingTop: spacing.medium }}
-        {...customValueSelectorProps}
-      />
+      <Wrapper>
+        <InputWrapper>
+          {isLoading ? <Spinner /> : <ValueInput {...customValueSelectorProps} />}
+        </InputWrapper>
+        <ArrowIcon />
+        <Spacing h={20} />
+        <Selector
+          placeholder={t('label.whereToSend')}
+          searchPlaceholder={t('label.walletAddress')}
+          noOptionImageFallback
+          hasQRScanner
+          disableSelfSelect
+          allowEnteringCustomAddress
+          {...customSelectorProps}
+        />
+      </Wrapper>
       {children}
     </ContainerWithHeader>
   );

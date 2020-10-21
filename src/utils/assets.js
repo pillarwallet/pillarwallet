@@ -140,6 +140,7 @@ export const calculateMaxAmount = (
   gasToken: ?GasToken = {},
 ): number => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);
+  if (!balance) balance = 0;
 
   if (typeof balance !== 'string') {
     balance = balance.toString();

@@ -77,12 +77,12 @@ class ActiveConnections extends React.Component<Props> {
 
   renderConnection = ({ item }) => {
     const { peerMeta = {} } = item;
-    const { name, icons } = peerMeta;
+    const { name, icons, url } = peerMeta;
     const icon = get(icons, '[0]');
 
     return (
       <ListItemWithImage
-        label={name}
+        label={name || url}
         avatarUrl={icon}
         onPress={() => this.onItemPress(item)}
       />

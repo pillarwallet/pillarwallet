@@ -141,7 +141,11 @@ class ContainerWithHeader extends React.Component<Props, State> {
       }
 
       return (
-        <ScrollView style={{ flex: 1 }} keyboardShouldPersistTaps={keyboardShouldPersistTaps}>
+        <ScrollView
+          style={{ flex: 1 }}
+          keyboardShouldPersistTaps={keyboardShouldPersistTaps}
+          contentContainerStyle={{ flexGrow: 1 }}
+        >
           {children}
         </ScrollView>
       );
