@@ -50,7 +50,14 @@ const { abi: exchangeAbi } = getSource({ network, contract: 'Synthetix' });
 const { address: ratesAddress } = getTarget({ network, contract: 'ExchangeRates' });
 const { abi: ratesAbi } = getSource({ network, contract: 'ExchangeRates' });
 
-export const fetchSynthetixSupportedAssets = () => getTokens({ network }).map(token => token.symbol);
+export const fetchSynthetixSupportedAssets = (): string[] => {
+  try {
+    return getTokens({ network }).map(token => token.symbol);
+  } catch (e) {
+    reportOrWarn('Failed to fetch Synthetix supported tokens', e, 'warning');
+    return [];
+  }
+};
 
 export const createSynthetixOrder = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientSendAddress: string,
@@ -89,7 +96,7 @@ export const createSynthetixOrder = async (
   }
 };
 
-const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: string) => {
+const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: string): Promise<boolean> => {
   const assetContract = new Contract(fromTokenAddress, ERC20_CONTRACT_ABI, ethProvider);
   const allowance = await assetContract.allowance(clientAddress, exchangeAddress);
   return allowance.gt(0);
@@ -119,7 +126,7 @@ export const getSynthetixOffer = async (
   }
 };
 
-export const createSynthetixAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
+export const createSynthetixAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Object => {
   const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
   return allowanceTx;
 };

@@ -1,0 +1,7 @@
+diff --git a/node_modules/oboe/test/json/incomplete.json b/node_modules/oboe/test/json/incomplete.json
+index 57947e1..e58eeac 100644
+--- a/node_modules/oboe/test/json/incomplete.json
++++ b/node_modules/oboe/test/json/incomplete.json
+@@ -1 +1 @@
+-[[1,2,3],[4,5
++[[1,2,3],[4,5]]

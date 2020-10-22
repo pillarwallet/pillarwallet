@@ -106,8 +106,6 @@ type Props = {
 };
 
 type State = {
-  transactionSpeed: string,
-  gasLimit: number,
   txFeeInfo: ?TransactionFeeInfo,
   gettingFee: boolean,
 };
