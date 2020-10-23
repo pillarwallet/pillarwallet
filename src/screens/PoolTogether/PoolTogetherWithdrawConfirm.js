@@ -167,10 +167,8 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
             <Spacing h={50} />
             <Button
               title={t('poolTogetherContent.button.confirmWithdraw')}
-              onPress={() => {
-                this.withdrawPoolAsset();
-              }}
-              style={{ marginBottom: 13, width: '100%' }}
+              onPress={this.withdrawPoolAsset}
+              style={{ marginBottom: 13 }}
               disabled={isDisabled}
             />
           </ContentWrapper>

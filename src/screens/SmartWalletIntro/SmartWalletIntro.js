@@ -140,7 +140,6 @@ class SmartWalletIntro extends React.PureComponent<Props, State> {
           </CustomWrapper>
           <ButtonWrapper>
             <Button
-              block
               title={t('button.proceed')}
               onPress={() => this.setState({ showPinModal: true })}
               style={{

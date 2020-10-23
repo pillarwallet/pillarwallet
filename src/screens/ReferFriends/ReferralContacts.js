@@ -264,7 +264,6 @@ class ReferralContacts extends React.PureComponent<Props, State> {
             title={t('button.sendInvites')}
             onPress={this.sendInvites}
             isLoading={isSendingInvite}
-            block
             marginTop={16}
           />
         </FooterWrapper>

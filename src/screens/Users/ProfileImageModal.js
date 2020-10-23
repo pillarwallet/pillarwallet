@@ -89,7 +89,8 @@ const ProfileImageModal = ({
           <>
             <Spacing h={8} />
             <Button
-              secondaryDanger
+              danger
+              transparent
               block
               title={t('profileContent.modal.profileImage.button.deleteAvatar')}
               onPress={onDeleteAvatarPress}

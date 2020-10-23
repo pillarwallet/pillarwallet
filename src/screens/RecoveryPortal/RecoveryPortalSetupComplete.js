@@ -17,7 +17,7 @@
 import * as React from 'react';
 import { connect } from 'react-redux';
 import { Alert } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import { useBackHandler } from '@react-native-community/hooks';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
@@ -31,11 +31,9 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { MediumText, Paragraph } from 'components/Typography';
 import Animation from 'components/Animation';
-import ButtonText from 'components/ButtonText';
 
 // util
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { getThemeColors } from 'utils/themes';
+import { fontStyles, spacing } from 'utils/variables';
 
 // models, types
 import type { Theme } from 'models/Theme';
@@ -71,9 +69,7 @@ const RecoveryPortalSetupComplete = ({
   isBackedUp,
   isImported,
   navigation,
-  theme,
 }: Props) => {
-  const colors = getThemeColors(theme);
   const isWalletBackupNeeded = !isImported && !isBackedUp;
   const dismissNavigation = () => navigation.dismiss();
 
@@ -98,7 +94,6 @@ const RecoveryPortalSetupComplete = ({
           <Paragraph small>{t('auth:recoveryPortal.paragraph.importantToBackupPrivateKey')}</Paragraph>
           {isWalletBackupNeeded &&
             <Button
-              block
               title={t('auth:button.backupSeedPhrase')}
               onPress={() => navigation.navigate(BACKUP_WALLET_IN_SETTINGS_FLOW)}
               marginTop={50}
@@ -106,17 +101,15 @@ const RecoveryPortalSetupComplete = ({
             />
           }
           {isWalletBackupNeeded &&
-            <ButtonText
-              buttonText={t('auth:button.skipAtOwnRisk')}
+            <Button
+              title={t('auth:button.skipAtOwnRisk')}
               onPress={() => skipPrompt(dismissNavigation)}
-              color={colors.negative}
-              fontSize={fontSizes.medium}
-              medium
+              negative
+              transparent
             />
           }
           {!isWalletBackupNeeded &&
             <Button
-              block
               title={t('auth:button.magic')}
               onPress={() => navigation.dismiss()}
               marginTop={50}
@@ -135,4 +128,4 @@ const mapStateToProps = ({
   isImported,
 });
 
-export default withTheme(connect(mapStateToProps)(RecoveryPortalSetupComplete));
+export default connect(mapStateToProps)(RecoveryPortalSetupComplete);

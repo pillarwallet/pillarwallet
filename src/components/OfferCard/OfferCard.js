@@ -32,7 +32,7 @@ import DynamicSizeImage from 'components/DynamicSizeImage';
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
-import type { ExternalButtonProps } from 'components/Button';
+import type { Props as ButtonProps } from 'components/Button';
 
 type ImageObject = {
   uri: string,
@@ -44,17 +44,17 @@ type Props = {
   labelTop: string,
   valueTop: string | number,
   cardImageSource: string | ImageObject,
-  cardButton: ExternalButtonProps,
+  cardButton: ButtonProps,
   labelBottom: string,
   valueBottom: string | number,
   cardNote?: string,
-  additionalCardButton: ?ExternalButtonProps,
+  additionalCardButton: ?ButtonProps,
 };
 
 type LeftSideProps = {
   label: string,
   value: string | number,
-  buttonProps: ?ExternalButtonProps,
+  buttonProps: ?ButtonProps,
   note?: string,
 }
 
@@ -122,8 +122,9 @@ const LeftSide = (props: LeftSideProps) => {
       <Button
         {...buttonProps}
         small
-        positive
         horizontalPaddings={8}
+        block={false}
+        primarySecond
       />
     );
   }
@@ -191,6 +192,7 @@ const OfferCard = (props: Props) => {
               {...cardButton}
               small
               horizontalPaddings={8}
+              block={false}
             />
           </CardColumn>
         </CardRow>

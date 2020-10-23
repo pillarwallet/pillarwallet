@@ -387,27 +387,18 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               }
             </ContentRow>
             <ContentRow>
-              {!purchaseDisabled &&
-                <Button
-                  title={t('button.next')}
-                  onPress={() => {
-                    if (!hasAllowance && !isApprovalExecuting) {
-                      this.setState({ isAllowModalVisible: true });
-                    }
-                    return nextNavigationFunction && nextNavigationFunction();
-                  }}
-                  isLoading={isLoading}
-                  disabled={purchaseDisabled}
-                  style={{ marginBottom: 13, width: '100%' }}
-                />
-              }
-              {!!purchaseDisabled && // has to update like this so it shows the disabled style
-                <Button
-                  title={t('button.next')}
-                  disabled={purchaseDisabled}
-                  style={{ marginBottom: 13, width: '100%' }}
-                />
-              }
+              <Button
+                title={t('button.next')}
+                onPress={() => {
+                  if (!hasAllowance && !isApprovalExecuting) {
+                    this.setState({ isAllowModalVisible: true });
+                  }
+                  return nextNavigationFunction && nextNavigationFunction();
+                }}
+                isLoading={isLoading}
+                disabled={purchaseDisabled}
+                style={{ marginBottom: 13 }}
+              />
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>

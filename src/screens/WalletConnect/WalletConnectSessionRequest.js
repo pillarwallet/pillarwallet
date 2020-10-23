@@ -62,7 +62,7 @@ const Value = styled(MediumText)`
 `;
 
 const OptionButton = styled(Button)`
-  margin-top: 14px;
+  margin-top: 4px;
   flex-grow: 1;
 `;
 
@@ -138,15 +138,13 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
         <Footer keyboardVerticalOffset={40}>
           <FooterWrapper>
             <OptionButton
-              primaryInverted
               onPress={this.handleSessionApproval}
-              regularText
               title={t('button.approve')}
             />
             <OptionButton
-              dangerInverted
+              transparent
+              danger
               onPress={this.handleSessionRejection}
-              regularText
               title={t('button.reject')}
             />
           </FooterWrapper>

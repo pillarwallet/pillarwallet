@@ -51,7 +51,7 @@ const AccessToAddressBook = (props: Props) => {
           {t('addressBookContent.paragraph.allowAccess')}
         </Paragraph>
         <ButtonWrapper>
-          <Button title={t('button.confirm')} onPress={allowAccess} block />
+          <Button title={t('button.confirm')} onPress={allowAccess} />
         </ButtonWrapper>
       </Wrapper>
     </ContainerWithHeader>

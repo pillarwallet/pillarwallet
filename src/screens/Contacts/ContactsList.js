@@ -117,6 +117,7 @@ const ContactsList = ({
       headerProps={{
         centerItems: [{ title: t('title.addressBook') }],
         rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => setSelectedContact({}) }],
+        sideFlex: 2,
       }}
     >
       <FlatList
@@ -161,7 +162,7 @@ const ContactsList = ({
             <Spacing h={spacing.large} />
             <ProfileImage
               userName={contactToDelete?.name}
-              initialsSize={48}
+              initialsSize={36}
               diameter={64}
               noShadow
               borderWidth={0}
@@ -180,17 +181,13 @@ const ContactsList = ({
                 hideContactToDeleteModal();
                 deleteContact(contactToDelete);
               }}
-              block
-              negative
-              regularText
+              danger
             />
             <Spacing h={4} />
             <Button
               onPress={hideContactToDeleteModal}
               title={t('alert.deleteContact.button.cancel')}
-              light
-              squarePrimary
-              regularText
+              transparent
             />
           </ContentWrapper>
         </SlideModal>

@@ -121,10 +121,8 @@ const AssetEnableModal = (props: Props) => {
             : t('exchangeContent.modal.enableAsset.button.enable')
           }
           onPress={onEnable}
-          regularText
           style={{ marginBottom: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
-          block
           disabled={isDisabled}
         />
         <BaseText secondary>

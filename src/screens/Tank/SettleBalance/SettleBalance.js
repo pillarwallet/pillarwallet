@@ -257,6 +257,7 @@ class SettleBalance extends React.Component<Props, State> {
                 small
                 disabled={!session.isOnline}
                 title={t('button.next')}
+                block={false}
                 onPress={this.goToConfirm}
               />
             )}

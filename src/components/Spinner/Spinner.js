@@ -19,43 +19,42 @@
 */
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import styled from 'styled-components/native';
-import Lottie from 'lottie-react-native';
+import styled, { withTheme } from 'styled-components/native';
+import { MaterialIndicator } from 'react-native-indicators';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 type Props = {
-  width?: number,
-  height?: number,
+  basic?: boolean,
+  size: number,
+  trackWidth?: number,
+  color?: string,
   style?: StyleSheet.Styles,
+  theme: Theme,
 };
 
-const AnimationWrapper = styled.View``;
+const StyledMaterialIndicator = styled(MaterialIndicator)`
+  flex: 0;
+`;
 
-const animationSource = require('./animation.json');
+const getSpinnerColor = (props: Props) => {
+  const { theme, basic } = props;
+  const colors = getThemeColors(theme);
+  if (basic) return colors.basic090;
+  return colors.primaryAccent130;
+};
 
-export default class Spinner extends React.Component<Props> {
-  static defaultProps = {
-    width: 40,
-    height: 40,
-    style: {},
-  };
-  animation: Lottie;
+const Spinner = (props: Props) => {
+  const {
+    size = 40,
+    trackWidth = 3,
+    color,
+    style,
+  } = props;
+  const spinnerColor = getSpinnerColor(props);
+  return (
+    <StyledMaterialIndicator size={size} trackWidth={trackWidth} color={color || spinnerColor} style={style} />
+  );
+};
 
-  componentDidMount() {
-    this.animation.play();
-  }
-  render() {
-    const { width, height, style } = this.props;
-    return (
-      <AnimationWrapper style={style}>
-        <Lottie
-          ref={(animation) => {
-            this.animation = animation;
-          }}
-          source={animationSource}
-          style={{ width, height }}
-          loop
-        />
-      </AnimationWrapper>
-    );
-  }
-}
+export default withTheme(Spinner);

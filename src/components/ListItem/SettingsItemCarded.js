@@ -215,7 +215,7 @@ const SettingsItemCarded = (props: Props) => {
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>
           {isActive && !props.isSwitching && <CheckIcon name="check" />}
-          {props.isSwitching && <LoadingSpinner width={fontSizes.large} height={fontSizes.large} />}
+          {props.isSwitching && <LoadingSpinner size={fontSizes.large} trackWith={2} />}
         </CardRow>
       </ShadowedCard>
       {!!onSettingsPress &&

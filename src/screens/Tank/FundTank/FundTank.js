@@ -255,6 +255,7 @@ class FundTank extends React.Component<Props, State> {
             <Button
               disabled={!session.isOnline || !topUpFee.isFetched}
               small
+              block={false}
               flexRight
               title={t('button.next')}
               onPress={this.handleFormSubmit}

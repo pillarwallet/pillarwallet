@@ -28,7 +28,6 @@ import t from 'translations/translate';
 import { Paragraph, MediumText, BaseText } from 'components/Typography';
 import Checkbox from 'components/Checkbox';
 import Icon from 'components/Icon';
-import { NextFooter } from 'components/Layout/NextFooter';
 import CollapsibleListItem from 'components/ListItem/CollapsibleListItem';
 
 // utils
@@ -41,6 +40,7 @@ import { SET_WALLET_PIN_CODE } from 'constants/navigationConstants';
 
 // types
 import type { Theme } from 'models/Theme';
+import Button from 'components/Button';
 
 
 type Props = {
@@ -92,6 +92,10 @@ const TickIcon = styled(Icon)`
   font-size: 8px;
   color: ${themedColors.control};
   margin-top: 1px;
+`;
+
+const FooterWrapper = styled.View`
+  padding: ${spacing.layoutSides}px;
 `;
 
 const Permissions = ({
@@ -334,20 +338,23 @@ const Permissions = ({
             borderBottomColor: colors.border,
           }}
         />
-        <NextFooter
-          onNextPress={handleAgree}
-          nextDisabled={!hasAgreedToTerms}
-          contentAlign="center"
-        >
+
+        <FooterWrapper>
           <Checkbox
             onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
             small
             lightText
             checked={hasAgreedToTerms}
+            wrapperStyle={{ marginBottom: 16 }}
           >
             {t('auth:withLink.readUnderstandAgreeTo', { linkedText: t('auth:termsOfUse') })}
           </Checkbox>
-        </NextFooter>
+          <Button
+            title={t('auth:button.proceed')}
+            onPress={handleAgree}
+            disabled={!hasAgreedToTerms}
+          />
+        </FooterWrapper>
       </ScrollView>
     </ContainerWithHeader>
   );

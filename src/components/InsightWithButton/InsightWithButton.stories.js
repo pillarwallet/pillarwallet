@@ -43,7 +43,7 @@ storiesOf('InsightWithButton', module)
       <InsightWithButton
         buttonTitle="Wow, press me!"
         description={itemsList[0]}
-        buttonProps={{ positive: true }}
+        buttonProps={{ primarySecond: true }}
         onButtonPress={() => {}}
       />
     </CenterView>

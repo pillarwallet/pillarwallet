@@ -599,7 +599,7 @@ class TextInput extends React.Component<Props, State> {
               </RightSideWrapper>}
               {!!buttonProps &&
               <ButtonWrapper>
-                <Button {...buttonProps} />
+                <Button {...buttonProps} block={false} />
               </ButtonWrapper>}
             </Item>
             {Platform.OS === 'ios' && <IosFocusInput

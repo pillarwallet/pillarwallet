@@ -215,7 +215,6 @@ class PPNView extends React.Component<Props, State> {
               small
               marginTop={12}
               onPress={this.navigateToBuyPillar}
-              regularText
             />);
         } else {
           insightProps.buttonTitle = t('button.topUpPLRTank');
@@ -292,7 +291,7 @@ class PPNView extends React.Component<Props, State> {
         message: t('insight.smartWalletActivate.default.description'),
       }
       : smartWalletStatus.sendingBlockedMessage || {};
-    const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
+    const disableTopUpAndSettle = !!Object.keys(sendingBlockedMessage).length;
 
     const PPNTransactionsMapped = mapTransactionsHistory(
       PPNTransactions,
@@ -394,7 +393,7 @@ class PPNView extends React.Component<Props, State> {
                 onPress={this.navigateToFundTank}
                 fontIcon="plus"
                 fontIconStyle={{ fontSize: fontSizes.big }}
-                disabled={!!disableTopUpAndSettle}
+                disabled={disableTopUpAndSettle}
               />
               <CircleButton
                 label={t('button.withdraw')}
@@ -425,7 +424,7 @@ class PPNView extends React.Component<Props, State> {
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
             color={colors.text}
             bordered
-            disabled={!!disableTopUpAndSettle}
+            disabled={disableTopUpAndSettle}
           />}
           {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
@@ -451,7 +450,7 @@ class PPNView extends React.Component<Props, State> {
           <FloatingButtonView>
             <Button
               style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
-              width="auto"
+              block={false}
               title={t('button.settleTransactions')}
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
               disabled={disableTopUpAndSettle}

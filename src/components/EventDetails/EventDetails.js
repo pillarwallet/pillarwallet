@@ -677,7 +677,7 @@ export class EventDetail extends React.Component<Props, State> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -703,7 +703,7 @@ export class EventDetail extends React.Component<Props, State> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -731,7 +731,7 @@ export class EventDetail extends React.Component<Props, State> {
               {
                 title: t('button.topUp'),
                 onPress: this.topUpPillarNetwork,
-                squarePrimary: true,
+                transparent: true,
               },
             ],
           };
@@ -753,6 +753,7 @@ export class EventDetail extends React.Component<Props, State> {
             {
               title: t('button.topUp'),
               onPress: this.topUpPillarNetwork,
+              secondary: true,
             },
           ],
         };
@@ -763,7 +764,7 @@ export class EventDetail extends React.Component<Props, State> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -808,7 +809,6 @@ export class EventDetail extends React.Component<Props, State> {
         const activatePillarNetworkButton = {
           title: t('button.activatePPN'),
           onPress: this.topUpPillarNetwork,
-          secondary: true,
         };
 
         const referFriendsButton = {
@@ -820,7 +820,7 @@ export class EventDetail extends React.Component<Props, State> {
         const referFriendsButtonSecondary = {
           title: this.getReferButtonTitle(),
           onPress: this.referFriends,
-          squarePrimary: true,
+          secondary: true,
         };
 
         eventData = {
@@ -833,7 +833,7 @@ export class EventDetail extends React.Component<Props, State> {
         const topUpMoreButton = {
           title: t('button.topUpMore'),
           onPress: this.topUpPillarNetwork,
-          squarePrimary: true,
+          secondary: true,
         };
         eventData = {
           buttons: isPending
@@ -912,7 +912,7 @@ export class EventDetail extends React.Component<Props, State> {
             aaveDepositButtons.push({
               title: t('button.viewDeposit'),
               onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-              squarePrimary: true,
+              secondary: true,
             });
           }
         }
@@ -935,7 +935,7 @@ export class EventDetail extends React.Component<Props, State> {
           aaveWithdrawButtons.push({
             title: t('button.viewDeposit'),
             onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-            squarePrimary: true,
+            secondary: true,
           });
         }
         eventData.buttons = aaveWithdrawButtons;
@@ -962,7 +962,7 @@ export class EventDetail extends React.Component<Props, State> {
             {
               title: t('button.viewPoolTogetherPool'),
               onPress: () => this.goToPoolTogetherPool(symbol),
-              squarePrimary: true,
+              secondary: true,
             },
           );
         }
@@ -1014,7 +1014,7 @@ export class EventDetail extends React.Component<Props, State> {
             },
             {
               title: t('button.viewSablierStream'),
-              squarePrimary: true,
+              secondary: true,
               onPress: () => this.goToIncomingStream(streamId),
             },
           ],
@@ -1053,7 +1053,7 @@ export class EventDetail extends React.Component<Props, State> {
                 {
                   title: t('button.sendBack'),
                   onPress: () => this.sendSynthetic(relevantAddress),
-                  squarePrimary: true,
+                  secondary: true,
                 },
               ];
             }
@@ -1070,7 +1070,7 @@ export class EventDetail extends React.Component<Props, State> {
           const buttons = [{
             title: t('button.viewPoolTogetherPool'),
             onPress: () => this.goToPoolTogetherPool(DAI),
-            squarePrimary: true,
+            secondary: true,
           }];
           eventData = {
             name: t('poolTogether'),
@@ -1087,7 +1087,7 @@ export class EventDetail extends React.Component<Props, State> {
           const inviteToPillarButton = {
             title: t('button.inviteToPillar'),
             onPress: this.referFriends,
-            squarePrimary: true,
+            secondary: true,
           };
 
           const sendBackToAddress = {
@@ -1381,7 +1381,7 @@ export class EventDetail extends React.Component<Props, State> {
     if (fee) {
       return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
     } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
-      return (<Spinner height={20} width={20} style={{ marginBottom: 32 }} />);
+      return (<Spinner size={20} trackWidth={2} style={{ marginBottom: 32 }} />);
     }
     return null;
   };
@@ -1448,7 +1448,7 @@ export class EventDetail extends React.Component<Props, State> {
         <ButtonsContainer>
           {buttons.map(buttonProps => (
             <React.Fragment key={buttonProps.title} >
-              <Button regularText {...buttonProps} />
+              <Button {...buttonProps} />
               <Spacing h={4} />
             </React.Fragment>
           ))}
@@ -1489,7 +1489,7 @@ export class EventDetail extends React.Component<Props, State> {
 
       if (!alreadyHasViewOnBlockchainButton) {
         const viewOnBlockchainButton = {
-          squarePrimary: hasModalButtons, // styling if multiple buttons in modal
+          transparent: hasModalButtons, // styling if multiple buttons in modal
           secondary: !hasModalButtons, // styling if single button in modal
           title: viewOnBlockchainButtonTitle,
           onPress: this.viewOnTheBlockchain,

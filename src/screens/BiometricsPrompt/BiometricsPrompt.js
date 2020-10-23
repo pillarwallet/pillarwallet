@@ -34,11 +34,10 @@ import { beginOnboardingAction } from 'actions/onboardingActions';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
 import Toast from 'components/Toast';
 
 // utils
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { getBiometryType } from 'utils/settings';
 import { themedColors } from 'utils/themes';
 
@@ -70,6 +69,7 @@ const ContentInnerWrapper = styled.View`
 `;
 
 const ButtonsWrapper = styled.View`
+  width: 100%;
   padding-bottom: 15%;
 `;
 
@@ -140,12 +140,15 @@ class BiometricsPrompt extends React.Component<Props> {
           <ContentInnerWrapper>
             <TouchIdImage source={imageSource} />
             <ButtonsWrapper>
-              <Button title={t('auth:button.yesPlease')} onPress={() => this.proceedTobeginOnboarding(true)} />
-              <ButtonText
-                buttonText={t('auth:button.okToUsePinCodeOnly')}
+              <Button
+                title={t('auth:button.yesPlease')}
+                onPress={() => this.proceedTobeginOnboarding(true)}
+                marginBottom={4}
+              />
+              <Button
+                transparent
+                title={t('auth:button.okToUsePinCodeOnly')}
                 onPress={() => this.proceedTobeginOnboarding(false)}
-                fontSize={fontSizes.medium}
-                wrapperStyle={{ padding: spacing.large }} // leave padding for better clickable area
               />
             </ButtonsWrapper>
           </ContentInnerWrapper>

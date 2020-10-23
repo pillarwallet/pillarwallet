@@ -116,7 +116,7 @@ class UnsettledAssets extends React.Component<Props> {
         <FloatingButtonView>
           <Button
             style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
-            width="auto"
+            block={false}
             title={t('ppnContent.button.settleTransactions')}
             onPress={() => navigation.navigate(SETTLE_BALANCE)}
           />

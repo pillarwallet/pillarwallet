@@ -34,7 +34,7 @@ import { Spacing } from 'components/Layout';
 // types
 import type { Props as SelectorProps } from 'components/Selector';
 import type { ExternalProps as ValueSelectorProps } from 'components/ValueInput';
-import type { ExternalButtonProps as ButtonProps } from 'components/Button';
+import type { Props as ButtonProps } from 'components/Button';
 
 // utils
 import { spacing } from 'utils/variables';
@@ -91,7 +91,6 @@ const SendFooter = (props: FooterProps) => {
       {isNextButtonVisible &&
         <Button
           title={t('button.next')}
-          block
           marginTop={spacing.medium}
           {...buttonProps}
         />

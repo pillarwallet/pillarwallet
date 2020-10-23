@@ -44,7 +44,7 @@ const TooltipTester = ({ tooltipProps }) => {
         {...tooltipProps}
         isVisible={isVisible}
       >
-        <Button title="Press me!" onPress={() => setIsVisible(!isVisible)} />
+        <Button title="Press me!" onPress={() => setIsVisible(!isVisible)} block={false} />
       </Tooltip>
     </Wrapper>
   );

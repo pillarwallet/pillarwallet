@@ -6,6 +6,7 @@
 function loadStories() {
 	require('../src/components/ActionModal/ActionModal.stories');
 	require('../src/components/ActivityFeed/ActivityFeedItem.stories');
+	require('../src/components/Button/Button.stories');
 	require('../src/components/EventDetails/EventDetails.stories');
 	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
@@ -21,6 +22,7 @@ function loadStories() {
 const stories = [
 	'../src/components/ActionModal/ActionModal.stories',
 	'../src/components/ActivityFeed/ActivityFeedItem.stories',
+	'../src/components/Button/Button.stories',
 	'../src/components/EventDetails/EventDetails.stories',
 	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',

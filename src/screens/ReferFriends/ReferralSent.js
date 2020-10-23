@@ -111,15 +111,12 @@ class ReferralSent extends React.PureComponent<Props> {
             />
             <Button
               title={t('button.inviteMoreFriends')}
-              block
-              regularText
               onPress={() => navigation.navigate(REFER_FLOW)}
             />
             <Button
               title={t('button.close')}
-              secondary
-              block
-              marginTop={12}
+              transparent
+              marginTop={4}
               onPress={() => navigation.navigate(HOME)}
             />
           </Wrapper>

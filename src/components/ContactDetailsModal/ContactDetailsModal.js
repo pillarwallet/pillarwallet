@@ -259,7 +259,7 @@ const ContactDetailsModal = ({
         {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
         {!!ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
         {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
-        {resolvingEns && <LoadingSpinner width={25} height={25} />}
+        {resolvingEns && <LoadingSpinner size={25} />}
         <Button
           marginTop={spacing.large}
           disabled={!dirtyInputs || !!errorMessage || resolvingEns}

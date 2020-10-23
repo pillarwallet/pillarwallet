@@ -51,7 +51,6 @@ const RecoveryPortalWalletRecoveryStarted = (props: Props) => (
       <Title center>{t('auth:recoveryPortal.title.smartWalletRecovered')}</Title>
       <Paragraph small light center>{t('auth:recoveryPortal.paragraph.smartWalletRecovered')}</Paragraph>
       <Button
-        block
         title={t('auth:button.magic', { exclamation: true })}
         onPress={() => props.navigation.navigate(RECOVERY_PORTAL_WALLET_RECOVERY_PENDING)}
         marginTop={50}

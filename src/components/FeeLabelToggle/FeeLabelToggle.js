@@ -102,7 +102,7 @@ const FeeLabelToggle = ({
   const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
 
   if (isLoading) {
-    return <Spinner width={20} height={20} />;
+    return <Spinner size={20} trackWidth={2} />;
   }
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

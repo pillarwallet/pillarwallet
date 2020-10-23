@@ -239,7 +239,7 @@ const ProfileFormTemplate = (locals: Object) => {
       const buttonTitle = fieldDisplayValue ? t('button.verify') : t('button.add');
       const buttonAction = fieldDisplayValue ? (() => onPressVerify(fieldName)) : (() => onFocus(fieldName));
       description = fieldDisplayValue ? descriptionAdded : descriptionEmpty;
-      sideComponent = <Button horizontalPaddings={8} small title={buttonTitle} onPress={buttonAction} />;
+      sideComponent = <Button horizontalPaddings={8} small title={buttonTitle} onPress={buttonAction} block={false} />;
     }
 
     return (

@@ -30,7 +30,7 @@ import { DAI } from 'constants/assetsConstants';
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 
 // types
@@ -141,10 +141,7 @@ const PoolTokenAllowModal = (props: Props) => {
           secondary
           title={isDisabled ? t('label.notEnoughToken', { token: feeToken }) : t('button.enable')}
           onPress={onAllow}
-          regularText
           style={{ marginBottom: 28 }}
-          textStyle={{ fontSize: fontSizes.medium }}
-          block
           disabled={isDisabled}
         />
         <BaseText secondary>

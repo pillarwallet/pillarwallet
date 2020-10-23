@@ -152,7 +152,6 @@ class CommunitySettings extends React.Component<{}, State> {
               buttonProps={{
                 title: t('button.subscribe'),
                 small: true,
-                regularText: true,
                 marginRight: 12,
                 height: 32,
                 onPress: this.subscribe,

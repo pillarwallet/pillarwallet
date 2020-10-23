@@ -109,15 +109,13 @@ const SablierCancellationModal = ({
         <Spacing h={16} />
         <Button
           secondary
-          block
           title={t('sablierContent.button.confirmStreamCancellation')}
           onPress={onCancel}
           disabled={isDisabled}
         />
-        <Spacing h={8} />
+        <Spacing h={4} />
         <Button
-          squarePrimary
-          block
+          transparent
           title={t('sablierContent.button.cancelStreamCancellation')}
           onPress={onModalHide}
         />

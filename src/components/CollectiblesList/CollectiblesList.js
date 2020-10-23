@@ -148,10 +148,8 @@ const CollectiblesList = ({
             <EmptyStateParagraph {...emptyStateInfo} />
             <Button
               title={t('button.receive')}
-              block
               marginTop={40}
               secondary
-              regularText
               onPress={() => setIsReceiveModalVisible(true)}
             />
           </EmptyStateWrapper>

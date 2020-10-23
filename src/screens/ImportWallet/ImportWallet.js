@@ -243,6 +243,7 @@ class ImportWallet extends React.Component<Props, State> {
             leftIconName="back"
             disabled={isImportingWallet}
             secondary
+            block={false}
           />}
           <StyledButton
             title={nextButtonText}
@@ -251,6 +252,7 @@ class ImportWallet extends React.Component<Props, State> {
             rightIconStyle={{ transform: [{ rotate: '180deg' }] }}
             disabled={!currentBPWord || isImportingWallet}
             isLoading={isImportingWallet}
+            block={false}
           />
         </ButtonsWrapper>
       );

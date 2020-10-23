@@ -113,8 +113,6 @@ class EmailPhoneMissing extends React.PureComponent<Props> {
           />
           <Button
             title={t('referralsContent.modal.missingPhone.button.toUserData')}
-            block
-            regularText
             onPress={() => navigation.navigate(ADD_EDIT_USER)}
           />
         </Wrapper>

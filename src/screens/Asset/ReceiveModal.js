@@ -204,20 +204,19 @@ class ReceiveModal extends React.Component<Props, *> {
             <Button
               title={t('button.buyTokens')}
               onPress={handleBuyTokens}
-              positive
+              primarySecond
               width={buttonWidth}
               small={needsSmallButtons}
-              regularText
               textStyle={{ paddingTop: 4 }}
+              block={false}
             />
             )}
             <Button
               title={t('button.shareAddress')}
               onPress={this.handleAddressShare}
-              width={buttonWidth}
+              width={showBuyTokensButton ? buttonWidth : undefined}
               small={needsSmallButtons}
-              block={!buttonWidth}
-              regularText
+              block={!showBuyTokensButton}
               textStyle={{ paddingTop: 4 }}
             />
           </ButtonsRow>

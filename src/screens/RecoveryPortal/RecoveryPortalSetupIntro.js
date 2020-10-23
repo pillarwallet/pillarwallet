@@ -94,7 +94,6 @@ const RecoveryPortalSetupIntro = ({
       </CustomWrapper>
       <ButtonWrapper>
         <Button
-          block
           title={t('auth:button.next')}
           onPress={() => {
             hasSeenRecoveryPortalIntro();

@@ -308,6 +308,7 @@ const KeyBasedAssetTransferChoose = ({
                 calculateTransactionsGas(); // start calculating
                 navigation.navigate(KEY_BASED_ASSET_TRANSFER_CONFIRM);
               }}
+              block={false}
             />
           </FooterInner>
         </Footer>

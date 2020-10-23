@@ -155,8 +155,6 @@ const EnterWithdrawAmount = ({
           )}
           {showNextButton && (
             <Button
-              regularText
-              block
               disabled={isNextButtonDisabled}
               title={nextButtonTitle}
               onPress={onNextButtonPress}
