@@ -63,8 +63,6 @@ const DeleteAvatarModal = ({
           uri={profileImageUri}
           userName={username}
           diameter={64}
-          borderWidth={0}
-          noShadow
         />
         <Spacing h={20} />
         <BaseText medium center>{t('profileContent.modal.deleteAvatar.paragraph.areYouSure')}</BaseText>

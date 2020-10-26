@@ -36,9 +36,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
         style={
           Array [
             Object {
-              "height": 52,
+              "height": 58,
               "paddingHorizontal": 16,
-              "paddingVertical": 14,
+              "paddingVertical": 10,
               "width": "100%",
             },
             undefined,
@@ -67,7 +67,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "flexGrow": 1,
                   "flexShrink": 1,
-                  "height": 24,
+                  "height": 36,
                   "justifyContent": "flex-start",
                 },
                 Object {},
@@ -87,17 +87,18 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               onStartShouldSetResponder={[Function]}
               style={
                 Object {
-                  "alignItems": "flex-start",
-                  "height": 24,
+                  "alignItems": "center",
+                  "backgroundColor": "#EBF0F6",
+                  "borderRadius": 36,
+                  "height": 36,
                   "justifyContent": "center",
-                  "marginLeft": -12,
                   "opacity": 1,
                   "paddingBottom": 0,
-                  "paddingLeft": 10,
+                  "paddingLeft": 0,
                   "paddingRight": 0,
                   "paddingTop": 0,
                   "position": "relative",
-                  "width": 44,
+                  "width": 36,
                 }
               }
             >
@@ -106,7 +107,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Object {
                     "color": "#0A1427",
-                    "fontSize": 24,
+                    "fontSize": 18,
                     "marginBottom": undefined,
                     "marginLeft": undefined,
                     "marginRight": undefined,
@@ -126,7 +127,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "flexGrow": 4,
                   "flexShrink": 1,
-                  "height": 24,
+                  "height": 40,
                   "justifyContent": "center",
                   "paddingBottom": 0,
                   "paddingLeft": 12,
@@ -141,13 +142,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             style={
               Array [
                 Object {
+                  "alignContent": "center",
                   "alignItems": "center",
                   "flexBasis": 0,
                   "flexDirection": "row",
                   "flexGrow": 1,
                   "flexShrink": 1,
                   "flexWrap": "wrap",
-                  "height": 24,
+                  "height": 36,
                   "justifyContent": "flex-end",
                 },
                 undefined,
@@ -177,7 +179,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "alignItems": "flex-start",
                     "alignSelf": "center",
-                    "height": 34,
+                    "height": 36,
                     "justifyContent": "center",
                     "opacity": 1,
                     "paddingBottom": 5,
@@ -2074,8 +2076,8 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   style={
                     Object {
                       "alignItems": "center",
-                      "backgroundColor": "#d1d9e4",
-                      "borderColor": "#FFFFFF",
+                      "backgroundColor": "#e0eeff",
+                      "borderColor": "#e0eeff",
                       "borderRadius": 24,
                       "borderStyle": "solid",
                       "borderWidth": 0,
@@ -2149,13 +2151,13 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   }
                 >
                   <View
-                    noHorizonatalPadding={false}
+                    noHorizontalPadding={false}
                     style={
                       Array [
                         Object {
-                          "height": 52,
+                          "height": 58,
                           "paddingHorizontal": 16,
-                          "paddingVertical": 14,
+                          "paddingVertical": 10,
                           "width": "100%",
                         },
                         undefined,
@@ -2185,7 +2187,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
-                              "height": 24,
+                              "height": 36,
                               "justifyContent": "flex-start",
                             },
                             Object {},
@@ -2260,13 +2262,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         style={
                           Array [
                             Object {
+                              "alignContent": "center",
                               "alignItems": "center",
                               "flexBasis": 0,
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
-                              "height": 24,
+                              "height": 36,
                               "justifyContent": "flex-end",
                             },
                             undefined,
@@ -2920,12 +2923,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   }
                 >
                   <View
-                    noHorizonatalPadding={true}
+                    noHorizontalPadding={true}
                     style={
                       Array [
                         Object {
-                          "height": 52,
-                          "paddingVertical": 14,
+                          "height": 58,
+                          "paddingVertical": 10,
                           "width": "100%",
                         },
                         undefined,
@@ -2955,7 +2958,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "flexDirection": "row",
                               "flexGrow": 4,
                               "flexShrink": 1,
-                              "height": 24,
+                              "height": 36,
                               "justifyContent": "flex-start",
                             },
                             Object {},
@@ -2966,13 +2969,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         style={
                           Array [
                             Object {
+                              "alignContent": "center",
                               "alignItems": "center",
                               "flexBasis": 0,
                               "flexDirection": "row",
                               "flexGrow": 1,
                               "flexShrink": 1,
                               "flexWrap": "wrap",
-                              "height": 24,
+                              "height": 36,
                               "justifyContent": "flex-end",
                             },
                             undefined,

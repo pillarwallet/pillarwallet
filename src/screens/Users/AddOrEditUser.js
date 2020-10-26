@@ -698,15 +698,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
-                    {!!profileImage && (
-                      <ProfileImage
-                        uri={updatedProfileImage}
-                        userName={username || ''}
-                        diameter={96}
-                        borderWidth={0}
-                        noShadow
-                      />
-                    )}
+                    {!!profileImage && <ProfileImage
+                      uri={updatedProfileImage}
+                      userName={username || ''}
+                      diameter={96}
+                    />}
                     {!profileImage && !!username && (
                       <ProfileImagePlaceholder>
                         <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>

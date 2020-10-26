@@ -17,13 +17,51 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import SWActivationCard from './SWActivationCard';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import Emoji from 'react-native-emoji';
 
-storiesOf('SWActivationCard', module)
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import { ListCard } from './ListCard';
+
+const TITLE = 'Long list title to check layout on edge cases';
+
+storiesOf('ListCard', module)
+  .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <SWActivationCard navigation={{}} />
+    <ListCard title="List title" />
+  ))
+  .add('with custom icon', () => (
+    <ListCard
+      title={TITLE}
+      customIcon={<Emoji name="gear" style={{ marginRight: 10 }} />}
+    />
+  ))
+  .add('with label', () => (
+    <ListCard
+      title={TITLE}
+      labelBadge={{ label: 'label badge' }}
+    />
+  ))
+  .add('with labelText', () => (
+    <ListCard
+      title={TITLE}
+      label="label text"
+    />
+  ))
+  .add('with note', () => (
+    <ListCard
+      title={TITLE}
+      note={{ note: 'Note text that takes up at least two lines' }}
+    />
+  ))
+  .add('with subtitle', () => (
+    <ListCard
+      title={TITLE}
+      subtitle="Longer subtitle text to check how lines wrap"
+      label="Label text"
+    />
   ));

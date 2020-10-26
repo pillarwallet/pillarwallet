@@ -51,23 +51,21 @@ const AddonWrapper = styled.View`
 `;
 
 const ListItem = styled.View`
-  ${({ bordered, theme }) => bordered
-    ? `
-    border-bottom-width: ${StyleSheet.hairlineWidth}px;
-    border-top-width: ${StyleSheet.hairlineWidth}px;
-    border-color: ${theme.colors.border};
-    `
-    : ''}
+  ${({ bordered, theme }) => bordered && `
+  border-bottom-width: ${StyleSheet.hairlineWidth}px;
+  border-top-width: ${StyleSheet.hairlineWidth}px;
+  border-color: ${theme.colors.basic080};
+  `}
 `;
 
 const ItemLabel = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${({ color, theme }) => color || theme.colors.link};
+  color: ${({ color, theme }) => color || theme.colors.basic000};
 `;
 
 const SubText = styled(BaseText)`
   ${fontStyles.small};
-  color: ${({ color, theme }) => color || theme.colors.secondaryText};
+  color: ${({ color, theme }) => color || theme.colors.basic030};
   margin-top: 4px;
 `;
 
@@ -85,13 +83,13 @@ const Row = styled.View`
 `;
 
 const ChevronIcon = styled(Icon)`
-  color: ${({ color, theme }) => color || theme.colors.link};
+  color: ${({ color, theme }) => color || theme.colors.basic000};
   font-size: ${fontSizes.small}px;
 `;
 
 type Props = {
   label: string,
-  onPress?: ?Function,
+  onPress?: () => void,
   addon?: React.Node,
   bordered?: boolean,
   color?: string,

@@ -18,39 +18,55 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
-import ToastCard from './ToastCard';
+import { images } from 'utils/images';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import SettingsItemCarded from './SettingsItemCarded';
 
 
-const normalText = 'Magna culpa aliquip nisi in eu';
+const { smartWalletIcon } = images({ current: LIGHT_THEME, colors: {} });
 
-const longText = 'Magna culpa aliquip nisi in eu Lorem reprehenderit laborum ' +
-  'duis. In exercitation exercitation ex irure. Lorem non nostrud laboris ' +
-  'consectetur culpa aliquip sunt pariatur velit cillum magna dolor.';
-
-storiesOf('ToastCard', module)
+storiesOf('SettingsItemCarded', module)
   .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ToastCard
-      message={normalText}
-      emoji="hash"
+    <SettingsItemCarded
+      title="This is card's title"
+      iconSource={smartWalletIcon}
     />
   ))
-  .add('long text', () => (
-    <ToastCard
-      message={longText}
-      emoji="hash"
+  .add('with subtitle', () => (
+    <SettingsItemCarded
+      title="This is card's title"
+      subtitle="And this - subtitle"
+      iconSource={smartWalletIcon}
     />
   ))
-  .add('link', () => (
-    <ToastCard
-      message={normalText}
-      emoji="hash"
-      link="toast link"
+  .add('active card', () => (
+    <SettingsItemCarded
+      title="This is card's title"
+      subtitle="And this - subtitle"
+      iconSource={smartWalletIcon}
+      isActive
+    />
+  ))
+  .add('loading card', () => (
+    <SettingsItemCarded
+      title="This is card's title"
+      subtitle="And this - subtitle"
+      iconSource={smartWalletIcon}
+      isLoading
+    />
+  ))
+  .add('edge cases', () => (
+    <SettingsItemCarded
+      title="This is longer card's title. To test layout on edge cases"
+      subtitle="And longer subtitle for the same reason"
+      iconSource={smartWalletIcon}
+      isLoading
     />
   ));

@@ -38,6 +38,7 @@ import {
   POOLTOGETHER_DEPOSIT_TRANSACTION,
 } from 'constants/poolTogetherConstants';
 import { withTheme } from 'styled-components/native';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 
 const placeholderImage = 'https://picsum.photos/200';
@@ -83,6 +84,7 @@ const dataForAllAccounts = {
 const ActivityFeedItem = withTheme(ActivityFeedItemNoTheme);
 
 storiesOf('ActivityFeedItem', module)
+  .addDecorator(WithThemeDecorator)
   .add('Key wallet created', () => (
     <ActivityFeedItem
       {...reduxData}

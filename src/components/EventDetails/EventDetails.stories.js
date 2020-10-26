@@ -38,6 +38,7 @@ import {
   POOLTOGETHER_DEPOSIT_TRANSACTION,
 } from 'constants/poolTogetherConstants';
 
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const placeholderImage = 'https://picsum.photos/200';
 
@@ -122,6 +123,7 @@ const EventDetailsStoryItem = withTheme(EventDetailsClass);
 
 storiesOf('EventDetail', module)
 // SMART WALLET (and related) EVENTS
+  .addDecorator(WithThemeDecorator)
   .add('Smart wallet created | Needs to activate', () => (
     <EventDetailsStoryItem
       {...reduxData}

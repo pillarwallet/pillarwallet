@@ -265,7 +265,7 @@ class SlideModal extends React.Component<Props, *> {
             noPaddingTop
             onClose={this.hideModal}
             wrapperStyle={{ backgroundColor: 'transparent' }}
-            noHorizonatalPadding={!fullScreen && !noPadding}
+            noHorizontalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? null : 4}
             noBack
             forceInsetTop={insetTop ? 'always' : 'never'} // eslint-disable-line i18next/no-literal-string

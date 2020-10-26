@@ -17,40 +17,61 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import React from 'react';
+import * as React from 'react';
+import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 
-import ToastCard from './ToastCard';
+import Checkbox from './Checkbox';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
+const CheckboxesWrapper = (story) => (
+  <View style={{
+    flex: 1,
+    justifyContent: 'space-between',
+    paddingTop: '20%',
+    paddingBottom: '20%',
+  }}
+  >
+    {story()}
+  </View>
+);
 
-const normalText = 'Magna culpa aliquip nisi in eu';
+const CHECKBOX_TEXT = 'Checkbox text that takes up at least two lines';
 
-const longText = 'Magna culpa aliquip nisi in eu Lorem reprehenderit laborum ' +
-  'duis. In exercitation exercitation ex irure. Lorem non nostrud laboris ' +
-  'consectetur culpa aliquip sunt pariatur velit cillum magna dolor.';
-
-storiesOf('ToastCard', module)
+storiesOf('Checkbox', module)
+  .addDecorator(CheckboxesWrapper)
   .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
-  .add('default', () => (
-    <ToastCard
-      message={normalText}
-      emoji="hash"
-    />
+  .add('all cases', () => (
+    <>
+      <Checkbox>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox checked>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded checked>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+    </>
   ))
-  .add('long text', () => (
-    <ToastCard
-      message={longText}
-      emoji="hash"
-    />
-  ))
-  .add('link', () => (
-    <ToastCard
-      message={normalText}
-      emoji="hash"
-      link="toast link"
-    />
+  .add('all cases light', () => (
+    <>
+      <Checkbox lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox checked lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded checked lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+    </>
   ));

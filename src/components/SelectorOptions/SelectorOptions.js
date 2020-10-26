@@ -274,8 +274,6 @@ class SelectorOptions extends React.Component<Props, State> {
             userName={name}
             diameter={DIAMETER}
             textStyle={{ fontSize: fontSizes.medium }}
-            noShadow
-            borderWidth={0}
             fallbackImage={genericToken}
           />
           }

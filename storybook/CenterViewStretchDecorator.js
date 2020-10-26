@@ -17,35 +17,20 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import QRCode from 'react-native-qrcode-svg';
-import { withTheme } from 'styled-components/native/index';
-import { getColorByThemeOutsideStyled } from 'utils/themes';
-import type { Theme } from 'models/Theme';
+import React from 'react';
+import styled from 'styled-components/native';
 
-type Props = {
-  value: string,
-  size: number,
-  theme: Theme,
-  getRef?: (ref: QRCode) => void,
-};
+const CenterViewStretchDecorator = styled.View`
+  flex: 1;
+  width: 100%;
+  justify-content: center;
+  align-items: stretch;
+  padding: 20px;
+`;
 
-const QRCodeWithTheme = (props: Props) => {
-  const {
-    value,
-    size,
-    theme,
-    getRef,
-  } = props;
-  return (
-    <QRCode
-      getRef={getRef}
-      value={value}
-      size={size}
-      color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic070' })}
-      backgroundColor={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic050', darkKey: 'basic000' })}
-    />
-  );
-};
+export default (story: Function) => (
+  <CenterViewStretchDecorator>
+    {story()}
+  </CenterViewStretchDecorator>
+);
 
-export default withTheme(QRCodeWithTheme);
