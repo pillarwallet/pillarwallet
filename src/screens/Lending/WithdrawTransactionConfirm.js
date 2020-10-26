@@ -36,22 +36,20 @@ import { Spacing } from 'components/Layout';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getAaveWithdrawTransaction } from 'utils/aave';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { DepositedAsset } from 'models/Asset';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  withdrawTransactionEstimate: ?Object,
-  useGasToken: boolean,
+  feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
 };
 
@@ -61,8 +59,7 @@ const DepositWrapper = styled.View`
 
 const WithdrawTransactionConfirm = ({
   navigation,
-  withdrawTransactionEstimate,
-  useGasToken,
+  feeInfo,
   accountAddress,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -71,7 +68,6 @@ const WithdrawTransactionConfirm = ({
   const depositedAsset: DepositedAsset = navigation.getParam('asset');
   const { symbol: depositedAssetSymbol } = depositedAsset;
 
-  const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate, useGasToken);
   const onNextButtonPress = async () => {
     if (isSubmitted) return;
     setIsSubmitted(true);
@@ -80,10 +76,10 @@ const WithdrawTransactionConfirm = ({
       accountAddress,
       withdrawAmount,
       depositedAsset,
-      txFeeInfo?.fee || new BigNumber(0),
+      feeInfo?.fee || new BigNumber(0),
     );
 
-    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+    if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo?.gasToken;
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
     setIsSubmitted(false);
@@ -105,7 +101,7 @@ const WithdrawTransactionConfirm = ({
         <Table>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -113,7 +109,7 @@ const WithdrawTransactionConfirm = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
           </TableRow>
         </Table>
         <Spacing h={50} />
@@ -131,13 +127,12 @@ const WithdrawTransactionConfirm = ({
 };
 
 const mapStateToProps = ({
-  lending: { withdrawTransactionEstimate },
+  transactionEstimate: { feeInfo },
 }: RootReducerState): $Shape<Props> => ({
-  withdrawTransactionEstimate,
+  feeInfo,
 });
 
 const structuredSelector = createStructuredSelector({
-  useGasToken: useGasTokenSelector,
   accountAddress: activeAccountAddressSelector,
 });
 

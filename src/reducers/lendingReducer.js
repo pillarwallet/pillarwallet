@@ -19,13 +19,9 @@
 */
 import {
   SET_LENDING_ASSETS_TO_DEPOSIT,
-  SET_CALCULATING_LENDING_DEPOSIT_TRANSACTION_ESTIMATE,
-  SET_CALCULATING_LENDING_WITHDRAW_TRANSACTION_ESTIMATE,
-  SET_LENDING_DEPOSIT_TRANSACTION_ESTIMATE,
   SET_LENDING_DEPOSITED_ASSETS,
   SET_FETCHING_LENDING_ASSETS_TO_DEPOSIT,
   SET_FETCHING_LENDING_DEPOSITED_ASSETS,
-  SET_LENDING_WITHDRAW_TRANSACTION_ESTIMATE,
 } from 'constants/lendingConstants';
 import type { AssetToDeposit, DepositedAsset } from 'models/Asset';
 
@@ -35,10 +31,6 @@ export type LendingReducerState = {
   depositedAssets: DepositedAsset[],
   isFetchingDepositedAssets: boolean,
   isFetchingAssetsToDeposit: boolean,
-  isCalculatingDepositTransactionEstimate: boolean,
-  isCalculatingWithdrawTransactionEstimate: boolean,
-  depositTransactionEstimate: ?Object,
-  withdrawTransactionEstimate: ?Object,
 };
 
 export type LendingReducerAction = {
@@ -51,10 +43,6 @@ export const initialState = {
   depositedAssets: [],
   isFetchingDepositedAssets: false,
   isFetchingAssetsToDeposit: false,
-  isCalculatingDepositTransactionEstimate: false,
-  isCalculatingWithdrawTransactionEstimate: false,
-  depositTransactionEstimate: null,
-  withdrawTransactionEstimate: null,
 };
 
 export default function lendingReducer(
@@ -70,30 +58,6 @@ export default function lendingReducer(
       return { ...state, isFetchingDepositedAssets: action.payload || true };
     case SET_LENDING_DEPOSITED_ASSETS:
       return { ...state, depositedAssets: action.payload, isFetchingDepositedAssets: false };
-    case SET_CALCULATING_LENDING_DEPOSIT_TRANSACTION_ESTIMATE:
-      return {
-        ...state,
-        isCalculatingDepositTransactionEstimate: true,
-        depositTransactionEstimate: null,
-      };
-    case SET_LENDING_DEPOSIT_TRANSACTION_ESTIMATE:
-      return {
-        ...state,
-        isCalculatingDepositTransactionEstimate: false,
-        depositTransactionEstimate: action.payload,
-      };
-    case SET_CALCULATING_LENDING_WITHDRAW_TRANSACTION_ESTIMATE:
-      return {
-        ...state,
-        isCalculatingWithdrawTransactionEstimate: true,
-        withdrawTransactionEstimate: null,
-      };
-    case SET_LENDING_WITHDRAW_TRANSACTION_ESTIMATE:
-      return {
-        ...state,
-        isCalculatingWithdrawTransactionEstimate: false,
-        withdrawTransactionEstimate: action.payload,
-      };
     default:
       return state;
   }

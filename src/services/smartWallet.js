@@ -478,7 +478,7 @@ class SmartWallet {
 
   async estimateAccountTransaction(
     transaction: AccountTransaction,
-    assetData?: AssetData,
+    assetData: ?AssetData,
   ): Promise<?EstimatedTransactionFee> {
     const {
       value: rawValue,

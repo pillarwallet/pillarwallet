@@ -62,7 +62,8 @@ export const estimateTransactionAction = (
   recipientAddress: string,
   value: number,
   data: ?string,
-  assetData?: AssetData,
+  assetData: ?AssetData,
+  sequential: ?AccountTransaction[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
@@ -72,6 +73,7 @@ export const estimateTransactionAction = (
     let transaction: AccountTransaction = {
       recipient: recipientAddress,
       value,
+      sequential,
     };
 
     if (assetData?.tokenType === COLLECTIBLES && !data && assetData) {
