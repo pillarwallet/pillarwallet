@@ -33809,7 +33809,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                     "flexDirection": "row",
                     "flexGrow": 4,
                     "flexShrink": 1,
-                    "height": 36,
+                    "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
@@ -33821,12 +33821,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
               }
             >
               <View
-                style={
-                  Object {
-                    "flexDirection": "row",
-                    "flexWrap": "wrap",
-                  }
-                }
+                style={Object {}}
               >
                 <Text
                   centerText={true}
@@ -33849,7 +33844,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontSize": 16,
-                            "lineHeight": 24,
+                            "lineHeight": 20,
                             "textAlign": "center",
                           },
                           Object {},
@@ -34131,7 +34126,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                     "flexDirection": "row",
                     "flexGrow": 4,
                     "flexShrink": 1,
-                    "height": 36,
+                    "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
@@ -34143,12 +34138,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
               }
             >
               <View
-                style={
-                  Object {
-                    "flexDirection": "row",
-                    "flexWrap": "wrap",
-                  }
-                }
+                style={Object {}}
               >
                 <Text
                   centerText={true}
@@ -34171,7 +34161,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontSize": 16,
-                            "lineHeight": 24,
+                            "lineHeight": 20,
                             "textAlign": "center",
                           },
                           Object {},
@@ -34408,7 +34398,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                     "flexDirection": "row",
                     "flexGrow": 4,
                     "flexShrink": 1,
-                    "height": 36,
+                    "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
@@ -34420,12 +34410,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
               }
             >
               <View
-                style={
-                  Object {
-                    "flexDirection": "row",
-                    "flexWrap": "wrap",
-                  }
-                }
+                style={Object {}}
               >
                 <Text
                   centerText={true}
@@ -34448,7 +34433,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontSize": 16,
-                            "lineHeight": 24,
+                            "lineHeight": 20,
                             "textAlign": "center",
                           },
                           Object {},
@@ -34581,7 +34566,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                     "flexDirection": "row",
                     "flexGrow": 4,
                     "flexShrink": 1,
-                    "height": 36,
+                    "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
@@ -34593,12 +34578,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
               }
             >
               <View
-                style={
-                  Object {
-                    "flexDirection": "row",
-                    "flexWrap": "wrap",
-                  }
-                }
+                style={Object {}}
               >
                 <Text
                   centerText={true}
@@ -34621,7 +34601,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontSize": 16,
-                            "lineHeight": 24,
+                            "lineHeight": 20,
                             "textAlign": "center",
                           },
                           Object {},
@@ -34858,7 +34838,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                     "flexDirection": "row",
                     "flexGrow": 4,
                     "flexShrink": 1,
-                    "height": 36,
+                    "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
@@ -34870,12 +34850,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
               }
             >
               <View
-                style={
-                  Object {
-                    "flexDirection": "row",
-                    "flexWrap": "wrap",
-                  }
-                }
+                style={Object {}}
               >
                 <Text
                   centerText={true}
@@ -34898,7 +34873,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontSize": 16,
-                            "lineHeight": 24,
+                            "lineHeight": 20,
                             "textAlign": "center",
                           },
                           Object {},
@@ -35075,7 +35050,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                     "flexDirection": "row",
                     "flexGrow": 4,
                     "flexShrink": 1,
-                    "height": 36,
+                    "height": 40,
                     "justifyContent": "center",
                     "paddingBottom": 0,
                     "paddingLeft": 12,
@@ -35087,12 +35062,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
               }
             >
               <View
-                style={
-                  Object {
-                    "flexDirection": "row",
-                    "flexWrap": "wrap",
-                  }
-                }
+                style={Object {}}
               >
                 <Text
                   centerText={true}
@@ -35115,7 +35085,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                           Object {
                             "color": "#0A1427",
                             "fontSize": 16,
-                            "lineHeight": 24,
+                            "lineHeight": 20,
                             "textAlign": "center",
                           },
                           Object {},
@@ -40427,7 +40397,7 @@ exports[`Storyshots Selector default 1`] = `
                                   "flexDirection": "row",
                                   "flexGrow": 4,
                                   "flexShrink": 1,
-                                  "height": 36,
+                                  "height": 40,
                                   "justifyContent": "center",
                                   "paddingBottom": 0,
                                   "paddingLeft": 12,
@@ -40439,12 +40409,7 @@ exports[`Storyshots Selector default 1`] = `
                             }
                           >
                             <View
-                              style={
-                                Object {
-                                  "flexDirection": "row",
-                                  "flexWrap": "wrap",
-                                }
-                              }
+                              style={Object {}}
                             >
                               <Text
                                 centerText={true}
@@ -40467,7 +40432,7 @@ exports[`Storyshots Selector default 1`] = `
                                         Object {
                                           "color": "#0A1427",
                                           "fontSize": 16,
-                                          "lineHeight": 24,
+                                          "lineHeight": 20,
                                           "textAlign": "center",
                                         },
                                         Object {},
@@ -41520,7 +41485,7 @@ exports[`Storyshots Selector no options 1`] = `
                                   "flexDirection": "row",
                                   "flexGrow": 4,
                                   "flexShrink": 1,
-                                  "height": 36,
+                                  "height": 40,
                                   "justifyContent": "center",
                                   "paddingBottom": 0,
                                   "paddingLeft": 12,
@@ -41532,12 +41497,7 @@ exports[`Storyshots Selector no options 1`] = `
                             }
                           >
                             <View
-                              style={
-                                Object {
-                                  "flexDirection": "row",
-                                  "flexWrap": "wrap",
-                                }
-                              }
+                              style={Object {}}
                             >
                               <Text
                                 centerText={true}
@@ -41560,7 +41520,7 @@ exports[`Storyshots Selector no options 1`] = `
                                         Object {
                                           "color": "#0A1427",
                                           "fontSize": 16,
-                                          "lineHeight": 24,
+                                          "lineHeight": 20,
                                           "textAlign": "center",
                                         },
                                         Object {},
@@ -42345,7 +42305,7 @@ exports[`Storyshots Selector selected option 1`] = `
                                   "flexDirection": "row",
                                   "flexGrow": 4,
                                   "flexShrink": 1,
-                                  "height": 36,
+                                  "height": 40,
                                   "justifyContent": "center",
                                   "paddingBottom": 0,
                                   "paddingLeft": 12,
@@ -42357,12 +42317,7 @@ exports[`Storyshots Selector selected option 1`] = `
                             }
                           >
                             <View
-                              style={
-                                Object {
-                                  "flexDirection": "row",
-                                  "flexWrap": "wrap",
-                                }
-                              }
+                              style={Object {}}
                             >
                               <Text
                                 centerText={true}
@@ -42385,7 +42340,7 @@ exports[`Storyshots Selector selected option 1`] = `
                                         Object {
                                           "color": "#0A1427",
                                           "fontSize": 16,
-                                          "lineHeight": 24,
+                                          "lineHeight": 20,
                                           "textAlign": "center",
                                         },
                                         Object {},
@@ -43438,7 +43393,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                   "flexDirection": "row",
                                   "flexGrow": 4,
                                   "flexShrink": 1,
-                                  "height": 36,
+                                  "height": 40,
                                   "justifyContent": "center",
                                   "paddingBottom": 0,
                                   "paddingLeft": 12,
@@ -43450,12 +43405,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                             }
                           >
                             <View
-                              style={
-                                Object {
-                                  "flexDirection": "row",
-                                  "flexWrap": "wrap",
-                                }
-                              }
+                              style={Object {}}
                             >
                               <Text
                                 centerText={true}
@@ -43478,7 +43428,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
                                         Object {
                                           "color": "#0A1427",
                                           "fontSize": 16,
-                                          "lineHeight": 24,
+                                          "lineHeight": 20,
                                           "textAlign": "center",
                                         },
                                         Object {},
@@ -44531,7 +44481,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                   "flexDirection": "row",
                                   "flexGrow": 4,
                                   "flexShrink": 1,
-                                  "height": 36,
+                                  "height": 40,
                                   "justifyContent": "center",
                                   "paddingBottom": 0,
                                   "paddingLeft": 12,
@@ -44543,12 +44493,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                             }
                           >
                             <View
-                              style={
-                                Object {
-                                  "flexDirection": "row",
-                                  "flexWrap": "wrap",
-                                }
-                              }
+                              style={Object {}}
                             >
                               <Text
                                 centerText={true}
@@ -44571,7 +44516,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
                                         Object {
                                           "color": "#0A1427",
                                           "fontSize": 16,
-                                          "lineHeight": 24,
+                                          "lineHeight": 20,
                                           "textAlign": "center",
                                         },
                                         Object {},
@@ -49224,7 +49169,7 @@ exports[`Storyshots Value Input default 1`] = `
                                   "flexDirection": "row",
                                   "flexGrow": 4,
                                   "flexShrink": 1,
-                                  "height": 36,
+                                  "height": 40,
                                   "justifyContent": "center",
                                   "paddingBottom": 0,
                                   "paddingLeft": 12,
@@ -49863,7 +49808,7 @@ exports[`Storyshots Value Input default 1`] = `
                                 "flexDirection": "row",
                                 "flexGrow": 4,
                                 "flexShrink": 1,
-                                "height": 36,
+                                "height": 40,
                                 "justifyContent": "center",
                                 "paddingBottom": 0,
                                 "paddingLeft": 12,
@@ -49875,12 +49820,7 @@ exports[`Storyshots Value Input default 1`] = `
                           }
                         >
                           <View
-                            style={
-                              Object {
-                                "flexDirection": "row",
-                                "flexWrap": "wrap",
-                              }
-                            }
+                            style={Object {}}
                           >
                             <Text
                               centerText={true}
@@ -49903,7 +49843,7 @@ exports[`Storyshots Value Input default 1`] = `
                                       Object {
                                         "color": "#0A1427",
                                         "fontSize": 16,
-                                        "lineHeight": 24,
+                                        "lineHeight": 20,
                                         "textAlign": "center",
                                       },
                                       Object {},

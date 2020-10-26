@@ -99,7 +99,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  height: 36px;
+  height: 40px;
 `;
 
 const LeftItems = styled.View`
@@ -236,8 +236,6 @@ class HeaderBlock extends React.Component<Props> {
         <View
           style={{
             ...commonStyle,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
             ...itemStyle,
           }}
           key={item.title}

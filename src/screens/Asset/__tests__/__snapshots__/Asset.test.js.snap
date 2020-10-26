@@ -127,7 +127,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "flexGrow": 4,
                   "flexShrink": 1,
-                  "height": 36,
+                  "height": 40,
                   "justifyContent": "center",
                   "paddingBottom": 0,
                   "paddingLeft": 12,
