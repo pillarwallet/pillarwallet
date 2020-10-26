@@ -19,15 +19,17 @@
 */
 
 import * as React from 'react';
-import { ImageBackground, Image } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
+import { Image } from 'react-native';
+import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { fontSizes, fontTrackings } from 'utils/variables';
+import {getColorByTheme, getColorByThemeOutsideStyled, getThemeColors, getThemeType, themedColors} from 'utils/themes';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { getThemeColors, getThemeType, themedColors } from 'utils/themes';
-import { images } from 'utils/images';
+import { Shadow } from 'components/Shadow';
 import type { Theme, ThemeColors } from 'models/Theme';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import {hexToRgba} from 'utils/ui';
 
 
 type Props = {
@@ -44,10 +46,9 @@ type Props = {
 type ButtonIconWrapperProps = {
   disabled?: boolean,
   showIndicator?: boolean,
-  theme: Theme,
+  themeType: string,
   children: React.Node,
 };
-
 
 function getIconColor(colors: ThemeColors, isDisabled?: boolean, themeType: string) {
   if (themeType === DARK_THEME) {
@@ -67,26 +68,10 @@ function getLabelColor(theme: Theme, isDisabled: boolean) {
   return colors.control;
 }
 
-const CircleButtonIconWrapperColors = ['#ffffff', '#f2f4f9'];
-
 const CircleButtonWrapper = styled.TouchableOpacity`
   justify-content: center;
   align-items: center;
-  padding: 8px 4px 0px;
-`;
-
-const ButtonWrapperStyles = `
-  justify-content: center;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-`;
-
-const CircleButtonIconWrapper = styled.View`
-  border-radius: 46px;
-  width: 92px;
-  height: 92px;
-  ${ButtonWrapperStyles}
+  margin: 16px 5%;
 `;
 
 const CircleButtonIcon = styled(Image)`
@@ -103,7 +88,6 @@ const CircleButtonText = styled(BaseText)`
   text-align: center;
   font-size: ${fontSizes.medium}px;
   letter-spacing: ${fontTrackings.tiny}px;
-  margin-top: -6px;
 `;
 
 const Indicator = styled.View`
@@ -116,30 +100,83 @@ const Indicator = styled.View`
   right: ${({ rightPos }) => rightPos}px;
 `;
 
+const BUTTON_SIZE = 64;
+
+const ButtonWrapper = styled.View`
+  position: relative;
+`;
+
+const ButtonBackgroundHolder = styled.View`
+  position: absolute;
+  width: ${BUTTON_SIZE}px;
+  height: ${BUTTON_SIZE}px;
+  align-items: center;
+  justify-content: center;
+`;
+
+const Border = styled.View`
+  position: absolute;
+  width: ${BUTTON_SIZE - 1}px;
+  height: ${BUTTON_SIZE - 1}px;
+  align-items: center;
+  justify-content: center;
+  border: ${({ borderColor }) => `0.5px solid ${borderColor}`};
+  border-radius: ${(BUTTON_SIZE - 1) / 2}px;
+`;
+
+const ButtonBackground = styled(Svg)`
+  position: absolute;
+  width: ${BUTTON_SIZE}px;
+  height: ${BUTTON_SIZE}px;
+  align-items: center;
+  justify-content: center;
+`;
 
 const ButtonIconWrapper = (props: ButtonIconWrapperProps) => {
   const {
     disabled,
     showIndicator,
-    theme,
     children,
+    themeType,
   } = props;
-  const { actionButtonBackground, actionButtonBackgroundDisabled } = images(theme);
 
-  const buttonBackground = disabled ? actionButtonBackgroundDisabled : actionButtonBackground;
+  const gradientFirstColor = getColorByThemeOutsideStyled(themeType, {
+    lightKey: 'basic070',
+    darkCustom: '#4c4c4c',
+  });
+  const gradientSecondColor = getColorByThemeOutsideStyled(themeType, {
+    lightCustom: '#f2f4f9',
+    darkCustom: '#242525',
+  });
+
   return (
-    <ImageBackground
-      source={buttonBackground}
-      style={{ width: 92, height: 92 }}
-    >
-      <CircleButtonIconWrapper
-        disabled={disabled}
-        colors={CircleButtonIconWrapperColors}
+    <ButtonWrapper>
+      <Shadow
+        useSVGShadow
+        widthIOS={BUTTON_SIZE}
+        heightIOS={BUTTON_SIZE}
+        shadowRadius={BUTTON_SIZE / 2}
+        wrapperStyle={{ margin: 4, marginBottom: 12 }}
+        shadowOffsetY={4}
+        shadowOpacity={!disabled && themeType !== DARK_THEME ? 0.05 : '0'}
+        shadowColoriOS="#07007a"
       >
-        {children}
-        {showIndicator && <Indicator topPos={17} rightPos={17} />}
-      </CircleButtonIconWrapper>
-    </ImageBackground>
+        <ButtonBackgroundHolder>
+          <ButtonBackground width={BUTTON_SIZE} height={BUTTON_SIZE} viewBox={`0 0 ${BUTTON_SIZE} ${BUTTON_SIZE}`}>
+            <Defs>
+              <LinearGradient id="grad" x1="0" y1="0" x2="0" y2="1">
+                <Stop offset="0" stopColor={gradientFirstColor} stopOpacity="1" />
+                <Stop offset="1" stopColor={gradientSecondColor} stopOpacity="1" />
+              </LinearGradient>
+            </Defs>
+            <Circle cx={BUTTON_SIZE / 2} cy={BUTTON_SIZE / 2} r={BUTTON_SIZE / 2} fill="url(#grad)" />
+          </ButtonBackground>
+          <Border borderColor={hexToRgba(gradientFirstColor, themeType === DARK_THEME ? 0.3 : 1)} />
+          {children}
+        </ButtonBackgroundHolder>
+      </Shadow>
+      {showIndicator && <Indicator topPos={7} rightPos={7} />}
+    </ButtonWrapper>
   );
 };
 
@@ -163,7 +200,7 @@ const CircleButton = (props: Props) => {
       disabled={disabled}
       onPress={() => onPress()}
     >
-      <ButtonIconWrapper {...props}>
+      <ButtonIconWrapper {...props} themeType={themeType}>
         {!!icon &&
         <CircleButtonIcon
           disabled={disabled}

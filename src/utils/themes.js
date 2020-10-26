@@ -283,7 +283,10 @@ export function getThemeName(currentTheme: Theme = defaultTheme) {
   return currentTheme.current.replace('Theme', '');
 }
 
-export const getColorByTheme = (props: ColorsByThemeProps) => {
+// in case there's no color by the key
+const FALLBACK_COLOR = '#808080';
+
+const generateColorsByTheme = (props: ColorsByThemeProps) => {
   const {
     lightKey,
     darkKey,
@@ -291,11 +294,17 @@ export const getColorByTheme = (props: ColorsByThemeProps) => {
     darkCustom,
   } = props;
 
-  // in case there's no color by the key
-  const FALLBACK_COLOR = '#808080';
-
-  return theme('current', {
+  return ({
     lightTheme: lightCustom || (lightKey && lightThemeColors[lightKey] ? lightThemeColors[lightKey] : FALLBACK_COLOR),
     darkTheme: darkCustom || (darkKey && darkThemeColors[darkKey] ? darkThemeColors[darkKey] : FALLBACK_COLOR),
   });
+};
+
+export const getColorByTheme = (props: ColorsByThemeProps) => {
+  return theme('current', generateColorsByTheme(props));
+};
+
+export const getColorByThemeOutsideStyled = (currentTheme: string, colorsProps: ColorsByThemeProps) => {
+  const colors = generateColorsByTheme(colorsProps);
+  return currentTheme && colors[currentTheme] ? colors[currentTheme] : FALLBACK_COLOR;
 };

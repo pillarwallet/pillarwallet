@@ -41,7 +41,7 @@ type Props = {
   shadowBorder?: number,
   marginVertical?: number,
   useSVGShadow?: boolean,
-  shadowOpacity?: number,
+  shadowOpacity?: number | string,
   wrapperStyle?: Object,
 };
 
