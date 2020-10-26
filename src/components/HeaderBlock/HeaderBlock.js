@@ -289,7 +289,6 @@ class HeaderBlock extends React.Component<Props> {
         <TextButton
           onPress={item.onPress}
           key={item.link}
-          withBackground={item.withBackground}
           style={{ ...commonStyle, ...itemStyle }}
         >
           <ButtonLabel maxFontSizeMultiplier={1.1}>{item.link}</ButtonLabel>

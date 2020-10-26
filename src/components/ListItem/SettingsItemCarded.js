@@ -37,9 +37,9 @@ type Props = {
   title: string,
   subtitle?: ?string,
   onPress?: () => void,
-  isActive?: boolean, //
+  isActive?: boolean,
   theme: Theme,
-  isLoading: boolean, //
+  isLoading: boolean,
 }
 
 const ItemWrapper = styled.View`
