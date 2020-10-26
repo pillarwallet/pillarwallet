@@ -46,7 +46,7 @@ const SearchBarWrapper = styled.View`
   width: 100%;
   position: relative;
   z-index: 101;
-  background-color: ${({ isFocused, theme }) => isFocused ? theme.colors.card : 'transparent'};
+  background-color: ${({ isFocused, theme }) => isFocused ? theme.colors.basic070 : 'transparent'};
 `;
 
 const MIN_QUERY_LENGTH = 2;

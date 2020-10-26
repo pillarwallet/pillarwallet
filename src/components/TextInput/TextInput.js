@@ -31,8 +31,6 @@ import { CachedImage } from 'react-native-cached-image';
 import get from 'lodash.get';
 import t from 'translations/translate';
 
-import { DARK_THEME } from 'constants/appSettingsConstants';
-
 import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
@@ -44,7 +42,7 @@ import SelectorOptions from 'components/SelectorOptions';
 import Tooltip from 'components/Tooltip';
 
 import { fontSizes, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
 import { images } from 'utils/images';
 import { resolveAssetSource, getFontFamily, getLineHeight, getFontSize } from 'utils/textInput';
@@ -97,7 +95,7 @@ type EventLike = {
 };
 
 const InputField = styled(Input)`
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${({ smallPadding }) => `padding: 0 ${smallPadding ? 6 : 14}px`};
   align-self: stretch;
   margin: 0;
@@ -124,11 +122,11 @@ const Item = styled(NBItem)`
 const InputBorder = styled.View`
   border-radius: 4px;
   border: 1px;
-  border-color: ${({ error, theme }) => error ? theme.colors.negative : 'transparent'};
+  border-color: ${({ error, theme }) => error ? theme.colors.secondaryAccent240 : 'transparent'};
 `;
 
 const ItemHolder = styled.View`
-  background-color: ${themedColors.tertiary};
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   position: relative;
   border-radius: 4px;
 `;
@@ -154,17 +152,18 @@ const Image = styled(CachedImage)`
   height: 24px;
   width: 24px;
   resize-mode: contain;
-  ${({ source, theme }) => !source && `tint-color: ${theme.colors.text};`}
+  ${({ source, theme }) => !source && `tint-color: ${theme.colors.basic010};`}
+ 
 `;
 
 const AddonRegularText = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   flex-wrap: wrap;
 `;
 
 const AddonIcon = styled(Icon)`
   font-size: 16px;
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   margin-right: 9;
 `;
 
@@ -175,12 +174,10 @@ const Selector = styled.TouchableOpacity`
   align-items: center;
   padding-left: 16px;
   padding-right: ${({ paddingRight }) => paddingRight || 10}px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-top-left-radius: 4px;
   border-bottom-left-radius: 4px;
-  border: 1px solid ${({ theme: { current, colors } }) => {
-    return current === DARK_THEME ? colors.tertiary : colors.secondaryAccent;
-  }};
+  border: 1px solid ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })};
   ${({ fullWidth }) => fullWidth && `
     flex: 1;
     border-radius: 4px;
@@ -204,13 +201,13 @@ const PlaceholderRight = styled(MediumText)`
 
 const SelectorValue = styled(MediumText)`
   ${fontStyles.big};
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   margin-left: 8px;
 `;
 
 const SelectorChevron = styled(Icon)`
   font-size: 16px;
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.basic020};
   margin-left: 15px;
 `;
 
@@ -523,7 +520,7 @@ class TextInput extends React.Component<Props, State> {
       textAlignVertical: multiline ? 'top' : 'center', // eslint-disable-line i18next/no-literal-string
       height: inputHeight,
       flex: 1,
-      color: hasError ? colors.negative : colors.text,
+      color: hasError ? colors.secondaryAccent240 : colors.basic010,
     };
 
     return (
@@ -579,9 +576,14 @@ class TextInput extends React.Component<Props, State> {
                         onSubmitEditing={this.handleSubmit}
                         value={textInputValue}
                         autoCorrect={autoCorrect}
-                        style={[defaultInputStyle, customStyle, additionalStyle, !editable && { color: colors.accent }]}
+                        style={[
+                          defaultInputStyle,
+                          customStyle,
+                          additionalStyle,
+                          !editable && { color: colors.basic010 },
+                        ]}
                         onLayout={onLayout}
-                        placeholderTextColor={colors.text}
+                        placeholderTextColor={colors.basic030}
                         alignTextOnRight={!!numeric}
                         smallPadding={!!onRightAddonPress}
                       />
@@ -593,8 +595,11 @@ class TextInput extends React.Component<Props, State> {
               {showRightAddon &&
               <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
                 {!!rightPlaceholder &&
-                  <PlaceholderRight color={colors.accent} addMargin={!!iconProps}>{rightPlaceholder}</PlaceholderRight>}
-                {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
+                  <PlaceholderRight color={colors.basic030} addMargin={!!iconProps}>
+                    {rightPlaceholder}
+                  </PlaceholderRight>
+                }
+                {!!iconProps && <IconButton color={colors.basic000} {...iconProps} />}
                 {!!loading && <Spinner width={30} height={30} />}
               </RightSideWrapper>}
               {!!buttonProps &&

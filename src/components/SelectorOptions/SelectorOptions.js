@@ -85,6 +85,7 @@ type State = {
 
 
 const DIAMETER = 64;
+const ITEM_SPACING = 13;
 
 const OptionsHeader = styled(MediumText)`
   margin: ${spacing.large}px ${spacing.layoutSides}px 0;
@@ -93,15 +94,13 @@ const OptionsHeader = styled(MediumText)`
 `;
 
 const HorizontalOptions = styled.View`
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${themedColors.border};
-  padding-bottom: ${spacing.small}px;
+  margin-bottom: ${spacing.small}px;
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
-  width: 90px;
+  width: ${DIAMETER + (ITEM_SPACING * 2)}px;
   padding-top: ${spacing.medium}px;
 `;
 
@@ -237,7 +236,7 @@ class SelectorOptions extends React.Component<Props, State> {
             keyboardShouldPersistTaps="always"
             renderItem={this.renderHorizontalOption}
             horizontal
-            contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+            contentContainerStyle={{ paddingHorizontal: 7, paddingVertical: spacing.medium }}
             ItemSeparatorComponent={() => <View style={{ width: 2, height: 1 }} />}
           />
         </HorizontalOptions>
@@ -443,6 +442,7 @@ class SelectorOptions extends React.Component<Props, State> {
         noSwipeToDismiss
         noClose
         backgroundColor={colors.card}
+        noTopPadding
       >
         <ContainerWithHeader
           headerProps={{
