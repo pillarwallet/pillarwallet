@@ -19,49 +19,34 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import styled from 'styled-components/native';
-import ActionModal from './ActionModal';
+
+import ProfileImage from './ProfileImage';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
-const items = [
-  {
-    label: 'First item',
-    chevron: true,
-    key: 'first',
-  },
-  {
-    label: 'Second item',
-    money: '123$',
-    key: 'second',
-  },
-];
+const userImage = 'https://picsum.photos/200';
+const usdcIcon = require('assets/images/usdc_color.png');
 
-
-const Wrapper = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  padding: 0 16px;
-  background-color: #dedede;
-`;
-
-const ModalWrapper = styled.View`
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.basic070};
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-`;
-
-const ModalWrapperDecorator = (story: () => void) => {
-  return (
-    <Wrapper>
-      <ModalWrapper>{story()}</ModalWrapper>
-    </Wrapper>
-  );
-};
-
-storiesOf('ActionModal', module)
-  .addDecorator(ModalWrapperDecorator)
+storiesOf('ProfileImage', module)
+  .addDecorator(CenterViewDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ActionModal items={items} isVisible onModalClose={() => {}} storybook />
+    <ProfileImage userName="Username" uri={userImage} />
+  ))
+  .add('with border', () => (
+    <ProfileImage userName="Username" uri={userImage} borderWidth={2} />
+  ))
+  .add('with addon image', () => (
+    <ProfileImage
+      userName="Username"
+      uri={userImage}
+      cornerIcon={usdcIcon}
+      cornerIconSize={16}
+    />
+  ))
+  .add('just initials', () => (
+    <ProfileImage userName="Username" />
+  ))
+  .add('custom diameter', () => (
+    <ProfileImage userName="Username" diameter={64} initialsSize={26} />
   ));

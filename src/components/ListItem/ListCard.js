@@ -25,7 +25,6 @@ import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
-import { themedColors } from 'utils/themes';
 import { LabelBadge } from 'components/LabelBadge';
 
 type Props = {
@@ -57,7 +56,7 @@ const CardImage = styled(CachedImage)`
   width: 60px;
   height: 60px;
   border-radius: 30px;
-  background-color: ${themedColors.secondaryAccent};
+  background-color: ${({ theme }) => theme.colors.basic080};
   margin-right: 20px;
 `;
 
@@ -69,8 +68,9 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.big};
+  flex: 1;
 `;
 
 const CardSubtitleView = styled.View`
@@ -78,7 +78,7 @@ const CardSubtitleView = styled.View`
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.regular};
   padding-right: 25%;
 `;
@@ -86,7 +86,7 @@ const CardSubtitle = styled(BaseText)`
 const TitleWithImagesWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.big};
 `;
 
@@ -102,8 +102,12 @@ const TitleWrapper = styled.View`
   flex-wrap: wrap;
 `;
 
+const LabelWrapper = styled.View`
+  padding-left: 10px;
+`;
+
 const Label = styled(BaseText)`
-  color: ${themedColors.link};
+  color: ${({ theme }) => theme.colors.basic000};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
@@ -143,11 +147,10 @@ export const ListCard = (props: Props) => {
 
   return (
     <ShadowedCard
-      wrapperStyle={{ marginBottom: 16, width: '100%' }}
+      wrapperStyle={{ marginBottom: 8, width: '100%' }}
       contentWrapperStyle={{ ...wrapperStyle, ...contentWrapperStyle }}
       onPress={action}
       disabled={disabled}
-      noShadow
     >
       <CardRow>
         {(!!iconSource || !!fallbackIcon) && <CardImage source={iconSource} fallbackSource={fallbackIcon} />}
@@ -155,14 +158,17 @@ export const ListCard = (props: Props) => {
         <CardContent>
           <TitleWrapper>
             {getTitle()}
-            {!!label && <Label>{label}</Label>}
-            {!!labelBadge && (
-              <LabelBadge
-                label={labelBadge.label}
-                labelStyle={{ fontSize: fontSizes.regular }}
-                color={labelBadge.color}
-              />
-            )}
+            {(!!label || !!labelBadge) &&
+            <LabelWrapper>
+              {!!label && <Label>{label}</Label>}
+              {!!labelBadge && (
+                <LabelBadge
+                  label={labelBadge.label}
+                  labelStyle={{ fontSize: fontSizes.regular }}
+                  color={labelBadge.color}
+                />
+              )}
+            </LabelWrapper>}
           </TitleWrapper>
           {!!subtitle && (
             <CardSubtitleView>

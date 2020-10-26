@@ -20,37 +20,32 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import styled from 'styled-components/native';
+
 import Button from 'components/Button';
 import Tooltip from 'components/Tooltip';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 const longText = 'Magna culpa aliquip nisi in eu Lorem reprehenderit laborum ' +
   'duis. In exercitation exercitation ex irure. Lorem non nostrud laboris ' +
   'consectetur culpa aliquip sunt pariatur velit cillum magna dolor.';
 
-const Wrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  flex: 1;
-`;
-
 const TooltipTester = ({ tooltipProps }) => {
   const [isVisible, setIsVisible] = React.useState(false);
 
   return (
-    <Wrapper>
-      <Tooltip
-        {...tooltipProps}
-        isVisible={isVisible}
-      >
-        <Button title="Press me!" onPress={() => setIsVisible(!isVisible)} block={false} />
-      </Tooltip>
-    </Wrapper>
+    <Tooltip
+      {...tooltipProps}
+      isVisible={isVisible}
+    >
+      <Button title="Press me!" onPress={() => setIsVisible(!isVisible)} block={false} />
+    </Tooltip>
   );
 };
 
 storiesOf('Tooltip', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
   .add('short', () => (
     <TooltipTester tooltipProps={{
           body: "I'm a tooltip",

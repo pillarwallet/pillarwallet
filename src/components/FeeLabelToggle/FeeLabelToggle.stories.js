@@ -20,33 +20,32 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import CenterView from '../../../storybook/CenterView';
 
 import FeeLabelToggle from './FeeLabelToggle';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
 storiesOf('FeeLabelToggle', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <CenterView>
-      <FeeLabelToggle
-        txFeeInWei="10000000000000000000"
-        gasToken={{
-          address: '0x0',
-          decimals: 18,
-          symbol: 'ETH',
-        }}
-      />
-    </CenterView>
+    <FeeLabelToggle
+      txFeeInWei="10000000000000000000"
+      gasToken={{
+        address: '0x0',
+        decimals: 18,
+        symbol: 'ETH',
+      }}
+    />
   ))
   .add('not enough token', () => (
-    <CenterView>
-      <FeeLabelToggle
-        txFeeInWei="10000000000000000000"
-        gasToken={{
-          address: '0x0',
-          decimals: 18,
-          symbol: 'ETH',
-        }}
-        notEnoughToken
-      />
-    </CenterView>
+    <FeeLabelToggle
+      txFeeInWei="10000000000000000000"
+      gasToken={{
+        address: '0x0',
+        decimals: 18,
+        symbol: 'ETH',
+      }}
+      notEnoughToken
+    />
   ));

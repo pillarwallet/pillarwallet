@@ -68,8 +68,6 @@ const ProfileImageModal = ({
           uri={profileImageUri}
           userName={username}
           diameter={64}
-          borderWidth={0}
-          noShadow
         />
         <Spacing h={26} />
         <Button

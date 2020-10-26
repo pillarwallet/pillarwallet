@@ -164,8 +164,6 @@ const ContactsList = ({
               userName={contactToDelete?.name}
               initialsSize={36}
               diameter={64}
-              noShadow
-              borderWidth={0}
             />
             <BaseText
               style={{ padding: spacing.large }}

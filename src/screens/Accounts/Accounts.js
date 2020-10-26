@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import styled, { withTheme } from 'styled-components/native';
+import { withTheme } from 'styled-components/native';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // components
@@ -103,11 +102,6 @@ type Props = {|
   keyBasedWalletHasPositiveBalance: boolean,
 |};
 
-const IconImage = styled(CachedImage)`
-  height: 52px;
-  width: 52px;
-`;
-
 const AccountsScreen = ({
   fetchAllAccountsBalances,
   setActiveBlockchainNetwork,
@@ -165,15 +159,15 @@ const AccountsScreen = ({
 
     return (
       <SettingsItemCarded
-        isSwitching={id === switchingToWalletId}
+        isLoading={id === switchingToWalletId}
         title={title}
         subtitle={balance}
-        onMainPress={() => {
+        onPress={() => {
           setSwitchingToWalletId(id);
           mainAction();
         }}
         isActive={isActive}
-        customIcon={<IconImage source={iconSource} />}
+        iconSource={iconSource}
       />
     );
   };

@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { Dimensions } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
@@ -28,46 +27,31 @@ import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { responsiveSize } from 'utils/ui';
-import { noop } from 'utils/common';
 import type { Theme } from 'models/Theme';
 
 type Props = {
-  icon?: string,
+  iconSource?: string,
   fallbackIcon?: string,
   title: string,
   subtitle?: ?string,
-  action?: Function,
-  note?: Object,
-  titleStyle?: Object,
-  label?: string,
-  contentWrapperStyle?: Object,
-  onMainPress?: ?Function,
-  onSettingsPress?: ?Function,
+  onPress?: () => void,
   isActive?: boolean,
-  customIcon?: React.Node,
-  settingsIcon?: string,
-  settingsLabel?: string,
-  isLoading?: boolean,
-  onSettingsLoadingPress?: Function,
-  settingsIconSource?: string,
-  sidePaddingsForWidth?: number,
   theme: Theme,
-  iconStyle?: Object,
-  isSwitching: boolean,
+  isLoading: boolean,
 }
 
 const ItemWrapper = styled.View`
-   flex-direction: row;
-   margin-bottom: ${spacing.medium}px;
-   align-items: stretch;
+  flex-direction: row;
+  margin-bottom: ${spacing.medium}px;
+  align-items: stretch;
 `;
 
 const CardRow = styled.View`
-   flex-direction: row;
-   width: 100%;
-   align-items: center;
+  flex-direction: row;
+  width: 100%;
+  align-items: center;
 `;
 
 const CardContent = styled.View`
@@ -78,25 +62,20 @@ const CardContent = styled.View`
 `;
 
 const CardTitle = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   font-size: ${fontSizes.big}px;
   line-height: 24px;
 `;
 
 const CardSubtitle = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.medium};
 `;
 
 const CheckIcon = styled(Icon)`
   font-size: ${fontSizes.rSmall}px;
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.basic000};
   align-self: flex-start;
-`;
-
-const SettingsIcon = styled(Icon)`
-  font-size: ${fontSizes.big}px;
-  color: ${themedColors.primary};
 `;
 
 const IconWrapper = styled.View`
@@ -110,19 +89,6 @@ const CardImage = styled(CachedImage)`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;
-  background-color: ${themedColors.secondaryAccent};
-`;
-const SettingsLabel = styled(MediumText)`
-  ${fontStyles.rRegular};
-  color: ${themedColors.primary};
-  margin-top: 4px;
-`;
-
-const ButtonIcon = styled(CachedImage)`
-  height: 24px;
-  width: 24px;
-  justify-content: center;
-  display: flex;
 `;
 
 export const LoadingSpinner = styled(Spinner)`
@@ -131,67 +97,27 @@ export const LoadingSpinner = styled(Spinner)`
   justify-content: center;
 `;
 
-const { width: screenWidth } = Dimensions.get('window');
-
-const defaultSettingsIcon = require('assets/icons/icon_settings.png');
-
-const SettingsIconComponent = (props) => {
-  const { settingsIconSource, settingsIcon, style } = props;
-  if (settingsIcon) {
-    return (
-      <SettingsIcon name={settingsIcon} style={style} />
-    );
-  }
-
-  return (
-    <ButtonIcon
-      source={settingsIconSource || defaultSettingsIcon}
-      resizeMode="contain"
-      resizeMethod="resize"
-      style={style}
-    />
-  );
-};
-
 const SettingsItemCarded = (props: Props) => {
   const {
     title,
     subtitle,
-    onMainPress,
-    onSettingsPress,
-    onSettingsLoadingPress,
+    onPress,
     isActive,
-    customIcon,
-    icon,
+    iconSource,
     fallbackIcon,
-    settingsIconSource,
-    settingsIcon,
-    settingsLabel,
-    isLoading,
-    sidePaddingsForWidth,
     theme,
-    iconStyle,
+    isLoading,
   } = props;
 
   const colors = getThemeColors(theme);
   const buttonSideLength = responsiveSize(84);
-  const settingsActionOnLoading = onSettingsLoadingPress || noop;
-  const settingsAction = isLoading ? settingsActionOnLoading : onSettingsPress;
-  const cardsSpacing = 8;
-  const additionalWrapperStyle = {};
-  if (sidePaddingsForWidth) {
-    additionalWrapperStyle.width = screenWidth - sidePaddingsForWidth - buttonSideLength - cardsSpacing;
-  }
 
-  const showIcon = !!icon || !!fallbackIcon || !!customIcon;
+  const showIcon = !!iconSource || !!fallbackIcon;
 
   return (
     <ItemWrapper>
       <ShadowedCard
-        wrapperStyle={{
-          flexGrow: 1,
-          ...additionalWrapperStyle,
-        }}
+        wrapperStyle={{ flexGrow: 1 }}
         contentWrapperStyle={{
           paddingVertical: 6,
           paddingHorizontal: responsiveSize(16),
@@ -199,65 +125,24 @@ const SettingsItemCarded = (props: Props) => {
           justifyContent: 'center',
           flexWrap: 'wrap',
           borderWidth: 2,
-          borderColor: isActive ? colors.primary : 'transparent',
+          borderColor: isActive ? colors.basic000 : 'transparent',
           borderRadius: 6,
         }}
-        onPress={onMainPress}
+        onPress={onPress}
       >
         <CardRow>
           {showIcon &&
           <IconWrapper>
-            {(!!icon || !!fallbackIcon) && <CardImage source={{ uri: icon }} fallbackSource={fallbackIcon} />}
-            {customIcon}
+            <CardImage source={iconSource} fallbackSource={fallbackIcon} />
           </IconWrapper>}
           <CardContent>
             <CardTitle>{title}</CardTitle>
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>
-          {isActive && !props.isSwitching && <CheckIcon name="check" />}
-          {props.isSwitching && <LoadingSpinner size={fontSizes.large} trackWith={2} />}
+          {isActive && !isLoading && <CheckIcon name="check" />}
+          {isLoading && <LoadingSpinner size={fontSizes.large} trackWith={2} />}
         </CardRow>
       </ShadowedCard>
-      {!!onSettingsPress &&
-      <ShadowedCard
-        wrapperStyle={{
-          width: buttonSideLength,
-          marginLeft: cardsSpacing,
-          flexDirection: 'column',
-          height: '100%',
-        }}
-        contentWrapperStyle={{
-          padding: spacing.small,
-          alignItems: 'center',
-          justifyContent: 'center',
-          alignSelf: 'stretch',
-          height: '100%',
-        }}
-        upperContentWrapperStyle={{
-          alignItems: 'center',
-          justifyContent: 'center',
-          flex: 1,
-        }}
-        onPress={settingsAction}
-      >
-        {!!isLoading && <LoadingSpinner />}
-        {!isLoading &&
-        <React.Fragment>
-          <SettingsIconComponent
-            settingsIconSource={settingsIconSource}
-            settingsIcon={settingsIcon}
-            style={iconStyle}
-          />
-          {!!settingsLabel &&
-          <SettingsLabel
-            numberOfLines={1}
-            ellipsizeMode="tail"
-          >
-            {settingsLabel}
-          </SettingsLabel>
-          }
-        </React.Fragment>}
-      </ShadowedCard>}
     </ItemWrapper>
   );
 };

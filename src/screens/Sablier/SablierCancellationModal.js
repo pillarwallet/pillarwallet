@@ -91,8 +91,6 @@ const SablierCancellationModal = ({
         <ProfileImage
           userName={username}
           diameter={64}
-          noShadow
-          borderWidth={0}
           cornerIcon={sablierLogo}
         />
         <Spacing h={32} />

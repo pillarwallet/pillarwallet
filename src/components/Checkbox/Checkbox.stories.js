@@ -17,33 +17,61 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
 import * as React from 'react';
 import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
-import CircleButton from 'components/CircleButton';
-import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-const Decorator = (story) => (
+import Checkbox from './Checkbox';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+
+const CheckboxesWrapper = (story) => (
   <View style={{
-    padding: 20,
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingTop: '20%',
+    paddingBottom: '20%',
   }}
   >
     {story()}
   </View>
 );
 
-storiesOf('CircleButton', module)
-  .addDecorator(Decorator)
+const CHECKBOX_TEXT = 'Checkbox text that takes up at least two lines';
+
+storiesOf('Checkbox', module)
+  .addDecorator(CheckboxesWrapper)
+  .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
   .add('all cases', () => (
     <>
-      <CircleButton fontIcon="paperPlane" onPress={() => {}} label="Default" />
-      <CircleButton fontIcon="paperPlane" onPress={() => {}} label="Disabled" disabled />
-      <CircleButton fontIcon="paperPlane" onPress={() => {}} label="With indicator" showIndicator />
+      <Checkbox>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox checked>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded checked>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+    </>
+  ))
+  .add('all cases light', () => (
+    <>
+      <Checkbox lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox checked lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
+      <Checkbox rounded checked lightText small>
+        {CHECKBOX_TEXT}
+      </Checkbox>
     </>
   ));

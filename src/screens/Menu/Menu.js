@@ -19,7 +19,7 @@
 */
 
 import React, { useState } from 'react';
-import { FlatList, Alert, View } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -31,12 +31,11 @@ import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
 import { getThemeColors, themedColors } from 'utils/themes';
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { images } from 'utils/images';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SettingsListItem from 'components/ListItem/SettingsItem';
 import { ListCard } from 'components/ListItem/ListCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -86,6 +85,12 @@ type Props = {
   hasKeyBasedAssetsTransferInProgress: boolean,
   keyBasedWalletHasPositiveBalance: boolean,
 };
+
+type IconProps = {
+  emoji?: string,
+  icon?: string,
+  iconColor?: string,
+}
 
 const Footer = styled.View``;
 
@@ -139,12 +144,28 @@ const LockScreenTextLink = styled(TextLink)`
   ${fontStyles.regular};
 `;
 
+const IconWrapper = styled.View`
+  margin-right: 10px;
+`;
+
+const ItemIcon = styled(Icon)`
+  color: ${({ color }) => color || themedColors.accent};
+  font-size: ${fontSizes.big}px;
+`;
+
+
 const MODAL = {
   PRIVACY_POLICY: 'privacyPolicy',
   SERVICES: 'termsOfService',
 };
 
 const SEPARATOR_SYMBOL = '  •  ';
+
+const CustomIcon = ({ emoji, icon, iconColor }: IconProps) => {
+  if (emoji) return (<IconWrapper><Emoji name={emoji} /></IconWrapper>);
+  if (icon) return (<IconWrapper><ItemIcon name={icon} color={iconColor} /></IconWrapper>);
+  return null;
+};
 
 const Menu = ({
   theme,
@@ -175,28 +196,24 @@ const Menu = ({
       key: 'appSettings',
       title: t('settingsContent.settingsItem.appSettings.title'),
       emoji: 'gear',
-      card: true,
       action: () => navigation.navigate(APP_SETTINGS),
     },
     {
       key: 'userProfile',
       title: t('settingsContent.settingsItem.userProfile.title'),
       emoji: 'male-singer',
-      card: true,
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
-      card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
     },
     {
       key: 'walletSettings',
       title: t('settingsContent.settingsItem.walletSettings.title'),
       emoji: 'moneybag',
-      card: true,
       action: () => navigation.navigate(WALLET_SETTINGS),
       labelBadge: !isBackedUp && {
         label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
@@ -260,10 +277,6 @@ const Menu = ({
       title,
       action,
       labelBadge,
-      card,
-      emoji,
-      icon,
-      iconColor,
       hidden,
     } = item;
 
@@ -271,25 +284,13 @@ const Menu = ({
       return null;
     }
 
-    if (card) {
-      return (
-        <ListCard
-          title={title}
-          action={action}
-          labelBadge={labelBadge}
-          contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
-          customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
-        />
-      );
-    }
-
     return (
-      <SettingsListItem
-        label={title}
-        onPress={action}
+      <ListCard
+        title={title}
+        action={action}
         labelBadge={labelBadge}
-        icon={icon}
-        iconColor={iconColor}
+        contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
+        customIcon={<CustomIcon {...item} />}
       />
     );
   };

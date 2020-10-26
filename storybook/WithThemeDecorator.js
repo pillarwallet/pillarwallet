@@ -51,7 +51,7 @@ const StoryWrapper = ({ themeType, children, setAppTheme }: Props) => {
           {children}
         </Container>
       </ThemeProvider>
-      {!!getEnv().SHOW_THEME_TOGGLE && <Button
+      {!!getEnv().SHOW_THEME_TOGGLE_IN_STORYBOOK && <Button
         title={`THEME: ${current}`} // eslint-disable-line i18next/no-literal-string
         onPress={() => setAppTheme(themeToChangeTo)}
       />}

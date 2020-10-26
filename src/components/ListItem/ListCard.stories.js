@@ -17,33 +17,51 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import InsightWithButton from './InsightWithButton';
+import Emoji from 'react-native-emoji';
+
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import { ListCard } from './ListCard';
 
-const itemsList = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-];
+const TITLE = 'Long list title to check layout on edge cases';
 
-storiesOf('InsightWithButton', module)
+storiesOf('ListCard', module)
   .addDecorator(CenterViewStretchDecorator)
   .addDecorator(WithThemeDecorator)
-  .add('with list', () => (
-    <InsightWithButton
-      title="Some short title"
-      itemsList={itemsList}
-      buttonTitle="Wow, press me!"
-      onButtonPress={() => {}}
+  .add('default', () => (
+    <ListCard title="List title" />
+  ))
+  .add('with custom icon', () => (
+    <ListCard
+      title={TITLE}
+      customIcon={<Emoji name="gear" style={{ marginRight: 10 }} />}
     />
   ))
-  .add('without list', () => (
-    <InsightWithButton
-      buttonTitle="Wow, press me!"
-      description={itemsList[0]}
-      buttonProps={{ primarySecond: true }}
-      onButtonPress={() => {}}
+  .add('with label', () => (
+    <ListCard
+      title={TITLE}
+      labelBadge={{ label: 'label badge' }}
+    />
+  ))
+  .add('with labelText', () => (
+    <ListCard
+      title={TITLE}
+      label="label text"
+    />
+  ))
+  .add('with note', () => (
+    <ListCard
+      title={TITLE}
+      note={{ note: 'Note text that takes up at least two lines' }}
+    />
+  ))
+  .add('with subtitle', () => (
+    <ListCard
+      title={TITLE}
+      subtitle="Longer subtitle text to check how lines wrap"
+      label="Label text"
     />
   ));

@@ -17,13 +17,31 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import styled from 'styled-components/native';
+import * as React from 'react';
+import { storiesOf } from '@storybook/react-native';
 
-const CenterView = styled.View`
-  flex: 1;
-  justify-content: center;
-  align-items: center;
-  margin: 20px;
-`;
+import Banner from './Banner';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-export default CenterView;
+const referralImage = require('assets/images/referral_gift.png');
+
+storiesOf('Banner', module)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
+    <Banner bannerText="Banner text that takes up at least two lines" isVisible />
+  ))
+  .add('with image', () => (
+    <Banner
+      bannerText="Banner text that takes up at least two lines"
+      isVisible
+      imageProps={{
+        style: {
+          width: 96,
+          height: 60,
+          marginRight: -4,
+          marginTop: 15,
+        },
+        source: referralImage,
+      }}
+    />
+  ));

@@ -17,51 +17,37 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
-import ActionModal from './ActionModal';
+
+import { spacing } from 'utils/variables';
+import { BaseText } from 'components/Typography';
+
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import { ListItemChevron } from './ListItemChevron';
 
-const items = [
-  {
-    label: 'First item',
-    chevron: true,
-    key: 'first',
-  },
-  {
-    label: 'Second item',
-    money: '123$',
-    key: 'second',
-  },
-];
-
-
-const Wrapper = styled.View`
-  flex: 1;
-  justify-content: flex-end;
-  padding: 0 16px;
-  background-color: #dedede;
+const ValueText = styled(BaseText)`
+  font-size: 14px;
+  margin-right: ${spacing.medium}px;
 `;
 
-const ModalWrapper = styled.View`
-  width: 100%;
-  background-color: ${({ theme }) => theme.colors.basic070};
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-`;
-
-const ModalWrapperDecorator = (story: () => void) => {
-  return (
-    <Wrapper>
-      <ModalWrapper>{story()}</ModalWrapper>
-    </Wrapper>
-  );
-};
-
-storiesOf('ActionModal', module)
-  .addDecorator(ModalWrapperDecorator)
+storiesOf('ListItemChevron', module)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ActionModal items={items} isVisible onModalClose={() => {}} storybook />
+    <ListItemChevron label="This is list item with chevron" />
+  ))
+  .add('with subtext', () => (
+    <ListItemChevron
+      label="This is list item with chevron"
+      subtext="That also has subtext under it's label and it wraps up nicely"
+    />
+  ))
+  .add('with addon', () => (
+    <ListItemChevron
+      label="Incoming balance"
+      rightAddon={(<ValueText>$ 123.45</ValueText>)}
+      bordered
+    />
   ));

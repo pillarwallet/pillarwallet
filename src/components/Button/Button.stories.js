@@ -22,6 +22,7 @@ import * as React from 'react';
 import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
 import Button from 'components/Button';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const Decorator = (story) => (
   <View style={{
@@ -42,6 +43,7 @@ const commonProps = {
 
 storiesOf('Button', module)
   .addDecorator(Decorator)
+  .addDecorator(WithThemeDecorator)
   .add('all variants', () => (
     <>
       <Button {...commonProps} />
