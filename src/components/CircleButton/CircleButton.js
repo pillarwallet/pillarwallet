@@ -23,13 +23,13 @@ import styled, { withTheme } from 'styled-components/native';
 import { Image } from 'react-native';
 import Svg, { Circle, Defs, LinearGradient, Stop } from 'react-native-svg';
 import { fontSizes, fontTrackings } from 'utils/variables';
-import {getColorByTheme, getColorByThemeOutsideStyled, getThemeColors, getThemeType, themedColors} from 'utils/themes';
+import { getColorByThemeOutsideStyled, getThemeColors, getThemeType, themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { Shadow } from 'components/Shadow';
 import type { Theme, ThemeColors } from 'models/Theme';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import {hexToRgba} from 'utils/ui';
+import { hexToRgba } from 'utils/ui';
 
 
 type Props = {

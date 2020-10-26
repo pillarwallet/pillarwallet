@@ -338,7 +338,6 @@ const Permissions = ({
             borderBottomColor: colors.border,
           }}
         />
-
         <FooterWrapper>
           <Checkbox
             onPress={() => setHasAgreedToTerms(!hasAgreedToTerms)}
