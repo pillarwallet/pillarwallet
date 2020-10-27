@@ -40071,6 +40071,183 @@ exports[`Storyshots SWActivationCard default 1`] = `
 </View>
 `;
 
+exports[`Storyshots SearchBlock default 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      isFocused={false}
+      pointerEvents="auto"
+      style={
+        Array [
+          Object {
+            "backgroundColor": "transparent",
+            "position": "relative",
+            "width": "100%",
+            "zIndex": 101,
+          },
+          Object {
+            "paddingHorizontal": 16,
+            "paddingVertical": 16,
+          },
+        ]
+      }
+    >
+      <View
+        marginBottom="0"
+        style={
+          Array [
+            Object {
+              "alignItems": "center",
+              "display": "flex",
+              "marginBottom": 0,
+              "marginTop": 0,
+            },
+            undefined,
+          ]
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            style={
+              Object {
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              backgroundColor="#EBF0F6"
+              borderColor="#EBF0F6"
+              style={
+                Array [
+                  Object {
+                    "backgroundColor": "#EBF0F6",
+                    "borderColor": "#EBF0F6",
+                    "borderRadius": 20,
+                    "borderWidth": 1,
+                    "height": 40,
+                    "width": "100%",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <TextInput
+                allowFontScaling={true}
+                autoCapitalize="none"
+                autoCorrect={false}
+                keyboardAppearance="light"
+                needsExtraPadding={true}
+                onBlur={[Function]}
+                onChange={[Function]}
+                onFocus={[Function]}
+                placeholder="label.search"
+                placeholderTextColor="#8B939E"
+                rejectResponderTermination={true}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "flexBasis": 0,
+                      "flexGrow": 1,
+                      "flexShrink": 1,
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 14,
+                      "height": 42,
+                      "paddingBottom": 10,
+                      "paddingLeft": 40,
+                      "paddingRight": 16,
+                      "paddingTop": 10,
+                    },
+                    undefined,
+                  ]
+                }
+                underlineColorAndroid="transparent"
+                value=""
+              />
+              <View
+                accessible={true}
+                focusable={true}
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
+                style={
+                  Object {
+                    "alignItems": "center",
+                    "flexBasis": 20,
+                    "flexGrow": 0,
+                    "flexShrink": 0,
+                    "justifyContent": "center",
+                    "left": 10,
+                    "opacity": 1,
+                    "paddingBottom": 0,
+                    "paddingLeft": 0,
+                    "paddingRight": 0,
+                    "paddingTop": 0,
+                    "position": "absolute",
+                    "top": 7,
+                  }
+                }
+              >
+                <View
+                  name="search"
+                  style={
+                    Object {
+                      "color": "#818EB3",
+                      "fontSize": 24,
+                      "height": 24,
+                      "marginBottom": undefined,
+                      "marginLeft": undefined,
+                      "marginRight": undefined,
+                      "marginTop": undefined,
+                      "paddingTop": 0,
+                      "width": 24,
+                    }
+                  }
+                />
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots Selector default 1`] = `
 <View
   style={

@@ -29,15 +29,15 @@ type State = {
 };
 
 type Props = {
-  onSearchChange: Function,
+  onSearchChange: (query: string) => void,
   itemSearchState?: boolean,
   searchInputPlaceholder?: string,
   backgroundColor?: string,
   hideSearch?: boolean,
-  onSearchFocus?: Function,
-  inputRef?: Function,
+  onSearchFocus?: () => void,
+  inputRef?: () => void,
   wrapperStyle?: Object,
-  onSearchBlur?: Function,
+  onSearchBlur?: () => void,
   hideOverlay?: boolean,
   disabled?: boolean,
 };
