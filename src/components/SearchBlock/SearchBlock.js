@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, TextInput } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import Overlay from './Overlay';
 
@@ -35,7 +35,7 @@ type Props = {
   backgroundColor?: string,
   hideSearch?: boolean,
   onSearchFocus?: () => void,
-  inputRef?: () => void,
+  inputRef?: (ref: TextInput) => void,
   wrapperStyle?: Object,
   onSearchBlur?: () => void,
   hideOverlay?: boolean,
