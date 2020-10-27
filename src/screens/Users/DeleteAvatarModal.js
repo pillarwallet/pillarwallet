@@ -68,7 +68,7 @@ const DeleteAvatarModal = ({
         <BaseText medium center>{t('profileContent.modal.deleteAvatar.paragraph.areYouSure')}</BaseText>
         <Spacing h={34} />
         <Button
-          negative
+          danger
           title={t('profileContent.modal.deleteAvatar.button.delete')}
           onPress={deleteAvatar}
         />

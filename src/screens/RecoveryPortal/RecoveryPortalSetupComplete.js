@@ -104,7 +104,7 @@ const RecoveryPortalSetupComplete = ({
             <Button
               title={t('auth:button.skipAtOwnRisk')}
               onPress={() => skipPrompt(dismissNavigation)}
-              negative
+              danger
               transparent
             />
           }
