@@ -366,13 +366,13 @@ class TextInput extends React.Component<Props, State> {
       return (
         <View style={{ flexDirection: 'row' }}>
           <Placeholder>{selectorOptions.selectorPlaceholder || t('label.select')}</Placeholder>
-          {shouldDisplaySpinner && <Spinner width={30} height={30} style={{ paddingLeft: 15 }} />}
+          {shouldDisplaySpinner && <Spinner size={30} trackWidth={3} style={{ paddingLeft: 15 }} />}
         </View>
       );
     }
 
     if (shouldDisplaySpinner) {
-      return <Spinner width={30} height={30} />;
+      return <Spinner size={30} trackWidth={3} />;
     }
 
     const optionImageSource = resolveAssetSource(selectedOptionIcon);
@@ -595,7 +595,7 @@ class TextInput extends React.Component<Props, State> {
                 {!!rightPlaceholder &&
                   <PlaceholderRight color={colors.accent} addMargin={!!iconProps}>{rightPlaceholder}</PlaceholderRight>}
                 {!!iconProps && <IconButton color={colors.primary} {...iconProps} />}
-                {!!loading && <Spinner width={30} height={30} />}
+                {!!loading && <Spinner size={30} trackWidth={3} />}
               </RightSideWrapper>}
               {!!buttonProps &&
               <ButtonWrapper>

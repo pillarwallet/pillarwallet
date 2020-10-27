@@ -14384,7 +14384,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             animating={true}
             animationDuration={4000}
             animationEasing={[Function]}
-            color="#FCFDFF"
+            color="#0A1427"
             hideAnimationDuration={200}
             interaction={true}
             renderComponent={[Function]}
@@ -14465,7 +14465,7 @@ exports[`Storyshots Button loading buttons 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 12,
                             "borderWidth": 2,
                             "height": 24,
@@ -14547,7 +14547,7 @@ exports[`Storyshots Button loading buttons 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 12,
                             "borderWidth": 2,
                             "height": 24,
@@ -14622,7 +14622,7 @@ exports[`Storyshots Button loading buttons 1`] = `
             animating={true}
             animationDuration={4000}
             animationEasing={[Function]}
-            color="#FCFDFF"
+            color="#0A1427"
             hideAnimationDuration={200}
             interaction={true}
             renderComponent={[Function]}
@@ -14703,7 +14703,7 @@ exports[`Storyshots Button loading buttons 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 12,
                             "borderWidth": 2,
                             "height": 24,
@@ -14785,7 +14785,7 @@ exports[`Storyshots Button loading buttons 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 12,
                             "borderWidth": 2,
                             "height": 24,
@@ -17354,7 +17354,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             animating={true}
             animationDuration={4000}
             animationEasing={[Function]}
-            color="#FCFDFF"
+            color="#0A1427"
             hideAnimationDuration={200}
             interaction={true}
             renderComponent={[Function]}
@@ -17435,7 +17435,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 8,
                             "borderWidth": 1,
                             "height": 16,
@@ -17517,7 +17517,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 8,
                             "borderWidth": 1,
                             "height": 16,
@@ -17591,7 +17591,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
             animating={true}
             animationDuration={4000}
             animationEasing={[Function]}
-            color="#FCFDFF"
+            color="#0A1427"
             hideAnimationDuration={200}
             interaction={true}
             renderComponent={[Function]}
@@ -17672,7 +17672,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 8,
                             "borderWidth": 1,
                             "height": 16,
@@ -17754,7 +17754,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
                       <View
                         style={
                           Object {
-                            "borderColor": "#FCFDFF",
+                            "borderColor": "#0A1427",
                             "borderRadius": 8,
                             "borderWidth": 1,
                             "height": 16,

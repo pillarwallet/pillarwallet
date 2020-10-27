@@ -109,7 +109,7 @@ const ButtonContent = (props: ContentProps) => {
     textStyle,
   } = props;
   if (isLoading) {
-    return <Spinner width={20} height={20} />;
+    return <Spinner size={20} trackWidth={2} />;
   } else if (buttonText) {
     return <ButtonLabel fontSize={fontSize} secondary={secondary} style={textStyle}>{buttonText}</ButtonLabel>;
   }

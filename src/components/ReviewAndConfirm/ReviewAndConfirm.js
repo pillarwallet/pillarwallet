@@ -75,7 +75,7 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 const ValueHolder = ({ value, valueArray, isLoading }) => {
-  if (isLoading) return <Spinner width={20} height={20} />;
+  if (isLoading) return <Spinner size={20} trackWidth={2} />;
   if (!isEmpty(valueArray)) return valueArray.map(val => <Value key={val}>{val}</Value>);
   if (value) return <Value>{value}</Value>;
   return null;

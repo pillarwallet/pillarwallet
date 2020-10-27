@@ -140,7 +140,7 @@ class SelectorList extends React.Component<Props, State> {
         contentContainerStyle={{ padding: CONTENT_PADDING }}
         ListEmptyComponent={
           <Wrapper flex={1} center style={{ padding: 10 }}>
-            <Spinner height={20} width={20} />
+            <Spinner size={20} trackWidth={2} />
           </Wrapper>
         }
       />

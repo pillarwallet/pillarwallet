@@ -97,7 +97,7 @@ const CollapsibleSection = (props: Props) => {
           <SectionTitle>{label}</SectionTitle>
           {!!collapseContent && <ChevronIcon name="chevron-right" style={{ transform: [{ rotate }] }} />}
         </SectionHeaderPart>
-        {showLoadingSpinner && <Spinner width={20} height={20} />}
+        {showLoadingSpinner && <Spinner size={20} trackWidth={2} />}
         {!showLoadingSpinner && !!labelRight && (
           <SectionHeaderPart onPress={onPressLabelRight}>
             <SectionLink>{labelRight}</SectionLink>

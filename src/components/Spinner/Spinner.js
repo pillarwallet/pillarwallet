@@ -38,7 +38,8 @@ const StyledMaterialIndicator = styled(MaterialIndicator)`
 `;
 
 const getSpinnerColor = (props: Props) => {
-  const { theme, basic } = props;
+  const { theme, basic, color } = props;
+  if (color) return color;
   const colors = getThemeColors(theme);
   if (basic) return colors.basic090;
   return colors.primaryAccent130;
@@ -48,12 +49,11 @@ const Spinner = (props: Props) => {
   const {
     size = 40,
     trackWidth = 3,
-    color,
     style,
   } = props;
   const spinnerColor = getSpinnerColor(props);
   return (
-    <StyledMaterialIndicator size={size} trackWidth={trackWidth} color={color || spinnerColor} style={style} />
+    <StyledMaterialIndicator size={size} trackWidth={trackWidth} color={spinnerColor} style={style} />
   );
 };
 

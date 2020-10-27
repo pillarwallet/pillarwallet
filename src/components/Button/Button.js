@@ -19,14 +19,16 @@
 */
 import * as React from 'react';
 import { StyleSheet } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import themeVariant from 'styled-theming';
 import debounce from 'lodash.debounce';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Spinner from 'components/Spinner';
 import { fontSizes, spacing } from 'utils/variables';
-import { DARK_THEME } from 'constants/appSettingsConstants';
+import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
+import { getThemeColors, getThemeType } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
 export type Props = {
   children?: React.Node,
@@ -56,6 +58,8 @@ export type Props = {
   transparent?: boolean,
   primarySecond?: boolean,
 };
+
+type CombinedProps = Props & { theme: Theme }
 
 type State = {
   shouldIgnoreTap: boolean,
@@ -226,7 +230,7 @@ const getVariant = (props: Props) => {
   return VARIANT.DEFAULT;
 };
 
-class Button extends React.Component<Props, State> {
+class Button extends React.Component<CombinedProps, State> {
   static defaultProps = {
     debounceTime: 400,
     block: true,
@@ -261,11 +265,23 @@ class Button extends React.Component<Props, State> {
       rightIconStyle,
       small,
       textStyle,
+      theme,
     } = this.props;
+    const themeType = getThemeType(theme);
+    const colors = getThemeColors(theme);
 
     if (isLoading) {
       return (
-        <Spinner size={small ? 16 : 24} trackWidth={small ? 1 : 2} basic style={{ paddingLeft: 8, paddingRight: 8 }} />
+        <Spinner
+          size={small ? 16 : 24}
+          trackWidth={small ? 1 : 2}
+          basic
+          style={{ paddingLeft: 8, paddingRight: 8 }}
+          color={(themeType === LIGHT_THEME && variant === VARIANT.SECONDARY) || variant === VARIANT.TRANSPARENT
+            ? colors.basic010
+            : null
+          }
+        />
       );
     }
 
@@ -310,4 +326,4 @@ class Button extends React.Component<Props, State> {
   }
 }
 
-export default Button;
+export default withTheme(Button);

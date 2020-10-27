@@ -193,7 +193,7 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
         </DetailsLine>
         <DetailsLine>
           <DetailsTitle>{t('auth:recoveryPortal.label.estimatedFeeForConnectingToPortal')}</DetailsTitle>
-          {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+          {gettingFee && <Spinner style={{ marginTop: 5 }} size={20} trackWidth={2} />}
           {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
         {!isEmpty(errorMessage) && !gettingFee && <WarningMessage small>{errorMessage}</WarningMessage>}
