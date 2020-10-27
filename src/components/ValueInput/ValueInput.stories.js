@@ -25,6 +25,8 @@ import { GBP } from 'constants/assetsConstants';
 
 import { ValueInputComponent } from 'components/ValueInput';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
+import NavigationDecorator from '../../../storybook/NavigationDecorator';
 
 
 const reduxMock = {
@@ -110,6 +112,8 @@ const reduxMock = {
 const ValueInputWithTheme = withTheme(ValueInputComponent);
 
 storiesOf('Value Input', module)
+  .addDecorator(CenterViewStretchDecorator)
+  .addDecorator(NavigationDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
     <ValueInputWithTheme

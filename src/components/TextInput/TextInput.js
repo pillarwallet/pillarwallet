@@ -139,7 +139,6 @@ const LeftSideWrapper = styled.View`
   padding-left: 14px;
   flex-direction: row;
   align-items: center;
-  max-width: 25%;
 `;
 
 const RightSideWrapper = styled.TouchableOpacity`
@@ -159,6 +158,7 @@ const Image = styled(CachedImage)`
 const AddonRegularText = styled(BaseText)`
   color: ${({ theme }) => theme.colors.basic030};
   flex-wrap: wrap;
+  max-width: 80px;
 `;
 
 const AddonIcon = styled(Icon)`
@@ -591,7 +591,6 @@ class TextInput extends React.Component<Props, State> {
                   </View>
                 </TouchableWithoutFeedback>
               )}
-
               {showRightAddon &&
               <RightSideWrapper onPress={onRightAddonPress} disabled={!onRightAddonPress}>
                 {!!rightPlaceholder &&
@@ -600,7 +599,7 @@ class TextInput extends React.Component<Props, State> {
                   </PlaceholderRight>
                 }
                 {!!iconProps && <IconButton color={colors.basic000} {...iconProps} />}
-                {!!loading && <Spinner width={30} height={30} />}
+                {!!loading && <Spinner width={30} height={30} style={{ marginLeft: 6 }} />}
               </RightSideWrapper>}
               {!!buttonProps &&
               <ButtonWrapper>

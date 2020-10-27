@@ -18,42 +18,17 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type Option = {
-  name: string,
-  value: string,
-  token?: string,
-  symbol?: string,
-  tokenId?: string,
-  imageUrl?: string,
-  lastUpdateTime?: string,
-  imageSource?: string,
-  ethAddress?: string,
-  opacity?: number,
-  hasSmartWallet?: number,
-  disabled?: boolean,
-  key?: string,
-  icon?: string,
-  iconUrl?: string,
-  assetBalance?: string,
-  formattedBalanceInFiat?: string,
-  id?: string,
-  decimals?: number,
-  tokenType?: string,
-  contractAddress?: string,
-  address?: string,
-  balance?: {
-    syntheticBalance?: string,
-  },
-};
+import React, { Children } from 'react';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
-export type HorizontalOption = {
-  title?: string,
-  data: Option[],
+export default (
+  story: () => void,
+  context: Object,
+) => {
+  const Navigator = createAppContainer(
+    createSwitchNavigator({
+      TestScreen: { screen: () => Children.only(story()), params: context },
+    }),
+  );
+  return <Navigator />;
 };
-
-export type OptionTabs = {
-  name: string,
-  id: string,
-  options?: Option[],
-  collectibles?: boolean,
-}

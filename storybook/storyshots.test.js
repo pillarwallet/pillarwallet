@@ -19,7 +19,13 @@
 */
 
 import * as React from 'react';
+import { View } from 'react-native';
 import initStoryshots from '@storybook/addon-storyshots';
+
+const MockComponent = (props) => {
+  const { children, ...rest } = props;
+  return (<View {...rest}>{children}</View>);
+};
 
 jest.mock('global', () => global);
 jest.mock('react-navigation', () => {
@@ -28,6 +34,14 @@ jest.mock('react-navigation', () => {
     withNavigation: Component => props => (
       <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />
     ),
+    createAppContainer: Component => props => (
+      <Component navigation={{ navigate: jest.fn(), addListener: jest.fn() }} {...props} />
+    ),
+    createSwitchNavigator: props => jest.fn().mockImplementation(() => {
+      const { TestScreen } = props;
+      const { screen, params } = TestScreen;
+      return <MockComponent {...params}>{ screen()}</MockComponent>;
+    }),
     ThemeColors: {
       light: {
         bodyContent: '',
