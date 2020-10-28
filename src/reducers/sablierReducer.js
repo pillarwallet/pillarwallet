@@ -17,12 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import {
-  SET_STREAMS,
-  SET_FETCHING_STREAMS,
-  SET_CALCULATING_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE,
-  SET_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE,
-} from 'constants/sablierConstants';
+import { SET_STREAMS, SET_FETCHING_STREAMS } from 'constants/sablierConstants';
 import type { Stream } from 'models/Sablier';
 
 
@@ -30,8 +25,6 @@ export type SablierReducerState = {
   outgoingStreams: Stream[],
   incomingStreams: Stream[],
   isFetchingStreams: boolean,
-  isCalculatingWithdrawTransactionEstimate: boolean,
-  withdrawTransactionEstimate: ?Object,
 };
 
 export type SablierReducerAction = {
@@ -43,8 +36,6 @@ export const initialState = {
   outgoingStreams: [],
   incomingStreams: [],
   isFetchingStreams: false,
-  isCalculatingWithdrawTransactionEstimate: false,
-  withdrawTransactionEstimate: null,
 };
 
 export default function sablierReducer(
@@ -56,14 +47,6 @@ export default function sablierReducer(
       return { ...state, ...action.payload, isFetchingStreams: false };
     case SET_FETCHING_STREAMS:
       return { ...state, isFetchingStreams: true };
-    case SET_CALCULATING_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE:
-      return { ...state, isCalculatingWithdrawTransactionEstimate: true };
-    case SET_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE:
-      return {
-        ...state,
-        withdrawTransactionEstimate: action.payload,
-        isCalculatingWithdrawTransactionEstimate: false,
-      };
     default:
       return state;
   }

@@ -21,7 +21,6 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -29,6 +28,7 @@ import t from 'translations/translate';
 
 // actions
 import { calculateLendingDepositTransactionEstimateAction, fetchAssetsToDepositAction } from 'actions/lendingActions';
+import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -66,6 +66,7 @@ type Props = {
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
   estimateErrorMessage: ?string,
+  resetEstimateTransaction: () => void,
 };
 
 const CurrentInterestRate = styled.View`
@@ -106,7 +107,12 @@ const EnterDepositAmount = ({
   fetchAssetsToDeposit,
   isFetchingAssetsToDeposit,
   estimateErrorMessage,
+  resetEstimateTransaction,
 }: Props) => {
+  useEffect(() => {
+    resetEstimateTransaction();
+  }, []);
+
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
   const [depositAmount, setDepositAmount] = useState('');
@@ -123,18 +129,19 @@ const EnterDepositAmount = ({
     calculateLendingDepositTransactionEstimate(depositAmount, assetToDeposit);
   }, [depositAmount, assetToDeposit]);
 
-  const gasTokenSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
-  const showTxFee = !!depositAmount && (!!feeInfo || isEstimating || !!estimateErrorMessage);
-  const isEnoughForFee = !!feeInfo && isEnoughBalanceForTransactionFee(balances, {
-    txFeeInWei: feeInfo.fee,
-    amount: depositAmount,
-    decimals: assetToDeposit?.decimals,
-    symbol: selectedAssetSymbol,
-    gasToken: feeInfo.gasToken,
-  });
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      amount: depositAmount,
+      decimals: assetToDeposit?.decimals,
+      symbol: selectedAssetSymbol,
+      gasToken: feeInfo.gasToken,
+    });
+  }
 
-  const errorMessage = !isEnoughForFee
-    ? t('error.notEnoughTokenForFee', { token: gasTokenSymbol })
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
 
   const showNextButton = depositAmount !== null; // only if amount input touched
@@ -154,23 +161,23 @@ const EnterDepositAmount = ({
       headerProps={{ centerItems: [{ title: t('aaveContent.title.depositAmountScreen') }] }}
       footer={(
         <FooterInner>
-          {showTxFee && (
-            <FeeInfo alignItems="center">
+          <FeeInfo alignItems="center">
+            {feeInfo && (
               <FeeLabelToggle
                 labelText={t('label.fee')}
                 txFeeInWei={feeInfo?.fee}
                 gasToken={feeInfo?.gasToken}
                 isLoading={isEstimating}
-                hasError={!isEstimating && !isEnoughForFee}
+                hasError={!!errorMessage}
                 showFiatDefault
               />
-              {!!errorMessage && (
-                <BaseText negative style={{ marginTop: spacing.medium }}>
-                  {errorMessage}
-                </BaseText>
-              )}
-            </FeeInfo>
-          )}
+            )}
+            {!!errorMessage && (
+              <BaseText negative style={{ marginTop: spacing.medium }}>
+                {errorMessage}
+              </BaseText>
+            )}
+          </FeeInfo>
           {showNextButton && (
             <Button
               regularText
@@ -237,6 +244,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     asset: AssetToDeposit,
   ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset)), 500),
   fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterDepositAmount);

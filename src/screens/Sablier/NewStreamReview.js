@@ -36,7 +36,7 @@ import Icon from 'components/Icon';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
-import { getCreateStreamFeeAndTransaction } from 'services/sablier';
+import { getSablierCreateStreamTransaction } from 'services/sablier';
 import {
   countDownDHMS,
   formatUnits,
@@ -104,14 +104,13 @@ class NewStreamReview extends React.Component<Props, State> {
       txFeeInWei,
       gasToken,
       transactionPayload,
-    } = await getCreateStreamFeeAndTransaction(
+    } = await getSablierCreateStreamTransaction(
       activeAccountAddress,
       receiverAddress,
       assetValue,
       assetData,
       getTimestamp(startDate),
       getTimestamp(endDate),
-      useGasToken,
     );
 
     this.setState({

@@ -17,20 +17,26 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+// actions
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { saveDbAction } from 'actions/dbActions';
+
+// constants
+import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+import { SET_STREAMS, SET_FETCHING_STREAMS } from 'constants/sablierConstants';
+
+// utils
+import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+
+// services
 import {
   fetchUserStreams,
+  getSablierCancellationTransaction,
   getSablierWithdrawTransaction,
 } from 'services/sablier';
-import smartWalletService from 'services/smartWallet';
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
-import {
-  SET_STREAMS,
-  SET_FETCHING_STREAMS,
-  SET_CALCULATING_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE,
-  SET_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE,
-} from 'constants/sablierConstants';
-import { saveDbAction } from 'actions/dbActions';
+
+// types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Streams, Stream } from 'models/Sablier';
 import type { Asset } from 'models/Asset';
@@ -62,12 +68,12 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
   amount: number,
   asset: Asset,
 ) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_CALCULATING_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE });
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
     const { to: recipient, amount: value, data } = getSablierWithdrawTransaction(
       getAccountAddress(smartWalletAccount),
@@ -76,14 +82,21 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
       stream,
     );
 
-    const estimate = await smartWalletService
-      .estimateAccountTransaction({ recipient, value, data })
-      .catch((e) => {
-        reportErrorLog('Error getting sablier withdraw transaction estimate', { message: e.message });
-        return null;
-      });
+    dispatch(estimateTransactionAction(recipient, value, data));
+  };
+};
 
-    dispatch({ type: SET_SABLIER_WITHDRAW_TRANSACTION_ESTIMATE, payload: estimate });
+export const calculateSablierCancelTransactionEstimateAction = (stream: Stream) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const { to, data } = getSablierCancellationTransaction(stream);
+
+    dispatch(estimateTransactionAction(to, 0, data));
   };
 };
 
