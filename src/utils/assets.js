@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS, USD } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -310,3 +310,11 @@ export const mapCollectibleToAssetData = ({
   icon: icon || '',
   tokenType: COLLECTIBLES,
 });
+
+export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {
+  const ethRates = rates[ETH];
+  if (!ethRates) {
+    return 0;
+  }
+  return value * (ethRates[fiatCurrency] / ethRates[USD]);
+};

@@ -24,7 +24,7 @@ import Adapter from 'enzyme-adapter-react-16';
 import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import mocktract from 'mocktract';
 
 // constants
@@ -154,9 +154,7 @@ jest.setMock('ethers', {
     EtherscanProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
     FallbackProvider: jest.fn().mockImplementation(() => mockInjectedProvider),
   },
-  BigNumber: {
-    from: x => x,
-  },
+  BigNumber: EthersBigNumber,
 });
 
 jest.setMock('react-native-background-timer', {

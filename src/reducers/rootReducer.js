@@ -65,6 +65,7 @@ import sablierReducer from './sablierReducer';
 import fiatToCryptoReducer from './fiatToCryptoReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
+import rariReducer from './rariReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -111,6 +112,7 @@ import type { SablierReducerAction, SablierReducerState } from './sablierReducer
 import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiatToCryptoReducer.js';
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
+import type { RariReducerAction, RariReducerState } from './rariReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -151,6 +153,7 @@ export type RootReducerState = {|
   fiatToCrypto: FiatToCryptoReducerState,
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
+  rari: RariReducerState,
 |};
 
 type RootReducerAction =
@@ -182,7 +185,8 @@ type RootReducerAction =
   | SablierReducerAction
   | FiatToCryptoReducerAction
   | OnboardingReducerAction
-  | CacheAction;
+  | CacheAction
+  | RariReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -233,6 +237,7 @@ const appReducer = combineReducers({
   fiatToCrypto: fiatToCryptoReducer,
   onboarding: onboardingReducer,
   cache: cacheReducer,
+  rari: rariReducer,
 });
 
 export const initialState = appReducer(undefined, {});

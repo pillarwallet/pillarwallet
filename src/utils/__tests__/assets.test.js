@@ -22,15 +22,17 @@ import {
   getBalance,
   balanceInEth,
   getRate,
+  convertUSDToFiat,
 } from 'utils/assets';
 import type { Balances, Rates } from 'models/Asset';
 
 describe('Assets utils', () => {
   const ETH_GBP = 10;
+  const ETH_USD = 5;
   const PLR_ETH = 1.2;
 
   const rates: Rates = {
-    ETH: { GBP: ETH_GBP, ETH: 1 },
+    ETH: { GBP: ETH_GBP, ETH: 1, USD: ETH_USD },
     PLR: { GBP: (PLR_ETH * ETH_GBP), ETH: PLR_ETH },
     AAA: { GBP: 3 },
   };
@@ -163,6 +165,13 @@ describe('Assets utils', () => {
           });
         });
       });
+    });
+  });
+
+  describe('convertUSDToFiat', () => {
+    it('converts to GBP', () => {
+      const converted = convertUSDToFiat(100, rates, 'GBP');
+      expect(converted).toEqual(200);
     });
   });
 });
