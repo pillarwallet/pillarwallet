@@ -87,11 +87,7 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
 };
 
 export const calculateSablierCancelTransactionEstimateAction = (stream: Stream) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
-    if (!smartWalletAccount) return;
-
+  return (dispatch: Dispatch) => {
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
     const { to, data } = getSablierCancellationTransaction(stream);
@@ -99,4 +95,3 @@ export const calculateSablierCancelTransactionEstimateAction = (stream: Stream) 
     dispatch(estimateTransactionAction(to, 0, data));
   };
 };
-

@@ -41,6 +41,7 @@ import Selector from 'components/Selector';
 import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
 import ArrowIcon from 'components/ArrowIcon/ArrowIcon';
+import Toast from 'components/Toast';
 
 // services
 import { getSablierCancellationTransaction } from 'services/sablier';
@@ -115,14 +116,20 @@ class OutgoingStream extends React.Component<Props, State> {
   }
 
   onCancelConfirm = () => {
-    const {
-      navigation,
-      feeInfo,
-    } = this.props;
+    const { navigation, feeInfo } = this.props;
     this.setState({ isCancellationModalVisible: false });
 
     const { stream } = navigation.state.params;
     let transactionPayload = getSablierCancellationTransaction(stream);
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotCancelStream'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
 
     transactionPayload = {
       ...transactionPayload,

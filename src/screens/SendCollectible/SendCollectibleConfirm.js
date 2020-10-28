@@ -148,12 +148,11 @@ const SendCollectibleConfirm = ({
 
     const { fee: txFeeInWei, gasToken } = feeInfo;
 
-    let transactionPayloadUpdated = {
+    const transactionPayloadUpdated = {
       ...transactionPayload,
       txFeeInWei,
+      gasToken,
     };
-
-    if (gasToken) transactionPayloadUpdated = { ...transactionPayloadUpdated, gasToken };
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: transactionPayloadUpdated,

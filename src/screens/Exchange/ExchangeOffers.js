@@ -283,14 +283,11 @@ class ExchangeOffers extends React.Component<Props, State> {
 
     const { fee: txFeeInWei, gasToken } = feeInfo;
 
-    let transactionPayload = {
+    const transactionPayload = {
       ...enablePayload,
       txFeeInWei,
+      gasToken,
     };
-
-    if (gasToken) {
-      transactionPayload = { ...transactionPayload, gasToken };
-    }
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
