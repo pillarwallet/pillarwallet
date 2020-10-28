@@ -23,8 +23,8 @@ import { View } from 'react-native';
 import initStoryshots from '@storybook/addon-storyshots';
 
 const MockComponent = (props) => {
-  const { children, ...rest } = props;
-  return (<View {...rest}>{children}</View>);
+  const { children } = props;
+  return (<View>{children}</View>);
 };
 
 jest.mock('global', () => global);
@@ -39,8 +39,8 @@ jest.mock('react-navigation', () => {
     ),
     createSwitchNavigator: props => jest.fn().mockImplementation(() => {
       const { TestScreen } = props;
-      const { screen, params } = TestScreen;
-      return <MockComponent {...params}>{ screen()}</MockComponent>;
+      const { screen } = TestScreen;
+      return <MockComponent>{ screen()}</MockComponent>;
     }),
     ThemeColors: {
       light: {

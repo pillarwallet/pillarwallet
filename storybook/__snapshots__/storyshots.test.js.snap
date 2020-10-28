@@ -47355,58 +47355,7 @@ exports[`Storyshots TextInput default 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "textinput--default",
-            "kind": "TextInput",
-            "name": "default",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "default",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="textinput--default"
-      kind="TextInput"
-      name="default"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="default"
-    >
+    <View>
       <View
         style={
           Array [
@@ -48365,58 +48314,7 @@ exports[`Storyshots TextInput multiline 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "textinput--multiline",
-            "kind": "TextInput",
-            "name": "multiline",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "multiline",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="textinput--multiline"
-      kind="TextInput"
-      name="multiline"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="multiline"
-    >
+    <View>
       <View
         style={
           Array [
@@ -49312,58 +49210,7 @@ exports[`Storyshots TextInput numeric 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "textinput--numeric",
-            "kind": "TextInput",
-            "name": "numeric",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "numeric",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="textinput--numeric"
-      kind="TextInput"
-      name="numeric"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="numeric"
-    >
+    <View>
       <View
         style={
           Array [
@@ -50323,58 +50170,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "textinput--numeric-with-all-addons",
-            "kind": "TextInput",
-            "name": "numeric with all addons",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "numeric with all addons",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="textinput--numeric-with-all-addons"
-      kind="TextInput"
-      name="numeric with all addons"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="numeric with all addons"
-    >
+    <View>
       <View
         style={
           Array [
@@ -51420,58 +51216,7 @@ exports[`Storyshots TextInput with button 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "textinput--with-button",
-            "kind": "TextInput",
-            "name": "with button",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "with button",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="textinput--with-button"
-      kind="TextInput"
-      name="with button"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="with button"
-    >
+    <View>
       <View
         style={
           Array [
@@ -52529,58 +52274,7 @@ exports[`Storyshots TextInput with selector 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "textinput--with-selector",
-            "kind": "TextInput",
-            "name": "with selector",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "with selector",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="textinput--with-selector"
-      kind="TextInput"
-      name="with selector"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/TextInput/TextInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="with selector"
-    >
+    <View>
       <View
         style={
           Array [
@@ -55202,58 +54896,7 @@ exports[`Storyshots Value Input default 1`] = `
       ]
     }
   >
-    <View
-      hooks={
-        HooksContext {
-          "currentContext": Object {
-            "hooks": [Circular],
-            "id": "value-input--default",
-            "kind": "Value Input",
-            "name": "default",
-            "parameters": Object {
-              "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/ValueInput/ValueInput.stories.js",
-              "framework": "react-native",
-            },
-            "story": "default",
-          },
-          "currentDecoratorName": null,
-          "currentEffects": Array [],
-          "currentHooks": Array [],
-          "currentPhase": "NONE",
-          "hasUpdates": false,
-          "hookListsMap": WeakMap {},
-          "mountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "nextHookIndex": 0,
-          "prevEffects": Array [],
-          "prevMountedDecorators": Set {
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-            [Function],
-          },
-          "renderListener": [Function],
-        }
-      }
-      id="value-input--default"
-      kind="Value Input"
-      name="default"
-      parameters={
-        Object {
-          "fileName": "/Users/mac/Documents/projects/reactnative/pillarwallet/src/components/ValueInput/ValueInput.stories.js",
-          "framework": "react-native",
-        }
-      }
-      story="default"
-    >
+    <View>
       <View
         style={
           Array [
