@@ -160,7 +160,7 @@ export const calculateLendingDepositTransactionEstimateAction = (
       aaveDepositNeededTransactions[0].amount,
       aaveDepositNeededTransactions[0].data,
       null,
-      sequentialTransactions.length ? sequentialTransactions : null,
+      sequentialTransactions,
     ));
   };
 };
