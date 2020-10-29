@@ -26,6 +26,7 @@ import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+import isEqual from 'lodash.isequal';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -63,7 +64,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { themedColors } from 'utils/themes';
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { formatAmount } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
 import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
@@ -166,6 +167,12 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     this.updateAllowanceFeeAndTransaction();
     this.updatePurchaseFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (!isEqual(this.props.poolAllowance, prevProps.poolAllowance)) {
+      this.updatePurchaseFeeAndTransaction();
+    }
   }
 
   updateAllowanceFeeAndTransaction = () => {
@@ -276,11 +283,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
-    const isLoading = (!allowPayload && !hasAllowance)
-      || (!purchasePayload && hasAllowance)
-      || isApprovalExecuting
-      || isEstimating;
-
     if (feeInfo) {
       if ((allowPayload && !hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
         ...allowPayload,
@@ -295,8 +297,9 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       }
     }
 
-    const purchaseDisabled = hasAllowance
-      && (numberOfTickets === 0 || !!errorMessage || !feeInfo);
+    const submitDisabled = isEstimating
+      || isApprovalExecuting
+      || (hasAllowance && (numberOfTickets === 0 || !!errorMessage || !feeInfo));
 
     let nextNavigationFunction;
     if (purchasePayload) {
@@ -353,14 +356,18 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               </Text>
             </ContentRow>
             <ContentRow>
-              {!hasAllowance && !isApprovalExecuting &&
+              {!hasAllowance && !isEstimating && !isApprovalExecuting && (
                 <Text center label>{t('poolTogetherContent.paragraph.automationMissing')}</Text>
-              }
-              {!!isApprovalExecuting &&
+              )}
+              {!!isApprovalExecuting && (
                 <Text center label>{t('poolTogetherContent.paragraph.pendingAutomation')}</Text>
-              }
-              {isEstimating && !feeInfo && <Text center label>{t('label.fetchingFee')}</Text>}
-              {!!purchaseTransactionAvailable && !!feeInfo && (
+              )}
+              {isEstimating && !isApprovalExecuting && !feeInfo && (
+                <Text center label>{t('label.fetchingFee')}</Text>
+              )}
+            </ContentRow>
+            {!!purchaseTransactionAvailable && !!feeInfo && (
+              <ContentRow>
                 <FeeLabelToggle
                   labelText={t('label.fee')}
                   txFeeInWei={feeInfo?.fee}
@@ -368,18 +375,18 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   hasError={!!errorMessage}
                   showFiatDefault
                 />
-              )}
-              {!!purchaseTransactionAvailable && !!errorMessage && (
-                <BaseText negative style={{ marginTop: spacing.medium }}>
-                  {errorMessage}
-                </BaseText>
-              )}
-            </ContentRow>
+              </ContentRow>
+            )}
+            {!!purchaseTransactionAvailable && !!errorMessage && (
+              <ContentRow>
+                <BaseText negative>{errorMessage}</BaseText>
+              </ContentRow>
+            )}
             <ContentRow>
               <Button
                 title={t('button.next')}
                 onPress={() => {
-                  if (purchaseDisabled) return null;
+                  if (submitDisabled) return null;
 
                   if (!hasAllowance && !isApprovalExecuting) {
                     this.setState({ isAllowModalVisible: true });
@@ -387,8 +394,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
-                isLoading={isLoading}
-                disabled={!!purchaseDisabled}
+                disabled={!!submitDisabled}
                 style={{ marginBottom: 13, width: '100%' }}
               />
             </ContentRow>

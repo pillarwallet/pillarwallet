@@ -64,7 +64,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { themedColors } from 'utils/themes';
-import { fontStyles, spacing } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
 
 // services
@@ -274,12 +274,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
-
-    const isLoading = (!allowPayload && !hasAllowance)
-      || (!withdrawPayload && hasAllowance)
-      || isApprovalExecuting
-      || isEstimating;
-
     if (feeInfo) {
       if ((allowPayload && !hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
         ...allowPayload,
@@ -294,8 +288,9 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       }
     }
 
-    const withdrawDisabled = hasAllowance
-      && (ticketsCount === 0 || !!errorMessage || !feeInfo);
+    const submitDisabled = isEstimating
+      || isApprovalExecuting
+      || (hasAllowance && (ticketsCount === 0 || !!errorMessage || !feeInfo));
 
     let nextNavigationFunction;
     if (withdrawPayload) {
@@ -367,8 +362,9 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   {t('poolTogetherContent.paragraph.pendingAutomation')}
                 </Text>
               }
-              {isEstimating && !feeInfo && <Text center label>{t('label.fetchingFee')}</Text>}
-              {!!withdrawTransactionAvailable && !!feeInfo && (
+            </ContentRow>
+            {!!withdrawTransactionAvailable && !!feeInfo && (
+              <ContentRow>
                 <FeeLabelToggle
                   labelText={t('label.fee')}
                   txFeeInWei={feeInfo?.fee}
@@ -376,26 +372,25 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   hasError={!!errorMessage}
                   showFiatDefault
                 />
-              )}
-              {!!withdrawTransactionAvailable && !!errorMessage && (
-                <BaseText negative style={{ marginTop: spacing.medium }}>
-                  {errorMessage}
-                </BaseText>
-              )}
-            </ContentRow>
+              </ContentRow>
+            )}
+            {!!withdrawTransactionAvailable && !!errorMessage && (
+              <ContentRow>
+                <BaseText negative>{errorMessage}</BaseText>
+              </ContentRow>
+            )}
             <ContentRow>
               <Button
                 title={t('button.next')}
                 onPress={() => {
-                  if (withdrawDisabled) return null;
+                  if (submitDisabled) return null;
 
                   if (!hasAllowance && !isApprovalExecuting) {
                     this.setState({ isAllowModalVisible: true });
                   }
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
-                isLoading={isLoading}
-                disabled={withdrawDisabled}
+                disabled={!!submitDisabled}
                 style={{ marginBottom: 13, width: '100%' }}
               />
             </ContentRow>

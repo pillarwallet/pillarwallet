@@ -102,8 +102,6 @@ class NewStreamReview extends React.Component<Props> {
       navigation,
       resetEstimateTransaction,
       estimateTransaction,
-      supportedAssets,
-      assets,
       activeAccountAddress,
     } = this.props;
 
@@ -114,15 +112,13 @@ class NewStreamReview extends React.Component<Props> {
       endDate,
       receiverAddress,
       assetValue,
-      assetSymbol,
     } = navigation.state.params;
 
-    this.asset = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
     this.transactionPayload = await getSablierCreateStreamTransaction(
       activeAccountAddress,
       receiverAddress,
       assetValue,
-      this.asset,
+      this.getAsset(),
       getTimestamp(startDate),
       getTimestamp(endDate),
     );
@@ -130,6 +126,12 @@ class NewStreamReview extends React.Component<Props> {
     const { to, data, sequentialSmartWalletTransactions } = this.transactionPayload;
 
     estimateTransaction(to, data, sequentialSmartWalletTransactions);
+  }
+
+  getAsset = () => {
+    const { assets, supportedAssets, navigation } = this.props;
+    const { assetSymbol } = navigation.state.params;
+    return getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
   }
 
   onSubmit = () => {
@@ -169,6 +171,7 @@ class NewStreamReview extends React.Component<Props> {
       estimateErrorMessage,
     } = this.props;
 
+    const asset = this.getAsset();
     const {
       assetSymbol, assetValue, receiverAddress, startDate, endDate,
     } = navigation.state.params;
@@ -183,7 +186,7 @@ class NewStreamReview extends React.Component<Props> {
       notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
         txFeeInWei: feeInfo?.fee,
         amount: assetValue,
-        decimals: this.asset.decimals,
+        decimals: asset.decimals,
         symbol: assetSymbol,
         gasToken: feeInfo?.gasToken,
       });
@@ -207,7 +210,7 @@ class NewStreamReview extends React.Component<Props> {
           <TokenReviewSummary
             assetSymbol={assetSymbol}
             text={t('sablierContent.label.youAreStreaming')}
-            amount={formatUnits(assetValue, this.asset.decimals)}
+            amount={formatUnits(assetValue, asset.decimals)}
           />
           <Spacing h={36} />
           <Table title={t('sablierContent.label.streamDetails')}>
