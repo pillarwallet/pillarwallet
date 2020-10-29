@@ -43,7 +43,7 @@ type State = {|
 |};
 
 type ModalInstance = {
-  _close: () => Promise<void>,
+  closeRNModal: () => Promise<void>,
 };
 
 const ModalStackContext = React.createContext<ModalState[]>([]);
@@ -130,7 +130,7 @@ class ModalProvider extends React.Component<{||}, State> {
       // sure the proper element was removed from stack array, there is no
       // special handling.
       if (index === this.state.stack.length - 1) {
-        await instance._close();
+        await instance.closeRNModal();
       }
 
       this.setState(({ stack }) => ({
@@ -156,7 +156,7 @@ class ModalProvider extends React.Component<{||}, State> {
     }, async () => {
       await Promise.all(this.state.stack.map(({ id }) => {
         const modal = this.modalInstances.get(id);
-        return modal && modal._close();
+        return modal && modal.closeRNModal();
       }));
 
       this.setState(({ stack, pending }) => ({

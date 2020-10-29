@@ -65,7 +65,7 @@ additional ones are ignored.
 
 The "public" `modal.close` function doesn't close the modal directly - instead
 it's redirected to the `<ModalProvider>` instance, which updates the stack and
-calls the inner one (`modal._close`).
+calls the inner one (`modal.closeRNModal`).
 
 In order to display multiple modals one over another, each modal on the stack
 needs to be rendered as a child of the one before it. At the same time, any

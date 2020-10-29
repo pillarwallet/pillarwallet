@@ -108,7 +108,7 @@ class Modal extends React.Component<Props, State> {
   }
 
   componentWillUnmount() {
-    // Don't let the _close method hang if RNModal's onModalHide doesn't get
+    // Don't let the closeRNModal method hang if RNModal's onModalHide doesn't get
     // called before unmounting.
     this.callClosingCallbacks();
 
@@ -121,7 +121,7 @@ class Modal extends React.Component<Props, State> {
     if (instance) instance.close(this.getId());
   }
 
-  _close = () => {
+  closeRNModal = () => {
     this.setState({ isVisible: false });
     return new Promise((resolve) => {
       this.closingCallbacks.push(resolve);
