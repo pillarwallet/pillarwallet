@@ -37,7 +37,7 @@ export type ScrollToProps = {
 
 type SwipeDirection = 'up' | 'down' | 'left' | 'right';
 
-// Props according to react-native-modal. The ones commented out are not forwarded
+// Props according to react-native-modal
 type Props = {|
   children?: ReactNode,
   animationIn?: string | Object,
@@ -54,16 +54,12 @@ type Props = {|
   customBackdrop?: ReactNode,
   deviceHeight?: number,
   deviceWidth?: number,
-  // onBackButtonPress?: () => void,
-  // onBackdropPress?: () => void,
   onModalWillHide?: () => void,
   onModalHide?: () => void,
   onModalWillShow?: () => void,
   onModalShow?: () => void,
   onSwipeStart?: () => void,
   onSwipeMove?: (percentageShown: number) => void,
-  // onSwipeComplete?: (_: { swipingDirection: SwipeDirection }) => void,
-  // onSwipeCancel?: () => void,
   scrollOffset?: number,
   scrollOffsetMax?: number,
   scrollTo?: (_: ScrollToProps) => void,
@@ -72,7 +68,6 @@ type Props = {|
   swipeDirection?: SwipeDirection | SwipeDirection[],
   useNativeDriver?: boolean,
   hideModalContentWhileAnimating?: boolean,
-  // propagateSwipe?: boolean,
   style?: any,
 |};
 

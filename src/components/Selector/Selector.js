@@ -113,9 +113,7 @@ const Selector = ({
 
   const handleScannerOpen = () => {
     Keyboard.dismiss();
-    Modal.open(() => (
-      <AddressScanner onRead={handleScannerReadResult} />
-    ));
+    Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
   };
 
   const handleSearchValidation = (searchQuery: string): ?string => {

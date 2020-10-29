@@ -60,7 +60,7 @@ type OwnProps = {|
   eventDetail?: boolean,
   noSwipeToDismiss?: boolean,
   noPadding?: boolean,
-  headerLeftItems?: Object[],
+  headerLeftItems?: $PropertyType<HeaderProps, 'leftItems'>,
   sideMargins?: number,
   noTopPadding?: boolean,
   headerProps?: HeaderProps,

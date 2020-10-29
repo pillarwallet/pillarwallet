@@ -74,7 +74,7 @@ const SablierDatePicker = ({
   const colors = getThemeColors(theme);
 
   const [date, setDate] = useState(initialDate);
-  const filled = date ?? minimumDate;
+  const displayedDate = date ?? minimumDate;
 
   const header = picker === DATE_PICKER.START_TIME ? (
     <Row>
@@ -87,15 +87,15 @@ const SablierDatePicker = ({
     <Row>
       <MediumText labelTertiary regular>{t('sablierContent.label.start')}</MediumText>
       <Row>
-        <TextLink onPress={() => setDate(addHours(filled, 1))}>
+        <TextLink onPress={() => setDate(addHours(displayedDate, 1))}>
           {t('sablierContent.button.plusHour')}
         </TextLink>
         <Spacing w={10} />
-        <TextLink onPress={() => setDate(addDays(filled, 1))}>
+        <TextLink onPress={() => setDate(addDays(displayedDate, 1))}>
           {t('sablierContent.button.plusDay')}
         </TextLink>
         <Spacing w={10} />
-        <TextLink onPress={() => setDate(addDays(filled, 30))}>
+        <TextLink onPress={() => setDate(addDays(displayedDate, 30))}>
           {t('sablierContent.button.plus30Days')}
         </TextLink>
       </Row>
@@ -116,7 +116,7 @@ const SablierDatePicker = ({
         <TimingInput value={date} filled={getThemeType(theme) === DARK_THEME} />
         <Spacing h={20} />
         <DatePicker
-          date={filled}
+          date={displayedDate}
           onDateChange={setDate}
           androidVariant="nativeAndroid"
           mode="datetime"

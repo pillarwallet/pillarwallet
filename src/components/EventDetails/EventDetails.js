@@ -498,9 +498,8 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(BADGE, { badgeId });
   };
 
-  openReceiveModal = (receiveWalletAddress: string) => {
+  openReceiveModal = (receiveWalletAddress: string) =>
     Modal.open(() => <ReceiveModal address={receiveWalletAddress} />);
-  };
 
   topUpSW = () => {
     const { accounts } = this.props;

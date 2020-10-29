@@ -234,9 +234,7 @@ const ContactDetailsModal = ({
     }
   };
 
-  const openScanner = () => {
-    Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
-  };
+  const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
 
   return (
     <ModalBox

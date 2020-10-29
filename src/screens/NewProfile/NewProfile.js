@@ -253,9 +253,7 @@ const NewProfile = ({
     ? { default: true, floating: true, transparent: true }
     : { centerItems: [{ title: t('auth:title.chooseUsername') }] };
 
-  const openLegalModal = (endpoint: string) => Modal.open(() => (
-    <HTMLContentModal htmlEndpoint={endpoint} />
-  ));
+  const openLegalModal = (endpoint: string) => Modal.open(() => <HTMLContentModal htmlEndpoint={endpoint} />);
 
   return (
     <ContainerWithHeader
