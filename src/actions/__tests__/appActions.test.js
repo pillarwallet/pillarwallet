@@ -24,11 +24,13 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { CACHE_STATUS, SET_CACHED_URLS } from 'constants/cacheConstants';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import localeConfig from 'configs/localeConfig';
 import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 const storage = Storage.getInstance('db');
 
@@ -49,17 +51,33 @@ const initialCacheState = {
   cachedUrls: {},
 };
 
+const BASE_URL = 'baseUrl/';
+const TIME_STAMP = '123456789';
+
+const mockedFirebaseConfigGetString = (key) => {
+  switch (key) {
+    case FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP:
+      return TIME_STAMP;
+
+    case FEATURE_FLAGS.APP_LOCALES_URL:
+      return BASE_URL;
+
+    default:
+      return null;
+  }
+};
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({ appSettings: initialAppSettingsState, session: initialSessionState, cache: initialCacheState });
+    firebaseRemoteConfig.getString = mockedFirebaseConfigGetString;
   });
 
   const defaultLanguage = getDefaultSupportedUserLanguage();
-  const authTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/auth.json`;
-  const commonTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/common.json`;
+  const authTranslationsUrl = `${BASE_URL}${defaultLanguage}/auth_${TIME_STAMP}.json`;
+  const commonTranslationsUrl = `${BASE_URL}${defaultLanguage}/common_${TIME_STAMP}.json`;
 
 
   it(`initAppAndRedirectAction - should trigger the app settings updated 

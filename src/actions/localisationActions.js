@@ -29,6 +29,7 @@ import {
   setLanguage,
   isLanguageSupported,
 } from 'services/localisation/translations';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 import { cacheUrlAction, removeUrlCacheAction } from 'actions/cacheActions';
 import {
@@ -46,6 +47,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getCachedJSONFile } from 'utils/cache';
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 
 const LOCAL = 'LOCAL';
@@ -60,10 +62,22 @@ type SetLngAndBundle = {
   onSuccess?: () => void,
 }
 
-const getTranslationData = (lng: string) => localeConfig.namespaces.map((ns) => ({
-  ns,
-  url: `${localeConfig.baseUrl}${lng}/${ns}.json`, // eslint-disable-line i18next/no-literal-string
-}));
+const getTranslationData = (lng: string, baseUrl: string, timeStamp: string) => localeConfig.namespaces.map((ns) => {
+  let url = '';
+  if (baseUrl) {
+    /* eslint-disable i18next/no-literal-string */
+    if (timeStamp) {
+      url = `${baseUrl}${lng}/${ns}_${timeStamp}.json`;
+    } else {
+      url = `${baseUrl}${lng}/${ns}.json`;
+    }
+    /* eslint-enable i18next/no-literal-string */
+  }
+  return {
+    ns,
+    url,
+  };
+});
 
 const getCachedTranslationResources =
   async (translationsData: TranslationData[], cachedUrls: CachedUrls, dispatch: Dispatch) => {
@@ -101,14 +115,16 @@ const getTranslationsResources = async (props) => {
   // TODO: pass in versioning;
   let version = '';
   const missingNsArray = [];
-  const translationsData = getTranslationData(language);
+  const baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
+  const translationsTimeStamp = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP);
+  const translationsData = getTranslationData(language, baseUrl, translationsTimeStamp);
 
   const { session: { data: { isOnline } } } = getState();
 
   const relatedLocalTranslationData = localeConfig.localTranslations[language] || {};
 
   // if translations' baseUrl is provided - use external translations. If not - local.
-  if (localeConfig.baseUrl) {
+  if (baseUrl) {
     // If network is available - fetch and cache newest translations
     // TODO: fetch newest only once per session.
     if (isOnline) {
@@ -204,7 +220,7 @@ export const getAndSetFallbackLanguageResources = () => {
   };
 };
 
-export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
+export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { localisation } },
@@ -320,11 +336,15 @@ export const changeLanguageAction = (language: string) => {
 export const updateTranslationResourceOnNetworkChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { localisation } },
+      appSettings: { isFetched, data: { localisation } },
       session: { data: { isOnline, fallbackLanguageVersion, translationsInitialised } },
     } = getState();
 
-    if (!translationsInitialised || !localeConfig.isEnabled || !localeConfig.baseUrl) return;
+    if (!isFetched) return;
+
+    const baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
+
+    if (!translationsInitialised || !localeConfig.isEnabled || !baseUrl) return;
 
     const { translationVersion, activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultSupportedUserLanguage();

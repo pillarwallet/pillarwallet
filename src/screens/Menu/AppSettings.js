@@ -237,7 +237,7 @@ class AppSettings extends React.Component<Props, State> {
         subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
         onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
         bulletedLabel: !hasOtherDevicesLinked && {
-          label: 'Not set',
+          label: t('label.notSet'),
         },
       },
       {

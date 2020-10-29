@@ -22,7 +22,6 @@ import { setupEnv, switchEnvironments, getEnv } from 'configs/envConfig';
 import React, { Suspense } from 'react';
 import Intercom from 'react-native-intercom';
 import { StatusBar, Platform, Linking, View } from 'react-native';
-import remoteConfig from '@react-native-firebase/remote-config';
 import { Provider, connect } from 'react-redux';
 import * as Sentry from '@sentry/react-native';
 import { PersistGate } from 'redux-persist/lib/integration/react';
@@ -51,7 +50,6 @@ import { changeLanguageAction, updateTranslationResourceOnNetworkChangeAction } 
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { STAGING } from 'constants/envConstants';
 
 // components
@@ -69,6 +67,7 @@ import { log } from 'utils/logger';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
+import { initFirebase } from 'services/firebase';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -158,32 +157,8 @@ class App extends React.Component<Props, *> {
     const env = await setupEnv();
     log.info('Environment: ', env);
     this.setState({ env });
-    /**
-     * First, we need to set the defaults for Remote Config.
-     * This makes the default values immedidately available
-     * on app load and can be used.
-     *
-     * @url https://rnfirebase.io/reference/remote-config#setDefaults
-     */
 
-    remoteConfig()
-      .setDefaults(INITIAL_FEATURE_FLAGS)
-      .then(() => log.info('Firebase Config: Defaults loaded and available.'))
-      .catch(e => log.error('Firebase Config: An error occured loading defaults:', e));
-
-    /**
-     * Secondly, we need to activate any remotely fetched values
-     * if they exist at all. The values that have been fetched
-     * and activated override the default values above (see @url
-     * above).
-     *
-     * @url https://rnfirebase.io/reference/remote-config#activate
-     */
-
-    remoteConfig()
-      .activate()
-      .then((r) => log.info('Firebase Config: Activation result was:', r))
-      .catch(e => log.error('Firebase Config: An error occured loading defaults:', e));
+    await initFirebase();
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
@@ -269,7 +244,7 @@ class App extends React.Component<Props, *> {
     const theme = getThemeByType(themeType);
     const { current } = theme;
 
-    if (!isFetched || (localeConfig.isEnabled && localeConfig.baseUrl && !translationsInitialised)) return null;
+    if (!isFetched || (localeConfig.isEnabled && !translationsInitialised)) return null;
 
     return (
       <AppearanceProvider>
