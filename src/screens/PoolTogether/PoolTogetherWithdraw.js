@@ -75,6 +75,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 
 // local components
 import PoolTokenAllowModal from './PoolTokenAllowModal';
+import isEqual from 'lodash.isequal';
 
 
 const ContentWrapper = styled.View`
@@ -166,6 +167,12 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     this.updateAllowanceFeeAndTransaction();
     this.updateWithdrawFeeAndTransaction();
     logScreenView('View PoolTogether Withdraw', 'PoolTogetherWithdraw');
+  }
+
+  componentDidUpdate(prevProps: Props) {
+    if (!isEqual(this.props.poolAllowance, prevProps.poolAllowance)) {
+      this.updateWithdrawFeeAndTransaction();
+    }
   }
 
   updateAllowanceFeeAndTransaction = () => {
@@ -301,7 +308,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             tokenValue: ticketsCount,
             totalPoolTicketsCount,
             userTickets,
-            ...withdrawPayload,
+            transactionPayload: withdrawPayload,
           });
       };
     }
@@ -352,22 +359,22 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
               <Text label center>{t('poolTogetherContent.paragraph.withdrawalNote')}</Text>
             </ContentRow>
             <ContentRow style={{ paddingTop: 22 }}>
-              {(!hasAllowance && !isApprovalExecuting) &&
-                <Text center label>
-                  {t('poolTogetherContent.paragraph.automationMissing')}
-                </Text>
-              }
-              {!!isApprovalExecuting &&
-                <Text center label>
-                  {t('poolTogetherContent.paragraph.pendingAutomation')}
-                </Text>
-              }
+              {!hasAllowance && !isEstimating && !isApprovalExecuting && (
+                <Text center label>{t('poolTogetherContent.paragraph.automationMissing')}</Text>
+              )}
+              {!!isApprovalExecuting && (
+                <Text center label>{t('poolTogetherContent.paragraph.pendingAutomation')}</Text>
+              )}
+              {isEstimating && !isApprovalExecuting && !feeInfo && (
+                <Text center label>{t('label.fetchingFee')}</Text>
+              )}
             </ContentRow>
             {!!withdrawTransactionAvailable && !!feeInfo && (
               <ContentRow>
                 <FeeLabelToggle
                   labelText={t('label.fee')}
                   txFeeInWei={feeInfo?.fee}
+                  isLoading={isEstimating}
                   gasToken={feeInfo?.gasToken}
                   hasError={!!errorMessage}
                   showFiatDefault

@@ -365,6 +365,8 @@ const servicesFlow = createStackNavigator({
   [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
   [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -415,6 +417,8 @@ const homeFlow = createStackNavigator({
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
   [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
   [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -672,6 +676,8 @@ const poolTogetherFlow = createStackNavigator({
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;

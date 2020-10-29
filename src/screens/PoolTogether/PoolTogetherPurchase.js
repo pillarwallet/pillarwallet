@@ -310,7 +310,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             tokenValue: numberOfTickets,
             totalPoolTicketsCount,
             userTickets,
-            ...purchasePayload,
+            transactionPayload: purchasePayload,
           });
       };
     }
@@ -371,6 +371,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 <FeeLabelToggle
                   labelText={t('label.fee')}
                   txFeeInWei={feeInfo?.fee}
+                  isLoading={isEstimating}
                   gasToken={feeInfo?.gasToken}
                   hasError={!!errorMessage}
                   showFiatDefault

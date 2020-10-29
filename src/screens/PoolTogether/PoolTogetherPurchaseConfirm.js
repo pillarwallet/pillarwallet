@@ -93,7 +93,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
   scroll: Object;
 
   constructor(props) {
-    const { navigation, feeInfo } = props;
+    const { navigation } = props;
     const {
       poolToken,
       tokenValue,
@@ -133,7 +133,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: { ...transactionPayload, txFeeInWei, gasToken },
-      goBackDismiss: true,
       transactionType: POOLTOGETHER_DEPOSIT_TRANSACTION,
     });
   };
