@@ -25,6 +25,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
+import isEqual from 'lodash.isequal';
 import t from 'translations/translate';
 
 // actions
@@ -75,7 +76,6 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 
 // local components
 import PoolTokenAllowModal from './PoolTokenAllowModal';
-import isEqual from 'lodash.isequal';
 
 
 const ContentWrapper = styled.View`
