@@ -19,196 +19,44 @@
 */
 
 import * as React from 'react';
-import { ScrollView } from 'react-native';
-import Intercom from 'react-native-intercom';
-import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
-import t from 'translations/translate';
 
 // actions
-import {
-  removeContactForReferralAction,
-  sendReferralInvitationsAction,
-} from 'actions/referralsActions';
-
-// components
-import { MediumText, BaseText } from 'components/Typography';
-import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Insight from 'components/Insight';
-import Button from 'components/Button';
-import ClosablePillList from 'components/ClosablePillList';
-
-// utils
-import { spacing } from 'utils/variables';
-import { getRemainingDailyInvitations } from 'utils/referrals';
+import { allowToAccessPhoneContactsAction } from 'actions/referralsActions';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { ReferralContact, SentInvitationsCount } from 'reducers/referralsReducer';
 
-// constants
-import { ADDRESS_BOOK_PERMISSION, REFERRAL_CONTACTS } from 'constants/navigationConstants';
-
+// screens
+import ReferralContacts from './ReferralContacts';
+import AccessToAddressBook from './AccessToAddressBook';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  inviteByEmail: (email: string) => void,
-  removeContactForReferral: (id: string) => void,
-  addedContactsToInvite: ReferralContact[],
-  sendInvitation: (invitations: ReferralContact[]) => void,
-  isSendingInvite: boolean,
   hasAllowedToAccessContacts: boolean,
-  sentInvitationsCount: SentInvitationsCount,
-  isPillarRewardCampaignActive: boolean,
+  allowToAccessPhoneContacts: () => void,
 };
 
-const ButtonWrapper = styled.View`
-  flex: 1;
-  justify-content: ${({ justifyCenter }) => justifyCenter ? 'center' : 'flex-start'};
-  padding: ${spacing.large}px 0;
-`;
-
-
 class ReferFriends extends React.PureComponent<Props> {
-  sendInvites = () => {
-    const { addedContactsToInvite, sendInvitation } = this.props;
-    sendInvitation(addedContactsToInvite);
-  };
-
-  proceedToSelectContacts = () => {
-    const { navigation, hasAllowedToAccessContacts } = this.props;
-    if (hasAllowedToAccessContacts) {
-      navigation.navigate(REFERRAL_CONTACTS);
-    } else {
-      navigation.navigate(ADDRESS_BOOK_PERMISSION);
-    }
-  };
-
   render() {
-    const {
-      navigation,
-      addedContactsToInvite,
-      removeContactForReferral,
-      isSendingInvite,
-      sentInvitationsCount,
-      isPillarRewardCampaignActive,
-    } = this.props;
+    const { hasAllowedToAccessContacts, navigation, allowToAccessPhoneContacts } = this.props;
 
-    const mappedContactsToInvite = addedContactsToInvite.map((contact) => ({ ...contact, label: contact.name }));
-    const hasAddedContacts = !!mappedContactsToInvite.length;
-    const availableInvites = getRemainingDailyInvitations(sentInvitationsCount) - mappedContactsToInvite.length;
-    const availableInvitesText = !availableInvites
-      ? 0
-      : t('referralsContent.label.remainingCount', { amount: availableInvites });
-    const commonSteps = [
-      {
-        title: t('referralsContent.instruction.shareLink.title'),
-        body: t('referralsContent.instruction.shareLink.paragraph'),
-      },
-      {
-        title: t('referralsContent.instruction.giveSmartWallet.title'),
-        body: t('referralsContent.instruction.giveSmartWallet.paragraph'),
-      },
-    ];
-
-    return (
-      <ContainerWithHeader
-        headerProps={{
-          centerItems: [{
-            title: isPillarRewardCampaignActive
-              ? t('referralsContent.title.referMain')
-              : t('referralsContent.title.inviteMain'),
-          }],
-          rightItems: [
-            {
-              link: t('button.support'),
-              onPress: () => Intercom.displayMessenger(),
-            },
-          ],
-          sideFlex: 2,
-        }}
-      >
-        <ScrollView contentContainerStyle={{ paddingTop: 24, paddingHorizontal: spacing.layoutSides }}>
-          <Insight
-            isVisible
-            insightNumberedList={isPillarRewardCampaignActive
-              ? [
-                  ...commonSteps,
-                  {
-                    title: t('referralsContent.instruction.getTokens.title'),
-                    body: t('referralsContent.instruction.getTokens.paragraph'),
-                  },
-                ]
-              : commonSteps
-            }
-            wrapperPadding={0}
-            wrapperStyle={{ marginBottom: hasAddedContacts ? 34 : 40 }}
-          />
-          {hasAddedContacts && !isSendingInvite &&
-            <React.Fragment>
-              <MediumText accent>
-                {isPillarRewardCampaignActive
-                  ? t('referralsContent.label.referralsCount', { amountText: availableInvitesText })
-                  : t('referralsContent.label.invitesCount', { amountText: availableInvitesText })
-                }
-              </MediumText>
-              <ClosablePillList
-                listItems={mappedContactsToInvite}
-                onItemClose={(id) => removeContactForReferral(id)}
-              >
-                <Button
-                  title={t('button.addContacts')}
-                  horizontalPaddings={8}
-                  small
-                  card
-                  onPress={() => navigation.navigate(REFERRAL_CONTACTS)}
-                  marginTop={4}
-                  marginBottom={4}
-                />
-              </ClosablePillList>
-              {!!isPillarRewardCampaignActive &&
-              <BaseText style={{ marginTop: spacing.large }} secondary small>
-                {t('referralsContent.paragraph.rewardMechanics')}
-              </BaseText>}
-            </React.Fragment>}
-          <ButtonWrapper justifyCenter={hasAddedContacts}>
-            <Button
-              isLoading={isSendingInvite}
-              title={addedContactsToInvite.length ? t('button.sendInvites') : t('button.selectContacts')}
-              onPress={addedContactsToInvite.length
-                ? this.sendInvites
-                : this.proceedToSelectContacts}
-              block
-            />
-          </ButtonWrapper>
-        </ScrollView>
-      </ContainerWithHeader>
-    );
+    if (hasAllowedToAccessContacts) {
+      return <ReferralContacts navigation={navigation} />;
+    }
+    return <AccessToAddressBook allowToAccessPhoneContacts={allowToAccessPhoneContacts} />;
   }
 }
 
 const mapStateToProps = ({
-  referrals: {
-    addedContactsToInvite,
-    isSendingInvite,
-    hasAllowedToAccessContacts,
-    sentInvitationsCount,
-    isPillarRewardCampaignActive,
-  },
+  referrals: { hasAllowedToAccessContacts },
 }: RootReducerState): $Shape<Props> => ({
-  addedContactsToInvite,
-  isSendingInvite,
   hasAllowedToAccessContacts,
-  sentInvitationsCount,
-  isPillarRewardCampaignActive,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  removeContactForReferral: (id: string) => dispatch(removeContactForReferralAction(id)),
-  sendInvitation: (invitations: ReferralContact[]) => dispatch(
-    sendReferralInvitationsAction(invitations),
-  ),
+  allowToAccessPhoneContacts: () => dispatch(allowToAccessPhoneContactsAction()),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ReferFriends));
+export default connect(mapStateToProps, mapDispatchToProps)(ReferFriends);

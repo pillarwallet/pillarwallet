@@ -41,8 +41,6 @@ import { ADD_NOTIFICATION } from 'constants/notificationConstants';
 import {
   SENDING_INVITE,
   INVITE_SENT,
-  SET_CONTACTS_FOR_REFERRAL,
-  REMOVE_CONTACT_FOR_REFERRAL,
   REFERRAL_INVITE_ERROR,
   ALLOW_ACCESS_PHONE_CONTACTS,
   CLAIM_REWARD,
@@ -270,16 +268,6 @@ export const claimTokensAction = (props: ClaimTokenAction, callback?: Function) 
     }
   };
 };
-
-export const setContactsForReferralAction = (contacts: ReferralContact[]) => ({
-  type: SET_CONTACTS_FOR_REFERRAL,
-  payload: contacts,
-});
-
-export const removeContactForReferralAction = (id: string) => ({
-  type: REMOVE_CONTACT_FOR_REFERRAL,
-  payload: id,
-});
 
 export const allowToAccessPhoneContactsAction = () => {
   return async (dispatch: Dispatch) => {
