@@ -120,7 +120,6 @@ export const estimateTransactionAction = (
     const currentErrorMessage = getState().transactionEstimate.errorMessage;
     if (errorMessage) {
       dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
-      // TODO: Toast is temporary solution
       if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
       Toast.show({
         message: errorMessage,

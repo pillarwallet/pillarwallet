@@ -19,8 +19,6 @@
 */
 
 import {
-  SET_CONTACTS_FOR_REFERRAL,
-  REMOVE_CONTACT_FOR_REFERRAL,
   INVITE_SENT,
   SENDING_INVITE,
   REFERRAL_INVITE_ERROR,
@@ -81,16 +79,6 @@ export type ReferralsErrorErrorAction = {|
   type: 'REFERRAL_INVITE_ERROR',
 |};
 
-type ReferralsSetContactsAction = {|
-  type: 'SET_CONTACTS_FOR_REFERRAL',
-  payload: ReferralContact[],
-|};
-
-export type ReferralsRemoveContactAction = {|
-  type: 'REMOVE_CONTACT_FOR_REFERRAL',
-  payload: string,
-|};
-
 export type ReferralsInviteAlreadySentAction = {|
   type: 'SET_ALREADY_INVITED_CONTACTS',
   payload: ReferralContact[],
@@ -113,8 +101,6 @@ type ReferralsClaimReward = {|
 export type ReferralsReducerAction =
   | ReferralsSendingInviteAction
   | ReferralsInviteSentAction
-  | ReferralsSetContactsAction
-  | ReferralsRemoveContactAction
   | ReferralsErrorErrorAction
   | ReferralsInviteAlreadySentAction
   | ReferralsTokenReceived
@@ -123,7 +109,6 @@ export type ReferralsReducerAction =
 
 export type ReferralsReducerState = {|
   isSendingInvite: boolean,
-  addedContactsToInvite: ReferralContact[],
   alreadyInvitedContacts: ReferralContact[],
   hasAllowedToAccessContacts: boolean,
   sentInvitationsCount: SentInvitationsCount,
@@ -139,7 +124,6 @@ export type ReferralsReducerState = {|
 |};
 
 export const initialState: ReferralsReducerState = {
-  addedContactsToInvite: [],
   alreadyInvitedContacts: [],
   isSendingInvite: false,
   hasAllowedToAccessContacts: false,
@@ -158,32 +142,6 @@ export const initialState: ReferralsReducerState = {
   is1WorldCampaignActive: false,
 };
 
-
-const setContacts = (
-  state: ReferralsReducerState,
-  action: ReferralsSetContactsAction,
-): ReferralsReducerState => {
-  const { payload } = action;
-
-  return {
-    ...state,
-    addedContactsToInvite: payload,
-  };
-};
-
-const removeContact = (
-  state: ReferralsReducerState,
-  action: ReferralsRemoveContactAction,
-): ReferralsReducerState => {
-  const { payload } = action;
-  const { addedContactsToInvite } = state;
-
-  return {
-    ...state,
-    addedContactsToInvite: [...addedContactsToInvite.filter((contact) => contact.id !== payload)],
-  };
-};
-
 const setInvitations = (
   state: ReferralsReducerState,
   action: ReferralsInviteSentAction,
@@ -195,7 +153,6 @@ const setInvitations = (
   return {
     ...state,
     isSendingInvite: false,
-    addedContactsToInvite: [],
     alreadyInvitedContacts: [...alreadyInvitedContacts, ..._alreadyInvitedContacts],
     sentInvitationsCount,
   };
@@ -225,12 +182,6 @@ export default function referralsReducer(
 
     case SET_ALREADY_INVITED_CONTACTS:
       return setAlreadySentInvites(state, action);
-
-    case SET_CONTACTS_FOR_REFERRAL:
-      return setContacts(state, action);
-
-    case REMOVE_CONTACT_FOR_REFERRAL:
-      return removeContact(state, action);
 
     case ALLOW_ACCESS_PHONE_CONTACTS:
       return { ...state, hasAllowedToAccessContacts: true };
