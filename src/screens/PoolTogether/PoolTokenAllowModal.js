@@ -32,12 +32,15 @@ import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // types
 import type { Theme } from 'models/Theme';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 // utils
 import { images } from 'utils/images';
+
 
 export type AllowData = {
   assetSymbol: string,
@@ -55,8 +58,10 @@ type Props = {
   onAllow: () => void,
   allowData: AllowData,
   theme: Theme,
+  assetSymbol: string,
+  errorMessage: ?string,
+  feeInfo: ?TransactionFeeInfo,
 };
-
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -91,24 +96,15 @@ const PoolTokenAllowModal = (props: Props) => {
     onModalHide,
     onAllow,
     isVisible,
-    allowData,
     theme,
-  } = props;
-
-  if (!allowData) {
-    return null;
-  }
-
-  const {
-    feeToken,
-    feeDisplayValue,
-    feeInFiat,
+    errorMessage,
     assetSymbol,
-    isDisabled,
-  } = allowData;
+    feeInfo,
+  } = props;
 
   const tokenLogo = assetSymbol === DAI ? daiIcon : usdcIcon;
   const { genericToken: fallbackSource } = images(theme);
+  const isDisabled = !feeInfo || !!errorMessage;
 
   return (
     <SlideModal
@@ -137,19 +133,30 @@ const PoolTokenAllowModal = (props: Props) => {
         <Paragraph>
           {t('poolTogetherContent.paragraph.allowAutomationWithToken', { token: assetSymbol })}
         </Paragraph>
+        {!!feeInfo && (
+          <FeeLabelToggle
+            labelText={t('label.fee')}
+            txFeeInWei={feeInfo?.fee}
+            gasToken={feeInfo?.gasToken}
+            hasError={!!errorMessage}
+            showFiatDefault
+          />
+        )}
+        {!!errorMessage && (
+          <BaseText negative style={{ marginTop: spacing.medium }}>
+            {errorMessage}
+          </BaseText>
+        )}
         <Button
           secondary
-          title={isDisabled ? t('label.notEnoughToken', { token: feeToken }) : t('button.enable')}
+          title={t('button.enable')}
           onPress={onAllow}
           regularText
-          style={{ marginBottom: 28 }}
+          style={{ marginTop: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
           block
           disabled={isDisabled}
         />
-        <BaseText secondary>
-          {t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
-        </BaseText>
       </ContentWrapper>
     </SlideModal>
   );

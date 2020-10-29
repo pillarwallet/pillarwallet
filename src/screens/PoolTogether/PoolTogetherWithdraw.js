@@ -70,7 +70,7 @@ import { getRate, isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsLis
 
 // services
 import {
-  getApproveFeeAndTransaction,
+  getApproveTransaction,
   getWithdrawTicketFeeAndTransaction,
 } from 'services/poolTogether';
 
@@ -168,21 +168,11 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
 
   updateFeeAndCheckAllowance = async () => {
     const { poolToken } = this.state;
-    const { useGasToken, poolAllowance } = this.props;
+    const { poolAllowance } = this.props;
     const hasAllowance = poolAllowance[poolToken];
     if (!hasAllowance) {
-      const {
-        txFeeInWei,
-        gasToken,
-        transactionPayload,
-      } = await getApproveFeeAndTransaction(poolToken, useGasToken) || {};
-      if (txFeeInWei) {
-        this.setState({
-          gasToken,
-          allowPayload: transactionPayload,
-          txFeeInWei,
-        });
-      }
+      const allowPayload = await getApproveTransaction(poolToken);
+      this.setState({ allowPayload });
     }
   }
 

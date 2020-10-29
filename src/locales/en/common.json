@@ -1369,7 +1369,8 @@
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
     "cannotSendCollectible": "Cannot send collectible. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
-    "cannotCancelStream": "Cannot cancel stream. Please try again."
+    "cannotCancelStream": "Cannot cancel stream. Please try again.",
+    "cannotAllowAsset": "Cannot allow asset. Please try again."
   },
 
   "exchangeContent": {

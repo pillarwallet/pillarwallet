@@ -25,7 +25,6 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
-import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
@@ -47,7 +46,7 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from '
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type { GasToken } from 'models/Transaction';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -86,9 +85,7 @@ type State = {
   userTickets: number,
   totalPoolTicketsCount: number,
   transactionPayload: Object,
-  isDisabled: boolean,
-  txFeeInWei: BigNumber | number,
-  gasToken: ?GasToken,
+  feeInfo: ?TransactionFeeInfo,
 };
 
 class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
@@ -102,9 +99,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       userTickets,
       totalPoolTicketsCount,
       transactionPayload,
-      isDisabled,
-      txFeeInWei,
-      gasToken,
+      feeInfo,
     } = navigation.state.params || {};
     super(props);
     this.state = {
@@ -113,9 +108,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       userTickets,
       totalPoolTicketsCount,
       transactionPayload,
-      isDisabled,
-      txFeeInWei,
-      gasToken,
+      feeInfo,
     };
   }
 
@@ -143,9 +136,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       tokenValue,
       userTickets,
       totalPoolTicketsCount,
-      isDisabled,
-      txFeeInWei,
-      gasToken,
+      feeInfo,
     } = this.state;
 
     const asset = supportedAssets.find(({ symbol }) => poolToken === symbol);
@@ -195,7 +186,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               </TableRow>
               <TableRow>
                 <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-                <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
               </TableRow>
               <TableRow>
                 <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -203,7 +194,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
               </TableRow>
               <TableRow>
                 <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-                <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
               </TableRow>
             </Table>
             <Spacing h={50} />
@@ -213,7 +204,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
                 this.purchasePoolAsset();
               }}
               style={{ marginBottom: 13, width: '100%' }}
-              disabled={isDisabled}
             />
           </ContentWrapper>
         </ScrollWrapper>

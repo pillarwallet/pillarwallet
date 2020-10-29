@@ -258,9 +258,13 @@ class NewStreamReview extends React.Component<Props> {
 const mapStateToProps = ({
   assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
+  transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   ensRegistry,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
