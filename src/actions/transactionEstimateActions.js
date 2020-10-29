@@ -101,9 +101,8 @@ export const estimateTransactionAction = (
 
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
-      .catch((sdkError) => {
-        console.log('estimateAccountTransaction sdkError: ', sdkError); // eslint-disable-line
-        errorMessage = sdkError || t('toast.transactionFeeEstimationFailed');
+      .catch((error) => {
+        errorMessage = error?.message || t('toast.transactionFeeEstimationFailed');
         return null;
       });
 
@@ -111,8 +110,6 @@ export const estimateTransactionAction = (
       const useGasToken = useGasTokenSelector(getState());
       feeInfo = buildTxFeeInfo(estimated, useGasToken);
     }
-
-    // feeInfo.fee = new BigNumber(0)
 
     if (!errorMessage && feeInfo && !feeInfo.fee.gt(0)) {
       errorMessage = t('toast.transactionFeeEstimationFailed');

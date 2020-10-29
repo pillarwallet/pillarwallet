@@ -30,6 +30,7 @@ import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 import { getEnv } from 'configs/envConfig';
 
@@ -524,7 +525,35 @@ class SmartWallet {
     const estimated = await this.getSdk()
       .estimateAccountTransaction(...estimateMethodParams)
       .then(parseEstimatePayload)
-      .catch(() => ({}));
+      .catch((error) => {
+        let errorMessage = t('error.unableToEstimateTransaction');
+        const errorReplaceString = '[ethjs-query] while formatting outputs from RPC'; // eslint-disable-line
+        if (error?.message) {
+          /**
+           * the return result from Archanova is problematic,
+           * it contains "ethjs-query" part and rest of message is JSON string
+           * this is known issue on Archanova end, but it's not planned to be fixed
+           * return example:
+           * [ethjs-query] while formatting outputs from RPC
+           * '{"value":{"body":"{\"oneMore\":\"escaped\",\"JSON\":\"object\"}"}}'
+           */
+          if (error.message.includes(errorReplaceString)) {
+            try {
+              const messageJsonPart1 = JSON.parse(error.message.replace(errorReplaceString, '').trim().slice(1, -1));
+              const messageJsonPart2 = JSON.parse(messageJsonPart1?.value?.body);
+              const estimateError = messageJsonPart2?.error;
+              if (estimateError?.message) errorMessage = estimateError.message;
+              if (estimateError?.data) errorMessage = `${estimateError.data}: ${errorMessage}`;
+            } catch {
+              // unable to decrypt json
+            }
+          } else {
+            // this means it's more generic error message and not "ethjs-query"
+            errorMessage = error.message;
+          }
+        }
+        throw new Error(errorMessage);
+      });
 
     return formatEstimated(estimated);
   }
