@@ -42,6 +42,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
+import Toast from 'components/Toast';
 
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -119,10 +120,21 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
 
   purchasePoolAsset = () => {
     const { navigation } = this.props;
-    const { transactionPayload } = this.state;
+    const { transactionPayload, feeInfo } = this.state;
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotPurchaseTicket'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { fee: txFeeInWei, gasToken } = feeInfo;
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload,
+      transactionPayload: { ...transactionPayload, txFeeInWei, gasToken },
       goBackDismiss: true,
       transactionType: POOLTOGETHER_DEPOSIT_TRANSACTION,
     });

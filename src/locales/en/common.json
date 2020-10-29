@@ -1370,7 +1370,9 @@
     "cannotSendCollectible": "Cannot send collectible. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
-    "cannotAllowAsset": "Cannot allow asset. Please try again."
+    "cannotAllowAsset": "Cannot allow asset. Please try again.",
+    "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
+    "cannotWithdraw": "Cannot withdraw. Please try again."
   },
 
   "exchangeContent": {

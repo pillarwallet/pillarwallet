@@ -161,14 +161,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
   componentDidMount() {
     const { logScreenView, resetEstimateTransaction } = this.props;
-    // check if poolTogether is already allowed and get fee if not
     resetEstimateTransaction();
-    this.updateCheckAllowance();
+    // check if poolTogether is already allowed and get fee if not
+    this.updateAllowanceFeeAndTransaction();
     this.updatePurchaseFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
-  updateCheckAllowance = () => {
+  updateAllowanceFeeAndTransaction = () => {
     const { poolToken } = this.state;
     const { poolAllowance, estimateTransaction } = this.props;
     const hasAllowance = poolAllowance[poolToken];
@@ -314,7 +314,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const poolTokenItem = getAssetData(getAssetsAsList(assets), supportedAssets, poolToken);
     const assetOptions = !isEmpty(poolTokenItem) ? [poolTokenItem] : [];
-    const purschaseTransactionAvailable = !!hasAllowance && !!purchasePayload;
+    const purchaseTransactionAvailable = !!hasAllowance && !!purchasePayload;
 
     return (
       <ContainerWithHeader
@@ -359,8 +359,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               {!!isApprovalExecuting &&
                 <Text center label>{t('poolTogetherContent.paragraph.pendingAutomation')}</Text>
               }
-              {isEstimating && <Text center label>{t('label.fetchingFee')}</Text>}
-              {!!purschaseTransactionAvailable && !!feeInfo && (
+              {isEstimating && !feeInfo && <Text center label>{t('label.fetchingFee')}</Text>}
+              {!!purchaseTransactionAvailable && !!feeInfo && (
                 <FeeLabelToggle
                   labelText={t('label.fee')}
                   txFeeInWei={feeInfo?.fee}
@@ -369,7 +369,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   showFiatDefault
                 />
               )}
-              {!!purschaseTransactionAvailable && !!errorMessage && (
+              {!!purchaseTransactionAvailable && !!errorMessage && (
                 <BaseText negative style={{ marginTop: spacing.medium }}>
                   {errorMessage}
                 </BaseText>

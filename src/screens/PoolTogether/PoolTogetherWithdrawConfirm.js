@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
-import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 
 // actions
@@ -41,11 +40,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
+import Toast from 'components/Toast';
 
 // models
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-import type { GasToken } from 'models/Transaction';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
@@ -69,9 +69,7 @@ type State = {
   poolToken: string,
   tokenValue: number,
   transactionPayload: Object,
-  isDisabled: boolean,
-  txFeeInWei: BigNumber | number,
-  gasToken: ?GasToken,
+  feeInfo: ?TransactionFeeInfo,
 };
 
 class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
@@ -83,18 +81,14 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
       poolToken,
       tokenValue,
       transactionPayload,
-      isDisabled,
-      txFeeInWei,
-      gasToken,
+      feeInfo,
     } = navigation.state.params || {};
     super(props);
     this.state = {
       poolToken,
       tokenValue,
       transactionPayload,
-      isDisabled,
-      txFeeInWei,
-      gasToken,
+      feeInfo,
     };
   }
 
@@ -105,10 +99,21 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
 
   withdrawPoolAsset = () => {
     const { navigation } = this.props;
-    const { transactionPayload } = this.state;
+    const { transactionPayload, feeInfo } = this.state;
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotWithdraw'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { fee: txFeeInWei, gasToken } = feeInfo;
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload,
+      transactionPayload: { ...transactionPayload, txFeeInWei, gasToken },
       goBackDismiss: true,
       transactionType: POOLTOGETHER_WITHDRAW_TRANSACTION,
     });
@@ -122,9 +127,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
     const {
       poolToken,
       tokenValue,
-      txFeeInWei,
-      gasToken,
-      isDisabled,
+      feeInfo,
     } = this.state;
 
     return (
@@ -153,7 +156,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
             <Table>
               <TableRow>
                 <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-                <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
               </TableRow>
               <TableRow>
                 <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -161,7 +164,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
               </TableRow>
               <TableRow>
                 <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-                <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
               </TableRow>
             </Table>
             <Spacing h={50} />
@@ -171,7 +174,6 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
                 this.withdrawPoolAsset();
               }}
               style={{ marginBottom: 13, width: '100%' }}
-              disabled={isDisabled}
             />
           </ContentWrapper>
         </ScrollWrapper>

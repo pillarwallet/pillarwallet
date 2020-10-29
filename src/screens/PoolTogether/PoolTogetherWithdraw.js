@@ -24,9 +24,7 @@ import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { utils } from 'ethers';
 import t from 'translations/translate';
 
 // actions
@@ -36,9 +34,10 @@ import {
   setDismissApproveAction,
   fetchPoolAllowanceStatusAction,
 } from 'actions/poolTogetherActions';
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // constants
-import { DAI, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { DAI, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM, POOLTOGETHER_WITHDRAW_CONFIRM } from 'constants/navigationConstants';
 import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 
@@ -48,10 +47,12 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueInput from 'components/ValueInput';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
+import Toast from 'components/Toast';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Balances, Rates, Assets, Asset } from 'models/Asset';
+import type { Balances, Assets, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -59,20 +60,18 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { themedColors } from 'utils/themes';
-import { fontStyles } from 'utils/variables';
-import { formatFiat, formatTransactionFee } from 'utils/common';
-import { getRate, isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
+import { fontStyles, spacing } from 'utils/variables';
+import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
 
 // services
-import {
-  getApproveTransaction,
-  getWithdrawTicketFeeAndTransaction,
-} from 'services/poolTogether';
+import { getApproveTransaction, getWithdrawTicketTransaction } from 'services/poolTogether';
+
+// types
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 // local components
 import PoolTokenAllowModal from './PoolTokenAllowModal';
@@ -110,13 +109,19 @@ type Props = {
   fetchPoolAllowanceStatus: (symbol: string) => void,
   setDismissApprove: (symbol: string) => void,
   theme: Theme,
-  useGasToken: boolean,
-  baseFiatCurrency: ?string,
   poolAllowance: { [string]: boolean },
   poolApproveExecuting: { [string]: boolean | string },
-  rates: Rates,
   assets: Assets,
   supportedAssets: Asset[],
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  estimateTransaction: (
+    receiver: string,
+    amount: number,
+    data: string,
+  ) => void,
+  resetEstimateTransaction: () => void,
 };
 
 type State = {
@@ -127,8 +132,6 @@ type State = {
   totalPoolTicketsCount: number,
   isAllowModalVisible: boolean,
   allowPayload: Object,
-  gasToken: Object,
-  txFeeInWei: number,
   withdrawPayload: Object,
 };
 
@@ -152,70 +155,40 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       totalPoolTicketsCount,
       isAllowModalVisible: false,
       allowPayload: null,
-      gasToken: null,
-      txFeeInWei: 0,
       withdrawPayload: null,
     };
   }
 
   componentDidMount() {
-    const { logScreenView } = this.props;
+    const { logScreenView, resetEstimateTransaction } = this.props;
+    resetEstimateTransaction();
     // check if poolTogether is already allowed and get fee if not
-    this.updateFeeAndCheckAllowance();
+    this.updateAllowanceFeeAndTransaction();
     this.updateWithdrawFeeAndTransaction();
     logScreenView('View PoolTogether Withdraw', 'PoolTogetherWithdraw');
   }
 
-  updateFeeAndCheckAllowance = async () => {
+  updateAllowanceFeeAndTransaction = () => {
     const { poolToken } = this.state;
-    const { poolAllowance } = this.props;
+    const { poolAllowance, estimateTransaction } = this.props;
     const hasAllowance = poolAllowance[poolToken];
     if (!hasAllowance) {
-      const allowPayload = await getApproveTransaction(poolToken);
+      const allowPayload = getApproveTransaction(poolToken);
+      const { to, data, amount } = allowPayload;
+      estimateTransaction(to, amount, data);
       this.setState({ allowPayload });
     }
   }
 
   updateWithdrawFeeAndTransaction = () => {
     const { poolToken, ticketsCount } = this.state;
-    const {
-      useGasToken,
-      poolAllowance,
-      baseFiatCurrency,
-      balances,
-      rates,
-    } = this.props;
+    const { poolAllowance, estimateTransaction } = this.props;
     if (poolAllowance[poolToken]) {
-      this.setState({
-        withdrawPayload: null,
-      }, async () => {
-        const {
-          txFeeInWei,
-          gasToken,
-          transactionPayload,
-        } = await getWithdrawTicketFeeAndTransaction(ticketsCount, poolToken, useGasToken) || {};
-        if (txFeeInWei) {
-          const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-          const feeSymbol = get(gasToken, 'symbol', ETH);
-          const feeDecimals = get(gasToken, 'decimals', 'ether');
-          const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-          const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-          const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-          const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
-          const tokenValueInFiat = formatFiat(ticketsCount * getRate(rates, poolToken, fiatCurrency), fiatCurrency);
-
-          const withdrawPayload = {
-            transactionPayload,
-            feeInFiat,
-            feeSymbol,
-            feeDisplayValue,
-            isDisabled,
-            tokenValueInFiat,
-            txFeeInWei,
-            gasToken,
-          };
-          this.setState({ withdrawPayload });
-        }
+      this.setState({ withdrawPayload: null }, () => {
+        const withdrawPayload = getWithdrawTicketTransaction(ticketsCount, poolToken);
+        const { to, data, amount } = withdrawPayload;
+        estimateTransaction(to, amount, data);
+        this.setState({ withdrawPayload });
       });
     }
   }
@@ -240,11 +213,30 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
   };
 
   allowPoolAsset = () => {
-    const { navigation } = this.props;
+    const { navigation, feeInfo } = this.props;
     const { allowPayload } = this.state;
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotAllowAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { fee: txFeeInWei, gasToken } = feeInfo;
+
     this.hideAllowAssetModal();
+
+    const transactionPayload = {
+      ...allowPayload,
+      txFeeInWei,
+      gasToken,
+    };
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload: allowPayload,
+      transactionPayload,
       goBackDismiss: true,
       transactionType: POOL_TOGETHER_ALLOW,
     });
@@ -255,13 +247,14 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       navigation,
       fetchPoolStats,
       balances,
-      baseFiatCurrency,
-      rates,
       poolAllowance,
       poolApproveExecuting,
       fetchPoolAllowanceStatus,
       assets,
       supportedAssets,
+      feeInfo,
+      isEstimating,
+      estimateErrorMessage,
     } = this.props;
 
     const {
@@ -271,38 +264,38 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       userTickets,
       totalPoolTicketsCount,
       isAllowModalVisible,
-      gasToken,
-      txFeeInWei,
       allowPayload,
       withdrawPayload,
     } = this.state;
+
+    let errorMessage = estimateErrorMessage;
 
     const hasAllowance = poolAllowance[poolToken];
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
-    const isLoading = (!allowPayload && !hasAllowance) || (!withdrawPayload && hasAllowance) || isApprovalExecuting;
 
-    const withdrawDisabled = hasAllowance && (ticketsCount === 0 || (withdrawPayload && withdrawPayload.isDisabled));
+    const isLoading = (!allowPayload && !hasAllowance)
+      || (!withdrawPayload && hasAllowance)
+      || isApprovalExecuting
+      || isEstimating;
 
-    let allowData;
-    if (allowPayload) {
-      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-      const feeSymbol = get(gasToken, 'symbol', ETH);
-      const feeDecimals = get(gasToken, 'decimals', 'ether');
-      const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-      const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-      const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-      const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
-
-      allowData = {
-        assetSymbol: poolToken,
-        feeDisplayValue,
-        feeInFiat,
-        isDisabled,
-        feeToken: feeSymbol,
-      };
+    if (feeInfo) {
+      if ((allowPayload && !hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
+        ...allowPayload,
+        txFeeInWei: feeInfo.fee,
+        gasToken: feeInfo.gasToken,
+      })) || (withdrawPayload && hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
+        ...withdrawPayload,
+        txFeeInWei: feeInfo.fee,
+        gasToken: feeInfo.gasToken,
+      }))) {
+        errorMessage = t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH });
+      }
     }
+
+    const withdrawDisabled = hasAllowance
+      && (ticketsCount === 0 || !!errorMessage || !feeInfo);
 
     let nextNavigationFunction;
     if (withdrawPayload) {
@@ -327,6 +320,8 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
         balance: userTickets.toString(),
       },
     };
+
+    const withdrawTransactionAvailable = !!hasAllowance && !!withdrawPayload;
 
     return (
       <ContainerWithHeader
@@ -372,42 +367,37 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   {t('poolTogetherContent.paragraph.pendingAutomation')}
                 </Text>
               }
-              {(!!hasAllowance && !withdrawPayload) && <Text center label>{t('label.fetchingFee')}</Text>}
-              {(!!hasAllowance && !!withdrawPayload) &&
-                <Text center label>
-                  {t('label.feeTokenFiat', {
-                    tokenValue: withdrawPayload.feeDisplayValue,
-                    fiatValue: withdrawPayload.feeInFiat,
-                  })}
-                  {withdrawPayload.isDisabled &&
-                  // eslint-disable-next-line i18next/no-literal-string
-                  `\n${t('error.notEnoughTokenForFee', { token: withdrawPayload.feeSymbol })}`
-                  }
-                </Text>
-              }
+              {isEstimating && !feeInfo && <Text center label>{t('label.fetchingFee')}</Text>}
+              {!!withdrawTransactionAvailable && !!feeInfo && (
+                <FeeLabelToggle
+                  labelText={t('label.fee')}
+                  txFeeInWei={feeInfo?.fee}
+                  gasToken={feeInfo?.gasToken}
+                  hasError={!!errorMessage}
+                  showFiatDefault
+                />
+              )}
+              {!!withdrawTransactionAvailable && !!errorMessage && (
+                <BaseText negative style={{ marginTop: spacing.medium }}>
+                  {errorMessage}
+                </BaseText>
+              )}
             </ContentRow>
             <ContentRow>
-              {!withdrawDisabled &&
-                <Button
-                  title={t('button.next')}
-                  onPress={() => {
-                    if (!hasAllowance && !isApprovalExecuting) {
-                      this.setState({ isAllowModalVisible: true });
-                    }
-                    return nextNavigationFunction && nextNavigationFunction();
-                  }}
-                  isLoading={isLoading}
-                  disabled={withdrawDisabled}
-                  style={{ marginBottom: 13, width: '100%' }}
-                />
-              }
-              {!!withdrawDisabled && // has to update like this so it shows the disabled style
-                <Button
-                  title={t('button.next')}
-                  disabled={withdrawDisabled}
-                  style={{ marginBottom: 13, width: '100%' }}
-                />
-              }
+              <Button
+                title={t('button.next')}
+                onPress={() => {
+                  if (withdrawDisabled) return null;
+
+                  if (!hasAllowance && !isApprovalExecuting) {
+                    this.setState({ isAllowModalVisible: true });
+                  }
+                  return nextNavigationFunction && nextNavigationFunction();
+                }}
+                isLoading={isLoading}
+                disabled={withdrawDisabled}
+                style={{ marginBottom: 13, width: '100%' }}
+              />
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
@@ -415,7 +405,9 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
           isVisible={!!isAllowModalVisible}
           onModalHide={this.hideAllowAssetModal}
           onAllow={this.allowPoolAsset}
-          allowData={allowData}
+          feeInfo={feeInfo}
+          errorMessage={errorMessage}
+          assetSymbol={poolToken}
         />
       </ContainerWithHeader>
     );
@@ -423,7 +415,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   accounts: { data: accounts },
   poolTogether: {
@@ -431,23 +422,23 @@ const mapStateToProps = ({
     poolAllowance,
     poolApproveExecuting,
   },
-  rates: { data: rates },
   assets: { supportedAssets },
+  transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
   session,
   accounts,
   poolPrizeInfo,
   poolAllowance,
   poolApproveExecuting,
-  rates,
   supportedAssets,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   balances: accountBalancesSelector,
-  useGasToken: useGasTokenSelector,
   assets: accountAssetsSelector,
 });
 
@@ -461,6 +452,12 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
   fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
   setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
+  estimateTransaction: (
+    receiver: string,
+    amount: number,
+    data: string,
+  ) => dispatch(estimateTransactionAction(receiver, amount, data)),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(withTheme(PoolTogetherWithdraw));

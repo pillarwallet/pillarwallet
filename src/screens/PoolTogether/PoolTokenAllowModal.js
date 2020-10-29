@@ -42,21 +42,12 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import { images } from 'utils/images';
 
 
-export type AllowData = {
-  assetSymbol: string,
-  feeDisplayValue: string,
-  feeInFiat: string,
-  isDisabled?: boolean,
-  feeToken: string,
-};
-
 type Props = {
   onModalHide: () => void,
   onConfirm: (status: ?string) => void,
   isVisible: boolean,
   manageContactType: string,
   onAllow: () => void,
-  allowData: AllowData,
   theme: Theme,
   assetSymbol: string,
   errorMessage: ?string,
