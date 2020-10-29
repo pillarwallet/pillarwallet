@@ -31,12 +31,18 @@ import Modal from 'components/Modal';
 // utils
 import { fontSizes, lineHeights, appFont, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
+import { reportErrorLog } from 'utils/common';
+
+// constants
+import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import type { Theme } from 'models/Theme';
 
-const LEGAL_HTML_ENDPOINT_PREFIX = 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/';
 export const ENDPOINTS = {
   TERMS_OF_SERVICE: 'terms_of_service',
   PRIVACY_POLICY: 'privacy_policy',
@@ -111,9 +117,10 @@ class HTMLContentModal extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    const endpointPrefix = firebaseRemoteConfig.getString(FEATURE_FLAGS.LEGAL_HTML_ENDPOINT_PREFIX);
     const { htmlEndpoint } = this.props;
     // eslint-disable-next-line i18next/no-literal-string
-    const htmlEndpointFull = `${LEGAL_HTML_ENDPOINT_PREFIX}${htmlEndpoint}.html`;
+    const htmlEndpointFull = `${endpointPrefix}${htmlEndpoint}.html`;
 
     fetch(htmlEndpointFull)
       .then((resp) => resp.text())
@@ -123,7 +130,9 @@ class HTMLContentModal extends React.Component<Props, State> {
           htmlData: text.replace(/(\r\n\t|\n|\r\t)/gm, ''),
         });
       })
-      .catch((() => {}));
+      .catch((error => {
+        reportErrorLog(`HTMLContentModal: Failed to fetch ${htmlEndpointFull}`, { error });
+      }));
   }
 
   handleModalClose = () => {
