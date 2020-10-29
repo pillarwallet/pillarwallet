@@ -75,8 +75,6 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
-import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
-import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
@@ -215,9 +213,6 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
-  REFER_MAIN_SCREEN,
-  ADDRESS_BOOK_PERMISSION,
-  REFERRAL_CONTACTS,
   CONNECT_TAB,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
@@ -369,16 +364,6 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-
-// REFER FLOW
-const referFlow = createStackNavigator({
-  [REFER_MAIN_SCREEN]: ReferFriendsScreen,
-  [ADDRESS_BOOK_PERMISSION]: AccessToAddressBookScreen,
-  [REFERRAL_CONTACTS]: ReferralContactsScreen,
-}, StackNavigatorConfig);
-
-referFlow.navigationOptions = hideTabNavigatorOnChildView;
-
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
@@ -401,7 +386,7 @@ const homeFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
-  [REFER_FLOW]: referFlow,
+  [REFER_FLOW]: ReferFriendsScreen,
   [STORYBOOK]: StorybookScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
   [EXCHANGE]: ExchangeScreen,

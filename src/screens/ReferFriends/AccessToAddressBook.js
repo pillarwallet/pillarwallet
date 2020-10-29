@@ -19,24 +19,17 @@
 */
 
 import * as React from 'react';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import { Paragraph } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Wrapper } from 'components/Layout';
-
 import { spacing } from 'utils/variables';
-import type { NavigationScreenProp } from 'react-navigation';
-import { REFERRAL_CONTACTS } from 'constants/navigationConstants';
-import type { Dispatch } from 'reducers/rootReducer';
-import { connect } from 'react-redux';
-import { allowToAccessPhoneContactsAction } from 'actions/referralsActions';
 
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   allowToAccessPhoneContacts: () => void,
 };
 
@@ -45,34 +38,24 @@ const ButtonWrapper = styled.View`
   justify-content: center;
 `;
 
-
-class AccessToAddressBook extends React.PureComponent<Props> {
-  navigateToContactsScreen = () => {
-    const { navigation, allowToAccessPhoneContacts } = this.props;
+const AccessToAddressBook = (props: Props) => {
+  const allowAccess = () => {
+    const { allowToAccessPhoneContacts } = props;
     allowToAccessPhoneContacts();
-    navigation.navigate(REFERRAL_CONTACTS);
   };
 
-  render() {
-    return (
-      <ContainerWithHeader
-        headerProps={{ centerItems: [{ title: t('addressBookContent.title.allowAccess') }] }}
-      >
-        <Wrapper flex={1} regularPadding>
-          <Paragraph style={{ marginTop: spacing.layoutSides }}>
-            {t('addressBookContent.paragraph.allowAccess')}
-          </Paragraph>
-          <ButtonWrapper>
-            <Button title={t('button.confirm')} onPress={this.navigateToContactsScreen} block />
-          </ButtonWrapper>
-        </Wrapper>
-      </ContainerWithHeader>
-    );
-  }
-}
+  return (
+    <ContainerWithHeader headerProps={{ centerItems: [{ title: t('addressBookContent.title.allowAccess') }] }}>
+      <Wrapper flex={1} regularPadding>
+        <Paragraph style={{ marginTop: spacing.layoutSides }}>
+          {t('addressBookContent.paragraph.allowAccess')}
+        </Paragraph>
+        <ButtonWrapper>
+          <Button title={t('button.confirm')} onPress={allowAccess} block />
+        </ButtonWrapper>
+      </Wrapper>
+    </ContainerWithHeader>
+  );
+};
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  allowToAccessPhoneContacts: () => dispatch(allowToAccessPhoneContactsAction()),
-});
-
-export default withTheme(connect(null, mapDispatchToProps)(AccessToAddressBook));
+export default AccessToAddressBook;
