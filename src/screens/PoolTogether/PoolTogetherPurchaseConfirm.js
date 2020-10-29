@@ -78,6 +78,7 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
   supportedAssets: Asset[],
+  feeInfo: ?TransactionFeeInfo,
 };
 
 type State = {
@@ -86,21 +87,19 @@ type State = {
   userTickets: number,
   totalPoolTicketsCount: number,
   transactionPayload: Object,
-  feeInfo: ?TransactionFeeInfo,
 };
 
 class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
   scroll: Object;
 
   constructor(props) {
-    const { navigation } = props;
+    const { navigation, feeInfo } = props;
     const {
       poolToken,
       tokenValue,
       userTickets,
       totalPoolTicketsCount,
       transactionPayload,
-      feeInfo,
     } = navigation.state.params || {};
     super(props);
     this.state = {
@@ -109,7 +108,6 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
       userTickets,
       totalPoolTicketsCount,
       transactionPayload,
-      feeInfo,
     };
   }
 
@@ -119,8 +117,8 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
   }
 
   purchasePoolAsset = () => {
-    const { navigation } = this.props;
-    const { transactionPayload, feeInfo } = this.state;
+    const { navigation, feeInfo } = this.props;
+    const { transactionPayload } = this.state;
 
     if (!feeInfo) {
       Toast.show({
@@ -141,14 +139,13 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
   };
 
   render() {
-    const { fetchPoolStats, supportedAssets } = this.props;
+    const { fetchPoolStats, supportedAssets, feeInfo } = this.props;
 
     const {
       poolToken,
       tokenValue,
       userTickets,
       totalPoolTicketsCount,
-      feeInfo,
     } = this.state;
 
     const asset = supportedAssets.find(({ symbol }) => poolToken === symbol);
@@ -227,9 +224,11 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   assets: { supportedAssets },
+  transactionEstimate: { feeInfo },
 }: RootReducerState): $Shape<Props> => ({
   session,
   supportedAssets,
+  feeInfo,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -63,13 +63,13 @@ type Props = {
   fetchPoolStats: (symbol: string) => void,
   theme: Theme,
   user: Object,
+  feeInfo: ?TransactionFeeInfo,
 };
 
 type State = {
   poolToken: string,
   tokenValue: number,
   transactionPayload: Object,
-  feeInfo: ?TransactionFeeInfo,
 };
 
 class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
@@ -81,14 +81,12 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
       poolToken,
       tokenValue,
       transactionPayload,
-      feeInfo,
     } = navigation.state.params || {};
     super(props);
     this.state = {
       poolToken,
       tokenValue,
       transactionPayload,
-      feeInfo,
     };
   }
 
@@ -98,8 +96,8 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
   }
 
   withdrawPoolAsset = () => {
-    const { navigation } = this.props;
-    const { transactionPayload, feeInfo } = this.state;
+    const { navigation, feeInfo } = this.props;
+    const { transactionPayload } = this.state;
 
     if (!feeInfo) {
       Toast.show({
@@ -120,15 +118,8 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
   };
 
   render() {
-    const {
-      fetchPoolStats,
-    } = this.props;
-
-    const {
-      poolToken,
-      tokenValue,
-      feeInfo,
-    } = this.state;
+    const { fetchPoolStats, feeInfo } = this.props;
+    const { poolToken, tokenValue } = this.state;
 
     return (
       <ContainerWithHeader
@@ -185,9 +176,11 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   user: { data: user },
+  transactionEstimate: { feeInfo },
 }: RootReducerState): $Shape<Props> => ({
   session,
   user,
+  feeInfo,
 });
 
 const structuredSelector = createStructuredSelector({
