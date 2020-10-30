@@ -24,6 +24,8 @@ import { getAccountAddress } from 'utils/accounts';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 
+export type Selector<Result, Props = void> = (state: RootReducerState, props?: Props) => Result;
+
 //
 // Global selectors here
 //

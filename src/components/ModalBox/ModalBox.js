@@ -17,33 +17,25 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { Platform, StyleSheet } from 'react-native';
+import React, { useRef, useCallback, useImperativeHandle } from 'react';
+import type { Node as ReactNode } from 'react';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
-import Modal from 'react-native-modal';
 
 // utils
 import { themedColors } from 'utils/themes';
 
 // components
 import Icon from 'components/Icon';
+import Modal from 'components/Modal';
 
-
-type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
-  children: React.Node,
+type Props = {|
+  children: ReactNode,
   modalStyle?: StyleSheet.Styles,
   showModalClose?: boolean,
   noBoxMinHeight?: boolean,
-  onModalHidden?: () => void,
-};
-
-const Wrapper = styled.KeyboardAvoidingView`
-  flex-direction: column;
-  align-items: center;
-  background-color: transparent;
-`;
+  onModalHide?: () => void,
+|};
 
 const Box = styled.View`
   flex-direction: column;
@@ -68,38 +60,41 @@ const ModalCloseButton = styled.TouchableOpacity`
   opacity: 0.5;
 `;
 
-const ModalBox = ({
-  isVisible,
-  onModalHide,
+export type ModalBoxInstance = {
+  close: () => void,
+};
+
+const ModalBox = React.forwardRef<Props, ModalBoxInstance>(({
   modalStyle,
   children,
   showModalClose,
   noBoxMinHeight,
-  onModalHidden,
-}: Props) => (
-  <Modal
-    isVisible={isVisible}
-    hasBackdrop
-    backdropOpacity={0.7}
-    onModalHide={onModalHidden}
-    onBackdropPress={onModalHide}
-    style={modalStyle}
-  >
-    <Wrapper
-      enabled
-      behavior={Platform.OS === 'ios' ? 'padding' : null}
-      style={{ flex: 1 }}
+  onModalHide,
+}: Props, ref) => {
+  const modalRef = useRef();
+
+  const close = useCallback(() => {
+    if (modalRef.current) modalRef.current.close();
+  }, []);
+
+  useImperativeHandle(ref, () => ({ close }), [close]);
+
+  return (
+    <Modal
+      ref={modalRef}
+      onModalHide={onModalHide}
+      style={[{ justifyContent: 'center' }, modalStyle]}
     >
       {showModalClose && (
-        <ModalCloseButton onPress={onModalHide}>
+        <ModalCloseButton onPress={close}>
           <Icon name="rounded-close" style={{ color: '#fff', fontSize: 25 }} />
         </ModalCloseButton>
       )}
       <Box noBoxMinHeight={noBoxMinHeight}>
         {children}
       </Box>
-    </Wrapper>
-  </Modal>
-);
+    </Modal>
+  );
+});
 
 export default ModalBox;

@@ -32,6 +32,7 @@ import NetInfo, { NetInfoState, NetInfoSubscription } from '@react-native-commun
 import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
+import { NavigationActions } from 'react-navigation';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -62,6 +63,7 @@ import Spinner from 'components/Spinner';
 import Walkthrough from 'components/Walkthrough';
 import Button from 'components/Button';
 import PercentsInputAccessoryHolder from 'components/PercentsInputAccessory/PercentsInputAccessoryHolder';
+import Modal from 'components/Modal';
 
 // utils
 import { getThemeByType, defaultTheme } from 'utils/themes';
@@ -256,6 +258,10 @@ class App extends React.Component<Props, *> {
     }
   };
 
+  closeModalsOnScreenChange = (prev, next, action) => {
+    if (action.type === NavigationActions.NAVIGATE) Modal.closeAll();
+  }
+
   render() {
     const {
       isFetched,
@@ -283,6 +289,7 @@ class App extends React.Component<Props, *> {
                 }}
                 theme={current === LIGHT_THEME ? 'light' : 'dark'} // eslint-disable-line i18next/no-literal-string
                 language={i18next.language}
+                onNavigationStateChange={this.closeModalsOnScreenChange}
               />
               {!!getEnv().SHOW_THEME_TOGGLE &&
               <Button

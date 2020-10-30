@@ -40,6 +40,7 @@ import {
 // components
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import OfferCard from 'components/OfferCard/OfferCard';
+import Modal from 'components/Modal';
 
 // constants
 import { EXCHANGE } from 'constants/exchangeConstants';
@@ -116,8 +117,6 @@ type Props = {
 type State = {
   pressedOfferId: string, // offer id will be passed to prevent double clicking
   pressedTokenAllowanceId: string,
-  isEnableAssetModalVisible: boolean,
-  enableData?: ?EnableData,
   enablePayload: ?TokenTransactionPayload,
 };
 
@@ -185,8 +184,6 @@ class ExchangeOffers extends React.Component<Props, State> {
   state = {
     pressedOfferId: '',
     pressedTokenAllowanceId: '',
-    isEnableAssetModalVisible: false,
-    enableData: null,
     enablePayload: null,
   };
 
@@ -283,31 +280,36 @@ class ExchangeOffers extends React.Component<Props, State> {
     const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
     const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
 
+    const enableData = {
+      providerName,
+      assetSymbol,
+      assetIcon,
+      feeDisplayValue,
+      feeInFiat,
+      isDisabled,
+    };
+
     this.setState({
       pressedTokenAllowanceId: '',
-      isEnableAssetModalVisible: true,
-      enableData: {
-        providerName,
-        assetSymbol,
-        assetIcon,
-        feeDisplayValue,
-        feeInFiat,
-        isDisabled,
-      },
       enablePayload: { ...transactionPayload },
+    }, () => {
+      this.openEnableAssetModal(enableData);
     });
   };
 
-  hideEnableAssetModal = () => {
-    const { setDismissTransaction } = this.props;
-    setDismissTransaction();
-    this.setState({ isEnableAssetModalVisible: false, enableData: null });
-  };
+  openEnableAssetModal = (enableData: EnableData) => {
+    Modal.open(() => (
+      <AssetEnableModal
+        onModalHide={this.props.setDismissTransaction}
+        onEnable={this.enableAsset}
+        enableData={enableData}
+      />
+    ));
+  }
 
   enableAsset = () => {
     const { enablePayload } = this.state;
     const { navigation } = this.props;
-    this.hideEnableAssetModal();
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload: enablePayload,
@@ -444,7 +446,6 @@ class ExchangeOffers extends React.Component<Props, State> {
       isExchangeActive,
       showEmptyMessage,
     } = this.props;
-    const { isEnableAssetModalVisible, enableData } = this.state;
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
     return (
       <React.Fragment>
@@ -474,12 +475,6 @@ class ExchangeOffers extends React.Component<Props, State> {
               />
             </ESWrapper>
           )}
-        />
-        <AssetEnableModal
-          isVisible={isEnableAssetModalVisible}
-          onModalHide={this.hideEnableAssetModal}
-          onEnable={this.enableAsset}
-          enableData={enableData}
         />
       </React.Fragment>
     );
