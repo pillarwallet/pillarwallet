@@ -87,7 +87,7 @@ export const getAaveApyBNs = async () => {
 };
 
 const calculateMStableApyBN = async () => {
-  const epochNow = Math.floor((new Date()).getTime() / 1000);
+  const epochNow = Math.floor(Date.now() / 1000);
   const epoch24HrsAgo = epochNow - 86400;
   /* eslint-disable i18next/no-literal-string */
   const query = `{

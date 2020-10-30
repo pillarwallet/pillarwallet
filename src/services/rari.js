@@ -105,11 +105,8 @@ export const getUserInterests = async (accountAddress: string) => {
   // But in order to calculate the interest percentage we "reset" the interests gained on the last transfer
   // Aave calculates interest in the same way
 
-  const allTransactions = [...transactions.transfersIn, ...transactions.transfersOut].sort((a, b) => {
-    if (a === b) return 0;
-    if (a < b) return 1;
-    return -1;
-  });
+  const allTransactions = [...transactions.transfersIn, ...transactions.transfersOut]
+    .sort((a, b) => b.timestamp - a.timestamp);
   const lastTransfer = allTransactions[0];
   if (!lastTransfer) return null;
   const rsptExchangeRateOnLastTransfer = lastTransfer.amountInUSD / lastTransfer.amount;

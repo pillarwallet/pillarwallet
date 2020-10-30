@@ -148,7 +148,7 @@ const RariInfoScreen = ({
             {isFetchingFundBalance ?
               <Spinner width={20} height={20} style={{ marginVertical: 5 }} /> :
               <MediumText big>
-                {formatFiat(convertUSDToFiat(rariFundBalance, rates, fiatCurrency), fiatCurrency, true)}
+                {formatFiat(convertUSDToFiat(rariFundBalance, rates, fiatCurrency), fiatCurrency, { skipCents: true })}
               </MediumText>
             }
             <BaseText secondary small>{t('rariContent.label.totalSupply')}</BaseText>
@@ -178,6 +178,7 @@ const RariInfoScreen = ({
         <InsightWithButton
           title={t('rariContent.infoContent.maximizeYieldInsight.title')}
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
+          buttonProps={{ small: false }}
         />
         <Spacing h={26} />
         {renderParagraph(

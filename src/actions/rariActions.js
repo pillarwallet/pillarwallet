@@ -54,14 +54,14 @@ export const fetchRariAPYAction = () => {
 
 export const fetchRariUserDataAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_FETCHING_RARI_USER_DATA });
-
     const {
       accounts: { data: accounts },
     } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;
     const smartWalletAddress = getAccountAddress(smartWalletAccount);
+
+    dispatch({ type: SET_FETCHING_RARI_USER_DATA });
 
     const [userDepositInUSD, userDepositInRSPT, userInterests] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),

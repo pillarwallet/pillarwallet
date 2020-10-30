@@ -249,11 +249,13 @@ export const getCurrencySymbol = (currency: string): string => {
   return CURRENCY_SYMBOLS[currency] || '';
 };
 
-export const formatFiat = (src: number | string, baseFiatCurrency?: ?string, skipCents?: boolean): string => {
+export const formatFiat = (
+  src: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
+): string => {
   const REGEX = '\\d(?=(\\d{3})+\\D)';
   const num = new BigNumber(src).toFixed(2);
   let formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
-  if (skipCents) {
+  if (options?.skipCents) {
     formatedValue = formatedValue.substring(0, formatedValue.length - 3);
   }
   const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
