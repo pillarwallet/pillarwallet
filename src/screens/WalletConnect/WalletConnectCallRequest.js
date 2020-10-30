@@ -22,12 +22,15 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
-import { utils, BigNumber as EthersBigNumber } from 'ethers';
+import { utils } from 'ethers';
 import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
 import t from 'translations/translate';
+
+// actions
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import { Footer, ScrollWrapper } from 'components/Layout';
@@ -42,27 +45,23 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { isEnoughBalanceForTransactionFee, getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { images } from 'utils/images';
 import { formatTransactionFee } from 'utils/common';
-import { buildTxFeeInfo } from 'utils/smartWallet';
-
-// services
-import smartWalletService from 'services/smartWallet';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
 import { PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TX, REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // types
-import type { Asset, Assets, Balances } from 'models/Asset';
+import type { Asset, AssetData, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Account } from 'models/Account';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // local components
 import withWCRequests from './withWCRequests';
@@ -81,14 +80,12 @@ type Props = {
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  useGasToken: boolean,
+  estimateTransaction: (recipient: string, value: number, data: ?string, assetData: AssetData) => void,
+  resetEstimateTransaction: () => void,
+  isEstimating: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  estimateErrorMessage: ?string,
 };
-
-type State = {
-  txFeeInfo: ?TransactionFeeInfo,
-  gettingFee: boolean,
-};
-
 
 const FooterWrapper = styled.View`
   flex-direction: column;
@@ -118,16 +115,10 @@ const OptionButton = styled(Button)`
   flex-grow: 1;
 `;
 
-
-class WalletConnectCallRequestScreen extends React.Component<Props, State> {
+class WalletConnectCallRequestScreen extends React.Component<Props> {
   request: ?CallRequest = null;
   transactionDetails: Object;
   unsupportedTransaction: boolean;
-
-  state = {
-    txFeeInfo: null,
-    gettingFee: false,
-  };
 
   constructor(props: Props) {
     super(props);
@@ -147,51 +138,34 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const requestMethod = get(this.request, 'method');
+    this.props.resetEstimateTransaction();
     if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
   }
 
-  fetchTransactionEstimate = async () => {
+  fetchTransactionEstimate = () => {
     if (this.unsupportedTransaction) return;
-    this.setState({ gettingFee: true });
 
-    const txFeeInfo = await this.getSmartWalletTxFee();
-    this.setState({ txFeeInfo, gettingFee: false });
-  };
-
-  getSmartWalletTxFee = async (): Promise<TransactionFeeInfo> => {
-    const { accountAssets, supportedAssets, useGasToken } = this.props;
-    const defaultResponse = { fee: new BigNumber(0) };
+    const { accountAssets, supportedAssets, estimateTransaction } = this.props;
     const {
       amount,
-      to: recipient,
+      to,
       contractAddress,
       data,
     } = this.transactionDetails;
 
     const value = Number(amount || 0);
 
-    const { symbol, decimals } =
-      getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, contractAddress);
+    const { symbol, decimals } = getAssetDataByAddress(
+      getAssetsAsList(accountAssets),
+      supportedAssets,
+      contractAddress,
+    );
+
     const assetData = { contractAddress, token: symbol, decimals };
 
-    const transaction = {
-      recipient,
-      value,
-      data,
-    };
-
-    const estimated = await smartWalletService
-      .estimateAccountTransaction(transaction, assetData)
-      .then(result => buildTxFeeInfo(result, useGasToken))
-      .catch(() => null);
-
-    if (!estimated) {
-      return defaultResponse;
-    }
-
-    return estimated;
+    estimateTransaction(to, value, data, assetData);
   };
 
   handleFormSubmit = (request, transactionPayload) => {
@@ -215,9 +189,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
       balances,
       theme,
       getTransactionPayload,
+      feeInfo,
+      isEstimating,
+      estimateErrorMessage,
     } = this.props;
-
-    const { txFeeInfo, gettingFee } = this.state;
 
     const colors = getThemeColors(theme);
 
@@ -233,11 +208,11 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
     let body = null;
     let address = '';
     let message = '';
-    let errorMessage;
+    let errorMessage = estimateErrorMessage;
     let transactionPayload;
 
-    const gasToken = txFeeInfo?.gasToken || null;
-    const txFeeInWei = txFeeInfo?.fee || new BigNumber(0);
+    const gasToken = feeInfo?.gasToken || null;
+    const txFeeInWei = feeInfo?.fee || new BigNumber(0);
 
     switch (method) {
       case ETH_SEND_TX:
@@ -261,21 +236,14 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 
         if (this.unsupportedTransaction) {
           errorMessage = t('error.walletConnect.assetNotSupported');
-        } else {
-          const txFeeInWeiBN = EthersBigNumber.from(txFeeInWei.toString()); // BN compatibility
-          if (!isEnoughBalanceForTransactionFee(balances, {
-            amount,
-            symbol,
-            decimals,
-            txFeeInWei,
-            gasToken,
-          })) {
-            const feeSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
-            errorMessage = t('error.notEnoughTokenForFee', { token: feeSymbol });
-          }
-          if (!gettingFee && txFeeInWeiBN.eq(0)) {
-            errorMessage = t('error.transactionFailed.cantCalculateFee');
-          }
+        } else if (feeInfo && !isEnoughBalanceForTransactionFee(balances, {
+          amount,
+          symbol,
+          decimals,
+          txFeeInWei,
+          gasToken,
+        })) {
+          errorMessage = t('error.notEnoughTokenForFee', { token: gasToken || ETH });
         }
 
         const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
@@ -317,8 +285,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
                 <LabelSub>
                   {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
                 </LabelSub>
-                {!!gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
-                {!gettingFee && <Value>{feeDisplayValue}</Value>}
+                {!!isEstimating && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+                {!isEstimating && <Value>{feeDisplayValue}</Value>}
               </LabeledRow>
             }
             {data.toLowerCase() !== '0x' && (
@@ -394,7 +362,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
             <OptionButton
               primaryInverted
               onPress={() => this.handleFormSubmit(this.request, transactionPayload)}
-              disabled={!!errorMessage || (type === REQUEST_TYPE.TRANSACTION && gettingFee)}
+              disabled={!!errorMessage || (type === REQUEST_TYPE.TRANSACTION && isEstimating)}
               regularText
               title={
                 t([
@@ -419,15 +387,18 @@ class WalletConnectCallRequestScreen extends React.Component<Props, State> {
 const mapStateToProps = ({
   assets: { supportedAssets },
   accounts: { data: accounts },
-}) => ({
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
+}: RootReducerState): $Shape<Props> => ({
   accounts,
   supportedAssets,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   accountAssets: accountAssetsSelector,
-  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -435,6 +406,16 @@ const combinedMapStateToProps = (state) => ({
   ...mapStateToProps(state),
 });
 
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  estimateTransaction: (
+    recipient: string,
+    value: number,
+    data: ?string,
+    assetData: AssetData,
+  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
+});
+
 export default withWCRequests(
-  withTheme(connect(combinedMapStateToProps)(WalletConnectCallRequestScreen)),
+  withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WalletConnectCallRequestScreen)),
 );
