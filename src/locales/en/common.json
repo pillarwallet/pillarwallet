@@ -489,7 +489,10 @@
       "invalidSession": "Invalid Wallet Connect session",
       "alreadyPending": "A connection is already waiting"
     },
-    "unableToEstimateTransaction": "Unable to estimate transaction. Please try again."
+    "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
+    "theGraphQueryFailed": {
+      "poolTogetherStats": "Can't connect to Pool Together"
+    }
   },
 
   "badgeText": {
