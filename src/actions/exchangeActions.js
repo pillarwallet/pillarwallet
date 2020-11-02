@@ -62,6 +62,7 @@ import {
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -191,7 +192,7 @@ export const setTokenAllowanceAction = (
     } = getState();
 
     const clientAddress = getSmartWalletAddress(accounts);
-    let txData;
+    let txData: ?AllowanceTransaction = null;
     if (provider === PROVIDER_UNISWAP) {
       txData = await createUniswapAllowanceTx(fromAssetAddress, clientAddress || '');
     } else if (provider === PROVIDER_1INCH) {

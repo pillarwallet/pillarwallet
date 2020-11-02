@@ -54,6 +54,7 @@ import { callSubgraph } from 'services/theGraph';
 // models
 import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 // constants
 import { PROVIDER_UNISWAP, UNISWAP_SUBGRAPH_NAME } from 'constants/exchangeConstants';
@@ -86,7 +87,7 @@ const getBackupRoute = async (
     pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, ethProvider);
     pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, ethProvider);
   } catch (e) {
-    reportLog('Pair unsupported', e, 'warning');
+    reportLog('Pair unsupported by Uniswap', e, 'warning');
     return null;
   }
 
@@ -280,10 +281,11 @@ export const createUniswapOrder = async (
   };
 };
 
-export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, ADDRESSES.router);
-  return allowanceTx;
-};
+export const createUniswapAllowanceTx =
+  async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
+    const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, ADDRESSES.router);
+    return allowanceTx;
+  };
 
 export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
   let finished = false;

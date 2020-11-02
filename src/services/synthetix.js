@@ -38,6 +38,7 @@ import { PROVIDER_SYNTHETIX } from 'constants/exchangeConstants';
 // models
 import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -124,8 +125,9 @@ export const getSynthetixOffer = async (
   }
 };
 
-export const createSynthetixAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Object => {
-  const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
-  return allowanceTx;
-};
+export const createSynthetixAllowanceTx =
+  async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
+    const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
+    return allowanceTx;
+  };
 

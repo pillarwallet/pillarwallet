@@ -29,6 +29,7 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { Option, HorizontalOption } from 'models/Selector';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 import { fiatCurrencies } from 'fixtures/assets';
 import { ETH } from 'constants/assetsConstants';
@@ -124,7 +125,7 @@ export const createAllowanceTx = async (
   fromAssetAddress: string,
   clientAddress: string,
   contractAddress: string,
-) => {
+): Promise<AllowanceTransaction | null> => {
   if (!clientAddress) {
     reportOrWarn('Unable to set allowance', null, 'error');
     return null;
@@ -141,10 +142,7 @@ export const createAllowanceTx = async (
   return {
     nonce: txCount.toString(),
     to: fromAssetAddress,
-    gasLimit: '0',
-    gasPrice: '0',
     chainId: '1',
-    value: '0',
     data: encodedContractFunction,
   };
 };

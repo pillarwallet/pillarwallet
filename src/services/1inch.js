@@ -44,6 +44,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 // types
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 import t from 'translations/translate';
 
@@ -130,10 +131,11 @@ export const create1inchOrder = async (
   };
 };
 
-export const create1inchAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, EXCHANGE_ADDRESS);
-  return allowanceTx;
-};
+export const create1inchAllowanceTx =
+  async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
+    const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, EXCHANGE_ADDRESS);
+    return allowanceTx;
+  };
 
 export const fetch1inchSupportedTokens = async (): Promise<string[]> => {
   const response = await axios.get('https://api.1inch.exchange/v1.1/tokens');
