@@ -39,9 +39,10 @@ import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
 import ContactDetailsModal from 'components/ContactDetailsModal';
+import Toast from 'components/Toast';
 
 // utils
-import { isValidNumber } from 'utils/common';
+import { isValidNumber, reportErrorLog } from 'utils/common';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
@@ -243,7 +244,18 @@ const SendAsset = ({
   };
 
   const handleFormSubmit = async () => {
-    if (submitPressed || !feeInfo || !selectedContact || !assetData) return;
+    if (submitPressed) return; // double press
+
+    if (!feeInfo || !selectedContact || !assetData) {
+      // something went wrong
+      Toast.show({
+        message: t('toast.cannotSendAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      reportErrorLog('SendAsset screen handleFormSubmit failed', { feeInfo, selectedContact, assetData });
+      return;
+    }
 
     setSubmitPressed(true);
 

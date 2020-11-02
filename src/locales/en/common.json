@@ -1353,7 +1353,9 @@
     "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
     "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
     "cannotEnableAsset": "Cannot enable asset. Please try again.",
-    "cannotSendCollectible": "Cannot send collectible. Please try again."
+    "cannotSendCollectible": "Cannot send collectible. Please try again.",
+    "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
+    "cannotSendAsset": "Cannot send asset. Please try again."
   },
 
   "exchangeContent": {

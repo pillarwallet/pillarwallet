@@ -33,6 +33,7 @@ import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
 import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
 import Icon from 'components/Icon';
+import Toast from 'components/Toast';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -178,12 +179,18 @@ const ExchangeConfirmScreen = ({
   useEffect(() => { fetchTransactionEstimate(); }, []);
 
   const onConfirmTransactionPress = () => {
-    if (!feeInfo) return;
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotExchangeAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
 
-    const transactionPayload = { ...offerOrder };
+    const { fee: txFeeInWei, gasToken } = feeInfo;
 
-    transactionPayload.txFeeInWei = feeInfo.fee;
-    if (feeInfo.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
+    const transactionPayload = { ...offerOrder, gasToken, txFeeInWei };
 
     if (setTokenAllowance) {
       transactionPayload.extra = {
