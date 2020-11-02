@@ -103,6 +103,7 @@ const Withdraw = (props: Props) => {
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [maxWithdraw, setMaxWithdraw] = useState(EthersBigNumber.from(0));
   const [isFetchingMaxWithdraw, setIsFetchingMaxWithdraw] = useState(true);
+  const [inputValid, setInputValid] = useState(false);
 
   const stream = navigation.getParam('stream');
   const { id: streamId, token, recipient } = stream;
@@ -118,7 +119,7 @@ const Withdraw = (props: Props) => {
 
   useEffect(() => {
     calculateSablierWithdrawTransactionEstimate(stream, withdrawAmountInWei, assetData);
-  }, [withdrawAmount]);
+  }, [withdrawAmount, inputValid]);
 
   useEffect(() => {
     // the exact max amount to withdraw must be fetched from the blockchain
@@ -160,7 +161,8 @@ const Withdraw = (props: Props) => {
     || isFetchingMaxWithdraw
     || !withdrawAmount
     || !!errorMessage
-    || !feeInfo;
+    || !feeInfo
+    || !inputValid;
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
 
   return (
@@ -201,6 +203,7 @@ const Withdraw = (props: Props) => {
           assetData={assetData}
           customAssets={assetOptions}
           customBalances={streamedAssetBalance}
+          onFormValid={setInputValid}
         />
       </InputWrapper>
     </ContainerWithHeader>

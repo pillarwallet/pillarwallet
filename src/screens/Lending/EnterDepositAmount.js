@@ -116,6 +116,7 @@ const EnterDepositAmount = ({
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
   const [depositAmount, setDepositAmount] = useState('');
+  const [inputValid, setInputValid] = useState(false);
 
   const assetToDeposit = assetsToDeposit.find(({ symbol }) => symbol === selectedAssetSymbol);
 
@@ -125,9 +126,9 @@ const EnterDepositAmount = ({
   }, [assetsToDeposit]);
 
   useEffect(() => {
-    if (!depositAmount || !assetToDeposit) return;
+    if (!depositAmount || !assetToDeposit || !inputValid) return;
     calculateLendingDepositTransactionEstimate(depositAmount, assetToDeposit);
-  }, [depositAmount, assetToDeposit]);
+  }, [depositAmount, assetToDeposit, inputValid]);
 
   let notEnoughForFee;
   if (feeInfo) {
@@ -148,6 +149,7 @@ const EnterDepositAmount = ({
   const isNextButtonDisabled = !!isEstimating
     || !depositAmount
     || !!errorMessage
+    || !inputValid
     || !feeInfo;
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(
@@ -200,6 +202,7 @@ const EnterDepositAmount = ({
             assetData={assetToDeposit}
             onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
             customAssets={assetsToDeposit}
+            onFormValid={setInputValid}
           />
         </InputWrapper>
       )}

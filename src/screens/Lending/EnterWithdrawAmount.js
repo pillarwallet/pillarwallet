@@ -97,13 +97,14 @@ const EnterWithdrawAmount = ({
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
   const [depositAmount, setDepositAmount] = useState('');
+  const [inputValid, setInputValid] = useState(false);
 
   const depositedAsset = depositedAssets.find(({ symbol }) => symbol === selectedAssetSymbol);
 
   useEffect(() => {
-    if (!depositAmount || !depositedAsset) return;
+    if (!depositAmount || !depositedAsset || !inputValid) return;
     calculateLendingWithdrawTransactionEstimate(depositAmount, depositedAsset);
-  }, [depositAmount, depositedAsset]);
+  }, [depositAmount, depositedAsset, inputValid]);
 
   let notEnoughForFee;
   if (feeInfo) {
@@ -124,6 +125,7 @@ const EnterWithdrawAmount = ({
   const isNextButtonDisabled = !!isEstimating
     || !depositAmount
     || !!errorMessage
+    || !inputValid
     || !feeInfo;
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(
@@ -180,6 +182,7 @@ const EnterWithdrawAmount = ({
           onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
           customAssets={depositedAssets}
           customBalances={depositedAssetsBalances}
+          onFormValid={setInputValid}
         />
       </InputWrapper>
     </ContainerWithHeader>

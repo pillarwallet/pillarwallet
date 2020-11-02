@@ -134,6 +134,7 @@ type State = {
   isAllowModalVisible: boolean,
   allowPayload: Object,
   purchasePayload: Object,
+  isInputValid: boolean,
 };
 
 class PoolTogetherPurchase extends React.Component<Props, State> {
@@ -157,6 +158,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       isAllowModalVisible: false,
       allowPayload: null,
       purchasePayload: null,
+      isInputValid: false,
     };
   }
 
@@ -270,6 +272,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       isAllowModalVisible,
       allowPayload,
       purchasePayload,
+      isInputValid,
     } = this.state;
 
     let errorMessage = estimateErrorMessage;
@@ -296,6 +299,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const submitDisabled = isEstimating
       || isApprovalExecuting
+      || !isInputValid
       || (hasAllowance && (numberOfTickets === 0 || !!errorMessage || !feeInfo));
 
     let nextNavigationFunction;
@@ -343,6 +347,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 onValueChange={this.onValueChange}
                 assetData={poolTokenItem}
                 customAssets={assetOptions}
+                onFormValid={(isValid) => this.setState({ isInputValid: isValid })}
               />
             </ContentRow>
             <ContentRow>

@@ -134,6 +134,7 @@ type State = {
   isAllowModalVisible: boolean,
   allowPayload: Object,
   withdrawPayload: Object,
+  isInputValid: boolean,
 };
 
 class PoolTogetherWithdraw extends React.Component<Props, State> {
@@ -157,6 +158,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       isAllowModalVisible: false,
       allowPayload: null,
       withdrawPayload: null,
+      isInputValid: false,
     };
   }
 
@@ -271,6 +273,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       isAllowModalVisible,
       allowPayload,
       withdrawPayload,
+      isInputValid,
     } = this.state;
 
     let errorMessage = estimateErrorMessage;
@@ -295,6 +298,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
 
     const submitDisabled = isEstimating
       || isApprovalExecuting
+      || !isInputValid
       || (hasAllowance && (ticketsCount === 0 || !!errorMessage || !feeInfo));
 
     let nextNavigationFunction;
@@ -351,6 +355,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                 assetData={poolTokenItem}
                 customAssets={assetOptions}
                 customBalances={balanceOptions}
+                onFormValid={(isValid) => this.setState({ isInputValid: isValid })}
               />
             </ContentRow>
             <ContentRow>
