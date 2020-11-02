@@ -117,9 +117,7 @@ const setAllowanceAbiFunction = [{
   gas: 38769,
 }];
 
-const ethProvider = () => {
-  return getEthereumProvider(getEnv().NETWORK_PROVIDER);
-};
+const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 export const createAllowanceTx = async (
   fromAssetAddress: string,
@@ -130,19 +128,23 @@ export const createAllowanceTx = async (
     reportOrWarn('Unable to set allowance', null, 'error');
     return null;
   }
+  try {
+    const encodedContractFunction = encodeContractMethod(
+      setAllowanceAbiFunction,
+      'approve',
+      [contractAddress, constants.MaxUint256.toString()],
+    );
 
-  const encodedContractFunction = encodeContractMethod(
-    setAllowanceAbiFunction,
-    'approve',
-    [contractAddress, constants.MaxUint256.toString()],
-  );
+    const txCount = await ethProvider().getTransactionCount(clientAddress);
 
-  const txCount = await ethProvider().getTransactionCount(clientAddress);
-
-  return {
-    nonce: txCount.toString(),
-    to: fromAssetAddress,
-    chainId: '1',
-    data: encodedContractFunction,
-  };
+    return {
+      nonce: txCount.toString(),
+      to: fromAssetAddress,
+      chainId: '1',
+      data: encodedContractFunction,
+    };
+  } catch (e) {
+    reportOrWarn('Unable to set allowance', e, 'error');
+    return null;
+  }
 };

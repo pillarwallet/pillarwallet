@@ -343,12 +343,9 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
-    const fetchSuccess: boolean =
-      Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
+    const fetchSuccess: boolean = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
 
-    const fetchedAssetsSymbols: string[] = fetchSuccess
-      ? uniq(assetsSymbols[0].concat(assetsSymbols[1]))
-      : [];
+    const fetchedAssetsSymbols: string[] = fetchSuccess ? uniq(assetsSymbols[0].concat(assetsSymbols[1])) : [];
 
     const exchangeSupportedAssets = fetchSuccess
       ? supportedAssets.filter(({ symbol, isSynthetixAsset }) =>
