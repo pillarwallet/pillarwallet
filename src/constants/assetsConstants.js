@@ -42,6 +42,7 @@ export const HOLO = 'HOLO';
 export const WBTC = 'WBTC';
 export const sBTC = 'sBTC';
 export const SNX = 'SNX';
+export const RSPT = 'RSPT';
 
 const LINK = 'LINK';
 const BAT = 'BAT';

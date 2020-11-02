@@ -120,6 +120,8 @@ import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
+import RariDepositScreen from 'screens/Rari/RariDeposit';
+import RariInfoScreen from 'screens/Rari/RariInfo';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -265,6 +267,9 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
+  RARI_FLOW,
+  RARI_DEPOSIT,
+  RARI_INFO,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -712,6 +717,13 @@ const sablierFlow = createStackNavigator({
 
 sablierFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const rariFlow = createStackNavigator({
+  [RARI_DEPOSIT]: RariDepositScreen,
+  [RARI_INFO]: RariInfoScreen,
+}, StackNavigatorConfig);
+
+rariFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -756,6 +768,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACTS_FLOW]: contactsFlow,
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
+    [RARI_FLOW]: rariFlow,
   },
   modalTransition,
 );
