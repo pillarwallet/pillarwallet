@@ -43,6 +43,7 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   SENDWYRE_INPUT,
+  RARI_DEPOSIT,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -85,6 +86,7 @@ let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
 let isAltalixEnabled = true;
+let isRariEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -115,6 +117,7 @@ class ServicesScreen extends React.Component<Props> {
     isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
+    isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
@@ -178,6 +181,16 @@ class ServicesScreen extends React.Component<Props> {
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
         action: () => navigation.navigate(SABLIER_STREAMS),
+      });
+    }
+    if (isRariEnabled) {
+      services.push({
+        key: 'rari',
+        title: t('servicesContent.rari.title'),
+        body: t('servicesContent.rari.description'),
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(RARI_DEPOSIT),
       });
     }
     if (isPeerToPeerEnabled) {
