@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
+import maxBy from 'lodash.maxby';
 import { getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import {
@@ -105,9 +106,7 @@ export const getUserInterests = async (accountAddress: string) => {
   // But in order to calculate the interest percentage we "reset" the interests gained on the last transfer
   // Aave calculates interest in the same way
 
-  const allTransactions = [...transactions.transfersIn, ...transactions.transfersOut]
-    .sort((a, b) => b.timestamp - a.timestamp);
-  const lastTransfer = allTransactions[0];
+  const lastTransfer = maxBy([...transactions.transfersIn, ...transactions.transfersOut], tx => +tx.timestamp);
   if (!lastTransfer) return null;
   const rsptExchangeRateOnLastTransfer = lastTransfer.amountInUSD / lastTransfer.amount;
   const initialBalance = userBalanceRSPT * rsptExchangeRateOnLastTransfer;
