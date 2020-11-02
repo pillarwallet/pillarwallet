@@ -32,6 +32,7 @@ import Button from 'components/Button';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import Tabs from 'components/Tabs';
 import SablierStream from 'components/SablierStream';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { SABLIER_NEW_STREAM } from 'constants/navigationConstants';
 
@@ -49,6 +50,7 @@ type Props = {
   outgoingStreams: Stream[],
   incomingStreams: Stream[],
   isFetchingStreams: boolean,
+  streamsGraphQueryFailed: boolean,
   fetchUserStreams: () => void,
 };
 
@@ -156,7 +158,11 @@ class SablierStreams extends React.Component<Props, State> {
 
   render() {
     const {
-      outgoingStreams, incomingStreams, isFetchingStreams, fetchUserStreams,
+      outgoingStreams,
+      incomingStreams,
+      isFetchingStreams,
+      fetchUserStreams,
+      streamsGraphQueryFailed,
     } = this.props;
 
     const headerProps = {
@@ -188,17 +194,29 @@ class SablierStreams extends React.Component<Props, State> {
           <Spacing h={24} />
           {isEmpty ? this.renderStreams() : this.renderEmptyState()}
         </ScrollWrapper>
+        <RetryGraphQueryBox
+          message={t('error.theGraphQueryFailed.sablierStreams')}
+          hasFailed={streamsGraphQueryFailed}
+          isFetching={isFetchingStreams}
+          onRetry={fetchUserStreams}
+        />
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  sablier: { incomingStreams, outgoingStreams, isFetchingStreams },
+  sablier: {
+    incomingStreams,
+    outgoingStreams,
+    isFetchingStreams,
+    streamsGraphQueryFailed,
+  },
 }: RootReducerState): $Shape<Props> => ({
   incomingStreams,
   outgoingStreams,
   isFetchingStreams,
+  streamsGraphQueryFailed,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

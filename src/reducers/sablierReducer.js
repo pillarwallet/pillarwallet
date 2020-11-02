@@ -17,25 +17,44 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_STREAMS, SET_FETCHING_STREAMS } from 'constants/sablierConstants';
-import type { Stream } from 'models/Sablier';
+import {
+  SET_STREAMS,
+  SET_FETCHING_STREAMS,
+  SET_SABLIER_GRAPH_QUERY_ERROR,
+} from 'constants/sablierConstants';
+import type { Stream, Streams } from 'models/Sablier';
 
 
 export type SablierReducerState = {
   outgoingStreams: Stream[],
   incomingStreams: Stream[],
   isFetchingStreams: boolean,
+  streamsGraphQueryFailed: boolean,
 };
 
-export type SablierReducerAction = {
-  type: string,
-  payload: any,
+type SetStreamsAction = {
+  type: typeof SET_STREAMS,
+  payload: Streams,
 };
+
+type SetFetchingStreamsAction = {
+  type: typeof SET_FETCHING_STREAMS,
+};
+
+type SetStreamsGraphQueryErrorAction = {
+  type: typeof SET_SABLIER_GRAPH_QUERY_ERROR,
+};
+
+export type SablierReducerAction =
+  | SetStreamsAction
+  | SetFetchingStreamsAction
+  | SetStreamsGraphQueryErrorAction;
 
 export const initialState = {
   outgoingStreams: [],
   incomingStreams: [],
   isFetchingStreams: false,
+  streamsGraphQueryFailed: false,
 };
 
 export default function sablierReducer(
@@ -44,9 +63,20 @@ export default function sablierReducer(
 ): SablierReducerState {
   switch (action.type) {
     case SET_STREAMS:
-      return { ...state, ...action.payload, isFetchingStreams: false };
+      return {
+        ...state,
+        ...action.payload,
+        isFetchingStreams: false,
+        streamsGraphQueryFailed: false,
+      };
     case SET_FETCHING_STREAMS:
       return { ...state, isFetchingStreams: true };
+    case SET_SABLIER_GRAPH_QUERY_ERROR:
+      return {
+        ...state,
+        isFetchingStreams: false,
+        streamsGraphQueryFailed: true,
+      };
     default:
       return state;
   }
