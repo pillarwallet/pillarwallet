@@ -21,7 +21,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -31,6 +30,7 @@ import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { Spacing } from 'components/Layout';
+import Toast from 'components/Toast';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -72,11 +72,20 @@ const WithdrawTransactionConfirm = ({
     if (isSubmitted) return;
     setIsSubmitted(true);
 
+    if (!feeInfo?.fee) {
+      Toast.show({
+        message: t('toast.cannotWithdrawAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
     const transactionPayload = await getAaveWithdrawTransaction(
       accountAddress,
       withdrawAmount,
       depositedAsset,
-      feeInfo?.fee || new BigNumber(0),
+      feeInfo?.fee,
     );
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo?.gasToken;

@@ -1359,7 +1359,9 @@
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
     "cannotWithdraw": "Cannot withdraw. Please try again.",
     "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
-    "cannotSendAsset": "Cannot send asset. Please try again."
+    "cannotSendAsset": "Cannot send asset. Please try again.",
+    "cannotDepositAsset": "Cannot deposit asset. Please try again.",
+    "cannotWithdrawAsset": "Cannot withdraw asset. Please try again."
   },
 
   "exchangeContent": {
