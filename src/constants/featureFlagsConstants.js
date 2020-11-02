@@ -30,6 +30,7 @@ export const FEATURE_FLAGS = {
   SABLIER: 'feature_services_sablier',
   SABLIER_TIME_START_TOLERANCE: 'feature_services_sablier_time_start_tolerance',
   ALTALIX: 'feature_services_altalix',
+  RARI: 'feature_services_rari',
   SMART_WALLET_ACTIVATION_PAID_BY_PILLAR: 'app_smart_wallet_paid_for_by_pillar',
   APP_FEES_PAID_WITH_PLR: 'app_fees_paid_with_plr',
   USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES: 'use_legacy_cryptocompare_token_prices',
@@ -55,4 +56,5 @@ export const INITIAL_FEATURE_FLAGS = {
   [FEATURE_FLAGS.APP_LOCALES_URL]: 'test',
   [FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP]: '1',
   [FEATURE_FLAGS.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
+  [FEATURE_FLAGS.RARI]: true,
 };

@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS, SNX } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS, SNX, USD } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -315,3 +315,11 @@ const isSynthetixAsset = (asset: Asset): boolean => !!asset.isSynthetixAsset && 
 
 export const isSynthetixTx = (fromAsset: Asset, toAsset: Asset): boolean =>
   isSynthetixAsset(fromAsset) && isSynthetixAsset(toAsset);
+
+export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {
+  const ethRates = rates[ETH];
+  if (!ethRates) {
+    return 0;
+  }
+  return value * (ethRates[fiatCurrency] / ethRates[USD]);
+};
