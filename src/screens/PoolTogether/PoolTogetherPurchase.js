@@ -242,7 +242,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
-      goBackDismiss: true,
       transactionType: POOL_TOGETHER_ALLOW,
     });
   };
