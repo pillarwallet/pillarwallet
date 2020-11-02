@@ -191,12 +191,10 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     const { poolToken, ticketsCount } = this.state;
     const { poolAllowance, estimateTransaction } = this.props;
     if (poolAllowance[poolToken]) {
-      this.setState({ withdrawPayload: null }, () => {
-        const withdrawPayload = getWithdrawTicketTransaction(ticketsCount, poolToken);
-        const { to, data, amount } = withdrawPayload;
-        estimateTransaction(to, amount, data);
-        this.setState({ withdrawPayload });
-      });
+      const withdrawPayload = getWithdrawTicketTransaction(ticketsCount, poolToken);
+      const { to, data, amount } = withdrawPayload;
+      estimateTransaction(to, amount, data);
+      this.setState({ withdrawPayload });
     }
   }
 

@@ -191,12 +191,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const { poolToken, numberOfTickets } = this.state;
     const { poolAllowance, estimateTransaction } = this.props;
     if (poolAllowance[poolToken]) {
-      this.setState({ purchasePayload: null }, () => {
-        const purchasePayload = getPurchaseTicketTransaction(numberOfTickets, poolToken);
-        const { to, data, amount } = purchasePayload;
-        estimateTransaction(to, amount, data);
-        this.setState({ purchasePayload });
-      });
+      const purchasePayload = getPurchaseTicketTransaction(numberOfTickets, poolToken);
+      const { to, data, amount } = purchasePayload;
+      estimateTransaction(to, amount, data);
+      this.setState({ purchasePayload });
     }
   }
 
