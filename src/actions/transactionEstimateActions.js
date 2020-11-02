@@ -52,8 +52,9 @@ import type { AssetData } from 'models/Asset';
 
 
 export const resetEstimateTransactionAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: null });
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
   };
 };
