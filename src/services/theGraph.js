@@ -20,6 +20,20 @@
 import axios from 'axios';
 import { reportLog } from 'utils/common';
 
+export class GraphQueryError extends Error {
+  subgraphName: string;
+  query: string;
+  responseError: Error;
+
+  constructor(subgraphName: string, query: string, responseError: Error) {
+    // eslint-disable-next-line i18next/no-literal-string
+    super(`The Graph API call to subgraph "${subgraphName}" failed`);
+    if (Error.captureStackTrace) Error.captureStackTrace(this, GraphQueryError);
+    this.subgraphName = subgraphName;
+    this.query = query;
+    this.responseError = responseError;
+  }
+}
 
 export const callSubgraph = (subgraphName: string, query: string) => {
   // eslint-disable-next-line i18next/no-literal-string
@@ -29,6 +43,6 @@ export const callSubgraph = (subgraphName: string, query: string) => {
     .then(({ data: response }) => response.data)
     .catch((error) => {
       reportLog(`The Graph subgraph "${subgraphName}" API call failed`, { error, query });
-      return null;
+      throw new GraphQueryError(subgraphName, query, error);
     });
 };
