@@ -247,8 +247,9 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = response;
 
     const assetToEnable =
-      exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode || fromAssetSymbol) || {};
+      exchangeSupportedAssets.find(({ symbol }) => symbol === fromAssetCode || symbol === fromAssetSymbol) || {};
     const { symbol: assetSymbol, iconUrl: assetIcon } = assetToEnable;
+
     const providerName = getCryptoProviderName(provider);
 
     let transactionPayload = {
