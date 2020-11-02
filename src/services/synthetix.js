@@ -20,7 +20,6 @@
 
 /* eslint-disable i18next/no-literal-string */
 
-import { getTokens, getTarget, getSource, toBytes32 } from 'synthetix';
 import { utils, Contract } from 'ethers';
 import { BigNumber } from 'bignumber.js';
 
@@ -42,35 +41,27 @@ import type { AllowanceTransaction } from 'models/Transaction';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import RATES_ABI from 'abi/synthetixRates.json';
+import EXCHANGE_ABI from 'abi/synthetixExchange.json';
 
 const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-const network = isProdEnv ? 'mainnet' : 'kovan';
-const { address: exchangeAddress } = getTarget({ network, contract: 'ProxyERC20' });
-const { abi: exchangeAbi } = getSource({ network, contract: 'Synthetix' });
 
-const { address: ratesAddress } = getTarget({ network, contract: 'ExchangeRates' });
-const { abi: ratesAbi } = getSource({ network, contract: 'ExchangeRates' });
-
-export const fetchSynthetixSupportedAssets = (): string[] => {
-  try {
-    return getTokens({ network }).map(token => token.symbol);
-  } catch (e) {
-    reportOrWarn('Failed to fetch Synthetix supported tokens', e, 'warning');
-    return [];
-  }
-};
+const exchangeAddress = '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F';
+const ratesAddress = isProdEnv
+  ? '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80'
+  : '0xA36f5A656c48EB0b43b63293E690DA746162d40B';
 
 export const createSynthetixOrder = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientSendAddress: string,
 ): Promise<Object> => {
   try {
     const data = encodeContractMethod(
-      exchangeAbi,
+      EXCHANGE_ABI,
       'exchange',
       [
-        toBytes32(fromAsset.symbol),
+        utils.formatBytes32String(fromAsset.symbol),
         parseTokenBigNumberAmount(amount, fromAsset.decimals),
-        toBytes32(toAsset.symbol),
+        utils.formatBytes32String(toAsset.symbol),
       ],
     );
 
@@ -105,12 +96,12 @@ export const getSynthetixOffer = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientAddress: string,
 ): Promise<Offer | null> => {
   try {
-    const contract = getContract(ratesAddress, ratesAbi);
+    const contract = getContract(ratesAddress, RATES_ABI);
     if (!contract) return null;
     const toValue = await contract.effectiveValue(
-      toBytes32(fromAsset.symbol),
+      utils.formatBytes32String(fromAsset.symbol),
       parseTokenBigNumberAmount(amount, fromAsset.decimals),
-      toBytes32(toAsset.symbol),
+      utils.formatBytes32String(toAsset.symbol),
     );
     const toAmount = utils.formatUnits(toValue.toString(), toAsset.decimals);
     const allowanceSet = await getSynthetixAllowance(clientAddress, fromAsset.address);
