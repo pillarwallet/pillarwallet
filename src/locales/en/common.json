@@ -488,8 +488,7 @@
       "invalidSession": "Invalid Wallet Connect session",
       "alreadyPending": "A connection is already waiting"
     },
-    "reverted": "reverted",
-    "unableToEstimateTransaction": "Unable to estimate transaction"
+    "unableToEstimateTransaction": "Unable to estimate transaction. Please try again."
   },
 
   "badgeText": {
@@ -1358,7 +1357,9 @@
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
     "cannotAllowAsset": "Cannot allow asset. Please try again.",
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
-    "cannotWithdraw": "Cannot withdraw. Please try again."
+    "cannotWithdraw": "Cannot withdraw. Please try again.",
+    "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
+    "cannotSendAsset": "Cannot send asset. Please try again."
   },
 
   "exchangeContent": {

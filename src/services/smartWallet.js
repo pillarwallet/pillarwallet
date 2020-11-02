@@ -41,7 +41,7 @@ import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
-import { printLog, reportErrorLog, reportOrWarn } from 'utils/common';
+import { printLog, reportErrorLog, reportLog, reportOrWarn } from 'utils/common';
 
 // services
 import { encodeContractMethod } from 'services/assets';
@@ -544,14 +544,25 @@ class SmartWallet {
               const estimateError = messageJsonPart2?.error;
               if (estimateError?.message) errorMessage = estimateError.message;
               if (estimateError?.data) errorMessage = `${estimateError.data}: ${errorMessage}`;
-            } catch {
+            } catch (parseError) {
               // unable to decrypt json
+              reportLog('Smart Wallet service error message json parser failed', {
+                parseError,
+                error,
+                transaction,
+                assetData,
+              });
             }
           } else {
             // this means it's more generic error message and not "ethjs-query"
             errorMessage = error.message;
           }
         }
+        reportErrorLog('Smart Wallet service estimateAccountTransaction failed', {
+          errorMessage,
+          transaction,
+          assetData,
+        });
         throw new Error(errorMessage);
       });
 
