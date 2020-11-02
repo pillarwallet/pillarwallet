@@ -489,7 +489,7 @@
       "alreadyPending": "A connection is already waiting"
     },
     "reverted": "reverted",
-    "unableToEstimateTransaction": "Unable to estimate transaction"
+    "unableToEstimateTransaction": "Unable to estimate transaction. Please try again."
   },
 
   "badgeText": {
