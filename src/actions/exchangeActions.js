@@ -45,7 +45,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
-import { getAssetsAsList, getAssetData } from 'utils/assets';
+import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -65,7 +65,6 @@ import type { Asset } from 'models/Asset';
 
 // actions
 import { saveDbAction } from './dbActions';
-
 
 export const takeOfferAction = (
   fromAsset: Asset,
@@ -164,7 +163,7 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
 
-    if (fromAsset.isSynthetixAsset && toAsset.isSynthetixAsset) {
+    if (isSynthetixTx(fromAsset, toAsset)) {
       dispatch(estimateSynthetixTxAction(fromAsset, toAsset, fromAmount, clientAddress));
     } else {
       dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));

@@ -68,7 +68,7 @@ export const createSynthetixOrder = async (
       'exchange',
       [
         toBytes32(fromAsset.symbol),
-        parseTokenBigNumberAmount(amount, fromAsset.decimals).toString(),
+        parseTokenBigNumberAmount(amount, fromAsset.decimals),
         toBytes32(toAsset.symbol),
       ],
     );
@@ -76,13 +76,11 @@ export const createSynthetixOrder = async (
     if (!data) throw new Error();
 
     const txCount = await ethProvider.getTransactionCount(clientSendAddress);
-    const value = parseTokenBigNumberAmount(amount, fromAsset.decimals).toString();
 
     const txObject = {
       data,
       nonce: txCount.toString(),
       to: exchangeAddress,
-      value,
     };
 
     return {
