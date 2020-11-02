@@ -33,16 +33,16 @@ import ProfileImage from 'components/ProfileImage';
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 
-import type { GasToken } from 'models/Transaction';
+import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
+import { spacing } from 'utils/variables';
 
 
 type CancelData = {
-  txFeeInWei: number,
-  gasToken: GasToken,
-  isDisabled?: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  errorMessage: ?string,
   recipient: string,
 };
 
@@ -69,7 +69,7 @@ const SablierCancellationModal = ({
   const colors = getThemeColors(theme);
 
   const {
-    txFeeInWei, gasToken, isDisabled, recipient,
+    feeInfo, errorMessage, recipient,
   } = cancelData;
 
   const username = findEnsNameCaseInsensitive(ensRegistry, recipient) || recipient;
@@ -100,19 +100,27 @@ const SablierCancellationModal = ({
           {t('sablierContent.paragraph.cancelStreamWarning')}
         </BaseText>
         <Spacing h={32} />
-        <FeeLabelToggle
-          labelText={t('label.fee')}
-          txFeeInWei={txFeeInWei}
-          gasToken={gasToken}
-          showFiatDefault
-        />
+        {!!feeInfo && (
+          <FeeLabelToggle
+            labelText={t('label.fee')}
+            txFeeInWei={feeInfo?.fee}
+            gasToken={feeInfo?.gasToken}
+            hasError={!!errorMessage}
+            showFiatDefault
+          />
+        )}
+        {!!errorMessage && (
+          <BaseText negative style={{ marginTop: spacing.medium }}>
+            {errorMessage}
+          </BaseText>
+        )}
         <Spacing h={16} />
         <Button
           secondary
           block
           title={t('sablierContent.button.confirmStreamCancellation')}
           onPress={onCancel}
-          disabled={isDisabled}
+          disabled={!!errorMessage}
         />
         <Spacing h={8} />
         <Button

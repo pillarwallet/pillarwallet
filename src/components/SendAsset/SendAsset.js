@@ -343,7 +343,7 @@ const SendAsset = ({
 
   const showNextButton = hasAllData;
 
-  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage;
+  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
 
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
   const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(

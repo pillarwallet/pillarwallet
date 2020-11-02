@@ -29,7 +29,6 @@ import { POOLTOGETHER_WITHDRAW_TRANSACTION, POOLTOGETHER_DEPOSIT_TRANSACTION } f
 
 // utils
 import { getEthereumProvider, formatMoney, reportErrorLog } from 'utils/common';
-import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // abi
 import POOL_DAI_ABI from 'abi/poolDAI.json';
@@ -41,7 +40,6 @@ import USDC_ABI from 'abi/USDC.json';
 import type { PoolInfo } from 'models/PoolTogether';
 
 // services
-import smartWalletService from './smartWallet';
 import { encodeContractMethod } from './assets';
 import { callSubgraph } from './theGraph';
 
@@ -262,33 +260,7 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
   };
 }
 
-export const getSmartWalletTxFee = async (transaction: Object, useGasToken: boolean): Promise<Object> => {
-  const defaultResponse = { fee: new BigNumber('0'), error: true };
-  const estimateTransaction = {
-    data: transaction.data,
-    recipient: transaction.to,
-    value: transaction.amount,
-  };
-
-  const estimated = await smartWalletService
-    .estimateAccountTransaction(estimateTransaction)
-    .then(result => buildTxFeeInfo(result, useGasToken))
-    .catch((e) => {
-      reportErrorLog('Error getting PoolTogether fee for transaction', {
-        ...transaction,
-        message: e.message,
-      });
-      return null;
-    });
-
-  if (!estimated) {
-    return defaultResponse;
-  }
-
-  return estimated;
-};
-
-export async function getApproveFeeAndTransaction(symbol: string, useGasToken: boolean) {
+export function getApproveTransaction(symbol: string) {
   const {
     tokenContractAddress: contractAddress,
     poolContractAddress,
@@ -298,7 +270,8 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
   const rawValue = 1000000000;
   const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
   const data = encodeContractMethod(tokenABI, 'approve', [poolContractAddress, valueToApprove]);
-  let transactionPayload = {
+
+  return {
     amount: 0,
     to: contractAddress,
     symbol,
@@ -310,23 +283,6 @@ export async function getApproveFeeAndTransaction(symbol: string, useGasToken: b
         symbol,
       },
     },
-  };
-
-  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(transactionPayload, useGasToken);
-  if (gasToken) {
-    transactionPayload = { ...transactionPayload, gasToken };
-  }
-
-  if (error) {
-    return null;
-  }
-
-  transactionPayload = { ...transactionPayload, txFeeInWei };
-
-  return {
-    gasToken,
-    txFeeInWei,
-    transactionPayload,
   };
 }
 
@@ -355,7 +311,7 @@ export const checkPoolAllowance = async (symbol: string, address: string): Promi
   return hasAllowance;
 };
 
-export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, symbol: string, useGasToken: boolean) {
+export function getPurchaseTicketTransaction(depositAmount: number, symbol: string) {
   const {
     poolAbi,
     unitType: decimals,
@@ -363,7 +319,8 @@ export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, 
   } = getPoolTogetherTokenContract(symbol);
   const valueToDeposit = utils.parseUnits(depositAmount.toString(), decimals);
   const data = encodeContractMethod(poolAbi, 'depositPool', [valueToDeposit]);
-  let transactionPayload = {
+
+  return {
     amount: 0,
     to: poolContractAddress,
     symbol,
@@ -377,26 +334,9 @@ export async function getPurchaseTicketFeeAndTransaction(depositAmount: number, 
     },
     tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
   };
-
-  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(transactionPayload, useGasToken);
-  if (gasToken) {
-    transactionPayload = { ...transactionPayload, gasToken };
-  }
-
-  if (error) {
-    return null;
-  }
-
-  transactionPayload = { ...transactionPayload, txFeeInWei };
-
-  return {
-    gasToken,
-    txFeeInWei,
-    transactionPayload,
-  };
 }
 
-export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number, symbol: string, useGasToken: boolean) {
+export function getWithdrawTicketTransaction(withdrawAmount: number, symbol: string) {
   const {
     poolAbi,
     unitType: decimals,
@@ -404,7 +344,8 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
   } = getPoolTogetherTokenContract(symbol);
   const valueToWithdraw = utils.parseUnits(withdrawAmount.toString(), decimals);
   const data = encodeContractMethod(poolAbi, 'withdraw', [valueToWithdraw]);
-  let transactionPayload = {
+
+  return {
     amount: 0,
     to: poolContractAddress,
     symbol,
@@ -417,23 +358,6 @@ export async function getWithdrawTicketFeeAndTransaction(withdrawAmount: number,
       decimals,
     },
     tag: POOLTOGETHER_WITHDRAW_TRANSACTION,
-  };
-
-  const { fee: txFeeInWei, gasToken, error } = await getSmartWalletTxFee(transactionPayload, useGasToken);
-  if (gasToken) {
-    transactionPayload = { ...transactionPayload, gasToken };
-  }
-
-  transactionPayload = { ...transactionPayload, txFeeInWei };
-
-  if (error) {
-    return null;
-  }
-
-  return {
-    gasToken,
-    txFeeInWei,
-    transactionPayload,
   };
 }
 

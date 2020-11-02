@@ -479,7 +479,7 @@ class SmartWallet {
 
   async estimateAccountTransaction(
     transaction: AccountTransaction,
-    assetData?: AssetData,
+    assetData: ?AssetData,
   ): Promise<?EstimatedTransactionFee> {
     const {
       value: rawValue,
@@ -543,7 +543,11 @@ class SmartWallet {
               const messageJsonPart2 = JSON.parse(messageJsonPart1?.value?.body);
               const estimateError = messageJsonPart2?.error;
               if (estimateError?.message) errorMessage = estimateError.message;
-              if (estimateError?.data) errorMessage = `${estimateError.data}: ${errorMessage}`;
+
+              // if it starts with 0x then we shouldn't show (can occur)
+              if (estimateError?.data && !estimateError.data.startsWith('0x')) {
+                errorMessage = `${estimateError.data}: ${errorMessage}`;
+              }
             } catch (parseError) {
               // unable to decrypt json
               reportLog('Smart Wallet service error message json parser failed', {

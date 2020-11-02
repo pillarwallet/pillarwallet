@@ -52,8 +52,9 @@ import type { AssetData } from 'models/Asset';
 
 
 export const resetEstimateTransactionAction = () => {
-  return async (dispatch: Dispatch) => {
+  return (dispatch: Dispatch) => {
     dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: null });
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
   };
 };
@@ -62,7 +63,8 @@ export const estimateTransactionAction = (
   recipientAddress: string,
   value: number,
   data: ?string,
-  assetData?: AssetData,
+  assetData: ?AssetData,
+  sequential: ?AccountTransaction[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
@@ -72,6 +74,7 @@ export const estimateTransactionAction = (
     let transaction: AccountTransaction = {
       recipient: recipientAddress,
       value,
+      sequential,
     };
 
     if (assetData?.tokenType === COLLECTIBLES && !data && assetData) {
