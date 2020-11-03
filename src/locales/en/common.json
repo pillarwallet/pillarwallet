@@ -492,7 +492,9 @@
     "unableToEstimateTransaction": "Unable to estimate transaction. Please try again.",
     "theGraphQueryFailed": {
       "poolTogetherStats": "Can't connect to Pool Together",
-      "sablierStreams": "Can't connect to Sablier"
+      "sablierStreams": "Can't connect to Sablier",
+      "isTokenSupportedByUniswap": "Can't connect to exchange service",
+      "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete."
     }
   },
 

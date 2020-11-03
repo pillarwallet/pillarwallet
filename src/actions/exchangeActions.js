@@ -39,6 +39,8 @@ import {
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
   PROVIDER_SYNTHETIX,
+  SET_UNISWAP_TOKENS_QUERY_STATUS,
+  UNISWAP_TOKENS_QUERY_STATUS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -56,6 +58,7 @@ import {
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } from 'services/synthetix';
+import { GraphQueryError } from 'services/theGraph';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -338,8 +341,30 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
       assets: { supportedAssets },
     } = getState();
 
+    dispatch({
+      type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+      payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
+    });
+
     const oneInchAssetsSymbols = fetch1inchSupportedTokens();
-    const uniswapAssetsSymbols = fetchUniswapSupportedTokens(supportedAssets.map(({ symbol }) => symbol));
+    const uniswapAssetsSymbols = fetchUniswapSupportedTokens(supportedAssets.map(({ symbol }) => symbol))
+      .then(result => {
+        dispatch({
+          type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+          payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS },
+        });
+        return result;
+      })
+      .catch(error => {
+        if (error instanceof GraphQueryError) {
+          dispatch({
+            type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+            payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
+          });
+        }
+
+        return [];
+      });
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
