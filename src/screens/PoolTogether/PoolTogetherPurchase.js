@@ -212,11 +212,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
   }
 
   openAllowAssetModal = () => {
+    const { poolToken, allowPayload } = this.state;
     Modal.open(() => (
       <PoolTokenAllowModal
+        assetSymbol={poolToken}
+        transactionPayload={allowPayload}
         onModalHide={() => {
           const { setDismissApprove } = this.props;
-          setDismissApprove(this.state.poolToken);
+          setDismissApprove(poolToken);
         }}
         onAllow={this.allowPoolAsset}
       />
@@ -271,7 +274,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       numberOfTickets,
       userTickets,
       totalPoolTicketsCount,
-      allowPayload,
       purchasePayload,
       isInputValid,
     } = this.state;
@@ -284,18 +286,12 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
-    if (feeInfo) {
-      if ((allowPayload && !hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
-        ...allowPayload,
-        txFeeInWei: feeInfo.fee,
-        gasToken: feeInfo.gasToken,
-      })) || (purchasePayload && hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
-        ...purchasePayload,
-        txFeeInWei: feeInfo.fee,
-        gasToken: feeInfo.gasToken,
-      }))) {
-        errorMessage = t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH });
-      }
+    if (feeInfo && purchasePayload && hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
+      ...purchasePayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    })) {
+      errorMessage = t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH });
     }
 
     const submitDisabled = isEstimating

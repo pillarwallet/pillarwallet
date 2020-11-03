@@ -23,10 +23,12 @@ import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import t from 'translations/translate';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
 // constants
 import styled, { withTheme } from 'styled-components/native';
-import { DAI } from 'constants/assetsConstants';
+import { DAI, ETH } from 'constants/assetsConstants';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -35,13 +37,25 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
+// utils
+import { images } from 'utils/images';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+
 // types
 import type { Theme } from 'models/Theme';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Balances } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
 
-// utils
-import { images } from 'utils/images';
 
+type StateProps = {|
+  estimateErrorMessage: ?string,
+  feeInfo: ?TransactionFeeInfo,
+  balances: Balances,
+|};
 
 type OwnProps = {|
   onModalHide: () => void,
@@ -51,9 +65,8 @@ type OwnProps = {|
 type Props = {|
   ...OwnProps,
   theme: Theme,
-  assetSymbol: string, // TODO: check
-  errorMessage: ?string,
-  feeInfo: ?TransactionFeeInfo,
+  assetSymbol: string,
+  transactionPayload: Object,
 |};
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -84,17 +97,30 @@ const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
 const poolTogetherLogo = require('assets/images/pool_together.png');
 
-const PoolTokenAllowModal = (props: Props) => {
-  const {
-    onModalHide,
-    onAllow,
-    theme,
-    errorMessage,
-    assetSymbol,
-    feeInfo,
-  } = props;
-
+const PoolTokenAllowModal = ({
+  onModalHide,
+  onAllow,
+  theme,
+  estimateErrorMessage,
+  assetSymbol,
+  feeInfo,
+  transactionPayload,
+  balances,
+}: Props) => {
   const modalRef = useRef();
+
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      ...transactionPayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    });
+  }
+
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
 
   const tokenLogo = assetSymbol === DAI ? daiIcon : usdcIcon;
   const { genericToken: fallbackSource } = images(theme);
@@ -159,4 +185,21 @@ const PoolTokenAllowModal = (props: Props) => {
   );
 };
 
-export default (withTheme(PoolTokenAllowModal): AbstractComponent<OwnProps>);
+
+const mapStateToProps = ({
+  transactionEstimate: { feeInfo, errorMessage: estimateErrorMessage },
+}: RootReducerState): StateProps => ({
+  feeInfo,
+  estimateErrorMessage,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default (withTheme(connect(combinedMapStateToProps)(PoolTokenAllowModal)): AbstractComponent<OwnProps>);
