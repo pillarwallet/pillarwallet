@@ -345,7 +345,7 @@ export const deploySmartWalletAction = () => {
 
     if (!deployTxHash) {
       await dispatch(setSmartWalletDeploymentDataAction(null, SMART_WALLET_DEPLOYMENT_ERRORS.SDK_ERROR));
-      if (error && error === SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED) {
+      if (isCaseInsensitiveMatch(error, SMART_WALLET_DEPLOYMENT_ERRORS.REVERTED)) {
         Toast.show({
           message: t('toast.smartWalletActivationUnavailable'),
           emoji: 'hushed',

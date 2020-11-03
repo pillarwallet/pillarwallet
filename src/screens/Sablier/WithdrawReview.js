@@ -30,10 +30,8 @@ import { Spacing } from 'components/Layout';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 
-import { buildTxFeeInfo } from 'utils/smartWallet';
 import { findEnsNameCaseInsensitive, formatUnits } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -42,17 +40,16 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Asset } from 'models/Asset';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  useGasToken: boolean,
-  withdrawTransactionEstimate: ?Object,
+  feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
   ensRegistry: EnsRegistry,
   assets: Assets,
   supportedAssets: Asset[],
-  isCalculatingWithdrawTransactionEstimate: boolean,
 };
 
 const MainContainer = styled.View`
@@ -61,15 +58,13 @@ const MainContainer = styled.View`
 
 const WithdrawReview = ({
   navigation,
-  useGasToken,
-  withdrawTransactionEstimate,
   accountAddress,
   ensRegistry,
   assets,
   supportedAssets,
+  feeInfo,
 }: Props) => {
   const { withdrawAmountInWei, stream } = navigation.state.params;
-  const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate, useGasToken);
 
   const assetAddress = stream.token.id;
   const assetData = getAssetDataByAddress(getAssetsAsList(assets), supportedAssets, assetAddress);
@@ -82,10 +77,10 @@ const WithdrawReview = ({
       stream,
     );
 
-    if (txFeeInfo.gasToken) {
+    if (feeInfo?.gasToken) {
       transactionPayload = {
         ...transactionPayload,
-        gasToken: txFeeInfo.gasToken,
+        gasToken: feeInfo?.gasToken,
       };
     }
 
@@ -115,7 +110,7 @@ const WithdrawReview = ({
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -123,7 +118,7 @@ const WithdrawReview = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
           </TableRow>
         </Table>
         <Spacing h={50} />
@@ -134,18 +129,14 @@ const WithdrawReview = ({
 };
 
 const mapStateToProps = ({
-  sablier: { withdrawTransactionEstimate, isCalculatingWithdrawTransactionEstimate },
   ensRegistry: { data: ensRegistry },
   assets: { supportedAssets },
 }: RootReducerState): $Shape<Props> => ({
-  withdrawTransactionEstimate,
-  isCalculatingWithdrawTransactionEstimate,
   ensRegistry,
   supportedAssets,
 });
 
 const structuredSelector = createStructuredSelector({
-  useGasToken: useGasTokenSelector,
   accountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
 });

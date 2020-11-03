@@ -24,51 +24,62 @@ import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
+// actions
+import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { calculateSablierCancelTransactionEstimateAction } from 'actions/sablierActions';
+
+// constants
+import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { TRANSACTION_EVENT } from 'constants/historyConstants';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
 import Selector from 'components/Selector';
 import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
+import ArrowIcon from 'components/ArrowIcon/ArrowIcon';
+import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 
-import { getCancellationFeeAndTransaction } from 'services/sablier';
-import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { findEnsNameCaseInsensitive } from 'utils/common';
-import { mapTransactionsHistory } from 'utils/feedData';
-import { isSablierTransactionTag } from 'utils/sablier';
+// services
+import { getSablierCancellationTransaction } from 'services/sablier';
+
+// selectors
 import { sablierEventsSelector } from 'selectors/sablier';
 import { accountHistorySelector } from 'selectors/history';
 
-import type { Rates, Asset, Balances } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+// utils
+import { findEnsNameCaseInsensitive } from 'utils/common';
+import { mapTransactionsHistory } from 'utils/feedData';
+import { isSablierTransactionTag } from 'utils/sablier';
+
+// types
+import type { Asset, Balances } from 'models/Asset';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
+import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Stream } from 'models/Sablier';
 import type { Accounts } from 'models/Account';
 
+// local
 import SablierCancellationModal from './SablierCancellationModal';
-import ArrowIcon from '../../components/ArrowIcon/ArrowIcon';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  useGasToken: boolean,
-  rates: Rates,
-  baseFiatCurrency: ?string,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
   balances: Balances,
   history: Object[],
   sablierEvents: Object[],
   accounts: Accounts,
-};
-
-type State = {
-  isFetchingCancellationFee: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  calculateSablierCancelTransactionEstimate: (stream: Stream) => void,
+  resetEstimateTransaction: () => void,
 };
 
 const SelectorWrapper = styled.View`
@@ -76,59 +87,66 @@ const SelectorWrapper = styled.View`
   padding: 30px 0 48px;
 `;
 
-class OutgoingStream extends React.Component<Props, State> {
-  state = {
-    isFetchingCancellationFee: false,
+class OutgoingStream extends React.Component<Props> {
+  componentDidMount() {
+    this.props.resetEstimateTransaction();
   }
 
-  onCancel = async () => {
-    this.setState({ isFetchingCancellationFee: true });
+  onCancel = () => {
+    const {
+      navigation,
+      calculateSablierCancelTransactionEstimate,
+      resetEstimateTransaction,
+    } = this.props;
 
-    const { useGasToken, navigation } = this.props;
     const { stream } = navigation.state.params;
 
-    const {
-      txFeeInWei,
-      gasToken,
-      transactionPayload: cancellationPayload,
-    } = await getCancellationFeeAndTransaction(stream, useGasToken);
+    const transactionPayload = getSablierCancellationTransaction(stream);
+    resetEstimateTransaction();
+    calculateSablierCancelTransactionEstimate(stream);
 
-    this.setState({ isFetchingCancellationFee: false });
-
-    const { balances } = this.props;
-
-    if (cancellationPayload) {
-      const isDisabled = !isEnoughBalanceForTransactionFee(balances, cancellationPayload);
-
-      const cancelData = {
-        txFeeInWei,
-        isDisabled,
-        gasToken,
-        recipient: stream.recipient,
-      };
-
-      Modal.open(() => (
-        <SablierCancellationModal
-          cancelData={cancelData}
-          onCancel={() => this.onCancelConfirm(cancellationPayload)}
-        />
-      ));
-    }
+    Modal.open(() => (
+      <SablierCancellationModal
+        recipient={stream.recipient}
+        transactionPayload={transactionPayload}
+        onCancel={this.onCancelConfirm}
+      />
+    ));
   }
 
-  onCancelConfirm = (cancellationPayload) => {
-    const { navigation } = this.props;
+  onCancelConfirm = () => {
+    const { navigation, feeInfo } = this.props;
 
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload: cancellationPayload,
-    });
+    const { stream } = navigation.state.params;
+    let transactionPayload = getSablierCancellationTransaction(stream);
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotCancelStream'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    transactionPayload = {
+      ...transactionPayload,
+      txFeeInWei: feeInfo?.fee,
+      gasToken: feeInfo?.gasToken,
+    };
+
+    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
   }
 
   render() {
     const {
-      navigation, ensRegistry, history, accounts, sablierEvents,
+      navigation,
+      ensRegistry,
+      history,
+      accounts,
+      sablierEvents,
+      isEstimating,
     } = this.props;
-    const { isFetchingCancellationFee } = this.state;
 
     const stream = navigation.getParam('stream');
 
@@ -175,7 +193,7 @@ class OutgoingStream extends React.Component<Props, State> {
         <Button
           title={t('sablierContent.button.cancelStream')}
           onPress={this.onCancel}
-          isLoading={isFetchingCancellationFee}
+          isLoading={isEstimating}
           marginLeft={20}
           marginRight={20}
         />
@@ -192,22 +210,19 @@ class OutgoingStream extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
   assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
+  transactionEstimate: { feeInfo, isEstimating },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
   supportedAssets,
   ensRegistry,
   accounts,
+  feeInfo,
+  isEstimating,
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
-  useGasToken: useGasTokenSelector,
   history: accountHistorySelector,
   sablierEvents: sablierEventsSelector,
 });
@@ -217,5 +232,11 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  calculateSablierCancelTransactionEstimate: (
+    stream: Stream,
+  ) => dispatch(calculateSablierCancelTransactionEstimateAction(stream)),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
+});
 
-export default connect(combinedMapStateToProps)(OutgoingStream);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(OutgoingStream);

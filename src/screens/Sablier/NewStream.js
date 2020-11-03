@@ -81,6 +81,7 @@ type State = {
   assetValue: number,
   selectedAsset: Option,
   selectedContact: ?Contact,
+  isInputValid: boolean,
 };
 
 const Row = styled.View`
@@ -107,6 +108,7 @@ class NewStream extends React.Component<Props, State> {
       assetValue: 0,
       selectedAsset: daiAsset,
       selectedContact: null,
+      isInputValid: false,
     };
   }
 
@@ -181,9 +183,9 @@ class NewStream extends React.Component<Props, State> {
 
   isFormValid = () => {
     const {
-      assetValue, startDate, endDate, selectedContact,
+      assetValue, startDate, endDate, selectedContact, isInputValid,
     } = this.state;
-    return assetValue && startDate && endDate && selectedContact;
+    return assetValue && startDate && endDate && selectedContact && isInputValid;
   }
 
   renderStreamSummary = () => {
@@ -245,6 +247,7 @@ class NewStream extends React.Component<Props, State> {
             assetData={selectedAsset}
             onAssetDataChange={asset => this.setState({ selectedAsset: asset })}
             customAssets={assetsOptions}
+            onFormValid={(isValid) => this.setState({ isInputValid: isValid })}
           />
           <Spacing h={10} />
           <ArrowIcon />
@@ -327,6 +330,5 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
   ...mapStateToProps(state),
 });
-
 
 export default connect(combinedMapStateToProps)(NewStream);

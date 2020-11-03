@@ -17,37 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { SET_STREAMS, SET_FETCHING_STREAMS } from 'constants/sablierConstants';
-import type { Stream } from 'models/Sablier';
 
-
-export type SablierReducerState = {
-  outgoingStreams: Stream[],
-  incomingStreams: Stream[],
-  isFetchingStreams: boolean,
-};
-
-export type SablierReducerAction = {
-  type: string,
-  payload: any,
-};
-
-export const initialState = {
-  outgoingStreams: [],
-  incomingStreams: [],
-  isFetchingStreams: false,
-};
-
-export default function sablierReducer(
-  state: SablierReducerState = initialState,
-  action: SablierReducerAction,
-): SablierReducerState {
-  switch (action.type) {
-    case SET_STREAMS:
-      return { ...state, ...action.payload, isFetchingStreams: false };
-    case SET_FETCHING_STREAMS:
-      return { ...state, isFetchingStreams: true };
-    default:
-      return state;
-  }
-}
+export const SET_ESTIMATING_TRANSACTION = 'SET_ESTIMATING_TRANSACTION';
+export const SET_TRANSACTION_ESTIMATE_FEE_INFO = 'SET_TRANSACTION_ESTIMATE_FEE_INFO';
+export const SET_TRANSACTION_ESTIMATE_ERROR = 'SET_TRANSACTION_ESTIMATE_ERROR';

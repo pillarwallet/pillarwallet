@@ -32,22 +32,24 @@ import ValueInput from 'components/ValueInput';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import { BaseText } from 'components/Typography';
 
 // constants
 import { SABLIER_WITHDRAW_REVIEW } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // utils
 import { getAssetDataByAddress, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { formatUnits } from 'utils/common';
-import { buildTxFeeInfo } from 'utils/smartWallet';
+import { spacing } from 'utils/variables';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // actions
 import { calculateSablierWithdrawTransactionEstimateAction } from 'actions/sablierActions';
+import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // services
 import { fetchStreamBalance } from 'services/sablier';
@@ -56,6 +58,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Asset, Balances } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
@@ -63,10 +66,11 @@ type Props = {
   assets: Assets,
   supportedAssets: Asset[],
   navigation: NavigationScreenProp<*>,
-  withdrawTransactionEstimate: ?Object,
-  isCalculatingWithdrawTransactionEstimate: boolean,
-  useGasToken: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
   balances: Balances,
+  estimateErrorMessage: ?string,
+  resetEstimateTransaction: () => void,
 };
 
 const FooterWrapper = styled.View`
@@ -85,15 +89,21 @@ const Withdraw = (props: Props) => {
     navigation,
     assets,
     supportedAssets,
-    withdrawTransactionEstimate,
-    isCalculatingWithdrawTransactionEstimate,
-    useGasToken,
+    feeInfo,
+    isEstimating,
     balances,
+    estimateErrorMessage,
+    resetEstimateTransaction,
   } = props;
+
+  useEffect(() => {
+    resetEstimateTransaction();
+  }, []);
 
   const [withdrawAmount, setWithdrawAmount] = useState('');
   const [maxWithdraw, setMaxWithdraw] = useState(EthersBigNumber.from(0));
   const [isFetchingMaxWithdraw, setIsFetchingMaxWithdraw] = useState(true);
+  const [inputValid, setInputValid] = useState(false);
 
   const stream = navigation.getParam('stream');
   const { id: streamId, token, recipient } = stream;
@@ -109,7 +119,7 @@ const Withdraw = (props: Props) => {
 
   useEffect(() => {
     calculateSablierWithdrawTransactionEstimate(stream, withdrawAmountInWei, assetData);
-  }, [withdrawAmount]);
+  }, [withdrawAmount, inputValid]);
 
   useEffect(() => {
     // the exact max amount to withdraw must be fetched from the blockchain
@@ -135,31 +145,46 @@ const Withdraw = (props: Props) => {
     [assetData.symbol]: { symbol: assetData.symbol, balance: formatUnits(maxWithdraw, assetData.decimals) },
   };
 
-  const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate, useGasToken);
-  const isEnoughForFee = !!txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, {
-    txFeeInWei: txFeeInfo.fee,
-    gasToken: txFeeInfo.gasToken,
-  });
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    });
+  }
 
-  const isNextButtonDisabled = isCalculatingWithdrawTransactionEstimate
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
+
+  const isNextButtonDisabled = isEstimating
     || isFetchingMaxWithdraw
     || !withdrawAmount
-    || !isEnoughForFee
-    || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
-  const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? t('label.gettingFee') : t('button.next');
+    || !!errorMessage
+    || !feeInfo
+    || !inputValid;
+  const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
 
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('sablierContent.title.withdrawScreen') }] }}
       footer={
         <FooterWrapper>
-          <FeeLabelToggle
-            labelText={t('label.fee')}
-            txFeeInWei={txFeeInfo?.fee}
-            gasToken={txFeeInfo?.gasToken}
-            isLoading={isCalculatingWithdrawTransactionEstimate}
-            showFiatDefault
-          />
+          {!!feeInfo && (
+            <FeeLabelToggle
+              labelText={t('label.fee')}
+              txFeeInWei={feeInfo?.fee}
+              gasToken={feeInfo?.gasToken}
+              isLoading={isEstimating}
+              hasError={!!errorMessage}
+              showFiatDefault
+            />
+          )}
+          {!!errorMessage && (
+            <BaseText negative style={{ marginTop: spacing.medium }}>
+              {errorMessage}
+            </BaseText>
+          )}
           <Spacing h={16} />
           <Button
             disabled={isNextButtonDisabled}
@@ -178,6 +203,7 @@ const Withdraw = (props: Props) => {
           assetData={assetData}
           customAssets={assetOptions}
           customBalances={streamedAssetBalance}
+          onFormValid={setInputValid}
         />
       </InputWrapper>
     </ContainerWithHeader>
@@ -186,16 +212,16 @@ const Withdraw = (props: Props) => {
 
 const mapStateToProps = ({
   assets: { supportedAssets },
-  sablier: { withdrawTransactionEstimate, isCalculatingWithdrawTransactionEstimate },
+  transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
-  withdrawTransactionEstimate,
-  isCalculatingWithdrawTransactionEstimate,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
-  useGasToken: useGasTokenSelector,
   balances: accountBalancesSelector,
 });
 
@@ -205,8 +231,12 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  calculateSablierWithdrawTransactionEstimate: debounce((stream: Stream, amount: number, asset: Asset) =>
-    dispatch(calculateSablierWithdrawTransactionEstimateAction(stream, amount, asset)), 500),
+  calculateSablierWithdrawTransactionEstimate: debounce((
+    stream: Stream,
+    amount: number,
+    asset: Asset,
+  ) => dispatch(calculateSablierWithdrawTransactionEstimateAction(stream, amount, asset)), 500),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(Withdraw);
