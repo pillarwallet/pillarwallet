@@ -93,8 +93,18 @@ class OutgoingStream extends React.Component<Props> {
   }
 
   onCancel = () => {
-    const { stream } = this.props.navigation.state.params;
+    const {
+      navigation,
+      calculateSablierCancelTransactionEstimate,
+      resetEstimateTransaction,
+    } = this.props;
+
+    const { stream } = navigation.state.params;
+
     const transactionPayload = getSablierCancellationTransaction(stream);
+    resetEstimateTransaction();
+    calculateSablierCancelTransactionEstimate(stream);
+
     Modal.open(() => (
       <SablierCancellationModal
         recipient={stream.recipient}

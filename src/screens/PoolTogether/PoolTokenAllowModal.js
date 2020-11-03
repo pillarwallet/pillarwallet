@@ -54,6 +54,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 type StateProps = {|
   estimateErrorMessage: ?string,
   feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
   balances: Balances,
 |};
 
@@ -107,6 +108,7 @@ const PoolTokenAllowModal = ({
   feeInfo,
   transactionPayload,
   balances,
+  isEstimating,
 }: Props) => {
   const modalRef = useRef();
 
@@ -125,7 +127,7 @@ const PoolTokenAllowModal = ({
 
   const tokenLogo = assetSymbol === DAI ? daiIcon : usdcIcon;
   const { genericToken: fallbackSource } = images(theme);
-  const isDisabled = !feeInfo || !!errorMessage;
+  const isDisabled = !feeInfo || !!errorMessage || isEstimating;
 
   return (
     <SlideModal
@@ -154,10 +156,11 @@ const PoolTokenAllowModal = ({
         <Paragraph>
           {t('poolTogetherContent.paragraph.allowAutomationWithToken', { token: assetSymbol })}
         </Paragraph>
-        {!!feeInfo && (
+        {(isEstimating || !!feeInfo) && (
           <FeeLabelToggle
             labelText={t('label.fee')}
             txFeeInWei={feeInfo?.fee}
+            isLoading={isEstimating}
             gasToken={feeInfo?.gasToken}
             hasError={!!errorMessage}
             showFiatDefault
@@ -188,9 +191,10 @@ const PoolTokenAllowModal = ({
 
 
 const mapStateToProps = ({
-  transactionEstimate: { feeInfo, errorMessage: estimateErrorMessage },
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<StateProps> => ({
   feeInfo,
+  isEstimating,
   estimateErrorMessage,
 });
 

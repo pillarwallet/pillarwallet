@@ -57,6 +57,7 @@ import type { Balances } from 'models/Asset';
 type StateProps = {|
   ensRegistry: EnsRegistry,
   feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
   estimateErrorMessage: ?string,
   balances: Balances,
 |};
@@ -90,6 +91,7 @@ const SablierCancellationModal = ({
   estimateErrorMessage,
   balances,
   transactionPayload,
+  isEstimating,
 }: Props) => {
   const colors = getThemeColors(theme);
 
@@ -109,6 +111,8 @@ const SablierCancellationModal = ({
     : estimateErrorMessage;
 
   const modalRef = useRef();
+
+  const isDisabled = !feeInfo || !!errorMessage || isEstimating;
 
   return (
     <SlideModal
@@ -135,10 +139,11 @@ const SablierCancellationModal = ({
           {t('sablierContent.paragraph.cancelStreamWarning')}
         </BaseText>
         <Spacing h={32} />
-        {!!feeInfo && (
+        {(isEstimating || !!feeInfo) && (
           <FeeLabelToggle
             labelText={t('label.fee')}
             txFeeInWei={feeInfo?.fee}
+            isLoading={isEstimating}
             gasToken={feeInfo?.gasToken}
             hasError={!!errorMessage}
             showFiatDefault
@@ -158,7 +163,7 @@ const SablierCancellationModal = ({
             if (modalRef.current) modalRef.current.close();
             onCancel();
           }}
-          disabled={!!errorMessage}
+          disabled={isDisabled}
         />
         <Spacing h={8} />
         <Button
@@ -176,10 +181,11 @@ const SablierCancellationModal = ({
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-  transactionEstimate: { feeInfo, errorMessage: estimateErrorMessage },
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<StateProps> => ({
   ensRegistry,
   feeInfo,
+  isEstimating,
   estimateErrorMessage,
 });
 

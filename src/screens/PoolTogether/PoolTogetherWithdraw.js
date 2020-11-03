@@ -213,6 +213,10 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
 
   openAllowAssetModal = () => {
     const { poolToken, allowPayload } = this.state;
+    const { estimateTransaction, resetEstimateTransaction } = this.props;
+    resetEstimateTransaction();
+    const { to, data, amount } = allowPayload;
+    estimateTransaction(to, amount, data);
     Modal.open(() => (
       <PoolTokenAllowModal
         assetSymbol={poolToken}
