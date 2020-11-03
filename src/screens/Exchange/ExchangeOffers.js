@@ -40,6 +40,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import OfferCard from 'components/OfferCard/OfferCard';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // constants
 import { EXCHANGE } from 'constants/exchangeConstants';
@@ -112,8 +113,6 @@ type Props = {
 type State = {
   pressedOfferId: string, // offer id will be passed to prevent double clicking
   pressedTokenAllowanceId: string,
-  isEnableAssetModalVisible: boolean,
-  enableData?: ?EnableData,
   enablePayload: ?$Shape<TokenTransactionPayload>,
 };
 
@@ -182,8 +181,6 @@ class ExchangeOffers extends React.Component<Props, State> {
   state = {
     pressedOfferId: '',
     pressedTokenAllowanceId: '',
-    isEnableAssetModalVisible: false,
-    enableData: null,
     enablePayload: null,
   };
 
@@ -249,28 +246,34 @@ class ExchangeOffers extends React.Component<Props, State> {
       },
     };
 
+    const enableData = {
+      providerName,
+      assetSymbol,
+      assetIcon,
+    };
+
     this.setState({
       pressedTokenAllowanceId: '',
-      isEnableAssetModalVisible: true,
-      enableData: {
-        providerName,
-        assetSymbol,
-        assetIcon,
-      },
       enablePayload: { ...transactionPayload },
+    }, () => {
+      this.openEnableAssetModal(enableData);
     });
   };
 
-  hideEnableAssetModal = () => {
-    const { setDismissTransaction } = this.props;
-    setDismissTransaction();
-    this.setState({ isEnableAssetModalVisible: false, enableData: null });
-  };
+  openEnableAssetModal = (enableData: EnableData) => {
+    Modal.open(() => (
+      // TODO: revisit
+      <AssetEnableModal
+        onModalHide={this.props.setDismissTransaction}
+        onEnable={this.enableAsset}
+        enableData={enableData}
+      />
+    ));
+  }
 
   enableAsset = () => {
     const { enablePayload } = this.state;
     const { navigation, feeInfo } = this.props;
-    this.hideEnableAssetModal();
 
     if (!feeInfo) {
       Toast.show({
@@ -425,11 +428,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       disableNonFiatExchange,
       isExchangeActive,
       showEmptyMessage,
-      feeInfo,
-      isEstimating,
-      estimateErrorMessage,
+      // TODO: check
+      // feeInfo,
+      // isEstimating,
+      // estimateErrorMessage,
     } = this.props;
-    const { isEnableAssetModalVisible, enableData } = this.state;
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
     return (
       <React.Fragment>
@@ -460,15 +463,15 @@ class ExchangeOffers extends React.Component<Props, State> {
             </ESWrapper>
           )}
         />
-        <AssetEnableModal
-          isVisible={isEnableAssetModalVisible}
-          onModalHide={this.hideEnableAssetModal}
-          onEnable={this.enableAsset}
-          enableData={enableData}
-          feeInfo={feeInfo}
-          isEstimating={isEstimating}
-          estimateErrorMessage={estimateErrorMessage}
-        />
+        {/*<AssetEnableModal*/}
+        {/*  isVisible={isEnableAssetModalVisible}*/}
+        {/*  onModalHide={this.hideEnableAssetModal}*/}
+        {/*  onEnable={this.enableAsset}*/}
+        {/*  enableData={enableData}*/}
+        {/*  feeInfo={feeInfo}*/}
+        {/*  isEstimating={isEstimating}*/}
+        {/*  estimateErrorMessage={estimateErrorMessage}*/}
+        {/*/>*/}
       </React.Fragment>
     );
   }

@@ -40,6 +40,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
 import ContactDetailsModal from 'components/ContactDetailsModal';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // utils
 import { isValidNumber, reportErrorLog } from 'utils/common';
@@ -147,10 +148,6 @@ const SendAsset = ({
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
-  const [contactToAdd, setContactToAdd] = useState(null);
-  const hideAddContactModal = () => setContactToAdd(null);
-  const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
-  const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
@@ -345,11 +342,25 @@ const SendAsset = ({
 
   const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
 
+  const openAddToContacts = useCallback((initial: ?Contact) => {
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={t('title.addNewContact')}
+        contact={initial}
+        onSave={(contact: Contact) => {
+          addContact(contact);
+          handleReceiverSelect({ ...contact, value: contact.ethAddress });
+        }}
+        contacts={contacts}
+        isDefaultNameEns
+      />
+    ));
+  }, [contacts, addContact, handleReceiverSelect]);
+
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
   const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
     option,
-    setContactToAdd,
-    () => setForceHideSelectorModals(true),
+    openAddToContacts,
   );
   const customOptionButtonOnPress = !resolvingContactEnsName
     ? addContactButtonPress
@@ -361,19 +372,11 @@ const SendAsset = ({
   return (
     <SendContainer
       customSelectorProps={{
-        onOptionSelect: !resolvingContactEnsName && !contactToAdd ? handleReceiverSelect : () => {},
+        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
         options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress,
-        resetOptionsModalOnHiddenOptionAdded: true,
-        hideModals: forceHideSelectorModals,
-        onModalsHidden: () => {
-          // force hide selector modals to show contact add modal
-          if (contactToAdd) {
-            setSelectorModalsHidden(true);
-          }
-        },
       }}
       customValueSelectorProps={{
         value: amount,
@@ -402,25 +405,7 @@ const SendAsset = ({
         ),
         isLoading: isEstimating,
       }}
-    >
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
-        contact={contactToAdd}
-        onSavePress={(contact: Contact) => {
-          hideAddContactModal();
-          addContact(contact);
-          handleReceiverSelect({ ...contact, value: contact.ethAddress });
-        }}
-        onModalHide={hideAddContactModal}
-        onModalHidden={() => {
-          setSelectorModalsHidden(false);
-          setForceHideSelectorModals(false);
-        }}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    </SendContainer>
+    />
   );
 };
 

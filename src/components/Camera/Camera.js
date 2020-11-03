@@ -20,8 +20,6 @@
 
 import * as React from 'react';
 import { Dimensions } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
-import Modal from 'react-native-modal';
 import styled, { withTheme } from 'styled-components/native';
 import ImagePicker from 'react-native-image-crop-picker';
 import { RNCamera } from 'react-native-camera';
@@ -29,6 +27,7 @@ import { connect } from 'react-redux';
 import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg';
 import t from 'translations/translate';
 
+import Modal from 'components/Modal';
 import Button from 'components/Button';
 import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
@@ -46,20 +45,27 @@ import { printLog } from 'utils/common';
 
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme, ThemeColors } from 'models/Theme';
+import type { User } from 'models/User';
 
+type StateProps = {|
+  user: User,
+|};
 
-type Props = {
-  onModalHide?: Function,
-  isVisible: boolean,
-  modalHide: Function,
+type DispatchProps = {|
   updateUserAvatar: Function,
-  permissionsGranted: boolean,
-  user: Object,
-  navigation: NavigationScreenProp<*>,
   handleImagePick: Function,
-  isPickingImage: boolean,
+|};
+
+type OwnProps = {|
+  permissionsGranted: boolean,
+|};
+
+type Props = {|
+  ...StateProps,
+  ...DispatchProps,
+  ...OwnProps,
   theme: Theme,
-};
+|};
 
 type State = {
   showResult: boolean,
@@ -174,6 +180,7 @@ class Camera extends React.Component<Props, State> {
   camera: ?Object;
   hardwareFlashTimeout: TimeoutID;
   frontFlashTimeout: TimeoutID;
+  modalRef = React.createRef<Modal>();
 
   state = {
     showResult: false,
@@ -183,10 +190,6 @@ class Camera extends React.Component<Props, State> {
     isFlashOn: false,
     isHardwareFlashOn: false,
     isFrontFlashVisible: false,
-  };
-
-  handleModalClose = () => {
-    this.setState({ showResult: false });
   };
 
   getBackToCamera = () => {
@@ -258,13 +261,13 @@ class Camera extends React.Component<Props, State> {
   };
 
   setImage = async () => {
-    const { user, updateUserAvatar, modalHide } = this.props;
+    const { user, updateUserAvatar } = this.props;
     const { imageUri } = this.state;
     const formData: any = new FormData();
     formData.append('walletId', user.walletId);
     formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
     updateUserAvatar(user.walletId, formData);
-    modalHide();
+    this.closeCamera();
   };
 
   handleFlash = () => {
@@ -291,25 +294,14 @@ class Camera extends React.Component<Props, State> {
   };
 
   closeCamera = () => {
-    const { modalHide } = this.props;
-    this.setState({
-      showResult: false,
-      previewBase64: '',
-      imageUri: '',
-      cameraType: FRONT,
-      isFlashOn: false,
-      isHardwareFlashOn: false,
-      isFrontFlashVisible: false,
-    });
-    modalHide();
+    if (this.modalRef.current) this.modalRef.current.close();
   };
 
   renderNoPermissions = () => {
-    const { modalHide } = this.props;
     return (
       <React.Fragment>
         <HeaderWrapper>
-          <Header light flexStart onClose={modalHide} />
+          <Header light flexStart onClose={this.closeCamera} />
         </HeaderWrapper>
         <NoPermissions>
           <BaseText style={{ color: 'white' }}>{t('paragraph.cameraPermissionMissing')}</BaseText>
@@ -349,7 +341,7 @@ class Camera extends React.Component<Props, State> {
       isHardwareFlashOn,
       isFrontFlashVisible,
     } = this.state;
-    const { isVisible, theme } = this.props;
+    const { theme } = this.props;
     const colors = getThemeColors(theme);
 
     const cutOutD = screenWidth - 40;
@@ -369,7 +361,6 @@ class Camera extends React.Component<Props, State> {
     const flashIcon = isFlashOn ? 'flash-on' : 'flash-off'; // eslint-disable-line i18next/no-literal-string
     return (
       <React.Fragment>
-        {!!isVisible &&
         <RNCamera
           captureAudio={false}
           ref={ref => {
@@ -385,7 +376,6 @@ class Camera extends React.Component<Props, State> {
           type={cameraType}
           flashMode={isHardwareFlashOn ? FLASH_ON : FLASH_OFF}
         />
-        }
         <SvgOverlay
           height={screenHeight}
           width={screenWidth}
@@ -423,7 +413,7 @@ class Camera extends React.Component<Props, State> {
   };
 
   render() {
-    const { isVisible, modalHide, permissionsGranted } = this.props;
+    const { permissionsGranted } = this.props;
 
     const cameraScreenContent = permissionsGranted
       ? this.renderCamera()
@@ -438,14 +428,12 @@ class Camera extends React.Component<Props, State> {
 
     return (
       <Modal
-        isVisible={isVisible}
+        ref={this.modalRef}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
         animationIn="fadeIn"
         animationOut="fadeOut"
         hideModalContentWhileAnimating
-        onBackButtonPress={modalHide}
-        onModalHide={this.handleModalClose}
         style={{
           margin: 0,
           justifyContent: 'flex-start',
@@ -468,10 +456,11 @@ class Camera extends React.Component<Props, State> {
   }
 }
 
-const mapStateToProps = ({ user: { data: user } }: RootReducerState): $Shape<Props> => ({ user });
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+const mapStateToProps = ({ user: { data: user } }: RootReducerState): StateProps => ({ user });
+const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
   handleImagePick: (isPickingImage: boolean) => dispatch(handleImagePickAction(isPickingImage)),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(Camera));
+type ExportedComponent = React.AbstractComponent<OwnProps>;
+export default (withTheme(connect(mapStateToProps, mapDispatchToProps)(Camera)): ExportedComponent);

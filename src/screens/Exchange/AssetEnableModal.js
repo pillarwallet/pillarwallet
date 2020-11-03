@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
@@ -42,18 +43,19 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnableData } from './ExchangeOffers';
 
 
-type Props = {
+type OwnProps = {|
   onModalHide: () => void,
-  onConfirm: (status: ?string) => void,
-  isVisible: boolean,
   onEnable: () => void,
   enableData: EnableData,
+|};
+
+type Props = {|
+  ...OwnProps,
   theme: Theme,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-};
-
+|};
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -77,13 +79,14 @@ const AssetEnableModal = (props: Props) => {
   const {
     onModalHide,
     onEnable,
-    isVisible,
     enableData,
     theme,
     estimateErrorMessage,
     feeInfo,
     isEstimating,
   } = props;
+
+  const modalRef = useRef();
 
   if (!enableData) {
     return null;
@@ -102,14 +105,14 @@ const AssetEnableModal = (props: Props) => {
 
   return (
     <SlideModal
-      isVisible={isVisible}
+      ref={modalRef}
       onModalHide={onModalHide}
       noClose
-      headerProps={{
+      headerProps={({
         centerItems: [{ title: t('exchangeContent.modal.enableAsset.title', { asset: assetSymbol }) }],
-        sideFlex: '0',
+        sideFlex: 0,
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
-      }}
+      })}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <AssetImage
@@ -128,7 +131,10 @@ const AssetEnableModal = (props: Props) => {
         <Button
           secondary
           title={estimateErrorMessage || t('exchangeContent.modal.enableAsset.button.enable')}
-          onPress={onEnable}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+            onEnable();
+          }}
           regularText
           style={{ marginTop: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
@@ -140,4 +146,4 @@ const AssetEnableModal = (props: Props) => {
   );
 };
 
-export default withTheme(AssetEnableModal);
+export default (withTheme(AssetEnableModal): AbstractComponent<OwnProps>);

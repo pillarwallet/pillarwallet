@@ -50,6 +50,7 @@ import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import Modal from 'components/Modal';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -131,7 +132,6 @@ type State = {
   numberOfTickets: number,
   userTickets: number,
   totalPoolTicketsCount: number,
-  isAllowModalVisible: boolean,
   allowPayload: Object,
   purchasePayload: Object,
   isInputValid: boolean,
@@ -155,7 +155,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       numberOfTickets: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible: false,
       allowPayload: null,
       purchasePayload: null,
       isInputValid: false,
@@ -212,12 +211,17 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     });
   }
 
-  hideAllowAssetModal = () => {
-    const { setDismissApprove } = this.props;
-    const { poolToken } = this.state;
-    setDismissApprove(poolToken);
-    this.setState({ isAllowModalVisible: false });
-  };
+  openAllowAssetModal = () => {
+    Modal.open(() => (
+      <PoolTokenAllowModal
+        onModalHide={() => {
+          const { setDismissApprove } = this.props;
+          setDismissApprove(this.state.poolToken);
+        }}
+        onAllow={this.allowPoolAsset}
+      />
+    ));
+  }
 
   allowPoolAsset = () => {
     const { navigation, feeInfo } = this.props;
@@ -233,8 +237,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     }
 
     const { fee: txFeeInWei, gasToken } = feeInfo;
-
-    this.hideAllowAssetModal();
 
     const transactionPayload = {
       ...allowPayload,
@@ -269,7 +271,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       numberOfTickets,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible,
       allowPayload,
       purchasePayload,
       isInputValid,
@@ -392,7 +393,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                   if (submitDisabled) return null;
 
                   if (!hasAllowance && !isApprovalExecuting) {
-                    this.setState({ isAllowModalVisible: true });
+                    this.openAllowAssetModal();
                   }
 
                   return nextNavigationFunction && nextNavigationFunction();
@@ -403,14 +404,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
-        <PoolTokenAllowModal
-          isVisible={!!isAllowModalVisible}
-          onModalHide={this.hideAllowAssetModal}
-          onAllow={this.allowPoolAsset}
-          feeInfo={feeInfo}
-          errorMessage={errorMessage}
-          assetSymbol={poolToken}
-        />
       </ContainerWithHeader>
     );
   }

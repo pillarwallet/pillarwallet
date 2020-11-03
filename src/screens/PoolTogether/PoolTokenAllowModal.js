@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import t from 'translations/translate';
@@ -42,17 +43,18 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import { images } from 'utils/images';
 
 
-type Props = {
+type OwnProps = {|
   onModalHide: () => void,
-  onConfirm: (status: ?string) => void,
-  isVisible: boolean,
-  manageContactType: string,
   onAllow: () => void,
+|};
+
+type Props = {|
+  ...OwnProps,
   theme: Theme,
-  assetSymbol: string,
+  assetSymbol: string, // TODO: check
   errorMessage: ?string,
   feeInfo: ?TransactionFeeInfo,
-};
+|};
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -86,12 +88,13 @@ const PoolTokenAllowModal = (props: Props) => {
   const {
     onModalHide,
     onAllow,
-    isVisible,
     theme,
     errorMessage,
     assetSymbol,
     feeInfo,
   } = props;
+
+  const modalRef = useRef();
 
   const tokenLogo = assetSymbol === DAI ? daiIcon : usdcIcon;
   const { genericToken: fallbackSource } = images(theme);
@@ -99,14 +102,14 @@ const PoolTokenAllowModal = (props: Props) => {
 
   return (
     <SlideModal
-      isVisible={isVisible}
+      ref={modalRef}
       onModalHide={onModalHide}
       noClose
-      headerProps={{
+      headerProps={({
         centerItems: [{ title: t('poolTogetherContent.title.authorizePoolTogether') }],
-        sideFlex: '0',
+        sideFlex: 0,
         wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
-      }}
+      })}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <ContentRow>
@@ -141,7 +144,10 @@ const PoolTokenAllowModal = (props: Props) => {
         <Button
           secondary
           title={t('button.enable')}
-          onPress={onAllow}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+            onAllow();
+          }}
           regularText
           style={{ marginTop: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
@@ -153,4 +159,4 @@ const PoolTokenAllowModal = (props: Props) => {
   );
 };
 
-export default withTheme(PoolTokenAllowModal);
+export default (withTheme(PoolTokenAllowModal): AbstractComponent<OwnProps>);

@@ -50,6 +50,7 @@ import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import FeeLabelToggle from 'components/FeeLabelToggle';
+import Modal from 'components/Modal';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -131,7 +132,6 @@ type State = {
   ticketsCount: number,
   userTickets: number,
   totalPoolTicketsCount: number,
-  isAllowModalVisible: boolean,
   allowPayload: Object,
   withdrawPayload: Object,
   isInputValid: boolean,
@@ -155,7 +155,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       ticketsCount: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible: false,
       allowPayload: null,
       withdrawPayload: null,
       isInputValid: false,
@@ -213,10 +212,15 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
   }
 
   hideAllowAssetModal = () => {
-    const { setDismissApprove } = this.props;
-    const { poolToken } = this.state;
-    setDismissApprove(poolToken);
-    this.setState({ isAllowModalVisible: false });
+    Modal.open(() => (
+      <PoolTokenAllowModal
+        onModalHide={() => {
+          const { setDismissApprove } = this.props;
+          setDismissApprove(this.state.poolToken);
+        }}
+        onAllow={this.allowPoolAsset}
+      />
+    ));
   };
 
   allowPoolAsset = () => {
@@ -270,7 +274,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
       ticketsCount,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible,
       allowPayload,
       withdrawPayload,
       isInputValid,
@@ -396,8 +399,9 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   if (submitDisabled) return null;
 
                   if (!hasAllowance && !isApprovalExecuting) {
-                    this.setState({ isAllowModalVisible: true });
+                    this.openAllowAssetModal();
                   }
+
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
                 disabled={!!submitDisabled}
@@ -406,14 +410,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
-        <PoolTokenAllowModal
-          isVisible={!!isAllowModalVisible}
-          onModalHide={this.hideAllowAssetModal}
-          onAllow={this.allowPoolAsset}
-          feeInfo={feeInfo}
-          errorMessage={errorMessage}
-          assetSymbol={poolToken}
-        />
       </ContainerWithHeader>
     );
   }

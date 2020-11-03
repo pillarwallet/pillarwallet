@@ -42,6 +42,7 @@ import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
 import ArrowIcon from 'components/ArrowIcon/ArrowIcon';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // services
 import { getSablierCancellationTransaction } from 'services/sablier';
@@ -88,36 +89,28 @@ type Props = {
   resetEstimateTransaction: () => void,
 };
 
-type State = {
-  isCancellationModalVisible: boolean,
-};
-
 const SelectorWrapper = styled.View`
   align-items: center;
   padding: 30px 0 48px;
 `;
 
-class OutgoingStream extends React.Component<Props, State> {
-  state = {
-    isCancellationModalVisible: false,
-  }
-
+class OutgoingStream extends React.Component<Props> {
   componentDidMount() {
     this.props.resetEstimateTransaction();
   }
 
   onCancel = () => {
-    const { navigation, calculateSablierCancelTransactionEstimate } = this.props;
-    const { stream } = navigation.state.params;
-
-    calculateSablierCancelTransactionEstimate(stream);
-
-    this.setState({ isCancellationModalVisible: true });
+    const cancelData = {}; // TODO: review
+    Modal.open(() => (
+      <SablierCancellationModal
+        cancelData={cancelData}
+        onCancel={this.onCancelConfirm}
+      />
+    ));
   }
 
   onCancelConfirm = () => {
     const { navigation, feeInfo } = this.props;
-    this.setState({ isCancellationModalVisible: false });
 
     const { stream } = navigation.state.params;
     let transactionPayload = getSablierCancellationTransaction(stream);
@@ -152,7 +145,6 @@ class OutgoingStream extends React.Component<Props, State> {
       isEstimating,
       estimateErrorMessage,
     } = this.props;
-    const { isCancellationModalVisible } = this.state;
 
     const stream = navigation.getParam('stream');
 

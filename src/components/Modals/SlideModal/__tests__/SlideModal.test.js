@@ -24,8 +24,6 @@ import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from 'utils/themes';
-import { fontSizes } from 'utils/variables';
-import { delay } from 'utils/common';
 import configureStore from '../../../../configureStore';
 import SlideModal from '../SlideModal';
 
@@ -36,7 +34,7 @@ describe('Slide Modal', () => {
     const component = renderer.create(
       <Provider store={store}>
         <ThemeProvider theme={defaultTheme}>
-          <SlideModal title="title" isVisible />
+          <SlideModal title="title" />
         </ThemeProvider>
       </Provider>).toJSON();
     expect(component).toMatchSnapshot();
@@ -46,25 +44,10 @@ describe('Slide Modal', () => {
     const ChildContent = () => <BaseText>Test</BaseText>;
     const wrapper = shallow(
       <ThemeProvider theme={defaultTheme}>
-        <SlideModal title="title" isVisible>
+        <SlideModal title="title">
           <ChildContent />
         </SlideModal>
       </ThemeProvider>);
     expect(wrapper.find(ChildContent)).toHaveLength(1);
-  });
-
-  it('should close modal on dismiss', async () => {
-    const onModalHide = jest.fn();
-    const component = renderer.create(
-      <Provider store={store}>
-        <ThemeProvider theme={defaultTheme}>
-          <SlideModal title="title" isVisible onModalHide={onModalHide} />
-        </ThemeProvider>
-      </Provider>);
-    const instance = component.root;
-    const button = instance.findByProps({ icon: 'close', fontSize: fontSizes.regular });
-    button.props.onPress();
-    await delay(400);
-    expect(onModalHide).toHaveBeenCalled();
   });
 });
