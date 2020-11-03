@@ -70,6 +70,7 @@ type Props = {|
   ...OwnProps,
   theme: Theme,
   recipient: string,
+  transactionPayload: Object,
 |};
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -88,7 +89,7 @@ const SablierCancellationModal = ({
   feeInfo,
   estimateErrorMessage,
   balances,
-  sablierCancellationTransaction,
+  transactionPayload,
 }: Props) => {
   const colors = getThemeColors(theme);
 
@@ -97,7 +98,7 @@ const SablierCancellationModal = ({
   let notEnoughForFee;
   if (feeInfo) {
     notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
-      ...sablierCancellationTransaction,
+      ...transactionPayload,
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
     });

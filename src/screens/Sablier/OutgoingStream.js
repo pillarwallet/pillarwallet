@@ -31,7 +31,6 @@ import { calculateSablierCancelTransactionEstimateAction } from 'actions/sablier
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import { ETH } from 'constants/assetsConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -48,12 +47,10 @@ import Modal from 'components/Modal';
 import { getSablierCancellationTransaction } from 'services/sablier';
 
 // selectors
-import { accountBalancesSelector } from 'selectors/balances';
 import { sablierEventsSelector } from 'selectors/sablier';
 import { accountHistorySelector } from 'selectors/history';
 
 // utils
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { isSablierTransactionTag } from 'utils/sablier';
