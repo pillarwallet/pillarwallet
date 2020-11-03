@@ -25,6 +25,8 @@ import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
+import { createStructuredSelector } from 'reselect';
+import { connect } from 'react-redux';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
@@ -33,28 +35,44 @@ import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
-// types
-import type { Theme } from 'models/Theme';
+// constants
+import { ETH } from 'constants/assetsConstants';
 
 // utils
 import { images } from 'utils/images';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+
+// types
+import type { RootReducerState } from 'reducers/rootReducer';
+import type { Theme } from 'models/Theme';
+import type { Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+
+// local
 import type { EnableData } from './ExchangeOffers';
 
+
+type StateProps = {|
+  isEstimating: boolean,
+  feeInfo: ?TransactionFeeInfo,
+  estimateErrorMessage: ?string,
+  balances: Balances,
+|};
 
 type OwnProps = {|
   onModalHide: () => void,
   onEnable: () => void,
   enableData: EnableData,
+  transactionPayload: Object,
 |};
 
 type Props = {|
+  ...StateProps,
   ...OwnProps,
   theme: Theme,
-  isEstimating: boolean,
-  feeInfo: ?TransactionFeeInfo,
-  estimateErrorMessage: ?string,
 |};
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -84,6 +102,8 @@ const AssetEnableModal = (props: Props) => {
     estimateErrorMessage,
     feeInfo,
     isEstimating,
+    balances,
+    transactionPayload,
   } = props;
 
   const modalRef = useRef();
@@ -93,11 +113,25 @@ const AssetEnableModal = (props: Props) => {
     assetSymbol,
     assetIcon,
   } = enableData;
+
   const fullIconUrl = `${getEnv().SDK_PROVIDER}/${assetIcon}?size=3`;
 
   const { genericToken: fallbackSource } = images(theme);
 
-  const isDisabled = !!estimateErrorMessage || isEstimating;
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      ...transactionPayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    });
+  }
+
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
+
+  const isDisabled = !!errorMessage || isEstimating;
 
   return (
     <SlideModal
@@ -122,11 +156,11 @@ const AssetEnableModal = (props: Props) => {
           txFeeInWei={feeInfo?.fee}
           gasToken={feeInfo?.gasToken}
           isLoading={isEstimating}
-          hasError={!!estimateErrorMessage}
+          hasError={!!errorMessage}
         />
         <Button
           secondary
-          title={estimateErrorMessage || t('exchangeContent.modal.enableAsset.button.enable')}
+          title={errorMessage || t('exchangeContent.modal.enableAsset.button.enable')}
           onPress={() => {
             if (modalRef.current) modalRef.current.close();
             onEnable();
@@ -142,4 +176,21 @@ const AssetEnableModal = (props: Props) => {
   );
 };
 
-export default (withTheme(AssetEnableModal): AbstractComponent<OwnProps>);
+const mapStateToProps = ({
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
+}: RootReducerState): $Shape<StateProps> => ({
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default (withTheme(connect(combinedMapStateToProps)(AssetEnableModal)): AbstractComponent<OwnProps>);

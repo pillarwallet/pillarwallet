@@ -262,11 +262,11 @@ class ExchangeOffers extends React.Component<Props, State> {
 
   openEnableAssetModal = (enableData: EnableData) => {
     Modal.open(() => (
-      // TODO: revisit
       <AssetEnableModal
         onModalHide={this.props.setDismissTransaction}
         onEnable={this.enableAsset}
         enableData={enableData}
+        transactionPayload={this.state.enablePayload}
       />
     ));
   }
@@ -428,12 +428,10 @@ class ExchangeOffers extends React.Component<Props, State> {
       disableNonFiatExchange,
       isExchangeActive,
       showEmptyMessage,
-      // TODO: check
-      // feeInfo,
-      // isEstimating,
-      // estimateErrorMessage,
     } = this.props;
+
     const reorderedOffers = offers.sort((a, b) => (new BigNumber(b.askRate)).minus(a.askRate).toNumber());
+
     return (
       <React.Fragment>
         <FlatList
@@ -463,15 +461,6 @@ class ExchangeOffers extends React.Component<Props, State> {
             </ESWrapper>
           )}
         />
-        {/*<AssetEnableModal*/}
-        {/*  isVisible={isEnableAssetModalVisible}*/}
-        {/*  onModalHide={this.hideEnableAssetModal}*/}
-        {/*  onEnable={this.enableAsset}*/}
-        {/*  enableData={enableData}*/}
-        {/*  feeInfo={feeInfo}*/}
-        {/*  isEstimating={isEstimating}*/}
-        {/*  estimateErrorMessage={estimateErrorMessage}*/}
-        {/*/>*/}
       </React.Fragment>
     );
   }
