@@ -29,7 +29,6 @@ import { getContract, encodeContractMethod } from 'services/assets';
 
 // utils
 import { getEthereumProvider, parseTokenBigNumberAmount, reportOrWarn } from 'utils/common';
-import { isProdEnv } from 'utils/environment';
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
 import { PROVIDER_SYNTHETIX } from 'constants/exchangeConstants';
@@ -47,9 +46,9 @@ import EXCHANGE_ABI from 'abi/synthetixExchange.json';
 const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 const exchangeAddress = '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F';
-const ratesAddress = isProdEnv
-  ? '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80'
-  : '0xA36f5A656c48EB0b43b63293E690DA746162d40B';
+
+const mainnetRatesAddress = '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80';
+const kovanRatesAddress = '0xA36f5A656c48EB0b43b63293E690DA746162d40B';
 
 export const createSynthetixOrder = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientSendAddress: string,
@@ -92,10 +91,16 @@ const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: st
   return allowance.gt(0);
 };
 
+const getRatesAddress = () => {
+  const isProd = getEnv().NETWORK_PROVIDER === 'homestead';
+  return isProd ? mainnetRatesAddress : kovanRatesAddress;
+};
+
 export const getSynthetixOffer = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientAddress: string,
 ): Promise<Offer | null> => {
   try {
+    const ratesAddress = getRatesAddress();
     const contract = getContract(ratesAddress, RATES_ABI);
     if (!contract) return null;
     const toValue = await contract.effectiveValue(

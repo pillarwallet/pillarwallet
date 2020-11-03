@@ -234,7 +234,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const {
       address: fromAssetAddress, code: fromAssetCode, symbol: fromAssetSymbol, decimals,
     } = fromAsset;
-    const { code: toAssetCode } = toAsset;
+    const { code: toAssetCode, symbol: toAssetSymbol } = toAsset;
 
     if (isEmpty(response)) {
       this.setState({ pressedTokenAllowanceId: '' }); // reset set allowance button to be enabled
@@ -255,15 +255,15 @@ class ExchangeOffers extends React.Component<Props, State> {
     let transactionPayload = {
       amount: 0,
       to: payToAddress,
-      symbol: fromAssetCode,
+      symbol: fromAssetCode || fromAssetSymbol,
       contractAddress: fromAssetAddress || '',
       decimals: parseInt(decimals, 10) || 18,
       data,
       extra: {
         allowance: {
           provider,
-          fromAssetCode,
-          toAssetCode,
+          fromAssetCode: fromAssetCode || fromAssetSymbol,
+          toAssetCode: toAssetCode || toAssetSymbol,
         },
       },
     };
@@ -381,8 +381,8 @@ class ExchangeOffers extends React.Component<Props, State> {
     } = offer;
     let { allowanceSet = true } = offer;
 
-    const { code: toAssetCode, symbol: toAssetSymbol } = toAsset;
-    const { code: fromAssetCode } = fromAsset;
+    const toAssetCode = toAsset?.code || toAsset?.symbol;
+    const fromAssetCode = fromAsset?.code || fromAsset?.symbol;
 
     let storedAllowance;
     if (!allowanceSet) {
@@ -432,7 +432,7 @@ class ExchangeOffers extends React.Component<Props, State> {
           labelBottom={t('exchangeContent.label.availableAmount')}
           valueBottom={available}
           cardButton={{
-            title: t('tokenValue', { value: amountToBuyString, token: toAssetCode || toAssetSymbol }),
+            title: t('tokenValue', { value: amountToBuyString, token: toAssetCode }),
             onPress: () => this.onOfferPress(offer),
             disabled: isTakeButtonDisabled || disableNonFiatExchange,
             isLoading: isTakeOfferPressed,

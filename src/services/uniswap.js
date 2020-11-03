@@ -77,7 +77,7 @@ const getBackupRoute = async (
     token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, ethProvider);
     tokenMiddle = await Fetcher.fetchTokenData(chainId, ADDRESSES.WETH, ethProvider);
   } catch (e) {
-    reportLog('Failed to fetch token data', e, 'warning');
+    reportLog('Uniswap: failed to fetch token data', e, 'warning');
     return null;
   }
 
