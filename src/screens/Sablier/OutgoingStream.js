@@ -59,7 +59,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { isSablierTransactionTag } from 'utils/sablier';
 
 // types
-import type { Rates, Asset, Balances } from 'models/Asset';
+import type { Asset, Balances } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
@@ -73,9 +73,6 @@ import SablierCancellationModal from './SablierCancellationModal';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  useGasToken: boolean,
-  rates: Rates,
-  baseFiatCurrency: ?string,
   supportedAssets: Asset[],
   ensRegistry: EnsRegistry,
   balances: Balances,
@@ -84,7 +81,6 @@ type Props = {
   accounts: Accounts,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
-  estimateErrorMessage: ?string,
   calculateSablierCancelTransactionEstimate: (stream: Stream) => void,
   resetEstimateTransaction: () => void,
 };
@@ -100,10 +96,12 @@ class OutgoingStream extends React.Component<Props> {
   }
 
   onCancel = () => {
-    const cancelData = {}; // TODO: review
+    const { stream } = this.props.navigation.state.params;
+    const transactionPayload = getSablierCancellationTransaction(stream);
     Modal.open(() => (
       <SablierCancellationModal
-        cancelData={cancelData}
+        recipient={stream.recipient}
+        transactionPayload={transactionPayload}
         onCancel={this.onCancelConfirm}
       />
     ));
@@ -135,38 +133,15 @@ class OutgoingStream extends React.Component<Props> {
 
   render() {
     const {
-      balances,
       navigation,
       ensRegistry,
       history,
       accounts,
       sablierEvents,
-      feeInfo,
       isEstimating,
-      estimateErrorMessage,
     } = this.props;
 
     const stream = navigation.getParam('stream');
-
-
-    let notEnoughForFee;
-    if (feeInfo) {
-      notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
-        ...getSablierCancellationTransaction(stream),
-        txFeeInWei: feeInfo.fee,
-        gasToken: feeInfo.gasToken,
-      });
-    }
-
-    const errorMessage = notEnoughForFee
-      ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
-      : estimateErrorMessage;
-
-    const cancelData = {
-      feeInfo,
-      errorMessage,
-      recipient: stream.recipient,
-    };
 
     const recipient = {
       name: findEnsNameCaseInsensitive(ensRegistry, stream.recipient) || stream.recipient,
@@ -222,37 +197,25 @@ class OutgoingStream extends React.Component<Props> {
           card
           cardHeaderTitle={t('sablierContent.title.streamingActivityFeed')}
         />
-        <SablierCancellationModal
-          isVisible={isCancellationModalVisible}
-          cancelData={cancelData}
-          onModalHide={() => this.setState({ isCancellationModalVisible: false })}
-          onCancel={this.onCancelConfirm}
-        />
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  rates: { data: rates },
-  appSettings: { data: { baseFiatCurrency } },
   assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
   accounts: { data: accounts },
-  transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
+  transactionEstimate: { feeInfo, isEstimating },
 }: RootReducerState): $Shape<Props> => ({
-  rates,
-  baseFiatCurrency,
   supportedAssets,
   ensRegistry,
   accounts,
-  isEstimating,
   feeInfo,
-  estimateErrorMessage,
+  isEstimating,
 });
 
 const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
   history: accountHistorySelector,
   sablierEvents: sablierEventsSelector,
 });
