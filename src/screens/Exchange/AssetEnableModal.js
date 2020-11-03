@@ -88,10 +88,6 @@ const AssetEnableModal = (props: Props) => {
 
   const modalRef = useRef();
 
-  if (!enableData) {
-    return null;
-  }
-
   const {
     providerName,
     assetSymbol,

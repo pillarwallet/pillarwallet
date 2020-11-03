@@ -60,13 +60,14 @@ type StateProps = {|
 type OwnProps = {|
   onModalHide: () => void,
   onAllow: () => void,
+  assetSymbol: string,
+  transactionPayload: Object,
 |};
 
 type Props = {|
+  ...StateProps,
   ...OwnProps,
   theme: Theme,
-  assetSymbol: string,
-  transactionPayload: Object,
 |};
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -188,7 +189,7 @@ const PoolTokenAllowModal = ({
 
 const mapStateToProps = ({
   transactionEstimate: { feeInfo, errorMessage: estimateErrorMessage },
-}: RootReducerState): StateProps => ({
+}: RootReducerState): $Shape<StateProps> => ({
   feeInfo,
   estimateErrorMessage,
 });

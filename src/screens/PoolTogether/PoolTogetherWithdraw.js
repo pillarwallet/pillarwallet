@@ -211,7 +211,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     });
   }
 
-  hideAllowAssetModal = () => {
+  openAllowAssetModal = () => {
     const { poolToken, allowPayload } = this.state;
     Modal.open(() => (
       <PoolTokenAllowModal
@@ -240,8 +240,6 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
     }
 
     const { fee: txFeeInWei, gasToken } = feeInfo;
-
-    this.hideAllowAssetModal();
 
     const transactionPayload = {
       ...allowPayload,

@@ -63,14 +63,14 @@ type StateProps = {|
 
 type OwnProps = {|
   onCancel: () => void,
+  recipient: string,
+  transactionPayload: Object,
 |};
 
 type Props = {|
   ...StateProps,
   ...OwnProps,
   theme: Theme,
-  recipient: string,
-  transactionPayload: Object,
 |};
 
 const ContentWrapper = styled(SafeAreaView)`
@@ -177,7 +177,7 @@ const SablierCancellationModal = ({
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
   transactionEstimate: { feeInfo, errorMessage: estimateErrorMessage },
-}: RootReducerState): StateProps => ({
+}: RootReducerState): $Shape<StateProps> => ({
   ensRegistry,
   feeInfo,
   estimateErrorMessage,
