@@ -45,15 +45,11 @@ import EXCHANGE_ABI from 'abi/synthetixExchange.json';
 
 const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
-const exchangeAddress = '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F';
-
-const mainnetRatesAddress = '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80';
-const kovanRatesAddress = '0xA36f5A656c48EB0b43b63293E690DA746162d40B';
-
 export const createSynthetixOrder = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientSendAddress: string,
 ): Promise<Object> => {
   try {
+    const exchangeAddress = getEnv().SYNTHETIX_EXCHANGE_ADDRESS;
     const data = encodeContractMethod(
       EXCHANGE_ABI,
       'exchange',
@@ -87,20 +83,15 @@ export const createSynthetixOrder = async (
 
 const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: string): Promise<boolean> => {
   const assetContract = new Contract(fromTokenAddress, ERC20_CONTRACT_ABI, ethProvider);
-  const allowance = await assetContract.allowance(clientAddress, exchangeAddress);
+  const allowance = await assetContract.allowance(clientAddress, getEnv().SYNTHETIX_EXCHANGE_ADDRESS);
   return allowance.gt(0);
-};
-
-const getRatesAddress = () => {
-  const isProd = getEnv().NETWORK_PROVIDER === 'homestead';
-  return isProd ? mainnetRatesAddress : kovanRatesAddress;
 };
 
 export const getSynthetixOffer = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientAddress: string,
 ): Promise<Offer | null> => {
   try {
-    const ratesAddress = getRatesAddress();
+    const ratesAddress = getEnv().SYNTHETIX_RATES_ADDRESS;
     const contract = getContract(ratesAddress, RATES_ABI);
     if (!contract) return null;
     const toValue = await contract.effectiveValue(
@@ -123,7 +114,7 @@ export const getSynthetixOffer = async (
 
 export const createSynthetixAllowanceTx =
   async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
-    const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
+    const allowanceTx = createAllowanceTx(fromAssetAddress, clientAddress, getEnv().SYNTHETIX_EXCHANGE_ADDRESS);
     return allowanceTx;
   };
 
