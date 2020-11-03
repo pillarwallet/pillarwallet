@@ -295,7 +295,6 @@ const SendAsset = ({
     // update fee only on max balance
     if (maxBalance === calculatedBalanceAmount && selectedContact) {
       // await needed for initial max available send calculation to get estimate before showing max available after fees
-      // TODO: check if value needs to be returned (conflict solve)
       await estimateTransaction(
         selectedContact.ethAddress,
         Number(calculatedBalanceAmount),
