@@ -25,11 +25,11 @@ import type { CachedUrls } from 'reducers/cacheReducer';
 import { CACHE_STATUS, REMOVE_URL_CACHE } from 'constants/cacheConstants';
 import { saveDbAction } from './dbActions';
 
-// TODO: should prevent status === CACHE_STATUS.DONE ?
 const canStartCaching = (urlAsKey: string, cachedUrls: CachedUrls) => {
   const { status } = cachedUrls[urlAsKey] || {};
   return !status // haven't yet cached it
     || status !== CACHE_STATUS.PENDING // not being cached
+    || status !== CACHE_STATUS.DONE // not already cached
     || status === CACHE_STATUS.FAILED; // allow to retry if failed
 };
 

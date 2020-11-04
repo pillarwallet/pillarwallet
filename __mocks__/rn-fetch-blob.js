@@ -2,13 +2,16 @@
 
 const Config: Function = jest.fn(() => {
   return {
-    fetch: jest.fn(() =>
-      Promise.resolve({
+    fetch: jest.fn((method, url) => {
+      if (url.includes('FAIL_FETCH')) {
+        return Promise.reject();
+      }
+      return Promise.resolve({
         json: () => Promise.resolve(),
         respInfo: { status: 200 },
-        path: () => 'localString',
-      }),
-    ),
+        path: () => url,
+      });
+    }),
   };
 });
 
