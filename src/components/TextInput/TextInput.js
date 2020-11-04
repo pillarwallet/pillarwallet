@@ -566,7 +566,7 @@ class TextInput extends React.Component<Props, State> {
                       <InputField
                         {...inputProps}
                         innerRef={(input) => {
-                        if (getInputRef) getInputRef(input);
+                          if (getInputRef) getInputRef(input);
                           this.multilineInputField = input;
                         }}
                         onChange={this.handleChange}

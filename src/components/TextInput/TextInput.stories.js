@@ -24,7 +24,6 @@ import { storiesOf } from '@storybook/react-native';
 import TextInput from 'components/TextInput';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
-import NavigationDecorator from '../../../storybook/NavigationDecorator';
 
 const leftSideImage = 'https://picsum.photos/100';
 
@@ -56,7 +55,6 @@ const TextInputWithState = (props) => {
 
 storiesOf('TextInput', module)
   .addDecorator(CenterViewStretchDecorator)
-  .addDecorator(NavigationDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
     <TextInputWithState

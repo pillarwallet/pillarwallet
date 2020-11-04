@@ -23,6 +23,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import { withI18next } from 'storybook-addon-i18next';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import { loadStories } from './storyLoader';
 import './rn-addons';
@@ -44,4 +45,6 @@ const StorybookUIRoot = () => {
   return <StorybookComponent />;
 };
 
-export default StorybookUIRoot;
+const StorybookWithNav = createAppContainer(createSwitchNavigator({ Screen: StorybookUIRoot }));
+
+export default StorybookWithNav;
