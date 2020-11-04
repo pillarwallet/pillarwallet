@@ -264,6 +264,7 @@ import {
   SABLIER_WITHDRAW,
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
+  EXCHANGE_FLOW,
 } from 'constants/navigationConstants';
 
 // utils
@@ -332,23 +333,27 @@ const assetsFlow = createStackNavigator(
     [ASSET]: AssetScreen,
     [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
-    [EXCHANGE]: ExchangeScreen,
-    [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
-    [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
   StackNavigatorConfig,
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// SERVICES FLOW
-const servicesFlow = createStackNavigator({
-  [SERVICES]: ServicesScreen,
+const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// SERVICES FLOW
+const servicesFlow = createStackNavigator({
+  [SERVICES]: ServicesScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
 }, StackNavigatorConfig);
 
@@ -379,8 +384,6 @@ const homeFlow = createStackNavigator({
   [REFER_FLOW]: ReferFriendsScreen,
   [STORYBOOK]: StorybookScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
-  [EXCHANGE]: ExchangeScreen,
-  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
@@ -743,6 +746,7 @@ const AppFlowNavigation = createStackNavigator(
     [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
     [CONTACTS_FLOW]: contactsFlow,
     [SABLIER_FLOW]: sablierFlow,
+    [EXCHANGE_FLOW]: exchangeFlow,
   },
   modalTransition,
 );
