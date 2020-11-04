@@ -128,8 +128,6 @@ const DepositTransactionConfirm = ({
         </Table>
         <Spacing h={50} />
         <Button
-          regularText
-          block
           disabled={isSubmitted}
           isLoading={isSubmitted}
           title={t('aaveContent.button.confirmDeposit')}

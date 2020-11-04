@@ -140,7 +140,7 @@ const SettingsItemCarded = (props: Props) => {
             {!!subtitle && <CardSubtitle>{subtitle}</CardSubtitle>}
           </CardContent>
           {isActive && !isLoading && <CheckIcon name="check" />}
-          {isLoading && <LoadingSpinner width={fontSizes.large} height={fontSizes.large} />}
+          {isLoading && <LoadingSpinner size={fontSizes.large} trackWith={2} />}
         </CardRow>
       </ShadowedCard>
     </ItemWrapper>

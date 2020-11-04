@@ -525,7 +525,8 @@ const Addon = (props: AddonProps) => {
         onPress={buttonAction}
         small
         secondary={secondaryButton}
-        listItemButton
+        horizontalPaddings={8}
+        block={false}
       />
     );
   }

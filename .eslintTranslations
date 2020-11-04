@@ -128,7 +128,8 @@
         "t",
         "toString",
         "uniqBy",
-        "updateAppSettingsAction"
+        "updateAppSettingsAction",
+        "variants"
       ],
       "ignoreAttribute": [
         "align",

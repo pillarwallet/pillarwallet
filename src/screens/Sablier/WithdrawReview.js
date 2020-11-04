@@ -127,7 +127,7 @@ const WithdrawReview = ({
           </TableRow>
         </Table>
         <Spacing h={50} />
-        <Button title={t('sablierContent.button.confirmWithdraw')} block onPress={onNextButtonPress} />
+        <Button title={t('sablierContent.button.confirmWithdraw')} onPress={onNextButtonPress} />
       </MainContainer>
     </ContainerWithHeader>
   );

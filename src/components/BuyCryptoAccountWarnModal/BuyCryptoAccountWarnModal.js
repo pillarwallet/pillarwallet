@@ -109,7 +109,6 @@ const BuyCryptoAccountWarnModal = ({ onClose, message, navigation }: Props) => {
             <Spacing h={34} />
             <Button
               secondary
-              regularText
               title={buttonTitle}
               onPress={buttonAction}
             />

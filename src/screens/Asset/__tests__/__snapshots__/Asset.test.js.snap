@@ -944,80 +944,960 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 Object {
                   "alignItems": "center",
                   "justifyContent": "center",
+                  "marginBottom": 16,
+                  "marginLeft": "5%",
+                  "marginRight": "5%",
+                  "marginTop": 16,
                   "opacity": 1,
-                  "paddingBottom": 0,
-                  "paddingLeft": 4,
-                  "paddingRight": 4,
-                  "paddingTop": 8,
                 }
               }
             >
               <View
-                accessibilityIgnoresInvertColors={true}
                 style={
-                  Object {
-                    "height": 92,
-                    "width": 92,
-                  }
+                  Array [
+                    Object {
+                      "position": "relative",
+                    },
+                    undefined,
+                  ]
                 }
               >
-                <Image
-                  source={
-                    Object {
-                      "default": "",
-                    }
-                  }
-                  style={
-                    Array [
-                      Object {
-                        "bottom": 0,
-                        "left": 0,
-                        "position": "absolute",
-                        "right": 0,
-                        "top": 0,
-                      },
-                      Object {
-                        "height": 92,
-                        "width": 92,
-                      },
-                      undefined,
-                    ]
-                  }
-                />
                 <View
-                  colors={
-                    Array [
-                      "#ffffff",
-                      "#f2f4f9",
-                    ]
-                  }
-                  disabled={false}
                   style={
                     Array [
                       Object {
-                        "alignItems": "center",
-                        "borderRadius": 46,
-                        "display": "flex",
-                        "flexDirection": "row",
-                        "height": 92,
-                        "justifyContent": "center",
-                        "width": 92,
+                        "position": "relative",
                       },
-                      undefined,
+                      Object {
+                        "margin": 4,
+                        "marginBottom": 12,
+                      },
                     ]
                   }
                 >
                   <View
-                    name="qrDetailed"
                     style={
-                      Object {
-                        "alignSelf": "center",
-                        "color": "#007AFF",
-                        "fontSize": 22,
-                        "opacity": 1,
-                      }
+                      Array [
+                        Object {
+                          "height": 64,
+                          "position": "relative",
+                          "width": 64,
+                        },
+                        Object {
+                          "marginVertical": 0,
+                        },
+                      ]
                     }
-                  />
+                  >
+                    <RNSVGSvgView
+                      bbHeight={148}
+                      bbWidth={148}
+                      focusable={false}
+                      height={148}
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "transparent",
+                            "borderWidth": 0,
+                          },
+                          Object {
+                            "left": -9,
+                            "position": "absolute",
+                            "top": -6,
+                          },
+                          Object {
+                            "opacity": 1,
+                          },
+                          Object {
+                            "flex": 0,
+                            "height": 148,
+                            "width": 148,
+                          },
+                        ]
+                      }
+                      width={148}
+                    >
+                      <RNSVGGroup
+                        fill={
+                          Array [
+                            0,
+                            4278190080,
+                          ]
+                        }
+                        fillOpacity={1}
+                        fillRule={1}
+                        font={Object {}}
+                        matrix={
+                          Array [
+                            1,
+                            0,
+                            0,
+                            1,
+                            0,
+                            0,
+                          ]
+                        }
+                        opacity={1}
+                        originX={0}
+                        originY={0}
+                        propList={Array []}
+                        rotation={0}
+                        scaleX={1}
+                        scaleY={1}
+                        skewX={0}
+                        skewY={0}
+                        stroke={null}
+                        strokeDasharray={null}
+                        strokeDashoffset={null}
+                        strokeLinecap={0}
+                        strokeLinejoin={0}
+                        strokeMiterlimit={4}
+                        strokeOpacity={1}
+                        strokeWidth={1}
+                        vectorEffect={0}
+                        x={0}
+                        y={0}
+                      >
+                        <RNSVGDefs>
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="top"
+                            x1="0%"
+                            x2="0%"
+                            y1="100%"
+                            y2="0%"
+                          />
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="bottom"
+                            x1="0%"
+                            x2="0%"
+                            y1="0%"
+                            y2="100%"
+                          />
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="left"
+                            x1="100%"
+                            x2="0%"
+                            y1="0%"
+                            y2="0%"
+                          />
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="right"
+                            x1="0%"
+                            x2="100%"
+                            y1="0%"
+                            y2="0%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="100%"
+                            cy="100%"
+                            fx="100%"
+                            fy="100%"
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                0.7619047619047619,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-left-top"
+                            rx="100%"
+                            ry="100%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="100%"
+                            cy="0%"
+                            fx="100%"
+                            fy="0%"
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                0.7619047619047619,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-left-bottom"
+                            rx="100%"
+                            ry="100%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="0%"
+                            cy="100%"
+                            fx="0%"
+                            fy="100%"
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                0.7619047619047619,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-right-top"
+                            rx="100%"
+                            ry="100%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="0%"
+                            cy="0%"
+                            fx="0%"
+                            fy="0%"
+                            gradient={
+                              Array [
+                                0,
+                                218562682,
+                                0.7619047619047619,
+                                218562682,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-right-bottom"
+                            rx="100%"
+                            ry="100%"
+                          />
+                        </RNSVGDefs>
+                        <RNSVGPath
+                          d="M 0 42,Q 0 0 42 0,v 10,q -32 0 -32 32,h -10,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-left-top",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGPath
+                          d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-right-top",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGPath
+                          d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-right-bottom",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGPath
+                          d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-left-bottom",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "top",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={10}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={0}
+                          x={42}
+                          y="0"
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "left",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={0}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={10}
+                          x="0"
+                          y={42}
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "right",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={0}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={10}
+                          x={74}
+                          y={42}
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "bottom",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={10}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={0}
+                          x={42}
+                          y={74}
+                        />
+                        <RNSVGPath
+                          d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
+                          fill={
+                            Array [
+                              0,
+                              218562682,
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                      </RNSVGGroup>
+                    </RNSVGSvgView>
+                    <View
+                      style={
+                        Array [
+                          Object {
+                            "alignItems": "center",
+                            "height": 64,
+                            "justifyContent": "center",
+                            "position": "absolute",
+                            "width": 64,
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <RNSVGSvgView
+                        align="xMidYMid"
+                        bbHeight={64}
+                        bbWidth={64}
+                        focusable={false}
+                        height={64}
+                        meetOrSlice={0}
+                        minX={0}
+                        minY={0}
+                        style={
+                          Array [
+                            Object {
+                              "backgroundColor": "transparent",
+                              "borderWidth": 0,
+                            },
+                            Array [
+                              Object {
+                                "alignItems": "center",
+                                "height": 64,
+                                "justifyContent": "center",
+                                "position": "absolute",
+                                "width": 64,
+                              },
+                              undefined,
+                            ],
+                            Object {
+                              "opacity": 1,
+                            },
+                            Object {
+                              "flex": 0,
+                              "height": 64,
+                              "width": 64,
+                            },
+                          ]
+                        }
+                        vbHeight={64}
+                        vbWidth={64}
+                        width={64}
+                      >
+                        <RNSVGGroup
+                          fill={
+                            Array [
+                              0,
+                              4278190080,
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          font={Object {}}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={Array []}
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        >
+                          <RNSVGDefs>
+                            <RNSVGLinearGradient
+                              gradient={
+                                Array [
+                                  0,
+                                  -328966,
+                                  1,
+                                  -854791,
+                                ]
+                              }
+                              gradientTransform={
+                                Array [
+                                  1,
+                                  0,
+                                  0,
+                                  1,
+                                  0,
+                                  0,
+                                ]
+                              }
+                              gradientUnits={0}
+                              name="grad"
+                              x1="0"
+                              x2="0"
+                              y1="0"
+                              y2="1"
+                            />
+                          </RNSVGDefs>
+                          <RNSVGCircle
+                            cx={32}
+                            cy={32}
+                            fill={
+                              Array [
+                                1,
+                                "grad",
+                              ]
+                            }
+                            fillOpacity={1}
+                            fillRule={1}
+                            matrix={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            opacity={1}
+                            originX={0}
+                            originY={0}
+                            propList={
+                              Array [
+                                "fill",
+                              ]
+                            }
+                            r={32}
+                            rotation={0}
+                            scaleX={1}
+                            scaleY={1}
+                            skewX={0}
+                            skewY={0}
+                            stroke={null}
+                            strokeDasharray={null}
+                            strokeDashoffset={null}
+                            strokeLinecap={0}
+                            strokeLinejoin={0}
+                            strokeMiterlimit={4}
+                            strokeOpacity={1}
+                            strokeWidth={1}
+                            vectorEffect={0}
+                            x={0}
+                            y={0}
+                          />
+                        </RNSVGGroup>
+                      </RNSVGSvgView>
+                      <View
+                        borderColor="rgba(250, 250, 250, 1)"
+                        style={
+                          Array [
+                            Object {
+                              "alignItems": "center",
+                              "borderColor": "rgba(250, 250, 250, 1)",
+                              "borderRadius": 31.5,
+                              "borderStyle": "solid",
+                              "borderWidth": 0.5,
+                              "height": 63,
+                              "justifyContent": "center",
+                              "position": "absolute",
+                              "width": 63,
+                            },
+                            undefined,
+                          ]
+                        }
+                      />
+                      <View
+                        name="qrDetailed"
+                        style={
+                          Object {
+                            "alignSelf": "center",
+                            "color": "#007AFF",
+                            "fontSize": 22,
+                            "opacity": 1,
+                          }
+                        }
+                      />
+                    </View>
+                  </View>
                 </View>
               </View>
               <Text
@@ -1034,7 +1914,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         "color": "#007AFF",
                         "fontSize": 16,
                         "letterSpacing": 0.1,
-                        "marginTop": -6,
                         "opacity": 1,
                         "textAlign": "center",
                       },
@@ -1061,80 +1940,960 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 Object {
                   "alignItems": "center",
                   "justifyContent": "center",
+                  "marginBottom": 16,
+                  "marginLeft": "5%",
+                  "marginRight": "5%",
+                  "marginTop": 16,
                   "opacity": 1,
-                  "paddingBottom": 0,
-                  "paddingLeft": 4,
-                  "paddingRight": 4,
-                  "paddingTop": 8,
                 }
               }
             >
               <View
-                accessibilityIgnoresInvertColors={true}
                 style={
-                  Object {
-                    "height": 92,
-                    "width": 92,
-                  }
+                  Array [
+                    Object {
+                      "position": "relative",
+                    },
+                    undefined,
+                  ]
                 }
               >
-                <Image
-                  source={
-                    Object {
-                      "default": "",
-                    }
-                  }
-                  style={
-                    Array [
-                      Object {
-                        "bottom": 0,
-                        "left": 0,
-                        "position": "absolute",
-                        "right": 0,
-                        "top": 0,
-                      },
-                      Object {
-                        "height": 92,
-                        "width": 92,
-                      },
-                      undefined,
-                    ]
-                  }
-                />
                 <View
-                  colors={
-                    Array [
-                      "#ffffff",
-                      "#f2f4f9",
-                    ]
-                  }
-                  disabled={true}
                   style={
                     Array [
                       Object {
-                        "alignItems": "center",
-                        "borderRadius": 46,
-                        "display": "flex",
-                        "flexDirection": "row",
-                        "height": 92,
-                        "justifyContent": "center",
-                        "width": 92,
+                        "position": "relative",
                       },
-                      undefined,
+                      Object {
+                        "margin": 4,
+                        "marginBottom": 12,
+                      },
                     ]
                   }
                 >
                   <View
-                    name="paperPlane"
                     style={
-                      Object {
-                        "alignSelf": "center",
-                        "color": "#007AFF",
-                        "fontSize": 22,
-                        "opacity": 0.5,
-                      }
+                      Array [
+                        Object {
+                          "height": 64,
+                          "position": "relative",
+                          "width": 64,
+                        },
+                        Object {
+                          "marginVertical": 0,
+                        },
+                      ]
                     }
-                  />
+                  >
+                    <RNSVGSvgView
+                      bbHeight={148}
+                      bbWidth={148}
+                      focusable={false}
+                      height={148}
+                      style={
+                        Array [
+                          Object {
+                            "backgroundColor": "transparent",
+                            "borderWidth": 0,
+                          },
+                          Object {
+                            "left": -9,
+                            "position": "absolute",
+                            "top": -6,
+                          },
+                          Object {
+                            "opacity": 1,
+                          },
+                          Object {
+                            "flex": 0,
+                            "height": 148,
+                            "width": 148,
+                          },
+                        ]
+                      }
+                      width={148}
+                    >
+                      <RNSVGGroup
+                        fill={
+                          Array [
+                            0,
+                            4278190080,
+                          ]
+                        }
+                        fillOpacity={1}
+                        fillRule={1}
+                        font={Object {}}
+                        matrix={
+                          Array [
+                            1,
+                            0,
+                            0,
+                            1,
+                            0,
+                            0,
+                          ]
+                        }
+                        opacity={1}
+                        originX={0}
+                        originY={0}
+                        propList={Array []}
+                        rotation={0}
+                        scaleX={1}
+                        scaleY={1}
+                        skewX={0}
+                        skewY={0}
+                        stroke={null}
+                        strokeDasharray={null}
+                        strokeDashoffset={null}
+                        strokeLinecap={0}
+                        strokeLinejoin={0}
+                        strokeMiterlimit={4}
+                        strokeOpacity={1}
+                        strokeWidth={1}
+                        vectorEffect={0}
+                        x={0}
+                        y={0}
+                      >
+                        <RNSVGDefs>
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="top"
+                            x1="0%"
+                            x2="0%"
+                            y1="100%"
+                            y2="0%"
+                          />
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="bottom"
+                            x1="0%"
+                            x2="0%"
+                            y1="0%"
+                            y2="100%"
+                          />
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="left"
+                            x1="100%"
+                            x2="0%"
+                            y1="0%"
+                            y2="0%"
+                          />
+                          <RNSVGLinearGradient
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="right"
+                            x1="0%"
+                            x2="100%"
+                            y1="0%"
+                            y2="0%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="100%"
+                            cy="100%"
+                            fx="100%"
+                            fy="100%"
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                0.7619047619047619,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-left-top"
+                            rx="100%"
+                            ry="100%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="100%"
+                            cy="0%"
+                            fx="100%"
+                            fy="0%"
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                0.7619047619047619,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-left-bottom"
+                            rx="100%"
+                            ry="100%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="0%"
+                            cy="100%"
+                            fx="0%"
+                            fy="100%"
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                0.7619047619047619,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-right-top"
+                            rx="100%"
+                            ry="100%"
+                          />
+                          <RNSVGRadialGradient
+                            cx="0%"
+                            cy="0%"
+                            fx="0%"
+                            fy="0%"
+                            gradient={
+                              Array [
+                                0,
+                                458874,
+                                0.7619047619047619,
+                                458874,
+                                1,
+                                458874,
+                              ]
+                            }
+                            gradientTransform={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            gradientUnits={0}
+                            name="border-right-bottom"
+                            rx="100%"
+                            ry="100%"
+                          />
+                        </RNSVGDefs>
+                        <RNSVGPath
+                          d="M 0 42,Q 0 0 42 0,v 10,q -32 0 -32 32,h -10,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-left-top",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGPath
+                          d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-right-top",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGPath
+                          d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-right-bottom",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGPath
+                          d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
+                          fill={
+                            Array [
+                              1,
+                              "border-left-bottom",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "top",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={10}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={0}
+                          x={42}
+                          y="0"
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "left",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={0}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={10}
+                          x="0"
+                          y={42}
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "right",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={0}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={10}
+                          x={74}
+                          y={42}
+                        />
+                        <RNSVGRect
+                          fill={
+                            Array [
+                              1,
+                              "bottom",
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          height={10}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          width={0}
+                          x={42}
+                          y={74}
+                        />
+                        <RNSVGPath
+                          d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
+                          fill={
+                            Array [
+                              0,
+                              458874,
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={
+                            Array [
+                              "fill",
+                            ]
+                          }
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        />
+                      </RNSVGGroup>
+                    </RNSVGSvgView>
+                    <View
+                      style={
+                        Array [
+                          Object {
+                            "alignItems": "center",
+                            "height": 64,
+                            "justifyContent": "center",
+                            "position": "absolute",
+                            "width": 64,
+                          },
+                          undefined,
+                        ]
+                      }
+                    >
+                      <RNSVGSvgView
+                        align="xMidYMid"
+                        bbHeight={64}
+                        bbWidth={64}
+                        focusable={false}
+                        height={64}
+                        meetOrSlice={0}
+                        minX={0}
+                        minY={0}
+                        style={
+                          Array [
+                            Object {
+                              "backgroundColor": "transparent",
+                              "borderWidth": 0,
+                            },
+                            Array [
+                              Object {
+                                "alignItems": "center",
+                                "height": 64,
+                                "justifyContent": "center",
+                                "position": "absolute",
+                                "width": 64,
+                              },
+                              undefined,
+                            ],
+                            Object {
+                              "opacity": 1,
+                            },
+                            Object {
+                              "flex": 0,
+                              "height": 64,
+                              "width": 64,
+                            },
+                          ]
+                        }
+                        vbHeight={64}
+                        vbWidth={64}
+                        width={64}
+                      >
+                        <RNSVGGroup
+                          fill={
+                            Array [
+                              0,
+                              4278190080,
+                            ]
+                          }
+                          fillOpacity={1}
+                          fillRule={1}
+                          font={Object {}}
+                          matrix={
+                            Array [
+                              1,
+                              0,
+                              0,
+                              1,
+                              0,
+                              0,
+                            ]
+                          }
+                          opacity={1}
+                          originX={0}
+                          originY={0}
+                          propList={Array []}
+                          rotation={0}
+                          scaleX={1}
+                          scaleY={1}
+                          skewX={0}
+                          skewY={0}
+                          stroke={null}
+                          strokeDasharray={null}
+                          strokeDashoffset={null}
+                          strokeLinecap={0}
+                          strokeLinejoin={0}
+                          strokeMiterlimit={4}
+                          strokeOpacity={1}
+                          strokeWidth={1}
+                          vectorEffect={0}
+                          x={0}
+                          y={0}
+                        >
+                          <RNSVGDefs>
+                            <RNSVGLinearGradient
+                              gradient={
+                                Array [
+                                  0,
+                                  -328966,
+                                  1,
+                                  -854791,
+                                ]
+                              }
+                              gradientTransform={
+                                Array [
+                                  1,
+                                  0,
+                                  0,
+                                  1,
+                                  0,
+                                  0,
+                                ]
+                              }
+                              gradientUnits={0}
+                              name="grad"
+                              x1="0"
+                              x2="0"
+                              y1="0"
+                              y2="1"
+                            />
+                          </RNSVGDefs>
+                          <RNSVGCircle
+                            cx={32}
+                            cy={32}
+                            fill={
+                              Array [
+                                1,
+                                "grad",
+                              ]
+                            }
+                            fillOpacity={1}
+                            fillRule={1}
+                            matrix={
+                              Array [
+                                1,
+                                0,
+                                0,
+                                1,
+                                0,
+                                0,
+                              ]
+                            }
+                            opacity={1}
+                            originX={0}
+                            originY={0}
+                            propList={
+                              Array [
+                                "fill",
+                              ]
+                            }
+                            r={32}
+                            rotation={0}
+                            scaleX={1}
+                            scaleY={1}
+                            skewX={0}
+                            skewY={0}
+                            stroke={null}
+                            strokeDasharray={null}
+                            strokeDashoffset={null}
+                            strokeLinecap={0}
+                            strokeLinejoin={0}
+                            strokeMiterlimit={4}
+                            strokeOpacity={1}
+                            strokeWidth={1}
+                            vectorEffect={0}
+                            x={0}
+                            y={0}
+                          />
+                        </RNSVGGroup>
+                      </RNSVGSvgView>
+                      <View
+                        borderColor="rgba(250, 250, 250, 1)"
+                        style={
+                          Array [
+                            Object {
+                              "alignItems": "center",
+                              "borderColor": "rgba(250, 250, 250, 1)",
+                              "borderRadius": 31.5,
+                              "borderStyle": "solid",
+                              "borderWidth": 0.5,
+                              "height": 63,
+                              "justifyContent": "center",
+                              "position": "absolute",
+                              "width": 63,
+                            },
+                            undefined,
+                          ]
+                        }
+                      />
+                      <View
+                        name="paperPlane"
+                        style={
+                          Object {
+                            "alignSelf": "center",
+                            "color": "#007AFF",
+                            "fontSize": 22,
+                            "opacity": 0.5,
+                          }
+                        }
+                      />
+                    </View>
+                  </View>
                 </View>
               </View>
               <Text
@@ -1151,7 +2910,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                         "color": "#8B939E",
                         "fontSize": 16,
                         "letterSpacing": 0.1,
-                        "marginTop": -6,
                         "opacity": 1,
                         "textAlign": "center",
                       },
@@ -2429,13 +4187,9 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           "alignItems": "center",
                           "alignSelf": "auto",
                           "backgroundColor": "#007AFF",
-                          "borderColor": "#007AFF",
                           "borderRadius": 6,
-                          "borderStyle": "solid",
-                          "borderWidth": 0,
-                          "elevation": 1,
                           "flexDirection": "row",
-                          "height": 48,
+                          "height": 52,
                           "justifyContent": "center",
                           "marginBottom": 0,
                           "marginLeft": 0,
@@ -2446,24 +4200,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                           "paddingLeft": 20,
                           "paddingRight": 20,
                           "paddingTop": 0,
-                          "shadowColor": "rgba(0,0,0,.12)",
-                          "shadowOffset": Object {
-                            "height": 2,
-                            "width": 0,
-                          },
-                          "shadowOpacity": 1,
-                          "shadowRadius": 7,
                           "width": "100%",
                         }
                       }
                     >
                       <Text
-                        customTheme={
-                          Object {
-                            "borderWidth": 0,
-                            "shadow": true,
-                          }
-                        }
                         small={false}
                         style={
                           Array [
@@ -2476,11 +4217,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             },
                             Array [
                               Object {
-                                "color": "#FCFDFF",
-                                "fontSize": 18,
-                                "lineHeight": 18,
-                                "marginBottom": 0,
-                                "marginTop": 3.2399999999999998,
+                                "color": "#FFFFFF",
+                                "fontSize": 16,
+                                "lineHeight": 16,
+                                "marginTop": 2.88,
+                                "textAlign": "center",
                               },
                               Object {
                                 "paddingTop": 4,
@@ -2488,108 +4229,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             ],
                           ]
                         }
-                        theme={
-                          Object {
-                            "colors": Object {
-                              "PPNSurface": "#0a0c78",
-                              "PPNText": "#f33726",
-                              "accent": "#818EB3",
-                              "activeTabBarIcon": "#007AFF",
-                              "avatarPlaceholderBackground": "#e0eeff",
-                              "avatarPlaceholderText": "#6690eb",
-                              "basic000": "#007AFF",
-                              "basic005": "#EBF0F5",
-                              "basic010": "#0A1427",
-                              "basic020": "#818EB3",
-                              "basic030": "#8B939E",
-                              "basic040": "#627288",
-                              "basic050": "#FFFFFF",
-                              "basic060": "#EBF0F6",
-                              "basic070": "#FAFAFA",
-                              "basic080": "#EDEDED",
-                              "basic090": "#FCFDFF",
-                              "border": "#007AFF",
-                              "buttonSecondaryBackground": "#e6f1f9",
-                              "card": "#FFFFFF",
-                              "control": "#FCFDFF",
-                              "danger": "#ff0005",
-                              "helpIcon": "#f7931a",
-                              "iconBackground": "#ebf0f5",
-                              "inactiveTabBarIcon": "#D4D9DB",
-                              "indicator": "#F8E71C",
-                              "labelTertiary": "#818eb3",
-                              "legacyWallet": "#FA574F",
-                              "link": "#007aff",
-                              "negative": "#BD573A",
-                              "notice": "#ea480e",
-                              "orange": "#f57c00",
-                              "poolTogetherPink": "#e51fff",
-                              "positive": "#2AA057",
-                              "primary": "#007AFF",
-                              "primaryAccent100": "#99CAFF",
-                              "primaryAccent110": "#66B0FF",
-                              "primaryAccent120": "#3395FF",
-                              "primaryAccent130": "#007AFF",
-                              "primaryAccent140": "#006EE6",
-                              "primaryAccent150": "#0062CC",
-                              "primaryAccent160": "#004A99",
-                              "primaryAccent170": "#003166",
-                              "primaryAccent180": "#00254D",
-                              "primaryAccent200": "#1BFF65",
-                              "primaryAccent210": "#18E65B",
-                              "primaryAccent220": "#15CC51",
-                              "primaryAccent230": "#12B347",
-                              "primaryAccent240": "#2AA057",
-                              "primaryAccent250": "#0F993D",
-                              "primaryAccent260": "#0D8033",
-                              "primaryAccent270": "#0A6629",
-                              "primaryAccent280": "#084D1F",
-                              "progressBarEnd": "#f04cfa",
-                              "progressBarStart": "#ca17e1",
-                              "secondaryAccent": "#EBF0F5",
-                              "secondaryAccent100": "#1BFF65",
-                              "secondaryAccent110": "#18E65B",
-                              "secondaryAccent120": "#15CC51",
-                              "secondaryAccent130": "#12B347",
-                              "secondaryAccent140": "#2AA057",
-                              "secondaryAccent150": "#0F993D",
-                              "secondaryAccent160": "#0D8033",
-                              "secondaryAccent170": "#0A6629",
-                              "secondaryAccent180": "#084D1F",
-                              "secondaryAccent200": "#FDB09B",
-                              "secondaryAccent210": "#F1987E",
-                              "secondaryAccent220": "#E37F63",
-                              "secondaryAccent230": "#CE6649",
-                              "secondaryAccent240": "#BD573A",
-                              "secondaryAccent250": "#A84427",
-                              "secondaryAccent260": "#903016",
-                              "secondaryAccent270": "#6F1A0A",
-                              "secondaryAccent280": "#5F0F01",
-                              "secondaryText": "#8B939E",
-                              "smartWallet": "#3C71FE",
-                              "smartWalletSurface": "#f3f7ff",
-                              "smartWalletText": "#1D24D8",
-                              "surface": "#007AFF",
-                              "synthetic": "#2329d6",
-                              "synthetic100": "#8080D6",
-                              "synthetic110": "#6B6BD6",
-                              "synthetic120": "#5656D6",
-                              "synthetic130": "#4040D6",
-                              "synthetic140": "#2329D6",
-                              "synthetic150": "#151CD6",
-                              "synthetic160": "#0000CC",
-                              "synthetic170": "#0000B3",
-                              "synthetic180": "#000099",
-                              "tertiary": "#EBF0F6",
-                              "text": "#FCFDFF",
-                              "toastCloseIcon": "#ededed",
-                              "transactionReceivedIcon": "#497391",
-                              "userAvatar": "#d1d9e4",
-                              "warning": "#ECA93A",
-                            },
-                            "current": "lightTheme",
-                          }
-                        }
+                        variant="default"
                       >
                         button.shareAddress
                       </Text>
