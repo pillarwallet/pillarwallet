@@ -29,9 +29,11 @@ import {
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  SET_WBTC_FEES,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset } from 'models/Asset';
+import type { WBTCFeesRaw } from 'models/WBTC';
 
 export type ExchangeReducerState = {
   data: {
@@ -43,6 +45,7 @@ export type ExchangeReducerState = {
   },
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
+  wbtcFees: WBTCFeesRaw,
 }
 
 export type ExchangeReducerAction = {
@@ -59,6 +62,13 @@ export const initialState = {
   },
   exchangeSupportedAssets: [],
   fiatExchangeSupportedAssets: [],
+  wbtcFees: {
+    btc: {
+      ethereum: { mint: 0, burn: 0 },
+      lock: 0,
+      release: 0,
+    },
+  },
 };
 
 export default function exchangeReducer(
@@ -163,6 +173,11 @@ export default function exchangeReducer(
       return {
         ...state,
         fiatExchangeSupportedAssets: action.payload,
+      };
+    case SET_WBTC_FEES:
+      return {
+        ...state,
+        wbtcFees: action.payload,
       };
     default:
       return state;

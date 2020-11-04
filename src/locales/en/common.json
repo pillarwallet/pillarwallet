@@ -869,6 +869,17 @@
     }
   },
 
+  "wbtcCafe": {
+    "rate": "Exchange rate",
+    "renFee": "RenVM fee",
+    "btcFee": "Bitcoin fee",
+    "slippage": "Max. price slippage",
+    "sendBtc": "To receive WBTC in Pillar, send {{amount}} BTC to this address.",
+    "copy": "Copy address",
+    "useOnce": "Address can be used only once.",
+    "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications."
+  },
+
   "referralsContent": {
     "banner": {
       "inviteBanner": {
@@ -1182,6 +1193,10 @@
     "wyre": {
       "title": "Buy with Wyre (Non-EU)",
       "description": "Buy Now"
+    },
+    "wbtcCafe": {
+      "title": "WBTC Cafe",
+      "description": "Swap between BTC and WBTC todo change this description"
     },
     "altalix": {
       "title": "Buy with Altalix",

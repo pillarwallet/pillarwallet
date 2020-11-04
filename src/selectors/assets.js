@@ -21,10 +21,9 @@
 import get from 'lodash.get';
 import { createSelector } from 'reselect';
 import { getEnv } from 'configs/envConfig';
-import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 import type { Assets, Balance, Rates } from 'models/Asset';
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
-import { getAssetData, getAssetsAsList, getBalance } from 'utils/assets';
+import { getAssetData, getAssetsAsList, getBalance, getFormattedBalanceInFiat } from 'utils/assets';
 import { userHasSmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 import {

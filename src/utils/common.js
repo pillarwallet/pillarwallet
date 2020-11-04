@@ -673,3 +673,17 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
 export const getEnsPrefix = () => isProdEnv
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
+
+export const hitslop10 = {
+  top: 10,
+  bottom: 10,
+  left: 10,
+  right: 10,
+};
+
+export const hitslopFull = {
+  top: getDeviceHeight(),
+  bottom: getDeviceHeight(),
+  left: getDeviceWidth(),
+  right: getDeviceWidth(),
+};

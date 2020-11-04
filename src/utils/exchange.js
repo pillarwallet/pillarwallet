@@ -28,11 +28,11 @@ import { getEnv } from 'configs/envConfig';
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
+import { ETH, BTC } from 'constants/assetsConstants';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { AllowanceTransaction } from 'models/Transaction';
 
 import { fiatCurrencies } from 'fixtures/assets';
-import { ETH } from 'constants/assetsConstants';
 import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 
 // services, utils
@@ -148,3 +148,5 @@ export const createAllowanceTx = async (
     return null;
   }
 };
+
+export const isWbtcCafe = (fromAsset: Option): boolean => fromAsset.symbol === BTC;

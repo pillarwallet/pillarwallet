@@ -40,7 +40,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 // actions
 import { saveDbAction } from './dbActions';
 
-
 export const setRatesAction = (newRates: Rates) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(newRates)) return;
