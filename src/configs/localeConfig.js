@@ -43,7 +43,7 @@ export default {
   namespaces: ['auth', DEFAULT_NAMESPACE],
   postProcessors: [PUNCTUATION_POSTPROCESSOR, CAPITALIZATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR],
   localTranslations: {
-    en: {
+    [DEFAULT_LANGUAGE_CODE]: {
       common: EN_COMMON,
       auth: EN_AUTH,
     },

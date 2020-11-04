@@ -59,7 +59,7 @@ const expectedLocalTranslationInitActions = [
   },
   {
     type: UPDATE_SESSION,
-    payload: { sessionLanguageCode: 'fr' },
+    payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: 'LOCAL' },
   },
 ];
 
@@ -74,7 +74,7 @@ const expectedExternalTranslationInitSessionActions = [
   },
   {
     type: UPDATE_SESSION,
-    payload: { sessionLanguageCode: 'fr' },
+    payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP },
   },
 ];
 
@@ -164,7 +164,7 @@ const expectedExternalTranslationInitActions = [
 const expectedLanguageChangeActions = [
   {
     type: 'UPDATE_APP_SETTINGS',
-    payload: { localisation: { activeLngCode: 'fr', translationVersion: TEST_TRANSLATIONS_TIME_STAMP } },
+    payload: { localisation: { activeLngCode: 'fr' } },
   },
   {
     type: 'UPDATE_SESSION',
@@ -172,7 +172,7 @@ const expectedLanguageChangeActions = [
   },
   {
     type: 'UPDATE_SESSION',
-    payload: { sessionLanguageCode: 'fr' },
+    payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP },
   },
 ];
 
@@ -217,6 +217,10 @@ const mockedFirebaseConfigGetUrlAndTimeStampString = (key) => {
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('Localisation actions', () => {
+  beforeEach(() => {
+    firebaseRemoteConfig.getString = () => '';
+  });
+
   afterEach(() => {
     i18n.init();
   });
@@ -242,7 +246,12 @@ describe('Localisation actions', () => {
         session: { data: { sessionLanguageCode: '' } },
       });
 
-      const expectedAction = [{ type: UPDATE_SESSION, payload: { sessionLanguageCode: 'fr' } }];
+      const expectedAction = [
+        {
+          type: UPDATE_SESSION,
+          payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: 'LOCAL' },
+        },
+      ];
 
       await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
       const actualActions = store.getActions();
@@ -259,8 +268,18 @@ describe('Localisation actions', () => {
         session: { data: { sessionLanguageCode: '' } },
       });
 
-      const userPreferredAction = [{ type: UPDATE_SESSION, payload: { sessionLanguageCode: 'fr' } }];
-      const expectedAction = [{ type: UPDATE_SESSION, payload: { sessionLanguageCode: 'en' } }];
+      const userPreferredAction = [
+        {
+          type: UPDATE_SESSION,
+          payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: 'LOCAL' },
+        },
+      ];
+      const expectedAction = [
+        {
+          type: UPDATE_SESSION,
+          payload: { sessionLanguageCode: 'en', sessionLanguageVersion: 'LOCAL' },
+        },
+      ];
 
       await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
       const actualActions = store.getActions();
@@ -278,19 +297,21 @@ describe('Localisation actions', () => {
         session: { data: { sessionLanguageCode: '' } },
       });
 
-      const userPreferredAction = [{ type: UPDATE_SESSION, payload: { sessionLanguageCode: 'fr' } }];
+      const userPreferredAction = [
+        {
+          type: UPDATE_SESSION,
+          payload: { sessionLanguageCode: 'fr', sessionLanguageVersion: 'LOCAL' },
+        },
+      ];
       const expectedAction = [
         {
           type: UPDATE_SESSION,
-          payload: { sessionLanguageCode: 'en' },
+          payload: { sessionLanguageCode: 'en', sessionLanguageVersion: 'LOCAL' },
         },
         {
           type: UPDATE_APP_SETTINGS,
           payload: {
-            localisation: {
-              activeLngCode: 'en',
-              translationVersion: undefined, // todo: check
-            },
+            localisation: { activeLngCode: 'en' },
           },
         }];
 
@@ -537,7 +558,7 @@ describe('Localisation actions', () => {
           },
           {
             type: UPDATE_SESSION,
-            payload: { sessionLanguageCode: LNG_LOCAL_ONLY },
+            payload: { sessionLanguageCode: LNG_LOCAL_ONLY, sessionLanguageVersion: 'LOCAL' },
           },
         ]);
         expect(i18n.language).toEqual(LNG_LOCAL_ONLY);
@@ -567,6 +588,7 @@ describe('Localisation actions', () => {
           [localeConfig.defaultLanguage]: {},
         },
       }, () => {});
+      firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
     });
 
     it('should change language in settings and in i18next if it\'s supported', async () => {

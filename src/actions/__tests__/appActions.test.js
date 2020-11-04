@@ -94,7 +94,13 @@ describe('App actions', () => {
       { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localPath: commonTranslationsUrl } },
       { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP } },
       { type: UPDATE_SESSION, payload: { translationsInitialised: true } },
-      { type: UPDATE_SESSION, payload: { sessionLanguageCode: localeConfig.defaultLanguage } },
+      {
+        type: UPDATE_SESSION,
+        payload: {
+          sessionLanguageCode: localeConfig.defaultLanguage,
+          sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP,
+        },
+      },
     ];
 
     return store.dispatch(initAppAndRedirectAction())

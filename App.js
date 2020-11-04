@@ -32,6 +32,7 @@ import DeviceInfo from 'react-native-device-info';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
 import { NavigationActions } from 'react-navigation';
+import remoteConfig from '@react-native-firebase/remote-config';
 
 import 'services/localisation/translations';
 import localeConfig from 'configs/localeConfig';
@@ -47,11 +48,12 @@ import {
 import { executeDeepLinkAction } from 'actions/deepLinkActions';
 import { startReferralsListenerAction, stopReferralsListenerAction } from 'actions/referralsActions';
 import { setAppThemeAction, handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
-import { changeLanguageAction, updateTranslationResourceOnNetworkChangeAction } from 'actions/localisationActions';
+import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } from 'actions/localisationActions';
 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { STAGING } from 'constants/envConstants';
+import { FEATURE_FLAGS, INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 
 // components
 import { Container } from 'components/Layout';
@@ -69,7 +71,7 @@ import { log } from 'utils/logger';
 
 // services
 import { setTopLevelNavigator } from 'services/navigation';
-import { initFirebase } from 'services/firebase';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -108,8 +110,9 @@ type Props = {
   i18n: I18n,
   changeLanguage: (language: string) => void,
   translationsInitialised: boolean,
-  updateTranslationResourceOnNetworkChange: () => void,
+  updateTranslationResourceOnContextChange: () => void,
   initialDeeplinkExecuted: boolean,
+  sessionLanguageVersion: ?string,
 }
 
 
@@ -154,13 +157,47 @@ class App extends React.Component<Props, *> {
       fetchAppSettingsAndRedirect,
       startListeningOnOpenNotification,
       startReferralsListener,
+      sessionLanguageVersion,
+      updateTranslationResourceOnContextChange,
     } = this.props;
 
     const env = await setupEnv();
     log.info('Environment: ', env);
     this.setState({ env });
 
-    await initFirebase();
+    /**
+     * First, we need to set the defaults for Remote Config.
+     * This makes the default values immediately available
+     * on app load and can be used.
+     *
+     * @url https://rnfirebase.io/reference/remote-config#setDefaults
+     */
+
+    remoteConfig()
+      .setDefaults(INITIAL_FEATURE_FLAGS)
+      .then(() => log.info('Firebase Config: Defaults loaded and available.'))
+      .catch(e => log.error('Firebase Config: An error occurred loading defaults:', e));
+
+    await remoteConfig().ensureInitialized();
+
+    /**
+     * Secondly, we need to activate any remotely fetched values
+     * if they exist at all. The values that have been fetched
+     * and activated override the default values above (see @url
+     * above).
+     *
+     * @url https://rnfirebase.io/reference/remote-config#activate
+     */
+
+    remoteConfig()
+      .activate()
+      .then((r) => {
+        log.info('Firebase Config: Activation result was:', r);
+        if (sessionLanguageVersion !== firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP)) {
+          updateTranslationResourceOnContextChange();
+        }
+      })
+      .catch(e => log.error('Firebase Config: An error occurred while activating:', e));
 
     // hold the UI and wait until network status finished for later app connectivity checks
     await NetInfo.fetch()
@@ -204,7 +241,7 @@ class App extends React.Component<Props, *> {
   };
 
   handleConnectivityChange = (state: NetInfoState) => {
-    const { updateTranslationResourceOnNetworkChange } = this.props;
+    const { updateTranslationResourceOnContextChange } = this.props;
     const isOnline = state.isInternetReachable;
     this.setOnlineStatus(isOnline);
 
@@ -219,7 +256,7 @@ class App extends React.Component<Props, *> {
       }
     } else {
       if (this.offlineToastId !== null) Toast.close(this.offlineToastId);
-      updateTranslationResourceOnNetworkChange();
+      updateTranslationResourceOnContextChange();
     }
   };
 
@@ -277,7 +314,7 @@ class App extends React.Component<Props, *> {
               {!!getEnv().SHOW_LANG_TOGGLE && <Button
                 title={`Change lang (current: ${i18next.language})`} // eslint-disable-line i18next/no-literal-string
                 // eslint-disable-next-line i18next/no-literal-string
-                onPress={() => changeLanguage(i18next.language === 'lt' ? localeConfig.defaultLanguage : 'lt')}
+                onPress={() => changeLanguage(i18next.language === 'am' ? localeConfig.defaultLanguage : 'am')}
               />}
               {!!activeWalkthroughSteps.length && <Walkthrough steps={activeWalkthroughSteps} />}
               {this.state.env === STAGING &&
@@ -304,7 +341,7 @@ class App extends React.Component<Props, *> {
 const mapStateToProps = ({
   appSettings: { isFetched, data: { themeType, isManualThemeSelection, initialDeeplinkExecuted } },
   walkthroughs: { steps: activeWalkthroughSteps },
-  session: { data: { translationsInitialised } },
+  session: { data: { translationsInitialised, sessionLanguageVersion } },
 }: RootReducerState): $Shape<Props> => ({
   isFetched,
   themeType,
@@ -312,6 +349,7 @@ const mapStateToProps = ({
   activeWalkthroughSteps,
   translationsInitialised,
   initialDeeplinkExecuted,
+  sessionLanguageVersion,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
@@ -326,7 +364,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setAppTheme: (themeType: string) => dispatch(setAppThemeAction(themeType)),
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   changeLanguage: (language) => dispatch(changeLanguageAction(language)),
-  updateTranslationResourceOnNetworkChange: () => dispatch(updateTranslationResourceOnNetworkChangeAction()),
+  updateTranslationResourceOnContextChange: () => dispatch(updateTranslationResourceOnContextChangeAction()),
 });
 
 const AppWithNavigationState = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(App));

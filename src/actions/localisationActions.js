@@ -94,19 +94,8 @@ const getTranslationsResources = async (props: GetTranslationResourcesProps) => 
     getLocal = false,
   } = props;
   let resources;
-  let version = '';
-  let baseUrl = '';
-
-  try {
-    version = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP);
-    baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
-  } catch (e) {
-    reportErrorLog('Firebase remote config is not accessible in getTranslationsResources', {
-      error: e,
-      version,
-      baseUrl,
-    });
-  }
+  let version = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP);
+  const baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
 
   const missingNsArray = [];
   const translationsData = getTranslationData(language, baseUrl, version);
@@ -284,7 +273,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
       }
 
       dispatch(setSessionTranslationBundleInitialisedAction());
-      dispatch(setSessionLanguageAction(language));
+      dispatch(setSessionLanguageAction(language, version));
     }
   };
 };
@@ -300,7 +289,7 @@ export const changeLanguageAction = (language: string) => {
     if (isLanguageSupported(language)) {
       const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
       const onLanguageChangeSuccess = () => {
-        dispatch(setAppLanguageAction(language, version));
+        dispatch(setAppLanguageAction(language));
         if (missingNsArray?.length) {
           Toast.show({
             message: t('toast.languageChangedWithSomeTranslationsMissing'),
@@ -328,7 +317,7 @@ export const changeLanguageAction = (language: string) => {
         // fallback language is needed to be updated on language change
         await dispatch(getAndSetFallbackLanguageResources());
       }
-      dispatch(setSessionLanguageAction(language));
+      dispatch(setSessionLanguageAction(language, version));
     } else {
       Toast.show({
         message: t('toast.languageIsNotSupported'),
@@ -339,11 +328,15 @@ export const changeLanguageAction = (language: string) => {
   };
 };
 
-export const updateTranslationResourceOnNetworkChangeAction = () => {
+export const updateTranslationResourceOnContextChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { isFetched, data: { localisation } },
-      session: { data: { isOnline, fallbackLanguageVersion, translationsInitialised } },
+      session: {
+        data: {
+          isOnline, fallbackLanguageVersion, translationsInitialised, sessionLanguageVersion,
+        },
+      },
     } = getState();
 
     if (!isFetched) return;
@@ -352,7 +345,7 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
 
     if (!translationsInitialised || !localeConfig.isEnabled || !baseUrl) return;
 
-    const { translationVersion, activeLngCode } = localisation || {};
+    const { activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultSupportedUserLanguage();
 
     if (isOnline) {
@@ -360,12 +353,13 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
       if (fallbackLanguageVersion === LOCAL && language !== localeConfig.defaultLanguage) {
         await dispatch(getAndSetFallbackLanguageResources());
       }
-      if (translationVersion === LOCAL && !!language) {
+      if (sessionLanguageVersion === LOCAL && !!language) {
         // retry fetching translations to change local ones into newest possible
         const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
 
         const onLanguageChangeSuccess = () => {
-          dispatch(setAppLanguageAction(language, version));
+          dispatch(setAppLanguageAction(language));
+          dispatch(setSessionLanguageAction(language, version));
         };
 
         await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });
