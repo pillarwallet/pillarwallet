@@ -82,7 +82,8 @@ export const createSynthetixOrder = async (
 };
 
 const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: string): Promise<boolean> => {
-  const assetContract = new Contract(fromTokenAddress, ERC20_CONTRACT_ABI, ethProvider);
+  const assetContract =
+    new Contract(fromTokenAddress, ERC20_CONTRACT_ABI, getEthereumProvider(getEnv().NETWORK_PROVIDER));
   const allowance = await assetContract.allowance(clientAddress, getEnv().SYNTHETIX_EXCHANGE_ADDRESS);
   return allowance.gt(0);
 };
