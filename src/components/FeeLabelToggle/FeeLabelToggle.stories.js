@@ -46,7 +46,7 @@ storiesOf('FeeLabelToggle', module)
           decimals: 18,
           symbol: 'ETH',
         }}
-        notEnoughToken
+        hasError
       />
     </CenterView>
   ));

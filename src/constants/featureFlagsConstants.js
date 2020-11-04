@@ -35,6 +35,7 @@ export const FEATURE_FLAGS = {
   USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES: 'use_legacy_cryptocompare_token_prices',
   APP_LOCALES_URL: 'app_locales_url',
   APP_LOCALES_LATEST_TIMESTAMP: 'app_locales_latest_timestamp',
+  LEGAL_HTML_ENDPOINT_PREFIX: 'app_legal_html_endpoint_prefix',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -53,4 +54,5 @@ export const INITIAL_FEATURE_FLAGS = {
   [FEATURE_FLAGS.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES]: false,
   [FEATURE_FLAGS.APP_LOCALES_URL]: '',
   [FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP]: '',
+  [FEATURE_FLAGS.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
 };

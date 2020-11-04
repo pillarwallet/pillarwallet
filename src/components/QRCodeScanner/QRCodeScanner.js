@@ -20,7 +20,6 @@
 import * as React from 'react';
 import { Vibration, Dimensions, Platform } from 'react-native';
 import throttle from 'lodash.throttle';
-import Modal from 'react-native-modal';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import t from 'translations/translate';
 import { noop, reportLog } from 'utils/common';
@@ -28,28 +27,26 @@ import CameraView from 'components/QRCodeScanner/CameraView';
 import NoPermissions from 'components/QRCodeScanner/NoPermissions';
 import type { Barcode, Point, Size } from 'react-native-camera';
 import Toast from 'components/Toast';
-
+import Modal from 'components/Modal';
 
 type BarcodeBounds = {
   size: Size,
   origin: Point,
 };
 
-type Props = {
-  onRead: (code: string) => void,
-  onCancel: () => void,
+type Props = {|
+  onRead?: (code: string) => void,
+  onCancel?: () => void,
   validator: (code: string) => boolean,
   dataFormatter: (code: string) => string,
   rectangleColor: string,
-  isActive: boolean,
-  onModalHidden?: () => void,
-};
+|};
 
-type State = {
+type State = {|
   isAuthorized: ?boolean,
   isFinished: boolean,
   code: ?string,
-};
+|};
 
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
@@ -67,6 +64,8 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     dataFormatter: (x: any) => x,
   };
 
+  modalRef = React.createRef<Modal>();
+
   state = {
     isAuthorized: null, // pending
     isFinished: false,
@@ -82,43 +81,8 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     });
   }
 
-  shouldComponentUpdate(nextProps: Props): boolean {
-    const { isFinished } = this.state;
-    const { isActive } = this.props;
-    const { isActive: nextActive } = nextProps;
-
-    if (isFinished && isActive && !nextActive) {
-      // Is deactivating a finished scanner, reset state
-      this.setState({ isFinished: false, code: null });
-
-      return false;
-    }
-
-    if (!isActive && nextProps.isActive) {
-      // Is reactivating a scanner
-      return true;
-    }
-
-    if (isFinished) {
-      // Scan is finished, stop rendering
-      return false;
-    }
-
-    return true;
-  }
-
-  componentDidUpdate() {
-    const { isActive } = this.props;
-
-    if (isActive && this.state.isAuthorized === null) {
-      this.askPermissions();
-    }
-  }
-
   componentDidMount() {
-    if (this.props.isActive) {
-      this.askPermissions();
-    }
+    this.askPermissions();
   }
 
   askPermissions = () => {
@@ -145,6 +109,12 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     return isInRecognitionArea;
   };
 
+  close = () => {
+    if (this.modalRef.current) {
+      this.modalRef.current.close();
+    }
+  }
+
   handleQRRead = (barcode: Barcode): void => {
     if (this.state.isFinished) {
       return;
@@ -165,7 +135,7 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     const { validator } = this.props;
 
     if (!validator(code)) {
-      this.props.onCancel();
+      this.close();
       Toast.show({
         message: t('toast.incorrectQRCode'),
         emoji: 'hushed',
@@ -176,26 +146,23 @@ export default class QRCodeScanner extends React.Component<Props, State> {
     }
 
     Vibration.vibrate();
-    this.setState({ code, isFinished: true });
+    this.setState({ code, isFinished: true }, this.close);
   };
 
-  onModalClosed = () => {
+  handleResult = () => {
     const { code } = this.state;
-    const { onRead, dataFormatter, onModalHidden } = this.props;
+    const {
+      onRead,
+      onCancel,
+      dataFormatter,
+    } = this.props;
 
-    if (code) {
-      onRead(dataFormatter(code));
-    }
-
-    if (onModalHidden) onModalHidden();
+    if (code && onRead) onRead(dataFormatter(code));
+    if (!code && onCancel) onCancel();
   };
 
   render() {
-    const {
-      isActive,
-      rectangleColor,
-      onCancel,
-    } = this.props;
+    const { rectangleColor } = this.props;
     const { isAuthorized, isFinished } = this.state;
 
     if (isAuthorized === null) return null; // permission request pending
@@ -206,25 +173,24 @@ export default class QRCodeScanner extends React.Component<Props, State> {
 
     return (
       <Modal
-        isVisible={isActive && !isFinished}
+        ref={this.modalRef}
         animationInTiming={animationInTiming}
         animationOutTiming={animationOutTiming}
         animationIn="fadeIn"
         animationOut="fadeOut"
         hideModalContentWhileAnimating
-        onBackButtonPress={onCancel}
         style={{
           margin: 0,
           justifyContent: 'flex-start',
         }}
-        onModalHide={this.onModalClosed}
+        onModalWillHide={this.handleResult}
       >
         {isDenied ? (
-          <NoPermissions onClose={onCancel} />
+          <NoPermissions onClose={this.close} />
         ) : (
           <CameraView
             onQRRead={this.handleQRRead}
-            onCancel={onCancel}
+            onCancel={this.close}
             rectangleSize={rectangleSize}
             rectangleColor={rectangleColor}
           />
