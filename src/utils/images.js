@@ -29,10 +29,6 @@ const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
 const pillarLogo = require('assets/images/pillar-logo-pixel.png');
 const pillarLogoSmallLight = require('assets/images/logo-small-on-light.png');
 const pillarLogoSmallDark = require('assets/images/logo-small-on-dark.png');
-const actionButtonBackgroundLight = require('assets/images/bg_action_button.png');
-const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
-const actionButtonBackgroundLightDisabled = require('assets/images/bg_action_button_disabled.png');
-const actionButtonBackgroundDarkDisabled = require('assets/images/bg_action_button_dark_disabled.png');
 const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
 const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
@@ -92,14 +88,6 @@ export const images = (theme: Theme) => {
     pillarLogoSmall: getImageByTheme(currentTheme, {
       lightTheme: pillarLogoSmallLight,
       darkTheme: pillarLogoSmallDark,
-    }),
-    actionButtonBackground: getImageByTheme(currentTheme, {
-      lightTheme: actionButtonBackgroundLight,
-      darkTheme: actionButtonBackgroundDark,
-    }),
-    actionButtonBackgroundDisabled: getImageByTheme(currentTheme, {
-      lightTheme: actionButtonBackgroundLightDisabled,
-      darkTheme: actionButtonBackgroundDarkDisabled,
     }),
     keyWalletIcon: getImageByTheme(currentTheme, {
       lightTheme: keyWalletIcon,

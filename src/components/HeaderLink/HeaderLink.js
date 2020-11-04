@@ -37,7 +37,7 @@ const CustomSpinner = styled(Spinner)`
 const HeaderLink = (props: Props) => {
   return (
     props.isLoading ?
-      <CustomSpinner /> :
+      <CustomSpinner size={20} trackWidth={2} /> :
       <TouchableOpacity
         onPress={props.onPress}
         disabled={props.disabled}

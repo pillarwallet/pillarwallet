@@ -46,6 +46,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { spacing } from 'utils/variables';
 
 // models, types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -68,17 +69,13 @@ type Props = {
   smartWalletState: SmartWalletReducerState,
 };
 
-const Sizer = styled.View`
-  max-width: 350px;
+const ActionButtonsWrapper = styled.View`
+  flex-direction: row;
   align-items: center;
   align-self: center;
-`;
-
-const ActionButtonsWrapper = styled.View`
+  justify-content: center;
   width: 100%;
-  padding: 14px 10px 36px;
-  flex-direction: row;
-  justify-content: space-between;
+  padding: 18px ${spacing.layoutSides}px 28px ${spacing.layoutSides}px;
 `;
 
 const ActionButtons = ({
@@ -142,26 +139,24 @@ const ActionButtons = ({
 
   return (
     <React.Fragment>
-      <Sizer>
-        <ActionButtonsWrapper>
-          <CircleButton
-            label={t('button.addFunds')}
-            fontIcon="qrDetailed"
-            onPress={() => setVisibleAddFundsModal(true)}
-          />
-          <CircleButton
-            label={t('button.send')}
-            fontIcon="paperPlane"
-            onPress={() => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW)}
-            disabled={!isSendButtonActive}
-          />
-          <CircleButton
-            label={t('button.exchange')}
-            fontIcon="exchange"
-            onPress={() => navigation.navigate(EXCHANGE)}
-          />
-        </ActionButtonsWrapper>
-      </Sizer>
+      <ActionButtonsWrapper>
+        <CircleButton
+          label={t('button.addFunds')}
+          fontIcon="qrDetailed"
+          onPress={() => setVisibleAddFundsModal(true)}
+        />
+        <CircleButton
+          label={t('button.send')}
+          fontIcon="paperPlane"
+          onPress={() => navigation.navigate(SEND_TOKEN_FROM_HOME_FLOW)}
+          disabled={!isSendButtonActive}
+        />
+        <CircleButton
+          label={t('button.exchange')}
+          fontIcon="exchange"
+          onPress={() => navigation.navigate(EXCHANGE)}
+        />
+      </ActionButtonsWrapper>
       <ActionOptionsModal
         onModalClose={closeAddFundsModal}
         isVisible={visibleAddFundsModal}

@@ -97,7 +97,6 @@ const InviteBanner = (props: Props) => {
           </BodyText>}
           <Button
             title={t('button.inviteFriends')}
-            block
             onPress={onInvitePress}
             marginTop={isReferralActive ? 0 : 14}
           />

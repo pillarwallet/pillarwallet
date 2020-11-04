@@ -257,14 +257,12 @@ class PillarNetworkIntro extends React.Component<Props, State> {
           {!needsSmartWallet &&
           <ButtonWrapper>
             <Button
-              block
               title={t('ppnContent.button.goToTank')}
               onPress={this.goToPLRTank}
               style={{
                 backgroundColor: colors.PPNText,
                 marginTop: 40,
                 marginBottom: 20,
-                opacity: needsSmartWallet ? 0.3 : 1,
               }}
               textStyle={{ color: colors.PPNSurface }}
               isLoading={processingCreate}

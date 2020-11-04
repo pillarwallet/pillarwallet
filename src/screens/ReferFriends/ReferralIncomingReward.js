@@ -125,7 +125,6 @@ class ReferralIncomingReward extends React.PureComponent<Props> {
                 onPress={() => navigation.navigate(ADD_EDIT_USER)}
                 marginBottom={spacing.mediumLarge}
                 marginTop={40}
-                block
               />
             </>}
           </Wrapper>

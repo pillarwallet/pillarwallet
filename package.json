@@ -115,6 +115,7 @@
     "react-native-image-crop-picker": "^0.26.2",
     "react-native-image-zoom-viewer": "^3.0.0",
     "react-native-inappbrowser-reborn": "^3.4.0",
+    "react-native-indicators": "^0.17.0",
     "react-native-intercom": "^13.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-keychain": "^6.0.0",

@@ -30,7 +30,6 @@ import SvgOverlay, { Path, LinearGradient, Stop, Circle } from 'react-native-svg
 import t from 'translations/translate';
 
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
 import { Footer } from 'components/Layout';
 import IconButton from 'components/IconButton';
@@ -458,8 +457,8 @@ class Camera extends React.Component<Props, State> {
             {preview}
           </PreviewWrapper>
           <ResultScreenFooter>
-            <Button marginBottom="20px" onPress={this.setImage} title={t('button.confirm')} />
-            <ButtonText buttonText={t('button.tryAgain')} onPress={this.getBackToCamera} />
+            <Button marginBottom="4px" onPress={this.setImage} title={t('button.confirm')} block={false} />
+            <Button onPress={this.getBackToCamera} title={t('button.tryAgain')} transparent />
           </ResultScreenFooter>
         </ResultScreen>
         }

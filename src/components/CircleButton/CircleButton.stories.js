@@ -17,33 +17,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import * as React from 'react';
+import { View } from 'react-native';
 import { storiesOf } from '@storybook/react-native';
-import InsightWithButton from './InsightWithButton';
+import CircleButton from 'components/CircleButton';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
-import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
-const itemsList = [
-  'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore.',
-  'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.',
-];
+const Decorator = (story) => (
+  <View style={{
+    padding: 20,
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexDirection: 'row',
+  }}
+  >
+    {story()}
+  </View>
+);
 
-storiesOf('InsightWithButton', module)
-  .addDecorator(CenterViewStretchDecorator)
+storiesOf('CircleButton', module)
+  .addDecorator(Decorator)
   .addDecorator(WithThemeDecorator)
-  .add('with list', () => (
-    <InsightWithButton
-      title="Some short title"
-      itemsList={itemsList}
-      buttonTitle="Wow, press me!"
-      onButtonPress={() => {}}
-    />
-  ))
-  .add('without list', () => (
-    <InsightWithButton
-      buttonTitle="Wow, press me!"
-      description={itemsList[0]}
-      buttonProps={{ primarySecond: true }}
-      onButtonPress={() => {}}
-    />
+  .add('all cases', () => (
+    <>
+      <CircleButton fontIcon="paperPlane" onPress={() => {}} label="Default" />
+      <CircleButton fontIcon="paperPlane" onPress={() => {}} label="Disabled" disabled />
+      <CircleButton fontIcon="paperPlane" onPress={() => {}} label="With indicator" showIndicator />
+    </>
   ));

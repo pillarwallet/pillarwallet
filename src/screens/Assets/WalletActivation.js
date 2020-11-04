@@ -103,14 +103,12 @@ class WalletActivation extends React.PureComponent<Props> {
           <Button
             title={t('button.smartWalletFAQ')}
             onPress={this.handleFaq}
-            textStyle={fontStyles.medium}
           />
           <Spacing h={4} />
           <Button
-            primaryInverted
+            transparent
             title={t('button.seeOnEtherscan')}
             onPress={this.handleEtherscan}
-            textStyle={fontStyles.medium}
             style={{ borderColor: 'transparent' }}
           />
         </ButtonsWrapper>
