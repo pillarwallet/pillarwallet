@@ -21,13 +21,13 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import get from 'lodash.get';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
 import { calculateLendingWithdrawTransactionEstimateAction } from 'actions/lendingActions';
+import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -41,27 +41,27 @@ import { ETH } from 'constants/assetsConstants';
 import { LENDING_WITHDRAW_TRANSACTION_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { spacing } from 'utils/variables';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Balances, DepositedAsset } from 'models/Asset';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
   depositedAssets: DepositedAsset[],
   navigation: NavigationScreenProp<*>,
-  isCalculatingWithdrawTransactionEstimate: boolean,
-  withdrawTransactionEstimate: ?Object,
+  isEstimating: boolean,
+  feeInfo: ?TransactionFeeInfo,
   calculateLendingWithdrawTransactionEstimate: (amount: number, asset: DepositedAsset) => void,
-  useGasToken: boolean,
   balances: Balances,
+  estimateErrorMessage: ?string,
+  resetEstimateTransaction: () => void,
 };
 
 const FeeInfo = styled.View`
@@ -76,10 +76,6 @@ const FooterInner = styled.View`
   align-items: center;
 `;
 
-const NotEnoughFee = styled(BaseText)`
-  margin-top: ${spacing.medium}px;
-`;
-
 const InputWrapper = styled.View`
   padding: 24px 40px 0;
 `;
@@ -87,40 +83,51 @@ const InputWrapper = styled.View`
 const EnterWithdrawAmount = ({
   navigation,
   depositedAssets,
-  withdrawTransactionEstimate,
-  isCalculatingWithdrawTransactionEstimate,
+  feeInfo,
+  isEstimating,
   calculateLendingWithdrawTransactionEstimate,
-  useGasToken,
   balances,
+  estimateErrorMessage,
+  resetEstimateTransaction,
 }: Props) => {
+  useEffect(() => {
+    resetEstimateTransaction();
+  }, []);
+
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
   const [depositAmount, setDepositAmount] = useState('');
+  const [inputValid, setInputValid] = useState(false);
 
   const depositedAsset = depositedAssets.find(({ symbol }) => symbol === selectedAssetSymbol);
 
   useEffect(() => {
-    if (!depositAmount || !depositedAsset) return;
+    if (!depositAmount || !depositedAsset || !inputValid) return;
     calculateLendingWithdrawTransactionEstimate(depositAmount, depositedAsset);
-  }, [depositAmount, depositedAsset]);
+  }, [depositAmount, depositedAsset, inputValid]);
 
-  const txFeeInfo = buildTxFeeInfo(withdrawTransactionEstimate, useGasToken);
-  const gasTokenSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
-  const showTxFee = !!depositAmount && (!!txFeeInfo?.fee || isCalculatingWithdrawTransactionEstimate);
-  const isEnoughForFee = !!txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, {
-    txFeeInWei: txFeeInfo.fee,
-    amount: depositAmount,
-    decimals: depositedAsset?.decimals,
-    symbol: selectedAssetSymbol,
-    gasToken: txFeeInfo.gasToken,
-  });
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      amount: depositAmount,
+      decimals: depositedAsset?.decimals,
+      symbol: selectedAssetSymbol,
+      gasToken: feeInfo.gasToken,
+    });
+  }
+
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
 
   const showNextButton = depositAmount !== null; // only if amount input touched
-  const isNextButtonDisabled = !!isCalculatingWithdrawTransactionEstimate
+  const isNextButtonDisabled = !!isEstimating
     || !depositAmount
-    || !isEnoughForFee
-    || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
-  const nextButtonTitle = isCalculatingWithdrawTransactionEstimate ? t('label.gettingFee') : t('button.next');
+    || !!errorMessage
+    || !inputValid
+    || !feeInfo;
+  const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(
     LENDING_WITHDRAW_TRANSACTION_CONFIRM,
     { amount: depositAmount, asset: depositedAsset },
@@ -137,22 +144,23 @@ const EnterWithdrawAmount = ({
       headerProps={{ centerItems: [{ title: t('aaveContent.title.withdrawAmountScreen') }] }}
       footer={(
         <FooterInner>
-          {showTxFee && (
-            <FeeInfo alignItems="center">
+          <FeeInfo alignItems="center">
+            {!!feeInfo && (
               <FeeLabelToggle
                 labelText={t('label.fee')}
-                txFeeInWei={txFeeInfo?.fee}
-                gasToken={txFeeInfo?.gasToken}
-                isLoading={isCalculatingWithdrawTransactionEstimate}
+                txFeeInWei={feeInfo?.fee}
+                gasToken={feeInfo?.gasToken}
+                isLoading={isEstimating}
+                hasError={!!errorMessage}
                 showFiatDefault
               />
-              {!isCalculatingWithdrawTransactionEstimate && !isEnoughForFee && (
-                <NotEnoughFee negative>
-                  {t('error.notEnoughTokenForFee', { token: gasTokenSymbol })}
-                </NotEnoughFee>
-              )}
-            </FeeInfo>
-          )}
+            )}
+            {!!errorMessage && (
+              <BaseText negative style={{ marginTop: spacing.medium }}>
+                {errorMessage}
+              </BaseText>
+            )}
+          </FeeInfo>
           {showNextButton && (
             <Button
               regularText
@@ -174,6 +182,7 @@ const EnterWithdrawAmount = ({
           onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
           customAssets={depositedAssets}
           customBalances={depositedAssetsBalances}
+          onFormValid={setInputValid}
         />
       </InputWrapper>
     </ContainerWithHeader>
@@ -181,16 +190,21 @@ const EnterWithdrawAmount = ({
 };
 
 const mapStateToProps = ({
-  lending: { depositedAssets, isCalculatingWithdrawTransactionEstimate, withdrawTransactionEstimate },
+  lending: { depositedAssets },
+  transactionEstimate: {
+    isEstimating,
+    feeInfo,
+    errorMessage: estimateErrorMessage,
+  },
 }: RootReducerState): $Shape<Props> => ({
   depositedAssets,
-  isCalculatingWithdrawTransactionEstimate,
-  withdrawTransactionEstimate,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -203,6 +217,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     amount: number,
     depositedAsset: DepositedAsset,
   ) => dispatch(calculateLendingWithdrawTransactionEstimateAction(amount, depositedAsset)), 500),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterWithdrawAmount);

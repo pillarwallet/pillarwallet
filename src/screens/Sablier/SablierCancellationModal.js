@@ -23,36 +23,49 @@ import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
-
 import styled, { withTheme } from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+
+// components
 import SlideModal from 'components/Modals/SlideModal';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import ProfileImage from 'components/ProfileImage';
+
+// utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
-import type { GasToken } from 'models/Transaction';
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+
+// types
+import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Balances } from 'models/Asset';
 
-type CancelData = {
-  txFeeInWei: number,
-  gasToken: GasToken,
-  isDisabled?: boolean,
-  recipient: string,
-};
 
 type StateProps = {|
   ensRegistry: EnsRegistry,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  balances: Balances,
 |};
 
 type OwnProps = {|
   onCancel: () => void,
-  cancelData: CancelData,
+  recipient: string,
+  transactionPayload: Object,
 |};
 
 type Props = {|
@@ -70,17 +83,36 @@ const ContentWrapper = styled(SafeAreaView)`
 const sablierLogo = require('assets/icons/sablier.png');
 
 const SablierCancellationModal = ({
-  theme, onCancel, cancelData, ensRegistry,
+  theme,
+  onCancel,
+  ensRegistry,
+  recipient,
+  feeInfo,
+  estimateErrorMessage,
+  balances,
+  transactionPayload,
+  isEstimating,
 }: Props) => {
   const colors = getThemeColors(theme);
 
-  const {
-    txFeeInWei, gasToken, isDisabled, recipient,
-  } = cancelData;
-
   const username = findEnsNameCaseInsensitive(ensRegistry, recipient) || recipient;
 
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      ...transactionPayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    });
+  }
+
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
+
   const modalRef = useRef();
+
+  const isDisabled = !feeInfo || !!errorMessage || isEstimating;
 
   return (
     <SlideModal
@@ -107,12 +139,21 @@ const SablierCancellationModal = ({
           {t('sablierContent.paragraph.cancelStreamWarning')}
         </BaseText>
         <Spacing h={32} />
-        <FeeLabelToggle
-          labelText={t('label.fee')}
-          txFeeInWei={txFeeInWei}
-          gasToken={gasToken}
-          showFiatDefault
-        />
+        {(isEstimating || !!feeInfo) && (
+          <FeeLabelToggle
+            labelText={t('label.fee')}
+            txFeeInWei={feeInfo?.fee}
+            isLoading={isEstimating}
+            gasToken={feeInfo?.gasToken}
+            hasError={!!errorMessage}
+            showFiatDefault
+          />
+        )}
+        {!!errorMessage && (
+          <BaseText negative style={{ marginTop: spacing.medium }}>
+            {errorMessage}
+          </BaseText>
+        )}
         <Spacing h={16} />
         <Button
           secondary
@@ -140,8 +181,21 @@ const SablierCancellationModal = ({
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-}: RootReducerState): StateProps => ({
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
+}: RootReducerState): $Shape<StateProps> => ({
   ensRegistry,
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
 });
 
-export default (withTheme(connect(mapStateToProps)(SablierCancellationModal)): AbstractComponent<OwnProps>);
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default (withTheme(connect(combinedMapStateToProps)(SablierCancellationModal)): AbstractComponent<OwnProps>);

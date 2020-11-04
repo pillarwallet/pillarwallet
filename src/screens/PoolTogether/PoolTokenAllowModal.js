@@ -23,38 +23,50 @@ import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { Image } from 'react-native';
 import t from 'translations/translate';
+import { connect } from 'react-redux';
+import { createStructuredSelector } from 'reselect';
 
 // constants
 import styled, { withTheme } from 'styled-components/native';
-import { DAI } from 'constants/assetsConstants';
+import { DAI, ETH } from 'constants/assetsConstants';
 
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
-
-// types
-import type { Theme } from 'models/Theme';
+import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // utils
 import { images } from 'utils/images';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
-export type AllowData = {
-  assetSymbol: string,
-  feeDisplayValue: string,
-  feeInFiat: string,
-  isDisabled?: boolean,
-  feeToken: string,
-};
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+
+// types
+import type { Theme } from 'models/Theme';
+import type { TransactionFeeInfo } from 'models/Transaction';
+import type { Balances } from 'models/Asset';
+import type { RootReducerState } from 'reducers/rootReducer';
+
+
+type StateProps = {|
+  estimateErrorMessage: ?string,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  balances: Balances,
+|};
 
 type OwnProps = {|
   onModalHide: () => void,
   onAllow: () => void,
-  allowData: AllowData,
+  assetSymbol: string,
+  transactionPayload: Object,
 |};
 
 type Props = {|
+  ...StateProps,
   ...OwnProps,
   theme: Theme,
 |};
@@ -87,30 +99,35 @@ const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
 const poolTogetherLogo = require('assets/images/pool_together.png');
 
-const PoolTokenAllowModal = (props: Props) => {
-  const {
-    onModalHide,
-    onAllow,
-    allowData,
-    theme,
-  } = props;
-
+const PoolTokenAllowModal = ({
+  onModalHide,
+  onAllow,
+  theme,
+  estimateErrorMessage,
+  assetSymbol,
+  feeInfo,
+  transactionPayload,
+  balances,
+  isEstimating,
+}: Props) => {
   const modalRef = useRef();
 
-  if (!allowData) {
-    return null;
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      ...transactionPayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    });
   }
 
-  const {
-    feeToken,
-    feeDisplayValue,
-    feeInFiat,
-    assetSymbol,
-    isDisabled,
-  } = allowData;
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
 
   const tokenLogo = assetSymbol === DAI ? daiIcon : usdcIcon;
   const { genericToken: fallbackSource } = images(theme);
+  const isDisabled = !feeInfo || !!errorMessage || isEstimating;
 
   return (
     <SlideModal
@@ -119,8 +136,8 @@ const PoolTokenAllowModal = (props: Props) => {
       noClose
       headerProps={({
         centerItems: [{ title: t('poolTogetherContent.title.authorizePoolTogether') }],
-          sideFlex: 0,
-          wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
+        sideFlex: 0,
+        wrapperStyle: { paddingTop: 8, paddingHorizontal: spacing.small },
       })}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
@@ -139,25 +156,55 @@ const PoolTokenAllowModal = (props: Props) => {
         <Paragraph>
           {t('poolTogetherContent.paragraph.allowAutomationWithToken', { token: assetSymbol })}
         </Paragraph>
+        {(isEstimating || !!feeInfo) && (
+          <FeeLabelToggle
+            labelText={t('label.fee')}
+            txFeeInWei={feeInfo?.fee}
+            isLoading={isEstimating}
+            gasToken={feeInfo?.gasToken}
+            hasError={!!errorMessage}
+            showFiatDefault
+          />
+        )}
+        {!!errorMessage && (
+          <BaseText negative style={{ marginTop: spacing.medium }}>
+            {errorMessage}
+          </BaseText>
+        )}
         <Button
           secondary
-          title={isDisabled ? t('label.notEnoughToken', { token: feeToken }) : t('button.enable')}
+          title={t('button.enable')}
           onPress={() => {
             if (modalRef.current) modalRef.current.close();
             onAllow();
           }}
           regularText
-          style={{ marginBottom: 28 }}
+          style={{ marginTop: 28 }}
           textStyle={{ fontSize: fontSizes.medium }}
           block
           disabled={isDisabled}
         />
-        <BaseText secondary>
-          {t('label.feeTokenFiat', { tokenValue: feeDisplayValue, fiatValue: feeInFiat })}
-        </BaseText>
       </ContentWrapper>
     </SlideModal>
   );
 };
 
-export default (withTheme(PoolTokenAllowModal): AbstractComponent<OwnProps>);
+
+const mapStateToProps = ({
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
+}: RootReducerState): $Shape<StateProps> => ({
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+});
+
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default (withTheme(connect(combinedMapStateToProps)(PoolTokenAllowModal)): AbstractComponent<OwnProps>);

@@ -19,13 +19,16 @@
 */
 
 import * as React from 'react';
-import { BigNumber } from 'bignumber.js';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { format as formatDate } from 'date-fns';
 
+// actions
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+
+// components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
@@ -33,27 +36,34 @@ import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableUser, TableF
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Toast from 'components/Toast';
 
+// constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
-import { getCreateStreamFeeAndTransaction } from 'services/sablier';
-import {
-  countDownDHMS,
-  formatUnits,
-} from 'utils/common';
+
+// services
+import { getSablierCreateStreamTransaction } from 'services/sablier';
+
+// utils
+import { countDownDHMS, formatUnits } from 'utils/common';
 import { getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getTimestamp } from 'utils/sablier';
 import { themedColors } from 'utils/themes';
+
+// selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountBalancesSelector } from 'selectors/balances';
 
+// types
 import type { Assets, Asset, Balances } from 'models/Asset';
-import type { RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { GasToken } from 'models/Transaction';
+import type { TransactionFeeInfo } from 'models/Transaction';
+import type { AccountTransaction } from 'services/smartWallet';
+import { ETH } from 'constants/assetsConstants';
 
 
 type Props = {
@@ -61,16 +71,17 @@ type Props = {
   activeAccountAddress: string,
   assets: Assets,
   supportedAssets: Asset[],
-  useGasToken: boolean,
   ensRegistry: EnsRegistry,
   balances: Balances,
-};
-
-type State = {
-  isFetchingTransactionFee: boolean,
-  txFeeInWei: ?BigNumber,
-  gasToken: ?GasToken,
-  transactionPayload: ?Object,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  estimateTransaction: (
+    receiver: string,
+    data: string,
+    sequentialTransactions: ?AccountTransaction[],
+  ) => void,
+  resetEstimateTransaction: () => void,
 };
 
 const RootContainer = styled.View`
@@ -82,48 +93,66 @@ const ClockIcon = styled(Icon)`
   font-size: 14px;
 `;
 
-class NewStreamReview extends React.Component<Props, State> {
-  state = {
-    isFetchingTransactionFee: true,
-    txFeeInWei: 0,
-    gasToken: null,
-    transactionPayload: null,
-  }
+class NewStreamReview extends React.Component<Props> {
+  transactionPayload: ?Object;
+  asset: Asset;
 
   async componentDidMount() {
     const {
-      navigation, activeAccountAddress, assets, supportedAssets, useGasToken,
+      navigation,
+      resetEstimateTransaction,
+      estimateTransaction,
+      activeAccountAddress,
     } = this.props;
+
+    resetEstimateTransaction();
+
     const {
-      startDate, endDate, receiverAddress, assetValue, assetSymbol,
+      startDate,
+      endDate,
+      receiverAddress,
+      assetValue,
     } = navigation.state.params;
 
-    const assetData = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
-
-    const {
-      txFeeInWei,
-      gasToken,
-      transactionPayload,
-    } = await getCreateStreamFeeAndTransaction(
+    this.transactionPayload = await getSablierCreateStreamTransaction(
       activeAccountAddress,
       receiverAddress,
       assetValue,
-      assetData,
+      this.getAsset(),
       getTimestamp(startDate),
       getTimestamp(endDate),
-      useGasToken,
     );
 
-    this.setState({
-      isFetchingTransactionFee: false,
-      gasToken,
-      transactionPayload,
-      txFeeInWei,
-    });
+    const { to, data, sequentialSmartWalletTransactions } = this.transactionPayload;
+
+    estimateTransaction(to, data, sequentialSmartWalletTransactions);
+  }
+
+  getAsset = () => {
+    const { assets, supportedAssets, navigation } = this.props;
+    const { assetSymbol } = navigation.state.params;
+    return getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
   }
 
   onSubmit = () => {
-    const { transactionPayload } = this.state;
+    const { feeInfo } = this.props;
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotCreateStream'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { fee: txFeeInWei, gasToken } = feeInfo;
+
+    const transactionPayload = {
+      ...this.transactionPayload,
+      txFeeInWei,
+      gasToken,
+    };
 
     this.props.navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
       transactionPayload,
@@ -134,28 +163,42 @@ class NewStreamReview extends React.Component<Props, State> {
 
   render() {
     const {
-      navigation, ensRegistry, balances, assets, supportedAssets,
+      navigation,
+      ensRegistry,
+      balances,
+      isEstimating,
+      feeInfo,
+      estimateErrorMessage,
     } = this.props;
-    const { isFetchingTransactionFee, txFeeInWei, gasToken } = this.state;
+
+    const asset = this.getAsset();
     const {
       assetSymbol, assetValue, receiverAddress, startDate, endDate,
     } = navigation.state.params;
-    const assetData = getAssetData(getAssetsAsList(assets), supportedAssets, assetSymbol);
     const { days, hours, minutes } = countDownDHMS(endDate.getTime() - startDate.getTime());
 
-    const startStreamButtonTitle = isFetchingTransactionFee
+    const startStreamButtonTitle = isEstimating
       ? t('label.gettingFee')
       : t('sablierContent.button.startStream');
-    const isEnoughForFee = !!txFeeInWei && isEnoughBalanceForTransactionFee(balances, {
-      txFeeInWei,
-      amount: assetValue,
-      decimals: assetData?.decimals,
-      symbol: assetSymbol,
-      gasToken,
-    });
-    const isStartStreamButtonDisabled = !!isFetchingTransactionFee
-    || !isEnoughForFee
-    || (!!txFeeInWei && !txFeeInWei.gt(0));
+
+    let notEnoughForFee;
+    if (feeInfo) {
+      notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+        txFeeInWei: feeInfo?.fee,
+        amount: assetValue,
+        decimals: asset.decimals,
+        symbol: assetSymbol,
+        gasToken: feeInfo?.gasToken,
+      });
+    }
+
+    const errorMessage = notEnoughForFee
+      ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+      : estimateErrorMessage;
+
+    const isStartStreamButtonDisabled = isEstimating
+      || !!errorMessage
+      || !feeInfo;
 
     return (
       <ContainerWithHeader
@@ -167,7 +210,7 @@ class NewStreamReview extends React.Component<Props, State> {
           <TokenReviewSummary
             assetSymbol={assetSymbol}
             text={t('sablierContent.label.youAreStreaming')}
-            amount={formatUnits(assetValue, assetData.decimals)}
+            amount={formatUnits(assetValue, asset.decimals)}
           />
           <Spacing h={36} />
           <Table title={t('sablierContent.label.streamDetails')}>
@@ -192,7 +235,7 @@ class NewStreamReview extends React.Component<Props, State> {
           <Table title={t('transactions.label.fees')}>
             <TableRow>
               <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
             </TableRow>
             <TableRow>
               <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -200,7 +243,7 @@ class NewStreamReview extends React.Component<Props, State> {
             </TableRow>
             <TableRow>
               <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-              <TableFee txFeeInWei={txFeeInWei} gasToken={gasToken} />
+              <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
             </TableRow>
           </Table>
           <Spacing h={50} />
@@ -218,15 +261,18 @@ class NewStreamReview extends React.Component<Props, State> {
 const mapStateToProps = ({
   assets: { supportedAssets },
   ensRegistry: { data: ensRegistry },
+  transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   ensRegistry,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
   assets: accountAssetsSelector,
-  useGasToken: useGasTokenSelector,
   balances: accountBalancesSelector,
 });
 
@@ -235,4 +281,13 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-export default connect(combinedMapStateToProps)(NewStreamReview);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  estimateTransaction: (
+    receiver: string,
+    data: string,
+    sequentialTransactions: ?AccountTransaction[],
+  ) => dispatch(estimateTransactionAction(receiver, 0, data, null, sequentialTransactions)),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
+});
+
+export default connect(combinedMapStateToProps, mapDispatchToProps)(NewStreamReview);

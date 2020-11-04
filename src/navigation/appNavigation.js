@@ -349,16 +349,6 @@ const servicesFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
-  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
-  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
-  [SABLIER_STREAMS]: SablierStreamsScreen,
-  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
-  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
-  [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
-  [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
 }, StackNavigatorConfig);
 
@@ -393,13 +383,12 @@ const homeFlow = createStackNavigator({
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
   [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
   [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -657,6 +646,8 @@ const poolTogetherFlow = createStackNavigator({
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
