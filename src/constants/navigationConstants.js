@@ -108,6 +108,7 @@ export const HOME = 'HOME';
 export const HOME_TAB = 'HOME_TAB';
 
 // EXCHANGE FLOW
+export const EXCHANGE_FLOW = 'EXCHANGE_FLOW';
 export const EXCHANGE = 'EXCHANGE';
 export const EXCHANGE_CONFIRM = 'EXCHANGE_CONFIRM';
 export const EXCHANGE_INFO = 'EXCHANGE_INFO';
