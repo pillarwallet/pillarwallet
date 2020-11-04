@@ -34,9 +34,19 @@ import {
 } from 'constants/exchangeConstants';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
-function mockStore({ state, pillarSdk }) {
-  return configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue])(state);
-}
+const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
+
+const storeState = {
+  exchange: {
+    data: { offers: [] },
+    exchangeSupportedAssets: [
+      { symbol: 'ETH', isSynthetixAsset: false },
+      { symbol: 'sUSD', isSynthetixAsset: true },
+      { symbol: 'sETH', isSynthetixAsset: true },
+    ],
+  },
+  accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.SMART_WALLET }] },
+};
 
 const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => ({
   type: SET_EXCHANGE_SEARCH_REQUEST,
@@ -50,22 +60,10 @@ const getAddOfferAction = (provider: string) => ({
 
 describe('Exchange actions test', () => {
   let store;
-  beforeEach(() => {
-    store = mockStore({
-      state: {
-        exchange: {
-          data: { offers: [] },
-          exchangeSupportedAssets: [
-            { symbol: 'ETH', isSynthetixAsset: false },
-            { symbol: 'sUSD', isSynthetixAsset: true },
-            { symbol: 'sETH', isSynthetixAsset: true },
-          ],
-        },
-        accounts: { data: [{ id: 's', walletId: 'b', type: ACCOUNT_TYPES.SMART_WALLET }] },
-      },
-    });
-  });
   describe('Creating offers', () => {
+    beforeEach(() => {
+      store = mockStore(storeState);
+    });
     it('Creates Synthetix offers when needed', async () => {
       await store.dispatch(searchOffersAction('sETH', 'sUSD', 10));
       const actions = store.getActions();
@@ -90,6 +88,9 @@ describe('Exchange actions test', () => {
     });
   });
   describe('Taking offers', () => {
+    beforeEach(() => {
+      store = mockStore(storeState);
+    });
     const commonArgs = [mockSupportedAssets[1], 10, PROVIDER_UNISWAP, 'trackId'];
     it('Creates an exchange transaction object for valid data', async () => {
       let txData;
@@ -98,6 +99,7 @@ describe('Exchange actions test', () => {
     });
     it('Does not create an exchange transaction object for invalid data', async () => {
       let txData;
+      // $FlowFixMe
       await store.dispatch(takeOfferAction(null, ...commonArgs, (val) => { txData = val; }));
       expect(isEmpty(txData)).toBeTruthy();
     });
