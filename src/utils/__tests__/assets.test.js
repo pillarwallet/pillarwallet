@@ -22,8 +22,10 @@ import {
   getBalance,
   balanceInEth,
   getRate,
+  isSynthetixTx,
 } from 'utils/assets';
 import type { Balances, Rates } from 'models/Asset';
+import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 describe('Assets utils', () => {
   const ETH_GBP = 10;
@@ -163,6 +165,28 @@ describe('Assets utils', () => {
           });
         });
       });
+    });
+
+    describe('recognize Synthetix transactions', () => {
+      const ETH = mockSupportedAssets[0];
+      const SNX = {
+        ...ETH,
+        symbol: 'SNX',
+        isSynthetixAsset: true,
+      };
+      const sUSD = {
+        ...ETH,
+        symbol: 'sUSD',
+        isSynthetixAsset: true,
+      };
+      const sETH = {
+        ...ETH,
+        symbol: 'sETH',
+        isSynthetixAsset: true,
+      };
+      expect(isSynthetixTx(SNX, sUSD)).toBeFalsy();
+      expect(isSynthetixTx(ETH, sUSD)).toBeFalsy();
+      expect(isSynthetixTx(sETH, sUSD)).toBeTruthy();
     });
   });
 });

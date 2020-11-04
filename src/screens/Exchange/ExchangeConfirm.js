@@ -196,8 +196,8 @@ const ExchangeConfirmScreen = ({
       transactionPayload.extra = {
         allowance: {
           provider,
-          fromAssetCode: fromAsset.code,
-          toAssetCode: toAsset.code,
+          fromAssetCode: fromAsset.code || fromAsset.symbol,
+          toAssetCode: toAsset.code || fromAsset.symbol,
         },
       };
     }

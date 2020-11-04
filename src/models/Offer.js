@@ -25,6 +25,7 @@ type ExchangeOfferAsset = {
   code: string,
   decimals: string,
   address: string,
+  symbol: string,
 }
 
 export type Offer = {

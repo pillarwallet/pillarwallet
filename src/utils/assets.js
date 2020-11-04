@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS, SNX } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -310,3 +310,8 @@ export const mapCollectibleToAssetData = ({
   icon: icon || '',
   tokenType: COLLECTIBLES,
 });
+
+const isSynthetixAsset = (asset: Asset): boolean => !!asset.isSynthetixAsset && asset.symbol !== SNX;
+
+export const isSynthetixTx = (fromAsset: Asset, toAsset: Asset): boolean =>
+  isSynthetixAsset(fromAsset) && isSynthetixAsset(toAsset);

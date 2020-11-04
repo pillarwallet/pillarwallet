@@ -38,13 +38,14 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
+  PROVIDER_SYNTHETIX,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
-import { getAssetsAsList, getAssetData } from 'utils/assets';
+import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -54,14 +55,15 @@ import {
   getUniswapOffer, createUniswapOrder, createUniswapAllowanceTx, fetchUniswapSupportedTokens,
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
+import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } from 'services/synthetix';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 // actions
 import { saveDbAction } from './dbActions';
-
 
 export const takeOfferAction = (
   fromAsset: Asset,
@@ -83,6 +85,8 @@ export const takeOfferAction = (
       order = await createUniswapOrder(fromAsset, toAsset, fromAmount, clientAddress);
     } else if (provider === PROVIDER_1INCH) {
       order = await create1inchOrder(fromAsset, toAsset, fromAmount, clientAddress);
+    } else if (provider === PROVIDER_SYNTHETIX) {
+      order = await createSynthetixOrder(fromAsset, toAsset, fromAmount, clientAddress);
     }
 
     if (!fromAsset || !toAsset || !order) {
@@ -125,6 +129,13 @@ const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number,
   };
 };
 
+const estimateSynthetixTxAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+  return async (dispatch: Dispatch) => {
+    const offer = await getSynthetixOffer(fromAsset, toAsset, fromAmount, clientAddress);
+    if (offer) dispatch({ type: ADD_OFFER, payload: offer });
+  };
+};
+
 export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -151,8 +162,12 @@ export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, f
 
     const clientAddress = toChecksumAddress(getSmartWalletAddress(accounts));
 
-    dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));
-    dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, clientAddress));
+    if (isSynthetixTx(fromAsset, toAsset)) {
+      dispatch(estimateSynthetixTxAction(fromAsset, toAsset, fromAmount, clientAddress));
+    } else {
+      dispatch(search1inchAction(fromAsset, toAsset, fromAmount, clientAddress));
+      dispatch(searchUniswapAction(fromAsset, toAsset, fromAmount, clientAddress));
+    }
   };
 };
 
@@ -175,11 +190,13 @@ export const setTokenAllowanceAction = (
     } = getState();
 
     const clientAddress = getSmartWalletAddress(accounts);
-    let txData;
+    let txData: ?AllowanceTransaction = null;
     if (provider === PROVIDER_UNISWAP) {
       txData = await createUniswapAllowanceTx(fromAssetAddress, clientAddress || '');
     } else if (provider === PROVIDER_1INCH) {
       txData = await create1inchAllowanceTx(fromAssetAddress, clientAddress || '');
+    } else if (provider === PROVIDER_SYNTHETIX) {
+      txData = await createSynthetixAllowanceTx(fromAssetAddress, clientAddress || '');
     }
 
     if (!txData) {
@@ -326,12 +343,13 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
-    const fetchSuccess = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
+    const fetchSuccess: boolean = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
 
     const fetchedAssetsSymbols: string[] = fetchSuccess ? uniq(assetsSymbols[0].concat(assetsSymbols[1])) : [];
 
     const exchangeSupportedAssets = fetchSuccess
-      ? supportedAssets.filter(({ symbol }) => fetchedAssetsSymbols.includes(symbol))
+      ? supportedAssets.filter(({ symbol, isSynthetixAsset }) =>
+        isSynthetixAsset || fetchedAssetsSymbols.includes(symbol))
       : [];
 
     dispatch({

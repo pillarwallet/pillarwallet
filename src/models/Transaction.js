@@ -183,3 +183,10 @@ export type TransactionFeeInfo = {
   fee: BigNumber,
   gasToken?: ?GasToken,
 };
+
+export type AllowanceTransaction = {
+  nonce: string,
+  to: string,
+  chainId: string,
+  data: string,
+};
