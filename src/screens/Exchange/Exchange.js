@@ -44,7 +44,7 @@ import {
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
-import { ETH, PLR, BTC } from 'constants/assetsConstants';
+import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
@@ -139,11 +139,16 @@ class ExchangeScreen extends React.Component<Props, State> {
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
   options: ExchangeOptions;
+  wbtcCafeOptions: Option[]
 
   constructor(props: Props) {
     super(props);
     this.listeners = [];
     this.options = this.provideOptions();
+    this.wbtcCafeOptions = [
+      this.options.fromOptions.find(a => a.value === BTC),
+      this.options.toOptions.find(a => a.value === WBTC),
+    ];
     const { fromAsset, toAsset } = this.getInitialAssets();
 
     this.state = {
@@ -261,14 +266,16 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   getFromInput = () => {
-    const { fromAsset, fromAmount } = this.state;
+    const { fromAsset, fromAmount, toAsset } = this.state;
     const { fromOptions, horizontalOptions } = this.options;
 
     return (
       <>
         <ValueInput
           assetData={fromAsset}
-          onAssetDataChange={(assetData) => this.setState({ fromAsset: assetData })}
+          onAssetDataChange={(assetData) => this.setState({
+            fromAsset: assetData, toAsset: assetData.symbol === BTC ? this.wbtcCafeOptions[1] : toAsset,
+          })}
           value={fromAmount}
           onValueChange={this.handleFromInputChange}
           selectorOptionsTitle={t('label.sell')}
@@ -278,6 +285,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           getInputRef={ref => { this.fromInputRef = ref; }}
           onBlur={this.blurFromInput}
           onFormValid={valid => this.setState({ isFormValid: valid })}
+          hideMaxSend={fromAsset.symbol === BTC}
         />
         {fromAsset.symbol === BTC && <WBTCCafeAddress amount={fromAmount} />}
       </>
@@ -389,6 +397,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       showEmptyMessage,
       isFormValid,
       fromAsset,
+      wbtcData,
     } = this.state;
 
     const displayWbtcCafe = isWbtcCafe(fromAsset);
@@ -419,7 +428,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           {assetsLoaded &&
           <FormWrapper>
             {this.getFromInput()}
-            <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
+            <ExchangeSwapIcon onPress={this.handleBuySellSwap} disabled={displayWbtcCafe} />
             {this.getToInput()}
           </FormWrapper>}
           {!!disableNonFiatExchange &&
@@ -428,7 +437,8 @@ class ExchangeScreen extends React.Component<Props, State> {
               buttonTitle={t('smartWalletContent.exchangeActivation.button')}
             />
           }
-          {displayWbtcCafe && <WBTCCafeInfo />}
+          {displayWbtcCafe &&
+            <WBTCCafeInfo wbtcData={wbtcData} fromAsset={this.wbtcCafeOptions[0]} toAsset={this.wbtcCafeOptions[1]} />}
           {!!isSubmitted && isFormValid &&
           <ExchangeOffers
             fromAmount={fromAmount}

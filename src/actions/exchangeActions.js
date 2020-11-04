@@ -38,11 +38,8 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
-<<<<<<< HEAD
   PROVIDER_SYNTHETIX,
-=======
   SET_WBTC_FEES,
->>>>>>> 4ffebac4402893252366318ab6e5eb4317470470
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -383,8 +380,8 @@ export const getWbtcFeesAction = () => {
           type: SET_WBTC_FEES,
           payload: res.result,
         });
-        dispatch(saveDbAction('wbtcFees', { wbtcFees: res.result }, true));
+        // dispatch(saveDbAction('wbtcFees', { wbtcFees: res.result }, true));
       })
-      .catch(e => reportLog('Failed to fetch WBTC fees', e));
+      .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
   };
 };

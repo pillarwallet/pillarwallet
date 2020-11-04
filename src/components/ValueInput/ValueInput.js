@@ -38,10 +38,10 @@ import Modal from 'components/Modal';
 import { formatAmount, isValidNumber } from 'utils/common';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
-import { calculateMaxAmount } from 'utils/assets';
+import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
-import { COLLECTIBLES, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
-import { getBalanceInFiat, getFormattedBalanceInFiat, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
+import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
@@ -242,7 +242,7 @@ export const ValueInputComponent = (props: Props) => {
     onFocus: onInputFocus,
   };
 
-  const errorMessage = disabled ? null : getErrorMessage(value, maxValue, assetSymbol);
+  const errorMessage = disabled || assetData?.symbol === BTC ? null : getErrorMessage(value, maxValue, assetSymbol);
 
   React.useEffect(() => {
     if (onFormValid) {

@@ -94,11 +94,7 @@ const ValueInputHeader = (props: Props) => {
   const { genericToken } = images(theme);
   return (
     <Wrapper>
-<<<<<<< HEAD:src/components/ValueInput/ValueInputHeader.js
-      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection}>
-=======
-      <SideWrapper onPress={onAssetPress} disabled={!onAssetPress} >
->>>>>>> 4ffebac4402893252366318ab6e5eb4317470470:src/components/TextInputWithAssetSelector/TextInputWithAssetSelectorHeader.js
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress} >
         <Image
           key={id}
           source={optionImageSource}
