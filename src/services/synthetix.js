@@ -60,7 +60,7 @@ export const createSynthetixOrder = async (
       ],
     );
 
-    if (!data) throw new Error();
+    if (!data) throw new Error('Failed to encode transaction data');
 
     const txCount = await ethProvider.getTransactionCount(clientSendAddress);
 
@@ -82,10 +82,15 @@ export const createSynthetixOrder = async (
 };
 
 const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: string): Promise<boolean> => {
-  const assetContract =
-    new Contract(fromTokenAddress, ERC20_CONTRACT_ABI, getEthereumProvider(getEnv().NETWORK_PROVIDER));
-  const allowance = await assetContract.allowance(clientAddress, getEnv().SYNTHETIX_EXCHANGE_ADDRESS);
-  return allowance.gt(0);
+  try {
+    const assetContract =
+      new Contract(fromTokenAddress, ERC20_CONTRACT_ABI, getEthereumProvider(getEnv().NETWORK_PROVIDER));
+    const allowance = await assetContract.allowance(clientAddress, getEnv().SYNTHETIX_EXCHANGE_ADDRESS);
+    return allowance.gt(0);
+  } catch (e) {
+    reportOrWarn(`Failed to fetch Synthetix allowance for token ${fromTokenAddress}`, e, 'warning');
+    return false;
+  }
 };
 
 export const getSynthetixOffer = async (

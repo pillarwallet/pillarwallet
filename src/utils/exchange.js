@@ -125,7 +125,7 @@ export const createAllowanceTx = async (
   contractAddress: string,
 ): Promise<AllowanceTransaction | null> => {
   if (!clientAddress) {
-    reportOrWarn('Unable to set allowance', null, 'error');
+    reportOrWarn('Unable to set allowance, no client address provided', null, 'error');
     return null;
   }
   try {
