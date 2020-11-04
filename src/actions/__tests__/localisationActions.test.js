@@ -507,7 +507,7 @@ describe('Localisation actions', () => {
           session: { data: { sessionLanguageCode: '', isOnline: true } },
           cache: {
             cachedUrls: {
-              [`${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
+              [`${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`]:
                 {
                   status: CACHE_STATUS.DONE,
                   localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
@@ -522,7 +522,17 @@ describe('Localisation actions', () => {
         await store.dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
         const actualActions = store.getActions();
         expect(actualActions).toEqual([
-          ...expectedExternalFrTranslationsFetchActions,
+          {
+            type: CACHE_STATUS.PENDING,
+            payload: { url: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json` },
+          },
+          {
+            type: CACHE_STATUS.DONE,
+            payload: {
+              url: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
+              localPath: `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`,
+            },
+          },
           ...expectedExternalTranslationInitSessionActions,
         ]);
         expect(i18n.language).toEqual('fr');

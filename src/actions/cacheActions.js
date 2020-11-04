@@ -27,10 +27,7 @@ import { saveDbAction } from './dbActions';
 
 const canStartCaching = (urlAsKey: string, cachedUrls: CachedUrls) => {
   const { status } = cachedUrls[urlAsKey] || {};
-  return !status // haven't yet cached it
-    || status !== CACHE_STATUS.PENDING // not being cached
-    || status !== CACHE_STATUS.DONE // not already cached
-    || status === CACHE_STATUS.FAILED; // allow to retry if failed
+  return !status || status === CACHE_STATUS.FAILED;
 };
 
 const finishCachingAction = (url: string, path: string) => {
