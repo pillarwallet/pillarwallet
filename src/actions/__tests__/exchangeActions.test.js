@@ -18,12 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import isEmpty from 'lodash.isempty';
 import configureMockStore from 'redux-mock-store';
 import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import { searchOffersAction } from 'actions/exchangeActions';
+import { searchOffersAction, takeOfferAction } from 'actions/exchangeActions';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
   ADD_OFFER,
@@ -31,6 +32,7 @@ import {
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
 } from 'constants/exchangeConstants';
+import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 function mockStore({ state, pillarSdk }) {
   return configureMockStore([thunk.withExtraArgument(pillarSdk), ReduxAsyncQueue])(state);
@@ -47,24 +49,23 @@ const getAddOfferAction = (provider: string) => ({
 });
 
 describe('Exchange actions test', () => {
-  describe('Creating offers', () => {
-    let store;
-    beforeEach(() => {
-      store = mockStore({
-        state: {
-          exchange: {
-            data: { offers: [] },
-            exchangeSupportedAssets: [
-              { symbol: 'ETH', isSynthetixAsset: false },
-              { symbol: 'sUSD', isSynthetixAsset: true },
-              { symbol: 'sETH', isSynthetixAsset: true },
-            ],
-          },
-          accounts: { data: [{ id: 's', walletId: 'b', type: ACCOUNT_TYPES.SMART_WALLET }] },
+  let store;
+  beforeEach(() => {
+    store = mockStore({
+      state: {
+        exchange: {
+          data: { offers: [] },
+          exchangeSupportedAssets: [
+            { symbol: 'ETH', isSynthetixAsset: false },
+            { symbol: 'sUSD', isSynthetixAsset: true },
+            { symbol: 'sETH', isSynthetixAsset: true },
+          ],
         },
-      });
+        accounts: { data: [{ id: 's', walletId: 'b', type: ACCOUNT_TYPES.SMART_WALLET }] },
+      },
     });
-
+  });
+  describe('Creating offers', () => {
     it('Creates Synthetix offers when needed', async () => {
       await store.dispatch(searchOffersAction('sETH', 'sUSD', 10));
       const actions = store.getActions();
@@ -86,6 +87,19 @@ describe('Exchange actions test', () => {
       const actions = store.getActions();
       const expectedActions = [getSearchRequestAction('invalidToken', 'sUSD', 10)];
       expect(actions).toEqual(expectedActions);
+    });
+  });
+  describe('Taking offers', () => {
+    const commonArgs = [mockSupportedAssets[1], 10, PROVIDER_UNISWAP, 'trackId'];
+    it('Creates an exchange transaction object for valid data', async () => {
+      let txData;
+      await store.dispatch(takeOfferAction(mockSupportedAssets[0], ...commonArgs, (val) => { txData = val; }));
+      expect(isEmpty(txData)).toBeFalsy();
+    });
+    it('Does not create an exchange transaction object for invalid data', async () => {
+      let txData;
+      await store.dispatch(takeOfferAction(null, ...commonArgs, (val) => { txData = val; }));
+      expect(isEmpty(txData)).toBeTruthy();
     });
   });
 });

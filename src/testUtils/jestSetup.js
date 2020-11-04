@@ -398,16 +398,19 @@ jest.setMock('services/synthetix', {
   getSynthetixOffer: () => Promise.resolve({
     provider: PROVIDER_SYNTHETIX,
   }),
+  createSynthetixOrder: () => Promise.resolve({}),
 });
 
 jest.setMock('services/uniswap', {
   getUniswapOffer: () => Promise.resolve({
     provider: PROVIDER_UNISWAP,
   }),
+  createUniswapOrder: () => Promise.resolve({}),
 });
 
 jest.setMock('services/1inch', {
   get1inchOffer: () => Promise.resolve({
     provider: PROVIDER_1INCH,
   }),
+  create1inchOrder: () => Promise.resolve({}),
 });
