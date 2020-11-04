@@ -36,6 +36,7 @@ import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 import envConfigMock from './envConfigMock';
 import localeConfigMock from './localeConfigMock';
+import { PROVIDER_1INCH, PROVIDER_SYNTHETIX, PROVIDER_UNISWAP } from '../constants/exchangeConstants';
 
 process.env.IS_TEST = 'TEST';
 
@@ -391,4 +392,25 @@ jest.setMock('configs/localeConfig', localeConfigMock);
 jest.setMock('services/coinGecko', {
   getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
   getCoinGeckoEtherPrice: () => Promise.resolve(mockEtherExchangeRates),
+});
+
+jest.setMock('services/synthetix', {
+  getSynthetixOffer: () => Promise.resolve({
+    provider: PROVIDER_SYNTHETIX,
+  }),
+  createSynthetixOrder: () => Promise.resolve({}),
+});
+
+jest.setMock('services/uniswap', {
+  getUniswapOffer: () => Promise.resolve({
+    provider: PROVIDER_UNISWAP,
+  }),
+  createUniswapOrder: () => Promise.resolve({}),
+});
+
+jest.setMock('services/1inch', {
+  get1inchOffer: () => Promise.resolve({
+    provider: PROVIDER_1INCH,
+  }),
+  create1inchOrder: () => Promise.resolve({}),
 });
