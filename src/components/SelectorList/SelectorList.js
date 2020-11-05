@@ -62,7 +62,7 @@ const ItemWrapper = styled.TouchableOpacity`
   padding: 4px 10px;
   border-radius: 4px;
   align-items: center;
-  ${({ isSelected, theme }) => isSelected && `background-color: ${theme.colors.card};`}
+  ${({ isSelected, theme }) => isSelected && `background-color: ${theme.colors.basic050};`}
   ${({ width }) => width && `width: ${width}px;`}
 `;
 
