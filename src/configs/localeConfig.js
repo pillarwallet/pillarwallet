@@ -43,7 +43,7 @@ export default {
   // pairs of language code and language name in native language
   supportedLanguages: {
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
-    am: 'Amharic',
+    am: 'አማርኛ',
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],

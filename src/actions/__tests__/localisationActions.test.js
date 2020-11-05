@@ -239,7 +239,7 @@ describe('Localisation actions', () => {
     });
 
     it('should pick users\' preferred language if it\'s supported and no language is provided', async () => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amharic', fr: 'Française' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
       localeConfig.localTranslations = {
         en: { common: {}, auth: {} }, am: { common: {}, auth: {} }, fr: { common: {}, auth: {} },
       };
@@ -263,7 +263,7 @@ describe('Localisation actions', () => {
     });
 
     it('should pick default language if user\'s preferred language is not supported', async () => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amharic' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
       localeConfig.localTranslations = { en: { common: {}, auth: {} }, am: { common: {}, auth: {} } };
 
       const store = mockStore({
@@ -292,7 +292,7 @@ describe('Localisation actions', () => {
     });
 
     it('should pick default language if user\'s previously selected language is no longer supported', async () => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amharic' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
       localeConfig.localTranslations = { en: { common: {}, auth: {} }, am: { common: {}, auth: {} } };
 
       const store = mockStore({
@@ -328,7 +328,7 @@ describe('Localisation actions', () => {
 
   describe('Fallback language', () => {
     beforeEach(() => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amharic', fr: 'Française' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION, onlyLocal: ONLY_LOCAL_TRANSLATION }, auth: {} },
         am: { common: {}, auth: {} },
@@ -410,7 +410,7 @@ describe('Localisation actions', () => {
 
     it('should use local EN as default language\'s translations if translations are not enabled', async () => {
       localeConfig.isEnabled = false;
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amheric' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
       firebaseRemoteConfig.getString = () => '';
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: '' } } },
@@ -427,7 +427,7 @@ describe('Localisation actions', () => {
       beforeEach(() => {
         localeConfig.supportedLanguages = {
           en: 'English',
-          am: 'Amharic',
+          am: 'አማርኛ',
           fr: 'Française',
           [LNG_LOCAL_ONLY]: 'Lietuvių',
         };
@@ -590,7 +590,7 @@ describe('Localisation actions', () => {
 
   describe('Change language', () => {
     beforeEach(() => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amheric', fr: 'Française' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: { test: EN_LOCAL_TEST_TRANSLATION } },
         am: { common: { test: AM_LOCAL_TEST_TRANSLATION }, auth: { test: AM_LOCAL_TEST_TRANSLATION } },
@@ -632,7 +632,7 @@ describe('Localisation actions', () => {
 
     it('should update fallback language on language change if it\'s LOCAL and baseUrl is provided', async () => {
       localeConfig.isEnabled = true;
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amharic', fr: 'Française' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
       localeConfig.localTranslations = {
         en:
           {
@@ -674,7 +674,7 @@ describe('Localisation actions', () => {
 
     it('should not change language if it\'s not supported', async () => {
       localeConfig.isEnabled = true;
-      localeConfig.supportedLanguages = { en: 'English', am: 'Amharic' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: 'en' } } },
         session: { data: {} },
