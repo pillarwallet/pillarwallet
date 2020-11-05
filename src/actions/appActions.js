@@ -72,7 +72,7 @@ import { SET_CACHED_URLS } from 'constants/cacheConstants';
 import { getWalletFromStorage } from 'utils/wallet';
 
 // actions
-import { getTranslationsResourcesAndSetLanguageOnAppOpen } from 'actions/localisationActions';
+import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
 
 
 const storage = Storage.getInstance('db');
@@ -231,7 +231,7 @@ export const initAppAndRedirectAction = () => {
     const { cachedUrls = {} } = get(storageData, 'cachedUrls', {});
     dispatch({ type: SET_CACHED_URLS, payload: cachedUrls });
 
-    await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpen());
+    await dispatch(getTranslationsResourcesAndSetLanguageOnAppOpenAction());
 
     navigate(NavigationActions.navigate(navAction));
 

@@ -199,7 +199,8 @@
     "set": "Set",
     "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline",
-    "payWithPLR": "Pay with PLR"
+    "payWithPLR": "Pay with PLR",
+    "notSet": "Not set"
   },
 
   "button": {

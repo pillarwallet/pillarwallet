@@ -267,15 +267,9 @@ export const toggleSablierAction = () => {
   };
 };
 
-export const setAppLanguageAction = (language: string, version: ?string) => {
+export const setAppLanguageAction = (language: string) => {
   return (dispatch: Dispatch) => {
-    const localisationSettings = {
-      localisation:
-        {
-          activeLngCode: language,
-          translationVersion: version,
-        },
-    };
+    const localisationSettings = { localisation: { activeLngCode: language } };
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: localisationSettings });
     dispatch(saveDbAction('app_settings', { appSettings: localisationSettings }));

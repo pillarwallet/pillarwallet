@@ -37,6 +37,6 @@ export const buildEnvironment = {
 export const devOptions = {
   SHOW_THEME_TOGGLE: undefined,
   SHOW_ONLY_STORYBOOK: undefined,
-  SHOW_LANG_TOGGLE: undefined,
+  SHOW_LANG_TOGGLE: 'true',
   DEFAULT_PIN: undefined,
 };

@@ -25,4 +25,5 @@ export type SessionData = {|
   translationsInitialised: boolean,
   fallbackLanguageVersion: ?string,
   sessionLanguageCode: ?string,
+  sessionLanguageVersion: ?string,
 |};
