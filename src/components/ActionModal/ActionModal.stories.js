@@ -63,5 +63,5 @@ storiesOf('ActionModal', module)
   .addDecorator(ModalWrapperDecorator)
   .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <ActionModal items={items} isVisible onModalClose={() => {}} storybook />
+    <ActionModal items={items} storybook />
   ));

@@ -123,6 +123,7 @@ const KeyBasedAssetTransferConfirm = ({
             labelText={t('label.fee')}
             txFeeInWei={totalTransferFeeWeiBN}
             showFiatDefault={!notEnoughFee}
+            hasError={!!notEnoughFee}
           />
           {!!notEnoughFee && <NotEnoughFee negative>{t('error.notEnoughTokenForFee', { token: ETH })}</NotEnoughFee>}
           <Button

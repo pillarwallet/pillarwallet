@@ -18,8 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
-import { Platform } from 'react-native';
+import React, { useCallback } from 'react';
 import { connect } from 'react-redux';
 import { withNavigation } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
@@ -29,15 +28,12 @@ import t from 'translations/translate';
 // components
 import styled from 'styled-components/native';
 import CircleButton from 'components/CircleButton';
-import ReceiveModal from 'screens/Asset/ReceiveModal';
-import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
+import Modal from 'components/Modal';
+import AddFundsModal from 'components/AddFundsModal';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { SEND_TOKEN_FROM_HOME_FLOW, EXCHANGE, SERVICES } from 'constants/navigationConstants';
-
-// actions
-import { goToInvitationFlowAction } from 'actions/referralsActions';
+import { SEND_TOKEN_FROM_HOME_FLOW, EXCHANGE } from 'constants/navigationConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -49,7 +45,7 @@ import { getSmartWalletStatus } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 
 // models, types
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { Balances, Rates } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { SmartWalletStatus } from 'models/SmartWalletStatus';
@@ -62,8 +58,6 @@ type Props = {
   baseFiatCurrency: ?string,
   activeAccountAddress: string,
   activeAccountBalances: Balances,
-  goToInvitationFlow: () => void,
-  rewardActive?: boolean,
   rates: Rates,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
@@ -83,55 +77,15 @@ const ActionButtons = ({
   activeAccountAddress,
   activeAccountBalances,
   baseFiatCurrency,
-  rewardActive,
-  goToInvitationFlow,
   rates,
   accounts,
   smartWalletState,
 }: Props) => {
-  const [receiveAddress, setReceiveAddress] = useState('');
-  const [visibleAddFundsModal, setVisibleAddFundsModal] = useState(false);
-
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const addFundsModalOptions = [
-    {
-      key: 'buy',
-      label: Platform.OS === 'ios' ? t('button.buyWithCardOrApplePay') : t('button.buyWithCard'),
-      iconName: 'wallet',
-      onPress: () => navigation.navigate(SERVICES, { fromAssetCode: fiatCurrency }),
-    },
-    {
-      key: 'receive',
-      label: t('button.sendFromAnotherWallet'),
-      iconName: 'qrDetailed',
-      onPress: () => setReceiveAddress(activeAccountAddress),
-    },
-    {
-      key: 'exchange',
-      label: t('button.exchange'),
-      iconName: 'flip',
-      onPress: () => navigation.navigate(EXCHANGE),
-    },
-    {
-      key: 'invite',
-      label: t('button.inviteAndGetTokens'),
-      iconName: 'present',
-      hide: !rewardActive,
-      onPress: goToInvitationFlow,
-    },
-  ];
-
-  const closeAddFundsModal = (callback?: () => void) => {
-    setVisibleAddFundsModal(false);
-    // TODO: do we really need this callback here?
-    if (callback) {
-      const timer = setTimeout(() => {
-        callback();
-        clearTimeout(timer);
-      }, 500);
-    }
-  };
+  const openAddFundsModal = useCallback(() => {
+    Modal.open(() => <AddFundsModal receiveAddress={activeAccountAddress} />);
+  }, [activeAccountAddress]);
 
   const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
   const isSendButtonActive = calculateBalanceInFiat(rates, activeAccountBalances, fiatCurrency)
@@ -143,7 +97,7 @@ const ActionButtons = ({
         <CircleButton
           label={t('button.addFunds')}
           fontIcon="qrDetailed"
-          onPress={() => setVisibleAddFundsModal(true)}
+          onPress={openAddFundsModal}
         />
         <CircleButton
           label={t('button.send')}
@@ -157,17 +111,6 @@ const ActionButtons = ({
           onPress={() => navigation.navigate(EXCHANGE)}
         />
       </ActionButtonsWrapper>
-      <ActionOptionsModal
-        onModalClose={closeAddFundsModal}
-        isVisible={visibleAddFundsModal}
-        items={addFundsModalOptions}
-        title={t('title.addFundsToWallet')}
-      />
-      <ReceiveModal
-        isVisible={!isEmpty(receiveAddress)}
-        address={receiveAddress}
-        onModalHide={() => setReceiveAddress('')}
-      />
     </React.Fragment>
   );
 };
@@ -194,8 +137,4 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...mapStateToProps(state),
 });
 
-const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
-});
-
-export default withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(ActionButtons));
+export default withNavigation(connect(combinedMapStateToProps)(ActionButtons));

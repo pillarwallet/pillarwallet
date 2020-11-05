@@ -24,10 +24,9 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
-import { utils } from 'ethers';
 import t from 'translations/translate';
+import isEqual from 'lodash.isequal';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
@@ -36,9 +35,10 @@ import {
   setDismissApproveAction,
   fetchPoolAllowanceStatusAction,
 } from 'actions/poolTogetherActions';
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // constants
-import { DAI, defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { DAI, ETH } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM, POOLTOGETHER_PURCHASE_CONFIRM } from 'constants/navigationConstants';
 import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
 
@@ -48,31 +48,33 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueInput from 'components/ValueInput';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
+import Toast from 'components/Toast';
+import FeeLabelToggle from 'components/FeeLabelToggle';
+import Modal from 'components/Modal';
 
 // models
 import type { Accounts } from 'models/Account';
-import type { Balances, Rates, Assets, Asset } from 'models/Asset';
+import type { Balances, Assets, Asset } from 'models/Asset';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
-import { formatAmount, formatFiat, formatTransactionFee } from 'utils/common';
+import { formatAmount } from 'utils/common';
 import { getWinChance } from 'utils/poolTogether';
-import { getRate, isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
 
 // services
-import {
-  getApproveFeeAndTransaction,
-  getPurchaseTicketFeeAndTransaction,
-} from 'services/poolTogether';
+import { getApproveTransaction, getPurchaseTicketTransaction } from 'services/poolTogether';
+
+// types
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 // local components
 import PoolTokenAllowModal from './PoolTokenAllowModal';
@@ -109,13 +111,19 @@ type Props = {
   fetchPoolStats: (symbol: string) => void,
   fetchPoolAllowanceStatus: (symbol: string) => void,
   setDismissApprove: (symbol: string) => void,
-  useGasToken: boolean,
-  baseFiatCurrency: ?string,
   poolAllowance: { [string]: boolean },
   poolApproveExecuting: { [string]: boolean | string },
-  rates: Rates,
   assets: Assets,
   supportedAssets: Asset[],
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  estimateTransaction: (
+    receiver: string,
+    amount: number,
+    data: string,
+  ) => void,
+  resetEstimateTransaction: () => void,
 };
 
 type State = {
@@ -124,11 +132,9 @@ type State = {
   numberOfTickets: number,
   userTickets: number,
   totalPoolTicketsCount: number,
-  isAllowModalVisible: boolean,
   allowPayload: Object,
-  gasToken: Object,
-  txFeeInWei: number,
   purchasePayload: Object,
+  isInputValid: boolean,
 };
 
 class PoolTogetherPurchase extends React.Component<Props, State> {
@@ -149,80 +155,47 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       numberOfTickets: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible: false,
       allowPayload: null,
-      gasToken: null,
-      txFeeInWei: 0,
       purchasePayload: null,
+      isInputValid: false,
     };
   }
 
   componentDidMount() {
-    const { logScreenView } = this.props;
+    const { logScreenView, resetEstimateTransaction } = this.props;
+    resetEstimateTransaction();
     // check if poolTogether is already allowed and get fee if not
-    this.updateFeeAndCheckAllowance();
+    this.updateAllowanceFeeAndTransaction();
     this.updatePurchaseFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
-  updateFeeAndCheckAllowance = async () => {
+  componentDidUpdate(prevProps: Props) {
+    if (!isEqual(this.props.poolAllowance, prevProps.poolAllowance)) {
+      this.updatePurchaseFeeAndTransaction();
+    }
+  }
+
+  updateAllowanceFeeAndTransaction = () => {
     const { poolToken } = this.state;
-    const { useGasToken, poolAllowance } = this.props;
+    const { poolAllowance, estimateTransaction } = this.props;
     const hasAllowance = poolAllowance[poolToken];
     if (!hasAllowance) {
-      const {
-        txFeeInWei,
-        gasToken,
-        transactionPayload,
-      } = await getApproveFeeAndTransaction(poolToken, useGasToken) || {};
-      if (txFeeInWei) {
-        this.setState({
-          gasToken,
-          allowPayload: transactionPayload,
-          txFeeInWei,
-        });
-      }
+      const allowPayload = getApproveTransaction(poolToken);
+      const { to, data, amount } = allowPayload;
+      estimateTransaction(to, amount, data);
+      this.setState({ allowPayload });
     }
   }
 
   updatePurchaseFeeAndTransaction = () => {
     const { poolToken, numberOfTickets } = this.state;
-    const {
-      useGasToken,
-      poolAllowance,
-      baseFiatCurrency,
-      balances,
-      rates,
-    } = this.props;
+    const { poolAllowance, estimateTransaction } = this.props;
     if (poolAllowance[poolToken]) {
-      this.setState({
-        purchasePayload: null,
-      }, async () => {
-        const {
-          txFeeInWei,
-          gasToken,
-          transactionPayload,
-        } = await getPurchaseTicketFeeAndTransaction(numberOfTickets, poolToken, useGasToken) || {};
-        if (txFeeInWei) {
-          const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-          const feeSymbol = get(gasToken, 'symbol', ETH);
-          const feeDecimals = get(gasToken, 'decimals', 'ether');
-          const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-          const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-          const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-          const isDisabled = !isEnoughBalanceForTransactionFee(balances, transactionPayload);
-          const purchasePayload = {
-            transactionPayload,
-            feeInFiat,
-            feeSymbol,
-            feeDisplayValue,
-            isDisabled,
-            txFeeInWei,
-            gasToken,
-          };
-          this.setState({ purchasePayload });
-        }
-      });
+      const purchasePayload = getPurchaseTicketTransaction(numberOfTickets, poolToken);
+      const { to, data, amount } = purchasePayload;
+      estimateTransaction(to, amount, data);
+      this.setState({ purchasePayload });
     }
   }
 
@@ -238,20 +211,48 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     });
   }
 
-  hideAllowAssetModal = () => {
-    const { setDismissApprove } = this.props;
-    const { poolToken } = this.state;
-    setDismissApprove(poolToken);
-    this.setState({ isAllowModalVisible: false });
-  };
+  openAllowAssetModal = () => {
+    const { poolToken, allowPayload } = this.state;
+    const { estimateTransaction, resetEstimateTransaction } = this.props;
+    resetEstimateTransaction();
+    const { to, data, amount } = allowPayload;
+    estimateTransaction(to, amount, data);
+    Modal.open(() => (
+      <PoolTokenAllowModal
+        assetSymbol={poolToken}
+        transactionPayload={allowPayload}
+        onModalHide={() => {
+          const { setDismissApprove } = this.props;
+          setDismissApprove(poolToken);
+        }}
+        onAllow={this.allowPoolAsset}
+      />
+    ));
+  }
 
   allowPoolAsset = () => {
-    const { navigation } = this.props;
+    const { navigation, feeInfo } = this.props;
     const { allowPayload } = this.state;
-    this.hideAllowAssetModal();
+
+    if (!feeInfo) {
+      Toast.show({
+        message: t('toast.cannotAllowAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { fee: txFeeInWei, gasToken } = feeInfo;
+
+    const transactionPayload = {
+      ...allowPayload,
+      txFeeInWei,
+      gasToken,
+    };
+
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload: allowPayload,
-      goBackDismiss: true,
+      transactionPayload,
       transactionType: POOL_TOGETHER_ALLOW,
     });
   };
@@ -261,13 +262,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       navigation,
       fetchPoolStats,
       balances,
-      baseFiatCurrency,
-      rates,
       poolAllowance,
       poolApproveExecuting,
       fetchPoolAllowanceStatus,
       assets,
       supportedAssets,
+      isEstimating,
+      feeInfo,
+      estimateErrorMessage,
     } = this.props;
 
     const {
@@ -276,12 +278,11 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       numberOfTickets,
       userTickets,
       totalPoolTicketsCount,
-      isAllowModalVisible,
-      gasToken,
-      txFeeInWei,
-      allowPayload,
       purchasePayload,
+      isInputValid,
     } = this.state;
+
+    let errorMessage = estimateErrorMessage;
 
     const hasAllowance = poolAllowance[poolToken];
 
@@ -289,28 +290,18 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     const isApprovalExecuting = !!poolApproveExecuting[poolToken];
 
-    const isLoading = (!allowPayload && !hasAllowance) || (!purchasePayload && hasAllowance) || isApprovalExecuting;
-
-    const purchaseDisabled = hasAllowance && (numberOfTickets === 0 || (purchasePayload && purchasePayload.isDisabled));
-
-    let allowData;
-    if (allowPayload) {
-      const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-      const feeSymbol = get(gasToken, 'symbol', ETH);
-      const feeDecimals = get(gasToken, 'decimals', 'ether');
-      const feeNumeric = utils.formatUnits(txFeeInWei.toString(), feeDecimals);
-      const feeInFiat = formatFiat(parseFloat(feeNumeric) * getRate(rates, feeSymbol, fiatCurrency), fiatCurrency);
-      const feeDisplayValue = formatTransactionFee(txFeeInWei, gasToken);
-      const isDisabled = !isEnoughBalanceForTransactionFee(balances, allowPayload);
-
-      allowData = {
-        assetSymbol: poolToken,
-        feeDisplayValue,
-        feeInFiat,
-        isDisabled,
-        feeToken: feeSymbol,
-      };
+    if (feeInfo && purchasePayload && hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
+      ...purchasePayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    })) {
+      errorMessage = t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH });
     }
+
+    const submitDisabled = isEstimating
+      || isApprovalExecuting
+      || !isInputValid
+      || (hasAllowance && (numberOfTickets === 0 || !!errorMessage || !feeInfo));
 
     let nextNavigationFunction;
     if (purchasePayload) {
@@ -321,13 +312,14 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             tokenValue: numberOfTickets,
             totalPoolTicketsCount,
             userTickets,
-            ...purchasePayload,
+            transactionPayload: purchasePayload,
           });
       };
     }
 
     const poolTokenItem = getAssetData(getAssetsAsList(assets), supportedAssets, poolToken);
     const assetOptions = !isEmpty(poolTokenItem) ? [poolTokenItem] : [];
+    const purchaseTransactionAvailable = !!hasAllowance && !!purchasePayload;
 
     return (
       <ContainerWithHeader
@@ -356,6 +348,7 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 onValueChange={this.onValueChange}
                 assetData={poolTokenItem}
                 customAssets={assetOptions}
+                onFormValid={(isValid) => this.setState({ isInputValid: isValid })}
               />
             </ContentRow>
             <ContentRow>
@@ -366,55 +359,57 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               </Text>
             </ContentRow>
             <ContentRow>
-              {(!hasAllowance && !isApprovalExecuting) &&
+              {!hasAllowance && !isEstimating && !isApprovalExecuting && (
                 <Text center label>{t('poolTogetherContent.paragraph.automationMissing')}</Text>
-              }
-              {!!isApprovalExecuting &&
+              )}
+              {!!isApprovalExecuting && (
                 <Text center label>{t('poolTogetherContent.paragraph.pendingAutomation')}</Text>
-              }
-              {(!!hasAllowance && !purchasePayload) && <Text center label>{t('label.fetchingFee')}</Text>}
-              {(!!hasAllowance && !!purchasePayload) &&
-                <Text center label>
-                  {t('label.feeTokenFiat', {
-                    tokenValue: purchasePayload.feeDisplayValue,
-                    fiatValue: purchasePayload.feeInFiat,
-                  })}
-                  {purchasePayload.isDisabled &&
-                  // eslint-disable-next-line i18next/no-literal-string
-                  `\n${t('error.notEnoughTokenForFee', { token: purchasePayload.feeSymbol })}`
-                  }
-                </Text>
-              }
+              )}
+              {isEstimating && !isApprovalExecuting && !feeInfo && (
+                <Text center label>{t('label.fetchingFee')}</Text>
+              )}
             </ContentRow>
+            {!!purchaseTransactionAvailable && !!feeInfo && (
+              <ContentRow>
+                <FeeLabelToggle
+                  labelText={t('label.fee')}
+                  txFeeInWei={feeInfo?.fee}
+                  isLoading={isEstimating}
+                  gasToken={feeInfo?.gasToken}
+                  hasError={!!errorMessage}
+                  showFiatDefault
+                />
+              </ContentRow>
+            )}
+            {!!purchaseTransactionAvailable && !!errorMessage && (
+              <ContentRow>
+                <BaseText negative>{errorMessage}</BaseText>
+              </ContentRow>
+            )}
             <ContentRow>
               <Button
                 title={t('button.next')}
                 onPress={() => {
+                  if (submitDisabled) return null;
+
                   if (!hasAllowance && !isApprovalExecuting) {
-                    this.setState({ isAllowModalVisible: true });
+                    this.openAllowAssetModal();
                   }
+
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
-                isLoading={isLoading}
-                disabled={purchaseDisabled}
+                disabled={!!submitDisabled}
                 style={{ marginBottom: 13 }}
               />
             </ContentRow>
           </ContentWrapper>
         </ScrollWrapper>
-        <PoolTokenAllowModal
-          isVisible={!!isAllowModalVisible}
-          onModalHide={this.hideAllowAssetModal}
-          onAllow={this.allowPoolAsset}
-          allowData={allowData}
-        />
       </ContainerWithHeader>
     );
   }
 }
 
 const mapStateToProps = ({
-  appSettings: { data: { baseFiatCurrency } },
   session: { data: session },
   accounts: { data: accounts },
   poolTogether: {
@@ -422,23 +417,23 @@ const mapStateToProps = ({
     poolAllowance,
     poolApproveExecuting,
   },
-  rates: { data: rates },
   assets: { supportedAssets },
+  transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
-  baseFiatCurrency,
   session,
   accounts,
   poolPrizeInfo,
   poolAllowance,
   poolApproveExecuting,
-  rates,
   supportedAssets,
+  isEstimating,
+  feeInfo,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   history: accountHistorySelector,
   balances: accountBalancesSelector,
-  useGasToken: useGasTokenSelector,
   assets: accountAssetsSelector,
 });
 
@@ -452,6 +447,12 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
   fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
   setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
+  estimateTransaction: (
+    receiver: string,
+    amount: number,
+    data: string,
+  ) => dispatch(estimateTransactionAction(receiver, amount, data)),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherPurchase);

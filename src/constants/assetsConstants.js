@@ -41,6 +41,7 @@ export const HOT = 'HOT';
 export const HOLO = 'HOLO';
 export const WBTC = 'WBTC';
 export const sBTC = 'sBTC';
+export const SNX = 'SNX';
 
 const LINK = 'LINK';
 const BAT = 'BAT';

@@ -28,13 +28,12 @@ import {
 const EN_COMMON = require('../locales/en/common.json');
 const EN_AUTH = require('../locales/en/auth.json');
 
-const DEFAULT_LANGUAGE_CODE = 'en';
+export const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
 const DEFAULT_NAMESPACE = 'common';
 
 export default {
   isEnabled: true,
-  baseUrl: '', // todo: change into real one;
   defaultLanguage: DEFAULT_LANGUAGE_CODE,
   // pairs of language code and language name in native language
   supportedLanguages: {
@@ -44,7 +43,7 @@ export default {
   namespaces: ['auth', DEFAULT_NAMESPACE],
   postProcessors: [PUNCTUATION_POSTPROCESSOR, CAPITALIZATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR],
   localTranslations: {
-    en: {
+    [DEFAULT_LANGUAGE_CODE]: {
       common: EN_COMMON,
       auth: EN_AUTH,
     },

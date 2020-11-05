@@ -51,7 +51,6 @@ export type TranslationData = {|
 
 export type LocalisationOptions = {
   activeLngCode: ?string,
-  translationVersion: ?string,
 };
 
 export type TranslatedString = string | Trans | BaseText;

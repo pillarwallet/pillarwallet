@@ -21,6 +21,8 @@
 import * as Sentry from '@sentry/react-native';
 import RNFetchBlob from 'rn-fetch-blob';
 import { reportLog } from 'utils/common';
+import type { TranslationData } from 'models/Translations';
+import type { CachedUrls } from 'reducers/cacheReducer';
 
 export const getCachedJSONFile = async (localPath: string) => {
   return new Promise(resolve => {
@@ -45,4 +47,33 @@ export const getCachedJSONFile = async (localPath: string) => {
       })
       .catch(() => resolve(null));
   });
+};
+
+export const getCachedTranslationResources = async (
+  translationsData: TranslationData[],
+  cachedUrls: CachedUrls,
+  onNoTranslations: (url: string) => void,
+  onError: (e: Object) => void) => {
+  const cachedTranslations = await Promise.all(translationsData.map(async ({ ns, url }) => {
+    const { localPath } = cachedUrls?.[url] || {};
+
+    if (!localPath) return { ns, translations: {} };
+
+    const translations = await getCachedJSONFile(localPath);
+
+    if (!translations) {
+      if (onNoTranslations) onNoTranslations(url);
+      return { ns, translations: {} };
+    }
+    return { ns, translations };
+  })).catch((e) => {
+    if (onError) onError(e);
+    return [];
+  });
+
+  return cachedTranslations.reduce((formattedResources, translation) => {
+    const { ns, translations } = translation;
+    if (ns && translations) formattedResources[ns] = translations;
+    return formattedResources;
+  }, {});
 };

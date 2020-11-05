@@ -24,7 +24,7 @@ import { ThemeProvider } from 'styled-components/native';
 
 import { defaultTheme } from 'utils/themes';
 
-import Toast from '../Toast';
+import Toast, { ToastProvider } from '../Toast';
 
 // Testing toast existence is achieved by looking for (hopefully unique)
 // message text.
@@ -45,7 +45,7 @@ describe('Toasts', () => {
     act(() => {
       rendererInstance = create(
         <ThemeProvider theme={defaultTheme}>
-          <Toast />
+          <ToastProvider />
         </ThemeProvider>,
       );
     });
@@ -58,7 +58,7 @@ describe('Toasts', () => {
     jest.useRealTimers();
   });
 
-  it('renders a single toast', async () => {
+  it('renders a single toast', () => {
     const message = 'TOAST MESSAGE';
     Toast.show({ message, emoji: 'hash' });
     jest.runAllTimers();
@@ -82,7 +82,7 @@ describe('Toasts', () => {
     act(() => {
       extraInstance = create(
         <ThemeProvider theme={defaultTheme}>
-          <Toast />
+          <ToastProvider />
         </ThemeProvider>,
       );
     });
@@ -95,6 +95,26 @@ describe('Toasts', () => {
     expect(hasToast(extraInstance, message)).toEqual(true);
 
     act(() => extraInstance.unmount());
+  });
+
+  it('moves toasts to the next available instance on unmount', () => {
+    let extraInstance: $FlowFixMe = null;
+    act(() => {
+      extraInstance = create(
+        <ThemeProvider theme={defaultTheme}>
+          <ToastProvider />
+        </ThemeProvider>,
+      );
+    });
+
+    const message = 'TOAST MESSAGE';
+    Toast.show({ message, emoji: 'hash' });
+    jest.runAllTimers();
+
+    act(() => extraInstance.unmount());
+    jest.runAllTimers();
+
+    expect(hasToast(rendererInstance, message)).toEqual(true);
   });
 
   it('allows to dismiss a toast by id', () => {

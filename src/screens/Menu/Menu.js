@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React from 'react';
 import { FlatList, Alert } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
@@ -39,7 +39,8 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ListCard } from 'components/ListItem/ListCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
-import HTMLContentModal from 'components/Modals/HTMLContentModal';
+import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
+import Modal from 'components/Modal';
 
 // constants
 import {
@@ -153,12 +154,6 @@ const ItemIcon = styled(Icon)`
   font-size: ${fontSizes.big}px;
 `;
 
-
-const MODAL = {
-  PRIVACY_POLICY: 'privacyPolicy',
-  SERVICES: 'termsOfService',
-};
-
 const SEPARATOR_SYMBOL = '  •  ';
 
 const CustomIcon = ({ emoji, icon, iconColor }: IconProps) => {
@@ -178,9 +173,9 @@ const Menu = ({
   lockScreen,
   keyBasedWalletHasPositiveBalance,
 }: Props) => {
-  const [visibleModal, setVisibleModal] = useState(null);
-
-  const toggleSlideModalOpen = (modal: ?string = null) => setVisibleModal(modal);
+  const openLegalModal = (endpoint: string) => Modal.open(() => (
+    <HTMLContentModal htmlEndpoint={endpoint} />
+  ));
 
   const { pillarLogoSmall: logo } = images(theme);
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
@@ -333,11 +328,11 @@ const Menu = ({
         ListFooterComponent={
           <Footer>
             <LinksSection>
-              <LegalTextLink onPress={() => toggleSlideModalOpen(MODAL.SERVICES)}>
+              <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.TERMS_OF_SERVICE)}>
                 {t('settingsContent.button.termOfUse')}
               </LegalTextLink>
               <LegalTextLink>{SEPARATOR_SYMBOL}</LegalTextLink>
-              <LegalTextLink onPress={() => toggleSlideModalOpen(MODAL.PRIVACY_POLICY)}>
+              <LegalTextLink onPress={() => openLegalModal(ENDPOINTS.PRIVACY_POLICY)}>
                 {t('settingsContent.button.privacyPolicy')}
               </LegalTextLink>
             </LinksSection>
@@ -354,18 +349,6 @@ const Menu = ({
             </LogoutSection>
           </Footer>
         }
-      />
-      {/* LEGAL MODALS */}
-      <HTMLContentModal
-        isVisible={visibleModal === MODAL.SERVICES}
-        modalHide={toggleSlideModalOpen}
-        htmlEndpoint="terms_of_service"
-      />
-
-      <HTMLContentModal
-        isVisible={visibleModal === MODAL.PRIVACY_POLICY}
-        modalHide={toggleSlideModalOpen}
-        htmlEndpoint="privacy_policy"
       />
     </ContainerWithHeader>
   );

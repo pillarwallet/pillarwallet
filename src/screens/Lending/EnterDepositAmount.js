@@ -21,7 +21,6 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -29,6 +28,7 @@ import t from 'translations/translate';
 
 // actions
 import { calculateLendingDepositTransactionEstimateAction, fetchAssetsToDepositAction } from 'actions/lendingActions';
+import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -44,29 +44,29 @@ import { LENDING_DEPOSIT_TRANSACTION_CONFIRM } from 'constants/navigationConstan
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
-import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
 import { formatAmountDisplay } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { buildTxFeeInfo } from 'utils/smartWallet';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { AssetToDeposit, Balances } from 'models/Asset';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
   assetsToDeposit: AssetToDeposit[],
   balances: Balances,
   navigation: NavigationScreenProp<*>,
-  isCalculatingDepositTransactionEstimate: boolean,
-  depositTransactionEstimate: ?Object,
+  isEstimating: boolean,
+  feeInfo: ?TransactionFeeInfo,
   calculateLendingDepositTransactionEstimate: (amount: number, asset: AssetToDeposit) => void,
-  useGasToken: boolean,
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
+  estimateErrorMessage: ?string,
+  resetEstimateTransaction: () => void,
 };
 
 const CurrentInterestRate = styled.View`
@@ -92,10 +92,6 @@ const FooterInner = styled.View`
   align-items: center;
 `;
 
-const NotEnoughFee = styled(BaseText)`
-  margin-top: ${spacing.medium}px;
-`;
-
 const InputWrapper = styled.View`
   padding: 24px 40px 0;
   z-index: 10;
@@ -105,16 +101,22 @@ const EnterDepositAmount = ({
   navigation,
   balances,
   assetsToDeposit,
-  depositTransactionEstimate,
-  isCalculatingDepositTransactionEstimate,
+  feeInfo,
+  isEstimating,
   calculateLendingDepositTransactionEstimate,
-  useGasToken,
   fetchAssetsToDeposit,
   isFetchingAssetsToDeposit,
+  estimateErrorMessage,
+  resetEstimateTransaction,
 }: Props) => {
+  useEffect(() => {
+    resetEstimateTransaction();
+  }, []);
+
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
   const [depositAmount, setDepositAmount] = useState('');
+  const [inputValid, setInputValid] = useState(false);
 
   const assetToDeposit = assetsToDeposit.find(({ symbol }) => symbol === selectedAssetSymbol);
 
@@ -124,27 +126,32 @@ const EnterDepositAmount = ({
   }, [assetsToDeposit]);
 
   useEffect(() => {
-    if (!depositAmount || !assetToDeposit) return;
+    if (!depositAmount || !assetToDeposit || !inputValid) return;
     calculateLendingDepositTransactionEstimate(depositAmount, assetToDeposit);
-  }, [depositAmount, assetToDeposit]);
+  }, [depositAmount, assetToDeposit, inputValid]);
 
-  const txFeeInfo = buildTxFeeInfo(depositTransactionEstimate, useGasToken);
-  const gasTokenSymbol = get(txFeeInfo?.gasToken, 'symbol', ETH);
-  const showTxFee = !!depositAmount && (!!txFeeInfo?.fee || isCalculatingDepositTransactionEstimate);
-  const isEnoughForFee = !!txFeeInfo?.fee && isEnoughBalanceForTransactionFee(balances, {
-    txFeeInWei: txFeeInfo.fee,
-    amount: depositAmount,
-    decimals: assetToDeposit?.decimals,
-    symbol: selectedAssetSymbol,
-    gasToken: txFeeInfo.gasToken,
-  });
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      amount: depositAmount,
+      decimals: assetToDeposit?.decimals,
+      symbol: selectedAssetSymbol,
+      gasToken: feeInfo.gasToken,
+    });
+  }
+
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
 
   const showNextButton = depositAmount !== null; // only if amount input touched
-  const isNextButtonDisabled = !!isCalculatingDepositTransactionEstimate
+  const isNextButtonDisabled = !!isEstimating
     || !depositAmount
-    || !isEnoughForFee
-    || (!!txFeeInfo?.fee && !txFeeInfo.fee.gt(0));
-  const nextButtonTitle = isCalculatingDepositTransactionEstimate ? t('label.gettingFee') : t('button.next');
+    || !!errorMessage
+    || !inputValid
+    || !feeInfo;
+  const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const onNextButtonPress = () => navigation.navigate(
     LENDING_DEPOSIT_TRANSACTION_CONFIRM,
     { amount: depositAmount, asset: assetToDeposit },
@@ -156,22 +163,23 @@ const EnterDepositAmount = ({
       headerProps={{ centerItems: [{ title: t('aaveContent.title.depositAmountScreen') }] }}
       footer={(
         <FooterInner>
-          {showTxFee && (
-            <FeeInfo alignItems="center">
+          <FeeInfo alignItems="center">
+            {feeInfo && (
               <FeeLabelToggle
                 labelText={t('label.fee')}
-                txFeeInWei={txFeeInfo?.fee}
-                gasToken={txFeeInfo?.gasToken}
-                isLoading={isCalculatingDepositTransactionEstimate}
+                txFeeInWei={feeInfo?.fee}
+                gasToken={feeInfo?.gasToken}
+                isLoading={isEstimating}
+                hasError={!!errorMessage}
                 showFiatDefault
               />
-              {!isCalculatingDepositTransactionEstimate && !isEnoughForFee && (
-                <NotEnoughFee negative>
-                  {t('error.notEnoughTokenForFee', { token: gasTokenSymbol })}
-                </NotEnoughFee>
-              )}
-            </FeeInfo>
-          )}
+            )}
+            {!!errorMessage && (
+              <BaseText negative style={{ marginTop: spacing.medium }}>
+                {errorMessage}
+              </BaseText>
+            )}
+          </FeeInfo>
           {showNextButton && (
             <Button
               disabled={isNextButtonDisabled}
@@ -192,6 +200,7 @@ const EnterDepositAmount = ({
             assetData={assetToDeposit}
             onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
             customAssets={assetsToDeposit}
+            onFormValid={setInputValid}
           />
         </InputWrapper>
       )}
@@ -210,20 +219,19 @@ const EnterDepositAmount = ({
 const mapStateToProps = ({
   lending: {
     assetsToDeposit,
-    isCalculatingDepositTransactionEstimate,
-    depositTransactionEstimate,
     isFetchingAssetsToDeposit,
   },
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
 }: RootReducerState): $Shape<Props> => ({
   assetsToDeposit,
-  isCalculatingDepositTransactionEstimate,
-  depositTransactionEstimate,
+  isEstimating,
+  feeInfo,
   isFetchingAssetsToDeposit,
+  estimateErrorMessage,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  useGasToken: useGasTokenSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -237,6 +245,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     asset: AssetToDeposit,
   ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset)), 500),
   fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(EnterDepositAmount);

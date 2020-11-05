@@ -33,6 +33,7 @@ import { Label, BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { Spacing } from 'components/Layout';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
+import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
@@ -68,7 +69,7 @@ type Props = {
   accountAssets: Assets,
   accountHistory: Transaction[],
   showRelayerMigration?: boolean,
-  notEnoughToken?: boolean,
+  hasError?: boolean,
 };
 
 const LabelWrapper = styled.View`
@@ -77,8 +78,9 @@ const LabelWrapper = styled.View`
 `;
 
 const FeePill = styled.TouchableOpacity`
-  background-color: ${({ notEnoughToken, theme }) =>
-    notEnoughToken ? theme.colors.negative : theme.colors.labelTertiary};
+  ${({ hasError, theme: { colors: { negative, labelTertiary } } }) => `
+    background-color: ${hasError ? negative : labelTertiary};
+  `}
   padding: 0 8px;
   border-radius: 12px;
   justify-content: center;
@@ -96,10 +98,9 @@ const FeeLabelToggle = ({
   accountAssets,
   accountHistory,
   isGasTokenSupported,
-  notEnoughToken,
+  hasError,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
-  const [showRelayerMigrationModal, setShowRelayerMigrationModal] = useState(false);
 
   if (isLoading) {
     return <Spinner size={20} trackWidth={2} />;
@@ -118,25 +119,29 @@ const FeeLabelToggle = ({
     firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR) &&
     !isGasTokenSupported;
 
+  const openRelayerMigrationModal = () => {
+    if (!showRelayerMigration) return;
+    Modal.open(() => (
+      <RelayerMigrationModal
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+      />
+    ));
+  };
+
   return (
     <LabelWrapper >
       <Label>{labelText || t('label.estimatedFee')}&nbsp;</Label>
       <Spacing w={8} />
-      <FeePill onPress={() => setIsFiatValueVisible(!isFiatValueVisible)} notEnoughToken={notEnoughToken}>
+      <FeePill onPress={() => setIsFiatValueVisible(!isFiatValueVisible)} hasError={hasError}>
         <BaseText small color="#ffffff">{labelValue}</BaseText>
       </FeePill>
       <Spacing w={8} />
       {showRelayerMigration && (
-        <BaseText small link onPress={() => setShowRelayerMigrationModal(true)}>
+        <BaseText small link onPress={openRelayerMigrationModal}>
           {t('label.payWithPLR')} <Emoji name="ok_hand" style={{ fontSize: 12 }} />
         </BaseText>
       )}
-      <RelayerMigrationModal
-        isVisible={showRelayerMigrationModal}
-        onModalHide={() => setShowRelayerMigrationModal(false)}
-        accountAssets={accountAssets}
-        accountHistory={accountHistory}
-      />
     </LabelWrapper>
   );
 };

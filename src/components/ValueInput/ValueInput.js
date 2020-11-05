@@ -33,6 +33,7 @@ import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
+import Modal from 'components/Modal';
 
 import { formatAmount, isValidNumber } from 'utils/common';
 import { themedColors, getThemeColors } from 'utils/themes';
@@ -134,7 +135,6 @@ export const ValueInputComponent = (props: Props) => {
 
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
-  const [isAssetSelectorVisible, setIsAssetSelectorVisible] = useState<boolean>(false);
   const [errorMessageState, setErrorMessageState] = useState<?string>(null);
 
   const assetSymbol = assetData.symbol || '';
@@ -192,11 +192,36 @@ export const ValueInputComponent = (props: Props) => {
 
   const assetsOptions = customAssets || assets;
 
+  const openAssetSelector = () => {
+    const optionTabs = showCollectibles
+      ? [{
+        name: t('label.tokens'),
+        options: assetsOptions,
+        id: TOKENS,
+      }, {
+        name: t('label.collectibles'),
+        options: collectibles,
+        id: COLLECTIBLES,
+        collectibles: true,
+      }]
+      : undefined;
+
+    Modal.open(() => (
+      <SelectorOptions
+        title={selectorOptionsTitle}
+        options={assetsOptions}
+        horizontalOptionsData={horizontalOptions}
+        onOptionSelect={onAssetDataChange}
+        optionTabs={optionTabs}
+      />
+    ));
+  };
+
   const getCustomLabel = () => {
     return (
       <ValueInputHeader
         asset={assetData}
-        onAssetPress={() => setIsAssetSelectorVisible(true)}
+        onAssetPress={openAssetSelector}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
         disableAssetSelection={assetsOptions.length <= 1}
@@ -225,16 +250,6 @@ export const ValueInputComponent = (props: Props) => {
     }
   }, [value, assetData]);
 
-  let optionTabs;
-  if (showCollectibles) {
-    optionTabs = [
-      { name: t('label.tokens'), options: assetsOptions, id: TOKENS },
-      {
-        name: t('label.collectibles'), options: collectibles, id: COLLECTIBLES, collectibles: true,
-      },
-    ];
-  }
-
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
 
@@ -250,7 +265,7 @@ export const ValueInputComponent = (props: Props) => {
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
-          onRightAddonPress={() => setIsAssetSelectorVisible(true)}
+          onRightAddonPress={openAssetSelector}
           leftSideText={displayFiatAmount
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat
@@ -265,7 +280,7 @@ export const ValueInputComponent = (props: Props) => {
       )}
       {tokenType === COLLECTIBLES && (
         <CollectibleWrapper>
-          <MediumText medium onPress={() => setIsAssetSelectorVisible(true)}>{assetData.name}
+          <MediumText medium onPress={openAssetSelector}>{assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
           <Spacing h={16} />
@@ -278,18 +293,6 @@ export const ValueInputComponent = (props: Props) => {
           />
         </CollectibleWrapper>
       )}
-      <SelectorOptions
-        isVisible={isAssetSelectorVisible}
-        title={selectorOptionsTitle}
-        options={assetsOptions}
-        horizontalOptionsData={horizontalOptions}
-        onOptionSelect={(option) => {
-          onAssetDataChange(option);
-          setIsAssetSelectorVisible(false);
-        }}
-        onHide={() => setIsAssetSelectorVisible(false)}
-        optionTabs={optionTabs}
-      />
     </>
   );
 };

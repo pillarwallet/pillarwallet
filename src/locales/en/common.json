@@ -199,7 +199,8 @@
     "set": "Set",
     "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline",
-    "payWithPLR": "Pay with PLR"
+    "payWithPLR": "Pay with PLR",
+    "notSet": "Not set"
   },
 
   "button": {
@@ -488,7 +489,7 @@
       "invalidSession": "Invalid Wallet Connect session",
       "alreadyPending": "A connection is already waiting"
     },
-    "reverted": "reverted"
+    "unableToEstimateTransaction": "Unable to estimate transaction. Please try again."
   },
 
   "badgeText": {
@@ -915,7 +916,7 @@
       "allowedInviteViaEmail": "You are now able to invite friends via email.",
       "allowedInviteViaPhone": "You are now able to invite friends via text message.",
       "emailVerified": "Your email has been verified",
-      "phoneVerified": "Your email has been verified"
+      "phoneVerified": "Your phone has been verified"
     },
     "label": {
       "selectedInvitesCount": "{{selectedCount}} selected ({{amountText}} available today)",
@@ -1350,7 +1351,18 @@
     "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again.",
     "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
     "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
-    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again."
+    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
+    "cannotEnableAsset": "Cannot enable asset. Please try again.",
+    "cannotSendCollectible": "Cannot send collectible. Please try again.",
+    "cannotCreateStream": "Cannot create stream. Please try again.",
+    "cannotCancelStream": "Cannot cancel stream. Please try again.",
+    "cannotAllowAsset": "Cannot allow asset. Please try again.",
+    "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
+    "cannotWithdraw": "Cannot withdraw. Please try again.",
+    "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
+    "cannotSendAsset": "Cannot send asset. Please try again.",
+    "cannotDepositAsset": "Cannot deposit asset. Please try again.",
+    "cannotWithdrawAsset": "Cannot withdraw asset. Please try again."
   },
 
   "exchangeContent": {

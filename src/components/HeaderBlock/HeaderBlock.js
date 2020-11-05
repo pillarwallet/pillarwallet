@@ -29,6 +29,7 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
+import { noop } from 'utils/common';
 import type { Theme } from 'models/Theme';
 
 // partials
@@ -39,19 +40,18 @@ type NavItem = {
   [string]: any,
 };
 
-export type Props = {
+export type OwnProps = {|
   rightItems?: NavItem[],
   leftItems?: NavItem[],
   centerItems?: NavItem[],
   sideFlex?: number,
-  navigation: NavigationScreenProp<*>,
+  navigation?: NavigationScreenProp<*>,
   background?: string,
   floating?: boolean,
   transparent?: boolean,
   light?: boolean,
   noBack?: boolean,
   customOnBack?: () => void,
-  theme: Theme,
   noPaddingTop?: boolean,
   noBottomBorder?: boolean,
   onClose?: () => void,
@@ -60,7 +60,12 @@ export type Props = {
   noHorizontalPadding?: boolean,
   forceInsetTop?: string,
   bottomBorderAnimationValue?: Animated.Value,
-};
+|};
+
+type Props = {|
+  ...OwnProps,
+  theme: Theme,
+|}
 
 const Wrapper = styled(Animated.View)`
   width: 100%;
@@ -103,7 +108,7 @@ const CenterItems = styled.View`
 `;
 
 const LeftItems = styled.View`
-  flex: ${props => props.sideFlex || 1};
+  flex: ${props => props.sideFlex ?? 1};
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
@@ -111,7 +116,7 @@ const LeftItems = styled.View`
 `;
 
 const RightItems = styled.View`
-  flex: ${props => props.sideFlex || 1};
+  flex: ${props => props.sideFlex ?? 1};
   align-items: center;
   justify-content: flex-end;
   flex-direction: row;
@@ -175,8 +180,8 @@ const animatedValueZero = new Animated.Value(0);
 
 const getCloseAction = (props, navigation) => {
   if (props.onClose) return () => props.onClose();
-  if (props.dismiss) return () => navigation.dismiss();
-  return () => navigation.goBack(null);
+  if (props.dismiss) return navigation ? () => navigation.dismiss() : noop;
+  return navigation ? () => navigation.goBack(null) : noop;
 };
 
 class HeaderBlock extends React.Component<Props> {
@@ -197,7 +202,7 @@ class HeaderBlock extends React.Component<Props> {
     return (
       <HeaderRow>
         <LeftItems
-          sideFlex={sideFlex || leftSideFlex}
+          sideFlex={sideFlex ?? leftSideFlex}
           style={!centerItems.length && !rightItems.length && !leftSideFlex ? { flexGrow: 2 } : {}}
         >
           {(leftItems.length || !!noBack)
@@ -206,7 +211,7 @@ class HeaderBlock extends React.Component<Props> {
               <BackIcon
                 icon="back"
                 color={colors.basic010}
-                onPress={customOnBack || (() => navigation.goBack(null))}
+                onPress={customOnBack || (() => (navigation && navigation.goBack(null)))}
                 fontSize={fontSizes.big}
               />
             )
@@ -397,4 +402,4 @@ class HeaderBlock extends React.Component<Props> {
   }
 }
 
-export default withTheme(HeaderBlock);
+export default (withTheme(HeaderBlock): React.AbstractComponent<OwnProps>);

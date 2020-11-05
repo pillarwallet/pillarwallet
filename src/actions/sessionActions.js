@@ -35,17 +35,15 @@ export const setSessionTranslationBundleInitialisedAction = () => ({
 });
 
 export const setFallbackLanguageVersionAction = (version: string) => {
-  // TODO: pass in real version when it will be set
-  //  ('1' is passed to prevent unnecessary fallback language resources' updates on network status change)
   return {
     type: UPDATE_SESSION,
-    payload: { fallbackLanguageVersion: version === 'LOCAL' ? version : '1' },
+    payload: { fallbackLanguageVersion: version },
   };
 };
 
-export const setSessionLanguageAction = (languageCode: string) => ({
+export const setSessionLanguageAction = (languageCode: string, version: string) => ({
   type: UPDATE_SESSION,
-  payload: { sessionLanguageCode: languageCode },
+  payload: { sessionLanguageCode: languageCode, sessionLanguageVersion: version },
 });
 
 export const handleSystemLanguageChangeAction = () => {
