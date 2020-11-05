@@ -161,7 +161,7 @@ export const mapTransactionsHistoryWithSablier = async (
   accountAddress: string,
   transactionHistory: Transaction[],
 ): Promise<Transaction[]> => {
-  const response = await fetchUserStreams(accountAddress);
+  const response = await fetchUserStreams(accountAddress).catch(() => null);
 
   if (!response) {
     return transactionHistory;
