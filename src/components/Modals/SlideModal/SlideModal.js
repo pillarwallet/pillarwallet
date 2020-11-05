@@ -28,7 +28,7 @@ import { Wrapper } from 'components/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 import { spacing } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 import type { ScrollToProps } from 'components/Modal';
 import type { Theme } from 'models/Theme';
@@ -132,7 +132,7 @@ const ModalBackground = styled.View`
   box-shadow: 0px 2px 7px rgba(0,0,0,.1);
   elevation: 1;
   margin-top: auto;
-  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.card};
+  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.basic050};
   margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
 `;
 
@@ -157,7 +157,7 @@ const ModalOverflow = styled.View`
   width: 100%;
   height: 100px;
   margin-bottom: -100px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 class SlideModal extends React.Component<Props, State> {
