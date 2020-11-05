@@ -21,7 +21,6 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import { BigNumber } from 'bignumber.js';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -31,27 +30,26 @@ import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import { Spacing } from 'components/Layout';
+import Toast from 'components/Toast';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
 import { activeAccountAddressSelector } from 'selectors';
 
 // utils
-import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getAaveDepositTransactions } from 'utils/aave';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { AssetToDeposit } from 'models/Asset';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
   navigation: NavigationScreenProp<*>,
-  depositTransactionEstimate: ?Object,
-  useGasToken: boolean,
+  feeInfo: ?TransactionFeeInfo,
   accountAddress: string,
 };
 
@@ -61,8 +59,7 @@ const DepositWrapper = styled.View`
 
 const DepositTransactionConfirm = ({
   navigation,
-  depositTransactionEstimate,
-  useGasToken,
+  feeInfo,
   accountAddress,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
@@ -71,16 +68,24 @@ const DepositTransactionConfirm = ({
   const depositAsset: AssetToDeposit = navigation.getParam('asset');
   const { symbol: depositAssetSymbol } = depositAsset;
 
-  const txFeeInfo = buildTxFeeInfo(depositTransactionEstimate, useGasToken);
   const onNextButtonPress = async () => {
     if (isSubmitted) return;
     setIsSubmitted(true);
+
+    if (!feeInfo?.fee) {
+      Toast.show({
+        message: t('toast.cannotDepositAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
 
     const aaveDepositTransactions = await getAaveDepositTransactions(
       accountAddress,
       depositAmount,
       depositAsset,
-      txFeeInfo?.fee || new BigNumber(0),
+      feeInfo?.fee,
     );
 
     let transactionPayload = aaveDepositTransactions[0];
@@ -93,7 +98,7 @@ const DepositTransactionConfirm = ({
       };
     }
 
-    if (txFeeInfo.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+    if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo?.gasToken;
 
     navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
     setIsSubmitted(false);
@@ -115,7 +120,7 @@ const DepositTransactionConfirm = ({
         <Table>
           <TableRow>
             <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
           </TableRow>
           <TableRow>
             <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
@@ -123,7 +128,7 @@ const DepositTransactionConfirm = ({
           </TableRow>
           <TableRow>
             <TableTotal>{t('transactions.label.totalFee')}</TableTotal>
-            <TableFee txFeeInWei={txFeeInfo.fee} gasToken={txFeeInfo.gasToken} />
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
           </TableRow>
         </Table>
         <Spacing h={50} />
@@ -141,13 +146,12 @@ const DepositTransactionConfirm = ({
 };
 
 const mapStateToProps = ({
-  lending: { depositTransactionEstimate },
+  transactionEstimate: { feeInfo },
 }: RootReducerState): $Shape<Props> => ({
-  depositTransactionEstimate,
+  feeInfo,
 });
 
 const structuredSelector = createStructuredSelector({
-  useGasToken: useGasTokenSelector,
   accountAddress: activeAccountAddressSelector,
 });
 

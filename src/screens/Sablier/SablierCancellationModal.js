@@ -18,42 +18,61 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useRef } from 'react';
+import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
-
 import styled, { withTheme } from 'styled-components/native';
+import { createStructuredSelector } from 'reselect';
+
+// constants
+import { ETH } from 'constants/assetsConstants';
+
+// components
 import SlideModal from 'components/Modals/SlideModal';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import ProfileImage from 'components/ProfileImage';
+
+// utils
 import { findEnsNameCaseInsensitive } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
+import { spacing } from 'utils/variables';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 
-import type { GasToken } from 'models/Transaction';
+// selectors
+import { accountBalancesSelector } from 'selectors/balances';
+
+// types
+import type { TransactionFeeInfo } from 'models/Transaction';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { Balances } from 'models/Asset';
 
 
-type CancelData = {
-  txFeeInWei: number,
-  gasToken: GasToken,
-  isDisabled?: boolean,
-  recipient: string,
-};
-
-type Props = {
-  isVisible: boolean,
-  onModalHide: () => void,
-  theme: Theme,
-  onCancel: () => void,
-  cancelData: CancelData,
+type StateProps = {|
   ensRegistry: EnsRegistry,
-};
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  balances: Balances,
+|};
+
+type OwnProps = {|
+  onCancel: () => void,
+  recipient: string,
+  transactionPayload: Object,
+|};
+
+type Props = {|
+  ...StateProps,
+  ...OwnProps,
+  theme: Theme,
+|};
 
 const ContentWrapper = styled(SafeAreaView)`
   width: 100%;
@@ -64,27 +83,47 @@ const ContentWrapper = styled(SafeAreaView)`
 const sablierLogo = require('assets/icons/sablier.png');
 
 const SablierCancellationModal = ({
-  isVisible, onModalHide, theme, onCancel, cancelData, ensRegistry,
+  theme,
+  onCancel,
+  ensRegistry,
+  recipient,
+  feeInfo,
+  estimateErrorMessage,
+  balances,
+  transactionPayload,
+  isEstimating,
 }: Props) => {
   const colors = getThemeColors(theme);
 
-  const {
-    txFeeInWei, gasToken, isDisabled, recipient,
-  } = cancelData;
-
   const username = findEnsNameCaseInsensitive(ensRegistry, recipient) || recipient;
+
+  let notEnoughForFee;
+  if (feeInfo) {
+    notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
+      ...transactionPayload,
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
+    });
+  }
+
+  const errorMessage = notEnoughForFee
+    ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
+
+  const modalRef = useRef();
+
+  const isDisabled = !feeInfo || !!errorMessage || isEstimating;
 
   return (
     <SlideModal
-      isVisible={isVisible}
-      onModalHide={onModalHide}
+      ref={modalRef}
       noClose
-      headerProps={{
+      headerProps={({
         centerItems: [
           { icon: 'warning', color: colors.negative, fontSize: 16 },
           { title: t('sablierContent.title.cancelStreamScreen') }],
-        sideFlex: '0',
-      }}
+          sideFlex: 0,
+      })}
     >
       <ContentWrapper forceInset={{ top: 'never', bottom: 'always' }}>
         <Spacing h={10} />
@@ -100,18 +139,30 @@ const SablierCancellationModal = ({
           {t('sablierContent.paragraph.cancelStreamWarning')}
         </BaseText>
         <Spacing h={32} />
-        <FeeLabelToggle
-          labelText={t('label.fee')}
-          txFeeInWei={txFeeInWei}
-          gasToken={gasToken}
-          showFiatDefault
-        />
+        {(isEstimating || !!feeInfo) && (
+          <FeeLabelToggle
+            labelText={t('label.fee')}
+            txFeeInWei={feeInfo?.fee}
+            isLoading={isEstimating}
+            gasToken={feeInfo?.gasToken}
+            hasError={!!errorMessage}
+            showFiatDefault
+          />
+        )}
+        {!!errorMessage && (
+          <BaseText negative style={{ marginTop: spacing.medium }}>
+            {errorMessage}
+          </BaseText>
+        )}
         <Spacing h={16} />
         <Button
           secondary
           block
           title={t('sablierContent.button.confirmStreamCancellation')}
-          onPress={onCancel}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+            onCancel();
+          }}
           disabled={isDisabled}
         />
         <Spacing h={8} />
@@ -119,7 +170,9 @@ const SablierCancellationModal = ({
           squarePrimary
           block
           title={t('sablierContent.button.cancelStreamCancellation')}
-          onPress={onModalHide}
+          onPress={() => {
+            if (modalRef.current) modalRef.current.close();
+          }}
         />
       </ContentWrapper>
     </SlideModal>
@@ -128,8 +181,21 @@ const SablierCancellationModal = ({
 
 const mapStateToProps = ({
   ensRegistry: { data: ensRegistry },
-}: RootReducerState): $Shape<Props> => ({
+  transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
+}: RootReducerState): $Shape<StateProps> => ({
   ensRegistry,
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
 });
 
-export default withTheme(connect(mapStateToProps)(SablierCancellationModal));
+const structuredSelector = createStructuredSelector({
+  balances: accountBalancesSelector,
+});
+
+const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
+  ...structuredSelector(state),
+  ...mapStateToProps(state),
+});
+
+export default (withTheme(connect(combinedMapStateToProps)(SablierCancellationModal)): AbstractComponent<OwnProps>);

@@ -20,37 +20,29 @@
 
 import * as React from 'react';
 import { connect } from 'react-redux';
-import { FlatList } from 'react-native';
-import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
 import {
-  saveBaseFiatCurrencyAction,
   setAppThemeAction,
-  saveOptOutTrackingAction,
   setPreferredGasTokenAction,
 } from 'actions/appSettingsActions';
-import { getDefaultSupportedUserLanguage, getLanguageFullName } from 'services/localisation/translations';
-import { changeLanguageAction } from 'actions/localisationActions';
+import { getLanguageFullName } from 'services/localisation/translations';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { ScrollWrapper, Wrapper } from 'components/Layout';
-import SlideModal from 'components/Modals/SlideModal';
+import { ScrollWrapper } from 'components/Layout';
+import Modal from 'components/Modal';
 
 // constants
-import { supportedFiatCurrencies, defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
 import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 
 // utils
-import { spacing, fontStyles, fontTrackings } from 'utils/variables';
-import { BaseText } from 'components/Typography';
-import SettingsListItem from 'components/ListItem/SettingsItem';
-import Checkbox from 'components/Checkbox';
+import { spacing } from 'utils/variables';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import localeConfig from 'configs/localeConfig';
@@ -78,21 +70,20 @@ import type { ConnectedDevice } from 'models/ConnectedDevice';
 
 // local
 import { SettingsSection } from './SettingsSection';
+import BaseFiatCurrencyModal from './BaseFiatCurrencyModal';
+import LanguageModal from './LanguageModal';
+import AnalyticsModal from './AnalyticsModal';
 
 type Props = {
   baseFiatCurrency: ?string,
   themeType: string,
-  optOutTracking: boolean,
-  saveBaseFiatCurrency: (currency: string) => void,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
-  saveOptOutTracking: (status: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
   isSmartAccount: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
-  changeLanguage: (languageCode: string) => void,
   localisation: ?LocalisationOptions,
   navigation: NavigationScreenProp<*>,
   devices: ConnectedDevice[],
@@ -101,78 +92,12 @@ type Props = {
 };
 
 type State = {
-  visibleModal: ?string,
-  showRelayerMigrationModal: boolean,
+  isAfterRelayerMigration: boolean,
 };
-
-const StyledWrapper = styled(Wrapper)`
-  justify-content: space-between;
-  padding-bottom: ${spacing.rhythm}px;
-  margin-top: ${spacing.medium}px;
-`;
-
-const SmallText = styled(BaseText)`
-  ${fontStyles.regular};
-  margin-top: 2px;
-  letter-spacing: ${fontTrackings.small}px;
-`;
-
-const CheckboxText = styled(BaseText)`
-  ${fontStyles.medium};
-  margin-top: 2px;
-  letter-spacing: ${fontTrackings.small}px;
-  margin-bottom: ${spacing.medium}px;
-`;
-
-
-const currencies = supportedFiatCurrencies.map(currency => ({ name: currency, value: currency }));
-const CURRENCY = 'currency';
-const LANGUAGE = 'language';
-const MODAL = {
-  SYSTEM_INFO: 'systemInfo',
-  BASE_CURRENCY: 'baseCurrency',
-  ANALYTICS: 'analytics',
-  LANGUAGES: 'languages',
-};
-const languages = Object.keys(localeConfig.supportedLanguages)
-  .map(languageCode => ({ name: localeConfig.supportedLanguages[languageCode], value: languageCode }));
 
 class AppSettings extends React.Component<Props, State> {
   state = {
-    visibleModal: null,
-    showRelayerMigrationModal: false,
-  };
-
-  renderListItem = (
-    field: string,
-    onSelect: Function,
-    currentValue: string,
-  ) => ({
-    item: { name, value },
-  }: Object) => (
-    <SettingsListItem
-      key={value}
-      label={name}
-      isSelected={value === currentValue}
-      onPress={() => onSelect(value)}
-    />
-  );
-
-  handleCurrencyUpdate = (value: string) => {
-    const { saveBaseFiatCurrency } = this.props;
-    saveBaseFiatCurrency(value);
-    this.setState({ visibleModal: null });
-  };
-
-  handleLanguageUpdate = (value: string) => {
-    const { changeLanguage } = this.props;
-    changeLanguage(value);
-    this.setState({ visibleModal: null });
-  };
-
-  handleToggleOptOutTracking = () => {
-    const { saveOptOutTracking, optOutTracking } = this.props;
-    saveOptOutTracking(!optOutTracking);
+    isAfterRelayerMigration: false,
   };
 
   getItems = () => {
@@ -201,14 +126,14 @@ class AppSettings extends React.Component<Props, State> {
       {
         key: 'language',
         title: t('settingsContent.settingsItem.language.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.LANGUAGES }),
+        onPress: this.openLanguageModal,
         value: getLanguageFullName(localisation?.activeLngCode || sessionLanguageCode || localeConfig.defaultLanguage),
         hidden: !localeConfig.isEnabled && Object.keys(localeConfig.supportedLanguages).length <= 1,
       },
       {
         key: 'localFiatCurrency',
         title: t('settingsContent.settingsItem.fiatCurrency.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.BASE_CURRENCY }),
+        onPress: this.openBaseFiatCurrencyModal,
         value: baseFiatCurrency || defaultFiatCurrency,
       },
       showGasTokenOption && {
@@ -218,7 +143,7 @@ class AppSettings extends React.Component<Props, State> {
         value: preferredGasToken === PLR,
         onPress: () => {
           if (showRelayerMigration) {
-            this.setState({ showRelayerMigrationModal: true });
+            this.openRelayerMigrationModal();
             return;
           }
           setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
@@ -237,57 +162,54 @@ class AppSettings extends React.Component<Props, State> {
         subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
         onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
         bulletedLabel: !hasOtherDevicesLinked && {
-          label: 'Not set',
+          label: t('label.notSet'),
         },
       },
       {
-        key: MODAL.ANALYTICS,
+        key: 'analytics',
         title: t('settingsContent.settingsItem.analytics.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.ANALYTICS }),
+        onPress: this.openAnalyticsModal,
       },
       {
-        key: MODAL.SYSTEM_INFO,
+        key: 'systemInfo',
         title: t('settingsContent.settingsItem.systemInfo.title'),
-        onPress: () => this.setState({ visibleModal: MODAL.SYSTEM_INFO }),
+        onPress: this.openSystemInfoModal,
       },
     ].filter(Boolean);
   };
 
-  handleOptionListItemRender = (item, type) => {
-    const { baseFiatCurrency, localisation } = this.props;
-    switch (type) {
-      case CURRENCY:
-        return this.renderListItem(CURRENCY, this.handleCurrencyUpdate, baseFiatCurrency || defaultFiatCurrency)(item);
-      case LANGUAGE:
-        const currentLanguage = localisation?.activeLngCode || getDefaultSupportedUserLanguage();
-        return this.renderListItem(LANGUAGE, this.handleLanguageUpdate, currentLanguage)(item);
-      default:
-        return null;
-    }
-  };
+  openBaseFiatCurrencyModal = () => Modal.open(() => <BaseFiatCurrencyModal />)
+
+  openLanguageModal = () => Modal.open(() => <LanguageModal />)
+
+  openRelayerMigrationModal = () => {
+    const { accountAssets, accountHistory } = this.props;
+
+    Modal.open(() => (
+      <RelayerMigrationModal
+        accountAssets={accountAssets}
+        accountHistory={accountHistory}
+        onMigrated={() => this.setState({ isAfterRelayerMigration: true })}
+      />
+    ));
+  }
+
+  openAnalyticsModal = () => Modal.open(() => <AnalyticsModal />)
+
+  openSystemInfoModal = () => Modal.open(() => <SystemInfoModal />);
 
   componentDidUpdate(prevProps: Props) {
     const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
-    const { showRelayerMigrationModal } = this.state;
-    if (prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported && showRelayerMigrationModal) {
+    const gasTokenBecameSupported = prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported;
+
+    if (gasTokenBecameSupported && this.state.isAfterRelayerMigration) {
       // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ showRelayerMigrationModal: false });
+      this.setState({ isAfterRelayerMigration: false });
       setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
     }
   }
 
   render() {
-    const {
-      optOutTracking,
-      isSmartAccount,
-      isGasTokenSupported,
-      accountAssets,
-      accountHistory,
-    } = this.props;
-    const { visibleModal, showRelayerMigrationModal } = this.state;
-
-    const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
-
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.appSettings.title') }] }}
@@ -302,89 +224,6 @@ class AppSettings extends React.Component<Props, State> {
             sectionItems={this.getItems()}
           />
         </ScrollWrapper>
-
-        {/* BASE CURRENCY */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.BASE_CURRENCY}
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-          title={t('settingsContent.settingsItem.fiatCurrency.screenTitle')}
-          insetTop
-        >
-          <FlatList
-            data={currencies}
-            renderItem={(item) => this.handleOptionListItemRender(item, CURRENCY)}
-            keyExtractor={({ name }) => name}
-          />
-        </SlideModal>
-
-        {/* ANALYTICS */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.ANALYTICS}
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-          avoidKeyboard
-          title={t('settingsContent.settingsItem.analytics.title')}
-          insetTop
-        >
-          <Wrapper regularPadding flex={1}>
-            <StyledWrapper>
-              <Checkbox
-                checked={!optOutTracking}
-                onPress={() => this.handleToggleOptOutTracking()}
-                wrapperStyle={{ marginBottom: spacing.large }}
-              >
-                <CheckboxText>
-                  {t('settingsContent.settingsItem.analytics.paragraph.agreeSharingInfo')}
-                </CheckboxText>
-              </Checkbox>
-              <SmallText>
-                {t('settingsContent.settingsItem.analytics.paragraph.legal')}
-              </SmallText>
-            </StyledWrapper>
-          </Wrapper>
-        </SlideModal>
-
-        {/* SYSTEM INFO MODAL */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.SYSTEM_INFO}
-          fullScreen
-          showHeader
-          title={t('settingsContent.settingsItem.systemInfo.title')}
-          onModalHide={() => this.setState({ visibleModal: null })}
-          insetTop
-        >
-          <SystemInfoModal headerOnClose={() => this.setState({ visibleModal: null })} />
-        </SlideModal>
-
-        {/* RELAYER GAS FEE ACTIVATION MODAL */}
-        {showRelayerMigration &&
-          <RelayerMigrationModal
-            isVisible={showRelayerMigrationModal}
-            onModalHide={() => this.setState({ showRelayerMigrationModal: false })}
-            accountAssets={accountAssets}
-            accountHistory={accountHistory}
-          />
-        }
-
-        {/* LANGUAGES */}
-        <SlideModal
-          isVisible={visibleModal === MODAL.LANGUAGES}
-          fullScreen
-          showHeader
-          onModalHide={() => this.setState({ visibleModal: null })}
-          title={t('settingsContent.settingsItem.language.screenTitle')}
-          insetTop
-        >
-          <FlatList
-            data={languages}
-            renderItem={(item) => this.handleOptionListItemRender(item, LANGUAGE)}
-            keyExtractor={({ name }) => name}
-          />
-        </SlideModal>
-
       </ContainerWithHeader>
     );
   }
@@ -395,7 +234,6 @@ const mapStateToProps = ({
     data: {
       baseFiatCurrency,
       themeType,
-      optOutTracking = false,
       localisation,
     },
   },
@@ -405,7 +243,6 @@ const mapStateToProps = ({
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   themeType,
-  optOutTracking,
   localisation,
   activeDeviceAddress,
   devices,
@@ -426,13 +263,10 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  saveBaseFiatCurrency: (currency: string) => dispatch(saveBaseFiatCurrencyAction(currency)),
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => dispatch(
     setAppThemeAction(themeType, isManualThemeSelection),
   ),
-  saveOptOutTracking: (status: boolean) => dispatch(saveOptOutTrackingAction(status)),
   setPreferredGasToken: (token: string) => dispatch(setPreferredGasTokenAction(token)),
-  changeLanguage: (languageCode: string) => dispatch(changeLanguageAction(languageCode)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AppSettings);

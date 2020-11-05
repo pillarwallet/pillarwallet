@@ -46,15 +46,15 @@ import {
   swapExactEthToTokens,
   generateTxObject,
 } from 'utils/uniswap';
-import { parseOffer } from 'utils/exchange';
+import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
 // services
-import { encodeContractMethod } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 
 // models
 import type { Asset } from 'models/Asset';
 import type { Offer } from 'models/Offer';
+import type { AllowanceTransaction } from 'models/Transaction';
 
 // constants
 import { PROVIDER_UNISWAP, UNISWAP_SUBGRAPH_NAME } from 'constants/exchangeConstants';
@@ -77,7 +77,7 @@ const getBackupRoute = async (
     token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, ethProvider);
     tokenMiddle = await Fetcher.fetchTokenData(chainId, ADDRESSES.WETH, ethProvider);
   } catch (e) {
-    reportLog('Failed to fetch token data', e, 'warning');
+    reportLog('Uniswap: failed to fetch token data', e, 'warning');
     return null;
   }
 
@@ -87,7 +87,7 @@ const getBackupRoute = async (
     pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, ethProvider);
     pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, ethProvider);
   } catch (e) {
-    reportLog('Pair unsupported', e, 'warning');
+    reportLog('Pair unsupported by Uniswap', e, 'warning');
     return null;
   }
 
@@ -281,37 +281,11 @@ export const createUniswapOrder = async (
   };
 };
 
-/* eslint-disable i18next/no-literal-string */
-export const createUniswapAllowanceTx = async (fromAssetAddress: string, clientAddress: string): Promise<Object> => {
-  const abiFunction = [{
-    name: 'approve',
-    outputs: [{ type: 'bool', name: 'out' }],
-    inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
-    constant: false,
-    payable: false,
-    type: 'function',
-    gas: 38769,
-  }];
-
-  const encodedContractFunction = encodeContractMethod(
-    abiFunction,
-    'approve',
-    [ADDRESSES.router, ethers.constants.MaxUint256.toString()],
-  );
-
-  const txCount = await ethProvider.getTransactionCount(clientAddress);
-
-  return {
-    nonce: txCount.toString(),
-    to: fromAssetAddress,
-    gasLimit: '0',
-    gasPrice: '0',
-    chainId: chainId.toString(),
-    value: '0',
-    data: encodedContractFunction,
+export const createUniswapAllowanceTx =
+  async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
+    const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, ADDRESSES.router);
+    return allowanceTx;
   };
-};
-/* eslint-enable i18next/no-literal-string */
 
 export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
   let finished = false;

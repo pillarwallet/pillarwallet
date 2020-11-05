@@ -30,12 +30,20 @@ import mocktract from 'mocktract';
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { ETH, PLR } from 'constants/assetsConstants';
+import {
+  EN_EXTERNAL_TEST_TRANSLATION,
+  FR_EXTERNAL_TEST_TRANSLATION,
+  TEST_TRANSLATIONS_BASE_URL,
+  TEST_TRANSLATIONS_TIME_STAMP,
+} from 'constants/localesConstants';
+import { PROVIDER_1INCH, PROVIDER_SYNTHETIX, PROVIDER_UNISWAP } from 'constants/exchangeConstants';
 
 // mocks
 import StorageMock from './asyncStorageMock';
 import WalletConnectMock from './walletConnectMock';
 import envConfigMock from './envConfigMock';
 import localeConfigMock from './localeConfigMock';
+
 
 process.env.IS_TEST = 'TEST';
 
@@ -391,4 +399,47 @@ jest.setMock('configs/localeConfig', localeConfigMock);
 jest.setMock('services/coinGecko', {
   getCoinGeckoTokenPrices: () => Promise.resolve(mockTokensExchangeRates),
   getCoinGeckoEtherPrice: () => Promise.resolve(mockEtherExchangeRates),
+});
+
+const getMockedTranslations = (url) => {
+  switch (url) {
+    case `${TEST_TRANSLATIONS_BASE_URL}fr/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`:
+    case `${TEST_TRANSLATIONS_BASE_URL}fr/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`:
+      return { test: FR_EXTERNAL_TEST_TRANSLATION };
+    case `${TEST_TRANSLATIONS_BASE_URL}en/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`:
+    case `${TEST_TRANSLATIONS_BASE_URL}en/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`:
+      return { test: EN_EXTERNAL_TEST_TRANSLATION, englishOnly: EN_EXTERNAL_TEST_TRANSLATION };
+    default:
+      return {};
+  }
+};
+
+jest.setMock('utils/cache', {
+  // getCachedJSONFile: (localPath) => Promise.resolve({ test: 'yaya' }),
+  getCachedJSONFile: (localPath) => getMockedTranslations(localPath),
+  getCachedTranslationResources: (translationsData) => translationsData.reduce((formatted, { ns, url }) => {
+    if (ns) formatted[ns] = getMockedTranslations(url);
+    return formatted;
+  }, {}),
+});
+
+jest.setMock('services/synthetix', {
+  getSynthetixOffer: () => Promise.resolve({
+    provider: PROVIDER_SYNTHETIX,
+  }),
+  createSynthetixOrder: () => Promise.resolve({}),
+});
+
+jest.setMock('services/uniswap', {
+  getUniswapOffer: () => Promise.resolve({
+    provider: PROVIDER_UNISWAP,
+  }),
+  createUniswapOrder: () => Promise.resolve({}),
+});
+
+jest.setMock('services/1inch', {
+  get1inchOffer: () => Promise.resolve({
+    provider: PROVIDER_1INCH,
+  }),
+  create1inchOrder: () => Promise.resolve({}),
 });

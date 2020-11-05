@@ -21,16 +21,26 @@ import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
 import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
+import { constants } from 'ethers';
+import { getEnv } from 'configs/envConfig';
+
+// models
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
-import { fiatCurrencies } from 'fixtures/assets';
 import type { Theme } from 'models/Theme';
-import { ETH } from 'constants/assetsConstants';
 import type { Option, HorizontalOption } from 'models/Selector';
+import type { AllowanceTransaction } from 'models/Transaction';
+
+import { fiatCurrencies } from 'fixtures/assets';
+import { ETH } from 'constants/assetsConstants';
 import PROVIDERS_META from 'assets/exchange/providersMeta.json';
+
+// services, utils
+import { encodeContractMethod } from 'services/assets';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
 import { chainId } from './uniswap';
+import { reportOrWarn, getEthereumProvider } from './common';
 
 export type ExchangeOptions = {
   fromOptions: Option[],
@@ -94,4 +104,47 @@ export const parseOffer = (
 
 export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
   return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
+};
+
+/* eslint-disable i18next/no-literal-string */
+const setAllowanceAbiFunction = [{
+  name: 'approve',
+  outputs: [{ type: 'bool', name: 'out' }],
+  inputs: [{ type: 'address', name: '_spender' }, { type: 'uint256', name: '_value' }],
+  constant: false,
+  payable: false,
+  type: 'function',
+  gas: 38769,
+}];
+
+const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
+
+export const createAllowanceTx = async (
+  fromAssetAddress: string,
+  clientAddress: string,
+  contractAddress: string,
+): Promise<AllowanceTransaction | null> => {
+  if (!clientAddress) {
+    reportOrWarn('Unable to set allowance, no client address provided', null, 'error');
+    return null;
+  }
+  try {
+    const encodedContractFunction = encodeContractMethod(
+      setAllowanceAbiFunction,
+      'approve',
+      [contractAddress, constants.MaxUint256.toString()],
+    );
+
+    const txCount = await ethProvider().getTransactionCount(clientAddress);
+
+    return {
+      nonce: txCount.toString(),
+      to: fromAssetAddress,
+      chainId: '1',
+      data: encodedContractFunction,
+    };
+  } catch (e) {
+    reportOrWarn('Unable to set allowance', e, 'error');
+    return null;
+  }
 };

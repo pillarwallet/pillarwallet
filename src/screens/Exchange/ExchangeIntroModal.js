@@ -23,14 +23,12 @@ import OverlayModal from 'components/OverlayModal/OverlayModal';
 import t from 'translations/translate';
 
 
-type Props = {
-  isVisible: boolean,
+type Props = {|
   onButtonPress: () => void,
-};
+|};
 
 export default (props: Props) => (
   <OverlayModal
-    isVisible={props.isVisible}
     onButtonPress={props.onButtonPress}
     title={t('exchangeContent.modal.intro.title')}
     content={t('exchangeContent.modal.intro.paragraph')}

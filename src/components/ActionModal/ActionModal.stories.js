@@ -53,7 +53,7 @@ const ModalWrapper = styled.View`
 storiesOf('ActionModal', module).add('default', () => (
   <Wrapper>
     <ModalWrapper>
-      <ActionModal items={items} isVisible onModalClose={() => {}} storybook />
+      <ActionModal items={items} storybook />
     </ModalWrapper>
   </Wrapper>
 ));

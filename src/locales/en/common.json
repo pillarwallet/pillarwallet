@@ -199,7 +199,8 @@
     "set": "Set",
     "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline",
-    "payWithPLR": "Pay with PLR"
+    "payWithPLR": "Pay with PLR",
+    "notSet": "Not set"
   },
 
   "button": {
@@ -236,7 +237,6 @@
     "receive": "Receive",
     "seeOnEtherscan": "See on Etherscan",
     "selectAll": "Select all",
-    "selectContacts": "Select contacts",
     "send": "Send",
     "sendAll": "Send all",
     "sendBack": "Send back",
@@ -489,7 +489,7 @@
       "invalidSession": "Invalid Wallet Connect session",
       "alreadyPending": "A connection is already waiting"
     },
-    "reverted": "reverted"
+    "unableToEstimateTransaction": "Unable to estimate transaction. Please try again."
   },
 
   "badgeText": {
@@ -903,20 +903,6 @@
       "claimTokens": "Claim tokens",
       "claimTokensError": "Error"
     },
-    "instruction": {
-      "shareLink": {
-        "title": "Share your link",
-        "paragraph": "Invite your friends to join Pillar."
-      },
-      "giveSmartWallet": {
-        "title": "Give Smart Wallet for free",
-        "paragraph": "Friends who install Pillar with your link will get free Smart Wallet activation."
-      },
-      "getTokens": {
-        "title": "Get free PLR",
-        "paragraph": "Earn meta-tokens for referring friends."
-      }
-    },
     "paragraph": {
       "incomingAward": "Thanks for joining Pillar.\n To celebrate this, we also give you {{reward}}.\n You need to add and verify your email or phone in order to receive the reward.\n Reward will be issued to new user only.",
       "rewardMechanics": "Your contacts will receive an invitation link. They will get rewarded with PLR tokens and a badge after confirming their phone number/email address. You will receive your reward after your contact has been rewarded.",
@@ -930,17 +916,17 @@
       "allowedInviteViaEmail": "You are now able to invite friends via email.",
       "allowedInviteViaPhone": "You are now able to invite friends via text message.",
       "emailVerified": "Your email has been verified",
-      "phoneVerified": "Your email has been verified"
+      "phoneVerified": "Your phone has been verified"
     },
     "label": {
-      "invitesCount": "Your invites ({{amountText}} available today)",
-      "referralsCount": "Your referrals ({{amountText}} available today)",
+      "selectedInvitesCount": "{{selectedCount}} selected ({{amountText}} available today)",
       "remainingCount": "{{amount}} more",
       "noReferralCode": "No code",
       "fromCode": "From {{code}}",
       "claiming": "Claiming...",
       "inviteFriends": "Invite friends to Pillar",
-      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more."
+      "referAndGetRewards": "Refer friends and earn rewards, free PLR and more.",
+      "noMoreDailyInvitesAvailable": "No more invites available today"
     }
   },
 
@@ -1365,7 +1351,18 @@
     "failedToCreateOrder": "An error occured. This offer cannot be accepted. Please try again.",
     "cannotFindDeploymentHash": "Cannot find deployment hash. Please try again.",
     "cannotFindTransactionHash": "Cannot find transaction hash. Please try again.",
-    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again."
+    "cannotGetBlockchainExplorerLink": "Cannot get blockchain explorer link. Please try again.",
+    "cannotEnableAsset": "Cannot enable asset. Please try again.",
+    "cannotSendCollectible": "Cannot send collectible. Please try again.",
+    "cannotCreateStream": "Cannot create stream. Please try again.",
+    "cannotCancelStream": "Cannot cancel stream. Please try again.",
+    "cannotAllowAsset": "Cannot allow asset. Please try again.",
+    "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
+    "cannotWithdraw": "Cannot withdraw. Please try again.",
+    "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
+    "cannotSendAsset": "Cannot send asset. Please try again.",
+    "cannotDepositAsset": "Cannot deposit asset. Please try again.",
+    "cannotWithdrawAsset": "Cannot withdraw asset. Please try again."
   },
 
   "exchangeContent": {

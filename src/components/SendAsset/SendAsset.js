@@ -24,48 +24,44 @@ import debounce from 'lodash.debounce';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { createStructuredSelector } from 'reselect';
-import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+
+// actions
+import { addContactAction } from 'actions/contactsActions';
+import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+
+// constants
+import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
+import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
 
 // components
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 import SendContainer from 'containers/SendContainer';
-import Toast from 'components/Toast';
 import ContactDetailsModal from 'components/ContactDetailsModal';
+import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // utils
-import { isValidNumber, getEthereumProvider } from 'utils/common';
+import { isValidNumber, reportErrorLog } from 'utils/common';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { buildTxFeeInfo } from 'utils/smartWallet';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
 
-// services
-import { buildERC721TransactionData } from 'services/assets';
-import smartWalletService from 'services/smartWallet';
-
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
-import { activeAccountAddressSelector, contactsSelector } from 'selectors';
+import { contactsSelector } from 'selectors';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
 import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles';
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type { Balances } from 'models/Asset';
+import type { Balances, AssetData } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
 import type { Option } from 'models/Selector';
 import type { Contact } from 'models/Contact';
-
-// constants
-import { SEND_COLLECTIBLE_CONFIRM, SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
-import { ETH, COLLECTIBLES } from 'constants/assetsConstants';
-
-// actions
-import { addContactAction } from 'actions/contactsActions';
 
 
 type Props = {
@@ -74,50 +70,71 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
   session: SessionData,
-  activeAccountAddress: string,
-  isGasTokenSupported: boolean,
   useGasToken: boolean,
   assetsWithBalance: Option[],
   collectibles: Option[],
   contacts: Contact[],
   addContact: (contact: Contact) => void,
+  feeInfo: ?TransactionFeeInfo,
+  isEstimating: boolean,
+  estimateErrorMessage: ?string,
+  resetEstimateTransaction: () => void,
+  estimateTransaction: (recipient: string, value: number, assetData: AssetData) => void,
 };
 
 const renderFeeToggle = (
   txFeeInfo: ?TransactionFeeInfo,
   showFee: boolean,
-  feeError: boolean,
+  feeError: ?string,
   isLoading: boolean,
+  enoughBalance: boolean,
 ) => {
   if (!showFee || !txFeeInfo) return null;
 
   const { fee, gasToken } = txFeeInfo;
-  const gasTokenSymbol = get(gasToken, 'symbol', ETH);
 
   return (
     <>
-      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} notEnoughToken={!!feeError} />
-      {!!feeError &&
-      <BaseText center secondary>
-        {t('error.notEnoughTokenForFeeExtended', { token: gasTokenSymbol })}
-      </BaseText>
-      }
+      <FeeLabelToggle txFeeInWei={fee} gasToken={gasToken} isLoading={isLoading} hasError={!enoughBalance} />
+      {!!feeError && <BaseText style={{ marginTop: 15 }} center secondary>{feeError}</BaseText>}
     </>
   );
 };
+
+// TODO: map collectible params
+const mapToAssetDataType = ({
+  contractAddress,
+  address,
+  symbol: token,
+  decimals,
+  tokenType,
+  tokenId,
+  name,
+}: Object): AssetData => ({
+  contractAddress: address || contractAddress,
+  token,
+  decimals,
+  tokenType,
+  id: tokenId,
+  name,
+});
 
 const SendAsset = ({
   source,
   navigation,
   balances,
   session,
-  activeAccountAddress,
   useGasToken,
   assetsWithBalance,
   collectibles,
   contacts,
   addContact,
   defaultContact,
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+  estimateTransaction,
+  resetEstimateTransaction,
 }: Props) => {
   const defaultAssetData = navigation.getParam('assetData');
   const defaultAssetOption = defaultAssetData && {
@@ -128,100 +145,45 @@ const SendAsset = ({
   const [assetData, setAssetData] = useState<Option>(defaultAssetOption || assetsWithBalance[0]);
   const [amount, setAmount] = useState('');
   const [inputIsValid, setInputIsValid] = useState(false);
-  const [txFeeInfo, setTxFeeInfo] = useState(null);
-  const [gettingFee, setGettingFee] = useState(true);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
-  const [contactToAdd, setContactToAdd] = useState(null);
-  const hideAddContactModal = () => setContactToAdd(null);
-  const [forceHideSelectorModals, setForceHideSelectorModals] = useState(false);
-  const [selectorModalsHidden, setSelectorModalsHidden] = useState(false);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
   const isValidAmount = !!amount && isValidNumber(currentValue.toString()); // method accepts value as string
 
-  const updateTxFee = async (specifiedAmount?: number) => {
-    const value = Number(specifiedAmount || amount || 0);
+  const updateTxFee = () => {
+    const value = Number(amount || 0);
     const isCollectible = get(assetData, 'tokenType') === COLLECTIBLES;
 
     // specified amount is always valid and not necessarily matches input amount
-    if ((!isCollectible && ((!specifiedAmount && !isValidAmount) || value === 0)) || !assetData || !selectedContact) {
-      setGettingFee(false);
-      setTxFeeInfo(null);
-      return null;
+    if ((!isCollectible && (!isValidAmount || value === 0)) || !assetData || !selectedContact) {
+      return;
     }
 
-    let data;
-    if (isCollectible) {
-      const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
-      const {
-        name,
-        id,
-        contractAddress,
-        tokenType,
-      } = assetData;
-      const collectibleTransaction = {
-        from: activeAccountAddress,
-        to: selectedContact.ethAddress,
-        receiverEnsName: selectedContact.ensName,
-        name,
-        tokenId: id,
-        contractAddress,
-        tokenType,
-      };
-      data = await buildERC721TransactionData(collectibleTransaction, provider);
-    }
-
-    const transaction = { recipient: selectedContact.ethAddress, value, data };
-
-    const formattedAssetData = {
-      token: assetData.token || '',
-      contractAddress: assetData.address || '',
-      decimals: assetData.decimals || 18,
-    };
-
-    const estimated = await smartWalletService
-      .estimateAccountTransaction(transaction, formattedAssetData)
-      .then(res => buildTxFeeInfo(res, useGasToken))
-      .catch(() => null);
-
-    if (!estimated) {
-      Toast.show({
-        message: t('toast.transactionFeeEstimationFailed'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
-      setGettingFee(false);
-      setTxFeeInfo(null);
-      return null;
-    }
-
-    setTxFeeInfo(estimated);
-    return estimated;
+    estimateTransaction(selectedContact.ethAddress, value, mapToAssetDataType(assetData));
   };
 
   const updateTxFeeDebounced = useCallback(
-    debounce(updateTxFee, 500),
+    debounce(updateTxFee, 100),
     [amount, selectedContact, useGasToken, assetData],
   );
 
   useEffect(() => {
-    if (!gettingFee) setGettingFee(true);
     updateTxFeeDebounced();
     return updateTxFeeDebounced.cancel;
   }, [updateTxFeeDebounced]);
-
-  // fee changed, no longer getting
-  useEffect(() => { if (gettingFee) setGettingFee(false); }, [txFeeInfo]);
 
   const handleAmountChange = (value: ?Object) => {
     if (amount !== value?.input) setAmount(value?.input || '0');
     if (value && assetData !== value.selector) setAssetData(value.selector);
   };
 
+  // initial
   useEffect(() => {
+    resetEstimateTransaction();
+
     if (!defaultAssetData) return;
 
     let formattedSelectedAsset;
@@ -279,7 +241,18 @@ const SendAsset = ({
   };
 
   const handleFormSubmit = async () => {
-    if (submitPressed || !txFeeInfo || !selectedContact || !assetData) return;
+    if (submitPressed) return; // double press
+
+    if (!feeInfo || !selectedContact || !assetData) {
+      // something went wrong
+      Toast.show({
+        message: t('toast.cannotSendAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      reportErrorLog('SendAsset screen handleFormSubmit failed', { feeInfo, selectedContact, assetData });
+      return;
+    }
 
     setSubmitPressed(true);
 
@@ -299,13 +272,13 @@ const SendAsset = ({
       to: selectedContact.ethAddress,
       receiverEnsName: selectedContact.ensName,
       amount: amount || 0,
-      txFeeInWei: txFeeInfo.fee,
+      txFeeInWei: feeInfo.fee,
       symbol: assetData.token,
       contractAddress: assetData.contractAddress,
       decimals: assetData.decimals,
     };
 
-    if (txFeeInfo?.gasToken) transactionPayload.gasToken = txFeeInfo.gasToken;
+    if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
 
     Keyboard.dismiss();
     setSubmitPressed(false);
@@ -316,14 +289,17 @@ const SendAsset = ({
   };
 
   const calculateBalancePercentTxFee = async (assetSymbol: string, percentageModifier: number) => {
-    setGettingFee(true);
     const maxBalance = parseFloat(getBalance(balances, assetSymbol));
     const calculatedBalanceAmount = maxBalance * percentageModifier;
 
     // update fee only on max balance
-    if (maxBalance === calculatedBalanceAmount) {
-      // not debounced call to make sure it's not cancelled
-      return updateTxFee(calculatedBalanceAmount);
+    if (maxBalance === calculatedBalanceAmount && selectedContact) {
+      // await needed for initial max available send calculation to get estimate before showing max available after fees
+      await estimateTransaction(
+        selectedContact.ethAddress,
+        Number(calculatedBalanceAmount),
+        mapToAssetDataType(assetData),
+      );
     }
     return null;
   };
@@ -334,7 +310,7 @@ const SendAsset = ({
   const balance = getBalance(balances, token);
 
   const enteredMoreThanBalance = currentValue > balance;
-  const hasAllFeeData = !gettingFee && !!txFeeInfo && txFeeInfo.fee.gt(0) && !!selectedContact;
+  const hasAllFeeData = !isEstimating && !!selectedContact;
 
   const showFeeForAsset = !enteredMoreThanBalance && hasAllFeeData && isValidAmount;
   const showFeeForCollectible = hasAllFeeData;
@@ -345,26 +321,45 @@ const SendAsset = ({
     ? (!!selectedContact && !!assetData)
     : (inputIsValid && !!selectedContact && !!currentValue);
 
-  let feeError = false;
-  if (txFeeInfo && assetData && isValidAmount) {
-    feeError = !isEnoughBalanceForTransactionFee(balances, {
-      txFeeInWei: txFeeInfo.fee,
-      gasToken: txFeeInfo.gasToken,
+  // perform actual balance check only if all values set
+  let enoughBalanceForTransaction = true;
+  if (feeInfo && assetData && isValidAmount) {
+    enoughBalanceForTransaction = isEnoughBalanceForTransactionFee(balances, {
+      txFeeInWei: feeInfo.fee,
+      gasToken: feeInfo.gasToken,
       decimals: assetData.decimals,
       amount,
       symbol: token,
     });
   }
 
-  const showNextButton = hasAllData && !feeError;
+  const errorMessage = !enoughBalanceForTransaction
+    ? t('error.notEnoughTokenForFeeExtended', { token: feeInfo?.gasToken?.symbol || ETH })
+    : estimateErrorMessage;
 
-  const isNextButtonDisabled = !session.isOnline;
+  const showNextButton = hasAllData;
+
+  const isNextButtonDisabled = !session.isOnline || !feeInfo || !!errorMessage || !inputIsValid;
+
+  const openAddToContacts = useCallback((initial: ?Contact) => {
+    Modal.open(() => (
+      <ContactDetailsModal
+        title={t('title.addNewContact')}
+        contact={initial}
+        onSave={(contact: Contact) => {
+          addContact(contact);
+          handleReceiverSelect({ ...contact, value: contact.ethAddress });
+        }}
+        contacts={contacts}
+        isDefaultNameEns
+      />
+    ));
+  }, [contacts, addContact, handleReceiverSelect]);
 
   const contactsAsOptions = contacts.map((contact) => ({ ...contact, value: contact.ethAddress }));
   const addContactButtonPress = (option: Option) => resolveAndSetContactAndFromOption(
     option,
-    setContactToAdd,
-    () => setForceHideSelectorModals(true),
+    openAddToContacts,
   );
   const customOptionButtonOnPress = !resolvingContactEnsName
     ? addContactButtonPress
@@ -376,19 +371,11 @@ const SendAsset = ({
   return (
     <SendContainer
       customSelectorProps={{
-        onOptionSelect: !resolvingContactEnsName && !contactToAdd ? handleReceiverSelect : () => {},
+        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
         options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),
         customOptionButtonOnPress,
-        resetOptionsModalOnHiddenOptionAdded: true,
-        hideModals: forceHideSelectorModals,
-        onModalsHidden: () => {
-          // force hide selector modals to show contact add modal
-          if (contactToAdd) {
-            setSelectorModalsHidden(true);
-          }
-        },
       }}
       customValueSelectorProps={{
         value: amount,
@@ -396,8 +383,8 @@ const SendAsset = ({
         assetData,
         onAssetDataChange: setAssetData,
         showCollectibles: true,
-        txFeeInfo,
-        hideMaxSend: gettingFee || !selectedContact,
+        txFeeInfo: feeInfo,
+        hideMaxSend: isEstimating || !selectedContact,
         updateTxFee: calculateBalancePercentTxFee,
         onFormValid: setInputIsValid,
       }}
@@ -408,33 +395,32 @@ const SendAsset = ({
           isLoading: submitPressed,
           disabled: isNextButtonDisabled,
         },
-        footerTopAddon: !!selectedContact && renderFeeToggle(txFeeInfo, showFee, feeError, gettingFee),
-        isLoading: gettingFee,
+        footerTopAddon: !!selectedContact && renderFeeToggle(
+          feeInfo,
+          showFee,
+          errorMessage,
+          isEstimating,
+          enoughBalanceForTransaction,
+        ),
+        isLoading: isEstimating,
       }}
-    >
-      <ContactDetailsModal
-        title={t('title.addNewContact')}
-        isVisible={!isEmpty(contactToAdd) && selectorModalsHidden}
-        contact={contactToAdd}
-        onSavePress={(contact: Contact) => {
-          hideAddContactModal();
-          addContact(contact);
-          handleReceiverSelect({ ...contact, value: contact.ethAddress });
-        }}
-        onModalHide={hideAddContactModal}
-        onModalHidden={() => {
-          setSelectorModalsHidden(false);
-          setForceHideSelectorModals(false);
-        }}
-        contacts={contacts}
-        isDefaultNameEns
-      />
-    </SendContainer>
+    />
   );
 };
 
+const mapStateToProps = ({
+  transactionEstimate: {
+    feeInfo,
+    isEstimating,
+    errorMessage: estimateErrorMessage,
+  },
+}: RootReducerState): $Shape<Props> => ({
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+});
+
 const structuredSelector = createStructuredSelector({
-  activeAccountAddress: activeAccountAddressSelector,
   useGasToken: useGasTokenSelector,
   assetsWithBalance: visibleActiveAccountAssetsWithBalanceSelector,
   collectibles: activeAccountMappedCollectiblesSelector,
@@ -443,10 +429,17 @@ const structuredSelector = createStructuredSelector({
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
   ...structuredSelector(state),
+  ...mapStateToProps(state),
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
+  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
+  estimateTransaction: (
+    recipient: string,
+    value: number,
+    assetData: AssetData,
+  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);

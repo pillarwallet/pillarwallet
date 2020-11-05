@@ -455,8 +455,8 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 
     // manage language settings (from onboarding) as those are overwritten
     if (savedLocalisation && savedLocalisation.activeLngCode) {
-      const { activeLngCode, translationVersion } = savedLocalisation;
-      dispatch(setAppLanguageAction(activeLngCode, translationVersion));
+      const { activeLngCode } = savedLocalisation;
+      dispatch(setAppLanguageAction(activeLngCode));
     }
 
     // app level cached urls

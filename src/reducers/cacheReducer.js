@@ -21,7 +21,6 @@
 import { CACHE_STATUS, REMOVE_URL_CACHE, SET_CACHED_URLS } from 'constants/cacheConstants';
 
 type CacheStatus =
-  typeof CACHE_STATUS.REQUESTED |
   typeof CACHE_STATUS.PENDING |
   typeof CACHE_STATUS.DONE |
   typeof CACHE_STATUS.FAILED;

@@ -19,11 +19,8 @@
 */
 
 import * as React from 'react';
-import { Platform, TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native';
-import type { NavigationScreenProp } from 'react-navigation';
+import { TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
-import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
-import ImagePicker from 'react-native-image-crop-picker';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import tForm from 'tcomb-form-native';
@@ -39,14 +36,13 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import { BaseText, MediumText } from 'components/Typography';
-import Camera from 'components/Camera';
 import TextInput from 'components/TextInput';
 import Flag from 'components/Flag';
 import Button from 'components/Button';
 import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
-import Toast from 'components/Toast';
+import Modal from 'components/Modal';
 
 // utils
 import { spacing, appFont, fontSizes, lineHeights } from 'utils/variables';
@@ -55,13 +51,14 @@ import { themedColors, getThemeColors } from 'utils/themes';
 import { getEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
-import { reportLog } from 'utils/common';
 
 // actions
-import { updateUserAction, deleteUserAvatarAction, updateUserAvatarAction } from 'actions/userActions';
+import { updateUserAction } from 'actions/userActions';
 import { dismissPrivacyInsightAction, dismissVerificationNoteAction } from 'actions/insightsActions';
 import { goToInvitationFlowAction } from 'actions/referralsActions';
-import { handleImagePickAction } from 'actions/appSettingsActions';
+
+// selectors
+import { updatedProfileImageSelector } from 'selectors/user';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -73,13 +70,11 @@ import CautionModal from './CautionModal';
 import VerifiedModal from './VerifiedModal';
 import InviteBanner from './InviteBanner';
 import ProfileImageModal from './ProfileImageModal';
-import DeleteAvatarModal from './DeleteAvatarModal';
-
 
 type Props = {
-  navigation: NavigationScreenProp<*>,
   oneTimePasswordSent: boolean,
   user: User,
+  profileImage: string | null,
   updateUser: (walletId: string, field: Object) => void,
   accounts: Accounts,
   theme: Theme,
@@ -89,27 +84,11 @@ type Props = {
   dismissVerificationNote: () => void,
   goToInvitationFlow: () => void,
   isPillarRewardCampaignActive: boolean,
-  deleteUserAvatar: () => void,
-  updateUserAvatar: (walletId: string, formData: any) => void,
-  handleImagePick: (isPickingImage: boolean) => void,
 };
 
 type State = {
-  permissionsGranted: boolean,
-  showCamera: boolean,
-  verifyingField: ?string,
   focusedField: ?string,
   value: Object,
-  cautionModalField: ?string,
-  verifiedModalField: ?string,
-  showProfileImageModal: boolean,
-  showDeleteAvatarModal: boolean,
-};
-
-
-const VISIBLE_CAUTION_MODAL = {
-  PHONE: 'phone',
-  EMAIL: 'email',
 };
 
 const FIELD_NAME = {
@@ -137,7 +116,7 @@ const ProfileImagePlaceholder = styled.View`
 `;
 
 const CountryWrapper = styled.TouchableOpacity`
-  padding: 20px;  
+  padding: 20px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
@@ -351,15 +330,8 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     const { user } = this.props;
 
     this.state = {
-      verifyingField: null,
-      permissionsGranted: false,
-      showCamera: false,
       value: getInitialValue(user),
       focusedField: null,
-      cautionModalField: null,
-      verifiedModalField: null,
-      showProfileImageModal: false,
-      showDeleteAvatarModal: false,
     };
   }
 
@@ -455,7 +427,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       this.setState({ focusedField: null });
       if (focusedField === FIELD_NAME.EMAIL && value.email !== user.email) {
         if (isEmailVerified) {
-          this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.EMAIL });
+          this.openCautionModal(FIELD_NAME.EMAIL);
         } else {
           updateUser(walletId, { email: value.email });
         }
@@ -464,7 +436,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
         const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
         if (formattedPhone !== user.phone) {
           if (isPhoneVerified) {
-            this.setState({ cautionModalField: VISIBLE_CAUTION_MODAL.PHONE });
+            this.openCautionModal(FIELD_NAME.PHONE);
           } else {
             updateUser(walletId, { phone: formattedPhone });
           }
@@ -493,119 +465,60 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     this.phoneInputRef.focus();
   };
 
-  openCamera = async () => {
-    let statusPhoto = RESULTS.GRANTED; // android doesn't need extra permission
-    if (Platform.OS === 'ios') {
-      statusPhoto = await requestPermission(PERMISSIONS.IOS.PHOTO_LIBRARY);
-    }
-    const statusCamera = await requestPermission(Platform.select({
-      android: PERMISSIONS.ANDROID.CAMERA,
-      ios: PERMISSIONS.IOS.CAMERA,
-    }));
-    this.setState({
-      permissionsGranted: statusPhoto === RESULTS.GRANTED && statusCamera === RESULTS.GRANTED,
-      showCamera: true,
-    });
-  };
-
-  closeCamera = () => {
-    this.setState({ showCamera: false });
-  };
-
-  openProfileImageModal = () => {
-    this.setState({ showProfileImageModal: true });
-  }
-
-  onTakeSelfiePress = () => {
-    // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
-    this.setState({ showProfileImageModal: false }, () => setTimeout(this.openCamera, 500));
-  }
-
-  onUploadPicturePress = () => {
-    const { handleImagePick } = this.props;
-    handleImagePick(true);
-
-    ImagePicker.openPicker({
-      width: 300,
-      height: 300,
-      cropperCircleOverlay: true,
-      cropping: true,
-    })
-      .then((image) => {
-        handleImagePick(false);
-        this.setImage(image.path);
-      })
-      .catch((error) => {
-        handleImagePick(false);
-        reportLog('Failed to get image from the gallery', { error });
-        Toast.show({
-          message: t('toast.failedToUploadImage'),
-          emoji: 'hushed',
-          autoClose: true,
-        });
-      });
-  };
-
-  setImage = (imageUri: string) => {
-    const { user, updateUserAvatar } = this.props;
-
-    const walletId = user?.walletId;
-    if (!walletId) return;
-
-    const formData: any = new FormData();
-    formData.append('walletId', walletId);
-    formData.append('image', { uri: imageUri, name: 'image.jpg', type: 'multipart/form-data' });
-    updateUserAvatar(walletId, formData);
-    this.setState({ showProfileImageModal: false });
-  };
-
-  onDeleteAvatarPress = () => {
-    // HACK: timeout, because iOS can't show two modals at once, may be removed once we have the new modals
-    this.setState({ showProfileImageModal: false },
-      () => setTimeout(() => this.setState({ showDeleteAvatarModal: true }), 500),
-    );
-  }
+  openProfileImageModal = () => Modal.open(() => <ProfileImageModal />)
 
   verifyField = (verifyingField) => {
-    this.setState({ verifyingField });
+    const onCloseVerification = () => {
+      const { user: { isPhoneVerified, isEmailVerified }, goToInvitationFlow } = this.props;
+      const isFieldVerified =
+        (verifyingField === FIELD_NAME.PHONE && isPhoneVerified) ||
+        (verifyingField === FIELD_NAME.EMAIL && isEmailVerified);
+
+      if (isFieldVerified) {
+        Modal.open(() => (
+          <VerifiedModal
+            onButtonPress={goToInvitationFlow}
+            verifiedField={verifyingField}
+          />
+        ));
+      }
+    };
+
+    Modal.open(() => (
+      <VerifyOTPModal
+        verifyingField={verifyingField}
+        onModalClose={onCloseVerification}
+      />
+    ));
   };
 
-  onCloseVerification = () => {
-    const { verifyingField } = this.state;
-    const { isPhoneVerified, isEmailVerified } = this.props.user;
-    if ((verifyingField === FIELD_NAME.PHONE && isPhoneVerified)
-      || (verifyingField === FIELD_NAME.EMAIL && isEmailVerified)) {
-      this.setState({ verifiedModalField: verifyingField });
-    }
-    this.setState({ verifyingField: null });
-  };
+  openCautionModal = (field: string) => {
+    const { value } = this.state;
 
-  changeField = () => {
-    const { updateUser, user: { walletId } } = this.props;
-    const { cautionModalField, value } = this.state;
+    const changeField = () => {
+      const { updateUser, user: { walletId } } = this.props;
+      if (!walletId) return;
 
-    if (!walletId) return;
+      if (field === FIELD_NAME.PHONE) {
+        const { phone: { input, selector } } = value;
+        const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
+        updateUser(walletId, { phone: formattedPhone });
+      } else if (field === FIELD_NAME.EMAIL) {
+        updateUser(walletId, { email: value.email });
+      }
+    };
 
-    if (cautionModalField === VISIBLE_CAUTION_MODAL.PHONE) {
-      const { phone: { input, selector } } = value;
-      const formattedPhone = input ? `+${selector.callingCode}${input}` : null;
-      updateUser(walletId, { phone: formattedPhone });
-    } else if (cautionModalField === VISIBLE_CAUTION_MODAL.EMAIL) {
-      updateUser(walletId, { email: value.email });
-    }
-    this.setState({ cautionModalField: null });
-  };
+    Modal.open(() => (
+      <CautionModal
+        onAcceptChange={changeField}
+        onDismiss={this.resetFieldValues}
+        focusedField={field}
+      />
+    ));
+  }
 
-  onDismissCautionModal = () => {
-    this.setState({
-      cautionModalField: null,
-      value: getInitialValue(this.props.user),
-    });
-  };
-
-  deleteAvatar = () => {
-    this.setState({ showDeleteAvatarModal: false });
-    this.props.deleteUserAvatar();
+  resetFieldValues = () => {
+    this.setState({ value: getInitialValue(this.props.user) });
   }
 
   renderInsight = () => {
@@ -656,32 +569,19 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
 
   render() {
     const {
-      permissionsGranted,
-      showCamera,
-      verifyingField,
       value,
       focusedField,
-      cautionModalField,
-      verifiedModalField,
-      showProfileImageModal,
-      showDeleteAvatarModal,
     } = this.state;
     const {
-      user, navigation, theme, accounts, goToInvitationFlow,
-    } = this.props;
-
-    const {
+      user: { username },
+      theme,
+      accounts,
       profileImage,
-      lastUpdateTime = 0,
-      username,
-    } = user;
-
+    } = this.props;
 
     const colors = getThemeColors(theme);
 
     const ensName = getEnsName(accounts);
-
-    const updatedProfileImage = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
     return (
       <ContainerWithHeader
@@ -700,7 +600,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
                   <ImageWrapper>
                     {!!profileImage && (
                       <ProfileImage
-                        uri={updatedProfileImage}
+                        uri={profileImage}
                         userName={username || ''}
                         diameter={96}
                         borderWidth={0}
@@ -732,47 +632,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
           {this.renderInsight()}
           <Spacing h={75} />
         </ScrollWrapper>
-
-        <Camera
-          isVisible={showCamera}
-          modalHide={this.closeCamera}
-          permissionsGranted={permissionsGranted}
-          navigation={navigation}
-        />
-
-        {!!verifyingField && <VerifyOTPModal
-          verifyingField={verifyingField}
-          onModalClose={this.onCloseVerification}
-        />}
-        <CautionModal
-          isVisible={!!cautionModalField}
-          onModalHide={this.onDismissCautionModal}
-          onButtonPress={this.changeField}
-          focusedField={cautionModalField}
-        />
-        <VerifiedModal
-          isVisible={!!verifiedModalField}
-          onModalHide={() => this.setState({ verifiedModalField: null })}
-          onButtonPress={goToInvitationFlow}
-          verifiedField={verifiedModalField}
-        />
-        <ProfileImageModal
-          isVisible={!!showProfileImageModal}
-          onModalHide={() => this.setState({ showProfileImageModal: false })}
-          ensName={ensName}
-          username={username || ''}
-          profileImageUri={updatedProfileImage}
-          onTakeSelfiePress={this.onTakeSelfiePress}
-          onUploadPicturePress={this.onUploadPicturePress}
-          onDeleteAvatarPress={this.onDeleteAvatarPress}
-        />
-        <DeleteAvatarModal
-          isVisible={!!showDeleteAvatarModal}
-          onModalHide={() => this.setState({ showDeleteAvatarModal: false })}
-          profileImageUri={updatedProfileImage}
-          username={username || ''}
-          deleteAvatar={this.deleteAvatar}
-        />
       </ContainerWithHeader>
     );
   }
@@ -795,15 +654,17 @@ const mapStateToProps = ({
   isPillarRewardCampaignActive,
 });
 
+const combinedMapStateToProps = state => ({
+  ...mapStateToProps(state),
+  profileImage: updatedProfileImageSelector(state),
+});
+
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateUser: (walletId: string, field: Object) =>
     dispatch(updateUserAction(walletId, field)),
   dismissPrivacyInsight: () => dispatch(dismissPrivacyInsightAction()),
   dismissVerificationNote: () => dispatch(dismissVerificationNoteAction()),
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
-  deleteUserAvatar: () => dispatch(deleteUserAvatarAction()),
-  updateUserAvatar: (walletId: string, formData: any) => dispatch(updateUserAvatarAction(walletId, formData)),
-  handleImagePick: (isPickingImage: boolean) => dispatch(handleImagePickAction(isPickingImage)),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(AddOrEditUser));
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(AddOrEditUser));

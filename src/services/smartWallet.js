@@ -30,6 +30,7 @@ import { ethToWei, toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import isEmpty from 'lodash.isempty';
+import t from 'translations/translate';
 
 import { getEnv } from 'configs/envConfig';
 
@@ -40,7 +41,7 @@ import { SMART_WALLET_DEPLOYMENT_ERRORS } from 'constants/smartWalletConstants';
 // utils
 import { addressesEqual } from 'utils/assets';
 import { normalizeForEns } from 'utils/accounts';
-import { printLog, reportErrorLog, reportOrWarn } from 'utils/common';
+import { printLog, reportErrorLog, reportLog, reportOrWarn } from 'utils/common';
 
 // services
 import { encodeContractMethod } from 'services/assets';
@@ -478,7 +479,7 @@ class SmartWallet {
 
   async estimateAccountTransaction(
     transaction: AccountTransaction,
-    assetData?: AssetData,
+    assetData: ?AssetData,
   ): Promise<?EstimatedTransactionFee> {
     const {
       value: rawValue,
@@ -524,7 +525,50 @@ class SmartWallet {
     const estimated = await this.getSdk()
       .estimateAccountTransaction(...estimateMethodParams)
       .then(parseEstimatePayload)
-      .catch(() => ({}));
+      .catch((error) => {
+        let errorMessage = t('error.unableToEstimateTransaction');
+        const errorReplaceString = '[ethjs-query] while formatting outputs from RPC'; // eslint-disable-line
+        if (error?.message) {
+          /**
+           * the return result from Archanova is problematic,
+           * it contains "ethjs-query" part and rest of message is JSON string
+           * this is known issue on Archanova end, but it's not planned to be fixed
+           * return example:
+           * [ethjs-query] while formatting outputs from RPC
+           * '{"value":{"body":"{\"oneMore\":\"escaped\",\"JSON\":\"object\"}"}}'
+           */
+          if (error.message.includes(errorReplaceString)) {
+            try {
+              const messageJsonPart1 = JSON.parse(error.message.replace(errorReplaceString, '').trim().slice(1, -1));
+              const messageJsonPart2 = JSON.parse(messageJsonPart1?.value?.body);
+              const estimateError = messageJsonPart2?.error;
+              if (estimateError?.message) errorMessage = estimateError.message;
+
+              // if it starts with 0x then we shouldn't show (can occur)
+              if (estimateError?.data && !estimateError.data.startsWith('0x')) {
+                errorMessage = `${estimateError.data}: ${errorMessage}`;
+              }
+            } catch (parseError) {
+              // unable to decrypt json
+              reportLog('Smart Wallet service error message json parser failed', {
+                parseError,
+                error,
+                transaction,
+                assetData,
+              });
+            }
+          } else {
+            // this means it's more generic error message and not "ethjs-query"
+            errorMessage = error.message;
+          }
+        }
+        reportErrorLog('Smart Wallet service estimateAccountTransaction failed', {
+          errorMessage,
+          transaction,
+          assetData,
+        });
+        throw new Error(errorMessage);
+      });
 
     return formatEstimated(estimated);
   }

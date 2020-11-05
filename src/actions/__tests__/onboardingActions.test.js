@@ -72,6 +72,8 @@ import type { EthereumWallet } from 'models/Wallet';
 
 global.WebSocket = WebSocket;
 
+jest.setTimeout(20000);
+
 const mockUser = { username: 'snow', walletId: 2 };
 
 const mockFetchInitialAssetsResponse = transformAssetsToObject(mockInitialAssets);

@@ -75,8 +75,6 @@ import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
-import AccessToAddressBookScreen from 'screens/ReferFriends/AccessToAddressBook';
-import ReferralContactsScreen from 'screens/ReferFriends/ReferralContacts';
 import ServicesScreen from 'screens/Services';
 import StorybookScreen from 'screens/Storybook';
 import MenuScreen from 'screens/Menu';
@@ -215,9 +213,6 @@ import {
   COMMUNITY_SETTINGS,
   APP_SETTINGS,
   MENU_FLOW,
-  REFER_MAIN_SCREEN,
-  ADDRESS_BOOK_PERMISSION,
-  REFERRAL_CONTACTS,
   CONNECT_TAB,
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
@@ -269,6 +264,7 @@ import {
   SABLIER_WITHDRAW,
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
+  EXCHANGE_FLOW,
 } from 'constants/navigationConstants';
 
 // utils
@@ -337,47 +333,31 @@ const assetsFlow = createStackNavigator(
     [ASSET]: AssetScreen,
     [ASSET_SEARCH]: AssetSearchScreen,
     [COLLECTIBLE]: CollectibleScreen,
-    [EXCHANGE]: ExchangeScreen,
-    [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
     [WALLET_SETTINGS]: WalletSettingsScreen,
-    [EXCHANGE_INFO]: ExchangeInfoScreen,
   },
   StackNavigatorConfig,
 );
 
 assetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// SERVICES FLOW
-const servicesFlow = createStackNavigator({
-  [SERVICES]: ServicesScreen,
+const exchangeFlow = createStackNavigator({
   [EXCHANGE]: ExchangeScreen,
   [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [EXCHANGE_RECEIVE_EXPLAINED]: ExchangeReceiveExplained,
   [EXCHANGE_INFO]: ExchangeInfoScreen,
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
-  [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
-  [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
-  [SABLIER_STREAMS]: SablierStreamsScreen,
-  [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
-  [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
-  [SABLIER_NEW_STREAM]: SablierNewStreamScreen,
-  [SABLIER_NEW_STREAM_REVIEW]: SablierNewStreamReviewScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// SERVICES FLOW
+const servicesFlow = createStackNavigator({
+  [SERVICES]: ServicesScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
-
-
-// REFER FLOW
-const referFlow = createStackNavigator({
-  [REFER_MAIN_SCREEN]: ReferFriendsScreen,
-  [ADDRESS_BOOK_PERMISSION]: AccessToAddressBookScreen,
-  [REFERRAL_CONTACTS]: ReferralContactsScreen,
-}, StackNavigatorConfig);
-
-referFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 // WALLETCONNECT FLOW
 const walletConnectFlow = createStackNavigator(
@@ -401,20 +381,17 @@ const homeFlow = createStackNavigator({
   [COLLECTIBLE]: CollectibleScreen,
   [BADGE]: BadgeScreen,
   [MANAGE_DETAILS_SESSIONS]: ManageDetailsSessionsScreen,
-  [REFER_FLOW]: referFlow,
+  [REFER_FLOW]: ReferFriendsScreen,
   [STORYBOOK]: StorybookScreen,
   [WALLET_SETTINGS]: WalletSettingsScreen,
-  [EXCHANGE]: ExchangeScreen,
-  [EXCHANGE_CONFIRM]: ExchangeConfirmScreen,
   [ADD_EDIT_USER]: AddOrEditUserScreen,
   [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
-  [POOLTOGETHER_DASHBOARD]: PoolTogetherDashboardScreen,
   [POOLTOGETHER_PURCHASE]: PoolTogetherPurchaseScreen,
-  [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
-  [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
   [SABLIER_INCOMING_STREAM]: SablierIncomingStreamScreen,
   [SABLIER_OUTGOING_STREAM]: SablierOutgoingStreamScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -672,6 +649,8 @@ const poolTogetherFlow = createStackNavigator({
   [POOLTOGETHER_PURCHASE_CONFIRM]: PoolTogetherPurchaseConfirmScreen,
   [POOLTOGETHER_WITHDRAW]: PoolTogetherWithdrawScreen,
   [POOLTOGETHER_WITHDRAW_CONFIRM]: PoolTogetherWithdrawConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 poolTogetherFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -767,6 +746,7 @@ const AppFlowNavigation = createStackNavigator(
     [KEY_BASED_ASSET_TRANSFER_STATUS]: KeyBasedAssetTransferStatusScreen,
     [CONTACTS_FLOW]: contactsFlow,
     [SABLIER_FLOW]: sablierFlow,
+    [EXCHANGE_FLOW]: exchangeFlow,
   },
   modalTransition,
 );
