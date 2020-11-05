@@ -27,11 +27,9 @@ import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
 
 import type { WBTCFeesWithRate, WBTCFeesRaw } from 'models/WBTC';
-import { getEnv } from '../configs/envConfig';
+import { getEnv } from 'configs/envConfig';
 
 /* eslint-disable i18next/no-literal-string */
-
-const isProdEnv = getEnv().NETWORK_PROVIDER === 'homestead';
 
 export const gatherWBTCFeeData = async (
   amount: number,
@@ -49,6 +47,7 @@ export const gatherWBTCFeeData = async (
   );
 
   try {
+    const isProdEnv = getEnv().NETWORK_PROVIDER === 'homestead';
     let exchangeRate;
     let total;
 

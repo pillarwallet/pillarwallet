@@ -170,7 +170,7 @@ export const provideOptions = (
   );
   return {
     fromOptions: assetsOptionsFrom.concat([getBtcOption()]),
-    toOptions: assetsOptionsBuying.concat([getBtcOption()]),
+    toOptions: assetsOptionsBuying,
     horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
   };
 };

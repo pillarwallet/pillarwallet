@@ -29,8 +29,9 @@ import { BTC, WBTC } from 'constants/assetsConstants';
 import type { Option } from 'models/Selector';
 import { isWbtcCafe } from 'utils/exchange';
 import { hitslop10, hitslopFull } from 'utils/common';
-
+import Modal from 'components/Modal';
 import t from 'translations/translate';
+import WBTCSlippageModal from './WBTCSlippageModal';
 
 type Props = {
   wbtcData: ?WBTCFeesWithRate,
@@ -144,9 +145,9 @@ class WBTCCafeInfo extends React.Component<Props, State> {
     showRenFeeInfo: false,
   }
 
-  handleSlippagePress = () => {
-    // modal
-  }
+  handleSlippagePress = () => Modal.open(() => (
+    <WBTCSlippageModal />
+  ));
 
   handleNextPress = () => {
     //
@@ -205,7 +206,7 @@ class WBTCCafeInfo extends React.Component<Props, State> {
           </Row>
         </InfoWrapper>
         <ButtonWrapper>
-          <Button title="Next" onPress={this.handleNextPress} disabled={showRenFeeInfo} />
+          <Button title={t('button.next')} onPress={this.handleNextPress} disabled={showRenFeeInfo} />
         </ButtonWrapper>
       </Container>
     );
