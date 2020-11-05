@@ -18,42 +18,21 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export type Option = {
-  name: string,
-  value: string,
-  token?: string,
-  symbol?: string,
-  tokenId?: string,
-  imageUrl?: string,
-  lastUpdateTime?: string,
-  imageSource?: string,
-  ethAddress?: string,
-  opacity?: number,
-  hasSmartWallet?: number,
-  disabled?: boolean,
-  key?: string,
-  icon?: string,
-  iconUrl?: string,
-  assetBalance?: string,
-  formattedBalanceInFiat?: string,
-  id?: string,
-  decimals?: number,
-  tokenType?: string,
-  contractAddress?: string,
-  address?: string,
-  balance?: {
-    syntheticBalance?: string,
-  },
-};
+import React from 'react';
+import { storiesOf } from '@storybook/react-native';
 
-export type HorizontalOption = {
-  title?: string,
-  data: Option[],
-};
+import SearchBlock from 'components/SearchBlock';
+import { spacing } from 'utils/variables';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-export type OptionTabs = {
-  name: string,
-  id: string,
-  options?: Option[],
-  collectibles?: boolean,
-}
+storiesOf('SearchBlock', module)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
+    <SearchBlock
+      onSearchChange={() => {}}
+      wrapperStyle={{
+        paddingHorizontal: spacing.layoutSides,
+        paddingVertical: spacing.mediumLarge,
+      }}
+    />
+  ));
