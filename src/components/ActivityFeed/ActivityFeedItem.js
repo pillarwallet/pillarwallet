@@ -627,7 +627,7 @@ export class ActivityFeedItem extends React.Component<Props> {
             subtext: t('label.outgoingSablierStream'),
             itemValue: getFormattedValue(formattedAmount, symbol, { isPositive: true }),
             itemStatusIcon: TX_FAILED_STATUS,
-            statusIconColor: 'secondaryAccent240', // eslint-disable-line i18next/no-literal-string
+            statusIconColor: 'secondaryAccent240',
             isFailed: true,
           };
         }
