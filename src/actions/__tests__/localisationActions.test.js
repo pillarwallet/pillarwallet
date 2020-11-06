@@ -45,6 +45,7 @@ import {
 const EN_LOCAL_TEST_TRANSLATION = 'En local translation';
 const FR_LOCAL_TEST_TRANSLATION = 'Fr local translation';
 const LT_LOCAL_TEST_TRANSLATION = 'Lt local translation';
+const FR_ONLY_LOCAL_TEST_TRANSLATION = 'Fr only local value';
 const ONLY_LOCAL_TRANSLATION = 'Only local translation';
 const LNG_LOCAL_ONLY = 'lt_FAIL_FETCH'; // FAIL_FETCH to fail rn-fetch-blob fetch;
 
@@ -427,7 +428,7 @@ describe('Localisation actions', () => {
         };
         localeConfig.localTranslations = {
           en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: {} },
-          fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
+          fr: { common: { test: FR_LOCAL_TEST_TRANSLATION, localOnly: FR_ONLY_LOCAL_TEST_TRANSLATION }, auth: {} },
           [LNG_LOCAL_ONLY]: { common: { test: LT_LOCAL_TEST_TRANSLATION }, auth: {} },
         };
         i18n.init({
@@ -472,6 +473,7 @@ describe('Localisation actions', () => {
         expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
         expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
         expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
+        expect(i18n.t('localOnly')).toEqual(FR_ONLY_LOCAL_TEST_TRANSLATION);
       });
 
       it('should initialise translations using external translations if baseUrl is available ' +
@@ -501,7 +503,7 @@ describe('Localisation actions', () => {
       });
 
       it('should initialise translations using external translations if baseUrl is available ' +
-        'and refetch translations if at least one ns\' translations os that language is missing', async () => {
+        'and refetch translations if at least one ns\' translations of that language is missing', async () => {
         const store = mockStore({
           appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
           session: { data: { sessionLanguageCode: '', isOnline: true } },
