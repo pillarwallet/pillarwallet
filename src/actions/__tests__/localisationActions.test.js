@@ -351,7 +351,7 @@ describe('Localisation actions', () => {
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION, onlyLocal: ONLY_LOCAL_TRANSLATION }, auth: {} },
         am: { common: {}, auth: {} },
-        fr: {},
+        fr: { common: {}, auth: {} },
         bs: { common: {}, auth: {} },
       };
 

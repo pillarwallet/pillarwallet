@@ -41,7 +41,26 @@ export const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
 const DEFAULT_NAMESPACE = 'common';
 
-export default {
+type SupportedLanguages = {
+  [language: string]: string,
+};
+type PathsToLocalTranslation = {
+  [language: string]: {
+    common: Object,
+    auth: Object,
+  };
+};
+type LocalisationConfig = {
+  isEnabled: boolean,
+  defaultLanguage: string,
+  supportedLanguages: SupportedLanguages,
+  defaultNameSpace: string,
+  namespaces: Array<string>,
+  postProcessors: Array<string>,
+  localTranslations: PathsToLocalTranslation,
+};
+
+export default ({
   isEnabled: true,
   defaultLanguage: DEFAULT_LANGUAGE_CODE,
   // pairs of language code and language name in native language
@@ -67,4 +86,4 @@ export default {
       auth: BS_AUTH,
     },
   },
-};
+}: LocalisationConfig);
