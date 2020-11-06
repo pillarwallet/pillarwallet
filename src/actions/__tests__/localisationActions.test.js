@@ -46,6 +46,7 @@ const EN_LOCAL_TEST_TRANSLATION = 'En local translation';
 const FR_LOCAL_TEST_TRANSLATION = 'Fr local translation';
 const AM_LOCAL_TEST_TRANSLATION = 'Am local translation';
 const LT_LOCAL_TEST_TRANSLATION = 'Lt local translation';
+const BS_LOCAL_TEST_TRANSLATION = 'Bs local translation';
 const FR_ONLY_LOCAL_TEST_TRANSLATION = 'Fr only local value';
 const ONLY_LOCAL_TRANSLATION = 'Only local translation';
 const LNG_LOCAL_ONLY = 'lt_FAIL_FETCH'; // FAIL_FETCH to fail rn-fetch-blob fetch;
@@ -240,9 +241,14 @@ describe('Localisation actions', () => {
     });
 
     it('should pick users\' preferred language if it\'s supported and no language is provided', async () => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
+      localeConfig.supportedLanguages = {
+        en: 'English', am: 'አማርኛ', fr: 'Française', bs: 'Bosanski',
+      };
       localeConfig.localTranslations = {
-        en: { common: {}, auth: {} }, am: { common: {}, auth: {} }, fr: { common: {}, auth: {} },
+        en: { common: {}, auth: {} },
+        am: { common: {}, auth: {} },
+        fr: { common: {}, auth: {} },
+        bs: { common: {}, auth: {} },
       };
 
       const store = mockStore({
@@ -264,8 +270,13 @@ describe('Localisation actions', () => {
     });
 
     it('should pick default language if user\'s preferred language is not supported', async () => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
-      localeConfig.localTranslations = { en: { common: {}, auth: {} }, am: { common: {}, auth: {} } };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', bs: 'Bosanski' };
+      localeConfig.localTranslations = {
+        en: { common: {}, auth: {} },
+        am: { common: {}, auth: {} },
+        fr: { common: {}, auth: {} },
+        bs: { common: {}, auth: {} },
+      };
 
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: '' } } },
@@ -293,8 +304,13 @@ describe('Localisation actions', () => {
     });
 
     it('should pick default language if user\'s previously selected language is no longer supported', async () => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
-      localeConfig.localTranslations = { en: { common: {}, auth: {} }, am: { common: {}, auth: {} } };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', bs: 'Bosanski' };
+      localeConfig.localTranslations = {
+        en: { common: {}, auth: {} },
+        am: { common: {}, auth: {} },
+        fr: { common: {}, auth: {} },
+        bs: { common: {}, auth: {} },
+      };
 
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
@@ -329,11 +345,14 @@ describe('Localisation actions', () => {
 
   describe('Fallback language', () => {
     beforeEach(() => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
+      localeConfig.supportedLanguages = {
+        en: 'English', am: 'አማርኛ', fr: 'Française', bs: 'Bosanski',
+      };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION, onlyLocal: ONLY_LOCAL_TRANSLATION }, auth: {} },
         am: { common: {}, auth: {} },
         fr: {},
+        bs: { common: {}, auth: {} },
       };
 
       i18n.init({
@@ -396,6 +415,7 @@ describe('Localisation actions', () => {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: {} },
         am: { common: { test: AM_LOCAL_TEST_TRANSLATION }, auth: {} },
         fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
+        bs: { common: { test: BS_LOCAL_TEST_TRANSLATION }, auth: {} },
       };
       i18n.init({
         ns: localeConfig.namespaces,
@@ -411,7 +431,7 @@ describe('Localisation actions', () => {
 
     it('should use local EN as default language\'s translations if translations are not enabled', async () => {
       localeConfig.isEnabled = false;
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', bs: 'Bosanski' };
       firebaseRemoteConfig.getString = () => '';
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: '' } } },
@@ -430,11 +450,13 @@ describe('Localisation actions', () => {
           en: 'English',
           am: 'አማርኛ',
           fr: 'Française',
+          bs: 'Bosanski',
           [LNG_LOCAL_ONLY]: 'Lietuvių',
         };
         localeConfig.localTranslations = {
           en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: {} },
           am: { common: { test: AM_LOCAL_TEST_TRANSLATION }, auth: {} },
+          bs: { common: { test: BS_LOCAL_TEST_TRANSLATION }, auth: {} },
           fr: { common: { test: FR_LOCAL_TEST_TRANSLATION, localOnly: FR_ONLY_LOCAL_TEST_TRANSLATION }, auth: {} },
           [LNG_LOCAL_ONLY]: { common: { test: LT_LOCAL_TEST_TRANSLATION }, auth: {} },
         };
@@ -592,11 +614,14 @@ describe('Localisation actions', () => {
 
   describe('Change language', () => {
     beforeEach(() => {
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
+      localeConfig.supportedLanguages = {
+        en: 'English', am: 'አማርኛ', fr: 'Française', bs: 'Bosanski',
+      };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: { test: EN_LOCAL_TEST_TRANSLATION } },
         am: { common: { test: AM_LOCAL_TEST_TRANSLATION }, auth: { test: AM_LOCAL_TEST_TRANSLATION } },
         fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
+        bs: { common: { test: BS_LOCAL_TEST_TRANSLATION }, auth: {} },
       };
       i18n.init({
         ns: localeConfig.namespaces,
@@ -634,7 +659,9 @@ describe('Localisation actions', () => {
 
     it('should update fallback language on language change if it\'s LOCAL and baseUrl is provided', async () => {
       localeConfig.isEnabled = true;
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', fr: 'Française' };
+      localeConfig.supportedLanguages = {
+        en: 'English', am: 'አማርኛ', fr: 'Française', bs: 'Bosanski',
+      };
       localeConfig.localTranslations = {
         en:
           {
@@ -643,6 +670,7 @@ describe('Localisation actions', () => {
           },
         am: { common: { test: AM_LOCAL_TEST_TRANSLATION }, auth: {} },
         fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
+        bs: { common: { test: BS_LOCAL_TEST_TRANSLATION }, auth: {} },
       };
       firebaseRemoteConfig.getString = mockedFirebaseConfigGetUrlAndTimeStampString;
       const store = mockStore({
@@ -676,7 +704,7 @@ describe('Localisation actions', () => {
 
     it('should not change language if it\'s not supported', async () => {
       localeConfig.isEnabled = true;
-      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ' };
+      localeConfig.supportedLanguages = { en: 'English', am: 'አማርኛ', bs: 'Bosanski' };
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: 'en' } } },
         session: { data: {} },
