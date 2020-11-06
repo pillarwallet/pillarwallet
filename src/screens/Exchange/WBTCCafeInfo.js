@@ -21,9 +21,10 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { BaseText } from 'components/Typography';
+import Icon from 'components/Icon';
 import Button from 'components/Button';
 import { themedColors } from 'utils/themes';
-import { fontStyles, spacing, UIColors } from 'utils/variables';
+import { fontStyles, spacing, UIColors, baseColors } from 'utils/variables';
 import type { WBTCFeesWithRate } from 'models/WBTC';
 import { BTC, WBTC } from 'constants/assetsConstants';
 import type { Option } from 'models/Selector';
@@ -37,11 +38,7 @@ type Props = {
   wbtcData: ?WBTCFeesWithRate,
   fromAsset: Option,
   toAsset: Option,
-}
-
-type State = {
-  maxSlippage: number,
-  showRenFeeInfo: boolean
+  extendedInfo?: boolean,
 }
 
 const Container = styled.TouchableOpacity`
@@ -51,7 +48,7 @@ const Container = styled.TouchableOpacity`
 const InfoWrapper = styled.View`
   width: 100%;
   border-radius: 4;
-  border-width: 1px;
+  border-width: ${({ noBorder = false }) => noBorder ? '0px' : '1px'};
   border-style: solid;
   border-color: ${themedColors.secondaryAccent};
   margin-bottom: 30px;
@@ -139,54 +136,85 @@ const IconWrapper = styled.View`
   align-items: center;
 `;
 
-class WBTCCafeInfo extends React.Component<Props, State> {
-  state = {
-    maxSlippage: 0.5,
-    showRenFeeInfo: false,
-  }
+const FeeRow = styled.View`
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  margin-bottom: 15px;
+`;
 
-  handleSlippagePress = () => Modal.open(() => (
-    <WBTCSlippageModal onModalWillHide={maxSlippage => this.setState({ maxSlippage })} />
+const FeeWrapper = styled.View`
+  background-color: ${baseColors.blueYonder};
+  border-radius: 10px;
+  padding: 2px 10px;
+  margin-left: 10px;
+`;
+
+const Fee = styled(BaseText)`
+  ${fontStyles.small};
+  color: ${baseColors.white};
+`;
+
+const ExchangeIcon = styled(Icon)`
+  color: ${themedColors.primary};
+  font-size: 16px;
+  margin-right: 4px;
+`;
+
+const RateWrapper = styled.View`
+  flex-direction: row;
+  align-items: center;
+`;
+
+const WBTCCafeInfo = (props: Props) => {
+  const [maxSlippage, setMaxSlippage] = React.useState<number>(0.5);
+  const [showRenFeeInfo, setShowRenFeeInfo] = React.useState<boolean>(false);
+
+  const handleSlippagePress = () => Modal.open(() => (
+    <WBTCSlippageModal onModalWillHide={selectedVal => setMaxSlippage(selectedVal)} />
   ));
 
-  handleNextPress = () => {
+  const handleNextPress = () => {
     //
-  }
+  };
 
-  getTooltip = () => (
-    <Tooltip activeOpacity={1} onPress={this.switchOffFeeInfo} hitSlop={hitslopFull}>
+  const switchOffFeeInfo = () => showRenFeeInfo && setShowRenFeeInfo(false);
+
+  const getTooltip = () => (
+    <Tooltip activeOpacity={1} onPress={switchOffFeeInfo} hitSlop={hitslopFull}>
       <TooltipBody><TooltipText>{t('wbtcCafe.renDescription')}</TooltipText></TooltipBody>
       <TooltipArrow />
     </Tooltip>
   );
 
-  switchOffFeeInfo = () => {
-    if (this.state.showRenFeeInfo) {
-      this.setState({ showRenFeeInfo: false });
-    }
-  }
 
-  render() {
-    const { wbtcData, fromAsset } = this.props;
-    if (!isWbtcCafe(fromAsset)) return null;
-    const { maxSlippage, showRenFeeInfo } = this.state;
-    const rate = wbtcData?.exchangeRate;
-    const { symbol } = fromAsset;
-    const rateString = rate && symbol ? `1 ${symbol} = ${rate.toFixed(4)} ${symbol === BTC ? WBTC : BTC}` : '-';
-    return (
-      <Container activeOpacity={1} onPress={this.switchOffFeeInfo}>
-        <InfoWrapper>
-          <Row disabled>
-            <Label>{t('wbtcCafe.rate')}</Label>
+  /* eslint-disable i18next/no-literal-string */
+
+  const { wbtcData, fromAsset, extendedInfo = true } = props;
+  if (!isWbtcCafe(fromAsset)) return null;
+  const rate = wbtcData?.exchangeRate;
+  const { symbol } = fromAsset;
+  const rateString = rate && symbol ? `1 ${symbol} = ${rate.toFixed(4)} ${symbol === BTC ? WBTC : BTC}` : '-';
+  return (
+    <Container activeOpacity={1} onPress={switchOffFeeInfo}>
+      <InfoWrapper noBorder={!extendedInfo}>
+        <Row disabled>
+          <Label>{t('wbtcCafe.rate')}</Label>
+          <RateWrapper>
+            <ExchangeIcon name="exchange" />
             <Label textColor={themedColors.text}>{rateString}</Label>
-          </Row>
+          </RateWrapper>
+        </Row>
+        {extendedInfo && (
+        <>
           <Row disabled>
             <TextRow>
               <Label>{t('wbtcCafe.renFee')}</Label>
               <IconWrapper style={{ alignItems: 'center' }}>
-                {showRenFeeInfo && this.getTooltip()}
+                {showRenFeeInfo && getTooltip()}
                 <RenFeeIcon
-                  onPress={() => this.setState({ showRenFeeInfo: !showRenFeeInfo })}
+                  onPress={() => setShowRenFeeInfo(!showRenFeeInfo)}
                   activeOpacity={1}
                   hitSlop={hitslop10}
                 >
@@ -200,17 +228,28 @@ class WBTCCafeInfo extends React.Component<Props, State> {
             <Label>{t('wbtcCafe.btcFee')}</Label>
             <Label>{wbtcData ? wbtcData.networkFee.toFixed(8) : '-'}</Label>
           </Row>
-          <Row onPress={this.handleSlippagePress} noBorder disabled={showRenFeeInfo}>
-            <Label textColor={themedColors.link}>{t('wbtcCafe.slippage')}</Label>
-            <Label>{`${maxSlippage}%`}</Label>
-          </Row>
-        </InfoWrapper>
-        <ButtonWrapper>
-          <Button title={t('button.next')} onPress={this.handleNextPress} disabled={showRenFeeInfo} />
-        </ButtonWrapper>
-      </Container>
-    );
-  }
-}
+        </>
+          )}
+        <Row onPress={handleSlippagePress} noBorder disabled={extendedInfo || showRenFeeInfo}>
+          <Label>{t('wbtcCafe.slippage')}</Label>
+          <Label textColor={extendedInfo ? null : themedColors.link}>{`${maxSlippage}%`}</Label>
+        </Row>
+      </InfoWrapper>
+      {!extendedInfo && (
+        <FeeRow>
+          <Label>{t('transactions.label.transactionFee')}</Label>
+          <FeeWrapper>
+            <Fee>
+              {`${wbtcData ? wbtcData.renVMFee.toFixed(4) + wbtcData.networkFee.toFixed(4) : '-'} ${BTC}`}
+            </Fee>
+          </FeeWrapper>
+        </FeeRow>
+      )}
+      <ButtonWrapper>
+        <Button title={t('title.confirm')} onPress={handleNextPress} disabled={showRenFeeInfo} />
+      </ButtonWrapper>
+    </Container>
+  );
+};
 
 export default withTheme(WBTCCafeInfo);
