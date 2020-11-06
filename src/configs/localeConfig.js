@@ -25,8 +25,13 @@ import {
   SUFFIX_PREFIX_POSTPROCESSOR,
 } from 'constants/localesConstants';
 
+// EN
 const EN_COMMON = require('../locales/en/common.json');
 const EN_AUTH = require('../locales/en/auth.json');
+
+// AM
+const AM_COMMON = require('../locales/am/common.json');
+const AM_AUTH = require('../locales/am/auth.json');
 
 export const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
@@ -38,6 +43,7 @@ export default {
   // pairs of language code and language name in native language
   supportedLanguages: {
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
+    am: 'አማርኛ',
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
@@ -46,6 +52,10 @@ export default {
     [DEFAULT_LANGUAGE_CODE]: {
       common: EN_COMMON,
       auth: EN_AUTH,
+    },
+    am: {
+      common: AM_COMMON,
+      auth: AM_AUTH,
     },
   },
 };
