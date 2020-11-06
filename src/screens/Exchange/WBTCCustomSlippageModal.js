@@ -25,7 +25,7 @@ import { spacing, fontStyles } from 'utils/variables';
 import t from 'translations/translate';
 import { themedColors } from 'utils/themes';
 import Modal from 'components/Modal';
-import { Theme } from 'models/Theme';
+import type { Theme } from 'models/Theme';
 import TextInput from 'components/TextInput/TextInput';
 import Button from 'components/Button';
 

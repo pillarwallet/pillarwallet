@@ -119,11 +119,6 @@ type State = {
   fromAsset: Option,
   toAsset: Option,
   isFormValid: boolean,
-  errorMessage: string,
-  showSellOptions: boolean,
-  showBuyOptions: boolean,
-  displayFiatFromAmount: boolean,
-  displayFiatToAmount: boolean,
   wbtcData: ?WBTCFeesWithRate,
 };
 
@@ -139,7 +134,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
   options: ExchangeOptions;
-  wbtcCafeOptions: Option[]
+  wbtcCafeOptions: (Option | typeof undefined)[]
 
   constructor(props: Props) {
     super(props);

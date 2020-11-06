@@ -28993,61 +28993,6 @@ exports[`Storyshots Value Input default 1`] = `
             onResponderTerminationRequest={[Function]}
             onStartShouldSetResponder={[Function]}
             style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexDirection": "row",
-                  "maxWidth": "25%",
-                  "paddingLeft": 14,
-                },
-                undefined,
-              ]
-            }
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontSize": 16,
-                    "marginRight": 9,
-                  },
-                  undefined,
-                ]
-              }
-            />
-            <Text
-              style={
-                Array [
-                  Object {
-                    "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
-                    "textAlignVertical": "center",
-                  },
-                  Array [
-                    Object {
-                      "color": "#8B939E",
-                      "flexWrap": "wrap",
-                    },
-                    undefined,
-                  ],
-                ]
-              }
-            >
-              £ 0
-            </Text>
-          </View>
-          <View
-            accessible={true}
-            focusable={true}
-            onClick={[Function]}
-            onResponderGrant={[Function]}
-            onResponderMove={[Function]}
-            onResponderRelease={[Function]}
-            onResponderTerminate={[Function]}
-            onResponderTerminationRequest={[Function]}
-            onStartShouldSetResponder={[Function]}
-            style={
               Object {
                 "flex": 1,
               }

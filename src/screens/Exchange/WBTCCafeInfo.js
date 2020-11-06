@@ -167,8 +167,8 @@ class WBTCCafeInfo extends React.Component<Props, State> {
   }
 
   render() {
-    const { wbtcData, fromAsset, toAsset } = this.props;
-    if (!isWbtcCafe(fromAsset, toAsset)) return null;
+    const { wbtcData, fromAsset } = this.props;
+    if (!isWbtcCafe(fromAsset)) return null;
     const { maxSlippage, showRenFeeInfo } = this.state;
     const rate = wbtcData?.exchangeRate;
     const { symbol } = fromAsset;

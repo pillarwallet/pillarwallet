@@ -29,7 +29,7 @@ import TextInput from 'components/TextInput/TextInput';
 import { themedColors } from 'utils/themes';
 import { spacing, fontStyles, baseColors } from 'utils/variables';
 
-import { Theme } from 'models/Theme';
+import type { Theme } from 'models/Theme';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import WBTCCustomSlippageModal from './WBTCCustomSlippageModal';
 
@@ -124,7 +124,7 @@ const SlippageModal = ({ theme, onModalWillHide }: Props) => {
     setCustomValue(val);
   };
 
-  const handleOptionPress = (val) => {
+  const handleOptionPress = (val: ?number) => {
     if (val) {
       setActiveValue(val);
       setCustomValue(null);
@@ -136,12 +136,11 @@ const SlippageModal = ({ theme, onModalWillHide }: Props) => {
   const isCustomSet = () => customValue || customValue === 0;
 
   const getCustomOptionLabelComponent = () => {
-    if (isCustomSet()) return <OptionText>{`${customValue}%`}</OptionText>;
+    if (isCustomSet()) return <OptionText>{`${customValue || ''}%`}</OptionText>;
     return (<TextInput
       customInputHeight={38}
       rightPlaceholder="%"
-      disabled
-      inputProps={{ editable: false }}
+      inputProps={{ editable: false, onTouchStart: () => handleOptionPress(customValue) }}
     />);
   };
 
