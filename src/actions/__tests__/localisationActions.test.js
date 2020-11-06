@@ -45,6 +45,7 @@ import {
 const EN_LOCAL_TEST_TRANSLATION = 'En local translation';
 const FR_LOCAL_TEST_TRANSLATION = 'Fr local translation';
 const LT_LOCAL_TEST_TRANSLATION = 'Lt local translation';
+const FR_ONLY_LOCAL_TEST_TRANSLATION = 'Fr only local value';
 const ONLY_LOCAL_TRANSLATION = 'Only local translation';
 const LNG_LOCAL_ONLY = 'lt_FAIL_FETCH'; // FAIL_FETCH to fail rn-fetch-blob fetch;
 
@@ -238,8 +239,7 @@ describe('Localisation actions', () => {
     });
 
     it('should pick users\' preferred language if it\'s supported and no language is provided', async () => {
-      localeConfig.supportedLanguages = { en: 'English', fr: 'Française' };
-      localeConfig.localTranslations = { en: { common: {}, auth: {} }, fr: { common: {}, auth: {} } };
+      localeConfig.supportedLanguages = { fr: 'Française' };
 
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: '' } } },
@@ -261,7 +261,6 @@ describe('Localisation actions', () => {
 
     it('should pick default language if user\'s preferred language is not supported', async () => {
       localeConfig.supportedLanguages = { en: 'English' };
-      localeConfig.localTranslations = { en: { common: {}, auth: {} } };
 
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: '' } } },
@@ -290,7 +289,6 @@ describe('Localisation actions', () => {
 
     it('should pick default language if user\'s previously selected language is no longer supported', async () => {
       localeConfig.supportedLanguages = { en: 'English' };
-      localeConfig.localTranslations = { en: { common: {}, auth: {} } };
 
       const store = mockStore({
         appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
@@ -328,7 +326,7 @@ describe('Localisation actions', () => {
       localeConfig.supportedLanguages = { en: 'English', fr: 'Française' };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION, onlyLocal: ONLY_LOCAL_TRANSLATION }, auth: {} },
-        fr: {},
+        fr: { common: {}, auth: {} },
       };
 
       i18n.init({
@@ -427,7 +425,7 @@ describe('Localisation actions', () => {
         };
         localeConfig.localTranslations = {
           en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: {} },
-          fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
+          fr: { common: { test: FR_LOCAL_TEST_TRANSLATION, localOnly: FR_ONLY_LOCAL_TEST_TRANSLATION }, auth: {} },
           [LNG_LOCAL_ONLY]: { common: { test: LT_LOCAL_TEST_TRANSLATION }, auth: {} },
         };
         i18n.init({
@@ -472,6 +470,7 @@ describe('Localisation actions', () => {
         expect(i18n.hasResourceBundle('en', 'auth')).toBeTruthy();
         expect(i18n.hasResourceBundle('en', 'common')).toBeTruthy();
         expect(i18n.t('test')).toEqual(FR_EXTERNAL_TEST_TRANSLATION);
+        expect(i18n.t('localOnly')).toEqual(FR_ONLY_LOCAL_TEST_TRANSLATION);
       });
 
       it('should initialise translations using external translations if baseUrl is available ' +
@@ -501,7 +500,7 @@ describe('Localisation actions', () => {
       });
 
       it('should initialise translations using external translations if baseUrl is available ' +
-        'and refetch translations if at least one ns\' translations os that language is missing', async () => {
+        'and refetch translations if at least one ns\' translations of that language is missing', async () => {
         const store = mockStore({
           appSettings: { data: { localisation: { activeLngCode: 'fr' } } },
           session: { data: { sessionLanguageCode: '', isOnline: true } },
@@ -583,7 +582,9 @@ describe('Localisation actions', () => {
 
   describe('Change language', () => {
     beforeEach(() => {
-      localeConfig.supportedLanguages = { en: 'English', fr: 'Française' };
+      localeConfig.supportedLanguages = {
+        en: 'English', fr: 'Française',
+      };
       localeConfig.localTranslations = {
         en: { common: { test: EN_LOCAL_TEST_TRANSLATION }, auth: { test: EN_LOCAL_TEST_TRANSLATION } },
         fr: { common: { test: FR_LOCAL_TEST_TRANSLATION }, auth: {} },
@@ -624,7 +625,9 @@ describe('Localisation actions', () => {
 
     it('should update fallback language on language change if it\'s LOCAL and baseUrl is provided', async () => {
       localeConfig.isEnabled = true;
-      localeConfig.supportedLanguages = { en: 'English', fr: 'Française' };
+      localeConfig.supportedLanguages = {
+        en: 'English', fr: 'Française',
+      };
       localeConfig.localTranslations = {
         en:
           {
