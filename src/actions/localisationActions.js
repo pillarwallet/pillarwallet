@@ -86,13 +86,24 @@ type GetTranslationResourcesProps = {
   getLocal?: boolean,
 }
 
+
+const getLocalTranslations = (language: string) => {
+  const relatedLocalTranslationData = localeConfig.localTranslations[language];
+  if (!relatedLocalTranslationData) {
+    reportLog('Local translations are missing', { language });
+    return {};
+  }
+  return localeConfig.namespaces.reduce((mappedResources, ns) => {
+    const localTranslations = relatedLocalTranslationData[ns];
+    if (localTranslations) {
+      mappedResources[ns] = localTranslations;
+    }
+    return mappedResources;
+  }, {});
+};
+
 const getTranslationsResources = async (props: GetTranslationResourcesProps) => {
-  const {
-    language,
-    dispatch,
-    getState,
-    getLocal = false,
-  } = props;
+  const { language, dispatch, getState } = props;
   let resources;
   let version = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP);
   const baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
@@ -105,7 +116,7 @@ const getTranslationsResources = async (props: GetTranslationResourcesProps) => 
   const relatedLocalTranslationData = localeConfig.localTranslations[language] || {};
 
   // if translations' baseUrl is provided - use external translations. If not - local.
-  if (baseUrl && !getLocal) {
+  if (baseUrl) {
     // If network is available and no cached version exists - fetch and cache newest translations
     const { cache: { cachedUrls: cachedUrlsBeforeFetching } } = getState();
 
@@ -149,13 +160,7 @@ const getTranslationsResources = async (props: GetTranslationResourcesProps) => 
       }
     }
   } else {
-    resources = localeConfig.namespaces.reduce((mappedResources, ns) => {
-      const localTranslations = relatedLocalTranslationData[ns];
-      if (localTranslations) {
-        mappedResources[ns] = localTranslations;
-      }
-      return mappedResources;
-    }, {});
+    resources = getLocalTranslations(language);
     version = LOCAL;
   }
 
@@ -190,9 +195,7 @@ const setLanguageAndTranslationBundles = async ({ language, resources, onSuccess
 export const getAndSetFallbackLanguageResources = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const language = localeConfig.defaultLanguage;
-    const { resources: localResources } = await getTranslationsResources({
-      language, dispatch, getState, getLocal: true,
-    });
+    const localResources = getLocalTranslations(language);
 
     const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
 
@@ -228,13 +231,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
 
     // check if translations are supported. If not - use local default lang translations
     if (!localeConfig.isEnabled) {
-      const localDefaultTranslations = localeConfig.localTranslations[localeConfig.defaultLanguage];
-      const localDefaultTranslationResources = localeConfig.namespaces.reduce((allResources, ns) => {
-        const relatedTranslations = localDefaultTranslations[ns];
-        if (relatedTranslations) allResources[ns] = relatedTranslations;
-        return allResources;
-      }, {});
-
+      const localDefaultTranslationResources = getLocalTranslations(localeConfig.defaultLanguage);
       await setLanguageAndTranslationBundles({
         resources: localDefaultTranslationResources,
         language: localeConfig.defaultLanguage,
@@ -271,6 +268,9 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
         // if is changing to fallback language - update fallbackLanguageVersion
         dispatch(setFallbackLanguageVersionAction(version));
       }
+
+      const localResources = getLocalTranslations(language);
+      await addResourceBundles(language, localeConfig.namespaces, localResources);
 
       dispatch(setSessionTranslationBundleInitialisedAction());
       dispatch(setSessionLanguageAction(language, version));
