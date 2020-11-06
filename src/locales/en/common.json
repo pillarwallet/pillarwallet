@@ -209,6 +209,7 @@
     "addContacts": "Add contacts",
     "addDetails": "Add details",
     "addFunds": "Add funds",
+    "apply": "Apply",
     "approve": "Approve",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
@@ -879,7 +880,8 @@
     "useOnce": "Address can be used only once.",
     "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications.",
     "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
-    "custom": "Custom"
+    "custom": "Custom",
+    "enterCustom": "Enter custom percent"
   },
 
   "referralsContent": {

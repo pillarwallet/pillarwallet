@@ -300,8 +300,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { toOptions, horizontalOptions } = this.options;
 
     let toAmount;
+    const isWbtc = isWbtcCafe(fromAsset);
 
-    if (isWbtcCafe(fromAsset) && wbtcData) {
+    if (isWbtc && wbtcData) {
       toAmount = String(wbtcData.estimate);
     } else if (offers?.length && fromAmount) {
       toAmount = getBestAmountToBuy(offers, fromAmount);
@@ -319,6 +320,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         leftSideSymbol="plus" // eslint-disable-line i18next/no-literal-string
         onBlur={this.blurFromInput}
         hideMaxSend
+        disableAssetChange={isWbtc}
       />
     );
   }

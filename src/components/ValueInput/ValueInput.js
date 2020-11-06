@@ -35,7 +35,7 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber } from 'utils/common';
+import { formatAmount, isValidNumber, noop } from 'utils/common';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -71,6 +71,7 @@ export type ExternalProps = {
   leftSideSymbol?: string,
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
+  disableAssetChange?: boolean,
 };
 
 type InnerProps = {
@@ -131,6 +132,7 @@ export const ValueInputComponent = (props: Props) => {
     leftSideSymbol,
     getInputRef,
     onFormValid,
+    disableAssetChange,
   } = props;
 
   const [valueInFiat, setValueInFiat] = useState<string>('');
@@ -224,7 +226,7 @@ export const ValueInputComponent = (props: Props) => {
         onAssetPress={openAssetSelector}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
-        disableAssetSelection={assetsOptions.length <= 1}
+        disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
     );
   };
@@ -265,7 +267,7 @@ export const ValueInputComponent = (props: Props) => {
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
-          onRightAddonPress={openAssetSelector}
+          onRightAddonPress={disableAssetChange ? noop : openAssetSelector}
           leftSideText={displayFiatAmount
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat
@@ -280,7 +282,7 @@ export const ValueInputComponent = (props: Props) => {
       )}
       {tokenType === COLLECTIBLES && (
         <CollectibleWrapper>
-          <MediumText medium onPress={openAssetSelector}>{assetData.name}
+          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>{assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
           <Spacing h={16} />

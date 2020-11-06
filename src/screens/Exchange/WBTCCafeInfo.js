@@ -146,7 +146,7 @@ class WBTCCafeInfo extends React.Component<Props, State> {
   }
 
   handleSlippagePress = () => Modal.open(() => (
-    <WBTCSlippageModal />
+    <WBTCSlippageModal onModalWillHide={maxSlippage => this.setState({ maxSlippage })} />
   ));
 
   handleNextPress = () => {

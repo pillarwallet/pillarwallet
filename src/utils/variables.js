@@ -119,6 +119,7 @@ export const baseColors = {
   neonBlue: '#3C71FF',
   darkOrange: '#ff8d04',
   chestnutRose: '#cb4c4c',
+  darkBlue: '#02050d',
 };
 
 export const brandColors = [

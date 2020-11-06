@@ -21,18 +21,21 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { MediumText, BaseText } from 'components/Typography';
-import { spacing, fontStyles } from 'utils/variables';
+import { spacing, fontStyles, baseColors } from 'utils/variables';
 import t from 'translations/translate';
 import { themedColors } from 'utils/themes';
 import Modal from 'components/Modal';
+import { Theme } from 'models/Theme';
+import { DARK_THEME } from 'constants/appSettingsConstants';
+import WBTCCustomSlippageModal from './WBTCCustomSlippageModal';
 
 const Container = styled.View`
   padding: ${spacing.rhythm}px;
-  background-color: white;
   border-top-left-radius: 32px;
   border-top-right-radius: 32px;
   position: absolute;
   bottom: 0;
+  background-color: ${themedColors.card};
 `;
 
 const Row = styled.View`
@@ -62,6 +65,8 @@ const Option = styled.TouchableOpacity`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
+  border-radius: 4px;
+  background-color: ${({ isActive }) => isActive ? themedColors.tertiary : baseColors.white};
 `;
 
 const OptionText = styled(BaseText)`
@@ -76,7 +81,8 @@ const Circle = styled.View`
   height: 20px;
   border-width: 1px;
   border-radius: 10px;
-  border-color: ${themedColors.inactiveTabBarIcon};
+  border-color: ${({ isDarkTheme }) => isDarkTheme ? baseColors.darkBlue : themedColors.inactiveTabBarIcon};
+  background-color: ${({ isDarkTheme }) => isDarkTheme ? baseColors.darkBlue : baseColors.white};
 `;
 
 const InnerCircle = styled.View`
@@ -86,37 +92,47 @@ const InnerCircle = styled.View`
   background-color: ${themedColors.primary};
 `;
 
+// 0 is for custom
+const PRESET_VALUES = [0.5, 1, 3, 0];
+
 interface Props {
-  onValuePress: (val: number) => void;
-  activeValue: number;
+  theme: Theme;
+  onModalWillHide: (val: number) => void;
 }
 
 const img = require('assets/icons/change.png');
 
-const SlippageModal = ({ onValuePress, activeValue }: Props) => {
+const SlippageModal = ({ theme, onModalWillHide }: Props) => {
+  const [activeValue, setActiveValue] = React.useState<number>(0.5);
+
+  const isActiveOption = (val: number) => val === activeValue || (!val && !PRESET_VALUES.includes(activeValue));
+
   const handleOptionPress = (val) => {
-    if (val) return onValuePress(val);
-    return; // open modal
+    if (val) return setActiveValue(val);
+    return Modal.open(() => <WBTCCustomSlippageModal onSubmit={setActiveValue} activeValue={activeValue} />);
   };
 
-  const getRow = (val?: number) => (
-    <Option onPress={handleOptionPress} key={val}>
-      <OptionText>{val ? `${val}%` : t('wbtcCafe.custom')}</OptionText>
-      <Circle>
-        {val === activeValue && <InnerCircle />}
-      </Circle>
-    </Option>
-  );
+  const getRow = (val: number) => {
+    const isActive = isActiveOption(val);
+    return (
+      <Option onPress={() => handleOptionPress(val)} key={val} isActive={isActive}>
+        <OptionText>{val ? `${val}%` : t('wbtcCafe.custom')}</OptionText>
+        <Circle isDarkTheme={theme.current === DARK_THEME} >
+          {isActiveOption(val) && <InnerCircle />}
+        </Circle>
+      </Option>
+    );
+  };
 
   return (
-    <Modal>
+    <Modal onModalWillHide={() => onModalWillHide(activeValue)}>
       <Container>
         <Row>
           <ExchangeIcon source={img} />
           <Title>{t('exchangeContent.label.maxSlippage')}</Title>
         </Row>
         <Text>{t('wbtcCafe.slippageDesc')}</Text>
-        {[0.5, 1, 3, undefined].map(val => getRow(val))}
+        {PRESET_VALUES.map(val => getRow(val))}
       </Container>
     </Modal>
   );
