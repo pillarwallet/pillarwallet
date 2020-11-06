@@ -20,11 +20,15 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { MediumText, BaseText } from 'components/Typography';
-import { spacing, fontStyles, baseColors } from 'utils/variables';
 import t from 'translations/translate';
-import { themedColors } from 'utils/themes';
+
+import { MediumText, BaseText } from 'components/Typography';
 import Modal from 'components/Modal';
+import TextInput from 'components/TextInput/TextInput';
+
+import { themedColors } from 'utils/themes';
+import { spacing, fontStyles, baseColors } from 'utils/variables';
+
 import { Theme } from 'models/Theme';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import WBTCCustomSlippageModal from './WBTCCustomSlippageModal';
@@ -92,6 +96,13 @@ const InnerCircle = styled.View`
   background-color: ${themedColors.primary};
 `;
 
+const Label = styled.View`
+  position: absolute;
+  right: 50;
+  justify-content: center;
+  bottom: 0;
+`;
+
 // 0 is for custom
 const PRESET_VALUES = [0.5, 1, 3, 0];
 
@@ -104,12 +115,34 @@ const img = require('assets/icons/change.png');
 
 const SlippageModal = ({ theme, onModalWillHide }: Props) => {
   const [activeValue, setActiveValue] = React.useState<number>(0.5);
+  const [customValue, setCustomValue] = React.useState<number | null>(null);
 
   const isActiveOption = (val: number) => val === activeValue || (!val && !PRESET_VALUES.includes(activeValue));
 
+  const handleCustomSubmit = (val: number) => {
+    setActiveValue(val);
+    setCustomValue(val);
+  };
+
   const handleOptionPress = (val) => {
-    if (val) return setActiveValue(val);
-    return Modal.open(() => <WBTCCustomSlippageModal onSubmit={setActiveValue} activeValue={activeValue} />);
+    if (val) {
+      setActiveValue(val);
+      setCustomValue(null);
+      return null;
+    }
+    return Modal.open(() => <WBTCCustomSlippageModal onSubmit={handleCustomSubmit} activeValue={activeValue} />);
+  };
+
+  const isCustomSet = () => customValue || customValue === 0;
+
+  const getCustomOptionLabelComponent = () => {
+    if (isCustomSet()) return <OptionText>{`${customValue}%`}</OptionText>;
+    return (<TextInput
+      customInputHeight={38}
+      rightPlaceholder="%"
+      disabled
+      inputProps={{ editable: false }}
+    />);
   };
 
   const getRow = (val: number) => {
@@ -117,6 +150,7 @@ const SlippageModal = ({ theme, onModalWillHide }: Props) => {
     return (
       <Option onPress={() => handleOptionPress(val)} key={val} isActive={isActive}>
         <OptionText>{val ? `${val}%` : t('wbtcCafe.custom')}</OptionText>
+        {!val && <Label style={[isCustomSet() && { bottom: null }]}>{getCustomOptionLabelComponent()}</Label>}
         <Circle isDarkTheme={theme.current === DARK_THEME} >
           {isActiveOption(val) && <InnerCircle />}
         </Circle>
