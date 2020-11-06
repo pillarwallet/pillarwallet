@@ -130,7 +130,7 @@ exports[`Storyshots ActionModal default 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#0A1427",
                       "fontSize": 10,
                       "lineHeight": 14,
                     },

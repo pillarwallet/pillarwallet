@@ -152,7 +152,6 @@ const Image = styled(CachedImage)`
   width: 24px;
   resize-mode: contain;
   ${({ source, theme }) => !source && `tint-color: ${theme.colors.basic010};`}
- 
 `;
 
 const AddonRegularText = styled(BaseText)`

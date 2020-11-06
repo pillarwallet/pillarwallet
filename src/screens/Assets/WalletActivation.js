@@ -109,7 +109,6 @@ class WalletActivation extends React.PureComponent<Props> {
             transparent
             title={t('button.seeOnEtherscan')}
             onPress={this.handleEtherscan}
-            style={{ borderColor: 'transparent' }}
           />
         </ButtonsWrapper>
       </ScrollView>

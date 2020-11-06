@@ -40,7 +40,7 @@ import Tabs from 'components/Tabs';
 import CollectiblesList from 'components/CollectiblesList';
 
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
 import { isValidAddress } from 'utils/validators';
@@ -92,7 +92,7 @@ const ITEM_SPACING = 13;
 const OptionsHeader = styled(MediumText)`
   margin: ${spacing.large}px ${spacing.layoutSides}px 0;
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const HorizontalOptions = styled.View`
@@ -108,7 +108,7 @@ const HorizontalOptionItem = styled.TouchableOpacity`
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
   padding: 0 4px;
   margin-top: 8px;
 `;
@@ -127,7 +127,7 @@ const IconCircle = styled.View`
   width: ${DIAMETER}px;
   height: ${DIAMETER}px;
   border-radius: ${DIAMETER / 2}px;
-  background-color: ${themedColors.tertiary};
+  background-color: ${({ theme }) => theme.colors.basic020};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -435,7 +435,7 @@ class SelectorOptions extends React.Component<Props, State> {
         onModalHide={this.props.onHide}
         noSwipeToDismiss
         noClose
-        backgroundColor={colors.card}
+        backgroundColor={colors.basic050}
         noTopPadding
       >
         <ContainerWithHeader

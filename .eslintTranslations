@@ -224,6 +224,7 @@
         "sharerUrl",
         "sideFlex",
         "statusIcon",
+        "statusIconColor",
         "style",
         "top",
         "translationKey",

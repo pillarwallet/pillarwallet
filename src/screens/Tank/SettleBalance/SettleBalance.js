@@ -61,7 +61,7 @@ import {
   groupAndSortByDate,
 } from 'utils/common';
 import { getRate } from 'utils/assets';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 import { createStructuredSelector } from 'reselect';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -115,17 +115,17 @@ const BalanceWrapper = styled.View`
 
 const ValueInFiat = styled(BaseText)`
   font-size: ${fontSizes.regular}px;
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const SubtitleView = styled.View`
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-end;
   padding: 30px ${spacing.rhythm}px 25px;
   border-bottom-width: 1px;
-  border-color: ${themedColors.border};
+  border-color: ${({ theme }) => theme.colors.basic080};
 `;
 
 const UnsettledTransactionsList = styled.SectionList`
@@ -140,7 +140,7 @@ const SectionHeaderWrapper = styled.View`
 
 const SectionHeader = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 class SettleBalance extends React.Component<Props, State> {

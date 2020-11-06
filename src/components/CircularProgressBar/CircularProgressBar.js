@@ -112,7 +112,7 @@ const CircularProgressBar = ({
         cx={size / 2}
         cy={size / 2}
         r={size / 2}
-        fill={colors.card}
+        fill={colors.basic050}
       />
       <AnimatedPath
         d={path}

@@ -37,7 +37,6 @@ import Modal from 'components/Modal';
 // utils
 import { smallScreen, getDeviceWidth } from 'utils/common';
 import { fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 
 import { activeAccountAddressSelector } from 'selectors';
@@ -75,7 +74,7 @@ const Name = styled(BaseText)`
 `;
 
 const Card = styled.TouchableOpacity`
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-radius: 10px;
   padding: 16px;
   align-items: center;

@@ -91,7 +91,7 @@ type IconProps = {
   emoji?: string,
   icon?: string,
   iconColor?: string,
-}
+};
 
 const Footer = styled.View``;
 
