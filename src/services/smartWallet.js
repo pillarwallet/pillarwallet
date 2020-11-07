@@ -488,7 +488,7 @@ class SmartWallet {
     } = transaction;
     let { data, recipient } = transaction;
     const decimals = get(assetData, 'decimals');
-    const assetSymbol = get(assetData, 'token');
+    const assetSymbol = get(assetData, 'token', ETH);
     const contractAddress = get(assetData, 'contractAddress');
 
     let value;
