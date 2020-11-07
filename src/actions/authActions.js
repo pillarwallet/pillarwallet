@@ -510,8 +510,25 @@ export const logoutAction = () => {
     await dispatch(resetAppServicesAction());
 
     // reset reducer state
-    const { isOnline } = getState().session.data; // keep network state after reset
-    dispatch(resetAppStateAction({ session: { data: { isOnline } } }));
+    const {
+      isOnline,
+      translationsInitialised,
+      fallbackLanguageVersion,
+      sessionLanguageCode,
+      sessionLanguageVersion,
+    } = getState().session.data; // keep these session values state after reset
+
+    dispatch(resetAppStateAction({
+      session: {
+        data: {
+          isOnline,
+          translationsInitialised,
+          fallbackLanguageVersion,
+          sessionLanguageCode,
+          sessionLanguageVersion,
+        },
+      },
+    }));
 
     // is cleaned up so we would not blind users after they delete wallet :)
 
