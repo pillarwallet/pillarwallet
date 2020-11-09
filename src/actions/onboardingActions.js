@@ -313,17 +313,33 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
 export const beginOnboardingAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // pass current onboarding, referrals and session network state to keep after redux state reset
+    // pass current onboarding, referrals and some session values to keep after redux state reset
     const {
       onboarding,
       referrals,
-      session: { data: { isOnline } },
+      session: {
+        data: {
+          isOnline,
+          translationsInitialised,
+          fallbackLanguageVersion,
+          sessionLanguageCode,
+          sessionLanguageVersion,
+        },
+      },
     } = getState();
 
     dispatch(resetAppStateAction({
       onboarding,
       referrals,
-      session: { data: { isOnline } },
+      session: {
+        data: {
+          isOnline,
+          translationsInitialised,
+          fallbackLanguageVersion,
+          sessionLanguageCode,
+          sessionLanguageVersion,
+        },
+      },
     }));
 
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));

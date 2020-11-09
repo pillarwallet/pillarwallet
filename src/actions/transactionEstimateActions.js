@@ -74,8 +74,11 @@ export const estimateTransactionAction = (
     let transaction: AccountTransaction = {
       recipient: recipientAddress,
       value,
-      sequential,
     };
+
+    if (sequential) {
+      transaction.sequentialTransactions = sequential;
+    }
 
     if (assetData?.tokenType === COLLECTIBLES && !data && assetData) {
       const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
