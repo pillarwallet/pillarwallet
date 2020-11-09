@@ -32,7 +32,9 @@ import {
   SET_FETCHING_RARI_APY,
   SET_FETCHING_RARI_USER_DATA,
 } from 'constants/rariConstants';
+import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
@@ -78,5 +80,33 @@ export const fetchRariUserDataAction = () => {
         userInterestsPercentage: userInterests?.interestsPercentage || 0,
       },
     });
+  };
+};
+
+export const calculateRariDepositTransactionEstimateAction = (
+  rariDepositNeededTransactions: Object[],
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const sequentialTransactions = rariDepositNeededTransactions
+      .slice(1)
+      .map(({
+        to: recipient,
+        amount: value,
+        data,
+      }) => ({ recipient, value, data }));
+
+    dispatch(estimateTransactionAction(
+      rariDepositNeededTransactions[0].to,
+      rariDepositNeededTransactions[0].amount,
+      rariDepositNeededTransactions[0].data,
+      null,
+      sequentialTransactions,
+    ));
   };
 };

@@ -27316,27 +27316,36 @@ exports[`Storyshots Table default 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
           Array [
             Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "textAlignVertical": "center",
+              "alignItems": "center",
+              "flexDirection": "row",
             },
-            Array [
-              Object {
-                "color": "#8B939E",
-                "fontSize": 14,
-                "lineHeight": 22,
-              },
-              undefined,
-            ],
+            undefined,
           ]
         }
       >
-        One
-      </Text>
+        <Text
+          regular={true}
+          secondary={true}
+          style={
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          One
+        </Text>
+      </View>
       <View
         onLayout={[Function]}
       >
@@ -27400,27 +27409,36 @@ exports[`Storyshots Table default 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
           Array [
             Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "textAlignVertical": "center",
+              "alignItems": "center",
+              "flexDirection": "row",
             },
-            Array [
-              Object {
-                "color": "#8B939E",
-                "fontSize": 14,
-                "lineHeight": 22,
-              },
-              undefined,
-            ],
+            undefined,
           ]
         }
       >
-        Two
-      </Text>
+        <Text
+          regular={true}
+          secondary={true}
+          style={
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          Two
+        </Text>
+      </View>
       <Text
         big={true}
         positive={true}
@@ -27498,27 +27516,36 @@ exports[`Storyshots Table default 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
           Array [
             Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "textAlignVertical": "center",
+              "alignItems": "center",
+              "flexDirection": "row",
             },
-            Array [
-              Object {
-                "color": "#8B939E",
-                "fontSize": 14,
-                "lineHeight": 22,
-              },
-              undefined,
-            ],
+            undefined,
           ]
         }
       >
-        Free
-      </Text>
+        <Text
+          regular={true}
+          secondary={true}
+          style={
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          Free
+        </Text>
+      </View>
       <Text
         positive={true}
         regular={true}
@@ -27566,27 +27593,36 @@ exports[`Storyshots Table default 1`] = `
         ]
       }
     >
-      <Text
+      <View
         style={
           Array [
             Object {
-              "color": "#0A1427",
-              "fontFamily": "EuclidCircularB-Regular",
-              "textAlignVertical": "center",
+              "alignItems": "center",
+              "flexDirection": "row",
             },
-            Array [
-              Object {
-                "color": "#8B939E",
-                "fontSize": 14,
-                "lineHeight": 22,
-              },
-              undefined,
-            ],
+            undefined,
           ]
         }
       >
-        High fees
-      </Text>
+        <Text
+          regular={true}
+          secondary={true}
+          style={
+            Array [
+              Object {
+                "color": "#8B939E",
+                "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 14,
+                "lineHeight": 22,
+                "textAlignVertical": "center",
+              },
+              undefined,
+            ]
+          }
+        >
+          High fees
+        </Text>
+      </View>
       <View
         onLayout={[Function]}
       >
