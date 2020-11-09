@@ -26,6 +26,7 @@
     "prestorybook": "rnstl"
   },
   "dependencies": {
+    "@ethersproject/shims": "^5.0.7",
     "@netgum/utils": "^0.1.3",
     "@pillarwallet/pillarwallet-nodejs-sdk": "1.48.1875",
     "@react-native-community/async-storage": "1.8.1",
