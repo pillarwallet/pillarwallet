@@ -21,10 +21,12 @@
 import React from 'react';
 import type { Node as ReactNode } from 'react';
 import RNModal from 'react-native-modal';
+import { View } from 'react-native';
+import styled from 'styled-components/native';
 
 import { ToastProvider } from 'components/Toast';
 
-import ModalProvider, { ModalStack, ModalIdContext } from './ModalProvider';
+import ModalProvider, { ModalStack, ModalIdContext, EMPTY_MODAL_ID } from './ModalProvider';
 import type { ModalOptions } from './ModalProvider';
 
 export { default as ModalProvider } from './ModalProvider';
@@ -74,6 +76,12 @@ type Props = {|
 type State = {|
   isVisible: boolean,
 |};
+
+const StaticContainer = styled.View`
+  background-color: rgba(0, 0, 0, 0.7);
+  flex: 1;
+  justify-content: center;
+`;
 
 class Modal extends React.Component<Props, State> {
   static open(render: $PropertyType<ModalOptions, 'render'>) {
@@ -140,7 +148,15 @@ class Modal extends React.Component<Props, State> {
     const { children, swipeDirection, ...props } = this.props;
     const { isVisible } = this.state;
 
-    return (
+    // render contents direrctly with overlay-like background if the modal was
+    // attached outside of ModalProvider (e.g. in storybook)
+    return this.getId() === EMPTY_MODAL_ID ? (
+      <StaticContainer>
+        <View style={this.props.style}>
+          {children}
+        </View>
+      </StaticContainer>
+    ) : (
       <RNModal
         isVisible={isVisible}
         propagateSwipe

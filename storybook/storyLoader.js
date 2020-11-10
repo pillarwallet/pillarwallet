@@ -9,6 +9,7 @@ function loadStories() {
 	require('../src/components/EventDetails/EventDetails.stories');
 	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
 	require('../src/components/InsightWithButton/InsightWithButton.stories');
+	require('../src/components/Modals/SlideModal/SlideModal.stories');
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/Selector/Selector.stories');
@@ -24,6 +25,7 @@ const stories = [
 	'../src/components/EventDetails/EventDetails.stories',
 	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
 	'../src/components/InsightWithButton/InsightWithButton.stories',
+	'../src/components/Modals/SlideModal/SlideModal.stories',
 	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/Selector/Selector.stories',
