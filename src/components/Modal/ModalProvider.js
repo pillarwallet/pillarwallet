@@ -49,8 +49,8 @@ type ModalInstance = {
 const ModalStackContext = React.createContext<ModalState[]>([]);
 const ModalNextIndexContext = React.createContext<number>(0);
 
-// eslint-disable-next-line i18next/no-literal-string
-export const ModalIdContext = React.createContext<string>('default value for modal id context');
+export const EMPTY_MODAL_ID = 'default value for modal id context';
+export const ModalIdContext = React.createContext<string>(EMPTY_MODAL_ID);
 
 export const ModalStack = () => {
   const stack = useContext(ModalStackContext);

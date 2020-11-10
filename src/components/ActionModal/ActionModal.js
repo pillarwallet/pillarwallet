@@ -41,7 +41,6 @@ type ItemType = {
 type OwnProps = {|
   items: ItemType[],
   doNotCloseOnPress?: boolean,
-  storybook?: boolean,
 |};
 
 type Props = {|
@@ -132,13 +131,8 @@ class ActionModal extends React.Component<Props> {
   };
 
   render() {
-    const {
-      theme,
-      storybook,
-    } = this.props;
+    const { theme } = this.props;
     const colors = getThemeColors(theme);
-
-    if (storybook) return this.renderContent();
 
     return (
       <SlideModal

@@ -204,7 +204,6 @@ type OwnProps = {|
   event: Object,
   itemData: PassedEventData,
   isForAllAccounts?: boolean,
-  storybook?: boolean,
 |};
 
 type Props = {|
@@ -1432,8 +1431,6 @@ export class EventDetail extends React.Component<Props> {
   };
 
   render() {
-    const { storybook } = this.props;
-
     let { event } = this.props;
 
     if (event.type === TRANSACTION_EVENT || event.type === COLLECTIBLE_TRANSACTION) {
@@ -1477,10 +1474,6 @@ export class EventDetail extends React.Component<Props> {
           buttons: updatedModalButtons,
         };
       }
-    }
-
-    if (storybook) {
-      return this.renderContent(event, eventData);
     }
 
     return (

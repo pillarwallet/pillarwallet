@@ -17,22 +17,14 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
-import { BaseText } from 'components/Typography';
-import { shallow } from 'enzyme';
-import { ThemeProvider } from 'styled-components';
-import { defaultTheme } from 'utils/themes';
-import SlideModal from '../SlideModal';
 
-describe('Slide Modal', () => {
-  it('should render SlideModal with content', () => {
-    const ChildContent = () => <BaseText>Test</BaseText>;
-    const wrapper = shallow(
-      <ThemeProvider theme={defaultTheme}>
-        <SlideModal title="title">
-          <ChildContent />
-        </SlideModal>
-      </ThemeProvider>);
-    expect(wrapper.find(ChildContent)).toHaveLength(1);
-  });
-});
+import React from 'react';
+import { storiesOf } from '@storybook/react-native';
+
+import SlideModal from './SlideModal';
+
+const stories = storiesOf('SlideModal', module);
+
+stories.add('default', () => (
+  <SlideModal title="title" />
+));
