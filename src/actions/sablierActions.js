@@ -24,7 +24,7 @@ import { saveDbAction } from 'actions/dbActions';
 
 // constants
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
-import { SET_STREAMS, SET_FETCHING_STREAMS } from 'constants/sablierConstants';
+import { SET_STREAMS, SET_FETCHING_STREAMS, SET_SABLIER_GRAPH_QUERY_ERROR } from 'constants/sablierConstants';
 
 // utils
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
@@ -35,6 +35,7 @@ import {
   getSablierCancellationTransaction,
   getSablierWithdrawTransaction,
 } from 'services/sablier';
+import { GraphQueryError } from 'services/theGraph';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -58,7 +59,14 @@ export const fetchUserStreamsAction = () => {
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_FETCHING_STREAMS });
-    const streams = await fetchUserStreams(getAccountAddress(smartWalletAccount));
+    const streams = await fetchUserStreams(getAccountAddress(smartWalletAccount))
+      .catch(error => {
+        if (error instanceof GraphQueryError) {
+          dispatch({ type: SET_SABLIER_GRAPH_QUERY_ERROR });
+        }
+
+        return null;
+      });
     if (streams) dispatch(setUserStreamsAction(streams));
   };
 };

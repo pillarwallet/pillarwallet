@@ -22,7 +22,6 @@ import * as React from 'react';
 import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
@@ -48,9 +47,6 @@ import Toast from 'components/Toast';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
-
-// selectors
-import { accountHistorySelector } from 'selectors/history';
 
 // utils
 import { formatAmount } from 'utils/common';
@@ -230,18 +226,9 @@ const mapStateToProps = ({
   feeInfo,
 });
 
-const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherPurchaseConfirm);
+export default connect(mapStateToProps, mapDispatchToProps)(PoolTogetherPurchaseConfirm);

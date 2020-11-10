@@ -41,6 +41,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Tabs from 'components/Tabs';
 import CircleButton from 'components/CircleButton';
 import ActivityFeed from 'components/ActivityFeed';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -95,6 +96,7 @@ type Props = {
   isFetchingPoolStats: boolean,
   theme: Theme,
   history: Object[],
+  poolStatsGraphQueryFailed: { [symbol: string]: boolean },
 };
 
 type State = {
@@ -153,6 +155,12 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
     });
   }
 
+  retryGraphQuery = () => {
+    const { activeTab } = this.state;
+    const { fetchPoolStats } = this.props;
+    fetchPoolStats(activeTab);
+  }
+
   render() {
     const {
       navigation,
@@ -162,6 +170,7 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
       history,
       accounts,
       isFetchingPoolStats,
+      poolStatsGraphQueryFailed,
     } = this.props;
 
     const {
@@ -316,6 +325,12 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
             )}
           </ContentWrapper>
         </ScrollWrapper>
+        <RetryGraphQueryBox
+          message={t('error.theGraphQueryFailed.poolTogetherStats')}
+          hasFailed={!!poolStatsGraphQueryFailed[activeTab]}
+          isFetching={isFetchingPoolStats}
+          onRetry={this.retryGraphQuery}
+        />
       </ContainerWithHeader>
     );
   }
@@ -324,12 +339,17 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
 const mapStateToProps = ({
   session: { data: session },
   accounts: { data: accounts },
-  poolTogether: { poolStats: poolPrizeInfo, isFetchingPoolStats },
+  poolTogether: {
+    poolStats: poolPrizeInfo,
+    isFetchingPoolStats,
+    poolStatsGraphQueryFailed,
+  },
 }: RootReducerState): $Shape<Props> => ({
   session,
   accounts,
   poolPrizeInfo,
   isFetchingPoolStats,
+  poolStatsGraphQueryFailed,
 });
 
 const structuredSelector = createStructuredSelector({

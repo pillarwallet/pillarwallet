@@ -41,6 +41,7 @@ type ItemType = {
 type Props = {|
   items: ItemType[],
   title?: string,
+  footer?: React.Node,
 |};
 
 const MainContainer = styled(SafeAreaView)`
@@ -75,7 +76,7 @@ class ActionOptionsModal extends React.Component<Props> {
   };
 
   render() {
-    const { items, title } = this.props;
+    const { items, title, footer } = this.props;
 
     return (
       <SlideModal
@@ -93,6 +94,7 @@ class ActionOptionsModal extends React.Component<Props> {
           </MediumText>}
           {items.filter(({ hide }) => !hide).map(this.renderItem)}
         </MainContainer>
+        {footer}
       </SlideModal>
     );
   }

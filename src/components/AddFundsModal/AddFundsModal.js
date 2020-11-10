@@ -29,6 +29,7 @@ import t from 'translations/translate';
 import Modal from 'components/Modal';
 import ActionOptionsModal from 'components/ActionModal/ActionOptionsModal';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // constants
 import { EXCHANGE, SERVICES } from 'constants/navigationConstants';
@@ -51,8 +52,16 @@ type Props = {|
 |};
 
 const exchangeSupportedAssetsSelector = ({
-  exchange: { exchangeSupportedAssets },
-}: RootReducerState) => exchangeSupportedAssets;
+  exchange: {
+    exchangeSupportedAssets,
+    isFetchingUniswapTokens,
+    uniswapTokensGraphQueryFailed,
+  },
+}: RootReducerState) => ({
+  exchangeSupportedAssets,
+  isFetchingUniswapTokens,
+  uniswapTokensGraphQueryFailed,
+});
 
 const rewardActiveSelector = ({
   referrals: { isPillarRewardCampaignActive: rewardActive },
@@ -60,18 +69,22 @@ const rewardActiveSelector = ({
 
 const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
   const dispatch = useDispatch();
-  const exchangeSupportedAssets = useSelector(exchangeSupportedAssetsSelector);
+  const {
+    exchangeSupportedAssets,
+    isFetchingUniswapTokens,
+    uniswapTokensGraphQueryFailed,
+  } = useSelector(exchangeSupportedAssetsSelector);
   const rewardActive = useSelector(rewardActiveSelector);
 
   const isSupportedByExchange = useMemo(() =>
-    exchangeSupportedAssets.some(({ symbol }) => symbol === token),
+    !!token && exchangeSupportedAssets.some(({ symbol }) => symbol === token),
   [exchangeSupportedAssets, token]);
 
   useEffect(() => {
     if (exchangeSupportedAssets.length === 0) {
       dispatch(getExchangeSupportedAssetsAction());
     }
-  }, [dispatch, exchangeSupportedAssets]);
+  }, [dispatch, exchangeSupportedAssets.length]);
 
   const openReceiveModal = useCallback(() => {
     Modal.open(() => (
@@ -81,6 +94,8 @@ const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
       />
     ));
   }, [token, receiveAddress]);
+
+  const hideExchangeOption = !!token && !isSupportedByExchange;
 
   const options = [
     {
@@ -100,7 +115,7 @@ const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
       label: t('button.exchange'),
       iconName: 'flip',
       onPress: () => navigation.navigate(EXCHANGE, token && { toAssetCode: token }),
-      hide: !!token && !isSupportedByExchange,
+      hide: hideExchangeOption,
     },
     {
       key: 'invite',
@@ -111,10 +126,20 @@ const AddFundsModal = ({ token, receiveAddress, navigation }: Props) => {
     },
   ];
 
+  const retryBox = (
+    <RetryGraphQueryBox
+      message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
+      hasFailed={hideExchangeOption && uniswapTokensGraphQueryFailed}
+      isFetching={isFetchingUniswapTokens}
+      onRetry={() => dispatch(getExchangeSupportedAssetsAction())}
+    />
+  );
+
   return (
     <ActionOptionsModal
       items={options}
       title={t('title.addFundsToWallet')}
+      footer={retryBox}
     />
   );
 };
