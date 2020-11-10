@@ -35,6 +35,7 @@ import Toast from 'components/Toast';
 
 import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { reportErrorLog } from 'utils/common';
 
 import { calculateRariDepositTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
@@ -141,7 +142,9 @@ const RariAddDepositScreen = ({
       setExchangeFee(_exchangeFeeBN);
       setSlippage(_slippage);
       calculateRariDepositTransactionEstimate(depositTransactions);
-    }).catch(() => null);
+    }).catch((error) => {
+      reportErrorLog('Rari service failed: Error creating transaction payload', { error });
+    });
   }, [assetValue, selectedAsset]);
 
   const onNextButtonPress = () => {

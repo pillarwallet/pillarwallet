@@ -29,21 +29,18 @@ export const get0xSwapOrders = async (
   maxInputAmountBN: EthersBigNumber,
   maxMakerAssetFillAmountBN?: EthersBigNumber,
 ) => {
-  let decoded = null;
-  try {
-    decoded = (await axios.get(
-      `https://api.0x.org/swap/v0/quote?sellToken=${
-        inputTokenAddress
-      }&buyToken=${
-        outputTokenAddress
-      }${maxMakerAssetFillAmountBN !== undefined && maxMakerAssetFillAmountBN !== null
-        ? `&buyAmount=${maxMakerAssetFillAmountBN.toString()}`
-        : `&sellAmount=${maxInputAmountBN.toString()}`}`,
-    )).data;
-  } catch (error) {
+  const { data: decoded } = await axios.get(
+    `https://api.0x.org/swap/v0/quote?sellToken=${
+      inputTokenAddress
+    }&buyToken=${
+      outputTokenAddress
+    }${maxMakerAssetFillAmountBN !== undefined && maxMakerAssetFillAmountBN !== null
+      ? `&buyAmount=${maxMakerAssetFillAmountBN.toString()}`
+      : `&sellAmount=${maxInputAmountBN.toString()}`}`,
+  ).catch((error) => {
     reportErrorLog('Error requesting quote from 0x swap API', { error });
     return null;
-  }
+  });
 
   if (!decoded) {
     reportErrorLog('Failed to decode quote from 0x swap API');

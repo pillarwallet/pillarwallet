@@ -86,7 +86,7 @@ export const fetchRariUserDataAction = () => {
 export const calculateRariDepositTransactionEstimateAction = (
   rariDepositNeededTransactions: Object[],
 ) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
+  return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;

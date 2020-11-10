@@ -55,9 +55,7 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
     transactionPayload, assetSymbol, amount, exchangeFeeBN, slippage,
   } = navigation.state.params;
 
-  const onNextButtonPress = () => {
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
-  };
+  const onNextButtonPress = () => navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
 
   const formattedExchangeFee = utils.formatEther(exchangeFeeBN);
 
