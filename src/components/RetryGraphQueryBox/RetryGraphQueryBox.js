@@ -68,6 +68,10 @@ const RetryGraphQueryBox = ({
     }
   }, [hasFailed]);
 
+  useEffect(() => {
+    if (isFetching) setCancelled(false);
+  }, [isFetching]);
+
   return (
     <FloatingBox isVisible={hasFailed && !isCancelled}>
       <Message>{message}</Message>
@@ -76,7 +80,10 @@ const RetryGraphQueryBox = ({
           small
           negative
           title={t('button.cancel')}
-          onPress={() => setCancelled(true)}
+          onPress={() => {
+            setCancelled(true);
+            setFirstRetry(true);
+          }}
         />
         <Spacing w={spacing.small} />
         <RowButton
