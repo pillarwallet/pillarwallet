@@ -40,6 +40,7 @@ import { BaseText, Paragraph, MediumText } from 'components/Typography';
 import SWActivationCard from 'components/SWActivationCard';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // actions
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
@@ -100,6 +101,8 @@ type Props = {
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
+  isFetchingUniswapTokens: boolean,
+  uniswapTokensGraphQueryFailed: boolean,
 };
 
 const AssetCardWrapper = styled.View`
@@ -242,6 +245,9 @@ class AssetScreen extends React.Component<Props> {
       availableStake,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
+      isFetchingUniswapTokens,
+      uniswapTokensGraphQueryFailed,
+      getExchangeSupportedAssets,
     } = this.props;
     const { assetData } = this.props.navigation.state.params;
     const { token, isSynthetic = false } = assetData;
@@ -369,6 +375,12 @@ class AssetScreen extends React.Component<Props> {
             isAssetView
           />}
         </ScrollWrapper>
+        <RetryGraphQueryBox
+          message={t('error.theGraphQueryFailed.isTokenSupportedByUniswap')}
+          hasFailed={!isSupportedByExchange && uniswapTokensGraphQueryFailed}
+          isFetching={isFetchingUniswapTokens}
+          onRetry={getExchangeSupportedAssets}
+        />
       </ContainerWithHeader>
     );
   }
@@ -379,13 +391,19 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   smartWallet: smartWalletState,
   accounts: { data: accounts },
-  exchange: { exchangeSupportedAssets },
+  exchange: {
+    exchangeSupportedAssets,
+    isFetchingUniswapTokens,
+    uniswapTokensGraphQueryFailed,
+  },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   smartWalletState,
   accounts,
   exchangeSupportedAssets,
+  isFetchingUniswapTokens,
+  uniswapTokensGraphQueryFailed,
 });
 
 const structuredSelector = createStructuredSelector({

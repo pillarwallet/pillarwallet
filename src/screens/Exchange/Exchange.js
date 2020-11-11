@@ -32,6 +32,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import ValueInput from 'components/ValueInput';
 import Modal from 'components/Modal';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // actions
 import {
@@ -49,7 +50,7 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 // utils, services
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
-import { formatAmount } from 'utils/common';
+import { formatAmount, noop } from 'utils/common';
 import type { ExchangeOptions } from 'utils/exchange';
 
 // selectors
@@ -103,6 +104,8 @@ type Props = {
   theme: Theme,
   isActiveAccountSmartWallet: boolean,
   offers: Offer[],
+  isFetchingUniswapTokens: boolean,
+  uniswapTokensGraphQueryFailed: boolean,
 };
 
 type State = {
@@ -350,6 +353,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       markNotificationAsSeen,
       accounts,
       smartWalletState,
+      isFetchingUniswapTokens,
+      uniswapTokensGraphQueryFailed,
+      getExchangeSupportedAssets,
     } = this.props;
 
     const {
@@ -407,6 +413,12 @@ class ExchangeScreen extends React.Component<Props, State> {
             navigation={navigation}
           />}
         </ScrollView>}
+        <RetryGraphQueryBox
+          message={t('error.theGraphQueryFailed.uniswapSupportedTokenList')}
+          hasFailed={uniswapTokensGraphQueryFailed}
+          isFetching={isFetchingUniswapTokens}
+          onRetry={() => getExchangeSupportedAssets(noop)}
+        />
       </ContainerWithHeader>
     );
   }
@@ -423,6 +435,8 @@ const mapStateToProps = ({
       offers,
     },
     exchangeSupportedAssets,
+    isFetchingUniswapTokens,
+    uniswapTokensGraphQueryFailed,
   },
   rates: { data: rates },
   accounts: { data: accounts },
@@ -439,6 +453,8 @@ const mapStateToProps = ({
   exchangeSupportedAssets,
   hasSeenExchangeIntro,
   offers,
+  isFetchingUniswapTokens,
+  uniswapTokensGraphQueryFailed,
 });
 
 const structuredSelector = createStructuredSelector({

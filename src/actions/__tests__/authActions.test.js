@@ -33,6 +33,10 @@ import {
 } from 'constants/smartWalletConstants';
 import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
+import {
+  SET_UNISWAP_TOKENS_QUERY_STATUS,
+  UNISWAP_TOKENS_QUERY_STATUS,
+} from 'constants/exchangeConstants';
 
 // actions
 import { loginAction } from 'actions/authActions';
@@ -122,6 +126,7 @@ describe('Auth actions', () => {
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },
       { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
@@ -147,6 +152,7 @@ describe('Auth actions', () => {
       { type: SET_SMART_WALLET_SDK_INIT, payload: true },
       { type: SET_CONNECTED_DEVICES, payload: [] },
       { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
+      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
       { type: UPDATE_USER, payload: merge({}, mockRegisteredUser, mockUpdatedUser) },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },

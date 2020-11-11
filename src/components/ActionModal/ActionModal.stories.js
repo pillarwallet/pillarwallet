@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import styled from 'styled-components/native';
 import ActionModal from './ActionModal';
 
 const items = [
@@ -35,25 +34,6 @@ const items = [
   },
 ];
 
-
-const Wrapper = styled.View`
-  flex: 1;
-  background-color: #000000;
-  justify-content: flex-end;
-  padding: 0 16px;
-`;
-
-const ModalWrapper = styled.View`
-  width: 100%;
-  background-color: #FFFFFF;
-  border-top-left-radius: 30px;
-  border-top-right-radius: 30px;
-`;
-
 storiesOf('ActionModal', module).add('default', () => (
-  <Wrapper>
-    <ModalWrapper>
-      <ActionModal items={items} storybook />
-    </ModalWrapper>
-  </Wrapper>
+  <ActionModal items={items} />
 ));

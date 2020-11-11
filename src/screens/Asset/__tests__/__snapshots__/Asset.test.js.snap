@@ -1165,6 +1165,363 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
         </View>
       </View>
     </RCTScrollView>
+    <View
+      onLayout={[Function]}
+      pointerEvents="box-none"
+      style={
+        Object {
+          "bottom": 0,
+          "left": 0,
+          "paddingBottom": 0,
+          "paddingLeft": 0,
+          "paddingRight": 0,
+          "paddingTop": 0,
+          "position": "absolute",
+          "right": 0,
+        }
+      }
+    >
+      <View
+        style={
+          Array [
+            Object {
+              "backgroundColor": "#060f1ecc",
+              "borderRadius": 16,
+              "marginBottom": 16,
+              "marginHorizontal": 16,
+              "paddingBottom": 16,
+              "paddingLeft": 16,
+              "paddingRight": 16,
+              "paddingTop": 16,
+            },
+            Object {
+              "transform": Array [
+                Object {
+                  "translateY": 1334,
+                },
+              ],
+            },
+          ]
+        }
+      >
+        <Text
+          style={
+            Array [
+              Object {
+                "color": "#0A1427",
+                "fontFamily": "EuclidCircularB-Regular",
+                "textAlignVertical": "center",
+              },
+              Array [
+                Object {
+                  "color": "#ffffff",
+                  "fontSize": 12,
+                  "lineHeight": 18,
+                  "marginBottom": 8,
+                  "textAlign": "center",
+                },
+                undefined,
+              ],
+            ]
+          }
+        >
+          error.theGraphQueryFailed.isTokenSupportedByUniswap
+        </Text>
+        <View
+          style={
+            Array [
+              Object {
+                "flexDirection": "row",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "alignSelf": "auto",
+                "backgroundColor": "#BD573A",
+                "borderColor": "#EDEDED",
+                "borderRadius": 3,
+                "borderStyle": "solid",
+                "borderWidth": 0,
+                "elevation": 1,
+                "flexBasis": 0,
+                "flexDirection": "row",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "height": 32,
+                "justifyContent": "center",
+                "marginBottom": 0,
+                "marginLeft": 0,
+                "marginRight": 0,
+                "marginTop": 0,
+                "opacity": 1,
+                "paddingBottom": 0,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,.12)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+                "width": "auto",
+              }
+            }
+          >
+            <Text
+              customTheme={
+                Object {
+                  "borderWidth": 0,
+                  "shadow": true,
+                }
+              }
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "lineHeight": 14,
+                        "marginBottom": 0,
+                        "marginTop": 2.52,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              theme={
+                Object {
+                  "colors": Object {
+                    "PPNSurface": "#0a0c78",
+                    "PPNText": "#f33726",
+                    "accent": "#818EB3",
+                    "activeTabBarIcon": "#007AFF",
+                    "avatarPlaceholderBackground": "#e0eeff",
+                    "avatarPlaceholderText": "#6690eb",
+                    "border": "#EDEDED",
+                    "buttonSecondaryBackground": "#e6f1f9",
+                    "card": "#FFFFFF",
+                    "control": "#FCFDFF",
+                    "danger": "#ff0005",
+                    "helpIcon": "#f7931a",
+                    "iconBackground": "#ebf0f5",
+                    "inactiveTabBarIcon": "#D4D9DB",
+                    "indicator": "#F8E71C",
+                    "labelTertiary": "#818eb3",
+                    "legacyWallet": "#FA574F",
+                    "link": "#007aff",
+                    "negative": "#BD573A",
+                    "notice": "#ea480e",
+                    "orange": "#f57c00",
+                    "poolTogetherPink": "#e51fff",
+                    "positive": "#2AA057",
+                    "primary": "#007AFF",
+                    "progressBarEnd": "#f04cfa",
+                    "progressBarStart": "#ca17e1",
+                    "secondaryAccent": "#EBF0F5",
+                    "secondaryText": "#8B939E",
+                    "smartWallet": "#3C71FE",
+                    "smartWalletSurface": "#f3f7ff",
+                    "smartWalletText": "#1D24D8",
+                    "surface": "#BD573A",
+                    "synthetic": "#2329d6",
+                    "tertiary": "#EBF0F6",
+                    "text": "#FCFDFF",
+                    "toastCloseIcon": "#ededed",
+                    "transactionReceivedIcon": "#497391",
+                    "userAvatar": "#d1d9e4",
+                    "warning": "#ECA93A",
+                  },
+                  "current": "lightTheme",
+                }
+              }
+            >
+              button.cancel
+            </Text>
+          </View>
+          <View
+            style={
+              Array [
+                Object {
+                  "height": 0,
+                  "width": 8,
+                },
+                undefined,
+              ]
+            }
+            w={8}
+          />
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "alignSelf": "auto",
+                "backgroundColor": "#007AFF",
+                "borderColor": "#007AFF",
+                "borderRadius": 3,
+                "borderStyle": "solid",
+                "borderWidth": 0,
+                "elevation": 1,
+                "flexBasis": 0,
+                "flexDirection": "row",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "height": 32,
+                "justifyContent": "center",
+                "marginBottom": 0,
+                "marginLeft": 0,
+                "marginRight": 0,
+                "marginTop": 0,
+                "opacity": 1,
+                "paddingBottom": 0,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 0,
+                "shadowColor": "rgba(0,0,0,.12)",
+                "shadowOffset": Object {
+                  "height": 2,
+                  "width": 0,
+                },
+                "shadowOpacity": 1,
+                "shadowRadius": 7,
+                "width": "auto",
+              }
+            }
+          >
+            <Text
+              customTheme={
+                Object {
+                  "borderWidth": 0,
+                  "shadow": true,
+                }
+              }
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "fontSize": 12,
+                      "lineHeight": 18,
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#FCFDFF",
+                        "fontSize": 14,
+                        "lineHeight": 14,
+                        "marginBottom": 0,
+                        "marginTop": 2.52,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+              theme={
+                Object {
+                  "colors": Object {
+                    "PPNSurface": "#0a0c78",
+                    "PPNText": "#f33726",
+                    "accent": "#818EB3",
+                    "activeTabBarIcon": "#007AFF",
+                    "avatarPlaceholderBackground": "#e0eeff",
+                    "avatarPlaceholderText": "#6690eb",
+                    "border": "#007AFF",
+                    "buttonSecondaryBackground": "#e6f1f9",
+                    "card": "#FFFFFF",
+                    "control": "#FCFDFF",
+                    "danger": "#ff0005",
+                    "helpIcon": "#f7931a",
+                    "iconBackground": "#ebf0f5",
+                    "inactiveTabBarIcon": "#D4D9DB",
+                    "indicator": "#F8E71C",
+                    "labelTertiary": "#818eb3",
+                    "legacyWallet": "#FA574F",
+                    "link": "#007aff",
+                    "negative": "#BD573A",
+                    "notice": "#ea480e",
+                    "orange": "#f57c00",
+                    "poolTogetherPink": "#e51fff",
+                    "positive": "#2AA057",
+                    "primary": "#007AFF",
+                    "progressBarEnd": "#f04cfa",
+                    "progressBarStart": "#ca17e1",
+                    "secondaryAccent": "#EBF0F5",
+                    "secondaryText": "#8B939E",
+                    "smartWallet": "#3C71FE",
+                    "smartWalletSurface": "#f3f7ff",
+                    "smartWalletText": "#1D24D8",
+                    "surface": "#007AFF",
+                    "synthetic": "#2329d6",
+                    "tertiary": "#EBF0F6",
+                    "text": "#FCFDFF",
+                    "toastCloseIcon": "#ededed",
+                    "transactionReceivedIcon": "#497391",
+                    "userAvatar": "#d1d9e4",
+                    "warning": "#ECA93A",
+                  },
+                  "current": "lightTheme",
+                }
+              }
+            >
+              button.retry
+            </Text>
+          </View>
+        </View>
+      </View>
+    </View>
   </View>
 </View>
 `;

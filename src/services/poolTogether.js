@@ -365,7 +365,8 @@ export async function getPoolTogetherTransactions(symbol: string, address: strin
   const { unitType, poolContractAddress: contractAddress } = getPoolTogetherTokenContract(symbol);
   let deposits = [];
   let withdrawals = [];
-  const rawHistory = await fetchPoolTogetherHistory(contractAddress, address);
+  const rawHistory = await fetchPoolTogetherHistory(contractAddress, address)
+    .catch(() => null);
   if (rawHistory) {
     const { deposits: rawDeposits, withdrawals: rawWithdraws } = rawHistory;
     deposits = rawDeposits.map(tx => {
