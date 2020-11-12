@@ -81,6 +81,7 @@ type State = {|
   query: ?string,
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
+  isQueryAValidAddress: boolean,
   activeTab: ?string,
 |};
 
@@ -158,6 +159,7 @@ class SelectorOptions extends React.Component<Props, State> {
     this.state = {
       query: null,
       customAddressAsAnOption: null,
+      isQueryAValidAddress: false,
       hasSearchError: false,
       activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
@@ -190,21 +192,16 @@ class SelectorOptions extends React.Component<Props, State> {
 
   handleCustomAddress = (query: string) => {
     const isValid = isValidAddress(query);
-    const address = (isValid && query) ? query : null;
-    this.handleCustomAddressAsAnOption(address);
+
+    this.setState({
+      isQueryAValidAddress: isValid,
+      customAddressAsAnOption: isValid && query
+        ? this.getCustomOption(query)
+        : null,
+    });
   };
 
-  handleCustomAddressAsAnOption = (address: ?string) => {
-    const { customAddressAsAnOption } = this.state;
-    if (!customAddressAsAnOption && !address) return;
-    if (!!customAddressAsAnOption && !address) {
-      this.setState({ customAddressAsAnOption: null });
-      return;
-    }
-    if (address) this.addCustomOption(address);
-  };
-
-  addCustomOption = (address: string) => {
+  getCustomOption = (address: string) => {
     let option = {
       value: address,
       name: address,
@@ -218,7 +215,8 @@ class SelectorOptions extends React.Component<Props, State> {
         buttonAction: () => customOptionButtonOnPress(option),
       };
     }
-    this.setState({ customAddressAsAnOption: option });
+
+    return option;
   };
 
   renderHorizontalOptions = (horizontalOptionsData: HorizontalOption[]) => {
@@ -376,6 +374,7 @@ class SelectorOptions extends React.Component<Props, State> {
     const {
       query,
       customAddressAsAnOption,
+      isQueryAValidAddress,
       hasSearchError,
       activeTab,
     } = this.state;
@@ -403,7 +402,9 @@ class SelectorOptions extends React.Component<Props, State> {
 
     const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
       && !filteredHorizontalOptionsData.some(({ data }) => data.length);
-    const emptyStateMessage = allowEnteringCustomAddress ? t('error.invalid.address') : t('label.nothingFound');
+    const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryAValidAddress)
+      ? t('error.invalid.address')
+      : t('label.nothingFound');
 
     const extendedHeaderItems = {
       value: 'extendedHeaderItems', /* eslint-disable-line i18next/no-literal-string */
