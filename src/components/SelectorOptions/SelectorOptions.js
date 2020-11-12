@@ -69,7 +69,6 @@ type OwnProps = {|
   forceTab?: string,
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
-  onCustomOptionSet?: (option: Option) => void,
   onOpen?: () => void,
 |};
 
@@ -211,7 +210,7 @@ class SelectorOptions extends React.Component<Props, State> {
       name: address,
       ethAddress: address,
     };
-    const { customOptionButtonLabel, customOptionButtonOnPress, onCustomOptionSet } = this.props;
+    const { customOptionButtonLabel, customOptionButtonOnPress } = this.props;
     if (customOptionButtonLabel && customOptionButtonOnPress) {
       option = {
         ...option,
@@ -219,9 +218,7 @@ class SelectorOptions extends React.Component<Props, State> {
         buttonAction: () => customOptionButtonOnPress(option),
       };
     }
-    this.setState({ customAddressAsAnOption: option }, () => {
-      if (onCustomOptionSet) onCustomOptionSet(option);
-    });
+    this.setState({ customAddressAsAnOption: option });
   };
 
   renderHorizontalOptions = (horizontalOptionsData: HorizontalOption[]) => {
