@@ -234,6 +234,27 @@ type EventData = {
   sublabel?: string,
 };
 
+// returns false for events which wouldn't render a modal
+// i.e. getEventData(event) === null
+export const hasDetailsData = (event: Object): boolean => {
+  switch (event.type) {
+    case USER_EVENT:
+      return [
+        WALLET_CREATE_EVENT,
+        PPN_INIT_EVENT,
+        WALLET_BACKUP_EVENT,
+      ].includes(event.subType);
+    case TRANSACTION_EVENT:
+    case TRANSACTION_PENDING_EVENT:
+      return event.tag !== SABLIER_CANCEL_STREAM;
+    case COLLECTIBLE_TRANSACTION:
+    case BADGE_REWARD_EVENT:
+      return true;
+    default:
+      return false;
+  }
+};
+
 const TokenImage = styled(CachedImage)`
   width: 64px;
   height: 64px;

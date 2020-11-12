@@ -33,7 +33,7 @@ import Tabs from 'components/Tabs';
 import { BaseText, MediumText } from 'components/Typography';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 import ActivityFeedItem from 'components/ActivityFeed/ActivityFeedItem';
-import EventDetails from 'components/EventDetails';
+import EventDetails, { hasDetailsData } from 'components/EventDetails';
 import Modal from 'components/Modal';
 
 // utils
@@ -206,6 +206,8 @@ class ActivityFeed extends React.Component<Props> {
   }
 
   selectEvent = (eventData: Object, itemData: Object) => {
+    if (!hasDetailsData(eventData)) return;
+
     Modal.open(() => (
       <EventDetails
         event={eventData}
