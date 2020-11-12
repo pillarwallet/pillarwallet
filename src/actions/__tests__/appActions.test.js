@@ -24,7 +24,7 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { CACHE_STATUS, SET_CACHED_URLS } from 'constants/cacheConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
@@ -55,10 +55,10 @@ const initialCacheState = {
 
 const mockedFirebaseConfigGetString = (key) => {
   switch (key) {
-    case FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP:
+    case REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP:
       return TEST_TRANSLATIONS_TIME_STAMP;
 
-    case FEATURE_FLAGS.APP_LOCALES_URL:
+    case REMOTE_CONFIG.APP_LOCALES_URL:
       return TEST_TRANSLATIONS_BASE_URL;
 
     default:
@@ -81,7 +81,7 @@ describe('App actions', () => {
     `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
 
 
-  it(`initAppAndRedirectAction - should trigger the app settings updated 
+  it(`initAppAndRedirectAction - should trigger the app settings updated
   with any redirection due to the empty storage`, async () => {
     await storage.save('storageSettings', { storageSettings: { pouchDBMigrated: true } });
     const expectedActions = [

@@ -32,7 +32,7 @@ import {
 import type { Assets, AssetsByAccount } from 'models/Asset';
 import PillarSdk from 'services/api';
 import { sendAssetAction, fetchAssetsBalancesAction, getSupportedTokens } from 'actions/assetsActions';
-import { INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 const pillarSdk = new PillarSdk();
@@ -117,7 +117,7 @@ const initialState = {
   wallet: { data: { address: mockWallet.address } },
   accounts: { data: mockAccounts },
   balances: { data: {} },
-  featureFlags: { data: INITIAL_FEATURE_FLAGS },
+  featureFlags: { data: INITIAL_REMOTE_CONFIG },
 };
 
 describe('Assets actions', () => {
