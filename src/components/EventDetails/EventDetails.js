@@ -236,7 +236,7 @@ type EventData = {
 
 // returns false for events which wouldn't render a modal
 // i.e. getEventData(event) === null
-export const hasDetailsData = (event: Object): boolean => {
+export const shouldShowEventDetails = (event: Object): boolean => {
   switch (event.type) {
     case USER_EVENT:
       return [
@@ -1385,11 +1385,15 @@ export class EventDetail extends React.Component<Props> {
       buttons,
     };
 
-    return settleEventData ? (
-      <DetailModal {...commonProps}>
-        {this.renderSettle(settleEventData, eventData)}
-      </DetailModal>
-    ) : (
+    if (settleEventData) {
+      return (
+        <DetailModal {...commonProps}>
+          {this.renderSettle(settleEventData, eventData)}
+        </DetailModal>
+      );
+    }
+
+    return (
       <DetailModal
         {...commonProps}
         fee={this.getFee(event.hash, fee, isReceived)}
