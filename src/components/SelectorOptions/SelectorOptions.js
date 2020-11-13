@@ -81,7 +81,7 @@ type State = {|
   query: ?string,
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
-  isQueryAValidAddress: boolean,
+  isQueryValidAddress: boolean,
   activeTab: ?string,
 |};
 
@@ -159,7 +159,7 @@ class SelectorOptions extends React.Component<Props, State> {
     this.state = {
       query: null,
       customAddressAsAnOption: null,
-      isQueryAValidAddress: false,
+      isQueryValidAddress: false,
       hasSearchError: false,
       activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
@@ -194,7 +194,7 @@ class SelectorOptions extends React.Component<Props, State> {
     const isValid = isValidAddress(query);
 
     this.setState({
-      isQueryAValidAddress: isValid,
+      isQueryValidAddress: isValid,
       customAddressAsAnOption: isValid && query
         ? this.getCustomOption(query)
         : null,
@@ -374,7 +374,7 @@ class SelectorOptions extends React.Component<Props, State> {
     const {
       query,
       customAddressAsAnOption,
-      isQueryAValidAddress,
+      isQueryValidAddress,
       hasSearchError,
       activeTab,
     } = this.state;
@@ -402,7 +402,7 @@ class SelectorOptions extends React.Component<Props, State> {
 
     const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
       && !filteredHorizontalOptionsData.some(({ data }) => data.length);
-    const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryAValidAddress)
+    const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
       ? t('error.invalid.address')
       : t('label.nothingFound');
 
