@@ -147,7 +147,7 @@ type Props = {
   isFetchingDepositedAssets: boolean,
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
-  fetchPoolStats: (firstRun?: boolean) => void,
+  fetchPoolStats: () => void,
   isSmartWalletActive: boolean,
   incomingStreams: Stream[],
   outgoingStreams: Stream[],
@@ -204,7 +204,7 @@ class HomeScreen extends React.Component<Props> {
       this.props.hideHomeUpdateIndicator();
     });
     if (isSmartWalletActive) {
-      fetchPoolStats(true);
+      fetchPoolStats();
     }
     fetchSmartWalletTransactions();
     fetchBadges();
@@ -664,7 +664,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   dismissReferFriends: () => dispatch(dismissReferFriendsOnHomeScreenAction()),
   fetchDepositedAssets: () => dispatch(fetchDepositedAssetsAction()),
   toggleLendingDeposits: () => dispatch(toggleLendingDepositsAction()),
-  fetchPoolStats: (firstRun?: boolean) => dispatch(fetchAllPoolsPrizes(firstRun)),
+  fetchPoolStats: () => dispatch(fetchAllPoolsPrizes()),
   fetchUserStreams: () => dispatch(fetchUserStreamsAction()),
   toggleSablier: () => dispatch(toggleSablierAction()),
 });

@@ -151,6 +151,7 @@ export const UIColors = {
   listDivider: 'rgba(25, 16, 91, 0.05)',
   headerButtonBorder: 'rgba(0, 122, 255, 0.05)',
   darkShadowColor: 'rgba(6, 15, 30, 0.8)',
+  tooltipBackground: '#060f1ecc',
 };
 
 export const fontSizes = {

@@ -17,27 +17,27 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import styled, { withTheme } from 'styled-components/native';
+import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { withTheme } from 'styled-components/native';
 import { MaterialIndicator } from 'react-native-indicators';
 import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
-type Props = {
+type Props = {|
   basic?: boolean,
-  size: number,
+  size?: number,
   trackWidth?: number,
-  color?: string,
+  color?: ?string,
   style?: StyleSheet.Styles,
+|};
+
+type CombinedProps = {
+  ...Props,
   theme: Theme,
-};
+}
 
-const StyledMaterialIndicator = styled(MaterialIndicator)`
-  flex: 0;
-`;
-
-const getSpinnerColor = (props: Props) => {
+const getSpinnerColor = (props: CombinedProps) => {
   const { theme, basic, color } = props;
   if (color) return color;
   const colors = getThemeColors(theme);
@@ -45,7 +45,7 @@ const getSpinnerColor = (props: Props) => {
   return colors.primaryAccent130;
 };
 
-const Spinner = (props: Props) => {
+const Spinner = (props: CombinedProps) => {
   const {
     size = 40,
     trackWidth = 3,
@@ -53,8 +53,10 @@ const Spinner = (props: Props) => {
   } = props;
   const spinnerColor = getSpinnerColor(props);
   return (
-    <StyledMaterialIndicator size={size} trackWidth={trackWidth} color={spinnerColor} style={style} />
+    <View style={{ height: size }}>
+      <MaterialIndicator size={size} trackWidth={trackWidth} color={spinnerColor} style={style} />
+    </View>
   );
 };
 
-export default withTheme(Spinner);
+export default (withTheme(Spinner): React.ComponentType<Props>);

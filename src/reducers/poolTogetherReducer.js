@@ -17,12 +17,17 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { REHYDRATE } from 'redux-persist';
+import get from 'lodash.get';
+
 import {
   SET_POOL_TOGETHER_PRIZE_INFO,
   SET_POOL_TOGETHER_ALLOWANCE,
   SET_EXECUTING_POOL_APPROVE,
   SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_FETCHING_STATS,
+  SET_POOL_TOGETHER_GRAPH_QUERY_ERROR,
 } from 'constants/poolTogetherConstants';
 
 import type { PoolPrizeInfo } from 'models/PoolTogether';
@@ -39,12 +44,20 @@ export type PoolTogetherReducerState = {
   lastSynced: {
     [string]: number,
   },
+  poolStatsGraphQueryFailed: {
+    [string]: boolean,
+  },
 }
+
+type SetPoolTogetherGraphQueryErrorAction = {
+  type: typeof SET_POOL_TOGETHER_GRAPH_QUERY_ERROR,
+  payload: { symbol: string },
+};
 
 export type PoolTogetherReducerAction = {
   type: string,
   payload: any,
-}
+} | SetPoolTogetherGraphQueryErrorAction;
 
 const initialState = {
   poolStats: {
@@ -78,6 +91,10 @@ const initialState = {
     DAI: 0,
     USDC: 0,
   },
+  poolStatsGraphQueryFailed: {
+    DAI: false,
+    USDC: false,
+  },
 };
 
 export default function poolTogetherReducer(
@@ -92,6 +109,10 @@ export default function poolTogetherReducer(
         lastSynced: {
           ...state.lastSynced,
           [action.payload.symbol]: Date.now(),
+        },
+        poolStatsGraphQueryFailed: {
+          ...state.poolStatsGraphQueryFailed,
+          [action.payload.symbol]: false,
         },
       };
     case SET_POOL_TOGETHER_ALLOWANCE:
@@ -120,6 +141,24 @@ export default function poolTogetherReducer(
           [action.payload]: false,
         },
       };
+    case SET_POOL_TOGETHER_GRAPH_QUERY_ERROR:
+      return {
+        ...state,
+        poolStatsGraphQueryFailed: {
+          ...state.poolStatsGraphQueryFailed,
+          [action.payload.symbol]: true,
+        },
+      };
+    case REHYDRATE: {
+      const { isFetchingPoolStats, poolStatsGraphQueryFailed, ...prevState } = state;
+
+      return {
+        ...prevState,
+        ...get(action.payload, 'poolTogether', {}),
+        isFetchingPoolStats,
+        poolStatsGraphQueryFailed,
+      };
+    }
     default:
       return state;
   }

@@ -18,6 +18,10 @@ function loadStories() {
 	require('../src/components/ListItem/ListItemChevron.stories');
 	require('../src/components/ListItem/SettingsItemCarded.stories');
 	require('../src/components/ProfileImage/ProfileImage.stories');
+	require('../src/components/FloatingBox/FloatingBox.stories');
+	require('../src/components/InsightWithButton/InsightWithButton.stories');
+	require('../src/components/Modals/SlideModal/SlideModal.stories');
+	require('../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories');
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
 	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/SearchBlock/SearchBlock.stories');
@@ -44,6 +48,10 @@ const stories = [
 	'../src/components/ListItem/ListItemChevron.stories',
 	'../src/components/ListItem/SettingsItemCarded.stories',
 	'../src/components/ProfileImage/ProfileImage.stories',
+	'../src/components/FloatingBox/FloatingBox.stories',
+	'../src/components/InsightWithButton/InsightWithButton.stories',
+	'../src/components/Modals/SlideModal/SlideModal.stories',
+	'../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories',
 	'../src/components/ReviewSummary/ReviewSummary.stories',
 	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/SearchBlock/SearchBlock.stories',

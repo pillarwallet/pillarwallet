@@ -18,13 +18,20 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const SET_POOL_TOGETHER_PRIZE_INFO = 'SET_POOL_TOGETHER_PRIZE_INFO';
-export const SET_EXECUTING_POOL_APPROVE = 'SET_EXECUTING_POOL_APPROVE';
-export const SET_DISMISS_POOL_APPROVE = 'SET_DISMISS_POOL_APPROVE';
-export const SET_POOL_TOGETHER_ALLOWANCE = 'SET_POOL_TOGETHER_ALLOWANCE';
-export const POOL_TOGETHER_ALLOW = 'POOL_TOGETHER_ALLOW';
-export const POOLTOGETHER_DEPOSIT_TRANSACTION = 'POOLTOGETHER_DEPOSIT_TRANSACTION';
-export const POOLTOGETHER_WITHDRAW_TRANSACTION = 'POOLTOGETHER_WITHDRAW_TRANSACTION';
-export const SET_POOL_TOGETHER_FETCHING_STATS = 'SET_POOL_TOGETHER_FETCHING_STATS';
-export const SET_POOL_TOGETHER_GRAPH_QUERY_ERROR: 'SET_POOL_TOGETHER_GRAPH_QUERY_ERROR' =
-  'SET_POOL_TOGETHER_GRAPH_QUERY_ERROR';
+import React from 'react';
+import { storiesOf } from '@storybook/react-native';
+
+import { noop } from 'utils/common';
+import RetryGraphQueryBox from './RetryGraphQueryBox';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+
+const stories = storiesOf('RetryGraphQueryBox', module).addDecorator(WithThemeDecorator);
+
+stories.add('default', () => (
+  <RetryGraphQueryBox
+    message="Can't connect to service"
+    hasFailed
+    isFetching={false}
+    onRetry={noop}
+  />
+));

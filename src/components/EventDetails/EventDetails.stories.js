@@ -108,7 +108,6 @@ const commonProps = {
   navigation: {
     navigate: noop(),
   },
-  storybook: true,
 };
 
 

@@ -178,7 +178,6 @@ const PoolTokenAllowModal = ({
             if (modalRef.current) modalRef.current.close();
             onAllow();
           }}
-          regularText
           style={{ marginTop: 28 }}
           disabled={isDisabled}
         />

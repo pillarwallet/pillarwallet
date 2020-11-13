@@ -60,7 +60,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 
 // selectors
-import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -436,7 +435,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
 });

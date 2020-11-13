@@ -39,7 +39,6 @@ type ItemType = {
 type Props = {|
   items: ItemType[],
   doNotCloseOnPress?: boolean,
-  storybook?: boolean,
 |};
 
 type ItemProps = {
@@ -125,10 +124,6 @@ class ActionModal extends React.Component<Props> {
   };
 
   render() {
-    const { storybook } = this.props;
-
-    if (storybook) return this.renderContent();
-
     return (
       <SlideModal
         ref={this.modalRef}

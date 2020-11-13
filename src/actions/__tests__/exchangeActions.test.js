@@ -24,14 +24,23 @@ import thunk from 'redux-thunk';
 import ReduxAsyncQueue from 'redux-async-queue';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
-import { searchOffersAction, takeOfferAction } from 'actions/exchangeActions';
+import {
+  searchOffersAction,
+  takeOfferAction,
+  getExchangeSupportedAssetsAction,
+} from 'actions/exchangeActions';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
   ADD_OFFER,
   PROVIDER_SYNTHETIX,
   PROVIDER_UNISWAP,
   PROVIDER_1INCH,
+  SET_UNISWAP_TOKENS_QUERY_STATUS,
+  UNISWAP_TOKENS_QUERY_STATUS,
+  SET_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
+import { fetchUniswapSupportedTokens } from 'services/uniswap';
+import { GraphQueryError } from 'services/theGraph';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
@@ -102,6 +111,62 @@ describe('Exchange actions test', () => {
       // $FlowFixMe
       await store.dispatch(takeOfferAction(null, ...commonArgs, (val) => { txData = val; }));
       expect(isEmpty(txData)).toBeTruthy();
+    });
+  });
+
+  describe('Uniswap supported assets subgraph query', () => {
+    beforeEach(() => {
+      store = mockStore({
+        exchange: {
+          exchangeSupportedAssets: [],
+          uniswapTokensGraphQueryFailed: false,
+          isFetchingUniswapTokens: false,
+        },
+        assets: {
+          supportedAssets: [
+            { symbol: 'ETH' },
+            { symbol: 'PLR' },
+          ],
+        },
+      });
+    });
+
+    it('updates query status in case of a successful response', async () => {
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(async () => ['ETH']);
+
+      const expectedActions = [{
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
+      }, {
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS },
+      }, {
+        type: SET_EXCHANGE_SUPPORTED_ASSETS,
+        payload: [{ symbol: 'ETH' }],
+      }];
+
+      await store.dispatch(getExchangeSupportedAssetsAction());
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+
+    it('updates query status in case of an error', async () => {
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() =>
+        Promise.reject(new GraphQueryError('subgraph', 'query', new Error())),
+      );
+
+      const expectedActions = [{
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
+      }, {
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
+      }, {
+        type: SET_EXCHANGE_SUPPORTED_ASSETS,
+        payload: [],
+      }];
+
+      await store.dispatch(getExchangeSupportedAssetsAction());
+      expect(store.getActions()).toEqual(expectedActions);
     });
   });
 });

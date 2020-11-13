@@ -30,7 +30,7 @@ import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { getThemeColors, getThemeType } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
-export type Props = {
+export type Props = {|
   children?: React.Node,
   title: string,
   onPress?: Function,
@@ -57,9 +57,12 @@ export type Props = {
   horizontalPaddings?: number,
   transparent?: boolean,
   primarySecond?: boolean,
-};
+|};
 
-type CombinedProps = Props & { theme: Theme }
+type CombinedProps = {|
+  ...Props,
+  theme: Theme,
+|};
 
 type State = {
   shouldIgnoreTap: boolean,
@@ -211,7 +214,7 @@ const ButtonText = styled(BaseText)`
   text-align: center;
 `;
 
-const getVariant = (props: Props) => {
+const getVariant = (props) => {
   if (props.danger && props.transparent) {
     return VARIANT.TRANSPARENT_DANGER;
   }
@@ -326,4 +329,4 @@ class Button extends React.Component<CombinedProps, State> {
   }
 }
 
-export default withTheme(Button);
+export default (withTheme(Button): React.ComponentType<Props>);
