@@ -88,7 +88,6 @@ const themes = {
   eventDetail: {
     padding: 0,
     borderRadius: '30px',
-    isTransparent: true,
   },
   noPadding: {
     padding: 0,
