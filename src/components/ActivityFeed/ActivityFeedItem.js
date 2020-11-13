@@ -746,7 +746,8 @@ export class ActivityFeedItem extends React.Component<Props> {
     }
     data.itemStatusIcon = data.itemStatusIcon || (isPending ? TX_PENDING_STATUS : '');
     if (isFailed) {
-      data.itemStatusIcon = isPPNTransaction ? '' : TX_FAILED_STATUS;
+      // due to failed transaction UI difference, failed PPN transactions should not show an icon
+      if (!isPPNTransaction) data.itemStatusIcon = TX_FAILED_STATUS;
       data.statusIconColor = 'secondaryAccent240'; // eslint-disable-line i18next/no-literal-string
       data.isFailed = true;
     }

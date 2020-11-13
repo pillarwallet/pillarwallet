@@ -311,7 +311,10 @@ class SearchBar extends React.Component<Props, State> {
       lightKey: 'basic060', darkKey: 'basic080',
     });
     const borderColor = getBorderColor({
-      isFocused, error: !!errorMessage, colors, defaultColor: defaultInputBackgroundColor,
+      isFocused,
+      error: !!errorMessage,
+      colors,
+      defaultColor: defaultInputBackgroundColor,
     });
 
     const customInputProps = {
