@@ -38,7 +38,7 @@ import Modal from 'components/Modal';
 // constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 
 // utils
@@ -120,7 +120,7 @@ class AppSettings extends React.Component<Props, State> {
 
     const hasOtherDevicesLinked = !!devices.length
       && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
-    const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR);
+    const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
 
     return [
       {

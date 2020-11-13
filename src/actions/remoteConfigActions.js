@@ -23,7 +23,7 @@ import { reportOrWarn } from 'utils/common';
 import { log } from 'utils/logger';
 import { isTest } from 'utils/environment';
 
-export const loadFeatureFlagsAction = () => {
+export const loadRemoteConfigAction = () => {
   return () => {
     /**
      * Instruct Remote Config to fetch the latest config

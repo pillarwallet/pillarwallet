@@ -47,7 +47,7 @@ import { responsiveSize } from 'utils/ui';
 import { ASSETS, KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
@@ -201,7 +201,7 @@ const AccountsScreen = ({
       };
     });
 
-  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {
     walletsToShow.push({
       type: ITEM_TYPE.BUTTON,
