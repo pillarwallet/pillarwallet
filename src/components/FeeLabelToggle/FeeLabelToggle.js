@@ -37,7 +37,7 @@ import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { formatTransactionFee, getCurrencySymbol } from 'utils/common';
@@ -116,7 +116,7 @@ const FeeLabelToggle = ({
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
   showRelayerMigration = showRelayerMigration &&
-    firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR) &&
+    firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR) &&
     !isGasTokenSupported;
 
   const openRelayerMigrationModal = () => {

@@ -54,7 +54,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_FLOW,
 } from 'constants/navigationConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
@@ -181,7 +181,7 @@ const Menu = ({
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
   const colors = getThemeColors(theme);
 
-  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   const isKeyBasedAssetsMigrationHidden = !isKeyBasedAssetsMigrationEnabled || (
     !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
   );

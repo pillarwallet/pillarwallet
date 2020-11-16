@@ -25,7 +25,7 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { ETH, HOT, HOLO, supportedFiatCurrencies } from 'constants/assetsConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import {
@@ -380,7 +380,7 @@ export async function getExchangeRates(assets: Assets): Promise<?Object> {
   }
 
   // CryptoCompare is legacy price oracle, however, the change to new one is feature flagged
-  const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
+  const useLegacyCryptoCompare = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.USE_LEGACY_CRYPTOCOMPARE_TOKEN_PRICES);
 
   let rates = useLegacyCryptoCompare
     ? await getLegacyExchangeRates(assetSymbols)

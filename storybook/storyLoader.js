@@ -10,6 +10,7 @@ function loadStories() {
 	require('../src/components/CircleButton/CircleButton.stories');
 	require('../src/components/Banner/Banner.stories');
 	require('../src/components/Checkbox/Checkbox.stories');
+	require('../src/components/DetailModal/DetailModal.stories');
 	require('../src/components/EventDetails/EventDetails.stories');
 	require('../src/components/FeeLabelToggle/FeeLabelToggle.stories');
 	require('../src/components/HeaderBlock/HeaderBlock.stories');
@@ -40,6 +41,7 @@ const stories = [
 	'../src/components/CircleButton/CircleButton.stories',
 	'../src/components/Banner/Banner.stories',
 	'../src/components/Checkbox/Checkbox.stories',
+	'../src/components/DetailModal/DetailModal.stories',
 	'../src/components/EventDetails/EventDetails.stories',
 	'../src/components/FeeLabelToggle/FeeLabelToggle.stories',
 	'../src/components/HeaderBlock/HeaderBlock.stories',

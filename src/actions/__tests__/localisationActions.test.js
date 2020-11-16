@@ -33,7 +33,7 @@ import localeConfig from 'configs/localeConfig';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CACHE_STATUS } from 'constants/cacheConstants';
 import {
   EN_EXTERNAL_TEST_TRANSLATION,
@@ -205,10 +205,10 @@ const cachedEnTranslations = {
 
 const mockedFirebaseConfigGetUrlAndTimeStampString = (key) => {
   switch (key) {
-    case FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP:
+    case REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP:
       return TEST_TRANSLATIONS_TIME_STAMP;
 
-    case FEATURE_FLAGS.APP_LOCALES_URL:
+    case REMOTE_CONFIG.APP_LOCALES_URL:
       return TEST_TRANSLATIONS_BASE_URL;
 
     default:

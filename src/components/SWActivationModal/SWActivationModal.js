@@ -41,7 +41,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 // constants
 import { ASSETS } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { images } from 'utils/images';
@@ -93,7 +93,7 @@ const SWActivationModal = ({
   balances,
   isOnline,
 }: Props) => {
-  const paidByPillar = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SMART_WALLET_ACTIVATION_PAID_BY_PILLAR);
+  const paidByPillar = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.SMART_WALLET_ACTIVATION_PAID_BY_PILLAR);
   const dispatch = useDispatch();
 
   useEffect(() => {
