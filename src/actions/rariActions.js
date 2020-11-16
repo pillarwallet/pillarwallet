@@ -32,9 +32,8 @@ import {
   SET_FETCHING_RARI_APY,
   SET_FETCHING_RARI_USER_DATA,
 } from 'constants/rariConstants';
-import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { estimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
@@ -91,7 +90,7 @@ export const calculateRariDepositTransactionEstimateAction = (
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     const sequentialTransactions = rariDepositNeededTransactions
       .slice(1)

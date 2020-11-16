@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber as EthersBigNumber, utils } from 'ethers';
+import { BigNumber as EthersBigNumber, utils, constants as ethersConstants } from 'ethers';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
 import { get0xSwapOrders } from 'services/0x.js';
 import { getEnv } from 'configs/envConfig';
@@ -30,7 +30,7 @@ import MSTABLE_CONTRACT_ABI from 'abi/mAsset.json';
 import type { Asset, Rates } from 'models/Asset';
 
 
-const getRariAcceptedCurrencies = async () => {
+const getRariAcceptedCurrencies = () => {
   const rariContract = getContract(
     getEnv().RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,
@@ -43,7 +43,7 @@ const getRariAcceptedCurrencies = async () => {
     }));
 };
 
-const getMStableSwapOutput = async (
+const getMStableSwapOutput = (
   inputTokenAddress: string, outputTokenAddress: string, amountBN: EthersBigNumber,
 ) => {
   const mstableContract = getContract(
@@ -179,7 +179,7 @@ const getRariDepositTransactionData = async (
         'uint256,uint256,uint256,uint256,bytes,bytes,bytes,bytes)[],bytes[],uint256)',
       [
         token.symbol === ETH
-          ? '0x0000000000000000000000000000000000000000'
+          ? ethersConstants.AddressZero
           : token.address,
         amountBN,
         acceptedCurrency,

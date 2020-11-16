@@ -29,18 +29,19 @@ export const get0xSwapOrders = async (
   maxInputAmountBN: EthersBigNumber,
   maxMakerAssetFillAmountBN?: EthersBigNumber,
 ) => {
-  const { data: decoded } = await axios.get(
-    `https://api.0x.org/swap/v0/quote?sellToken=${
-      inputTokenAddress
-    }&buyToken=${
-      outputTokenAddress
-    }${maxMakerAssetFillAmountBN !== undefined && maxMakerAssetFillAmountBN !== null
-      ? `&buyAmount=${maxMakerAssetFillAmountBN.toString()}`
-      : `&sellAmount=${maxInputAmountBN.toString()}`}`,
-  ).catch((error) => {
-    reportErrorLog('Error requesting quote from 0x swap API', { error });
-    return null;
-  });
+  // eslint-disable-next-line i18next/no-literal-string
+  let url = `https://api.0x.org/swap/v0/quote?sellToken=${inputTokenAddress}&buyToken=${outputTokenAddress}`;
+  if (maxMakerAssetFillAmountBN !== null && maxMakerAssetFillAmountBN !== undefined) {
+    url += `&buyAmount=${maxMakerAssetFillAmountBN.toString()}`;
+  } else {
+    url += `&sellAmount=${maxInputAmountBN.toString()}`;
+  }
+
+  const { data: decoded } = await axios.get(url)
+    .catch((error) => {
+      reportErrorLog('Error requesting quote from 0x swap API', { error });
+      return null;
+    });
 
   if (!decoded) {
     reportErrorLog('Failed to decode quote from 0x swap API');
@@ -71,35 +72,23 @@ export const get0xSwapOrders = async (
     ) {
       continue; // eslint-disable-line
     }
-    const takerAssetAmountBN = EthersBigNumber.from(
-      decoded.orders[i].takerAssetAmount,
-    );
+    const takerAssetAmountBN = EthersBigNumber.from(decoded.orders[i].takerAssetAmount);
     const takerFeeBN = EthersBigNumber.from(decoded.orders[i].takerFee);
     // Maximum amount we can send to this order including the taker fee
     const orderInputAmountBN = takerAssetAmountBN.add(takerFeeBN);
-    const makerAssetAmountBN = EthersBigNumber.from(
-      decoded.orders[i].makerAssetAmount,
-    );
+    const makerAssetAmountBN = EthersBigNumber.from(decoded.orders[i].makerAssetAmount);
 
     let orderMakerAssetFillAmountBN = EthersBigNumber.from(0);
     let orderTakerAssetFillAmountBN = EthersBigNumber.from(0);
     let orderInputFillAmountBN = EthersBigNumber.from(0);
 
-    if (maxMakerAssetFillAmountBN !== undefined && maxMakerAssetFillAmountBN !== null) {
+    if (maxMakerAssetFillAmountBN !== null && maxMakerAssetFillAmountBN !== undefined) {
       // maxMakerAssetFillAmountBN is specified, so use it
-      if (
-        maxMakerAssetFillAmountBN
-          .sub(makerAssetFilledAmountBN)
-          .lte(makerAssetAmountBN)
-      ) {
+      if (maxMakerAssetFillAmountBN.sub(makerAssetFilledAmountBN).lte(makerAssetAmountBN)) {
         // Calculate orderTakerAssetFillAmountBN and orderInputFillAmountBN from maxMakerAssetFillAmountBN
         orderMakerAssetFillAmountBN = maxMakerAssetFillAmountBN.sub(makerAssetFilledAmountBN);
-        orderTakerAssetFillAmountBN = orderMakerAssetFillAmountBN
-          .mul(takerAssetAmountBN)
-          .div(makerAssetAmountBN);
-        orderInputFillAmountBN = orderMakerAssetFillAmountBN
-          .mul(orderInputAmountBN)
-          .div(makerAssetAmountBN);
+        orderTakerAssetFillAmountBN = orderMakerAssetFillAmountBN.mul(takerAssetAmountBN).div(makerAssetAmountBN);
+        orderInputFillAmountBN = orderMakerAssetFillAmountBN.mul(orderInputAmountBN).div(makerAssetAmountBN);
 
         let tries = 0;
         while (
@@ -127,33 +116,19 @@ export const get0xSwapOrders = async (
 
       // If this order input amount is higher than the remaining input, calculate orderTakerAssetFillAmountBN
       // and orderMakerAssetFillAmountBN from the remaining maxInputAmountBN as usual
-      if (
-        maxInputAmountBN !== undefined &&
-          maxInputAmountBN !== null &&
-          orderInputFillAmountBN.gt(maxInputAmountBN.sub(inputFilledAmountBN))
-      ) {
+      if (EthersBigNumber.isBigNumber(maxInputAmountBN) &&
+          orderInputFillAmountBN.gt(maxInputAmountBN.sub(inputFilledAmountBN))) {
         orderInputFillAmountBN = maxInputAmountBN.sub(inputFilledAmountBN);
-        orderTakerAssetFillAmountBN = orderInputFillAmountBN
-          .mul(takerAssetAmountBN)
-          .div(orderInputAmountBN);
-        orderMakerAssetFillAmountBN = orderInputFillAmountBN
-          .mul(makerAssetAmountBN)
-          .div(orderInputAmountBN);
+        orderTakerAssetFillAmountBN = orderInputFillAmountBN.mul(takerAssetAmountBN).div(orderInputAmountBN);
+        orderMakerAssetFillAmountBN = orderInputFillAmountBN.mul(makerAssetAmountBN).div(orderInputAmountBN);
       }
       // maxMakerAssetFillAmountBN is not specified, so use maxInputAmountBN
-    } else if (
-      maxInputAmountBN !== undefined &&
-        maxInputAmountBN !== null &&
-        maxInputAmountBN.sub(inputFilledAmountBN).lte(orderInputAmountBN)
-    ) {
+    } else if (EthersBigNumber.isBigNumber(maxInputAmountBN) &&
+        maxInputAmountBN.sub(inputFilledAmountBN).lte(orderInputAmountBN)) {
       // Calculate orderInputFillAmountBN and orderTakerAssetFillAmountBN from the remaining maxInputAmountBN as usual
       orderInputFillAmountBN = maxInputAmountBN.sub(inputFilledAmountBN);
-      orderTakerAssetFillAmountBN = orderInputFillAmountBN
-        .mul(takerAssetAmountBN)
-        .div(orderInputAmountBN);
-      orderMakerAssetFillAmountBN = orderInputFillAmountBN
-        .mul(makerAssetAmountBN)
-        .div(orderInputAmountBN);
+      orderTakerAssetFillAmountBN = orderInputFillAmountBN.mul(takerAssetAmountBN).div(orderInputAmountBN);
+      orderMakerAssetFillAmountBN = orderInputFillAmountBN.mul(makerAssetAmountBN).div(orderInputAmountBN);
     } else {
       // Fill whole order
       orderInputFillAmountBN = orderInputAmountBN;
@@ -171,8 +146,8 @@ export const get0xSwapOrders = async (
 
     // Check if we have hit maxInputAmountBN or maxTakerAssetFillAmountBN
     if (
-      (maxInputAmountBN !== undefined && maxInputAmountBN !== null && inputFilledAmountBN.gte(maxInputAmountBN)) ||
-        (maxMakerAssetFillAmountBN !== undefined && maxMakerAssetFillAmountBN !== null &&
+      (EthersBigNumber.isBigNumber(maxInputAmountBN) && inputFilledAmountBN.gte(maxInputAmountBN)) ||
+        (EthersBigNumber.isBigNumber(maxMakerAssetFillAmountBN) &&
           makerAssetFilledAmountBN.gte(maxMakerAssetFillAmountBN))
     ) {
       break;

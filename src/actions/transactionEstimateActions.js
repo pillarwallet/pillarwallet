@@ -59,11 +59,10 @@ export const resetEstimateTransactionAction = () => {
   };
 };
 
-export const setEstimatingTransactionAction = (isEstimating: boolean) => {
-  return (dispatch: Dispatch) => {
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: isEstimating });
-  };
-};
+export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
+  type: SET_ESTIMATING_TRANSACTION,
+  payload: isEstimating,
+});
 
 export const estimateTransactionAction = (
   recipientAddress: string,

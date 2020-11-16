@@ -144,6 +144,10 @@ const RariAddDepositScreen = ({
       calculateRariDepositTransactionEstimate(depositTransactions);
     }).catch((error) => {
       reportErrorLog('Rari service failed: Error creating transaction payload', { error });
+      Toast.show({
+        message: t('toast.rariServiceFailed'),
+        emoji: 'hushed',
+      });
     });
   }, [assetValue, selectedAsset]);
 
