@@ -33,6 +33,7 @@ import { isWbtcCafe } from 'utils/exchange';
 import { hitslop10, hitslopFull } from 'utils/common';
 import Modal from 'components/Modal';
 import t from 'translations/translate';
+import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import WBTCSlippageModal from './WBTCSlippageModal';
 
 type Props = {
@@ -40,7 +41,8 @@ type Props = {
   fromAsset: Option,
   toAsset: Option,
   extendedInfo?: boolean,
-  navigation: NavigationScreenProp<*>
+  navigation: NavigationScreenProp<*>,
+  amount?: string,
 }
 
 const Container = styled.TouchableOpacity`
@@ -177,8 +179,19 @@ const WBTCCafeInfo = (props: Props) => {
     <WBTCSlippageModal onModalWillHide={selectedVal => setMaxSlippage(selectedVal)} />
   ));
 
+  const {
+    wbtcData, fromAsset, extendedInfo, navigation, amount,
+  } = props;
+
+  if (!isWbtcCafe(fromAsset)) return null;
+
   const handleNextPress = () => {
-    //
+    if (!extendedInfo) {
+      return navigation.navigate(EXCHANGE_CONFIRM, {
+        wbtcTxData: { maxSlippage: maxSlippage / 100, amount: Number(amount) },
+      });
+    }
+    return null; // todo handle
   };
 
   const switchOffFeeInfo = () => showRenFeeInfo && setShowRenFeeInfo(false);
@@ -190,10 +203,11 @@ const WBTCCafeInfo = (props: Props) => {
     </Tooltip>
   );
 
-  const { wbtcData, fromAsset, extendedInfo } = props;
-  if (!isWbtcCafe(fromAsset)) return null;
-
-  const getFeeNumber = () => Number(wbtcData.renVMFee.toFixed(5)) + Number(wbtcData.networkFee.toFixed(5));
+  const getFeeNumber = () => {
+    if (!wbtcData) return 0;
+    const { renVMFee = 0, networkFee = 0 } = wbtcData;
+    return Number(renVMFee.toFixed(5) || 0) + Number(networkFee.toFixed(5) || 0);
+  };
 
   const getFeeInfo = () => `${wbtcData?.estimate ? getFeeNumber() : '0'} ${BTC}`;
 

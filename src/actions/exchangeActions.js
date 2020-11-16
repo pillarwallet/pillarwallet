@@ -62,6 +62,8 @@ import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } f
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 import type { AllowanceTransaction } from 'models/Transaction';
+import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
+import type SDKWrapper from 'services/api';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -385,3 +387,12 @@ export const getWbtcFeesAction = () => {
       .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
   };
 };
+
+export const getWbtcGatewayAddressAction =
+  (params: WBTCGatewayAddressParams) =>
+    async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
+      const { user: { data: user } } = getState();
+      const walletId = user?.walletId || '';
+      const res = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
+      return res;
+    };

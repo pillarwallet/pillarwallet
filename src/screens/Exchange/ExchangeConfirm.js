@@ -41,7 +41,7 @@ import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 // actions
-import { setDismissTransactionAction } from 'actions/exchangeActions';
+import { setDismissTransactionAction, getWbtcGatewayAddressAction } from 'actions/exchangeActions';
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // utils
@@ -64,6 +64,7 @@ import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transac
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
+import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -91,6 +92,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
+  getWbtcGatewayAddress: (params: WBTCGatewayAddressParams) => void;
 };
 
 const MainWrapper = styled.View`
@@ -131,9 +133,13 @@ const ExchangeConfirmScreen = ({
   estimateTransaction,
   accountAssets,
   supportedAssets,
+  getWbtcGatewayAddress,
 }: Props) => {
+  const wbtcData: WBTCGatewayAddressParams = navigation.getParam('wbtcTxData');
+  const isWbtcCafe = !!wbtcData;
+
   useEffect(() => {
-    if (!executingExchangeTransaction) navigation.goBack();
+    if (!isWbtcCafe && !executingExchangeTransaction) navigation.goBack();
   }, [executingExchangeTransaction]);
 
   const offerOrder: MixedOfferOrder = navigation.getParam('offerOrder', {});
@@ -176,7 +182,18 @@ const ExchangeConfirmScreen = ({
     estimateTransaction(recipient, Number(amount || 0), data, estimateAssetData);
   };
 
-  useEffect(() => { fetchTransactionEstimate(); }, []);
+  const fetchWbtcAddress = async () => {
+    const resp: WBTCGatewayAddressResponse = await getWbtcGatewayAddress(wbtcData);
+    if (resp?.result === 'success') {
+      // TODO handle success
+    } else {
+      // handle fail
+    }
+  };
+
+  useEffect(() => {
+    if (isWbtcCafe) { fetchWbtcAddress(); } else { fetchTransactionEstimate(); }
+  }, []);
 
   const onConfirmTransactionPress = () => {
     if (!feeInfo) {
@@ -218,7 +235,7 @@ const ExchangeConfirmScreen = ({
     }
   };
 
-  if (!executingExchangeTransaction) {
+  if (!isWbtcCafe && !executingExchangeTransaction) {
     return null;
   }
 
@@ -249,7 +266,11 @@ const ExchangeConfirmScreen = ({
   const formattedReceiveAmountInFiat = formatFiat(receiveAmountInFiat, fiatCurrency);
 
   const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
-  const confirmButtonTitle = isEstimating ? t('label.gettingFee') : t('button.confirm');
+
+  const getButtonTitle = () => {
+    if (isWbtcCafe) return t('wbtcCafe.copy');
+    return isEstimating ? t('label.gettingFee') : t('button.confirm');
+  };
 
   return (
     <ContainerWithHeader
@@ -310,7 +331,7 @@ const ExchangeConfirmScreen = ({
             <Button
               disabled={!isOnline || !!errorMessage || !feeInfo || isEstimating}
               onPress={onConfirmTransactionPress}
-              title={confirmButtonTitle}
+              title={getButtonTitle()}
             />
           </TableWrapper>
         </MainWrapper>
@@ -351,6 +372,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
+  getWbtcGatewayAddress: (params) => dispatch(getWbtcGatewayAddressAction(params)),
   estimateTransaction: (
     recipient: string,
     value: number,

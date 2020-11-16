@@ -47,11 +47,11 @@ type WBTCResponseResult = "success" | "error";
 export type WBTCGatewayAddressResponse = {
   result: WBTCResponseResult,
   message?: string,
-  gatewayAddress?: string,
+  gateWayAddress?: string,
   exchangeRate?: number,
   amount?: number,
   nonce?: string,
-};
+} | typeof undefined;
 
 export type MintTransactionParams = {
   nonce: string,

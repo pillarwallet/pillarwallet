@@ -435,7 +435,13 @@ class ExchangeScreen extends React.Component<Props, State> {
             />
           }
           {displayWbtcCafe &&
-            <WBTCCafeInfo wbtcData={wbtcData} fromAsset={this.wbtcCafeOptions[0]} toAsset={this.wbtcCafeOptions[1]} />}
+            <WBTCCafeInfo
+              wbtcData={wbtcData}
+              fromAsset={this.wbtcCafeOptions[0]}
+              toAsset={this.wbtcCafeOptions[1]}
+              amount={fromAmount}
+              navigation={navigation}
+            />}
           {!!isSubmitted && isFormValid &&
           <ExchangeOffers
             fromAmount={fromAmount}
