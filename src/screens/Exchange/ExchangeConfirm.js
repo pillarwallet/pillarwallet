@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -36,7 +36,7 @@ import Icon from 'components/Icon';
 import Toast from 'components/Toast';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, BTC, WBTC } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { EXCHANGE, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
@@ -64,7 +64,7 @@ import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transac
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
-import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
+import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -73,7 +73,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
-
+import WBTCCafeInfo from './WBTCCafeInfo';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -136,7 +136,9 @@ const ExchangeConfirmScreen = ({
   getWbtcGatewayAddress,
 }: Props) => {
   const wbtcData: WBTCGatewayAddressParams = navigation.getParam('wbtcTxData');
+  const wbtcEstimationData: ?WBTCFeesWithRate = navigation.getParam('wbtcEstData');
   const isWbtcCafe = !!wbtcData;
+  const [wbtcGatewayAddressInfo, setWbtcGatewayAddressInfo] = useState<WBTCGatewayAddressResponse>({});
 
   useEffect(() => {
     if (!isWbtcCafe && !executingExchangeTransaction) navigation.goBack();
@@ -185,7 +187,7 @@ const ExchangeConfirmScreen = ({
   const fetchWbtcAddress = async () => {
     const resp: WBTCGatewayAddressResponse = await getWbtcGatewayAddress(wbtcData);
     if (resp?.result === 'success') {
-      // TODO handle success
+      setWbtcGatewayAddressInfo(resp);
     } else {
       // handle fail
     }
@@ -235,12 +237,10 @@ const ExchangeConfirmScreen = ({
     }
   };
 
-  if (!isWbtcCafe && !executingExchangeTransaction) {
-    return null;
-  }
+  if (!isWbtcCafe && !executingExchangeTransaction) return null;
 
-  const { code: fromAssetCode } = fromAsset;
-  const { code: toAssetCode } = toAsset;
+  const fromAssetCode = isWbtcCafe ? BTC : fromAsset.code;
+  const toAssetCode = isWbtcCafe ? WBTC : toAsset.code;
 
   const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -260,17 +260,71 @@ const ExchangeConfirmScreen = ({
       balance: getBalance(balances, feeSymbol),
     });
 
-  const formattedReceiveAmount = formatAmountDisplay(receiveQuantity);
+  const toQuantity = isWbtcCafe ? wbtcEstimationData.estimate : receiveQuantity;
 
-  const receiveAmountInFiat = parseFloat(receiveQuantity) * getRate(rates, toAssetCode, fiatCurrency);
+  const formattedReceiveAmount = formatAmountDisplay(toQuantity);
+
+  const receiveAmountInFiat = parseFloat(toQuantity) * getRate(rates, toAssetCode, fiatCurrency);
   const formattedReceiveAmountInFiat = formatFiat(receiveAmountInFiat, fiatCurrency);
 
   const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
 
-  const getButtonTitle = () => {
-    if (isWbtcCafe) return t('wbtcCafe.copy');
-    return isEstimating ? t('label.gettingFee') : t('button.confirm');
+  const getTable = () => {
+    return (
+      <TableWrapper>
+        <Table title={t('exchangeContent.label.exchangeDetails')}>
+          <TableRow>
+            <TableLabel>{t('exchangeContent.label.exchangeRate')}</TableLabel>
+            <Row>
+              <ExchangeIcon name="exchange" />
+              <Spacing w={4} />
+              <BaseText regular>
+                {t('exchangeContent.label.exchangeRateLayout', {
+                  rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
+                  toAssetCode,
+                  fromAssetCode,
+                })}
+              </BaseText>
+            </Row>
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('exchangeContent.label.maxSlippage')}</TableLabel>
+            <BaseText regular> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
+          </TableRow>
+        </Table>
+        <Spacing h={20} />
+        <Table title={t('transactions.label.fees')}>
+          <TableRow>
+            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
+            <TableAmount amount={0} />
+          </TableRow>
+          <TableRow>
+            <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
+            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
+          </TableRow>
+        </Table>
+        <Spacing h={48} />
+        <Button
+          disabled={!isOnline || !!errorMessage || !feeInfo || isEstimating}
+          onPress={onConfirmTransactionPress}
+          title={isEstimating ? t('label.gettingFee') : t('button.confirm')}
+        />
+      </TableWrapper>
+    );
   };
+
+  const getWbtcInfoComponent = () => (
+    <WBTCCafeInfo
+      extendedInfo
+      wbtcData={wbtcEstimationData}
+      amount={wbtcData.amount}
+      address={wbtcGatewayAddressInfo?.gatewayAddress}
+    />
+  );
 
   return (
     <ContainerWithHeader
@@ -283,7 +337,7 @@ const ExchangeConfirmScreen = ({
       <ScrollWrapper contentContainerStyle={{ minHeight: '100%' }}>
         <MainWrapper>
           <ExchangeScheme
-            fromValue={payQuantity}
+            fromValue={isWbtcCafe ? wbtcData.amount : payQuantity}
             fromAssetCode={fromAssetCode}
             toValue={formattedReceiveAmount}
             toValueInFiat={formattedReceiveAmountInFiat}
@@ -291,49 +345,7 @@ const ExchangeConfirmScreen = ({
             imageSource={providerLogo}
           />
           <Spacing h={36} />
-          <TableWrapper>
-            <Table title={t('exchangeContent.label.exchangeDetails')}>
-              <TableRow>
-                <TableLabel>{t('exchangeContent.label.exchangeRate')}</TableLabel>
-                <Row>
-                  <ExchangeIcon name="exchange" />
-                  <Spacing w={4} />
-                  <BaseText regular>
-                    {t('exchangeContent.label.exchangeRateLayout', {
-                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
-                      toAssetCode,
-                      fromAssetCode,
-                    })}
-                  </BaseText>
-                </Row>
-              </TableRow>
-              <TableRow>
-                <TableLabel>{t('exchangeContent.label.maxSlippage')}</TableLabel>
-                <BaseText regular> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
-              </TableRow>
-            </Table>
-            <Spacing h={20} />
-            <Table title={t('transactions.label.fees')}>
-              <TableRow>
-                <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
-              </TableRow>
-              <TableRow>
-                <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-                <TableAmount amount={0} />
-              </TableRow>
-              <TableRow>
-                <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
-                <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
-              </TableRow>
-            </Table>
-            <Spacing h={48} />
-            <Button
-              disabled={!isOnline || !!errorMessage || !feeInfo || isEstimating}
-              onPress={onConfirmTransactionPress}
-              title={getButtonTitle()}
-            />
-          </TableWrapper>
+          {isWbtcCafe ? getWbtcInfoComponent() : getTable()}
         </MainWrapper>
       </ScrollWrapper>
     </ContainerWithHeader>

@@ -17,15 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState, useEffect } from 'react';
-import { Clipboard } from 'react-native';
+import React from 'react';
 import Emoji from 'react-native-emoji';
 import styled, { withTheme } from 'styled-components/native';
 
 // components
 import QRCodeWithTheme from 'components/QRCode/QRCodeWithTheme';
 import { BaseText } from 'components/Typography';
-import Toast from 'components/Toast';
 import Spinner from 'components/Spinner';
 
 // utils
@@ -63,42 +61,27 @@ const InfoWrapper = styled.View`
   flex-direction: row;
   align-items: center;
   margin-top: 15px;
+  margin-bottom: 20px;
 `;
 
 type Props = {
   amount: string;
   theme: Theme;
+  address?: string;
 }
 
-const WBTCCafeAddress = ({ amount }: Props) => {
-  const [btcAddress, setBtcAddress] = useState('');
-  useEffect(() => {
-    if (!btcAddress) {
-      const address = 'testAddress'; // TODO: getGatewayAddress();
-      setBtcAddress(address);
-    }
-  });
-
-  const handleCopy = () => {
-    Clipboard.setString(btcAddress);
-    const message = t('toast.addressCopiedToClipboard');
-    Toast.show({ message, emoji: 'ok_hand' });
-  };
-
-  if (!btcAddress) {
+const WBTCCafeAddress = ({ amount, address }: Props) => {
+  if (!address) {
     return <Wrapper><Spinner height={30} width={30} /></Wrapper>;
   }
 
   return (
     <Wrapper>
       <AddressWrapper>
-        <QRCodeWithTheme size={70} value={btcAddress} />
+        <QRCodeWithTheme size={70} value={address} />
         <TextWrapper>
           <Text color={themedColors.text}>
             {t('wbtcCafe.sendBtc', { amount })}
-          </Text>
-          <Text color={themedColors.link} onPress={handleCopy}>
-            {t('wbtcCafe.copy')}
           </Text>
         </TextWrapper>
       </AddressWrapper>

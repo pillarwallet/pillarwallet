@@ -47,7 +47,7 @@ type WBTCResponseResult = "success" | "error";
 export type WBTCGatewayAddressResponse = {
   result: WBTCResponseResult,
   message?: string,
-  gateWayAddress?: string,
+  gatewayAddress?: string,
   exchangeRate?: number,
   amount?: number,
   nonce?: string,

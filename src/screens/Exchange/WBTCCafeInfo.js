@@ -19,30 +19,30 @@
 */
 
 import * as React from 'react';
+import { Clipboard } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
+import Toast from 'components/Toast';
 import { themedColors } from 'utils/themes';
 import { fontStyles, spacing, UIColors, baseColors } from 'utils/variables';
 import type { WBTCFeesWithRate } from 'models/WBTC';
 import { BTC, WBTC } from 'constants/assetsConstants';
-import type { Option } from 'models/Selector';
-import { isWbtcCafe } from 'utils/exchange';
 import { hitslop10, hitslopFull } from 'utils/common';
 import Modal from 'components/Modal';
 import t from 'translations/translate';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 import WBTCSlippageModal from './WBTCSlippageModal';
+import WBTCCafeAddress from './WBTCCafeAddress';
 
 type Props = {
   wbtcData: ?WBTCFeesWithRate,
-  fromAsset: Option,
-  toAsset: Option,
   extendedInfo?: boolean,
-  navigation: NavigationScreenProp<*>,
+  navigation?: NavigationScreenProp<*>,
   amount?: string,
+  address?: string,
 }
 
 const Container = styled.TouchableOpacity`
@@ -180,18 +180,20 @@ const WBTCCafeInfo = (props: Props) => {
   ));
 
   const {
-    wbtcData, fromAsset, extendedInfo, navigation, amount,
+    wbtcData, extendedInfo, navigation, amount, address,
   } = props;
 
-  if (!isWbtcCafe(fromAsset)) return null;
-
   const handleNextPress = () => {
-    if (!extendedInfo) {
+    if (!extendedInfo && !!navigation) {
       return navigation.navigate(EXCHANGE_CONFIRM, {
         wbtcTxData: { maxSlippage: maxSlippage / 100, amount: Number(amount) },
+        wbtcEstData: wbtcData,
       });
     }
-    return null; // todo handle
+    Clipboard.setString(address || '');
+    const message = t('toast.addressCopiedToClipboard');
+    Toast.show({ message, emoji: 'ok_hand' });
+    return null;
   };
 
   const switchOffFeeInfo = () => showRenFeeInfo && setShowRenFeeInfo(false);
@@ -211,12 +213,11 @@ const WBTCCafeInfo = (props: Props) => {
 
   const getFeeInfo = () => `${wbtcData?.estimate ? getFeeNumber() : '0'} ${BTC}`;
 
-  /* eslint-disable i18next/no-literal-string */
+  const getButtonTitle = () => t(`${extendedInfo ? 'wbtcCafe.copy' : 'title.confirm'}`);
 
   const rate = wbtcData?.exchangeRate;
-  const { symbol } = fromAsset;
-  const rateString = rate && symbol ? `1 ${symbol} = ${rate.toFixed(4)} ${symbol === BTC ? WBTC : BTC}` : '-';
-  const buttonDisabled = !wbtcData?.estimate || showRenFeeInfo; // wbtcData.estimate is 0 when input amount is 0;
+  const rateString = rate ? `1 ${BTC} = ${rate.toFixed(4)} ${WBTC}` : '-';
+  const buttonDisabled = !wbtcData?.estimate || showRenFeeInfo || (extendedInfo && !address);
   return (
     <Container activeOpacity={1} onPress={switchOffFeeInfo}>
       <InfoWrapper noBorder={!extendedInfo}>
@@ -249,6 +250,10 @@ const WBTCCafeInfo = (props: Props) => {
               <Label>{t('wbtcCafe.btcFee')}</Label>
               <Label>{wbtcData ? wbtcData.networkFee.toFixed(8) : '-'}</Label>
             </Row>
+            <Row disabled>
+              <Label>{t('transactions.label.pillarFee')}</Label>
+              <Label textColor={themedColors.positive}>{t('label.free')}</Label>
+            </Row>
           </>
         )}
         <Row onPress={handleSlippagePress} noBorder disabled={extendedInfo || showRenFeeInfo}>
@@ -256,7 +261,9 @@ const WBTCCafeInfo = (props: Props) => {
           <Label textColor={extendedInfo ? null : themedColors.link}>{`${maxSlippage}%`}</Label>
         </Row>
       </InfoWrapper>
-      {!extendedInfo && (
+      {extendedInfo
+      ? <WBTCCafeAddress amount={amount || wbtcData.amount} address={address} />
+      : (
         <FeeRow>
           <Label>{t('transactions.label.transactionFee')}</Label>
           <FeeWrapper>
@@ -265,7 +272,7 @@ const WBTCCafeInfo = (props: Props) => {
         </FeeRow>
       )}
       <ButtonWrapper>
-        <Button title={t('title.confirm')} onPress={handleNextPress} disabled={buttonDisabled} />
+        <Button title={getButtonTitle()} onPress={handleNextPress} disabled={buttonDisabled} />
       </ButtonWrapper>
     </Container>
   );

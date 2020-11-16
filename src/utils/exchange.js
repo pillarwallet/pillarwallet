@@ -29,6 +29,7 @@ import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import { ETH, BTC } from 'constants/assetsConstants';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { AllowanceTransaction } from 'models/Transaction';
 
@@ -51,7 +52,7 @@ export type ExchangeOptions = {
 export const getProviderInfo = (provider: string): Object => PROVIDERS_META.find(({ shim }) => shim === provider) || {};
 
 export const getOfferProviderLogo = (provider?: string, theme: Theme, type: string) => {
-  if (!provider) return '';
+  if (!provider) return staticImages[`exchangeDefaultLogo${theme.current === LIGHT_THEME ? 'Light' : 'Dark'}`];
   const providerInfo = getProviderInfo(provider);
   const themeName = getThemeName(theme);
   if (providerInfo) {
@@ -149,4 +150,4 @@ export const createAllowanceTx = async (
   }
 };
 
-export const isWbtcCafe = (fromAsset: Option): boolean => fromAsset.symbol === BTC;
+export const isWbtcCafe = (fromAssetCode: string): boolean => fromAssetCode === BTC;
