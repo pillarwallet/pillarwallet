@@ -259,7 +259,7 @@ export const mockSmartWalletAccount = {
   id: '0x0',
   isActive: false,
   walletId: '',
-  type: ACCOUNT_TYPES.SMART_WALLET,
+  type: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
   extra: mockSmartWalletAccountApiData,
 };
 

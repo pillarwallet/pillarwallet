@@ -46,7 +46,7 @@ export const availableWalletsSelector = createSelector(
     const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
     const availableWallets = [{ ...keyWallet }];
 
-    const smartWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+    const smartWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.LEGACY_SMART_WALLET);
     if (smartWallet) {
       availableWallets.unshift({
         ...smartWallet,
@@ -67,7 +67,7 @@ export const inactiveUserWalletForSendSelector = createSelector(
         const theme = getThemeByType(themeType);
         const { smartWalletIcon } = images(theme);
         const { keyWalletIcon } = images(theme);
-        const walletIcon = account.type === ACCOUNT_TYPES.SMART_WALLET ? smartWalletIcon : keyWalletIcon;
+        const walletIcon = account.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET ? smartWalletIcon : keyWalletIcon;
 
         return {
           ...account,

@@ -233,7 +233,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x000000',
         to: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -246,7 +246,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x000000',
         to: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
@@ -260,7 +260,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x000000',
         from: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -273,7 +273,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x000000',
         from: '0x222222',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
         status: TX_PENDING_STATUS,
@@ -287,7 +287,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         from: '0x111111',
         to: '0x000000',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}
@@ -300,7 +300,7 @@ storiesOf('ActivityFeedItem', module)
         type: TRANSACTION_EVENT,
         to: '0x111111',
         from: '0x000000',
-        accountType: ACCOUNT_TYPES.SMART_WALLET,
+        accountType: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
         asset: 'ETH',
         value: '1000000000000000000',
       }}

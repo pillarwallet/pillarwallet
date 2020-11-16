@@ -112,7 +112,7 @@ import type SDKWrapper from 'services/api';
 import { buildHistoryTransaction, updateAccountHistory, updateHistoryRecord } from 'utils/history';
 import {
   findAccountById,
-  findFirstSmartAccount,
+  findFirstLegacySmartAccount,
   getActiveAccountAddress,
   getActiveAccountId,
   normalizeForEns,
@@ -222,7 +222,7 @@ export const loadSmartWalletAccountsAction = (privateKey?: string) => {
     const backendAccounts = await api.listAccounts(user.walletId);
 
     const accountsPromises = smartAccounts.map(async account => {
-      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.LEGACY_SMART_WALLET, account, backendAccounts));
     });
     await Promise.all(accountsPromises);
   };
@@ -452,7 +452,7 @@ export const syncVirtualAccountTransactionsAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const payments = await smartWalletService.getAccountPayments(lastSyncedPaymentId);
@@ -1333,7 +1333,7 @@ export const importSmartWalletAccountsAction = (privateKey: string) => {
     const backendAccounts = await api.listAccounts(user.walletId);
 
     const newAccountsPromises = smartAccounts.map(async account => {
-      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.SMART_WALLET, account, backendAccounts));
+      return dispatch(addAccountAction(account.address, ACCOUNT_TYPES.LEGACY_SMART_WALLET, account, backendAccounts));
     });
     await Promise.all(newAccountsPromises);
 
@@ -1399,7 +1399,7 @@ export const addSmartWalletAccountDeviceAction = (deviceAddress: string, payWith
     }
 
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
@@ -1435,7 +1435,7 @@ export const removeDeployedSmartWalletAccountDeviceAction = (deviceAddress: stri
     }
 
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
@@ -1457,7 +1457,7 @@ export const setSmartWalletEnsNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);
@@ -1497,7 +1497,7 @@ export const switchToGasTokenRelayerAction = () => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) return;
 
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
     const accountId = getAccountId(smartWalletAccount);
     const accountAddress = getAccountAddress(smartWalletAccount);

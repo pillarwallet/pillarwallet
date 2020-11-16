@@ -63,7 +63,11 @@ import {
   canLoginWithPkFromPin,
 } from 'utils/keychain';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-import { findFirstSmartAccount, getActiveAccountType } from 'utils/accounts';
+import {
+  findFirstLegacySmartAccount,
+  findFirstEtherspotAccount,
+  getActiveAccountType,
+} from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
@@ -71,6 +75,7 @@ import Storage from 'services/storage';
 import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
+import etherspot from 'services/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -103,6 +108,10 @@ import {
   checkKeyBasedAssetTransferTransactionsAction,
 } from './keyBasedAssetTransferActions';
 import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
+import {
+  importEtherspotAccountsAction,
+  initEtherspotServiceAction,
+} from 'actions/etherspotActions';
 
 
 const storage = Storage.getInstance('db');
@@ -238,24 +247,9 @@ export const loginAction = (
 
       dispatch({ type: SET_WALLET, payload: unlockedWallet });
 
-      // init smart wallet
-      await dispatch(initOnLoginSmartWalletAccountAction(decryptedPrivateKey));
-
-      const smartWalletAccount = findFirstSmartAccount(accounts);
-
-      // key based wallet migration – switch to smart wallet if key based was active
-      if (getActiveAccountType(accounts) !== ACCOUNT_TYPES.SMART_WALLET && smartWalletAccount) {
-        await dispatch(setActiveAccountAction(smartWalletAccount.id));
-      }
-
-      /**
-       * set Ethereum network as active if we disable feature flag
-       * or end beta testing program while user has set BTC as active network
-       */
-      const revertToDefaultNetwork = !isSupportedBlockchain(blockchainNetwork);
-      if (revertToDefaultNetwork || !blockchainNetwork) {
-        dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
-      }
+      // init etherspot
+      await dispatch(initEtherspotServiceAction(decryptedPrivateKey));
+      const etherspotAccount = findFirstEtherspotAccount(accounts);
 
       if (isOnline) {
         // Dispatch action to try and get the latest remote config values...
@@ -265,12 +259,13 @@ export const loginAction = (
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
 
-        // offline onboarded or very old user that doesn't have any smart wallet, let's create one and migrate safe
-        if (!smartWalletAccount) {
+        // offline onboarded or very old user that doesn't have etherspot account, let's create one and migrate safe
+        if (!etherspotAccount) {
           // this will import and set Smart Wallet as current active account
-          await dispatch(importSmartWalletAccountsAction(decryptedPrivateKey));
+          await dispatch(importEtherspotAccountsAction(decryptedPrivateKey));
         }
 
+        // TODO: check archanova smart wallet balance for migration
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
       }
@@ -297,7 +292,7 @@ export const loginAction = (
           }
 
           dispatch(getWalletsCreationEventsAction());
-          dispatch(fetchSmartWalletTransactionsAction());
+          // dispatch(fetchSmartWalletTransactionsAction());
           dispatch(fetchReferralRewardAction());
 
           firebaseCrashlytics.setUserId(user.username);

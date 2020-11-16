@@ -69,7 +69,7 @@ import {
   getActiveAccountType,
   getAccountAddress,
   getAccountId,
-  checkIfSmartWalletAccount,
+  checkIfLegacySmartWalletAccount,
   isNotKeyBasedType,
 } from 'utils/accounts';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
@@ -117,7 +117,7 @@ export const sendAssetAction = (
     const activeAccountType = getActiveAccountType(accounts);
     if (!activeAccount) return;
 
-    if (activeAccountType === ACCOUNT_TYPES.SMART_WALLET) {
+    if (activeAccountType === ACCOUNT_TYPES.LEGACY_SMART_WALLET) {
       await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
     }
 
@@ -233,7 +233,7 @@ export const sendAssetAction = (
       }
     }
 
-    if (checkIfSmartWalletAccount(activeAccount) && !usePPN && tokenTx.hash) {
+    if (checkIfLegacySmartWalletAccount(activeAccount) && !usePPN && tokenTx.hash) {
       dispatch({
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
         payload: tokenTx.hash,
@@ -366,7 +366,7 @@ export const fetchAssetsBalancesAction = () => {
     await dispatch(fetchAccountAssetsBalancesAction(activeAccount));
     dispatch(fetchAccountAssetsRatesAction());
 
-    if (checkIfSmartWalletAccount(activeAccount)) {
+    if (checkIfLegacySmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };
@@ -413,7 +413,7 @@ export const fetchAllAccountsBalancesAction = () => {
 
     dispatch(fetchAllAccountsAssetsRatesAction());
 
-    if (checkIfSmartWalletAccount(activeAccount)) {
+    if (checkIfLegacySmartWalletAccount(activeAccount)) {
       dispatch(fetchVirtualAccountBalanceAction());
     }
   };

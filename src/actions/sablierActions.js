@@ -27,7 +27,7 @@ import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstan
 import { SET_STREAMS, SET_FETCHING_STREAMS, SET_SABLIER_GRAPH_QUERY_ERROR } from 'constants/sablierConstants';
 
 // utils
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstLegacySmartAccount, getAccountAddress } from 'utils/accounts';
 
 // services
 import {
@@ -55,7 +55,7 @@ export const fetchUserStreamsAction = () => {
     const {
       accounts: { data: accounts },
     } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_FETCHING_STREAMS });
@@ -78,7 +78,7 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });

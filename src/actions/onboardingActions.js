@@ -63,7 +63,7 @@ import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging } from 'services/firebase';
 
 // actions
-import { importSmartWalletAccountsAction, managePPNInitFlagAction } from 'actions/smartWalletActions';
+import { managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
@@ -83,6 +83,7 @@ import { initialAssets } from 'fixtures/assets';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+import { importEtherspotAccountsAction } from 'actions/etherspotActions';
 
 
 export const setupUserAction = (username: ?string, recoveryData?: Object) => {
@@ -249,7 +250,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(fetchReferralRewardAction());
 
       // create smart wallet account only for new wallets
-      await dispatch(importSmartWalletAccountsAction(privateKey));
+      await dispatch(importEtherspotAccountsAction(privateKey));
       await dispatch(fetchSmartWalletTransactionsAction());
       dispatch(managePPNInitFlagAction());
 

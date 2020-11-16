@@ -81,8 +81,12 @@ export const findKeyBasedAccount = (accounts: Accounts): ?Account => {
   return accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
 };
 
-export const findFirstSmartAccount = (accounts: Accounts): ?Account => {
-  return accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET);
+export const findFirstLegacySmartAccount = (accounts: Accounts): ?Account => {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.LEGACY_SMART_WALLET);
+};
+
+export const findFirstEtherspotAccount = (accounts: Accounts): ?Account => {
+  return accounts.find(({ type }) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET);
 };
 
 export const getActiveAccountWalletId = (accounts: Accounts): string => {
@@ -94,8 +98,8 @@ export const getActiveAccountWalletId = (accounts: Accounts): string => {
   return activeAccount.walletId;
 };
 
-export const checkIfSmartWalletAccount = (account: Account): boolean => {
-  return account.type === ACCOUNT_TYPES.SMART_WALLET;
+export const checkIfLegacySmartWalletAccount = (account: Account): boolean => {
+  return account.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET;
 };
 
 export const checkIfKeyBasedAccount = (account: Account): boolean => {
@@ -104,7 +108,9 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
 
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
-    case ACCOUNT_TYPES.SMART_WALLET:
+    case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
+      return t('smartWalletV2');
+    case ACCOUNT_TYPES.LEGACY_SMART_WALLET:
       return t('smartWallet');
     default:
       return '';
@@ -139,12 +145,12 @@ export const getEnabledAssets = (allAccountAssets: Assets, hiddenAssets: string[
 };
 
 export const getEnsName = (accounts: Accounts): string => {
-  const SWAccount = findFirstSmartAccount(accounts);
+  const SWAccount = findFirstLegacySmartAccount(accounts);
   return get(SWAccount, 'extra.ensName', '');
 };
 
 export const getSmartWalletAddress = (accounts: Accounts): ?string => {
-  const swAccount = findFirstSmartAccount(accounts);
+  const swAccount = findFirstLegacySmartAccount(accounts);
   if (!swAccount) return null;
   return getAccountAddress(swAccount);
 };

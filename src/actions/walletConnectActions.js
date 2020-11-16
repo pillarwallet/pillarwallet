@@ -61,9 +61,9 @@ import { createConnector } from 'services/walletConnect';
 import { isNavigationAllowed } from 'utils/navigation';
 import {
   getAccountAddress,
-  findFirstSmartAccount,
+  findFirstLegacySmartAccount,
   getActiveAccount,
-  checkIfSmartWalletAccount,
+  checkIfLegacySmartWalletAccount,
 } from 'utils/accounts';
 import { shouldClearWCSessions, shouldAllowSession } from 'utils/walletConnect';
 import { reportErrorLog } from 'utils/common';
@@ -440,8 +440,8 @@ export const approveSessionAction = (peerId: string) => {
     } = getState();
     try {
       let account = getActiveAccount(accounts);
-      if (!account || !checkIfSmartWalletAccount(account)) {
-        account = findFirstSmartAccount(accounts);
+      if (!account || !checkIfLegacySmartWalletAccount(account)) {
+        account = findFirstLegacySmartAccount(accounts);
       }
       if (!account) {
         Toast.show({

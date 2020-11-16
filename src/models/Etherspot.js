@@ -18,11 +18,3 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const UPDATE_ACCOUNTS = 'UPDATE_ACCOUNTS';
-export const ADD_ACCOUNT = 'ADD_ACCOUNT';
-export const ACCOUNT_TYPES = {
-  KEY_BASED: 'KEY_BASED',
-  LEGACY_SMART_WALLET: 'SMART_WALLET', // exactly "SMART_WALLET" is legacy constant
-  ETHERSPOT_SMART_WALLET: 'ETHERSPOT_SMART_WALLET',
-};
-export const CHANGING_ACCOUNT = 'CHANGING_ACCOUNT';

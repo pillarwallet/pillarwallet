@@ -147,7 +147,7 @@ class ReceiveModal extends React.Component<Props> {
 
     const { profileImage, lastUpdateTime = 0, username = '' } = user;
     const ensName = getEnsName(accounts);
-    const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.SMART_WALLET;
+    const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.LEGACY_SMART_WALLET;
     const buttonWidth = showBuyTokensButton ? getButtonWidth() : 0;
     const needsSmallButtons = showBuyTokensButton && buttonWidth <= 150;
     const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;

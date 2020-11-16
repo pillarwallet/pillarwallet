@@ -19,14 +19,14 @@
 */
 import get from 'lodash.get';
 import { saveDbAction } from 'actions/dbActions';
-import { findFirstSmartAccount } from 'utils/accounts';
+import { findFirstLegacySmartAccount } from 'utils/accounts';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import type { Accounts } from 'models/Account';
 
 
 function addWalletIdToSmartWalletAccount(accounts: Accounts, walletId: string): Accounts {
   return accounts.map(account => {
-    if (account.type !== ACCOUNT_TYPES.SMART_WALLET) return account;
+    if (account.type !== ACCOUNT_TYPES.LEGACY_SMART_WALLET) return account;
     return {
       ...account,
       walletId,
@@ -41,7 +41,7 @@ export default async function (storageData: Object, dispatch: Function) {
   // wallet is not registered yet
   if (!user.walletId) return accounts;
 
-  const smartWalletAccount = findFirstSmartAccount(accounts);
+  const smartWalletAccount = findFirstLegacySmartAccount(accounts);
 
   if (smartWalletAccount && !smartWalletAccount.walletId) {
     const migratedAccounts = addWalletIdToSmartWalletAccount(accounts, user.walletId);

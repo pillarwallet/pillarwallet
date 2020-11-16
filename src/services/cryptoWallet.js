@@ -17,7 +17,7 @@ export default class CryptoWallet {
         this.walletProvider = new KeyBasedWalletProvider(privateKey);
         this.walletProviderInitialized = true;
         break;
-      case ACCOUNT_TYPES.SMART_WALLET:
+      case ACCOUNT_TYPES.LEGACY_SMART_WALLET:
         this.walletProvider = new SmartWalletProvider(privateKey, account);
         this.initWalletProviderPromise = this.walletProvider.getInitStatus();
         break;

@@ -79,7 +79,7 @@ import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { findFirstSmartAccount, getAccountId } from 'utils/accounts';
+import { findFirstLegacySmartAccount, getAccountId } from 'utils/accounts';
 
 // selectors
 import {
@@ -176,7 +176,7 @@ class PPNView extends React.Component<Props, State> {
       balances,
       smartWalletState,
     } = this.props;
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
 
     const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
     if (isDeploying) {

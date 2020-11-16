@@ -100,7 +100,7 @@ const getMessage = (
 };
 
 export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
-  return accounts.some(acc => acc.type === ACCOUNT_TYPES.SMART_WALLET);
+  return accounts.some(acc => acc.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET);
 };
 
 export const getSmartWalletStatus = (
@@ -109,7 +109,7 @@ export const getSmartWalletStatus = (
 ): SmartWalletStatus => {
   const hasAccount = userHasSmartWallet(accounts);
   const activeAccount = getActiveAccount(accounts);
-  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.SMART_WALLET;
+  const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET;
 
   const { upgrade: { status } } = smartWalletState;
   const sendingBlockedMessage = getMessage(status, isSmartWalletActive);

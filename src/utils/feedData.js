@@ -33,7 +33,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 
 import {
   findAccountByAddress,
-  checkIfSmartWalletAccount,
+  checkIfLegacySmartWalletAccount,
   checkIfKeyBasedAccount,
   getInactiveUserAccounts,
   getAccountAddress,
@@ -189,7 +189,7 @@ export const isTimedOutTransaction = ({ status }: Object) => {
 
 export const isSWAddress = (address: string, accounts: Accounts) => {
   const account = findAccountByAddress(address, accounts);
-  return (!!account && checkIfSmartWalletAccount(account));
+  return (!!account && checkIfLegacySmartWalletAccount(account));
 };
 
 export const isKWAddress = (address: string, accounts: Accounts) => {

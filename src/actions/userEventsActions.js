@@ -58,7 +58,7 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
       case ACCOUNT_TYPES.KEY_BASED:
         eventTitle = WALLET_CREATED;
         break;
-      case ACCOUNT_TYPES.SMART_WALLET:
+      case ACCOUNT_TYPES.LEGACY_SMART_WALLET:
         eventTitle = SMART_WALLET_CREATED;
         break;
       default:
@@ -81,7 +81,7 @@ export const addWalletCreationEventAction = (type: string, createdAt: number) =>
 
     let ppnCreateEvent;
     let updatedUserEvents = [];
-    if (type === ACCOUNT_TYPES.SMART_WALLET) {
+    if (type === ACCOUNT_TYPES.LEGACY_SMART_WALLET) {
       ppnCreateEvent = {
         id: PPN_INIT_EVENT,
         eventTitle: PILLAR_NETWORK,

@@ -142,9 +142,9 @@ class SDKWrapper {
     return Promise.resolve()
       .then(() => this.pillarWalletSdk.user.infoSmartWallet({ walletId }))
       .then(({ data }) => data.wallets || [])
-      .catch(() => {
-        reportErrorLog('listAccounts failed', { walletId });
-        return [];
+      .catch((error) => {
+        reportErrorLog('listAccounts failed', { error, walletId });
+        return null;
       });
   }
 

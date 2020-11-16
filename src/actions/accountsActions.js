@@ -41,7 +41,7 @@ import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActio
 import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
 
 // utils
-import { findFirstSmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
+import { findFirstLegacySmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 
 // services
@@ -136,7 +136,7 @@ export const setActiveAccountAction = (accountId: string) => {
     });
     dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
 
-    if (account.type !== ACCOUNT_TYPES.SMART_WALLET || !account.extra) return;
+    if (account.type !== ACCOUNT_TYPES.LEGACY_SMART_WALLET || !account.extra) return;
 
     const { state = '' } = connectedAccount;
     if (state === sdkConstants.AccountStates.Deployed) {
@@ -163,7 +163,7 @@ export const switchAccountAction = (accountId: string) => {
 
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (account.type === ACCOUNT_TYPES.SMART_WALLET) {
+    if (account.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET) {
       if (sdkInitialized) {
         await dispatch(connectSmartWalletAccountAction(accountId));
         dispatch(setUserEnsIfEmptyAction());
@@ -190,14 +190,14 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
       user: { data: user },
     } = getState();
 
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
     if (!smartWalletAccount) return;
 
     const smartWalletAccountId = getAccountId(smartWalletAccount);
     await dispatch(initSmartWalletSdkAction(privateKey));
 
     const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.SMART_WALLET; // set to active routine
+    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.LEGACY_SMART_WALLET; // set to active routine
     await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
     dispatch(fetchVirtualAccountBalanceAction());
 
@@ -222,7 +222,7 @@ export const fallbackToSmartAccountAction = () => {
     const activeAccount = activeAccountSelector(getState());
     const { accounts: { data: accounts } } = getState();
     if (activeAccount && !isSupportedAccountType(activeAccount.type)) {
-      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.SMART_WALLET)
+      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.LEGACY_SMART_WALLET)
      || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
       if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
     }

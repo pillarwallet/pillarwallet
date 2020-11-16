@@ -47,7 +47,7 @@ describe('Smartwallet utils', () => {
         },
         {
           id: '',
-          type: ACCOUNT_TYPES.SMART_WALLET,
+          type: ACCOUNT_TYPES.LEGACY_SMART_WALLET,
           walletId: '',
           isActive: false,
         },

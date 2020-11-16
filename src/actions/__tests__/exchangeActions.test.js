@@ -54,7 +54,7 @@ const storeState = {
       { symbol: 'sETH', isSynthetixAsset: true },
     ],
   },
-  accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.SMART_WALLET }] },
+  accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.LEGACY_SMART_WALLET }] },
 };
 
 const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => ({
