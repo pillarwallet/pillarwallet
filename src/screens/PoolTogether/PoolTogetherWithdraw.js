@@ -402,7 +402,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
                 disabled={!!submitDisabled}
-                style={{ marginBottom: 13, width: '100%' }}
+                style={{ marginBottom: 13 }}
               />
             </ContentRow>
           </ContentWrapper>

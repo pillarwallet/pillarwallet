@@ -643,7 +643,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -669,7 +669,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -697,7 +697,7 @@ export class EventDetail extends React.Component<Props> {
               {
                 title: t('button.topUp'),
                 onPress: this.topUpPillarNetwork,
-                squarePrimary: true,
+                transparent: true,
               },
             ],
           };
@@ -719,6 +719,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: t('button.topUp'),
               onPress: this.topUpPillarNetwork,
+              secondary: true,
             },
           ],
         };
@@ -729,7 +730,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -774,7 +775,6 @@ export class EventDetail extends React.Component<Props> {
         const activatePillarNetworkButton = {
           title: t('button.activatePPN'),
           onPress: this.topUpPillarNetwork,
-          secondary: true,
         };
 
         const referFriendsButton = {
@@ -786,7 +786,7 @@ export class EventDetail extends React.Component<Props> {
         const referFriendsButtonSecondary = {
           title: this.getReferButtonTitle(),
           onPress: this.referFriends,
-          squarePrimary: true,
+          secondary: true,
         };
 
         eventData = {
@@ -799,7 +799,7 @@ export class EventDetail extends React.Component<Props> {
         const topUpMoreButton = {
           title: t('button.topUpMore'),
           onPress: this.topUpPillarNetwork,
-          squarePrimary: true,
+          secondary: true,
         };
         eventData = {
           buttons: isPending
@@ -878,7 +878,7 @@ export class EventDetail extends React.Component<Props> {
             aaveDepositButtons.push({
               title: t('button.viewDeposit'),
               onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-              squarePrimary: true,
+              secondary: true,
             });
           }
         }
@@ -901,7 +901,7 @@ export class EventDetail extends React.Component<Props> {
           aaveWithdrawButtons.push({
             title: t('button.viewDeposit'),
             onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-            squarePrimary: true,
+            secondary: true,
           });
         }
         eventData.buttons = aaveWithdrawButtons;
@@ -928,7 +928,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: t('button.viewPoolTogetherPool'),
               onPress: () => this.goToPoolTogetherPool(symbol),
-              squarePrimary: true,
+              secondary: true,
             },
           );
         }
@@ -980,7 +980,7 @@ export class EventDetail extends React.Component<Props> {
             },
             {
               title: t('button.viewSablierStream'),
-              squarePrimary: true,
+              secondary: true,
               onPress: () => this.goToIncomingStream(streamId),
             },
           ],
@@ -1019,7 +1019,7 @@ export class EventDetail extends React.Component<Props> {
                 {
                   title: t('button.sendBack'),
                   onPress: () => this.sendSynthetic(relevantAddress),
-                  squarePrimary: true,
+                  secondary: true,
                 },
               ];
             }
@@ -1036,7 +1036,7 @@ export class EventDetail extends React.Component<Props> {
           const buttons = [{
             title: t('button.viewPoolTogetherPool'),
             onPress: () => this.goToPoolTogetherPool(DAI),
-            squarePrimary: true,
+            secondary: true,
           }];
           eventData = {
             name: t('poolTogether'),
@@ -1053,7 +1053,7 @@ export class EventDetail extends React.Component<Props> {
           const inviteToPillarButton = {
             title: t('button.inviteToPillar'),
             onPress: this.referFriends,
-            squarePrimary: true,
+            secondary: true,
           };
 
           const sendBackToAddress = {
@@ -1255,8 +1255,6 @@ export class EventDetail extends React.Component<Props> {
           userName={label}
           diameter={64}
           textStyle={{ fontSize: fontSizes.big }}
-          noShadow
-          borderWidth={0}
           cornerIcon={cornerIcon}
           cornerIconSize={22}
         />
@@ -1302,7 +1300,7 @@ export class EventDetail extends React.Component<Props> {
                   amount={getFormattedValue(formattedVal, group.symbol, { isPositive: !isFailed, noSymbol: !isFailed })}
                   textStyle={{ fontSize: fontSizes.big }}
                   iconStyle={{ height: 14, width: 8, marginRight: 9 }}
-                  secondary={isFailed}
+                  failed={isFailed}
                 />
               </Row>
               {group.transactions.map(({
@@ -1405,7 +1403,6 @@ export class EventDetail extends React.Component<Props> {
           </DetailRow>
         )}
         {customActionTitle}
-
         {!!subtitle && <DetailParagraph>{subtitle}</DetailParagraph>}
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
       </DetailModal>
@@ -1435,7 +1432,7 @@ export class EventDetail extends React.Component<Props> {
 
       if (!alreadyHasViewOnBlockchainButton) {
         const viewOnBlockchainButton = {
-          squarePrimary: hasModalButtons, // styling if multiple buttons in modal
+          transparent: hasModalButtons, // styling if multiple buttons in modal
           secondary: !hasModalButtons, // styling if single button in modal
           title: viewOnBlockchainButtonTitle,
           onPress: this.viewOnTheBlockchain,

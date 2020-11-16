@@ -37,7 +37,7 @@ import { fontStyles, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 
 // types
-import type { ExternalButtonProps as ButtonProps } from 'components/Button';
+import type { Props as ButtonProps } from 'components/Button';
 
 opaque type FeePending = $FlowFixMe;
 export const FEE_PENDING: FeePending = Symbol('fee pending');
@@ -155,7 +155,7 @@ const getChildrenSpacing = (children: ?ReactNode): number =>
 
 const Fee = ({ fee }: { fee: void | string | FeePending }) => {
   if (fee === FEE_PENDING) {
-    return <FeeSpinner height={20} width={20} />;
+    return <FeeSpinner size={20} trackWidth={2} />;
   }
 
   if (typeof fee === 'string') {
@@ -206,7 +206,7 @@ const DetailModal = ({
           <ButtonsContainer>
             {buttons.map((buttonProps, i) => (
               <ButtonWrapper key={i} last={i + 1 === buttons.length}>
-                <Button regularText {...buttonProps} />
+                <Button {...buttonProps} />
               </ButtonWrapper>
             ))}
           </ButtonsContainer>

@@ -28,7 +28,7 @@ import { Wrapper } from 'components/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 
 import { spacing } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 import type { ScrollToProps } from 'components/Modal';
 import type { Theme } from 'models/Theme';
@@ -131,7 +131,7 @@ const ModalBackground = styled.View`
   box-shadow: 0px 2px 7px rgba(0,0,0,.1);
   elevation: 1;
   margin-top: auto;
-  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.card};
+  background-color: ${({ customTheme, theme }) => customTheme.isTransparent ? 'transparent' : theme.colors.basic050};
   margin-horizontal: ${({ sideMargins }) => sideMargins || 0}px;
 `;
 
@@ -156,7 +156,7 @@ const ModalOverflow = styled.View`
   width: 100%;
   height: 100px;
   margin-bottom: -100px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 class SlideModal extends React.Component<Props, State> {
@@ -203,7 +203,7 @@ class SlideModal extends React.Component<Props, State> {
 
     const customTheme = getTheme(this.props);
     const colors = getThemeColors(theme);
-    const backgroundColor = bgColor || colors.surface;
+    const backgroundColor = bgColor || colors.basic070;
 
     const showModalHeader = ((!fullScreen || showHeader) && !hideHeader) || !isEmpty(headerProps);
     let leftItems = [];
@@ -229,7 +229,7 @@ class SlideModal extends React.Component<Props, State> {
             noPaddingTop
             onClose={this.close}
             wrapperStyle={{ backgroundColor: 'transparent' }}
-            noHorizonatalPadding={!fullScreen && !noPadding}
+            noHorizontalPadding={!fullScreen && !noPadding}
             leftSideFlex={centerTitle ? undefined : 4}
             noBack
             forceInsetTop={insetTop ? 'always' : 'never'} // eslint-disable-line i18next/no-literal-string

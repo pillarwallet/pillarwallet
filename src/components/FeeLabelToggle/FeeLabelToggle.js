@@ -103,7 +103,7 @@ const FeeLabelToggle = ({
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
 
   if (isLoading) {
-    return <Spinner width={20} height={20} />;
+    return <Spinner size={20} trackWidth={2} />;
   }
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

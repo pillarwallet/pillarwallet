@@ -38,7 +38,7 @@ import Toast from 'components/Toast';
 import { Wrapper } from 'components/Layout';
 import HeaderBlock from 'components/HeaderBlock';
 import { Keyboard } from 'react-native';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 export type ScrollToProps = {
@@ -59,7 +59,7 @@ const ContentWrapper = styled.View`
   width: 100%;
   height: 100%;
   padding-top: 20px;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 const ModalContent = styled.View`
@@ -72,7 +72,7 @@ const ModalOverflow = styled.View`
   width: 100%;
   height: 100px;
   margin-bottom: -100px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 class CheckAuthWrapperModal extends React.Component<Props, *> {
@@ -126,7 +126,6 @@ class CheckAuthWrapperModal extends React.Component<Props, *> {
           noPaddingTop
           onClose={this.hideModal}
           wrapperStyle={{ backgroundColor: 'transparent' }}
-          noHorizonatalPadding={false}
           noBack
           forceInsetTop="never" // eslint-disable-line i18next/no-literal-string
         />
@@ -144,7 +143,7 @@ class CheckAuthWrapperModal extends React.Component<Props, *> {
         onSwipeComplete={this.hideModal}
         onBackdropPress={this.hideModal}
         backdropOpacity={1}
-        backdropColor={colors.surface}
+        backdropColor={colors.basic070}
         onBackButtonPress={this.hideModal}
         animationInTiming={animationTiming}
         animationOutTiming={animationTiming}

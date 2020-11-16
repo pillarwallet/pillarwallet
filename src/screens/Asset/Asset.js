@@ -370,7 +370,6 @@ class AssetScreen extends React.Component<Props> {
           <ActivityFeed
             feedTitle={t('title.transactions')}
             navigation={navigation}
-            noBorder
             feedData={relatedTransactions}
             isAssetView
           />}

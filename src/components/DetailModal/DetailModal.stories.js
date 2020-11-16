@@ -32,6 +32,7 @@ import { fontStyles } from 'utils/variables';
 import { images } from 'utils/images';
 
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from './DetailModal';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const iconImage = (
   <Icon
@@ -42,6 +43,9 @@ const iconImage = (
 );
 
 const stories = storiesOf('DetailModal', module);
+
+stories.addDecorator(WithThemeDecorator);
+
 
 stories.add('Layout S', () => (
   <DetailModal

@@ -37,10 +37,9 @@ import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
 import Spinner from 'components/Spinner';
 import { Paragraph, BaseText, MediumText } from 'components/Typography';
-import ButtonText from 'components/ButtonText';
 
 // utils
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { ETH } from 'constants/assetsConstants';
 import { formatTransactionFee } from 'utils/common';
@@ -194,23 +193,22 @@ class RecoveryPortalSetupConnectDevice extends React.PureComponent<Props, State>
         </DetailsLine>
         <DetailsLine>
           <DetailsTitle>{t('auth:recoveryPortal.label.estimatedFeeForConnectingToPortal')}</DetailsTitle>
-          {gettingFee && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+          {gettingFee && <Spinner style={{ marginTop: 5 }} size={20} trackWidth={2} />}
           {!gettingFee && <DetailsValue>{feeDisplayValue}</DetailsValue>}
         </DetailsLine>
         {!isEmpty(errorMessage) && !gettingFee && <WarningMessage small>{errorMessage}</WarningMessage>}
         {!isDeviceBeingAdded &&
           <View style={{ alignItems: 'center' }}>
             <Button
-              block
               disabled={isSubmitDisabled}
               title={submitButtonTitle}
               onPress={this.onNextClick}
-              marginBottom={spacing.large}
+              marginBottom={4}
             />
-            <ButtonText
-              buttonText={t('auth:button.cancel')}
+            <Button
+              title={t('auth:button.cancel')}
               onPress={() => cancelPrompt(() => navigation.goBack())}
-              fontSize={fontSizes.medium}
+              transparent
             />
           </View>
         }

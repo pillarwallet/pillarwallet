@@ -22,9 +22,6 @@ import type { Node as ReactNode } from 'react';
 import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 
-// utils
-import { themedColors } from 'utils/themes';
-
 // components
 import Icon from 'components/Icon';
 import Modal from 'components/Modal';
@@ -44,7 +41,7 @@ const Box = styled.View`
   margin: auto 0;
   align-self: center;
   border-radius: 10px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 const ModalCloseButton = styled.TouchableOpacity`

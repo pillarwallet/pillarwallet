@@ -159,7 +159,6 @@ const SWActivationModal = ({
               disabled={submitButtonDisabled}
               onPress={onSubmitPress}
               secondary
-              regularText
             />
           )}
         </ModalContainer>

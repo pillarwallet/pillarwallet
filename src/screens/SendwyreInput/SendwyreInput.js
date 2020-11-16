@@ -247,8 +247,6 @@ class SendwyreInputScreen extends React.Component<Props, State> {
           {this.renderForm()}
           <ButtonWrapper>
             <Button
-              regularText
-              block
               isLoading={isLoading}
               disabled={isButtonDisabled}
               title={buttonTitle}

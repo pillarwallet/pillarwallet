@@ -124,7 +124,7 @@ const PoolTickets = (props: Props) => {
         <TicketCounterColumn>
           {!!canSubtract &&
             <ActionCircleButton
-              color={colors.surface}
+              color={colors.basic070}
               active={canSubtract}
               icon="count-minus"
               fontSize={fontSizes.large}
@@ -133,7 +133,7 @@ const PoolTickets = (props: Props) => {
           }
           {!canSubtract && // must rerender like this so it will not stay active before a double action
             <ActionCircleButton
-              color={colors.surface}
+              color={colors.basic070}
               active={canSubtract}
               icon="count-minus"
               fontSize={fontSizes.large}
@@ -148,7 +148,7 @@ const PoolTickets = (props: Props) => {
         <TicketCounterColumn>
           {!!canAdd &&
             <ActionCircleButton
-              color={colors.surface}
+              color={colors.basic070}
               active={canAdd}
               icon="count-plus"
               fontSize={fontSizes.large}
@@ -157,7 +157,7 @@ const PoolTickets = (props: Props) => {
           }
           {!canAdd &&
             <ActionCircleButton
-              color={colors.surface}
+              color={colors.basic070}
               active={canAdd}
               icon="count-plus"
               fontSize={fontSizes.large}

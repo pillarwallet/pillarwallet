@@ -127,8 +127,6 @@ const ProfileImageModal: AbstractComponent<{||}> = () => {
           uri={profileImage}
           userName={username}
           diameter={64}
-          borderWidth={0}
-          noShadow
         />
         <Spacing h={26} />
         <Button
@@ -148,7 +146,8 @@ const ProfileImageModal: AbstractComponent<{||}> = () => {
           <>
             <Spacing h={8} />
             <Button
-              secondaryDanger
+              danger
+              transparent
               block
               title={t('profileContent.modal.profileImage.button.deleteAvatar')}
               onPress={openDeletionModal}

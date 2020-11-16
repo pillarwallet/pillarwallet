@@ -130,8 +130,6 @@ const SablierCancellationModal = ({
         <ProfileImage
           userName={username}
           diameter={64}
-          noShadow
-          borderWidth={0}
           cornerIcon={sablierLogo}
         />
         <Spacing h={32} />
@@ -157,7 +155,6 @@ const SablierCancellationModal = ({
         <Spacing h={16} />
         <Button
           secondary
-          block
           title={t('sablierContent.button.confirmStreamCancellation')}
           onPress={() => {
             if (modalRef.current) modalRef.current.close();
@@ -165,10 +162,9 @@ const SablierCancellationModal = ({
           }}
           disabled={isDisabled}
         />
-        <Spacing h={8} />
+        <Spacing h={4} />
         <Button
-          squarePrimary
-          block
+          transparent
           title={t('sablierContent.button.cancelStreamCancellation')}
           onPress={() => {
             if (modalRef.current) modalRef.current.close();
