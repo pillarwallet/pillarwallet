@@ -35,3 +35,34 @@ export type WBTCFeesRaw = {
     release: number,
   }
 };
+
+export type WBTCGatewayAddressParams = {
+  amount: number, // The amount of BTC (including fees)
+  maxSlippage: number, // e.g. 0.05
+  address?: string, // The destination address. Default is the requester wallet address
+};
+
+type WBTCResponseResult = "success" | "error";
+
+export type WBTCGatewayAddressResponse = {
+  result: WBTCResponseResult,
+  message?: string,
+  gatewayAddress?: string,
+  exchangeRate?: number,
+  amount?: number,
+  nonce?: string,
+};
+
+export type MintTransactionParams = {
+  nonce: string,
+};
+
+export type MintTransactionResponse = {
+  result: WBTCResponseResult,
+  message?: string,
+  confirmations?: number,
+  inputData?: string,
+  contractAddress?: string,
+  exchangeRate?: number,
+  gasEstimate?: number,
+};
