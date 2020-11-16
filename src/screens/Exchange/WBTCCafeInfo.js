@@ -20,6 +20,7 @@
 
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
+import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
@@ -39,6 +40,7 @@ type Props = {
   fromAsset: Option,
   toAsset: Option,
   extendedInfo?: boolean,
+  navigation: NavigationScreenProp<*>
 }
 
 const Container = styled.TouchableOpacity`
@@ -191,17 +193,16 @@ const WBTCCafeInfo = (props: Props) => {
   const { wbtcData, fromAsset, extendedInfo } = props;
   if (!isWbtcCafe(fromAsset)) return null;
 
-  const getFeeInfo = () => {
-    return `${wbtcData ? Number(wbtcData.renVMFee.toFixed(5)) + Number(wbtcData.networkFee.toFixed(5)) : '-'} ${BTC}`;
-  };
+  const getFeeNumber = () => Number(wbtcData.renVMFee.toFixed(5)) + Number(wbtcData.networkFee.toFixed(5));
 
+  const getFeeInfo = () => `${wbtcData?.estimate ? getFeeNumber() : '0'} ${BTC}`;
 
   /* eslint-disable i18next/no-literal-string */
 
   const rate = wbtcData?.exchangeRate;
   const { symbol } = fromAsset;
   const rateString = rate && symbol ? `1 ${symbol} = ${rate.toFixed(4)} ${symbol === BTC ? WBTC : BTC}` : '-';
-
+  const buttonDisabled = !wbtcData?.estimate || showRenFeeInfo; // wbtcData.estimate is 0 when input amount is 0;
   return (
     <Container activeOpacity={1} onPress={switchOffFeeInfo}>
       <InfoWrapper noBorder={!extendedInfo}>
@@ -213,29 +214,29 @@ const WBTCCafeInfo = (props: Props) => {
           </RateWrapper>
         </Row>
         {extendedInfo && (
-        <>
-          <Row disabled>
-            <TextRow>
-              <Label>{t('wbtcCafe.renFee')}</Label>
-              <IconWrapper style={{ alignItems: 'center' }}>
-                {showRenFeeInfo && getTooltip()}
-                <RenFeeIcon
-                  onPress={() => setShowRenFeeInfo(!showRenFeeInfo)}
-                  activeOpacity={1}
-                  hitSlop={hitslop10}
-                >
-                  <RenFeeIconText>?</RenFeeIconText>
-                </RenFeeIcon>
-              </IconWrapper>
-            </TextRow>
-            <Label>{wbtcData ? wbtcData.renVMFee.toFixed(8) : '-'}</Label>
-          </Row>
-          <Row disabled>
-            <Label>{t('wbtcCafe.btcFee')}</Label>
-            <Label>{wbtcData ? wbtcData.networkFee.toFixed(8) : '-'}</Label>
-          </Row>
-        </>
-          )}
+          <>
+            <Row disabled>
+              <TextRow>
+                <Label>{t('wbtcCafe.renFee')}</Label>
+                <IconWrapper style={{ alignItems: 'center' }}>
+                  {showRenFeeInfo && getTooltip()}
+                  <RenFeeIcon
+                    onPress={() => setShowRenFeeInfo(!showRenFeeInfo)}
+                    activeOpacity={1}
+                    hitSlop={hitslop10}
+                  >
+                    <RenFeeIconText>?</RenFeeIconText>
+                  </RenFeeIcon>
+                </IconWrapper>
+              </TextRow>
+              <Label>{wbtcData ? wbtcData.renVMFee.toFixed(8) : '-'}</Label>
+            </Row>
+            <Row disabled>
+              <Label>{t('wbtcCafe.btcFee')}</Label>
+              <Label>{wbtcData ? wbtcData.networkFee.toFixed(8) : '-'}</Label>
+            </Row>
+          </>
+        )}
         <Row onPress={handleSlippagePress} noBorder disabled={extendedInfo || showRenFeeInfo}>
           <Label>{t('wbtcCafe.slippage')}</Label>
           <Label textColor={extendedInfo ? null : themedColors.link}>{`${maxSlippage}%`}</Label>
@@ -250,7 +251,7 @@ const WBTCCafeInfo = (props: Props) => {
         </FeeRow>
       )}
       <ButtonWrapper>
-        <Button title={t('title.confirm')} onPress={handleNextPress} disabled={showRenFeeInfo} />
+        <Button title={t('title.confirm')} onPress={handleNextPress} disabled={buttonDisabled} />
       </ButtonWrapper>
     </Container>
   );
