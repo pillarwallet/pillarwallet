@@ -188,14 +188,20 @@ const WBTCCafeInfo = (props: Props) => {
     </Tooltip>
   );
 
+  const { wbtcData, fromAsset, extendedInfo } = props;
+  if (!isWbtcCafe(fromAsset)) return null;
+
+  const getFeeInfo = () => {
+    return `${wbtcData ? Number(wbtcData.renVMFee.toFixed(5)) + Number(wbtcData.networkFee.toFixed(5)) : '-'} ${BTC}`;
+  };
+
 
   /* eslint-disable i18next/no-literal-string */
 
-  const { wbtcData, fromAsset, extendedInfo = true } = props;
-  if (!isWbtcCafe(fromAsset)) return null;
   const rate = wbtcData?.exchangeRate;
   const { symbol } = fromAsset;
   const rateString = rate && symbol ? `1 ${symbol} = ${rate.toFixed(4)} ${symbol === BTC ? WBTC : BTC}` : '-';
+
   return (
     <Container activeOpacity={1} onPress={switchOffFeeInfo}>
       <InfoWrapper noBorder={!extendedInfo}>
@@ -239,9 +245,7 @@ const WBTCCafeInfo = (props: Props) => {
         <FeeRow>
           <Label>{t('transactions.label.transactionFee')}</Label>
           <FeeWrapper>
-            <Fee>
-              {`${wbtcData ? wbtcData.renVMFee.toFixed(4) + wbtcData.networkFee.toFixed(4) : '-'} ${BTC}`}
-            </Fee>
+            <Fee>{getFeeInfo()}</Fee>
           </FeeWrapper>
         </FeeRow>
       )}
