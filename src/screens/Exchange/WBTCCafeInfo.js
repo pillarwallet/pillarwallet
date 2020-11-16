@@ -43,6 +43,7 @@ type Props = {
   navigation?: NavigationScreenProp<*>,
   amount?: string,
   address?: string,
+  error?: boolean,
 }
 
 const Container = styled.TouchableOpacity`
@@ -180,7 +181,7 @@ const WBTCCafeInfo = (props: Props) => {
   ));
 
   const {
-    wbtcData, extendedInfo, navigation, amount, address,
+    wbtcData, extendedInfo, navigation, amount, address, error,
   } = props;
 
   const handleNextPress = () => {
@@ -217,7 +218,7 @@ const WBTCCafeInfo = (props: Props) => {
 
   const rate = wbtcData?.exchangeRate;
   const rateString = rate ? `1 ${BTC} = ${rate.toFixed(4)} ${WBTC}` : '-';
-  const buttonDisabled = !wbtcData?.estimate || showRenFeeInfo || (extendedInfo && !address);
+  const buttonDisabled = error || !wbtcData?.estimate || showRenFeeInfo || (extendedInfo && !address);
   return (
     <Container activeOpacity={1} onPress={switchOffFeeInfo}>
       <InfoWrapper noBorder={!extendedInfo}>
@@ -262,7 +263,7 @@ const WBTCCafeInfo = (props: Props) => {
         </Row>
       </InfoWrapper>
       {extendedInfo
-      ? <WBTCCafeAddress amount={amount || wbtcData.amount} address={address} />
+      ? <WBTCCafeAddress amount={amount} address={address} error={error} />
       : (
         <FeeRow>
           <Label>{t('transactions.label.transactionFee')}</Label>

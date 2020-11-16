@@ -150,4 +150,4 @@ export const createAllowanceTx = async (
   }
 };
 
-export const isWbtcCafe = (fromAssetCode: string): boolean => fromAssetCode === BTC;
+export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode === BTC;

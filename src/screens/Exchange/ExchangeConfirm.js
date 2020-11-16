@@ -29,16 +29,12 @@ import t from 'translations/translate';
 // components
 import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import Button from 'components/Button';
-import { BaseText } from 'components/Typography';
-import Table, { TableRow, TableLabel, TableAmount, TableFee } from 'components/Table';
-import Icon from 'components/Icon';
 import Toast from 'components/Toast';
 
 // constants
 import { defaultFiatCurrency, ETH, BTC, WBTC } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
-import { EXCHANGE, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
+import { EXCHANGE } from 'constants/exchangeConstants';
 
 // actions
 import { setDismissTransactionAction, getWbtcGatewayAddressAction } from 'actions/exchangeActions';
@@ -54,7 +50,6 @@ import {
   getBalance,
 } from 'utils/assets';
 import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
-import { themedColors } from 'utils/themes';
 import { isProdEnv } from 'utils/environment';
 
 // types
@@ -62,18 +57,17 @@ import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder } from 'models/Offer';
 import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
 import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, WBTCFeesWithRate } from 'models/WBTC';
 
 // selectors
-import { activeAccountSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // partials
 import ExchangeScheme from './ExchangeScheme';
 import WBTCCafeInfo from './WBTCCafeInfo';
+import ConfirmationTable from './ConfirmationTable';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -84,7 +78,6 @@ type Props = {
   executingExchangeTransaction: boolean,
   setDismissTransaction: () => void,
   theme: Theme,
-  activeAccount: ?Account,
   accountAssets: Assets,
   supportedAssets: Asset[],
   isOnline: boolean,
@@ -99,20 +92,6 @@ const MainWrapper = styled.View`
   padding: 48px 0 64px;
   flex: 1;
   justify-content: center;
-`;
-
-const TableWrapper = styled.View`
-  padding: 0 20px;
-`;
-
-const ExchangeIcon = styled(Icon)`
-  color: ${themedColors.primary};
-  font-size: 16px;
-`;
-
-const Row = styled.View`
-  flex-direction: row;
-  align-items: center;
 `;
 
 // already passed as mixed from other screen, TODO: fix the whole flow?
@@ -138,7 +117,8 @@ const ExchangeConfirmScreen = ({
   const wbtcData: WBTCGatewayAddressParams = navigation.getParam('wbtcTxData');
   const wbtcEstimationData: ?WBTCFeesWithRate = navigation.getParam('wbtcEstData');
   const isWbtcCafe = !!wbtcData;
-  const [wbtcGatewayAddressInfo, setWbtcGatewayAddressInfo] = useState<WBTCGatewayAddressResponse>({});
+  const [gatewayAddress, setGatewayAddress] = useState<string>('');
+  const [wbtcError, setWbtcError] = useState<boolean>(false);
 
   useEffect(() => {
     if (!isWbtcCafe && !executingExchangeTransaction) navigation.goBack();
@@ -186,10 +166,14 @@ const ExchangeConfirmScreen = ({
 
   const fetchWbtcAddress = async () => {
     const resp: WBTCGatewayAddressResponse = await getWbtcGatewayAddress(wbtcData);
-    if (resp?.result === 'success') {
-      setWbtcGatewayAddressInfo(resp);
+    if (resp?.result === 'success' && resp?.gatewayAddress) {
+      setGatewayAddress(resp?.gatewayAddress || '');
     } else {
-      // handle fail
+      setWbtcError(true);
+      Toast.show({
+        message: t('toast.walkthroughFailed'),
+        emoji: 'woman-shrugging',
+      });
     }
   };
 
@@ -260,7 +244,7 @@ const ExchangeConfirmScreen = ({
       balance: getBalance(balances, feeSymbol),
     });
 
-  const toQuantity = isWbtcCafe ? wbtcEstimationData.estimate : receiveQuantity;
+  const toQuantity = isWbtcCafe ? wbtcEstimationData?.estimate || 0 : receiveQuantity;
 
   const formattedReceiveAmount = formatAmountDisplay(toQuantity);
 
@@ -269,60 +253,24 @@ const ExchangeConfirmScreen = ({
 
   const providerLogo = getOfferProviderLogo(provider, theme, 'vertical');
 
-  const getTable = () => {
-    return (
-      <TableWrapper>
-        <Table title={t('exchangeContent.label.exchangeDetails')}>
-          <TableRow>
-            <TableLabel>{t('exchangeContent.label.exchangeRate')}</TableLabel>
-            <Row>
-              <ExchangeIcon name="exchange" />
-              <Spacing w={4} />
-              <BaseText regular>
-                {t('exchangeContent.label.exchangeRateLayout', {
-                  rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
-                  toAssetCode,
-                  fromAssetCode,
-                })}
-              </BaseText>
-            </Row>
-          </TableRow>
-          <TableRow>
-            <TableLabel>{t('exchangeContent.label.maxSlippage')}</TableLabel>
-            <BaseText regular> {t('percentValue', { value: ALLOWED_SLIPPAGE })}</BaseText>
-          </TableRow>
-        </Table>
-        <Spacing h={20} />
-        <Table title={t('transactions.label.fees')}>
-          <TableRow>
-            <TableLabel>{t('transactions.label.ethFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
-          </TableRow>
-          <TableRow>
-            <TableLabel>{t('transactions.label.pillarFee')}</TableLabel>
-            <TableAmount amount={0} />
-          </TableRow>
-          <TableRow>
-            <TableLabel>{t('transactions.label.totalFee')}</TableLabel>
-            <TableFee txFeeInWei={feeInfo?.fee} gasToken={feeInfo?.gasToken} />
-          </TableRow>
-        </Table>
-        <Spacing h={48} />
-        <Button
-          disabled={!isOnline || !!errorMessage || !feeInfo || isEstimating}
-          onPress={onConfirmTransactionPress}
-          title={isEstimating ? t('label.gettingFee') : t('button.confirm')}
-        />
-      </TableWrapper>
-    );
-  };
+  const getTable = () => (
+    <ConfirmationTable
+      errorMessage={errorMessage}
+      onPress={onConfirmTransactionPress}
+      offerOrder={offerOrder}
+      isEstimating={isEstimating}
+      isOnline={isOnline}
+      feeInfo={feeInfo}
+    />
+  );
 
   const getWbtcInfoComponent = () => (
     <WBTCCafeInfo
       extendedInfo
       wbtcData={wbtcEstimationData}
       amount={wbtcData.amount}
-      address={wbtcGatewayAddressInfo?.gatewayAddress}
+      address={gatewayAddress}
+      error={wbtcError}
     />
   );
 
@@ -373,7 +321,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  activeAccount: activeAccountSelector,
   accountAssets: accountAssetsSelector,
 });
 

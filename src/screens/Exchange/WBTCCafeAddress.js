@@ -68,10 +68,11 @@ type Props = {
   amount: string;
   theme: Theme;
   address?: string;
+  error?: boolean;
 }
 
-const WBTCCafeAddress = ({ amount, address }: Props) => {
-  if (!address) {
+const WBTCCafeAddress = ({ amount, address, error }: Props) => {
+  if (!address && !error) {
     return <Wrapper><Spinner height={30} width={30} /></Wrapper>;
   }
 
