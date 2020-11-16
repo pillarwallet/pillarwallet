@@ -745,6 +745,10 @@ workflows:
     jobs:
       - build-and-test:
           context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - develop
       - appcenter_ios:
           requires:
             - build-and-test

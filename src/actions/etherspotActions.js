@@ -59,7 +59,6 @@ import get from 'lodash.get';
 import { setConnectedDevicesAction } from 'actions/connectedDevicesActions';
 import { Account as EtherspotAccount } from 'etherspot';
 
-Z
 export const initEtherspotServiceAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
