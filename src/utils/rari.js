@@ -95,6 +95,9 @@ const getRariDepositTransactionData = async (
   }
 
   // try mStable
+  // TODO: if user wants to deposit mUSD the flow is a bit different
+  // you need to use MassetValidationHelper.getRedeemValidity to get swap output data
+  // but since mUSD is not yet supported we don't need to implement it right now
   if ([DAI, USDC, USDT, TUSD].includes(token.symbol)) {
     for (let i = 0; i < acceptedCurrencies.length; ++i) {
       acceptedCurrency = acceptedCurrencies[i];
@@ -131,9 +134,6 @@ const getRariDepositTransactionData = async (
         };
       }
     }
-  } else if (token.symbol === mUSD) {
-    // mUSD is not supported yet by Pillar wallet
-    // use MassetValidationHelper.getRedeemValidity to get swap output data
   }
 
   // try 0x
