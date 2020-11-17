@@ -30,7 +30,7 @@ import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { images } from 'utils/images';
 
@@ -103,8 +103,6 @@ const LinksSection = styled.View`
 `;
 
 const LogoutSection = styled.View`
-  border-top-color: ${themedColors.tertiary};
-  border-top-width: 1px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -112,8 +110,9 @@ const LogoutSection = styled.View`
 `;
 
 const LockScreenSection = styled.View`
-  border-top-color: ${themedColors.tertiary};
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   border-top-width: 1px;
+  border-bottom-width: 1px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
