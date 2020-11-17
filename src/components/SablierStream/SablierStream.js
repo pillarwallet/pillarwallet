@@ -164,8 +164,6 @@ class SablierStream extends React.Component<Props> {
         <ProfileImage
           userName={username}
           diameter={48}
-          noShadow
-          borderWidth={0}
         />
         <Spacing w={12} />
         <AssetContainer>

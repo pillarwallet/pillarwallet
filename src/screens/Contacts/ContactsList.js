@@ -117,6 +117,7 @@ const ContactsList = ({ theme }: Props) => {
       headerProps={{
         centerItems: [{ title: t('title.addressBook') }],
         rightItems: [{ noMargin: true, link: t('button.addNew'), onPress: () => openContactDetails(null) }],
+        sideFlex: 2,
       }}
     >
       <FlatList

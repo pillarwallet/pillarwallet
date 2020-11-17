@@ -49,8 +49,8 @@ type ModalInstance = {
 const ModalStackContext = React.createContext<ModalState[]>([]);
 const ModalNextIndexContext = React.createContext<number>(0);
 
-// eslint-disable-next-line i18next/no-literal-string
-export const ModalIdContext = React.createContext<string>('default value for modal id context');
+export const EMPTY_MODAL_ID = 'default value for modal id context';
+export const ModalIdContext = React.createContext<string>(EMPTY_MODAL_ID);
 
 export const ModalStack = () => {
   const stack = useContext(ModalStackContext);
@@ -145,7 +145,7 @@ class ModalProvider extends React.Component<{||}, State> {
     // In case closeAll was called because of a navigation event, it might have
     // happened after the destination screen was rendered with a different modal,
     // so modals opened right before this moment are ignored.
-    const wasJustOpened = ({ openedAt }) => now - openedAt < 10;
+    const wasJustOpened = ({ openedAt }) => now - openedAt < 100;
 
     this.setState(({ stack, pending }) => pending === null ? ({
       stack: stack.filter(m => !wasJustOpened(m)),

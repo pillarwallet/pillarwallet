@@ -33,11 +33,10 @@ import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 // components
 import { Wrapper } from 'components/Layout';
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 
 // utils
-import { fontSizes, spacing } from 'utils/variables';
+import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
 // constants
@@ -142,19 +141,17 @@ const Welcome = ({
           <Spacer onPress={handleSecretClick} />
           <ButtonsWrapper>
             <Button
-              roundedCorners
-              marginBottom={spacing.mediumLarge}
+              marginBottom={4}
               onPress={() => resetOnboardingAndNavigate(NEW_PROFILE)}
               title={t('auth:button.createAccount')}
               style={{ backgroundColor: '#00ff24' }}
               textStyle={{ color: '#000000' }}
-              block
             />
-            <ButtonText
-              buttonText={t('auth:button.recoverWallet')}
+            <Button
               onPress={() => resetOnboardingAndNavigate(IMPORT_WALLET_LEGALS)}
-              fontSize={fontSizes.big}
-              textStyle={{ color: '#fcfdff' }}
+              title={t('auth:button.recoverWallet')}
+              textStyle={{ color: '#fafafa' }}
+              transparent
             />
           </ButtonsWrapper>
         </Wrapper>

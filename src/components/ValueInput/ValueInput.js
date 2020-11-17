@@ -20,6 +20,7 @@
 
 import React, { useState } from 'react';
 import { connect } from 'react-redux';
+import { Keyboard } from 'react-native';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
@@ -207,6 +208,8 @@ export const ValueInputComponent = (props: Props) => {
         collectibles: true,
       }]
       : undefined;
+
+    Keyboard.dismiss();
 
     Modal.open(() => (
       <SelectorOptions

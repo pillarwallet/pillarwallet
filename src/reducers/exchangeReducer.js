@@ -30,6 +30,8 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
   SET_WBTC_FEES,
+  SET_UNISWAP_TOKENS_QUERY_STATUS,
+  UNISWAP_TOKENS_QUERY_STATUS,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset } from 'models/Asset';
@@ -46,12 +48,19 @@ export type ExchangeReducerState = {
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
   wbtcFees: WBTCFeesRaw,
+  isFetchingUniswapTokens: boolean,
+  uniswapTokensGraphQueryFailed: boolean,
 }
+
+type SetUniswapTokensQueryStatusAction = {
+  type: typeof SET_UNISWAP_TOKENS_QUERY_STATUS,
+  payload: { status: $Keys<typeof UNISWAP_TOKENS_QUERY_STATUS> },
+};
 
 export type ExchangeReducerAction = {
   type: string,
   payload: any,
-};
+} | SetUniswapTokensQueryStatusAction;
 
 export const initialState = {
   data: {
@@ -69,6 +78,8 @@ export const initialState = {
       release: 0,
     },
   },
+  isFetchingUniswapTokens: false,
+  uniswapTokensGraphQueryFailed: false,
 };
 
 export default function exchangeReducer(
@@ -179,6 +190,15 @@ export default function exchangeReducer(
         ...state,
         wbtcFees: action.payload,
       };
+    case SET_UNISWAP_TOKENS_QUERY_STATUS:
+      return (action.payload.status === UNISWAP_TOKENS_QUERY_STATUS.FETCHING)
+        ? { ...state, isFetchingUniswapTokens: true }
+        : {
+          ...state,
+          isFetchingUniswapTokens: false,
+          uniswapTokensGraphQueryFailed: action.payload.status === UNISWAP_TOKENS_QUERY_STATUS.ERROR,
+        };
+
     default:
       return state;
   }

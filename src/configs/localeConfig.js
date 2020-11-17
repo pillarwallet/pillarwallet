@@ -24,29 +24,67 @@ import {
   PUNCTUATION_POSTPROCESSOR,
   SUFFIX_PREFIX_POSTPROCESSOR,
 } from 'constants/localesConstants';
+import { devOptions } from './buildConfig';
 
+// EN
 const EN_COMMON = require('../locales/en/common.json');
 const EN_AUTH = require('../locales/en/auth.json');
 
-const DEFAULT_LANGUAGE_CODE = 'en';
+// AM
+const AM_COMMON = require('../locales/am/common.json');
+const AM_AUTH = require('../locales/am/auth.json');
+
+// BS
+const BS_COMMON = require('../locales/bs/common.json');
+const BS_AUTH = require('../locales/bs/auth.json');
+
+export const DEFAULT_LANGUAGE_CODE = 'en';
 const DEFAULT_LANGUAGE = 'English';
 const DEFAULT_NAMESPACE = 'common';
 
-export default {
-  isEnabled: true,
-  baseUrl: '', // todo: change into real one;
+type SupportedLanguages = {
+  [language: string]: string,
+};
+type PathsToLocalTranslation = {
+  [language: string]: {
+    common: Object,
+    auth: Object,
+  };
+};
+type LocalisationConfig = {
+  isEnabled: boolean,
+  defaultLanguage: string,
+  supportedLanguages: SupportedLanguages,
+  defaultNameSpace: string,
+  namespaces: Array<string>,
+  postProcessors: Array<string>,
+  localTranslations: PathsToLocalTranslation,
+};
+
+export default ({
+  isEnabled: !__DEV__ || !devOptions.DISABLE_EXTERNAL_TRANSLATIONS_ON_DEV, // to always keep enabled in production
   defaultLanguage: DEFAULT_LANGUAGE_CODE,
   // pairs of language code and language name in native language
   supportedLanguages: {
     [DEFAULT_LANGUAGE_CODE]: DEFAULT_LANGUAGE,
+    am: 'አማርኛ',
+    bs: 'Bosanski',
   },
   defaultNameSpace: DEFAULT_NAMESPACE,
   namespaces: ['auth', DEFAULT_NAMESPACE],
   postProcessors: [PUNCTUATION_POSTPROCESSOR, CAPITALIZATION_POSTPROCESSOR, SUFFIX_PREFIX_POSTPROCESSOR],
   localTranslations: {
-    en: {
+    [DEFAULT_LANGUAGE_CODE]: {
       common: EN_COMMON,
       auth: EN_AUTH,
     },
+    am: {
+      common: AM_COMMON,
+      auth: AM_AUTH,
+    },
+    bs: {
+      common: BS_COMMON,
+      auth: BS_AUTH,
+    },
   },
-};
+}: LocalisationConfig);

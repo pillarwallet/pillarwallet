@@ -87,16 +87,13 @@ const DeleteContactModal = ({ contact }: Props) => {
             dispatch(deleteContactAction(contact));
           }}
           block
-          negative
-          regularText
+          danger
         />
         <Spacing h={4} />
         <Button
           onPress={close}
           title={t('alert.deleteContact.button.cancel')}
-          light
-          squarePrimary
-          regularText
+          transparent
         />
       </ContentWrapper>
     </SlideModal>

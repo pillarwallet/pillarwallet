@@ -33,7 +33,7 @@ import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { ScrollWrapper } from 'components/Layout';
 
 // utils
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -48,7 +48,7 @@ const RecoveryIcon = styled.Image`
   height: 73px;
   alignSelf: center;
   marginVertical: 50px;
-  tintColor: ${themedColors.positive};
+  tintColor: ${({ theme }) => theme.colors.secondaryAccent140};
 `;
 
 type Props = {
@@ -69,7 +69,7 @@ const WalletRecoveryOptions = ({
       <ListItemChevron
         label={title}
         chevronColor={colors.secondaryText}
-        wrapperStyle={{ backgroundColor: colors.card }}
+        wrapperStyle={{ backgroundColor: colors.basic050 }}
         onPress={() => resetOnboardingAndNavigate(route)}
         bordered
       />

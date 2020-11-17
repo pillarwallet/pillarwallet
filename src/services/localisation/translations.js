@@ -64,7 +64,7 @@ i18n
 export const addResourceBundles = (lng: string, nameSpaces: string[], translations: TranslationResourcesOfLanguage) => {
   nameSpaces.forEach((ns) => {
     if (translations[ns]) {
-      i18n.addResourceBundle(lng, ns, translations[ns], true, true);
+      i18n.addResourceBundle(lng, ns, translations[ns], true, false);
     }
   });
   i18n.reloadResources();

@@ -190,7 +190,6 @@ const Withdraw = (props: Props) => {
             disabled={isNextButtonDisabled}
             title={nextButtonTitle}
             onPress={goToReviewScreen}
-            block
           />
         </FooterWrapper>
       }

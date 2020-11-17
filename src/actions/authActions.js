@@ -89,7 +89,7 @@ import {
 import { fetchSmartWalletTransactionsAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
 import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
-import { loadFeatureFlagsAction } from './featureFlagsActions';
+import { loadRemoteConfigAction } from './remoteConfigActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
@@ -259,7 +259,7 @@ export const loginAction = (
 
       if (isOnline) {
         // Dispatch action to try and get the latest remote config values...
-        dispatch(loadFeatureFlagsAction());
+        dispatch(loadRemoteConfigAction());
 
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
@@ -455,8 +455,8 @@ export const resetAppStateAction = (stateAfterReset: Object) => {
 
     // manage language settings (from onboarding) as those are overwritten
     if (savedLocalisation && savedLocalisation.activeLngCode) {
-      const { activeLngCode, translationVersion } = savedLocalisation;
-      dispatch(setAppLanguageAction(activeLngCode, translationVersion));
+      const { activeLngCode } = savedLocalisation;
+      dispatch(setAppLanguageAction(activeLngCode));
     }
 
     // app level cached urls
@@ -510,8 +510,25 @@ export const logoutAction = () => {
     await dispatch(resetAppServicesAction());
 
     // reset reducer state
-    const { isOnline } = getState().session.data; // keep network state after reset
-    dispatch(resetAppStateAction({ session: { data: { isOnline } } }));
+    const {
+      isOnline,
+      translationsInitialised,
+      fallbackLanguageVersion,
+      sessionLanguageCode,
+      sessionLanguageVersion,
+    } = getState().session.data; // keep these session values state after reset
+
+    dispatch(resetAppStateAction({
+      session: {
+        data: {
+          isOnline,
+          translationsInitialised,
+          fallbackLanguageVersion,
+          sessionLanguageCode,
+          sessionLanguageVersion,
+        },
+      },
+    }));
 
     // is cleaned up so we would not blind users after they delete wallet :)
 

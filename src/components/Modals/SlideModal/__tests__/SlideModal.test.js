@@ -18,28 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import renderer from 'react-test-renderer';
-import { Provider } from 'react-redux';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
 import { ThemeProvider } from 'styled-components';
 import { defaultTheme } from 'utils/themes';
-import configureStore from '../../../../configureStore';
 import SlideModal from '../SlideModal';
 
-const { store } = configureStore();
-
 describe('Slide Modal', () => {
-  it('should render SlideModal correctly', () => {
-    const component = renderer.create(
-      <Provider store={store}>
-        <ThemeProvider theme={defaultTheme}>
-          <SlideModal title="title" />
-        </ThemeProvider>
-      </Provider>).toJSON();
-    expect(component).toMatchSnapshot();
-  });
-
   it('should render SlideModal with content', () => {
     const ChildContent = () => <BaseText>Test</BaseText>;
     const wrapper = shallow(

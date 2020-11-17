@@ -31,5 +31,6 @@ YellowBox.ignoreWarnings([
   'Warning: componentWillReceiveProps has been renamed',
   'Warning: componentWillMount has been renamed',
 ]);
+import '@ethersproject/shims';
 import 'utils/shim';
-import'crypto';
+import 'crypto';

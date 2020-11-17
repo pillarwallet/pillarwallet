@@ -218,7 +218,7 @@ const ProfileFormTemplate = (locals: Object) => {
       const buttonTitle = fieldDisplayValue ? t('button.verify') : t('button.add');
       const buttonAction = fieldDisplayValue ? (() => onPressVerify(fieldName)) : (() => onFocus(fieldName));
       description = fieldDisplayValue ? descriptionAdded : descriptionEmpty;
-      sideComponent = <Button horizontalPaddings={8} small title={buttonTitle} onPress={buttonAction} />;
+      sideComponent = <Button horizontalPaddings={8} small title={buttonTitle} onPress={buttonAction} block={false} />;
     }
 
     return (
@@ -598,15 +598,11 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
-                    {!!profileImage && (
-                      <ProfileImage
-                        uri={profileImage}
-                        userName={username || ''}
-                        diameter={96}
-                        borderWidth={0}
-                        noShadow
-                      />
-                    )}
+                    {!!profileImage && <ProfileImage
+                      uri={profileImage}
+                      userName={username || ''}
+                      diameter={96}
+                    />}
                     {!profileImage && !!username && (
                       <ProfileImagePlaceholder>
                         <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>

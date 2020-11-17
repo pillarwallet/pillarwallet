@@ -19,18 +19,16 @@
 */
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
+
 import Table, { TableRow, TableLabel, TableAmount, TableTotal } from './Table';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 
-const Wrapper = styled.View`
-  flex: 1;
-  padding: 30px;
-  justify-content: center;
-`;
-
-storiesOf('Table', module).add('default', () => (
-  <Wrapper>
+storiesOf('Table', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
     <Table title="Table">
       <TableRow>
         <TableLabel>One</TableLabel>
@@ -54,5 +52,4 @@ storiesOf('Table', module).add('default', () => (
         <TableAmount amount={12320.56} token="PLR" />
       </TableRow>
     </Table>
-  </Wrapper>
-));
+  ));

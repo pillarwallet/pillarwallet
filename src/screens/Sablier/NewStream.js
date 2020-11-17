@@ -47,7 +47,7 @@ import { isEnsName } from 'utils/validators';
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
 import { SABLIER_NEW_STREAM_REVIEW } from 'constants/navigationConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { DATE_PICKER } from 'constants/sablierConstants';
 
 // services
@@ -114,7 +114,7 @@ class NewStream extends React.Component<Props, State> {
 
   getMinimalDate = () => {
     // default to 5 minutes
-    const delayInMinutes = firebaseRemoteConfig.getNumber(FEATURE_FLAGS.SABLIER_TIME_START_TOLERANCE) || 5;
+    const delayInMinutes = firebaseRemoteConfig.getNumber(REMOTE_CONFIG.SABLIER_TIME_START_TOLERANCE) || 5;
     return addMinutes(new Date(), delayInMinutes);
   }
 

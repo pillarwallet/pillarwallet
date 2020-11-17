@@ -189,7 +189,7 @@ class Progress extends React.Component<Props, State> {
       colorEnd = colors.progressBarEnd,
       barPadding = 3,
       height = 14,
-      emptyBarBackgroundColor = colors.surface,
+      emptyBarBackgroundColor = colors.basic070,
       emptyBarBorder,
     } = this.props;
 

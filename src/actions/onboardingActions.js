@@ -70,7 +70,7 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
-import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { loadRemoteConfigAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -239,7 +239,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // all the calls below require user to be online
     if (!isOnline) return;
 
-    dispatch(loadFeatureFlagsAction());
+    dispatch(loadRemoteConfigAction());
 
     // user might not be registered at this point
     if (walletId) {
@@ -313,17 +313,33 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
 export const beginOnboardingAction = (enableBiometrics?: boolean) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    // pass current onboarding, referrals and session network state to keep after redux state reset
+    // pass current onboarding, referrals and some session values to keep after redux state reset
     const {
       onboarding,
       referrals,
-      session: { data: { isOnline } },
+      session: {
+        data: {
+          isOnline,
+          translationsInitialised,
+          fallbackLanguageVersion,
+          sessionLanguageCode,
+          sessionLanguageVersion,
+        },
+      },
     } = getState();
 
     dispatch(resetAppStateAction({
       onboarding,
       referrals,
-      session: { data: { isOnline } },
+      session: {
+        data: {
+          isOnline,
+          translationsInitialised,
+          fallbackLanguageVersion,
+          sessionLanguageCode,
+          sessionLanguageVersion,
+        },
+      },
     }));
 
     navigate(NavigationActions.navigate({ routeName: NEW_WALLET }));

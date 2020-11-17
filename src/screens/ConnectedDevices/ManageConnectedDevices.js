@@ -109,7 +109,7 @@ const ManageConnectedDevices = ({
         {thisDeviceBeingRemoved &&
           <HorizontalView>
             <BaseText secondary>{t('label.removing')}</BaseText>
-            <Spinner style={{ marginLeft: 7 }} width={20} height={20} />
+            <Spinner style={{ marginLeft: 7 }} size={20} trackWidth={2} />
           </HorizontalView>
         }
         {!thisDeviceBeingRemoved && !isCurrentDevice && anyDeviceBeingRemoved &&

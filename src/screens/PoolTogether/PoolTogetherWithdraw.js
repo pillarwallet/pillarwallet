@@ -60,7 +60,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 
 // selectors
-import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
 
@@ -403,7 +402,7 @@ class PoolTogetherWithdraw extends React.Component<Props, State> {
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
                 disabled={!!submitDisabled}
-                style={{ marginBottom: 13, width: '100%' }}
+                style={{ marginBottom: 13 }}
               />
             </ContentRow>
           </ContentWrapper>
@@ -436,7 +435,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  history: accountHistorySelector,
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
 });

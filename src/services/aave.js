@@ -253,7 +253,9 @@ class AaveService {
       }
     `;
     /* eslint-enable i18next/no-literal-string */
-    return callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query);
+
+    return callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query)
+      .catch(() => null);
   }
 
   handleError(error: any, result: any): any {

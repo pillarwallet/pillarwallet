@@ -266,12 +266,14 @@ import {
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
 } from 'constants/navigationConstants';
+import { DARK_THEME } from 'constants/appSettingsConstants';
+
 
 // utils
 import { fontSizes } from 'utils/variables';
 import { initWalletConnectSessions } from 'actions/walletConnectActions';
 import { modalTransition, addAppStateChangeListener, removeAppStateChangeListener } from 'utils/common';
-import { getThemeColors, lightThemeColors, darkThemeColors } from 'utils/themes';
+import { getColorByThemeOutsideStyled, getThemeByType, getThemeColors } from 'utils/themes';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -312,8 +314,8 @@ const StackNavigatorConfig = {
   },
   cardStyle: {
     backgroundColor: {
-      dark: darkThemeColors.surface,
-      light: lightThemeColors.surface,
+      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+      light: getThemeColors(getThemeByType()).basic070,
     },
   },
 };
@@ -396,13 +398,17 @@ const homeFlow = createStackNavigator({
 
 homeFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const LIGHT_NAVBAR_DETAIL_COLOR = '#cdd2d4';
+
 const tabBarIcon = ({
   icon,
   hasIndicator,
   theme,
 }) => ({ focused }) => {
   const colors = getThemeColors(theme);
-  const tintColor = focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon;
+  const tintColor = focused
+    ? colors.primaryAccent130
+    : getColorByThemeOutsideStyled(theme.current, { darkKey: 'basic020', lightCustom: LIGHT_NAVBAR_DETAIL_COLOR });
 
   return (
     <View style={{ padding: 4 }}>
@@ -434,11 +440,15 @@ const tabBarIcon = ({
 
 const tabBarLabel = ({ text, theme }) => ({ focused }) => {
   const colors = getThemeColors(theme);
+  const textColor = focused
+    ? colors.primaryAccent130
+    : getColorByThemeOutsideStyled(theme.current, { darkKey: 'basic020', lightCustom: LIGHT_NAVBAR_DETAIL_COLOR });
+
   return (
     <BaseText
       style={{
         fontSize: fontSizes.regular,
-        color: focused ? colors.activeTabBarIcon : colors.inactiveTabBarIcon,
+        color: textColor,
         textAlign: 'center',
       }}
       numberOfLines={1}
@@ -504,7 +514,6 @@ const tabNavigation = createBottomTabNavigator(
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
-        borderTopColor: 'transparent',
         paddingTop: 5,
         paddingBottom: 5,
         height: 54,

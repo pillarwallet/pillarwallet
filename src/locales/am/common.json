@@ -1,0 +1,1488 @@
+{
+  "aaveDeposit": "አቬ ተቀማጭ",
+  "ensName": "ኢኤንኤስ ስም",
+  "ethereum": "ኢቲሪየም",
+  "facebook": "ፌስቡክ",
+  "keyWallet": "የቁልፍ ቦርሳ",
+  "medium": "መካከለኛ",
+  "pillarNetwork": "ፒላር አውታረ መረብ",
+  "pillarTank": "የፒላር በርሜል",
+  "poolTogether": "ፑል ቱጌዘር",
+  "smartWallet": "ብልህ ቦርሳ",
+  "telegram": "ቴሌግራም",
+  "twitter": "ትዊተር",
+  "youtube": "ዩቲዩብ",
+  "ellipsedString": "{{string}}...",
+  "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
+
+  "ticketAmount": "{{count}} ትኬት",
+  "ticketAmount_plural": "{{count}} ትኬቶች",
+  "ticket": "ትኬት",
+  "ticket_plural": "ትኬቶች",
+
+  "positiveValue": "+ {{value}}",
+  "negativeValue": "- {{value}}",
+  "positiveTokenValue": "+ {{value}} {{token}}",
+  "negativeTokenValue": "- {{value}} {{token}}",
+  "positivePercentValue": "+ {{value}} %",
+  "tokenValue": "{{value}} {{token}}",
+  "totalValue": "ጠቅላላ {{value}}",
+  "percentValue": "{{value}} %",
+  "availableValue": "የሚገኘው: {{value}}",
+  "ofValue": "የ{{value}}",
+  "valueOfValue": "{{partOfValue}} of {{allValue}}",
+  "ofTotalTokenValue": "የ{{value}} {{token}} ጠቅላላ",
+  "tokenFiatValue": "{{tokenValue}} ({{fiatValue}})",
+  "maxTokenValue": "ከፍተኛ {{value}} {{token}}",
+  "minTokenValue": "ዝቅተኛ {{value}} {{token}}",
+  "lessThanSignValue": "<{{value}}",
+  "moreThanSignValue": ">{{value}}",
+  "rangeValues": "{{fromValue}} - {{toValue}}",
+
+  "timeDaysHours": "{{days}}ቀ {{hours}}ሰ",
+  "timeHoursMinutes": "{{hours}}ሰ {{minutes}}ደ",
+  "timeDaysHoursMinutes":"{{days}}ቀ {{hours}}ሰ {{minutes}}ደ",
+  "inTimeDaysHoursMinutes":"በ {{days}}ቀ {{hours}}ሰ {{minutes}}ደ",
+  "timeDaysHoursMinutesLayout":"{{days}} {{hours}} {{minutes}}",
+  "day": "{{count}} ቀን",
+  "day_plural": "{{count}} ቀናት",
+  "hour": "{{count}} ሰዓት",
+  "hour_plural": "{{count}} ሰዓታት",
+  "minute": "{{count}} ደቂቃ",
+  "minute_plural": "{{count}} ደቂቃዎች",
+
+  "navigationTabs": {
+    "home": "ቤት",
+    "assets": "ንብረቶች",
+    "connect": "አገናኝ",
+    "services": "ግልጋሎቶች"
+  },
+
+  "title": {
+    "accounts": "መለያዎች",
+    "addFundsToWallet": "ገንዘብ ወደ ፒላር ይጨምሩ",
+    "mainActivityFeed": "ታሪክ",
+    "publicAddress": "የወል አድራሻ",
+    "success": "ተሳካ",
+    "totalBalance": "አጠቃላይ ቀሪ ሂሳብ",
+    "transactions": "ግብይቶች",
+    "addNewContact": "አዲስ ወዳጅዎን ይጨምሩ",
+    "editContact": "ወዳጅዎን ያርትዑ",
+    "addressBook": "የአድራሻ ማህደር",
+    "select": "ይምረጡ",
+    "failed": "አልተሳካም",
+    "pending": "በመጠባበቅ ላይ",
+    "collectibleSent": "ተሰብሳቢ ተልኳል",
+    "collectibleReceive": "ተሰብሳቢ ደርሷል",
+    "badgeReceived": "መለዮ ደርሷል",
+    "connectionRequested": "ተጠይቋል",
+    "assets": "ንብረቶች",
+    "backupPhrase": "መጠባበቂያ ቃል",
+    "verifyBackupPhrase": "የመጠባበቂያ ቃሉን ያረጋግጡ",
+    "confirmNewPin": "አዲሱን ይለፍ ያረጋግጡ",
+    "enterNewPincode": "አዲስ ይለፍ ያስገቡ",
+    "manageDevices": "መሳርያዎችን ያስተዳድሩ",
+    "noConnectedDevices": "መስመር ላይ ያለ መሳርያ የለም",
+    "confirm": "ያረጋግጡ",
+    "privateKey": "የግል ቁልፍ",
+    "exchange": "መለወጫ",
+    "unlockWithBiometrics": "በባዮሜትሪክ ማንበቢያ ይክፈቱ"
+  },
+
+  "label": {
+    "activate": "ያስጀምሩ",
+    "activateSmartWallet": "ብልህ ቦርሳውን ያስጀምሩ",
+    "activated": "ተጀምሯል",
+    "added": "ተጨምሯል",
+    "adding": "እየተጨመረ ነው",
+    "backedUp": "መጠባበቂያው ተዘጋጅቷል",
+    "badge": "መለዮ",
+    "canceled": "ተሰርዟል",
+    "collectibleFromUser": "ከ {{username}} የሚወሰድ",
+    "collectibleToUser": "ለ {{username}} የሚሰጥ",
+    "contactSupport": "ረዳትን ያግኙ",
+    "created": "ተፈጥሯል",
+    "emailOrPhone": "ኢሜል ወይም ስልክ",
+    "enabled": "ነቅቷል",
+    "enableSmartWalletGasRelayerPLR": "የግብይቱን ዋጋ በፒላር አድርግ",
+    "enabling": "እያነቃ",
+    "ended": "አልቋል",
+    "erc20TokensOnly": "ERC-20 ቶክኖች ብቻ",
+    "faceIDSettings": "የፊት መታወቅያ ማስተካከያ",
+    "feeToken": "ክፍያ {{tokenValue}}",
+    "feeTokenFiat": "ክፍያ {{tokenValue}} ({{fiatValue}})",
+    "fromKeyWallet": "ከቁልፍ ቦርሳ",
+    "fromPPN": "ከፒላር አውታረ መረብ",
+    "fromSmartWallet": "ከብልህ ቦርሳ",
+    "imported": "የተጫነ",
+    "incomingBalance": "ገቢ ሂሳብ",
+    "incomingSablierStream": "ገቢ ፍሰት",
+    "keyWalletVisibilityToggle": "የድሮ ቦርሳ (የላቀ)",
+    "loadingDefaultAssets": "እባሪ ንብረቶችን በመጫን ላይ",
+    "needToActivate": "ማንቃት ያስፈልጋል",
+    "newSmartWalletAccountDevice": "አዲስ የብልህ ቦርሳ መሳርያ",
+    "notApplicable": "ያልታወቀ",
+    "outgoingSablierStream": "ወጪ ፍሰት",
+    "purchase": "ይግዙ",
+    "received": "ተቀብሏል",
+    "receiving": "መቀበል",
+    "referralReward": "የአስተዋዋቂ ሽልማት",
+    "registered": "ተመዝግቧል",
+    "registerEnsName": "የኢኤንኤስ መለያ ስም ያስመዝግቡ",
+    "removed": "ተወግዷል",
+    "removing": "በማስወገድ ላይ",
+    "requested": "ተጠይቋል",
+    "search": "ይፈልጉ",
+    "searchAsset": "ንብረት ይፈልጉ",
+    "searchCollectible": "ተሰብሳቢውን ይፈልጉ",
+    "sending": "በመላክ ላይ",
+    "sent": "ተልኳል",
+    "settle": "ይወስኑ",
+    "smartWalletAccountDevice": "የብልህ ቦርሳ መለያ መሳርያ",
+    "smartWalletAccountDeviceAdded": "አዲስ የመለያ መሳርያ ተጨምሯል",
+    "smartWalletAccountDeviceRemoved": "የመለያ መሳርያ ተወግዷል",
+    "smartWalletGasRelayerPLR": "የብልህ ቦርሳ ክፍያ በ PLR ቶክን",
+    "started": "ጀምሯል",
+    "today": "ዛሬ",
+    "toKeyWallet": "ወደ ቁልፍ ቦርሳ",
+    "toPPN": "ወደ ፒላር አውታረ መረብ",
+    "topUp": "ይጨምሩ",
+    "toSmartWallet": "ወደ ብልህ ቦርሳ",
+    "withdraw": "ለማውጣት",
+    "withdrawal": "ማውጣት",
+    "yesterday": "ትላንት",
+    "yourEnsName": "የቦርሳዎ ኢኤንኤስ ስም",
+    "name": "ስም",
+    "address": "አድራሻ",
+    "resolvingEnsName": "የ  ኢኤንኤስ ስሙን በመፍታት ላይ",
+    "endingSoon": "በቅርቡ ያበቃል",
+    "endsIn": "በ {{endsIn}} ያበቃል",
+    "fetchingFee": "ዋጋውን እያመጣ ...",
+    "notEnoughToken": "በቂ {{token}} አይደለም",
+    "fee": "ክፍያ",
+    "gettingFee": "ክፍያውን እያመጣ ...",
+    "to": "ለ",
+    "from": "ከ",
+    "chooseReceiver": "ተቀባዩን ይምረጡ",
+    "walletAddress": "የቦርሳ አድራሻ",
+    "tokens": "ቶክኖች",
+    "collectibles": "ሊሰበሰብ የሚችሉ",
+    "collectible": "ሊሰበሰብ የሚችል",
+    "processing": "በማካሄድ ላይ...",
+    "mainAccount": "ዋናው መለያ",
+    "free": "ነጻ",
+    "estimatedFee": "ክፍያው በግምት",
+    "nothingFound": "ምንም አልተገኘም",
+    "verified": "ተረጋግጧል",
+    "select": "ይምረጡ",
+    "selectCurrency": "ገንዘብ ይምረጡ",
+    "choseOption": "አማራጭን ይምረጡ",
+    "noOptionsToSelect": "የሚመረጥ አማራጭ የለም",
+    "availableBalance": "ቀሪ ሂሳብ",
+    "sendingToReceiver": "ወደ {{receiver}} የተላከ",
+    "sentToReceiver": "ወደ {{receiver}} ተልኳል",
+    "walletBalance": "የቦርሳ ቀሪ {{balance}}",
+    "checking": "በማጣራት ላይ",
+    "thisDevice": "ይሄ መሳርያ",
+    "onHold": "በመጠባበቅ ላይ",
+    "deviceAddress": "የመሳርያ አድራሻ",
+    "noContactsAdded": "ምንም ወዳጅ አልጨመሩም",
+    "comingSoon": "በቅርቡ ይመጣል",
+    "buy": "ግዛ",
+    "sell": "ይሸጥ",
+    "unknown": "ያልታወቀ",
+    "pending": "በመጠባበቅ ላይ",
+    "fromPillarTank": "ከፒላር በርሜል",
+    "pinChanged": "ይለፍ ተቀይሯል",
+    "device": "መሳርያ {{address}}",
+    "popular": "ተወዳጅ",
+    "set": "አዘጋጅ",
+    "notAvailableInYourCountry": "አገርዎ ውስጥ በስራ ላይ አልዋለም",
+    "cannotProceedOffline": "መስመር ላይ ሳይሆኑ መቀጠል አይችሉም"
+  },
+
+  "button": {
+    "activate": "አንቃ",
+    "activatePPN": "የፒላርን አውታረ መረብ አንቃ",
+    "add": "ጨምር",
+    "addContacts": "ወዳጆቾትን ይጨምሩ",
+    "addDetails": "ዝርዝር ይጨምሩ",
+    "addFunds": "ገንዘብ ይጨምሩ",
+    "approve": "ይፍቀዱ",
+    "buyPLR": "PLR ይግዙ",
+    "buyTokensWithCreditCard": "ቶክኖች በክሬዲት ካርድ ይግዙ",
+    "buyTokens": "ቶክኖች ይግዙ",
+    "buyWithCard": "በካርድ ይግዙ",
+    "buyWithCardOrApplePay": "በክሬዲት ካርድ ወይም በአፕል መክፈያ",
+    "confirm": "ያረጋግጡ",
+    "connect": "ይገናኙ",
+    "claim": "ይገባኛል ጥያቄ",
+    "close": "ይዝጉ",
+    "depositMore": "ጭማሪ ያስቀምጡ",
+    "explore": "ያስሱ",
+    "exchange": "ይቀይሩ",
+    "hide": "ይደብቁ",
+    "inviteAndGetTokens": "ጋብዘው የነጻ ቶክኖች ያግኙ",
+    "inviteFriends": "ጓደኞችዎን ይጋብዙ",
+    "inviteMoreFriends": "ተጨማሪ ጓደኞች ይጋብዙ",
+    "inviteToPillar": "ወደ ፒላር ይጋብዙ",
+    "notEnoughPLR": "በቂ PLR የለም",
+    "purchase": "ይግዙ",
+    "purchaseMore": "ጨምረው ይግዙ",
+    "referFriends": "ጓደኛ ይጋብዙ",
+    "reject": "አልቀበልም",
+    "retry": "ይደገም",
+    "receive": "ተቀበል",
+    "seeOnEtherscan": " ኢተርስካን ላይ ይመልከቱ",
+    "selectAll": "ሁሉን መራጭ",
+    "selectContacts": "ወዳጆችዎትን ይጨምሩ",
+    "send": "ይላኩ",
+    "sendAll": "ሁሉንም ያላኩ",
+    "sendBack": "ይመልሱ",
+    "sendFromAnotherWallet": "ከሌላ ቦርሳ ይላኩ",
+    "sendInvites": "ግብዣ ይላኩ",
+    "sendMore": "ተጨማሪ ይላኩ",
+    "sendMax": "ሁሉንም ይላኩ",
+    "settleMore": "ጨምረው ይወስኑ",
+    "settleTransactions": "ግብይቱን ይወስኑ",
+    "shareAddress": "አድራሻ ይጋሩ",
+    "smartWalletFAQ": "ብልህ ቦርሳ ተደጋጋሚ ጥያቄዎች",
+    "subscribe": "ይመዝገቡ",
+    "support": "ረዳት",
+    "topUp": "ይሙሉ",
+    "topUpMore": "ጨምረው ይሙሉ",
+    "topUpPLRTank": "የ PLR በርሜሉን ይሙሉ",
+    "transferToSmartWallet": "ወደ ብልህ ቦርሳ ያስተላልፉ",
+    "tryAgain": "ደግመው ይሞክሩ",
+    "viewAllItemsAmount": "ሁሉን {{amount}} ለማየት",
+    "viewAll": "ሁሉንም እዩ",
+    "viewBadge": "መለዮ ለማየት",
+    "viewBalance": "ቀሪ ሂሳብ ለማየት",
+    "viewDeposit": "ተቀማጭ ለማየት",
+    "viewOnBlockchain": "ብሎክቼይን ላይ ለማየት",
+    "viewPoolTogetherPool": "ስብስቡን ለማየት",
+    "viewSablierStream": "ፍሰቱን ለማየት",
+    "verify": "ያረጋግጡ",
+    "withdraw": "ያውጡ",
+    "withdrawAll": "ሁሉንም ያውጡ",
+    "withdrawMore": "ተጨማሪ ያውጡ",
+    "delete": "ማጥፊያ",
+    "addNew": "አዲስ መጨመሪያ",
+    "save": "ማስቀመጫ",
+    "next": "ቀጣይ",
+    "spendMax": "ሁሉን ይክፈሉ",
+    "confirmWithdraw": "ማውጣትዎን ያረጋግጡ",
+    "enable": "አንቃ",
+    "useMax": "ሁሉንም ተጠቀም",
+    "allow": "ፍቀድ",
+    "max": "ሁሉንም",
+    "sendTokenInstead": "ይልቁንስ ቶክን ይላኩ",
+    "addToContacts": "ወዳጆችጋ ይጨምሩ",
+    "copyToClipboard": "ወደ ቅንጥብ ሰሌዳ ይገልብጡ",
+    "resendIt": "መልሰው ይላኩት",
+    "migrateAssetsToSmartWallet": "ንብረቶችዎን ወደ ብልህ ቦርሳ ይውሰዱ",
+    "continue": "ይቀጥሉ",
+    "remove": "ያስወግዱ",
+    "cancel": "ሰርዝ",
+    "edit": "አርትዕ",
+    "magic": "አስማት",
+    "disconnect": "ግንኙነት ያቋርጡ",
+    "open": "መክፈቻ",
+    "proceed": "ቀጥል",
+    "readMore": "ተጨማሪ ያንብቡ",
+    "activateSmartWallet": "ብልህ ቦርሳውን ያስጀምሩ",
+    "finish": "መጨረሻ"
+  },
+
+  "paragraph": {
+    "addressCopiedToClipboard": "አድራሻው ወደ ቅንጥብ ሰሌዳው ተግልብጧል",
+    "doNotSendRealEthOrTokens": "ትክክለኛውን ETH ወይም ERC20 ቶክኖች አይላኩ።",
+    "ensNameCopiedToClipboard": "ኢኤንኤስ ስሙ ወደ ቅንጥብ ሰሌዳው ተገልብጧል።",
+    "cameraPermissionMissing": "የካሜራ ፈቃድ አልተሰጠም - የካሜራውን ቅድመ እይታ መክፈት አልተቻለም።",
+    "didNotReceiveVerificationCodeQuestion": "ቁልፉ አልደረሰዎትም?",
+    "instructionsOnBackingUpBackupPhase": "ባለ 12 ቃላት መጠባበቂያ ቃላቶችዎን በትክክለኛው ቅደም ተከተል ይጻፉት",
+    "backupPhraseVerificationInstructions": "እባክዎት ትክክለኛ ቃላቶችን ይምረጡ",
+    "deviceRemovalConfirm": "እባክዎት ከታች ያሉ መረጃዎች ትክክል መሆናቸውን ሳያረጋግጡ መሳርያውን አያስወግዱ",
+    "loggingOutFirstMessage": "ለመሰረዝ ጥቂት ግዜ ይወስዳል",
+    "loggingOutSecondMessage": "ስንለይዎት እያዘንን ነው",
+    "backupPhraseRevealedPurpose": "እባክዎት ባለ 12 ቃላት የመጠባበቂያ ቃላቶችዎን ተጠቅመው ቦርሳዎትን ያስመልሱ፡፡",
+    "privateKeyRevealedPurpose": "እባክዎት ይሄንን የግል ቁልፍዎትን ተጠቅመው ቦርሳዎትን ያስመልሱ፡፡",
+    "doNotShareBackup": "ቦርሳዎ አደጋ ቢያጋጥመው ያለዎት የማስመለሻ አማራጭ ይሄ ብቻ ስለሆነ በጥንቃቄ ያስቅምጡት። ኢሜል አያድርጉ ወይም የማያ ገጹን ግልባጭ አይውሰዱ።",
+    "sessionExpiredReEnterPin": "የገቡበት ክፍለ ግዜ አልቋል። እባክዎ የይለፍ ቃሎትን አስገብተው ይቀጥሉ።"
+  },
+
+  "insight": {
+    "keyWalletIntro": {
+      "title": "ገንዘብዎን አይጣሉ",
+      "description": {
+        "backupWallet": "የቦርሳውን መጠባበቂያ ይስሩ",
+        "setPinCode": "የይለፍ ቃል ይስሩ",
+        "enableBiometrics": "የባዮሜትሪክ መግቢያውን ያንቁ (ከተፈለገ)"
+      }
+    },
+    "pillarNetworkActivate": {
+      "hasNoPPNBalance": {
+        "title": "የፒላርን አውታረ መረብ ያንቁ",
+        "description": {
+          "activationBenefit": "የትኛውንም ቶክን ለመላክ የፕላር በርሜሎትን መሙላት ያስፈልጋል"
+        }
+      },
+      "smartWalletIsNotActivated": {
+        "title": "የፒላር ክፍያ አውታረ መረብ ለፒላር ተጠቃሚ ያላቸው ልዩ ጥቅም",
+        "description": {
+          "instantTransactions": "ቅጽበታዊ፣ ነጻ፣ እና ግላላዊ ግብይቶች",
+          "singleTokenExperience": "ባለ አንድ ቶክን ተሞክሮ፡ የሌልዎትን ቶክኖችን መላክ/መግዛትን ችሎታ ያጠቃለለ፡ በቅጽበት ለማቀያየር የሚያስችል።"
+        },
+        "button": {
+          "activatePPN": "የፒላርን አውታረ መረብ ያንቁ"
+        }
+      },
+      "deploying": {
+        "description": {
+          "smartWalletActivatingStatusCard": "የብልህ ቦርሳዎትን በማንቃት ላይ። እየደረሰ ነው።"
+        }
+      }
+    },
+    "smartWalletIntro": {
+      "title": "እንኳን ወደ ፒላር ብልህ ቦርሳ በደህና መጡ።",
+      "description": {
+        "intro": "የፒላር ብልህ ብፖርሳ አሮጌውን የፒላር ቦርሳ ይተካል እናም የሚከተሉትን ጭማሪ ባህሪዎች ያቀርባል:",
+        "recovery": "ተስተካክሎ ከተዘጋጀ በኋላ ከማንኛውም ከበይነ መረብ ጋር ከተገናኘ መሳርያ ለማስመለስ ይቻላል።",
+        "accessToPPN": "ወደ ፒላር የክፍያ አውታረ መረብ፡ ቅፅበታዊ እና ነፃ ግብይት የሚካሄደበትጋ፡ ያስገባል",
+        "multipleKeys": "ለመተግበርያዎች የሚያገለግሉ ብዙ ቁልፎችን ለመቆጣጠርና የወጪ ወሰን ለመጨመር ይረዳል።"
+      },
+      "button": {
+        "ok": "ይገርማል፡ ጥሩ ነው"
+      }
+    },
+    "smartWalletActivate": {
+      "default": {
+        "title": "ንብረት ለመላክ የብልህ ቦርሳዎትን ያንቁ",
+        "description": "ትንሽ ክፍያ ያስከፍላል"
+      },
+      "isBeingDeployed": {
+        "title": "ብልህ ቦርሳው እየተሰማራ ነው።",
+        "description": {
+          "waitingTime": "ስምሪቱ ካለቀ በኋላ ንብረት መላክ ይችላሉ። በአማካይ {{waitingTimeInMinutes}} ደቂቃዎች ያስጠብቃል።."
+        }
+      },
+      "activationFailed": {
+        "title": "ብልህ ቦርሳ ማንቃቱ አልተሳካም።",
+        "error": {
+          "needToSetupSmartAccount": "መጀመርያ ብልህ ቦርሳዎትን መሙላት አለብዎት።",
+          "default": "አገልጋይ አስሊያችን ስህተት አሳይቷል። እባክዎት በድጋሚ መለያዎትን ለማንቃት ከበታች ያለውን ቁልፍ ይጫኑ።"
+        }
+      }
+    },
+    "dataPrivacy": {
+      "title": "መረጃዎት በሙሉ የግል ነው",
+      "description": "ስለተጠቃሚዎቻችን ግለሰባዊነት እንጠነቀቃለን። አጭበርባሪዎችን አንደግፍም። እርስዎም ጓደኖችዎን ጋብዘው የ PLR ቶክን ሽልማት እንዲያገኙ ትክክለኛ ተጠቃሚ መሆንዎን ማረጋገጥ አለብን።",
+      "button": {
+        "ok": "ገብቶኛል"
+      }
+    },
+    "walletConnectAppsListExplain": {
+      "title": "ምንድነው?",
+      "description": "ተጠንተው የተመረጡ የ ዌብ3 መተግበሪያዎችን በፒላር መጠቀም ይቻላል። መለያ መፍጠር ሳያስፈልጎት በመግባት ብቻ መጠቀም ይችላሉ። ኪውአር ኮድን ብቻ ያስነብቡት።",
+      "button": {
+        "ok": "ጥሩ፡ አመሰናለሁ"
+      }
+    },
+    "moneyStream": {
+      "title": "ሴብሊየርን በመጠቀም ገንዘብዎን በቀጣይ ፍሰት ይላኩ ወይም ይቀበሉ",
+      "description": {
+        "forWorkers": "እንደሰራተኛነትዎ ገቢዎ በተመሳሳይ ሰአት ውስጥ ወደ ሴብሊየር ቦርሳዎ የገባል።",
+        "forOrganizations": "አንድ ድርጅት የሚኖርበትን የክፍያ አሰልቺ ስራ የኛ ሰነ መላ ያስወግድሎታል።"
+      }
+    }
+  },
+
+  "form": {
+    "countryCode": {
+      "label": "የአገር መለያ",
+      "placeholder": "የአገር ስም",
+      "selectorTitle": "ሁሉም መለያዎች"
+    },
+    "email": {
+      "label": "ኢሜይል",
+      "placeholder": "ኢሜይል",
+      "description": {
+        "empty": "ልዩ ጥያቄዎችን ለመቀበል ኢሜይሎን ይጨምሩ።",
+        "added": "ኢሜይሎን ካረጋገጡ በኋላ ጓደኞችዎን ወደ ፒላር መጋበዝ ይችላሉ።",
+        "confirmed": "ኢሜይሎን ከቀየሩ በኋላ ደግመው ማረጋገጥ አለብዎት።"
+      }
+    },
+    "phoneNumber": {
+      "label": "የስልክ ቁጥር",
+      "description": {
+        "empty": "ጓደኖችዎን ለመጋበዝ የስልክ ቁጥሮን መጨመር ያስፈልጋል።",
+        "added": "የስልክ ቁጥሮን ያረጋግጡና ጓደኞችዎን ወደ ፒላር ማህበረሰብ መጋበዝ ይችላሉ።",
+        "confirmed": "የስልክ ቁጥሮን ከቀየሩ በኋላ በድጋሚ ማረጋገጥ ያስፈጎታል።"
+      }
+    },
+    "subscription": {
+      "placeholder": "ኢሜይሎ"
+    },
+    "selector": {
+      "placeholder": "ይምረጡ",
+      "searchPlaceholder": "ፈልግ",
+      "assetSearchPlaceholder": "ንብረት ፍለጋ"
+    }
+  },
+
+  "error": {
+    "transactionFailed": {
+      "timeOut": "ግብይቱ ግዜ አልፎበታል",
+      "default": "ግብይቱ አልተሳካም",
+      "offline": "መስመር ላይ ሳይሆኑ ግብይት መላክ አይችሉም",
+      "notEnoughGas": "የግብይቱን ክፍያ ለመሸፈን በቂ ነዳጅ የለዎትም። የእኢቲሪየም ሂሳቦትን ይሙሉበት።",
+      "notOwnedCollectible": "ይሄ ተሰብሳቢ የእርሶ መሆኑ አብቅቷል",
+      "collectibleCantBeTransferred": "ይሄን ተሰብሳቢ ማስተላለፍ አይቻልም",
+      "notEnoughStake": " በቂ ፒላር በርሜል ውስጥ የሎትም",
+      "notEnoughForGasWithBalance": "`በቂ {{token}} ለግብይቱ ክፍያ የሚሆን የለዎትም። ያለዎት ቀሪ: {{balance}} {{token}}",
+      "cantCalculateFee": "የግብይቱን ዋጋ ማስላት አልተቻለም"
+    },
+    "emptyAddress": "አድራሻ ባዶ ሊሆን አይችልም",
+    "contactWithAddressExist": "ይሄን አድራሻ የተጠቀመ ወዳጆ ቀድሞ ገብቷል",
+    "contactWithNameExist": "ይሄንን ስም ያለው ወዳጆ ቀድሞ ገብቷል",
+    "emptyName": "ስም ባዶ ሊሆን አይችልም",
+    "invalid": {
+      "address": "የተሳሳተ አድራሻ",
+      "email": "እባክዎ ኢሜሎን ያስገቡ"
+    },
+    "cannotSendYourself": "ይቅርታ ወደራስዎ መላክ አይችሉም። እባክዎት ሌላ አድራሻ ይጠቀሙ።",
+    "ensNameNotFound": "ይቅርታ ኢኤንኤስ ስሙ አልተገኘም። እባክዎ በድጋሚ ይሞክሩ።",
+    "notEnoughTokenForFee": "በቂ {{token}} ለግብይቱ ክፍያ የሚሆን የልዎትም።",
+    "notEnoughTokenForFeeExtended": "ይቅርታ በቂ {{token}} ቦርሳዎት ውስጥ ስለሌለ መገበያየት አይችሉም። እባክዎ ቦርሳዎትን ሞልተው በድጋሚ ይሞከሩ።",
+    "noCameraPermission": "የካሜራ ፈቃድ አልተሰጠም - የካሜራውን ኪው አር ማንበቢያ መክፈት አልተቻለም።",
+    "noField": {
+      "address": "ምንም አድራሻ የለም",
+      "phone": "ምንም ስልክ የለም",
+      "default": "ምንም መረጃ የለም"
+    },
+    "incorrectBackupPhraseWordsSelected": "የተሳሳቱ ቃላት መርጠዋል",
+    "pin": {
+      "newShouldBeDifferent": "አዲስይ ይለፍ አሁን ካለው መለየት አለበት"
+    },
+    "deviceRemovalOffline": "የብልህ ቦርሳዎትን ለማስወገድ በመስመር ላይ መሆን አለብዎት።",
+    "amount": {
+      "invalidNumber": "የተሳሳተ ቁጥር አስገብተዋል",
+      "exceedBalance": "ሂሳቡ ከሙሉው ቀሪ መብለጥ የለበትም",
+      "shouldNotHaveDecimals": "ሂሳቡ አስርዮሽ ቁጥሮችን መያዝ የለበትም",
+      "notProvided": "ሂሳቡን ማስገባት አለቦት",
+      "shouldBeGreaterThanValue": "ሂሳቡ ከ {{value}} {{token}} መብለጥ አለበት",
+      "shouldNotBeGreaterThanBalanceValue": "ሂሳቡ ካለዎት ቀሪ - {{balance}} {{token}} መብለጥ የለበትም",
+      "amountShouldBeBiggerThanZero": "ሂሳቡ ከ 0 መብለጥ አለበት",
+      "notEnoughToken": "በቂ {{token}} አይደለም",
+      "shouldBeGreaterThan1Wei": "ሂሳቡ ከ 1 ዌይ መብለጥ አለበት (0.000000000000000001 ኢት)"
+    },
+    "synthetics": {
+      "failedToCalculate": "የሲንቴቲክ መለውጫው ስሌት አልተሳካም"
+    },
+    "exchange": {
+      "incorrectNumber": "የተሳሳተ ቁጥር አስገብተዋል",
+      "amountTooBig": "ሂሳቡ ካሎት ቀሪ በላይ መሆን አይችልም - {{assetBalance}} {{symbol}}."
+    },
+    "walletConnect": {
+      "assetNotSupported": "ይሄ ግብይት ወይም ቶክን በአሁኑ ግዜ በፒላር አይደገፍም",
+      "unsupportedAction": "ይርታ ይሄ አማራጭ ለግዜው ስራ ላይ አልዋለም",
+      "noMatchingWallet": "የፈለጉት የዎሌት ኮኔክት ማገናኛ አልተገኘም",
+      "requestNotFound": "ጥያቄው አልተገኘም",
+      "requestRejected": "የጥሪው ጥያቄ ተቀባይ አላገኘም",
+      "invalidSession": "ያለፈበት የዎሌት ኮኔክት ክፈለ-ግዜ",
+      "alreadyPending": "ትስስሩ እየጠበቀዎት ነው"
+    },
+    "reverted": "ተመልሷል"
+  },
+
+  "badgeText": {
+    "new": "አዲስ"
+  },
+
+  "ppnContent": {
+    "tabs": {
+      "incoming": {
+        "title": "ገቢ",
+        "emptyState": {
+          "title": "ገቢ ግብይት የለም"
+        }
+      },
+      "sent": {
+        "title": "ተልኳል",
+        "emptyState": {
+          "title": "የተላከ ግብይት የለም"
+        }
+      },
+      "settled": {
+        "title": "ተወስኗል",
+        "emptyState": {
+          "title": "የተወሰነ ግብይት የለም"
+        }
+      }
+    },
+    "title": {
+      "settleTransactionsScreen": "ግብይቱን ይወስኑ",
+      "fundTankScreen": "የ PLR በርሜሉን ይሙሉ",
+      "sendTokenViaPpnScreen": "በፒፒኤን {{token}} ይላኩ",
+      "unsettledAssetsScreen": "ያልተወሰኑ ንብረቶች",
+      "withdrawFromTankScreen": "ከ PLR በርሜል ያውጡ"
+    },
+    "button": {
+      "fundTank": "የፒላር በርሜሉን ይሙሉ",
+      "releaseTankFunds": "ገንዘብ ይልቀቁ",
+      "withdrawFromTank": "ከ PLR በርሜል ያውጡ",
+      "settleTransactions": "ግብይቱን ይወስኑ",
+      "enableSmartWalletForTank": "የብልህ ቦርሳዎን በማስጀመር በርሜሉን ይፍጠሩ",
+      "goToTank": "ወደ PLR በርሜል ይሂዱ"
+    },
+    "label": {
+      "availableBalance": "ቀሪ ሂሳብ",
+      "paidByPillar": "በፒላር የሚከፈል ሂሳብ የለም",
+      "transactionsAvailableToSettle": "ግብየቱን እንዲያወራርዱ ይጠበቃል"
+    },
+    "paragraph": {
+      "introFirstParagraph": "PLR ቶክኖች በማስያዝ በእርስዎና በወዳጆችዎ መሃል ነፃና ቅጽበታዊ ግብይት ለማድረግ  ይችላሉ። PLR እንደ ሜታ ቶክን ስለሚያገለግል ማንኛውም የፒላር ክፍያ አውታረ መረብ ውስጥ ያሉ ቶክኖችን መላክና መቀበልን ያስችልዎታል።",
+      "introSecondParagraph": "ከፒላር በርሜሎት በማውጣት የፈለጉትን ይላኩ"
+    },
+    "ppnFeatures": {
+      "first": {
+        "title": "ቅጽበታዊ",
+        "description": "አዳኙን ወይም የጥቅሉን ማረጋገጫ የማያስጠብቅ፡ ቅፅበታዊ ግብይቶች።"
+      },
+      "second": {
+        "title": "ነጻ",
+        "description": "የአውታረ መረብ ወይም የነዳጅ ዋጋ የማያስከፍል ግብይት።"
+      },
+      "three": {
+        "title": "የግል ",
+        "description": "የመቸረሻው ሂሳብ ሲወራረድ ብቻ ነው ሰንሰለቱ ላይ የሚመዘገበው። የስብስብ ክፍያው ብዙ ክፍያዎችን በአንድ ለመጠቅለል ይረዳል።"
+      },
+      "settleTransactions": "ሂሳብ ያወራርዱ"
+    }
+  },
+
+  "smartWalletContent": {
+    "activationCard": {
+      "button": {
+        "activate": "ብልህ ቦርሳውን ያስጀምሩ"
+      },
+      "description": {
+        "activating": "መለያዎን ያስጀምሩ",
+        "default": "ንብረት ለመላክ የብልህ ቦርሳዎትን ያስጀምሩ"
+      }
+    },
+    "activationModal": {
+      "paragraph": "ንብረት ለመላክና ለመቀያየር የብልህ ቦርሳዎትን ማስጀመር አለቦት",
+      "title": "ብልህ ቦርሳውን ያስጀምሩ"
+    },
+    "walletActivationView": {
+      "title": "ብልህ ቦርሳው እየተጀመረ ነው።",
+      "paragraph": {
+        "smartWalletActivating": "ልንጨርስ ብዙ አልቀረንም። እስከዛው የብልህ ቦርሳውን ባህርይዎች ያስሱ።"
+      }
+    },
+    "exchangeActivation": {
+      "message": "ንብረት ለመቀያየር የብልህ ቦርሳዎትን ማስጀመር አለቦት",
+      "button": "ብልህ ቦርሳውን ያስጀምሩ"
+    },
+    "tabs": {
+      "tokens": {
+        "title": "ቶክኖች"
+      },
+      "collectibles": {
+        "title": "ሊሰበሰብ የሚችሉ"
+      }
+    },
+    "paragraph": {
+      "introFirstParagraph": "አዲሱን የፒላር ቦርሳ እውን ያደረገው የግል ብልህ-ውል አጠቃቀም ነው። ይሄም አጠቃቀም የተሻለ ንብረት አስተዳደር፣ ደህንነትና የማስመለሻን ዘዴዎች ተግባራዊ ያደርጋል።",
+      "introSecondParagraph": "በተዘረዘሩት ጥቅሞች ምክንያት ንብረቶችዎን ወደ ብልህ ቦርሳ እንዲያዘዋውሩ ፒላር ይመክርዎታል።",
+      "walletIsActivated": "አዲሱን ብልህ ቦርሳዎትንና የፒላር ክፍያ መረብን በንብረት ማያ ገፅ፡ በእላይ ቀኝ ብኩል ያገኙታል።"
+    },
+    "button": {
+      "goToSmartWallet": "ወደ ብልህ ቦርሳ ለመሄድ"
+    },
+    "title": {
+      "smartWalletIsActivated": "ብልህ ቦርሳዎት እየተጀመረ ነው።",
+      "walletActivatedScreen": "ቀጣዩ ምንድነው"
+    }
+  },
+
+  "assetSearchContent": {
+    "title": "ቶክኖች",
+    "tabs": {
+      "visible": {
+        "title": "እየታየ ነው",
+        "emptyState": {
+          "title": "ቶክኑ አልተገኘም",
+          "paragraph": "ስሙን በትክክል ማስገባትዎን ያረጋግጡ ወይም ለየት ያለ ቶክን ያስገቡ"
+        }
+      },
+      "withBalance": {
+        "title": "ሁሉም ዜሮ ያልሆኑ"
+      }
+    }
+  },
+
+  "collectiblesList": {
+    "emptyState": {
+      "noCollectibles": {
+        "title": "ሊሰበሰብ የሚችሉ የሉም",
+        "paragraph": "ቦርሳው ውስጥ ምንም ተሰብሳቢዎች የሉም"
+      },
+      "noneFound": {
+        "title": "ተሰብሳቢ አልተገኘም",
+        "paragraph": "ስሙን በትክክል ማስገባትዎን ያረጋግጡ"
+      }
+    }
+  },
+
+  "phoneBookContactsList": {
+    "emptyState": {
+      "couldNotGetContacts": {
+        "title": "ወዳጆችዎትን መልሶ ማውጣት አልተቻለም"
+      },
+      "noneFound": {
+        "title": "ማንም አልተገኘም",
+        "paragraph": "ትክክለኛ ስልክ ወይም ኢሜል ማስገባትዎን ያረጋግጡ"
+      }
+    }
+  },
+
+  "countryList": {
+    "emptyState": {
+      "noneFound": {
+        "title": "ምንም አልተገኘም",
+        "paragraph": "ትክክለኛ ስልክ ወይም አገር ማስገባትዎን ያረጋግጡ"
+      }
+    }
+  },
+
+  "aaveContent": {
+    "depositedAssetsList": {
+      "title": "አቬ ተቀማጮች"
+    },
+    "title": {
+      "assetsToDepositScreen": "የሚያስቀምጡትን ንብረት ይምረጡ",
+      "noAssetsToDeposit": "የሚያስቀምጡት ንብረት የለም",
+      "noDepositedAssets": "የተቀመጠ ንብረት የለም",
+      "depositedAssetsScreen": "ያለዎት ተቀማጮች",
+      "depositConfirmationScreen": "ይገምግሙ",
+      "depositAmountScreen": "ተቀማጭ ይጨምሩ",
+      "withdrawAmountScreen": "ያውጡ",
+      "depositedAssetScreen": "ያለዎት ተቀማጭ",
+      "activityFeed": "ታሪክ",
+      "withdrawConfirmationScreen": "ይገምግሙ"
+    },
+    "label": {
+      "currentAPY": "ወለዱ",
+      "currentAPYPercentage": "አመታዊ ወለድ {{rate}} %",
+      "earned": "ትርፉ"
+    },
+    "button": {
+      "confirmDeposit": "ተቀማጮትን ያረጋግጡ",
+      "confirmWithdrawal": "ማውጣትዎን ያረጋግጡ"
+    },
+    "paragraph": {
+      "receiveOnWithdrawal": "ወደ ቦርሳዎት {{token}} ይደርስዎታል"
+    }
+  },
+
+  "badgesContent": {
+    "badgesList": {
+      "title": "የመለዮ ጨዋታ",
+      "emptyState": {
+        "noBadges": {
+          "title": "መለዮ የለም",
+          "paragraph": "አሁን ምንም መለዮ የለዎትም"
+        }
+      }
+    },
+    "title": {
+      "unknownBadge": "ያልታወቀ መለዮ"
+    }
+  },
+
+  "settingsContent": {
+    "settingsItem": {
+      "analytics": {
+        "title": "የአጠቃቀም ትንታኔዎች",
+        "paragraph": {
+          "agreeSharingInfo": "ስም-አልባ የሆኑ የመተግበርያ አጠቃቀም ትንታኔዎችን ለማካፈል ደስተኛ ነኝ",
+          "legal": "ስም-አልባ የሆኑ የመተግበርያ አጠቃቀም ትንታኔዎችን በማካፈል ፒላር የተሻለ ቦርሳ እንዲሰራ እያገዙ ነው።\nስም-አልባ የሆኑ የአጠቃቀም ትንታኔዎች ማንኛውንም የእርሶንም ሆነ የወዳጆቾን መረጃዎች አያጠቃልሉም።"
+        }
+      },
+      "appSettings": {
+        "title": "የመተግበሪያ ቅንጅቶች"
+      },
+      "assetsMigration": {
+        "title": "ንብረቶችዎን ወደ ብልህ ቦርሳ ይውሰዱ"
+      },
+      "backup": {
+        "title": "መጠባበቂያው ተዘጋጅቶ አላለቀም",
+        "label": {
+          "notFinished": "ማስጠንቀቂያ"
+        }
+      },
+      "backupPhrase": {
+        "title": "12 ቃላትዎን ይመልከቱ"
+      },
+      "biometricLogin": {
+        "title": "የባዮሜትሪክ መግቢያ"
+      },
+      "changePIN": {
+        "title": "የይለፍ ቃልዎትን ይቀይሩ"
+      },
+      "community": {
+        "title": "ማህበረሰብ",
+        "paragraph": "የፒላርን ማህበረሰብ ይቀላቀሉ፡ በራሪ ጋዜጣችንንም ለማግኘት ይመዝገቡ። ዜናዎች፣ አዳዲስ የመተግበርያ ዝመናዎችንና ወዘተ ያገኛሉ",
+        "label": {
+          "follow": "ተከታያችን ይሁኑ"
+        }
+      },
+      "darkMode": {
+        "title": "የጨለመ ሁኔታ"
+      },
+      "fiatCurrency": {
+        "title": "የአካባቢው ገንዘብ",
+        "screenTitle": "ዋናው የሚጠቀሙበት ገንዝብ"
+      },
+      "faq": {
+        "title": "የእውቀት ማህደር"
+      },
+      "inviteFriends": {
+        "title": "ጓደኞችዎን ይጋብዙ"
+      },
+      "linkedDevices": {
+        "title": "የተጎዳኙ መሳርያዎች",
+        "subtitle": "የብልህ ቦርሳ መለያ መሳርያዎትን ያስተዳድሩ"
+      },
+      "payFeeWithPillar": {
+        "title": "የግብይቱን ዋጋ በፒላር አድርግ"
+      },
+      "privateKey": {
+        "title": "የቅል ቁልፎትን ይመልከቱ"
+      },
+      "securitySettings": {
+        "title": "የደህንነት ቅንጅቶች",
+        "screenTitle": "የደህንነት ቅንጅቶች",
+        "label": {
+          "globalSettings": "አለምአቀፍ",
+          "smartWalletSettings": "ብልህ ቦርሳ"
+        }
+      },
+      "systemInfo": {
+        "title": "ስራዓተ መረጃ"
+      },
+      "spendingLimits": {
+        "title": "የክፍያ ልክ",
+        "subtitle": "ለክፍያዎት መጠን ልክ በማበጀት የንብረቶትን ደህንነት ይጠብቁ",
+        "label": {
+          "notAvailableYet": "በቅርቡ"
+        }
+      },
+      "support": {
+        "title": "ከረዳትጋ ይገናኙ"
+      },
+      "recoveryPortal": {
+        "title": "የማስመለሻ መስክ",
+        "subtitle": {
+          "default": "የብልህ ቦርሳ መለያ ማዳኛ ድረ ገፅ",
+          "smartWalletNotActivated": "የብልህ ቦርሳ መለያ ማዳኛ ድረ ገፅ (ያለ ብልህ ቦርሳ አይሰራም)"
+        }
+      },
+      "recoverySettings": {
+        "title": "የማስመለሻ አማራጮች",
+        "screenTitle": "የማስመለሻ",
+        "label": {
+          "notFinished": "ማስጠንቀቂያ",
+          "globalSettings": "አለምአቀፍ",
+          "keyWalletSettings": "የቁልፍ ቦርሳ"
+        }
+      },
+      "referFriends": {
+        "title": "ጓደኞችዎን ይጋብዙ"
+      },
+      "requirePinOnLogin": {
+        "title": "ለመግባት ይለፍ ያስፈልጋል"
+      },
+      "userProfile": {
+        "title": "የተጠቃሚ መገለጫ"
+      },
+      "addressBook": {
+        "title": "የአድራሻ ማህደር"
+      }
+    },
+    "button": {
+      "termOfUse": "የአጠቃቅውም ውሎች",
+      "privacyPolicy": "የግላዊነት አሰራር",
+      "lockWallet": "ቦርሳውን ይቆልፉ",
+      "signOut": "ከቦርሳው ይውጡ"
+    }
+  },
+
+  "profileContent": {
+    "title": {
+      "manage": "የተጠቃሚ አማራጮች"
+    },
+    "paragraph": {
+      "verificationIsRequired": "አጭበርባሪዎችን ለመከላከል ማረጋገጫ ያስፈልጋል። ለተጠቃሚዎቻችን የግል መረጃ እንጨነቃለን።"
+    },
+    "modal": {
+      "updatingData": {
+        "title": "በጥንቃቄ ይቀጥሉ",
+        "paragraph": {
+          "emailChanged": "ኢሜሎን ከቀየሩ በኋላ ወዳጆችዎን ጋብዘው ሽልማት ለመቀበል በድጋሚ ማረጋገጥ ይጠበቅብዎታል።",
+          "phoneChanged": "የስልክ ቁጥሮን ከቀየሩ በኋላ ወዳጆችዎን ጋብዘው ሽልማት ለመቀበል በድጋሚ ማረጋገጥ ያስፈጎታል።"
+        },
+        "button": {
+          "changeEmail": "ኢሜሌን ቀይር",
+          "changePhone": "የስልክ ቁጥሬን ቀይር"
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "የማረጋገጫ ቁልፍ ያስገቡ (ኢሜል)",
+          "phone": "የማረጋገጫ ቁልፍ ያስገቡ (ኤስኤምኤስ)"
+        },
+        "error": "አልሰራም፡ እባክዎ በድጋሚ ይሞክሩ"
+      },
+      "profileImage": {
+        "button": {
+          "takeSelfie": "እራሶን ፎቶ ያንሱ",
+          "uploadPicture": "ምስሉን ያስገቡ",
+          "deleteAvatar": "አምሳያውን ያጥፉ"
+        }
+      },
+      "deleteAvatar": {
+        "title": "አምሳያውን ያጥፉ",
+        "paragraph": {
+          "areYouSure": "እርገጠኛ ነዎት፡ አምዳስያዎትን ለማጥፋት ይፈልጋሉ?"
+        },
+        "button": {
+          "delete": "አዎ ይጥፋ",
+          "cancel": "ሰርዝ"
+        }
+      }
+    }
+  },
+
+  "referralsContent": {
+    "banner": {
+      "inviteBanner": {
+        "title": "ፒላር ማህበራዊ ነው"
+      }
+    },
+    "modal": {
+      "missingPhone": {
+        "title": {
+          "activeRewardCampaign": "ጋብዘው ይሸለሙ",
+          "inactiveRewardCampaign": "ወደ ፒላር ይጋብዙ"
+        },
+        "paragraph": {
+          "reward": "ጋብዘውት የፒላርን መተግበርያ በእርሶ ማስፈንጠርያ በጫነ እያንዳንዱ ወዳጆ መጠን {{reward}} ይሸለማሉ።",
+          "enablingReferrals": "የማስተዋወቂያው ስራዓት እንዲሰራ ትክክለኛ ተጠቃሚ መሆንዎትን ማረጋገጥ አለብን። ለተጠቃሚዎችችን መረጃ ጥንቃቄ እንወስዳለን እናም ለማንም አናጋራውም።",
+          "enablingInvitations": "የማስተዋወቂያው ስራዓት እንዲሰራ ትክክለኛ ተጠቃሚ መሆንዎትን ማረጋገጥ አለብን። ለተጠቃሚዎችችን ግላዊ መረጃ ጥንቃቄ እንወስዳለን እናም ለማንም አናጋራውም።"
+        },
+        "button": {
+          "toUserData": "ኢሜል ወይም ስልኮን ያረጋግጡ"
+        }
+      }
+    },
+    "referralRewardText": "{{rewardsList}} እና መለዮ",
+    "title": {
+      "inviteMain": "ጓደኞችዎን ይጋብዙ",
+      "invitationsSent": "ግብዣው ተልኳል",
+      "referMain": "ጓደኞችዎን ይጋብዙ",
+      "incomingReward": "ሽልማቶ እየመጣ ነው",
+      "thanksForJoining": "ፒላርን ስለተቀላቀሉ እናመሰኛለን",
+      "thanksForUsing": "ፒላርን ስለተጠቀሙ እናመሰኛለን",
+      "claimTokens": "ቶክኖችን ይገባኛል በሉ",
+      "claimTokensError": "ስህተት"
+    },
+    "instruction": {
+      "shareLink": {
+        "title": "ማስፈንጠርያዎትን ያጋሩ",
+        "paragraph": "ወዳጆችዎን ወደ ፒላር ይጋብዙ"
+      },
+      "giveSmartWallet": {
+        "title": "ብልህ ቦርሳ በነፃ ይስጡ",
+        "paragraph": "በእርሶ ማስፈንጠርያ ፒላርን የጫኑ ወዳጆችዎ የነፃ የፒላር ብልህ ቦርሳ ማስጀመርያ ያገኛሉ"
+      },
+      "getTokens": {
+        "title": "የነፃ PLR ይውሰዱ",
+        "paragraph": "ጓደኞችዎን ስላስተዋወቁ ሜታ-ቶክኖችን ይሸለሙ"
+      }
+    },
+    "paragraph": {
+      "incomingAward": "ፒላርን ስለተቀላቀሉ እንኳን ደስ ያሎት።\nይሄንን ለማክበርም  {{reward}} ሸልመኖታል።\nሽልማቱን ለመቀበል ኢሜሎን ወይም ስልኮን መቸመር አለብዎት።\nሽልማቱ ለአዲስ ተጠቃሚዎች ብቻ ነው የሚሰጠው።",
+      "rewardMechanics": "ወዳጆችዎ የግብዣ ማስፈንጠርያ ይደርሳቸዋል። ስልክ ቁጥራቸውን ውይም ኢሜላቸውን ካረጋገጡ በኋላ የPLR ቶክን ሽልማትና መለዮ ይደርሳቸዋል። እርሶም ሽልማቶን ከዛ በኋላ ያገኛሉ።",
+      "invitationViaPhoneRules": "በኤስኤምኤስ ለመጋበዝ ስልኮትን ማረጋገጥ ይጠበቅቦታል።",
+      "invitationViaEmailRules": "በኢሜል ለመጋበዝ ኢሜሎትን ማረጋገጥ ይጠበቅቦታል።",
+      "rewardForEachInvitation": "ጋብዘውት የፒላርን መተግበርያ በእርሶ ማስፈንጠርያ በጫነ እያንዳንዱ ወዳጆ መጠን {{reward}} ይሸለማሉ። ነገር ግን ሁለታችሁም ዝርዝር መረጃችሁን ማረጋገጥ ይጠበቅባችሁዋል።",
+      "thanksForReferring": "ስለፒላር መረጃ ስላባዙ እናመሰኛለን።",
+      "rewardClaimingPending": "ግብይቱ በመካሄድ ላይ ነው።\nትንሽ ደቂቃዎችን ሊፈጅ ይችላል።\nሂደቱን እዚህ የቤት ገጹ ላይ ማየት ይችላሉ።",
+      "rewardClaimingError": "በአሁኑ ሰዓት ቁልፉን ማረጋገጥ አንችልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+      "getBadgesForEachInvitation": "ጋብዘውት የፒላርን መተግበርያ በእርሶ ማስፈንጠርያ በጫነ ወዳጆ ምክንያት የመለዮ ሽልማት መቀበሎን ይጀምሩ!",
+      "allowedInviteViaEmail": "አሁን ጓደኞችዎን በኢሜል መጋበዝ ይችላሉ።",
+      "allowedInviteViaPhone": "አሁን ጓደኞችዎን በስልክ መልክት መጋበዝ ይችላሉ።",
+      "emailVerified": "ኢሜይሎ ተረጋግጧል",
+      "phoneVerified": "ኢሜይሎ ተረጋግጧል"
+    },
+    "label": {
+      "invitesCount": "ግብዣዎት ({{amountText}} ለዛሬ ይቀራል)",
+      "referralsCount": "የማስተዋወቂያዎት ብዛት ({{amountText}} ለዛሬ ይቀራል)",
+      "remainingCount": "{{amount}} ተጨማሪ",
+      "noReferralCode": "መለያ የለም",
+      "fromCode": "ከ {{code}}",
+      "claiming": "ይገባኛልን በማድረስ ላይ",
+      "inviteFriends": "ወዳጆችዎን ወደ ፒላር ይጋብዙ",
+      "referAndGetRewards": "ወዳጆችዎን በመጋበዝ ነፃ የፒላርና ሌላ ተጨማሪ ሽልማቶች ያግኙ"
+    }
+  },
+
+  "relayerMigrationContent": {
+    "modal": {
+      "switch": {
+        "title": "የግብይቱን ዋጋ በፒላር አድርግ",
+        "paragraph": "ኢት ደህና ሰንብት! ከለውጡ በኋላ የግብይቱን ክፍያ በፒላር ቶክን ማድረግ ይችላሉ። በቂ ያልሆነ ነዳጅ ማለት ቀረ።",
+        "button": {
+          "switch": "መቀየሪያ"
+        },
+        "label": {
+          "freeSwitching": "መቀየር ነፃ ነው",
+          "switchPending": "የቅየራ ግብይቱ በመጠባበቅ ላይ ነው",
+          "waitingForConfirmation": "ማረጋገጫ በመጠበቅ ላይ"
+        }
+      },
+      "verification": {
+        "title": {
+          "email": "የማረጋገጫ ቁልፍ ያስገቡ (ኢሜል)",
+          "phone": "የማረጋገጫ ቁልፍ ያስገቡ (ኤስኤምኤስ)"
+        },
+        "error": "አልሰራም፡ እባክዎ በድጋሚ ይሞክሩ"
+      }
+    }
+  },
+
+  "addressBookContent": {
+    "title": {
+      "allowAccess": "የአድራሻ ማህደር ውስጥ ለመግባት"
+    },
+    "paragraph": {
+      "allowAccess": "የስልክዎትንና የኢሜል ወዳጅዎችዎትን ለማኘት እባክዎት ወደ አድራሻ ማህደሮት የመግቢያ ፈቃድ ይስጡ።"
+    }
+  },
+
+  "poolTogetherContent": {
+    "label": {
+      "prizeInDollars": "ሽልማት ${{prize}}",
+      "ownedTickets": "{{count}} ትኬት",
+      "ownedTickets_plural": "{{count}} ትኬቶች",
+      "winChance": "{{chancePercent}} እድል",
+      "prizeEstimate": "ሽልማይ በግምት",
+      "currentPrize": "ሽልማቱ",
+      "winningChance": "<0>{{primaryText}}</0> የማሸነፍ እድል",
+      "purchaseTickets": "ትኬት ይግዙ ለስብስቡ",
+      "daiPool": "የዳይ ስብስብ",
+      "usdcPool": "የዩኤስዲሲ ስብስብ"
+    },
+    "ticketsList": {
+      "title": "የፑል ቱጌዘር የቁጠባ ጨዋታ"
+    },
+    "title": {
+      "mainScreen": "ፑል ቱጌዘር",
+      "activityFeed": "ታሪክ",
+      "ticketPurchaseScreen": "ትኬት ይግዙ ",
+      "withdrawScreen": "ያውጡ",
+      "withdrawConfirmScreen": "ይገምግሙ",
+      "authorizePoolTogether": "ለፑል ቱጌዘር ፈቃድ ይስጡ",
+      "purchaseConfirmScreen": "ይገምግሙ"
+    },
+    "button": {
+      "joinPool": "ስብስቡ ውስጥ ይግቡ",
+      "purchaseTickets": "ትኬቶች ይግዙ "
+    },
+    "paragraph": {
+      "purchasedTicketsEligibleDate": "ዛሬ የተገዛው ትኬት ከ {{date}} ጀምሮ ለሚሰጠው ሽልማት ይውላል።",
+      "automationMissing": "ፑል ቱጌዘርን ለመቀላቀል ግብይቶትን ራስ-ሰር ማድረግ ይጠበቅብዎታል",
+      "pendingAutomation": "ፑል ቱጌዘር ራስ-ሰር እስኪሆን ይጠብቁ",
+      "withdrawalNote": "ካወጡ ሽልማት የማግኘት እድል አይኖሮትም።",
+      "receiveOnWithdrawal": "{{token}} በቦርሳዎ ይደርስዎታል።",
+      "allowAutomationWithToken": "ፑል ቱጌዘር የእርስዎን {{token}} ወጪ አድርጎ ግብይትዎን እራስ-ሰር እንዲያደርግ ይፍቀዱ። አንዴ ከፈቀዱ ከዚያ ቀጥሎ ያሉ ግብይቶች ያለ ምንም ራስ-ገዝ አድራጊ ክፍያዎች የከናወናሉ።"
+    }
+  },
+
+  "sablierContent": {
+    "status": {
+      "canceled": "ተሰርዟል",
+      "ended": "አልቋል",
+      "remaining": "ቀሪ"
+    },
+    "moneyStreamingList": {
+      "title": "የሴብሊየር የገንዘብ ፍሰት"
+    },
+    "title": {
+      "incomingStream": "ገቢ ፍሰት",
+      "newStreamScreen": "አዲስ ፍሰት",
+      "newStreamReviewScreen": "ይገምግሙ",
+      "outgoingStreamScreen": "ወጪ ፍሰት",
+      "streamingActivityFeed": "ታሪክ",
+      "allowanceModal": "ሴብሊየርን ይፍቀዱ",
+      "cancelStreamScreen": "ፍሰቱን ይሰርዙ",
+      "userStreamsScreen": "ፍሰቶችዎ",
+      "withdrawScreen": "ያውጡ",
+      "withdrawReviewScreen": "ይገምግሙ",
+      "startFirstStream": "የመጀመሪያዎትን ፍሰት ይጀምሩ"
+    },
+    "label": {
+      "streamed": "የተፋሰሰ",
+      "withdrawn": "የወጣ",
+      "start": "ጀምር",
+      "end": "ፈጽም",
+      "ofTokenValueStream": "የ {{value}} {{token}} ፍሰት"
+    },
+    "button": {
+      "startImmediately": "አሁን ጀምር",
+      "plusHour": "+1 ሰዓት",
+      "plusDay": "+1 ቀን",
+      "plus30Days": "+30 ቀኖች",
+      "startStream": "ፍሰቱን ጀምር",
+      "cancelStream": "ፍሰቱን ይሰርዙ",
+      "confirmStreamCancellation": "መሰረዙን ያረጋግጡ",
+      "cancelStreamCancellation": "አትሰርዝ",
+      "newStream": "አዲስ ፍሰት",
+      "confirmWithdraw": "ማውጣትዎን ያረጋግጡ"
+    },
+    "paragraph": {
+      "allowanceMissing": "የክፍያ ፍሳሽ ለመፍጠር ሴብሊየር የ {{asset}} ግብይቶችን በእርሶ ቦታ እንዲልክ መፍቀድ አለብዎት።",
+      "allowancePending": "እባክዎት የሲብሌር የመፍቀጃ ግብይት እስኪጠናቀቅ ይጠብቁ",
+      "newStreamInformation": "በአጠቃላይ የሚያፋስሡት {{value}} {{asset}} ለ {{duration}} ግዜ {{streamingRate}} በደቂቃ",
+      "allowSablierWithToken": "ሴብሊየር የ {{token}} ግብይቶችን በእርሶ ቦታ እንዲልክ መፍቀድ አለብዎት።",
+      "cancelStreamWarning": "ፍሳሹን ከዘረዙ ለተቀባዩ የላኩት ክፍያ አይመለስም፡ ያልተከፈለው ግን ይመለስልዎታል።",
+      "receiveOnWithdrawal": "{{token}} በቦርሳዎ ይደርስዎታል።"
+    },
+    "tabs": {
+      "outgoingStreams": "ወጪ",
+      "incomingStreams": "ገቢ"
+    }
+  },
+
+  "walletConnectContent": {
+    "title": {
+      "appsList": "መተግበርያ ያስሱ",
+      "requestsList": "ጥያቄዎች",
+      "activeConnections": "ገቢራዊ ግንኙነቶች",
+      "connect": "አገናኝ",
+      "walletConnectRequests": "የዎሌት ኮኔክት ጥያቄ",
+      "walletConnect": "ዎሌት ኮኔክት",
+      "requestType": {
+        "call": "የጥሪ ጥያቄ",
+        "transaction": "የግብይት ጥያቄ",
+        "message": "የመልክት ጥያቄ",
+        "unsupported": "ያልተደገፈ ጥያቄ",
+        "default": "ጥያቄ"
+      },
+      "manageSessionsScreen": "ክፍለ ግዜዎችን ያስተዳድሩ"
+    },
+    "label": {
+      "requestFrom": "ከ {{name}} ይጠይቁ",
+      "unknownRequestName": "ያልታወቀ",
+      "requestDescription": "መግለጫ",
+      "requestLink": "ዩአርኤል",
+      "upcomingApp": "በቅርቡ ይመጣል",
+      "name": "ስም"
+    },
+    "banner": {
+      "promo": {
+        "paragraph": "በፒላር ውስጥ ሊያገኟቸው የሚችሉ መተግበርያዎች"
+      },
+      "promoExtended": {
+        "paragraph": "ባልተማከለ መለወጫ ቶክኖን ይቀይሩ፣ ከሪፕቶ ያበድሩ፣ ይበደሩ፣ ጨዋታዎችን ይጫወቱ ወዘተ..."
+      }
+    },
+    "button": {
+      "approveType": {
+        "call": "ጥሪውን ይፍቀዱ",
+        "transaction": "ግብይቱን ይፍቀዱ",
+        "message": "መልክቱን ይፍቀዱ",
+        "unsupported": "ያልተደገፈውን ይፍቀዱ",
+        "default": "ይፍቀዱ"
+      },
+      "checkApp": "ይመልከቱ"
+    },
+    "appDescription": {
+      "zerion": "ያልተማከለ የመዋዕለ ነዋይ ለማፍሰስ፣ ወለድ ለማግኘት እና የክሪፕቶ ንብረቶችን ለመበደር በቀላሉ የሚያስችል በይነ ገጽ።",
+      "poolTogether": "የማያከስርና የተመረመረ የቁጠባ ጨዋታ። ትኬት ለማግኘት ዳይ ወደ ስብስቡ ያስቀምጡ። እያንዳንዱ ትኬት ሳምንታዊ ሽልማት የመድረስ እድል ይሰጣል።",
+      "mooni": "በቀላሉ ክሪፕቶ ገንዘብዎን ያለ መታወቂያ ወደ ባንክ ገንዘብ ለመቀየር የሚያስችል አሰራር",
+      "oasis": "ዳይ ተጠቅመው ይገበያዩ፣ ይበደሩ፣ ወይም ያስቀምጡ።",
+      "sablier": "ገንዘብ በቅጽበት \"ያፋስሱ\"",
+      "binanceDex": "ያልተማከለ ዲጅታል ንብረት መቀየሪያ በአለም መሪ የሆነውን የክሪፕቶ መቀየሪያ ከፈጠሩት",
+      "localCryptos": "በአለማችን ዋነኛው ታዋቂ አሳዳሪ-ያልሆነ እኩያ-ለ-እኩያ የሚያስተናግድ ገበያ ክሪፕቶን እርስ በእርስ ለመቀያየር የሚያስችል። ለመግዛት፣ ለመሸጥ በራሶ ውል መሰረት እናም የፈለጉትን የክፍያ መንገድ በመጠቀም።",
+      "asyncArt": "ሊተገበሩ የሚችሉ የማይገኙ ስነ-ጥበባትን ይሰብስቡ",
+      "knownOrigin": "የማይገኙ የዲጅታል ስነ-ጥበባትን ያግኙና ይሰብስቡ።",
+      "clovers": "የክሪፕቶ ምስሎችን ያግኙ፣ ይሰብስቡ፣ እናም ይገበያዩ",
+      "default": "ያልታወቀ"
+    },
+    "tabs": {
+      "active": {
+        "title": "ገቢራዊ",
+        "emptyState": {
+          "title": "ገቢራዊ የሆኑ ክፍለ ግዜዎች የሉም"
+        }
+      },
+      "requests": {
+        "title": "ጥያቄዎች",
+        "emptyState": {
+          "title": "በመጠባበቅ ላይ ያሉ ጥያቄዎች የሉም"
+        }
+      }
+    },
+    "paragraph": {
+      "finalFeeMightBeHigher": "ማስታወቂያ፡ ከዚህ በታች ያለው ክፍያ የተሳሰረው መድረክ ላይ ከሚቀርበው ሊወደድ ይችላል፡ ነገር ግን ብዙውን ግዜ የሚያንስ ነው የሚሆነው"
+    }
+  },
+
+  "servicesContent": {
+    "title": {
+      "servicesScreen": "ግልጋሎቶች"
+    },
+    "exchange": {
+      "title": "የአቅርቦት መዘወርያ",
+      "description": "ከተለያዩ ያልተማከሉ መቀየሪያዎችና የቶክን መቀያየሪያ ግልጋሎቶች በጥቅል የሚቀርቡ የሽያጭ ጨረታዎች",
+      "label": {
+        "exchangeCount": "{{count}} መንዛሪ",
+        "exchangeCount_plural": "{{count}} መንዛሪዎች"
+      }
+    },
+    "aaveDeposit": {
+      "title": "አቬ ተቀማጭ",
+      "description": "ክሪፕቶዎን ለቁጠባ አስቀምጠው ቅፅበታዊ ወለድ ያግኙ"
+    },
+    "poolTogether": {
+      "title": "ፑል ቱጌዘር የቁጠባ ጨዋታ",
+      "description": "ዳይ/ዩኤስዲሲ ስብስቡ ውስጥ ያስቀምጡ።  እያንዳንዱ ትኬት ሳምንታዊ ሽልማት የመድረስ እድል ይሰጣል።"
+    },
+    "sablier": {
+      "title": "የሴብሊየር የገንዘብ ፍሰት",
+      "description": "በአንድ ግዜ ተቀማጭ ብቻ ገንዘብ ወደ ሰዎች ወይም ድርጅቶች በቅፅበት ያፋሱ"
+    },
+    "peerToPeerTrading": {
+      "title": "እኩያ-ለ-እኩያ ግብይት",
+      "description": "ቶክኖችን በቀጥታ ከሎእሎችጋ ይቀያየሩ። የማይጎዳ፣ ደህንነቱ የተጠበቀና፣ ስም-አልባ"
+    },
+    "ramp": {
+      "assetDecisionAlert": {
+        "title": "እባክዎ ይምረጡ...",
+        "description": "ፒላር ቶክን መግዛር ይፈልጋሉ ወይስ ሌላ ቶክኖችን?",
+        "actionNonPlr": "ሌላ ቶክኖች",
+        "actionPlr": "ፒላር ቶክኖች"
+      },
+      "title": "በራምፕ ኔትወርክ ይግዙ",
+      "description": "አሁን ይግዙ"
+    },
+    "wyre": {
+      "title": "በዋየር ይግዙ (ከአውሮፓ ውጭ)",
+      "description": "አሁን ይግዙ"
+    },
+    "altalix": {
+      "title": "በአልታሊክስ ይግዙ",
+      "description": "አሁን ይግዙ"
+    },
+    "label": {
+      "requiresActivation": "ገቢራዊነት ይፈልጋል",
+      "forSmartWallet": "ለብልህ ቦርሳ",
+      "soon": "በቅርቡ"
+    }
+  },
+
+  "transactions": {
+    "title": {
+      "sendScreen": "ይላኩ",
+      "valueSelectorModal": "ይላኩ",
+      "reviewAndConfirmScreen": "ገምግመው ያረጋግጡ",
+      "allowanceTransactionSuccess": "ግብይቱ እየደረሰ ነው",
+      "exchangeTransactionSuccess": "ቶክኖች በመቀየር ላይ",
+      "transactionSuccess": "ቶክኖቹ እየመጡ ነው",
+      "collectibleTransactionSuccess": "ተሰብሳቢዎቹ እየመጡ ነው",
+      "poolTogetherTransactionSuccess": "ስብስቡ ውስጥ ገብተዋል!",
+      "sablierTransactionSuccess": "ፍሰትዎ ጀምሯል",
+      "transferAssetsToSmartWalletScreen": "የሚልኩትን ንብረት ይምረጡ",
+      "amountEditScreen": "ብዛቱን ያርትዑ",
+      "assetsTransferToSmartWalletStatusScreen": "በቁልፍ መሰረት ያሉትን ንብረቶች ለማፍለስ",
+      "creatingTransactions": "ግብይቶችን ለመፍጠር",
+      "keyBasedAssetsMigrationComplete": "በቁልፍ መሰረት ያሉትን ንብረቶች ማፍለሱ ተጠናቋል"
+    },
+    "button": {
+      "payFeeWithPillar": "የግብይቱን ዋጋ በፒላር አድርግ",
+      "confirmTransaction": "ግብይቱን ያረጋግጡ",
+      "cancelUnsent": "ያልተላከውን ይሰርዙ",
+      "speedSettings": "የፍጥነት ቅንጅቶች"
+    },
+    "label": {
+      "amount": "መጠን",
+      "receiver": "ተቀባይ",
+      "recipient": "ተቀባይ",
+      "recipientEnsName": "የተቀባይ ኢኤንኤስ ስም",
+      "recipientAddress": "የተቀባይ አድራሻ",
+      "transactionFee": "ክፍያ በግምት",
+      "assetsToSettle": "የሚወራርዱት ንብረቶች",
+      "recipientGet": "ተከፋይ የሚደርሰው",
+      "youPay": "ይከፍላሉ",
+      "collectibleName": "ሊሰበሰብ የሚችል",
+      "noAssetsFound": "ንብረት አልተገኘም",
+      "noCollectiblesFound": "ተሰብሳቢ አልተገኘም",
+      "fromKeyWallet": "ከቁልፍ ቦርሳ",
+      "toSmartWallet": "ወደ ብልህ ቦርሳ",
+      "tokensToTransfer": "የሚላኩ ቶክኖች",
+      "collectiblesToTransfer": "የሚላኩ ተስብሳቢዎች",
+      "speed": "ፍጥነት",
+      "data": "መረጃ",
+      "message": "መልክት",
+      "address": "አድራሻ"
+    },
+    "paragraph": {
+      "exchangeTransactionSuccess": "ይሄን ግብይት ለማጠናቀቅ ትንሽ ግዜ ሊወስድ ይችላል",
+      "poolTogetherDepositTransactionSuccess": "ስብሥቡን ይከታተሉ እናም እድል ይቅናዎት",
+      "sablierStreamTransactionSuccess": "ገንዝቦቹ ወደ {{address}} እንዴት እንደሚሄዱ ማየት ይችላሉ",
+      "transactionSuccess": "ቶሎ ይጠናቀቃል፡ ሆኖም ግን የተጠቀሙት የነዳጅ ዋጋ እናም የኢቲሪየም አውታረ መረብ መጨናነቅ።",
+      "finalFeeInformation": "ግብይቱ ሲጠናቀቅ ምንዛሪው ትንሽ ከፍ ወይም ዝቅ ሊል ይችላል።"
+    },
+    "emptyState": {
+      "assetsList": {
+        "title": "ንብረቶች አልተገኙም",
+        "paragraph": "ስሙን በትክክል ማስገባትዎን ያረጋግጡ"
+      }
+    }
+  },
+
+  "toast": {
+    "cantUpdateUser": "ለውጦቹ አልተቀመጡም። ትንሽ ቆይተው በድጋሚ ይሞክሩ",
+    "cantVerifyCode": "በአሁኑ ሰዓት ቁልፉን ማረጋገጥ አንችልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+    "cantVerifyInfo": {
+      "phone": "በአሁኑ ሰዓት ስልኮን ማረጋገጥ አንችልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+      "email": "በአሁኑ ሰዓት ኢሜሎን ማረጋገጥ አንችልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+      "default": "በአሁኑ ሰዓት መረጃዎትን ማረጋገጥ አንችልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።"
+    },
+    "verificationSuccess": {
+      "email": "የኢሜል ማረጋገጫው ተሳክቷል።",
+      "phone": "የስልክ ማረጋገጫው ተሳክቷል።",
+      "referralReward": "፣እረጃዎትን ስላረጋገጡ እናመሰኛለን። የሽልማትዎት ስጦታ በሂደት ላይ ነው።"
+    },
+    "referralInviteCantBeSent": {
+      "allInvites": "ግብዣዎቹ አልተላኩም። እባክዎት ትንሽ ቆይተው ይሞክሩ።",
+      "notAllInvites": "ይውተወሰኑ ግብዣዎች አልተላኩም። እባክዎት ትንሽ ቆይተው ይሞክሩ።"
+    },
+    "userIsOffline": "መስመር ላይ ያሉ አይመስልም። እባክዎ የበይነ-መረብ ግንኙነት እንዳለዎት ያረጋግጡ።",
+    "biometricLoginEnabled": "የባዮሜትሪክ መግቢያው በስራ ላይ ውሏል።",
+    "biometricLoginDisabled": "የባዮሜትሪክ መግቢያው ተሰናክሏል።",
+    "assetAdded": "{{assetName}} ({{assetSymbol}}) ተጨምሯል።",
+    "badgeReceived": "{{badgeName}} ደርሷል።",
+    "unableToAddDevice": "መሳርያውን ለመጨመር አልተቻለም፡ እባክዎ በድጋሚ ይሞክሩ",
+    "linkedDeviceRemoved": "የተያያዘው መሳርያ ተወግዷል።",
+    "linkedDeviceNotFound": "የተያያዘው መሳርያ አልተገኘም።",
+    "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) ወደ {{toAssetName}} ({{toAssetSymbol}}) መቀየርያ ስራ ላይ ውሏል።",
+    "keyWalletAssetsTransfered": "ንብረቱ ተላልፏል። መልካም የብልህ ቦርስ አጠቃቀም ይሁንልዎት።",
+    "poolTogetherAutomationEnabled": "{{tokenSymbol}} ስራ ላይ ውሏል። ይቅናዎት!",
+    "poolTogetherAutomationFailed": "{{tokenSymbol}} ን ገቢራዊ ማድረግ አልተቻልመ። እባክዎት ትንሽ ቆይተው ይሞክሩ።",
+    "walletRecovered": "አሁን ቦርሳዎ ተመልሷል። መልካም የፒላር አጠቃቀም ይሁንልዎ።",
+    "rewardsOnTheirWay": "የግብዣው ሽልማት እየመጣ ነው። በቅርብ ግዜ ይደርሶታል።",
+    "somethingWentWrong": "የተሳሳተ ነገር አለ፡ ስህተቱን በማጣራት ላይ ነን። ሃሳብ አይግባዎት፡ ገንዘቦ በአስተማማኝ ሁኔታ ላይ ነው ያለው። ትንሽ ቆይተው ይሞክሩ ወይም ከድጋፍ ሰጪ ጋር ይገናኙ።",
+    "failedToLogIn": "እርሶን የማስገባት ችግር አጋጥሟል። እባክዎት ትንሽ ቆይተው ይሞክሩ።",
+    "PPNTopUpSuccess": "{{paymentInfo}} ወደ ፒላር በርሜል ተጨምሯል።",
+    "PPNWithdrawSuccess": "{{paymentInfo}} ከፒላር በርሜል ወጥቷል።",
+    "PPNSettleSuccess": "ወዶ ቦርሳዎ ንብረቶች ተወራርደዋል።",
+    "lendingDepositSuccess": "{{paymentInfo}} ተቀምጧል።",
+    "lendingWithdrawSuccess": " {{paymentInfo}} ወጥቷል።",
+    "transactionSent": "{{paymentInfo}} ተልኳል።",
+    "transactionReceived": "{{paymentInfo}} ደርሷል።",
+    "backendProblem": "በአገልጋዩ አስሊ ላይ የተሳሳተ ነገር አለ፡ ስህተቱን በማጣራት ላይ ነን። ሃሳብ አይግባዎት፡ ገንዘቦ በአስተማማኝ ሁኔታ ላይ ነው ያለው። ትንሽ ቆይተው ይሞክሩ ወይም ከድጋፍ ሰጪ ጋር ይገናኙ።",
+    "PPNTopUp": "{{paymentInfo}} ወደ ፒላር በርሜል ተልኳል።",
+    "PPNWithdraw": "የ {{paymentInfo}} ማውጣት ጀምሯል። ቶክኖቹ በቅርብ ግዜ ውስጥ ይደርሱዎታል።",
+    "PPNSettle": "ማወራረዱ ተጀምሯል። ቶክኖቹ በቅርብ ግዜ ውስጥ ይደርሱዎታል",
+    "failedToAddDevice": "መሳርያውን ለመጨመር አልተቻለም፡ እባክዎ በድጋሚ ይሞክሩ",
+    "failedToRemoveDevice": "መሳርያውን ለማስወገድ አልተቻለም፡ እባክዎ በድጋሚ ይሞክሩ",
+    "switchRelayerTokenFailed": "የክፍያ ቶክኑን ማብራት አልተቻለም፡ እባክዎ በድጋሚ ይሞክሩ",
+    "syntheticTransactionFailed": "ይሄንን ግብይት ማከናወን አልተቻለም። እባክዎ በድጋሚ ይሞክሩ።",
+    "assetHasBeenHidden": "{{assetName}} ({{assetSymbol}}) ተወግዷል።",
+    "ensureBackup": "እባክዎ ለቦርሳዎ መጠባበቂያ ማበጀቶን እርግጠኛ ይሁኑ።",
+    "walletConnectUnsupportedApp": "ይሄ መተግበርያ አይደገፍም። በስራ ላይ እንዲውል ከፈለጉ ረዳት ሰጪን ይጠይቁ።",
+    "walletConnectConnectionsExpired": "ግንኙነቱ ግዜ አልፎበታል። እባኮት በድጋሚ ግንኙነት ይፍጠሩ።",
+    "walletConnectSessionTimedOut": "ጥያቄው ግዜ አልቆበታል። ደግመው ይሞክሩ።",
+    "walletConnectSmartWalletNotActive": "ብልህ ቦርሳዎ ገቢራዊ ካልሆነ ዎሌት ኮኔክትን መጠቀም አይችሉም።",
+    "cantReadQRCode": "ኪውአር ቁልፉን ማንበብ አልተቻለም። ደግመው ይሞክሩ ወይም ሌላ ምስል ይጠቀሙ።",
+    "incorrectQRCode": "ኪውአር ቁልፉ የተሳሳተ ነው።",
+    "transactionFeeEstimationFailed": "የግብይቱን ዋጋ መገመት አልተቻለም። እባክዎ በድጋሚ ይሞክሩ።",
+    "walkthroughFailed": "አልሰራም፡ እባክዎ በድጋሚ ይሞክሩ",
+    "addressCopiedToClipboard": "አድራሻው ወደ ቅንጥብ ሰሌዳው ተግልብጧል",
+    "ensNameCopiedToClipboard": "ኢኤንኤስ ስሙ ወደ ቅንጥብ ሰሌዳው ተገልብጧል።",
+    "forbiddenToRemoveAsset": "{{assetName}} ({{assetSymbol}}) ን ለማስወገድ አልተቻለም። ለፒላር በጣም አስፈላጊ ነው።",
+    "failedToGetFaceIDPermission": "የፊት መለያው ለፒላር የተከለከለ ነው። የስልክዎ ማቀናበርያ ውስጥ ገብተው ሊቀይሩት ይችላሉ።",
+    "subscribedToNewsletter": "ለመዋዕለ ዜናችን ይመዝገቡ።",
+    "subscriptionToNewsletterFailed": "ለመዋእለ ዜናችን ሊመዘገቡ አልቻሉም። እባክዎ በድጋሚ ይሞክሩ።",
+    "cantInviteYourself": "እራስዎን መጋበዝ አይችሉም።",
+    "invalidPhoneNumber": "የስልክ ቁጥር የአገር መለያ ቁልፍ ያስፈልገዋል።",
+    "dailyInvitationsLimitReached": "{{remainingDailyInvitations}} ግብዣዎች ለዛሬ ይቀሮታል። በቀን {{allowedDailyUpdates}} ነው የሚችሉት።",
+    "ensNameNotFound": "ኢኤንኤስ ስም አልተገኘም። ሌላ ስም ይሞክሩ።",
+    "purchasedPoolTogetherTickets": "{{count}} ትኬቶች ገዝተዋል። መልካም እድል።",
+    "purchasedPoolTogetherTickets_plural": "{{count}} ትኬቶች ገዝተዋል። መልካም እድል።",
+    "transactionStarted": "{{paymentInfo}} ተልኳል።",
+    "tooManyTransactionsToSettle": "በአንድ ግዜ ማወራረድ የሚችሉት ግብይት {{maxTxToSettle}} ብቻ ነው። ሌሎቹን በሚቀጥለው ዙር ማወራረድ ይችላሉ።",
+    "notEnoughForTransactionFee": "የግብይቱን ዋጋ ለመክፈል በቂ {{feeSymbol}} የለም።",
+    "languageChanged": "ቋንቋ ተቀይሯል።",
+    "languageChangeFailed": "ቋንቋውን ለመቀየር አልተቻለም፡ እባክዎ በድጋሚ ይሞክሩ።",
+    "sablierWithdraw": "{{assetName}} ({{assetSymbol}}) ወጥቷል።",
+    "sablierCancelStream": "ተፋሰሱ ተሰርዟል።",
+    "smartWalletDeviceAdded": "አዲስ የተጎዳኘ መሳርያ ተጨምሯል",
+    "cryptoPurchaseLaunchFailed": "ይቅርታ ግልጋሎቱን አሁን ለመክፈት አልቻልንም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+    "exchangeAllowanceFailed": "ይቅርታ የቶክኑን የፈቃድ መጠን ለመወሰን አልተቻለም። እባክዎ በድጋሚ ይሞክሩ።",
+    "contactUpdated": "ወዳጅዎ መረጃ ተሻሽሏል።",
+    "contactDeleted": "ወዳጆዎ ተወግዷል።",
+    "contactAdded": "አዲስ ወዳጅ ተቸምሯል።.",
+    "smartWalletActivationUnavailable": "ገቢራዊ ማድረግ ለግዜው አይቻልም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+    "failedToUploadImage": "ምስሉን ከሰነ-ጥበብ ቋቱ ለማምጣት አልተቻለም። እባክዎ በድጋሚ ይሞክሩ።",
+    "failedToDeleteAvatar": "አምሳያውን ለማጥፋት አልተቻለም። እባክዎ በድጋሚ ይሞክሩ።",
+    "failedToCreateOrder": "ለግዜው ጨረታዎን ለመቀበል አልተቻለም። እባክዎ ትንሽ ቆይተው ይሞክሩ።",
+    "cannotFindDeploymentHash": "የመጫኛው ሃሽ ሊገኝ አልቻለም። እባክዎ ደግመው ይሞክሩ።",
+    "cannotFindTransactionHash": "የግብይቱ ሃሽ ሊገኝ አልቻለም። እባክዎ ደግመው ይሞክሩ።",
+    "cannotGetBlockchainExplorerLink": "የብሎክቼይን አሳሹ ማስፈንጠርያ ሊገኝ አልቻለም። እባክዎ ደግመው ይሞክሩ።"
+  },
+
+  "exchangeContent": {
+    "modal": {
+      "smartWalletMissing": {
+        "title": "ብልህ ቦርሳውን ስራ ላይ ያውሉ።",
+        "paragraph": "ንብረቶቹን ለመቀበል ብልህ ቦርሳ ያስፈልጎታል።",
+        "button": {
+          "enable": "አንቃ"
+        }
+      },
+      "smartWalletIsNotActive": {
+        "title": "የብልህ ቦርሳ መለያ ይጠቀሙ",
+        "paragraph": "ክሪፕቶ ለመግዛት የብልህ ቦርሳዎትን መምረጥ አለብዎት።",
+        "button": {
+          "selectAccount": "መለያ ይምረጡ"
+        }
+      },
+      "enableAsset": {
+        "title": "{{asset}} ን ገቢራዊ ያድርጉ",
+        "paragraph": "አንዴ ገቢራዊ ከሆነ በ {{providerName}} ላይ ለመቀየር ይቻላል።",
+        "button": {
+          "enable": "አንቃ"
+        }
+      },
+      "intro": {
+        "title": "ይቀይሩ።",
+        "paragraph": "የፒላር መቀየርያ ወይም የአቅርቦት መዘውር የምንለው የተለያዩ ተጫራቾችን ከተለያዩ በፒላር ከተረጋጋጡ አገልግሎት ሰጪዎች ያሰባስባል።\n\nየዱቤ ካርድ በመጠቀም ክሪፕቶ ይግዙ፡ አፕል ፔይ ወይም ጉግል ፔይ። ቶክኖችን በትንሽ ንኪዎች ብቻ ይቀይሩ።",
+        "button": {
+          "next": "ቀጣይ"
+        }
+      }
+    },
+    "title": {
+      "confirmScreen": "ዝርዝሮች",
+      "settingsScreen": "ቅንጅቶች",
+      "activateSmartWalletScreen": "ብልህ ቦርሳውን ያስጀምሩ",
+      "buyWithWyreScreen": "በዋየር ይግዙ "
+    },
+    "button": {
+      "enableAsset": "ንብረቱን ገቢራዊ ያድርጉ",
+      "allowExchange": "ይሄንን መቀየሪያ ይፍቀዱ"
+    },
+    "paragraph": {
+      "tokenAllowanceInReviewScreen": "መረጃውን ገምግመው፣ ንብረቱን ገቢራዊ አድርገው፣ የግብይቱን ዋጋ ያጽድቁ።",
+      "ruleToGetExchangedTokensIntoSmartWallet": "የመቀየርያ ቶክኖቹን ለመቀበል ብልህ ቦርሳውን ገቢራዊ ያድርጉ።"
+    },
+    "label": {
+      "assetToEnable": "ገቢራዊ የሚደረጉት ንብረቶች",
+      "enabledAssets": "ገቢራዊ የተደረጉ የመለወጫ ንብረቶች፡ ",
+      "exchangeRate": "ምንዛሪ",
+      "availableAmount": "የሚገኝ",
+      "updatedRealTime": "በቅጽበት የሚታደስ"
+    },
+    "emptyState": {
+      "noOffers": {
+        "title": "የቀረበ ጨረታ የለም",
+        "paragraph": "በአሁን ሰዓት የፈለጉት የዋጋ ጨረታ ከለዋጮች  አልመጣም።\nአዳዲስ ጨረታዎች በማንኛውም ሰዓት ሊመጡ ስለሚችሉ እንዳያመልጦ።"
+      }
+    }
+  },
+
+  "alert": {
+    "deleteContact": {
+      "title": "{{contactName}} ይወገድ",
+      "message": "እርግጠኛ ኖት ይሄ ወዳጅ እንዲወገድ ይፈልጋሉ?",
+      "button": {
+        "cancel": "ሰርዝ",
+        "ok": "አዎ ሰርዝ"
+      }
+    },
+    "hideAsset": {
+      "title": "እርግጠኛ ነዎት?",
+      "message": "ይሄንን {{asset}} ከቦርሳዎ እንዲደበቅ ያደርጋል",
+      "button": {
+        "cancel": "ሰርዝ",
+        "ok": "ይደብቁ"
+      }
+    },
+    "logOut": {
+      "title": "ይውጡ።",
+      "message": "አንዴ ከወጡ ያለ 12ቱ የመጠባበቂያ ቃላት ተመልሰው ወደዚህ ቦርሳ ሊገቡ ይችሉም።",
+      "button": {
+        "cancel": "ሰርዝ",
+        "ok": "ያረጋግጡ"
+      }
+    },
+    "attemptToLogOutWithoutBackup": {
+      "title": "ይውጡ።",
+      "message": "12ቱን የመጠባበቂያ ቃላት ከያዙ በኋላ መውጣት ይችላሉ።",
+      "button": {
+        "cancel": "ሰርዝ",
+        "backup": "12 የመጠባበቂያ ቃላት ያስቀምጡ"
+      }
+    },
+    "invalidReferralDeepLink": {
+      "title": "የተሳሳተ ማስፈንጠሪያ",
+      "message": "የግብዣው መለያ የለም"
+    },
+    "walletConnectDisconnect": {
+      "title": "ከ {{name}} ይለያዩ",
+      "message": "እባክዎት ከ {{name}} መለያየቶትን ያጽድቁ።",
+      "button": {
+        "cancel": "ሰርዝ",
+        "ok": "ግንኙነት ያቋርጡ"
+      }
+    },
+    "addressIsNotOnPillarNetwork": {
+      "title": "አድራሻው የፒላር አውታረ መረብ ውስጥ አይገኝም",
+      "message": "ባለቤቱን የፒላር ቦርሳን እንዲጭኑ ጋብዘው ቅጽበታዊ ግብይት በነጻ እንዲልኩ ወይም በዋናው የኢቲሪየም አውታረ መረብ እንዲልኩ ያስችሏቸው።",
+      "button": {
+        "switchToMainnet": "ወደ ኢቲሪየም ዋናው አውታረ መረብ ይቀይሩ",
+        "cancel": "ሰርዝ"
+      }
+    },
+    "removeConnectedDevice": {
+      "title": "እርግጠኛ ነዎት?",
+      "message": "በዚህ መሳርያና በእርስዎ መለያ መሃል ያለውን ጥንድነት ሊያስወግዱ ነው።\nእባክዎት ለሁሉም ንብረቶ መጠባበቂያ ማዘጋጀቶን እርግጠና ይሁኑ።",
+      "button": {
+        "cancel": "ሰርዝ",
+        "ok": "መወገዱን ያጽድቁ።"
+      }
+    },
+    "contactsPermission": {
+      "title": "ወዳጆች",
+      "message": "ይሄ መተግበርያ ወዳጆችዎን ማየት ይፈልጋል",
+      "button": {
+        "ok": "ፍቀድ"
+      }
+    }
+  },
+
+  "notification": {
+    "transactionReceivedPending": "{{tokenValue}} እየመጣ ነው።",
+    "transactionReceivedConfirmed": "{{tokenValue}} ደርሷል።",
+    "transactionSentPending": "{{tokenValue}} እየተላከ ነው።",
+    "transactionSentConfirmed": "{{tokenValue}} ተልኳል።",
+    "receivedCollectible": "ተሰብሳቢው ደርሶታል።",
+    "collectibleSentAndReceived": "ተሰብሳዎቢዎ ደርሷል"
+  }
+}

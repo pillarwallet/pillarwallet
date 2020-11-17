@@ -24,11 +24,14 @@ import ReduxAsyncQueue from 'redux-async-queue';
 import { RESET_APP_LOADED, UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { CACHE_STATUS, SET_CACHED_URLS } from 'constants/cacheConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 import Storage from 'services/storage';
 import { initAppAndRedirectAction } from 'actions/appActions';
 import localeConfig from 'configs/localeConfig';
 import { getDefaultSupportedUserLanguage } from 'services/localisation/translations';
+import { firebaseRemoteConfig } from 'services/firebase';
+import { TEST_TRANSLATIONS_BASE_URL, TEST_TRANSLATIONS_TIME_STAMP } from 'constants/localesConstants';
 
 const storage = Storage.getInstance('db');
 
@@ -50,19 +53,35 @@ const initialCacheState = {
 };
 
 
+const mockedFirebaseConfigGetString = (key) => {
+  switch (key) {
+    case REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP:
+      return TEST_TRANSLATIONS_TIME_STAMP;
+
+    case REMOTE_CONFIG.APP_LOCALES_URL:
+      return TEST_TRANSLATIONS_BASE_URL;
+
+    default:
+      return null;
+  }
+};
+
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 describe('App actions', () => {
   let store;
   beforeEach(() => {
     store = mockStore({ appSettings: initialAppSettingsState, session: initialSessionState, cache: initialCacheState });
+    firebaseRemoteConfig.getString = mockedFirebaseConfigGetString;
   });
 
   const defaultLanguage = getDefaultSupportedUserLanguage();
-  const authTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/auth.json`;
-  const commonTranslationsUrl = `${localeConfig.baseUrl}${defaultLanguage}/common.json`;
+  const authTranslationsUrl =
+    `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/auth_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
+  const commonTranslationsUrl =
+    `${TEST_TRANSLATIONS_BASE_URL}${defaultLanguage}/common_${TEST_TRANSLATIONS_TIME_STAMP}.json`;
 
 
-  it(`initAppAndRedirectAction - should trigger the app settings updated 
+  it(`initAppAndRedirectAction - should trigger the app settings updated
   with any redirection due to the empty storage`, async () => {
     await storage.save('storageSettings', { storageSettings: { pouchDBMigrated: true } });
     const expectedActions = [
@@ -71,11 +90,17 @@ describe('App actions', () => {
       { type: SET_CACHED_URLS, payload: {} },
       { type: CACHE_STATUS.PENDING, payload: { url: authTranslationsUrl } },
       { type: CACHE_STATUS.PENDING, payload: { url: commonTranslationsUrl } },
-      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localPath: 'localString' } },
-      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localPath: 'localString' } },
-      { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: 'LOCAL' } },
+      { type: CACHE_STATUS.DONE, payload: { url: authTranslationsUrl, localPath: authTranslationsUrl } },
+      { type: CACHE_STATUS.DONE, payload: { url: commonTranslationsUrl, localPath: commonTranslationsUrl } },
+      { type: UPDATE_SESSION, payload: { fallbackLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP } },
       { type: UPDATE_SESSION, payload: { translationsInitialised: true } },
-      { type: UPDATE_SESSION, payload: { sessionLanguageCode: localeConfig.defaultLanguage } },
+      {
+        type: UPDATE_SESSION,
+        payload: {
+          sessionLanguageCode: localeConfig.defaultLanguage,
+          sessionLanguageVersion: TEST_TRANSLATIONS_TIME_STAMP,
+        },
+      },
     ];
 
     return store.dispatch(initAppAndRedirectAction())

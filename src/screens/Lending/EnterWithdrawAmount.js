@@ -163,8 +163,6 @@ const EnterWithdrawAmount = ({
           </FeeInfo>
           {showNextButton && (
             <Button
-              regularText
-              block
               disabled={isNextButtonDisabled}
               title={nextButtonTitle}
               onPress={onNextButtonPress}

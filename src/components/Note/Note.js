@@ -24,8 +24,9 @@ import Emoji from 'react-native-emoji';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
+
 
 type Props = {
   note: string | React.Node,
@@ -34,13 +35,13 @@ type Props = {
   children?: React.Node,
   onClose?: () => void,
   theme: Theme,
-}
+};
 
 const NoteWrapper = styled.View`
   flex-direction: row;
   justify-content: center;
-  background-color: ${themedColors.card};
-  border: 1px solid ${themedColors.border};
+  background-color: ${({ theme }) => theme.colors.basic050};
+  border: 1px solid ${({ theme }) => theme.colors.basic060};
   padding: ${spacing.layoutSides}px;
   padding-top: ${({ additionalPaddingTop }) => additionalPaddingTop ? '24' : spacing.layoutSides}px;
   border-radius: 4px;
@@ -90,7 +91,7 @@ export const Note = withTheme((props: Props) => {
         </Text>
       </TextWrapper>
       {children}
-      {onClose && <CloseIcon icon="close" color={colors.labelTertiary} fontSize={fontSizes.tiny} onPress={onClose} />}
+      {onClose && <CloseIcon icon="close" color={colors.basic020} fontSize={fontSizes.tiny} onPress={onClose} />}
     </NoteWrapper>
   );
 });

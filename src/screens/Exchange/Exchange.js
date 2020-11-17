@@ -32,6 +32,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SWActivationCard from 'components/SWActivationCard';
 import ValueInput from 'components/ValueInput';
 import Modal from 'components/Modal';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // actions
 import {
@@ -49,9 +50,10 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
-import { themedColors } from 'utils/themes';
 import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
 import { gatherWBTCFeeData } from 'services/wbtcCafe';
+
+import { noop } from 'utils/common';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -108,6 +110,8 @@ type Props = {
   offers: Offer[],
   wbtcFees: WBTCFeesRaw,
   getWbtcFees: () => void,
+  isFetchingUniswapTokens: boolean,
+  uniswapTokensGraphQueryFailed: boolean,
 };
 
 type State = {
@@ -123,7 +127,6 @@ type State = {
 
 const FormWrapper = styled.View`
   padding: 24px 40px 60px;
-  background-color: ${themedColors.surface};
 `;
 
 class ExchangeScreen extends React.Component<Props, State> {
@@ -383,6 +386,9 @@ class ExchangeScreen extends React.Component<Props, State> {
       markNotificationAsSeen,
       accounts,
       smartWalletState,
+      isFetchingUniswapTokens,
+      uniswapTokensGraphQueryFailed,
+      getExchangeSupportedAssets,
     } = this.props;
 
     const {
@@ -442,6 +448,12 @@ class ExchangeScreen extends React.Component<Props, State> {
             navigation={navigation}
           />}
         </ScrollView>}
+        <RetryGraphQueryBox
+          message={t('error.theGraphQueryFailed.uniswapSupportedTokenList')}
+          hasFailed={uniswapTokensGraphQueryFailed}
+          isFetching={isFetchingUniswapTokens}
+          onRetry={() => getExchangeSupportedAssets(noop)}
+        />
       </ContainerWithHeader>
     );
   }
@@ -459,6 +471,8 @@ const mapStateToProps = ({
     },
     wbtcFees,
     exchangeSupportedAssets,
+    isFetchingUniswapTokens,
+    uniswapTokensGraphQueryFailed,
   },
   rates: { data: rates },
   accounts: { data: accounts },
@@ -476,6 +490,8 @@ const mapStateToProps = ({
   hasSeenExchangeIntro,
   offers,
   wbtcFees,
+  isFetchingUniswapTokens,
+  uniswapTokensGraphQueryFailed,
 });
 
 const structuredSelector = createStructuredSelector({

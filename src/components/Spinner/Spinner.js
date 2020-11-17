@@ -17,45 +17,46 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
-import { StyleSheet } from 'react-native';
-import styled from 'styled-components/native';
-import Lottie from 'lottie-react-native';
+import * as React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { withTheme } from 'styled-components/native';
+import { MaterialIndicator } from 'react-native-indicators';
+import { getThemeColors } from 'utils/themes';
+import type { Theme } from 'models/Theme';
 
-type Props = {
-  width?: number,
-  height?: number,
+type Props = {|
+  basic?: boolean,
+  size?: number,
+  trackWidth?: number,
+  color?: ?string,
   style?: StyleSheet.Styles,
+|};
+
+type CombinedProps = {
+  ...Props,
+  theme: Theme,
+}
+
+const getSpinnerColor = (props: CombinedProps) => {
+  const { theme, basic, color } = props;
+  if (color) return color;
+  const colors = getThemeColors(theme);
+  if (basic) return colors.basic090;
+  return colors.primaryAccent130;
 };
 
-const AnimationWrapper = styled.View``;
+const Spinner = (props: CombinedProps) => {
+  const {
+    size = 40,
+    trackWidth = 3,
+    style,
+  } = props;
+  const spinnerColor = getSpinnerColor(props);
+  return (
+    <View style={{ height: size }}>
+      <MaterialIndicator size={size} trackWidth={trackWidth} color={spinnerColor} style={style} />
+    </View>
+  );
+};
 
-const animationSource = require('./animation.json');
-
-export default class Spinner extends React.Component<Props> {
-  static defaultProps = {
-    width: 40,
-    height: 40,
-    style: {},
-  };
-  animation: Lottie;
-
-  componentDidMount() {
-    this.animation.play();
-  }
-  render() {
-    const { width, height, style } = this.props;
-    return (
-      <AnimationWrapper style={style}>
-        <Lottie
-          ref={(animation) => {
-            this.animation = animation;
-          }}
-          source={animationSource}
-          style={{ width, height }}
-          loop
-        />
-      </AnimationWrapper>
-    );
-  }
-}
+export default (withTheme(Spinner): React.ComponentType<Props>);

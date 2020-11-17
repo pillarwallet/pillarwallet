@@ -38,6 +38,7 @@ import {
   POOLTOGETHER_DEPOSIT_TRANSACTION,
 } from 'constants/poolTogetherConstants';
 
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const placeholderImage = 'https://picsum.photos/200';
 
@@ -103,13 +104,10 @@ const actions = {
 const commonProps = {
   isVisible: true,
   onClose: noop,
-  rejectInvitation: noop,
-  acceptInvitation: noop,
   isForAllAccounts: true,
   navigation: {
     navigate: noop(),
   },
-  storybook: true,
 };
 
 
@@ -124,6 +122,7 @@ const EventDetailsStoryItem = withTheme(EventDetailsClass);
 
 storiesOf('EventDetail', module)
 // SMART WALLET (and related) EVENTS
+  .addDecorator(WithThemeDecorator)
   .add('Smart wallet created | Needs to activate', () => (
     <EventDetailsStoryItem
       {...reduxData}

@@ -29,6 +29,7 @@ import {
   setLanguage,
   isLanguageSupported,
 } from 'services/localisation/translations';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 import { cacheUrlAction, removeUrlCacheAction } from 'actions/cacheActions';
 import {
@@ -40,12 +41,13 @@ import { setAppLanguageAction } from 'actions/appSettingsActions';
 
 import Toast from 'components/Toast';
 
-import type { TranslationData, TranslationResourcesOfLanguage } from 'models/Translations';
-import type { CachedUrls } from 'reducers/cacheReducer';
+import type { TranslationResourcesOfLanguage } from 'models/Translations';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { reportErrorLog, reportLog } from 'utils/common';
-import { getCachedJSONFile } from 'utils/cache';
+import { getCachedTranslationResources } from 'utils/cache';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { CACHE_STATUS } from 'constants/cacheConstants';
 
 
 const LOCAL = 'LOCAL';
@@ -60,65 +62,82 @@ type SetLngAndBundle = {
   onSuccess?: () => void,
 }
 
-const getTranslationData = (lng: string) => localeConfig.namespaces.map((ns) => ({
-  ns,
-  url: `${localeConfig.baseUrl}${lng}/${ns}.json`, // eslint-disable-line i18next/no-literal-string
-}));
-
-const getCachedTranslationResources =
-  async (translationsData: TranslationData[], cachedUrls: CachedUrls, dispatch: Dispatch) => {
-    const cachedTranslations = await Promise.all(translationsData.map(async ({ ns, url }) => {
-      const { localPath } = cachedUrls?.[url] || {};
-      if (!localPath) return { ns, translations: {} };
-
-      const translations = await getCachedJSONFile(localPath);
-
-      if (!translations) {
-        // cached file no longer exists - remove it from map
-        dispatch(removeUrlCacheAction(url));
-        return { ns, translations: {} };
-      }
-      return { ns, translations };
-    })).catch((e) => {
-      reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, e);
-      return [];
-    });
-
-    return cachedTranslations.reduce((formattedResources, translation) => {
-      const { ns, translations } = translation;
-      if (ns && translations) formattedResources[ns] = translations;
-      return formattedResources;
-    }, {});
+const getTranslationData = (lng: string, baseUrl: string, version: string) => localeConfig.namespaces.map((ns) => {
+  let url = '';
+  if (baseUrl) {
+    /* eslint-disable i18next/no-literal-string */
+    if (version) {
+      url = `${baseUrl}${lng}/${ns}_${version}.json`;
+    } else {
+      url = `${baseUrl}${lng}/${ns}.json`;
+    }
+    /* eslint-enable i18next/no-literal-string */
+  }
+  return {
+    ns,
+    url,
   };
+});
 
-const getTranslationsResources = async (props) => {
-  const {
-    language,
-    dispatch,
-    getState,
-  } = props;
+type GetTranslationResourcesProps = {
+  language: string,
+  dispatch: Dispatch,
+  getState: GetState,
+  getLocal?: boolean,
+}
+
+
+const getLocalTranslations = (language: string) => {
+  const relatedLocalTranslationData = localeConfig.localTranslations[language];
+  if (!relatedLocalTranslationData) {
+    reportLog('Local translations are missing', { language });
+    return {};
+  }
+  return localeConfig.namespaces.reduce((mappedResources, ns) => {
+    const localTranslations = relatedLocalTranslationData[ns];
+    if (localTranslations) {
+      mappedResources[ns] = localTranslations;
+    }
+    return mappedResources;
+  }, {});
+};
+
+const getTranslationsResources = async (props: GetTranslationResourcesProps) => {
+  const { language, dispatch, getState } = props;
   let resources;
-  // TODO: pass in versioning;
-  let version = '';
+  let version = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP);
+  const baseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_URL);
+
   const missingNsArray = [];
-  const translationsData = getTranslationData(language);
+  const translationsData = getTranslationData(language, baseUrl, version);
 
   const { session: { data: { isOnline } } } = getState();
 
   const relatedLocalTranslationData = localeConfig.localTranslations[language] || {};
 
   // if translations' baseUrl is provided - use external translations. If not - local.
-  if (localeConfig.baseUrl) {
-    // If network is available - fetch and cache newest translations
-    // TODO: fetch newest only once per session.
-    if (isOnline) {
+  if (baseUrl) {
+    // If network is available and no cached version exists - fetch and cache newest translations
+    const { cache: { cachedUrls: cachedUrlsBeforeFetching } } = getState();
+
+    const translationsUrl = translationsData.map(({ url }) => url);
+    const doneCachingUrls = Object.keys(cachedUrlsBeforeFetching)
+      .filter((url) => cachedUrlsBeforeFetching[url]?.status === CACHE_STATUS.DONE);
+    const hasFullyCachedVersion = translationsUrl.every(i => doneCachingUrls.includes(i));
+
+    if (isOnline && !hasFullyCachedVersion) {
       // fetches to storage and set local path to cachedUrls
       await Promise.all(translationsData.map(({ url }) => dispatch(cacheUrlAction(url))));
     }
 
     // get newest cached translations
     const { cache: { cachedUrls } } = getState();
-    resources = await getCachedTranslationResources(translationsData, cachedUrls, dispatch);
+    resources = await getCachedTranslationResources(
+      translationsData,
+      cachedUrls,
+      url => dispatch(removeUrlCacheAction(url)),
+      e => reportLog(LANGUAGE_ERROR.NO_TRANSLATIONS, e),
+    );
 
     // check missing namespaces
     const existingNameSpaces = Object.keys(resources).filter(ns => !isEmpty(resources[ns]));
@@ -141,13 +160,7 @@ const getTranslationsResources = async (props) => {
       }
     }
   } else {
-    resources = localeConfig.namespaces.reduce((mappedResources, ns) => {
-      const localTranslations = relatedLocalTranslationData[ns];
-      if (localTranslations) {
-        mappedResources[ns] = localTranslations;
-      }
-      return mappedResources;
-    }, {});
+    resources = getLocalTranslations(language);
     version = LOCAL;
   }
 
@@ -182,11 +195,12 @@ const setLanguageAndTranslationBundles = async ({ language, resources, onSuccess
 export const getAndSetFallbackLanguageResources = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const language = localeConfig.defaultLanguage;
+    const localResources = getLocalTranslations(language);
+
     const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
 
     const fallbackTranslations = Object.values(resources).filter((translations) => !isEmpty(translations));
     const hasFallbackTranslations = !!fallbackTranslations.length;
-
     const missingNameSpaces = localeConfig.namespaces.filter(ns => !Object.keys(resources).includes(ns));
 
     if (missingNameSpaces.length || !hasFallbackTranslations) {
@@ -197,6 +211,7 @@ export const getAndSetFallbackLanguageResources = () => {
 
     if (hasFallbackTranslations) {
       await addResourceBundles(language, localeConfig.namespaces, resources);
+      await addResourceBundles(language, localeConfig.namespaces, localResources);
       dispatch(setFallbackLanguageVersionAction(version));
     } else {
       dispatch(setFallbackLanguageVersionAction(LOCAL));
@@ -204,7 +219,7 @@ export const getAndSetFallbackLanguageResources = () => {
   };
 };
 
-export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
+export const getTranslationsResourcesAndSetLanguageOnAppOpenAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       appSettings: { data: { localisation } },
@@ -216,13 +231,7 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
 
     // check if translations are supported. If not - use local default lang translations
     if (!localeConfig.isEnabled) {
-      const localDefaultTranslations = localeConfig.localTranslations[localeConfig.defaultLanguage];
-      const localDefaultTranslationResources = localeConfig.namespaces.reduce((allResources, ns) => {
-        const relatedTranslations = localDefaultTranslations[ns];
-        if (relatedTranslations) allResources[ns] = relatedTranslations;
-        return allResources;
-      }, {});
-
+      const localDefaultTranslationResources = getLocalTranslations(localeConfig.defaultLanguage);
       await setLanguageAndTranslationBundles({
         resources: localDefaultTranslationResources,
         language: localeConfig.defaultLanguage,
@@ -231,13 +240,12 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
       if (!!activeLngCode && !isLanguageSupported(activeLngCode)) {
         // previously selected language is no longer supported - fallback to default supported device language;
         language = getDefaultSupportedUserLanguage();
-        if (!Object.keys(localeConfig.supportedLanguages).includes(activeLngCode)) {
-          Toast.show({
-            message: t('toast.languageIsNoLongerSupported'),
-            emoji: 'hushed',
-            autoClose: true,
-          });
-        }
+        Toast.show({
+          message: t('toast.languageIsNoLongerSupported'),
+          emoji: 'hushed',
+          autoClose: true,
+        });
+        dispatch(setAppLanguageAction(language));
       }
 
       const {
@@ -261,8 +269,11 @@ export const getTranslationsResourcesAndSetLanguageOnAppOpen = () => {
         dispatch(setFallbackLanguageVersionAction(version));
       }
 
+      const localResources = getLocalTranslations(language);
+      await addResourceBundles(language, localeConfig.namespaces, localResources);
+
       dispatch(setSessionTranslationBundleInitialisedAction());
-      dispatch(setSessionLanguageAction(language));
+      dispatch(setSessionLanguageAction(language, version));
     }
   };
 };
@@ -278,7 +289,7 @@ export const changeLanguageAction = (language: string) => {
     if (isLanguageSupported(language)) {
       const { resources, missingNsArray, version } = await getTranslationsResources({ language, dispatch, getState });
       const onLanguageChangeSuccess = () => {
-        dispatch(setAppLanguageAction(language, version));
+        dispatch(setAppLanguageAction(language));
         if (missingNsArray?.length) {
           Toast.show({
             message: t('toast.languageChangedWithSomeTranslationsMissing'),
@@ -304,9 +315,9 @@ export const changeLanguageAction = (language: string) => {
         dispatch(setFallbackLanguageVersionAction(version));
       } else if (!fallbackLanguageVersion || fallbackLanguageVersion === LOCAL) {
         // fallback language is needed to be updated on language change
-        await getAndSetFallbackLanguageResources();
+        await dispatch(getAndSetFallbackLanguageResources());
       }
-      dispatch(setSessionLanguageAction(language));
+      dispatch(setSessionLanguageAction(language, version));
     } else {
       Toast.show({
         message: t('toast.languageIsNotSupported'),
@@ -317,16 +328,24 @@ export const changeLanguageAction = (language: string) => {
   };
 };
 
-export const updateTranslationResourceOnNetworkChangeAction = () => {
+export const updateTranslationResourceOnContextChangeAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      appSettings: { data: { localisation } },
-      session: { data: { isOnline, fallbackLanguageVersion, translationsInitialised } },
+      appSettings: { isFetched, data: { localisation } },
+      session: {
+        data: {
+          isOnline, fallbackLanguageVersion, translationsInitialised, sessionLanguageVersion,
+        },
+      },
     } = getState();
 
-    if (!translationsInitialised || !localeConfig.isEnabled || !localeConfig.baseUrl) return;
+    if (!isFetched) return;
 
-    const { translationVersion, activeLngCode } = localisation || {};
+    const baseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_URL);
+
+    if (!translationsInitialised || !localeConfig.isEnabled || !baseUrl) return;
+
+    const { activeLngCode } = localisation || {};
     const language = activeLngCode || getDefaultSupportedUserLanguage();
 
     if (isOnline) {
@@ -334,12 +353,13 @@ export const updateTranslationResourceOnNetworkChangeAction = () => {
       if (fallbackLanguageVersion === LOCAL && language !== localeConfig.defaultLanguage) {
         await dispatch(getAndSetFallbackLanguageResources());
       }
-      if (translationVersion === LOCAL && !!language) {
+      if (sessionLanguageVersion === LOCAL && !!language) {
         // retry fetching translations to change local ones into newest possible
         const { resources, version } = await getTranslationsResources({ language, dispatch, getState });
 
         const onLanguageChangeSuccess = () => {
-          dispatch(setAppLanguageAction(language, version));
+          dispatch(setAppLanguageAction(language));
+          dispatch(setSessionLanguageAction(language, version));
         };
 
         await setLanguageAndTranslationBundles({ resources, language, onSuccess: onLanguageChangeSuccess });

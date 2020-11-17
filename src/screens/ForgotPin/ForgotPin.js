@@ -72,13 +72,12 @@ class ForgotPin extends React.Component<Props, {}> {
             </FooterParagraph>
             <Button
               leftIconName="down-arrow"
-              block
               danger
-              marginBottom={`${spacing.rhythm}px`}
+              marginBottom={4}
               onPress={this.toImportWallet}
               title={t('auth:title.importWallet')}
             />
-            <Button block onPress={this.goBackToPin} secondary title={t('auth:button.backToPin')} />
+            <Button onPress={this.goBackToPin} transparent title={t('auth:button.backToPin')} />
           </FooterWrapper>
         )}
       >

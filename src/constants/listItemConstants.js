@@ -18,5 +18,4 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 export const ACTION = 'ACTION';
-export const CHAT_ITEM = 'CHAT_ITEM';
 export const DEFAULT = 'DEFAULT';

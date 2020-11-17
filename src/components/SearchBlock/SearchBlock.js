@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { Keyboard } from 'react-native';
+import { Keyboard, TextInput } from 'react-native';
 import SearchBar from 'components/SearchBar';
 import Overlay from './Overlay';
 
@@ -29,15 +29,15 @@ type State = {
 };
 
 type Props = {
-  onSearchChange: Function,
+  onSearchChange: (query: string) => void,
   itemSearchState?: boolean,
   searchInputPlaceholder?: string,
   backgroundColor?: string,
   hideSearch?: boolean,
-  onSearchFocus?: Function,
-  inputRef?: Function,
+  onSearchFocus?: () => void,
+  inputRef?: (ref: TextInput) => void,
   wrapperStyle?: Object,
-  onSearchBlur?: Function,
+  onSearchBlur?: () => void,
   hideOverlay?: boolean,
   disabled?: boolean,
 };
@@ -46,7 +46,7 @@ const SearchBarWrapper = styled.View`
   width: 100%;
   position: relative;
   z-index: 101;
-  background-color: ${({ isFocused, theme }) => isFocused ? theme.colors.card : 'transparent'};
+  background-color: ${({ isFocused, theme }) => isFocused ? theme.colors.basic070 : 'transparent'};
 `;
 
 const MIN_QUERY_LENGTH = 2;
