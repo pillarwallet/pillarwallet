@@ -62,7 +62,7 @@ const InnerBackground = styled.View`
 
 const InnerUsername = styled(MediumText)`
   font-size: ${props => props.initialsSize ? props.initialsSize : fontSizes.medium}px;
-  color: ${({ theme }) => theme.colors.primaryAccent130};
+  color: ${getColorByTheme({ lightCustom: '#6690eb', darkKey: 'primaryAccent240' })};
 `;
 
 const CornerIcon = styled(CachedImage)`

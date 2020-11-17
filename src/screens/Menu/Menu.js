@@ -126,7 +126,7 @@ const HeaderLogo = styled(CachedImage)`
 `;
 
 const LogoutIcon = styled(Icon)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   ${fontStyles.regular};
   margin-right: 5px;
 `;
@@ -136,12 +136,11 @@ const LegalTextLink = styled(TextLink)`
 `;
 
 const LogoutTextLink = styled(TextLink)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   ${fontStyles.regular};
 `;
 
 const LockScreenTextLink = styled(TextLink)`
-  color: ${themedColors.link};
   ${fontStyles.regular};
 `;
 
@@ -150,7 +149,7 @@ const IconWrapper = styled.View`
 `;
 
 const ItemIcon = styled(Icon)`
-  color: ${({ color }) => color || themedColors.accent};
+  color: ${({ color, theme }) => color || theme.colors.basic020};
   font-size: ${fontSizes.big}px;
 `;
 
