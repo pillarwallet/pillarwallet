@@ -5,6 +5,7 @@
 ### Translations setup
 Translations feature is managed by setting `isEnabled` to `true` in `configs/localeConfigs` **OR** providing `baseUrl`
 to fetch external translations.
+_(to disable it in development, adjust `DISABLE_EXTERNAL_TRANSLATIONS_ON_DEV` value in `buildConfig`)_
 If the first requirement is not met, locally stored default language's (set in `configs/localeConfigs` as `defaultLanguage`) translations are being used.
 If the second one is not provided - locally stored translations are used.
 
