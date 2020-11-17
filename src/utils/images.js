@@ -73,7 +73,7 @@ const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetix
 const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
 const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
 const exchangeDefaultLogoDark = require('assets/icons/exchange_default_dark.png');
-const exchangeDefaultLogoLight = require('assets/icons/exchange_default_dark.png'); // TODO change!
+const exchangeDefaultLogoLight = require('assets/icons/exchange_default_light.png');
 
 // patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
