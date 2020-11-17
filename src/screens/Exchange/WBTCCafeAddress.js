@@ -72,9 +72,7 @@ type Props = {
 }
 
 const WBTCCafeAddress = ({ amount, address, error }: Props) => {
-  if (!address && !error) {
-    return <Wrapper><Spinner height={30} width={30} /></Wrapper>;
-  }
+  if (!address && !error) return <Wrapper><Spinner size={30} /></Wrapper>;
 
   return (
     <Wrapper>

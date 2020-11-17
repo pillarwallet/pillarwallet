@@ -855,6 +855,17 @@ class SDKWrapper {
       .then(res => res.data)
       .catch(e => reportErrorLog('Failed to generate WBTC gateway address', e));
   }
+
+  // TODO add return type
+  generateWbtcCafeMintTx(nonce: string, walletId: string) {
+    return this.makeDirectSdkRequest({
+      path: '/partners/ren/generate-mint-transaction',
+      method: 'POST',
+      data: { nonce, walletId },
+    })
+      .then(res => res.data)
+      .catch(e => reportErrorLog('Failed to generate WBTC mint transaction', e));
+  }
 }
 
 export default SDKWrapper;

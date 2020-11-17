@@ -418,6 +418,8 @@ export const getWbtcGatewayAddressAction =
     async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
       const { user: { data: user } } = getState();
       const walletId = user?.walletId || '';
-      const res = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
-      return res;
+      const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
+      if (!gatewayAddressResponse?.nonce) return null;
+      // TODO: initiate minting tx
+      return gatewayAddressResponse;
     };
