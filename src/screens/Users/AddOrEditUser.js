@@ -523,7 +523,7 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
     } = this.props;
     const {
       isEmailVerified, isPhoneVerified, email, phone,
-    } = user
+    } = user;
     if (isPhoneVerified || isEmailVerified) {
       return (
         <InviteBanner
