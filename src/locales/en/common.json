@@ -1254,7 +1254,8 @@
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
-      "fees": "Fees"
+      "fees": "Fees",
+      "allowancePlusEthFee": "Allowance + Ethereum fee"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
@@ -1375,7 +1376,8 @@
     "cannotDepositAsset": "Cannot deposit asset. Please try again.",
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
-    "walletBackedUp": "Your wallet is backed up now."
+    "walletBackedUp": "Your wallet is backed up now.",
+    "rariServiceFailed": "An error occured. Please try again or try depositing another token."
   },
 
   "exchangeContent": {
@@ -1442,17 +1444,26 @@
   "rariContent": {
     "title": {
       "depositScreen": "Your deposit",
-      "infoScreen": "Rari Capital"
+      "infoScreen": "Rari Capital",
+      "addDepositScreen": "Add deposit",
+      "addDepositReviewScreen": "Review"
     },
     "label": {
       "currentAPY": "Current APY",
       "earned": "Earned",
-      "totalSupply": "Total supply"
+      "totalSupply": "Total supply",
+      "youAreAdding": "You are adding",
+      "rariExchangeFee": "Rari fee",
+      "depositDetails": "Deposit details",
+      "maxSlippage": "Max. slippage"
     },
     "button": {
       "withdraw": "Withdraw",
       "deposit": "Deposit",
       "transfer": "Transfer"
+    },
+    "tooltip": {
+      "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first"
     },
     "infoContent": {
       "subtitle": {

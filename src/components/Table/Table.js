@@ -19,17 +19,24 @@
 */
 import * as React from 'react';
 import { View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
-import { themedColors } from 'utils/themes';
+
+import { themedColors, getThemeColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { formatUnits } from 'utils/common';
+
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
+import IconButton from 'components/IconButton';
+import Tooltip from 'components/Tooltip';
+
 import { ETH } from 'constants/assetsConstants';
+
 import type { GasToken } from 'models/Transaction';
+
 import TableAmount from './TableAmount';
 
 export { default as TableAmount } from './TableAmount';
@@ -57,10 +64,37 @@ export const TableRow = styled.View`
   padding: 10px 0;
 `;
 
-export const TableLabel = styled(BaseText)`
-  ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+const Row = styled.View`
+  align-items: center;
+  flex-direction: row;
 `;
+
+export const TableLabel = withTheme(({ children, tooltip, theme }) => {
+  const [isTooltipVisible, setTooltipVisible] = React.useState(false);
+  const colors = getThemeColors(theme);
+  return (
+    <Row>
+      <BaseText regular secondary>{children}</BaseText>
+      {!!tooltip && (
+        <>
+          <Spacing w={4} />
+          <Tooltip
+            isVisible={isTooltipVisible}
+            body={tooltip}
+            positionOnBottom={false}
+          >
+            <IconButton
+              icon="question"
+              fontSize={16}
+              onPress={() => setTooltipVisible(!isTooltipVisible)}
+              color={colors.labelTertiary}
+            />
+          </Tooltip>
+        </>
+      )}
+    </Row>
+  );
+});
 
 export const TableTotal = styled(MediumText)`
   ${fontStyles.regular};
@@ -115,9 +149,10 @@ const Table = ({ children, title }: Props) => {
         </>
       )}
       {React.Children.map(children, (child, index) => {
+        const childrenCount = React.Children.toArray(children).filter(c => !!c).length;
         return (
           <>
-            {index > 0 && <Divider />}
+            {index > 0 && childrenCount > 1 && <Divider />}
             {child}
           </>
         );
