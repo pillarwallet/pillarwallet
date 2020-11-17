@@ -24,6 +24,7 @@ import {
   PUNCTUATION_POSTPROCESSOR,
   SUFFIX_PREFIX_POSTPROCESSOR,
 } from 'constants/localesConstants';
+import { devOptions } from './buildConfig';
 
 // EN
 const EN_COMMON = require('../locales/en/common.json');
@@ -61,7 +62,7 @@ type LocalisationConfig = {
 };
 
 export default ({
-  isEnabled: true,
+  isEnabled: !__DEV__ || !devOptions.DISABLE_EXTERNAL_TRANSLATIONS_ON_DEV, // to always keep enabled in production
   defaultLanguage: DEFAULT_LANGUAGE_CODE,
   // pairs of language code and language name in native language
   supportedLanguages: {

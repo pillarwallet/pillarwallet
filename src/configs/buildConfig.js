@@ -40,4 +40,5 @@ export const devOptions = {
   SHOW_THEME_TOGGLE_IN_STORYBOOK: undefined,
   SHOW_LANG_TOGGLE: undefined,
   DEFAULT_PIN: undefined,
+  DISABLE_EXTERNAL_TRANSLATIONS_ON_DEV: undefined,
 };
