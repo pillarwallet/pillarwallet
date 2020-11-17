@@ -122,6 +122,8 @@ import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
 import RariDepositScreen from 'screens/Rari/RariDeposit';
 import RariInfoScreen from 'screens/Rari/RariInfo';
+import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
+import RariAddDepositReviewScreen from 'screens/Rari/RariAddDepositReview';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -270,6 +272,8 @@ import {
   RARI_FLOW,
   RARI_DEPOSIT,
   RARI_INFO,
+  RARI_ADD_DEPOSIT,
+  RARI_ADD_DEPOSIT_REVIEW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -720,6 +724,8 @@ sablierFlow.navigationOptions = hideTabNavigatorOnChildView;
 const rariFlow = createStackNavigator({
   [RARI_DEPOSIT]: RariDepositScreen,
   [RARI_INFO]: RariInfoScreen,
+  [RARI_ADD_DEPOSIT]: RariAddDepositScreen,
+  [RARI_ADD_DEPOSIT_REVIEW]: RariAddDepositReviewScreen,
 }, StackNavigatorConfig);
 
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;

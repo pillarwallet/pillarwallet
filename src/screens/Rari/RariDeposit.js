@@ -37,7 +37,7 @@ import { formatFiat, formatAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency, RSPT } from 'constants/assetsConstants';
-import { RARI_INFO } from 'constants/navigationConstants';
+import { RARI_INFO, RARI_ADD_DEPOSIT } from 'constants/navigationConstants';
 
 import { fetchRariUserDataAction, fetchRariAPYAction } from 'actions/rariActions';
 
@@ -200,7 +200,7 @@ const RariDepositScreen = ({
             <CircleButton
               label={t('rariContent.button.deposit')}
               fontIcon="plus"
-              onPress={() => {}}
+              onPress={() => navigation.navigate(RARI_ADD_DEPOSIT)}
             />
             {userDepositInRSPT > 0 && (
             <>
