@@ -19,10 +19,9 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { transparentize } from 'polished';
 import { BaseText, MediumText } from 'components/Typography';
 import { fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { getColorByTheme } from 'utils/themes';
 
 const MnemonicPhraseWrapper = styled.View`
   flex-direction: row;
@@ -31,7 +30,7 @@ const MnemonicPhraseWrapper = styled.View`
   margin: 20px 0;
   padding: 20px 10px 10px;
   width: 100%;
-  background-color: ${themedColors.primary};
+  background-color: ${({ theme }) => theme.colors.primaryAccent130};
   border-radius: 12px;
 `;
 
@@ -48,14 +47,15 @@ const MnemonicPhraseIndex = styled(BaseText)`
   flex: 0 0 30px;
   text-align: right;
   font-size: ${fontSizes.medium}px;
-  color: ${({ theme }) => transparentize(0.5, theme.colors.control)};
+  color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
+  opacity: 0.5;
 `;
 
 const MnemonicPhraseWord = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
   padding-left: 10px;
   flex: 1;
-  color: ${themedColors.control};
+  color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
 `;
 
 const getIndex = (number: number) => {
