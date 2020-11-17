@@ -38,7 +38,7 @@ type Props = {
   label: string,
   notificationsCount?: number,
   warningNotification?: ?boolean,
-  onPress?: ?Function,
+  onPress?: ?() => void,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
   disabled?: ?boolean,
@@ -211,7 +211,7 @@ class SettingsListItem extends React.Component<Props> {
           </LabelWrapper>
           <ListAddon>
             <Switcher
-              isOn={processedValue}
+              isOn={!!processedValue}
               onToggle={onPress}
               disabled={disabled}
             />
@@ -225,6 +225,7 @@ class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
+      disabled,
     } = this.props;
 
     let processedValue;
@@ -242,7 +243,7 @@ class SettingsListItem extends React.Component<Props> {
     }
 
     return (
-      <NativeTouchable onPress={onPress}>
+      <NativeTouchable onPress={onPress} disabled={!!disabled}>
         {this.renderContent(processedValue)}
       </NativeTouchable>
     );

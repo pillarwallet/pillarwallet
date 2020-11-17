@@ -83,6 +83,7 @@ const Section = (props: Props) => {
               rightLabel={label}
               labelBadge={labelBadge}
               bulletedLabel={bulletedLabel}
+              disabled={disabled}
             />
           </ShadowedCard>
         );
