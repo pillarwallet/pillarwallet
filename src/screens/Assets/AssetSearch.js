@@ -97,6 +97,10 @@ const SearchSpinner = styled(Wrapper)`
   padding-top: 20;
 `;
 
+const TopWrapper = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic070};
+`;
+
 
 class AssetSearch extends React.Component<Props, State> {
   displayedAssets: Asset[];
@@ -327,7 +331,7 @@ class AssetSearch extends React.Component<Props, State> {
         <ScrollView
           stickyHeaderIndices={[0]}
         >
-          <>
+          <TopWrapper>
             <SearchBlock
               searchInputPlaceholder={t('label.searchAsset')}
               onSearchChange={this.handleSearchChange}
@@ -345,7 +349,7 @@ class AssetSearch extends React.Component<Props, State> {
                 wrapperStyle={{ paddingTop: 14 }}
               />
             )}
-          </>
+          </TopWrapper>
           {!isInSearchMode && (
             <>
               <ButtonsWrapper>

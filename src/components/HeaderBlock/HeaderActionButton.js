@@ -41,7 +41,6 @@ const HeaderButtonRounded = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 2px 6px;
-  border: 1px solid;
   ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor}`};
   border-radius: 6px;
 `;
