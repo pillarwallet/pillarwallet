@@ -26,7 +26,6 @@ import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
-import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';

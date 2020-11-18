@@ -51311,7 +51311,6 @@ exports[`Storyshots Value Input default 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
                         "flexBasis": 0,
                         "flexGrow": 1,
                         "flexShrink": 1,
@@ -51349,7 +51348,7 @@ exports[`Storyshots Value Input default 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#007aff",
+                      "color": "#007AFF",
                       "fontSize": 14,
                       "lineHeight": 22,
                       "marginTop": 1,
