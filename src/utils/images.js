@@ -43,9 +43,9 @@ const phoneIconDark = require('assets/icons/icon_circle_phone_device.png');
 const exchangeIconLight = require('assets/icons/exchange.png');
 const exchangeIconDark = require('assets/icons/exchange_dark.png');
 const walletIconLight = require('assets/icons/iconRoundedWalletLight.png');
-const walletIconDark = require('assets/icons/iconRoundedWalletDark.png');
+const walletIconDark = require('assets/icons/icon_rounded_wallet_dark.png');
 const personIconLight = require('assets/icons/iconRoundedPersonLight.png');
-const personIconDark = require('assets/icons/iconRoundedPersonDark.png');
+const personIconDark = require('assets/icons/icon_rounded_person_dark.png');
 const highFeesLight = require('assets/icons/high_fees.png');
 const highFeesDark = require('assets/icons/high_fees_dark.png');
 
