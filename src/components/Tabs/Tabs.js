@@ -21,23 +21,22 @@ import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
 import { BaseText } from 'components/Typography';
-import { themedColors } from 'utils/themes';
 
 type Tab = {
   id: string,
   name: string,
   onPress: () => void,
-}
+};
 
 type TabProps = Tab & {
   active: boolean,
-}
+};
 
 type Props = {
   tabs: Tab[],
   activeTab: string,
   wrapperStyle?: Object,
-}
+};
 
 const TabsContainer = styled.View`
   flex-direction: row;
@@ -46,7 +45,7 @@ const TabsContainer = styled.View`
 
 const Underline = styled.View`
   border-top-width: 3px;
-  border-color: ${themedColors.primary};
+  border-color: ${({ theme }) => theme.colors.primaryAccent130};
   border-top-left-radius: 3px;
   border-top-right-radius: 3px;
   margin-top: 3px;

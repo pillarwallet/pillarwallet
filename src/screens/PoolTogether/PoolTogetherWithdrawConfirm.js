@@ -158,7 +158,7 @@ class PoolTogetherWithdrawConfirm extends React.Component<Props, State> {
               onPress={() => {
                 this.withdrawPoolAsset();
               }}
-              style={{ marginBottom: 13, width: '100%' }}
+              style={{ marginBottom: 13 }}
             />
           </ContentWrapper>
         </ScrollWrapper>

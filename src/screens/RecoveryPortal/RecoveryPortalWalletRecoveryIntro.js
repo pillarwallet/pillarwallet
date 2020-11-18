@@ -32,7 +32,6 @@ import { ScrollWrapper } from 'components/Layout';
 import Button from 'components/Button';
 import { MediumText, BaseText, Paragraph, HelpText } from 'components/Typography';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import ButtonText from 'components/ButtonText';
 import Icon from 'components/Icon';
 
 // utils
@@ -93,17 +92,15 @@ const RecoveryPortalWalletRecoveryIntro = ({
         <HelpText color={colors.negative} noPadding>{t('auth:recoveryPortal.paragraph.introWarning')}</HelpText>
         <View style={{ alignItems: 'center' }}>
           <Button
-            block
             title={t('auth:button.proceed')}
             onPress={() => resetOnboardingAndNavigate(RECOVERY_PORTAL_WALLET_RECOVERY)}
             marginTop={50}
-            marginBottom={spacing.large}
+            marginBottom={4}
           />
-          <ButtonText
-            buttonText={t('auth:button.recoverKeyWalletFirst')}
+          <Button
+            title={t('auth:button.recoverKeyWalletFirst')}
             onPress={() => resetOnboardingAndNavigate(IMPORT_WALLET)}
-            fontSize={fontSizes.medium}
-            medium
+            transparent
           />
         </View>
       </ScrollWrapper>

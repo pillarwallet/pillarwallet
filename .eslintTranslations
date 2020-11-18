@@ -63,6 +63,7 @@
         "tel:",
         "text-align:",
         "text-align-vertical:",
+        "textDecorationLine",
         "top:",
         "transparent",
         "width:",
@@ -127,7 +128,8 @@
         "t",
         "toString",
         "uniqBy",
-        "updateAppSettingsAction"
+        "updateAppSettingsAction",
+        "variants"
       ],
       "ignoreAttribute": [
         "align",
@@ -173,7 +175,7 @@
         "swipeDirection",
         "underlineColorAndroid",
         "url",
-        "viewBox"
+        "viewBox",
       ],
       "ignoreProperty": [
         "_id",
@@ -222,11 +224,16 @@
         "sharerUrl",
         "sideFlex",
         "statusIcon",
+        "statusIconColor",
         "style",
         "top",
         "translationKey",
         "type",
-        "valueColor"
+        "valueColor",
+        "lightKey",
+        "darkKey",
+        "lightCustom",
+        "darkCustom",
       ],
       "validateTemplate": true
     }]

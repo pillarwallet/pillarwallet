@@ -54,7 +54,6 @@ import {
   getBalance,
 } from 'utils/assets';
 import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
-import { themedColors } from 'utils/themes';
 import { isProdEnv } from 'utils/environment';
 
 // types
@@ -104,7 +103,7 @@ const TableWrapper = styled.View`
 `;
 
 const ExchangeIcon = styled(Icon)`
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.primaryAccent130};
   font-size: 16px;
 `;
 

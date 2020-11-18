@@ -93,7 +93,14 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
   };
 
   const renderExploreButton = () => (
-    <Button small positive title={t('button.explore')} leftIconName="search" onPress={handleExplorePress} />
+    <Button
+      small
+      primarySecond
+      title={t('button.explore')}
+      leftIconName="search"
+      onPress={handleExplorePress}
+      block={false}
+    />
   );
 
   if (promoCardCollapsed) {

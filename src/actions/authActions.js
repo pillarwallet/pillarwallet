@@ -84,7 +84,7 @@ import {
   updatePinAttemptsAction,
 } from './walletActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
-import { loadFeatureFlagsAction } from './featureFlagsActions';
+import { loadRemoteConfigAction } from './remoteConfigActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
@@ -240,7 +240,7 @@ export const loginAction = (
 
       if (isOnline) {
         // Dispatch action to try and get the latest remote config values...
-        dispatch(loadFeatureFlagsAction());
+        dispatch(loadRemoteConfigAction());
 
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only

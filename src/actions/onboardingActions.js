@@ -67,7 +67,7 @@ import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'act
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
-import { loadFeatureFlagsAction } from 'actions/featureFlagsActions';
+import { loadRemoteConfigAction } from 'actions/remoteConfigActions';
 import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
@@ -239,7 +239,7 @@ export const setupAppServicesAction = (privateKey: ?string) => {
     // all the calls below require user to be online
     if (!isOnline) return;
 
-    dispatch(loadFeatureFlagsAction());
+    dispatch(loadRemoteConfigAction());
 
     // user might not be registered at this point
     if (walletId) {

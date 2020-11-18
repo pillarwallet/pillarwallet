@@ -62,7 +62,7 @@ const ItemWrapper = styled.TouchableOpacity`
   padding: 4px 10px;
   border-radius: 4px;
   align-items: center;
-  ${({ isSelected, theme }) => isSelected && `background-color: ${theme.colors.card};`}
+  ${({ isSelected, theme }) => isSelected && `background-color: ${theme.colors.basic050};`}
   ${({ width }) => width && `width: ${width}px;`}
 `;
 
@@ -140,7 +140,7 @@ class SelectorList extends React.Component<Props, State> {
         contentContainerStyle={{ padding: CONTENT_PADDING }}
         ListEmptyComponent={
           <Wrapper flex={1} center style={{ padding: 10 }}>
-            <Spinner height={20} width={20} />
+            <Spinner size={20} trackWidth={2} />
           </Wrapper>
         }
       />

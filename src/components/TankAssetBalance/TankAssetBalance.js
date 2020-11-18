@@ -23,7 +23,6 @@ import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 
 import { fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
 
 type Props = {
@@ -33,7 +32,7 @@ type Props = {
   iconStyle?: ?Object,
   token?: string,
   bottomExtra?: any,
-  secondary?: boolean,
+  failed?: boolean,
 };
 
 const Wrapper = styled.View`
@@ -42,7 +41,7 @@ const Wrapper = styled.View`
 `;
 
 const BalanceInTank = styled(BaseText)`
-  color: ${({ secondary }) => secondary ? themedColors.secondaryText : themedColors.synthetic};
+  color: ${({ theme }) => theme.colors.synthetic140};
   font-size: ${fontSizes.big}px;
 `;
 
@@ -50,7 +49,17 @@ const Icon = styled(CachedImage)`
   width: 6px;
   height: 12px;
   margin-right: 4px;
-  tint-color: ${({ secondary }) => secondary ? themedColors.secondaryText : themedColors.synthetic};
+  tint-color: ${({ theme }) => theme.colors.synthetic140};
+`;
+
+const Line = styled.View`
+  width: 100%;
+  height: 2px
+  background: ${({ theme }) => theme.colors.synthetic140};
+  position: absolute;
+  top: 50%;
+  left: 0;
+  margin: -1px;
 `;
 
 const lightningIcon = require('assets/icons/icon_lightning_sm.png');
@@ -63,15 +72,16 @@ const TankAssetBalance = (props: Props) => {
     token,
     bottomExtra,
     iconStyle,
-    secondary,
+    failed,
   } = props;
 
   return (
     <View>
       <Wrapper style={wrapperStyle}>
-        <Icon style={iconStyle} source={lightningIcon} secondary={secondary} />
-        <BalanceInTank style={textStyle} secondary={secondary}>{amount}</BalanceInTank>
+        <Icon style={iconStyle} source={lightningIcon} />
+        <BalanceInTank style={textStyle}>{amount}</BalanceInTank>
         {!!token && <BalanceInTank style={textStyle}> {token}</BalanceInTank>}
+        {!!failed && <Line />}
       </Wrapper>
       {bottomExtra}
     </View>

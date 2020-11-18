@@ -111,7 +111,7 @@ const WarningMessage = styled(Paragraph)`
 `;
 
 const OptionButton = styled(Button)`
-  margin-top: 14px;
+  margin-top: 4px;
   flex-grow: 1;
 `;
 
@@ -285,7 +285,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
                 <LabelSub>
                   {t('walletConnectContent.paragraph.finalFeeMightBeHigher')}
                 </LabelSub>
-                {!!isEstimating && <Spinner style={{ marginTop: 5 }} width={20} height={20} />}
+                {!!isEstimating && <Spinner style={{ marginTop: 5 }} size={20} trackWidth={2} />}
                 {!isEstimating && <Value>{feeDisplayValue}</Value>}
               </LabeledRow>
             }
@@ -356,14 +356,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
         }}
       >
         {body}
-        <Footer keyboardVerticalOffset={40} backgroundColor={colors.surface}>
+        <Footer keyboardVerticalOffset={40} backgroundColor={colors.basic070}>
           {!!errorMessage && <WarningMessage small>{errorMessage}</WarningMessage>}
           <FooterWrapper>
             <OptionButton
-              primaryInverted
               onPress={() => this.handleFormSubmit(this.request, transactionPayload)}
               disabled={!!errorMessage || (type === REQUEST_TYPE.TRANSACTION && isEstimating)}
-              regularText
               title={
                 t([
                   `walletConnectContent.button.approveType.${type}`,
@@ -372,9 +370,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
               }
             />
             <OptionButton
-              dangerInverted
+              danger
+              transparent
               onPress={this.handleDismissal}
-              regularText
               title={t('button.reject')}
             />
           </FooterWrapper>

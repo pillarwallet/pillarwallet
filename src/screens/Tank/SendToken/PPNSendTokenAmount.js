@@ -222,6 +222,7 @@ class PPNSendTokenAmount extends React.Component<Props, State> {
                 small
                 flexRight
                 title={t('button.next')}
+                block={false}
                 onPress={this.handleFormSubmit}
               />
             }

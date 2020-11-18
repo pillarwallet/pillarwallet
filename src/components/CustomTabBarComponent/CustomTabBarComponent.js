@@ -50,7 +50,11 @@ class CustomTabBarComponent extends React.Component<Props> {
   render() {
     const { theme, style = {} } = this.props;
     const colors = getThemeColors(theme);
-    const customStyle = { ...style, backgroundColor: colors.card };
+    const customStyle = {
+      ...style,
+      backgroundColor: colors.basic050,
+      borderTopColor: colors.basic060,
+    };
 
     return (
       Platform.select({

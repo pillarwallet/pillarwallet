@@ -112,7 +112,6 @@ type State = {
 
 const FormWrapper = styled.View`
   padding: 24px 40px 60px;
-  background-color: ${themedColors.surface};
 `;
 
 class ExchangeScreen extends React.Component<Props, State> {

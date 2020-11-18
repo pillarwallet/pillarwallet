@@ -63,7 +63,6 @@ export type Props = {|
   children?: any,
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
-  onCustomOptionSet?: (option: Option) => void,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
@@ -93,7 +92,6 @@ const Selector = ({
   children,
   customOptionButtonLabel,
   customOptionButtonOnPress,
-  onCustomOptionSet,
 }: Props) => {
   const optionsRef = useRef();
 
@@ -139,7 +137,6 @@ const Selector = ({
         }}
         validator={handleSearchValidation}
         allowEnteringCustomAddress={allowEnteringCustomAddress}
-        onCustomOptionSet={onCustomOptionSet}
         customOptionButtonLabel={customOptionButtonLabel}
         customOptionButtonOnPress={customOptionButtonOnPress}
       />

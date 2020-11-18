@@ -20,6 +20,7 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import ActionModal from './ActionModal';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
 const items = [
   {
@@ -34,6 +35,8 @@ const items = [
   },
 ];
 
-storiesOf('ActionModal', module).add('default', () => (
-  <ActionModal items={items} />
-));
+storiesOf('ActionModal', module)
+  .addDecorator(WithThemeDecorator)
+  .add('default', () => (
+    <ActionModal items={items} />
+  ));

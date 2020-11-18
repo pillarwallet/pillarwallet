@@ -113,11 +113,6 @@ const ImageWrapper = styled.View`
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 
-const getButtonWidth = () => {
-  const marginBetweenButtons = SCREEN_WIDTH > 360 ? 12 : 4;
-  return (SCREEN_WIDTH / 2) - spacing.layoutSides - (marginBetweenButtons / 2);
-};
-
 const visaIcon = require('assets/icons/visa.png');
 const mastercardIcon = require('assets/icons/mastercard.png');
 
@@ -148,8 +143,7 @@ class ReceiveModal extends React.Component<Props> {
     const { profileImage, lastUpdateTime = 0, username = '' } = user;
     const ensName = getEnsName(accounts);
     const isSmartWallet = getAccountTypeByAddress(address, accounts) === ACCOUNT_TYPES.LEGACY_SMART_WALLET;
-    const buttonWidth = showBuyTokensButton ? getButtonWidth() : 0;
-    const needsSmallButtons = showBuyTokensButton && buttonWidth <= 150;
+    const needsSmallButtons = showBuyTokensButton && SCREEN_WIDTH < 300;
     const profileImageURI = profileImage ? `${profileImage}?t=${lastUpdateTime}` : null;
 
     return (
@@ -173,8 +167,6 @@ class ReceiveModal extends React.Component<Props> {
               uri={profileImageURI}
               userName={username}
               diameter={48}
-              borderWidth={0}
-              noShadow
             />
           </ImageWrapper>
         }
@@ -206,21 +198,16 @@ class ReceiveModal extends React.Component<Props> {
             <Button
               title={t('button.buyTokens')}
               onPress={handleBuyTokens}
-              positive
-              width={buttonWidth}
+              primarySecond
               small={needsSmallButtons}
-              regularText
-              textStyle={{ paddingTop: 4 }}
+              style={{ flex: 1, marginRight: 10 }}
             />
             )}
             <Button
               title={t('button.shareAddress')}
               onPress={this.handleAddressShare}
-              width={buttonWidth}
               small={needsSmallButtons}
-              block={!buttonWidth}
-              regularText
-              textStyle={{ paddingTop: 4 }}
+              style={{ flex: 1 }}
             />
           </ButtonsRow>
           {showBuyTokensButton && (

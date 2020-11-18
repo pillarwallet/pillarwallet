@@ -204,9 +204,7 @@ class PoolTogetherPurchaseConfirm extends React.Component<Props, State> {
             <Spacing h={50} />
             <Button
               title={t('poolTogetherContent.button.purchaseTickets')}
-              onPress={() => {
-                this.purchasePoolAsset();
-              }}
+              onPress={this.purchasePoolAsset}
               style={{ marginBottom: 13, width: '100%' }}
             />
           </ContentWrapper>

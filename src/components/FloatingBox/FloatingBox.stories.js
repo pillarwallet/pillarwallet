@@ -26,8 +26,9 @@ import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 
 import FloatingBox from './FloatingBox';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-const stories = storiesOf('FloatingBox', module);
+const stories = storiesOf('FloatingBox', module).addDecorator(WithThemeDecorator);
 
 const BoxText = styled(BaseText)`
   color: white;

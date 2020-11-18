@@ -56,7 +56,7 @@ const LoadingParagraph = (props: Props) => {
       <Paragraph {...paragraphProps} isHidden={isLoading}>
         {text}
       </Paragraph>
-      {!!isLoading && <AbsoluteSpinner width={20} height={20} />}
+      {!!isLoading && <AbsoluteSpinner size={20} trackWidth={2} />}
     </Wrapper>
   );
 };

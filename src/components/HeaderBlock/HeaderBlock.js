@@ -28,8 +28,7 @@ import { SafeAreaView } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
-import { responsiveSize } from 'utils/ui';
-import { getThemeColors } from 'utils/themes';
+import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
 import type { Theme } from 'models/Theme';
 
@@ -58,7 +57,7 @@ export type OwnProps = {|
   onClose?: () => void,
   leftSideFlex?: number,
   wrapperStyle?: Object,
-  noHorizonatalPadding?: boolean,
+  noHorizontalPadding?: boolean,
   forceInsetTop?: string,
   bottomBorderAnimationValue?: Animated.Value,
 |};
@@ -80,10 +79,10 @@ const Wrapper = styled(Animated.View)`
 `;
 
 const HeaderContentWrapper = styled.View`
-  padding-vertical: 14px;
-  ${({ noHorizonatalPadding }) => !noHorizonatalPadding && `padding-horizontal: ${spacing.layoutSides}px;`}
+  padding-vertical: 10px;
+  ${({ noHorizontalPadding }) => !noHorizontalPadding && `padding-horizontal: ${spacing.layoutSides}px;`}
   width: 100%;
-  height: 52px;
+  height: 58px;
 `;
 
 const SafeArea = styled(SafeAreaView)`
@@ -105,7 +104,7 @@ const CenterItems = styled.View`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  height: 24px;
+  height: 40px;
 `;
 
 const LeftItems = styled.View`
@@ -113,7 +112,7 @@ const LeftItems = styled.View`
   align-items: center;
   justify-content: flex-start;
   flex-direction: row;
-  height: 24px;
+  height: 36px;
 `;
 
 const RightItems = styled.View`
@@ -122,21 +121,22 @@ const RightItems = styled.View`
   justify-content: flex-end;
   flex-direction: row;
   flex-wrap: wrap;
-  height: 24px;
+  align-content: center;
+  height: 36px;
 `;
 
 const BackIcon = styled(IconButton)`
   position: relative;
-  height: 24px;
-  width: 44px;
-  padding-left: 10px;
-  margin-left: -12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 36px;
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic050' })}
 `;
 
 const ActionIcon = styled(IconButton)`
   position: relative;
   align-self: center;
-  height: 34px;
+  height: 36px;
   width: 44px;
   padding: 5px 10px;
 `;
@@ -151,18 +151,11 @@ const TextButton = styled.TouchableOpacity`
   padding: 2px 0;
   flex-direction: row;
   align-items: center;
-  ${props => props.withBackground
-    ? `
-      background-color: ${props.theme.colors.tertiary};
-      border-radius: 6px;
-      padding: 2px ${responsiveSize(12)}px;
-      `
-    : ''}
 `;
 
 const ButtonLabel = styled(BaseText)`
   ${fontStyles.regular}px;
-  color: ${({ theme }) => theme.colors.link};
+  color: ${({ theme }) => theme.colors.basic000};
 `;
 
 const Indicator = styled.View`
@@ -202,7 +195,6 @@ class HeaderBlock extends React.Component<Props> {
       noBack,
       customOnBack,
       theme,
-      transparent,
       leftSideFlex,
     } = this.props;
     const colors = getThemeColors(theme);
@@ -218,10 +210,9 @@ class HeaderBlock extends React.Component<Props> {
             : (
               <BackIcon
                 icon="back"
-                color={transparent ? colors.control : colors.text}
+                color={colors.basic010}
                 onPress={customOnBack || (() => (navigation && navigation.goBack(null)))}
-                fontSize={fontSizes.large}
-                horizontalAlign="flex-start"
+                fontSize={fontSizes.big}
               />
             )
           }
@@ -242,7 +233,6 @@ class HeaderBlock extends React.Component<Props> {
 
   renderSideItems = (item, type = '') => {
     const { navigation, theme, onClose } = this.props;
-    const colors = getThemeColors(theme);
     const { style: itemStyle = {} } = item;
     const commonStyle = {};
     if (type === RIGHT && !item.noMargin) commonStyle.marginLeft = spacing.small;
@@ -251,8 +241,6 @@ class HeaderBlock extends React.Component<Props> {
         <View
           style={{
             ...commonStyle,
-            flexDirection: 'row',
-            flexWrap: 'wrap',
             ...itemStyle,
           }}
           key={item.title}
@@ -268,14 +256,20 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.icon) {
+      const additionalIconStyle = {};
+      const additionalIconProps = item.iconProps || {};
+      if (type === LEFT) additionalIconStyle.marginLeft = -10;
+      if (type === RIGHT) additionalIconStyle.marginRight = -10;
       return (
-        <View style={{ marginRight: -10, ...commonStyle, ...itemStyle }} key={item.icon}>
+        <View style={{ ...commonStyle, ...itemStyle, ...additionalIconStyle }} key={item.icon}>
           <ActionIcon
             icon={item.icon}
-            color={item.color || colors.text}
+            color={item.color
+              || getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })}
             onPress={item.onPress}
             fontSize={item.fontSize || fontSizes.large}
             horizontalAlign="flex-start"
+            {...additionalIconProps}
           />
           {!!item.indicator && <Indicator />}
         </View>
@@ -298,7 +292,6 @@ class HeaderBlock extends React.Component<Props> {
         <TextButton
           onPress={item.onPress}
           key={item.link}
-          withBackground={item.withBackground}
           style={{ ...commonStyle, ...itemStyle }}
         >
           <ButtonLabel maxFontSizeMultiplier={1.1}>{item.link}</ButtonLabel>
@@ -329,7 +322,7 @@ class HeaderBlock extends React.Component<Props> {
         >
           <CloseIcon
             icon="close"
-            color={colors.text}
+            color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })}
             onPress={getCloseAction({ ...item, onClose }, navigation)}
             fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
@@ -353,16 +346,12 @@ class HeaderBlock extends React.Component<Props> {
       light,
       noPaddingTop,
       wrapperStyle,
-      noHorizonatalPadding,
+      noHorizontalPadding,
       forceInsetTop = 'always',
       bottomBorderAnimationValue = animatedValueZero,
       noBottomBorder,
     } = this.props;
     const updatedColors = {};
-    if (floating) {
-      updatedColors.card = 'transparent';
-      updatedColors.border = 'transparent';
-    }
     if (light) {
       updatedColors.primary = theme.colors.control;
       updatedColors.text = theme.colors.control;
@@ -373,22 +362,24 @@ class HeaderBlock extends React.Component<Props> {
     let borderColor;
 
     if (noBottomBorder || floating) {
-      backgroundColor = floating ? 'transparent' : updatedTheme.colors.card;
+      backgroundColor = floating ? 'transparent' : updatedTheme.colors.basic050;
       borderColor = 'transparent';
     } else {
       backgroundColor = bottomBorderAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [theme.colors.surface, theme.colors.card],
+        outputRange: [theme.colors.basic070, theme.colors.basic050],
         extrapolate: 'clamp',
       });
+
+      const borderColorByTheme =
+        getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic080', darkKey: 'basic050' });
 
       borderColor = bottomBorderAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [`${theme.colors.border}00`, theme.colors.border],
+        outputRange: [`${borderColorByTheme}00`, borderColorByTheme],
         extrapolate: 'clamp',
       });
     }
-
 
     return (
       <ThemeProvider theme={updatedTheme}>
@@ -401,7 +392,7 @@ class HeaderBlock extends React.Component<Props> {
             noPaddingTop={noPaddingTop}
             androidStatusbarHeight={StatusBar.currentHeight}
           >
-            <HeaderContentWrapper noHorizonatalPadding={noHorizonatalPadding}>
+            <HeaderContentWrapper noHorizontalPadding={noHorizontalPadding}>
               {this.renderHeaderContent()}
             </HeaderContentWrapper>
           </SafeArea>

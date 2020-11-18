@@ -188,13 +188,11 @@ class PPNView extends React.Component<Props, State> {
             small
             marginTop={12}
             onPress={this.navigateToBuyPillar}
-            regularText
           />);
       } else {
         insightProps.buttonTitle = t('button.topUpPLRTank');
         insightProps.onButtonPress = this.navigateToFundTank;
       }
-
       return (
         <InsightWithButton
           title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
@@ -395,7 +393,7 @@ class PPNView extends React.Component<Props, State> {
           <FloatingButtonView>
             <Button
               style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
-              width="auto"
+              block={false}
               title={t('button.settleTransactions')}
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
             />

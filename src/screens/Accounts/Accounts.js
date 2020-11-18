@@ -18,11 +18,10 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useEffect, useState } from 'react';
-import styled, { withTheme } from 'styled-components/native';
+import { withTheme } from 'styled-components/native';
 import { FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // components
@@ -50,7 +49,7 @@ import { responsiveSize } from 'utils/ui';
 import { ASSETS, KEY_BASED_ASSET_TRANSFER_CHOOSE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
@@ -105,11 +104,6 @@ type Props = {|
   fetchAllAccountsBalances: () => void,
   keyBasedWalletHasPositiveBalance: boolean,
 |};
-
-const IconImage = styled(CachedImage)`
-  height: 52px;
-  width: 52px;
-`;
 
 const AccountsScreen = ({
   fetchAllAccountsBalances,
@@ -168,15 +162,15 @@ const AccountsScreen = ({
 
     return (
       <SettingsItemCarded
-        isSwitching={id === switchingToWalletId}
+        isLoading={id === switchingToWalletId}
         title={title}
         subtitle={balance}
-        onMainPress={() => {
+        onPress={() => {
           setSwitchingToWalletId(id);
           mainAction();
         }}
         isActive={isActive}
-        customIcon={<IconImage source={iconSource} />}
+        iconSource={iconSource}
       />
     );
   };
@@ -204,7 +198,7 @@ const AccountsScreen = ({
       };
     });
 
-  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   if (isKeyBasedAssetsMigrationEnabled && keyBasedWalletHasPositiveBalance) {
     walletsToShow.push({
       type: ITEM_TYPE.BUTTON,

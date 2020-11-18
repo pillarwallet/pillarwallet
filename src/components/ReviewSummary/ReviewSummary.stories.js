@@ -21,8 +21,9 @@
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import { withTheme } from 'styled-components/native';
-import CenterView from '../../../storybook/CenterView';
 
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewDecorator from '../../../storybook/CenterViewDecorator';
 import { TokenReviewSummaryComponent } from './TokenReviewSummary';
 import CollectibleReviewSummary from './CollectibleReviewSummary';
 
@@ -79,13 +80,11 @@ const collectible = {
 const TokenReviewSummaryComponentWithTheme = withTheme(TokenReviewSummaryComponent);
 
 storiesOf('ReviewSummary', module)
+  .addDecorator(CenterViewDecorator)
+  .addDecorator(WithThemeDecorator)
   .add('token', () => (
-    <CenterView>
-      <TokenReviewSummaryComponentWithTheme assetSymbol="PLR" text="You are sending" amount={102.1} {...reduxMock} />
-    </CenterView>
+    <TokenReviewSummaryComponentWithTheme assetSymbol="PLR" text="You are sending" amount={102.1} {...reduxMock} />
   ))
   .add('collectible', () => (
-    <CenterView>
-      <CollectibleReviewSummary collectible={collectible} text="You are sending" />
-    </CenterView>
+    <CollectibleReviewSummary collectible={collectible} text="You are sending" />
   ));

@@ -44,7 +44,7 @@ import {
   SABLIER_STREAMS,
   SENDWYRE_INPUT,
 } from 'constants/navigationConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -107,14 +107,14 @@ class ServicesScreen extends React.Component<Props> {
     /**
      * Retrieve boolean flags for services from Remote Config.
      */
-    isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.OFFERS_ENGINE);
-    isAaveEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.AAVE);
-    isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.POOL_TOGETHER);
-    isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.PEER_TO_PEER);
-    isWyreEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.WYRE);
-    isRampEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.RAMP);
-    isSablierEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.SABLIER);
-    isAltalixEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.ALTALIX);
+    isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_OFFERS_ENGINE);
+    isAaveEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_AAVE);
+    isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_POOL_TOGETHER);
+    isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_PEER_TO_PEER);
+    isWyreEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WYRE);
+    isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
+    isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
+    isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }

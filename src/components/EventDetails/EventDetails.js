@@ -23,7 +23,6 @@ import { View, Linking } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
-import { SafeAreaView } from 'react-navigation';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
 import { utils } from 'ethers';
@@ -33,20 +32,17 @@ import t from 'translations/translate';
 
 // components
 import { BaseText, MediumText } from 'components/Typography';
-import { Spacing } from 'components/Layout';
-import Button from 'components/Button';
-import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import CollectibleImage from 'components/CollectibleImage';
-import Spinner from 'components/Spinner';
 import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
+import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
 
 // utils
-import { spacing, fontStyles, fontSizes } from 'utils/variables';
+import { spacing, fontSizes } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { addressesEqual, getRate, getAssetDataByAddress } from 'utils/assets';
 import {
@@ -237,14 +233,26 @@ type EventData = {
   sublabel?: string,
 };
 
-const Wrapper = styled(SafeAreaView)`
-  padding: 16px 0 40px;
-  align-items: center;
-`;
-
-const ButtonsContainer = styled.View`
-  align-self: stretch;
-`;
+// returns false for events which wouldn't render a modal
+// i.e. getEventData(event) === null
+export const shouldShowEventDetails = (event: Object): boolean => {
+  switch (event.type) {
+    case USER_EVENT:
+      return [
+        WALLET_CREATE_EVENT,
+        PPN_INIT_EVENT,
+        WALLET_BACKUP_EVENT,
+      ].includes(event.subType);
+    case TRANSACTION_EVENT:
+    case TRANSACTION_PENDING_EVENT:
+      return event.tag !== SABLIER_CANCEL_STREAM;
+    case COLLECTIBLE_TRANSACTION:
+    case BADGE_REWARD_EVENT:
+      return true;
+    default:
+      return false;
+  }
+};
 
 const TokenImage = styled(CachedImage)`
   width: 64px;
@@ -281,13 +289,7 @@ const ItemIcon = styled(Icon)`
 const ActionIcon = styled(Icon)`
   margin-left: 4px;
   color: ${({ iconColor, theme }) => iconColor || theme.colors.secondaryText};
-  ${fontStyles.large};
-`;
-
-const ActionWrapper = styled.View`
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  font-size: ${fontSizes.big};
 `;
 
 const Row = styled.View`
@@ -298,7 +300,7 @@ const Row = styled.View`
 
 const SettleWrapper = styled.View`
   width: 100%;
-  padding: 0 ${spacing.layoutSides}px 36px;
+  padding: 0 ${spacing.layoutSides}px;
 `;
 
 const Divider = styled.View`
@@ -306,15 +308,6 @@ const Divider = styled.View`
   height: 1px;
   background-color: ${themedColors.tertiary};
   margin: 8px 0px 18px;
-`;
-
-const EventTimeHolder = styled.View`
-  text-align: center;
-  padding: 0 8px;
-`;
-
-const AvatarWrapper = styled.TouchableOpacity`
-  align-items: center;
 `;
 
 const ErrorMessage = styled(BaseText)`
@@ -644,7 +637,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -665,7 +658,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -693,7 +686,7 @@ export class EventDetail extends React.Component<Props> {
               {
                 title: t('button.topUp'),
                 onPress: this.topUpPillarNetwork,
-                squarePrimary: true,
+                transparent: true,
               },
             ],
           };
@@ -704,6 +697,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: t('button.topUp'),
               onPress: this.topUpPillarNetwork,
+              secondary: true,
             },
           ],
         };
@@ -714,7 +708,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: this.getReferButtonTitle(),
               onPress: this.referFriends,
-              squarePrimary: true,
+              secondary: true,
             },
           ],
         };
@@ -759,7 +753,6 @@ export class EventDetail extends React.Component<Props> {
         const activatePillarNetworkButton = {
           title: t('button.activatePPN'),
           onPress: this.topUpPillarNetwork,
-          secondary: true,
         };
 
         const referFriendsButton = {
@@ -771,7 +764,7 @@ export class EventDetail extends React.Component<Props> {
         const referFriendsButtonSecondary = {
           title: this.getReferButtonTitle(),
           onPress: this.referFriends,
-          squarePrimary: true,
+          secondary: true,
         };
 
         eventData = {
@@ -784,7 +777,7 @@ export class EventDetail extends React.Component<Props> {
         const topUpMoreButton = {
           title: t('button.topUpMore'),
           onPress: this.topUpPillarNetwork,
-          squarePrimary: true,
+          secondary: true,
         };
         eventData = {
           buttons: isPending
@@ -863,7 +856,7 @@ export class EventDetail extends React.Component<Props> {
             aaveDepositButtons.push({
               title: t('button.viewDeposit'),
               onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-              squarePrimary: true,
+              secondary: true,
             });
           }
         }
@@ -886,7 +879,7 @@ export class EventDetail extends React.Component<Props> {
           aaveWithdrawButtons.push({
             title: t('button.viewDeposit'),
             onPress: () => this.onAaveViewDeposit(aaveDepositedAsset),
-            squarePrimary: true,
+            secondary: true,
           });
         }
         eventData.buttons = aaveWithdrawButtons;
@@ -913,7 +906,7 @@ export class EventDetail extends React.Component<Props> {
             {
               title: t('button.viewPoolTogetherPool'),
               onPress: () => this.goToPoolTogetherPool(symbol),
-              squarePrimary: true,
+              secondary: true,
             },
           );
         }
@@ -965,7 +958,7 @@ export class EventDetail extends React.Component<Props> {
             },
             {
               title: t('button.viewSablierStream'),
-              squarePrimary: true,
+              secondary: true,
               onPress: () => this.goToIncomingStream(streamId),
             },
           ],
@@ -1004,7 +997,7 @@ export class EventDetail extends React.Component<Props> {
                 {
                   title: t('button.sendBack'),
                   onPress: () => this.sendSynthetic(relevantAddress),
-                  squarePrimary: true,
+                  secondary: true,
                 },
               ];
             }
@@ -1021,7 +1014,7 @@ export class EventDetail extends React.Component<Props> {
           const buttons = [{
             title: t('button.viewPoolTogetherPool'),
             onPress: () => this.goToPoolTogetherPool(DAI),
-            squarePrimary: true,
+            secondary: true,
           }];
           eventData = {
             name: t('poolTogether'),
@@ -1038,7 +1031,7 @@ export class EventDetail extends React.Component<Props> {
           const inviteToPillarButton = {
             title: t('button.inviteToPillar'),
             onPress: this.referFriends,
-            squarePrimary: true,
+            secondary: true,
           };
 
           const sendBackToAddress = {
@@ -1240,8 +1233,6 @@ export class EventDetail extends React.Component<Props> {
           userName={label}
           diameter={64}
           textStyle={{ fontSize: fontSizes.big }}
-          noShadow
-          borderWidth={0}
           cornerIcon={cornerIcon}
           cornerIconSize={22}
         />
@@ -1287,7 +1278,7 @@ export class EventDetail extends React.Component<Props> {
                   amount={getFormattedValue(formattedVal, group.symbol, { isPositive: !isFailed, noSymbol: !isFailed })}
                   textStyle={{ fontSize: fontSizes.big }}
                   iconStyle={{ height: 14, width: 8, marginRight: 9 }}
-                  secondary={isFailed}
+                  failed={isFailed}
                 />
               </Row>
               {group.transactions.map(({
@@ -1326,13 +1317,13 @@ export class EventDetail extends React.Component<Props> {
     );
   };
 
-  renderFee = (hash: string, fee: ?string, isReceived?: boolean) => {
+  getFee = (hash: string, fee: ?string, isReceived?: boolean) => {
     const { updatingTransaction, updatingCollectibleTransaction } = this.props;
     if (isReceived) return null;
     if (fee) {
-      return (<BaseText regular secondary style={{ marginBottom: 32 }}>{fee}</BaseText>);
+      return fee;
     } else if (updatingTransaction === hash || updatingCollectibleTransaction === hash) {
-      return (<Spinner height={20} width={20} style={{ marginBottom: 32 }} />);
+      return FEE_PENDING;
     }
     return null;
   };
@@ -1360,51 +1351,39 @@ export class EventDetail extends React.Component<Props> {
     const title = actionTitle || actionLabel || fullItemValue;
     const label = name || itemLabel;
     const subtitle = (actionSubtitle || fullItemValue) ? actionSubtitle || subtext : null;
-    const titleColor = this.getColor(valueColor);
-    const eventTime = date && formatDate(new Date(date * 1000), 'MMMM D, YYYY HH:mm');
+    const titleColor = this.getColor(valueColor) || undefined;
+
+    const commonProps = {
+      date: date !== undefined ? new Date(date * 1000) : undefined,
+      title: label,
+      subtitle: sublabel,
+      image: this.renderImage(itemData),
+      buttons,
+    };
+
+    if (settleEventData) {
+      return (
+        <DetailModal {...commonProps}>
+          {this.renderSettle(settleEventData, eventData)}
+        </DetailModal>
+      );
+    }
 
     return (
-      <Wrapper forceInset={{ top: 'never', bottom: 'always' }}>
-        <EventTimeHolder>
-          <BaseText tiny secondary>{eventTime}</BaseText>
-        </EventTimeHolder>
-        <Spacing h={10} />
-        <AvatarWrapper disabled>
-          <BaseText medium>{label}</BaseText>
-          {sublabel && <BaseText regular secondary>{sublabel}</BaseText>}
-          <Spacing h={20} />
-          {this.renderImage(itemData)}
-        </AvatarWrapper>
-        <Spacing h={20} />
-        {settleEventData ? this.renderSettle(settleEventData, eventData) : (
-          <React.Fragment>
-            <ActionWrapper>
-              {!!title && <MediumText large color={titleColor}>{title}</MediumText>}
-              {customActionTitle}
-              {!!actionIcon && <ActionIcon name={actionIcon} iconColor={statusIconColor} />}
-            </ActionWrapper>
-            {subtitle ? (
-              <React.Fragment>
-                <Spacing h={4} />
-                <BaseText regular secondary>{subtitle}</BaseText>
-                <Spacing h={16} />
-              </React.Fragment>
-            ) : (
-              <Spacing h={32} />
-            )}
-            {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-            {this.renderFee(event.hash, fee, isReceived)}
-          </React.Fragment>
+      <DetailModal
+        {...commonProps}
+        fee={this.getFee(event.hash, fee, isReceived)}
+      >
+        {!!title && (
+          <DetailRow color={titleColor}>
+            {title}
+            {!!actionIcon && <ActionIcon name={actionIcon} iconColor={statusIconColor} />}
+          </DetailRow>
         )}
-        <ButtonsContainer>
-          {buttons.map(buttonProps => (
-            <React.Fragment key={buttonProps.title} >
-              <Button regularText {...buttonProps} />
-              <Spacing h={4} />
-            </React.Fragment>
-          ))}
-        </ButtonsContainer>
-      </Wrapper>
+        {customActionTitle}
+        {!!subtitle && <DetailParagraph>{subtitle}</DetailParagraph>}
+        {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+      </DetailModal>
     );
   };
 
@@ -1431,7 +1410,7 @@ export class EventDetail extends React.Component<Props> {
 
       if (!alreadyHasViewOnBlockchainButton) {
         const viewOnBlockchainButton = {
-          squarePrimary: hasModalButtons, // styling if multiple buttons in modal
+          transparent: hasModalButtons, // styling if multiple buttons in modal
           secondary: !hasModalButtons, // styling if single button in modal
           title: viewOnBlockchainButtonTitle,
           onPress: this.viewOnTheBlockchain,
@@ -1454,14 +1433,7 @@ export class EventDetail extends React.Component<Props> {
       }
     }
 
-    return (
-      <SlideModal
-        noClose
-        hideHeader
-      >
-        {this.renderContent(event, eventData)}
-      </SlideModal>
-    );
+    return this.renderContent(event, eventData);
   }
 }
 
