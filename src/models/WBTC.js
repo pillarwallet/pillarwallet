@@ -52,17 +52,3 @@ export type WBTCGatewayAddressResponse = {
   amount?: number,
   nonce?: string,
 } | typeof undefined;
-
-export type MintTransactionParams = {
-  nonce: string,
-};
-
-export type MintTransactionResponse = {
-  result: WBTCResponseResult,
-  message?: string,
-  confirmations?: number,
-  inputData?: string,
-  contractAddress?: string,
-  exchangeRate?: number,
-  gasEstimate?: number,
-};

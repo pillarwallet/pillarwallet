@@ -413,13 +413,10 @@ export const getWbtcFeesAction = () => {
   };
 };
 
-export const getWbtcGatewayAddressAction =
-  (params: WBTCGatewayAddressParams) =>
-    async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
-      const { user: { data: user } } = getState();
-      const walletId = user?.walletId || '';
-      const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
-      if (!gatewayAddressResponse?.nonce) return null;
-      // TODO: initiate minting tx
-      return gatewayAddressResponse;
-    };
+export const getWbtcGatewayAddressAction = (params: WBTCGatewayAddressParams) =>
+  async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
+    const { user: { data: user } } = getState();
+    const walletId = user?.walletId || '';
+    const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
+    return gatewayAddressResponse;
+  };
