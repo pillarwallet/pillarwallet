@@ -82,7 +82,6 @@ import { fetchUserStreamsAction } from 'actions/sablierActions';
 import { combinedHistorySelector } from 'selectors/history';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 import { poolTogetherUserStatsSelector } from 'selectors/poolTogether';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import { sablierEventsSelector } from 'selectors/sablier';
 
 // utils
@@ -148,7 +147,6 @@ type Props = {
   isFetchingPoolStats: boolean,
   poolTogetherUserStats: Object[],
   fetchPoolStats: () => void,
-  isSmartWalletActive: boolean,
   incomingStreams: Stream[],
   outgoingStreams: Stream[],
   isFetchingStreams: boolean,
@@ -191,7 +189,6 @@ class HomeScreen extends React.Component<Props> {
       fetchSmartWalletTransactions,
       fetchReferralRewardsIssuerAddresses,
       fetchDepositedAssets,
-      isSmartWalletActive,
       fetchPoolStats,
       fetchUserStreams,
     } = this.props;
@@ -203,9 +200,7 @@ class HomeScreen extends React.Component<Props> {
     this._willFocus = this.props.navigation.addListener('willFocus', () => {
       this.props.hideHomeUpdateIndicator();
     });
-    if (isSmartWalletActive) {
-      fetchPoolStats();
-    }
+    fetchPoolStats();
     fetchSmartWalletTransactions();
     fetchBadges();
     fetchBadgeAwardHistory();
@@ -247,7 +242,6 @@ class HomeScreen extends React.Component<Props> {
       fetchReferralReward,
       fetchDepositedAssets,
       fetchPoolStats,
-      isSmartWalletActive,
       fetchUserStreams,
     } = this.props;
 
@@ -260,10 +254,8 @@ class HomeScreen extends React.Component<Props> {
     fetchReferralRewardsIssuerAddresses();
     fetchReferralReward();
     fetchDepositedAssets();
-    if (isSmartWalletActive) {
-      fetchPoolStats();
-      fetchUserStreams();
-    }
+    fetchPoolStats();
+    fetchUserStreams();
   };
 
   renderBadge = ({ item }) => {
@@ -368,7 +360,6 @@ class HomeScreen extends React.Component<Props> {
       isFetchingDepositedAssets,
       poolTogetherUserStats = [],
       isFetchingPoolStats,
-      isSmartWalletActive,
       incomingStreams,
       outgoingStreams,
       isFetchingStreams,
@@ -539,23 +530,23 @@ class HomeScreen extends React.Component<Props> {
                       open={!hideLendingDeposits}
                     />
                   }
-                  {!!hasPoolTickets && !!isSmartWalletActive &&
-                  <CollapsibleSection
-                    label={t('poolTogetherContent.ticketsList.title')}
-                    showLoadingSpinner={isFetchingPoolStats}
-                    collapseContent={
-                      <FlatList
-                        data={poolTogetherUserStats}
-                        keyExtractor={(item) => item.symbol}
-                        renderItem={this.renderPoolTogetherItem}
-                        listKey="pool_together"
-                      />
-                    }
-                    onPress={togglePoolTogether}
-                    open={!hidePoolTogether}
-                  />
-                  }
-                  {!!hasStreams && !!isSmartWalletActive &&
+                  {!!hasPoolTickets && (
+                    <CollapsibleSection
+                      label={t('poolTogetherContent.ticketsList.title')}
+                      showLoadingSpinner={isFetchingPoolStats}
+                      collapseContent={
+                        <FlatList
+                          data={poolTogetherUserStats}
+                          keyExtractor={(item) => item.symbol}
+                          renderItem={this.renderPoolTogetherItem}
+                          listKey="pool_together"
+                        />
+                      }
+                      onPress={togglePoolTogether}
+                      open={!hidePoolTogether}
+                    />
+                  )}
+                  {!!hasStreams && (
                     <CollapsibleSection
                       label={t('sablierContent.moneyStreamingList.title')}
                       showLoadingSpinner={isFetchingStreams}
@@ -573,7 +564,7 @@ class HomeScreen extends React.Component<Props> {
                       onPress={toggleSablier}
                       open={!hideSablier}
                     />
-                  }
+                  )}
                 </React.Fragment>
               )}
               flatListProps={{
@@ -638,7 +629,6 @@ const structuredSelector = createStructuredSelector({
   history: combinedHistorySelector,
   openSeaTxHistory: combinedCollectiblesHistorySelector,
   poolTogetherUserStats: poolTogetherUserStatsSelector,
-  isSmartWalletActive: isActiveAccountSmartWalletSelector,
   sablierEvents: sablierEventsSelector,
 });
 

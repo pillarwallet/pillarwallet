@@ -46,7 +46,6 @@ import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 import { ETH, PLR } from 'constants/assetsConstants';
 
 // utils, services
-import { themedColors } from 'utils/themes';
 import { formatAmount, noop } from 'utils/common';
 import type { ExchangeOptions } from 'utils/exchange';
 

@@ -49,7 +49,6 @@ import localeConfig from 'configs/localeConfig';
 // selectors
 import {
   isGasTokenSupportedSelector,
-  isActiveAccountSmartWalletSelector,
   preferredGasTokenSelector,
 } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -79,7 +78,6 @@ type Props = {
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   preferredGasToken: ?string,
   isGasTokenSupported: boolean,
-  isSmartAccount: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
@@ -107,18 +105,17 @@ class AppSettings extends React.Component<Props, State> {
       preferredGasToken,
       isGasTokenSupported,
       setPreferredGasToken,
-      isSmartAccount,
       localisation,
       sessionLanguageCode,
     } = this.props;
 
-    const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
+    const showRelayerMigration = !isGasTokenSupported;
 
     // TODO: revisit once web recovery portal has Etherspot implementation
     // const hasOtherDevicesLinked = !!devices.length
     //   && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
 
-    const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
+    const showGasTokenOption = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
 
     return [
       {
@@ -250,7 +247,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   isGasTokenSupported: isGasTokenSupportedSelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
   preferredGasToken: preferredGasTokenSelector,

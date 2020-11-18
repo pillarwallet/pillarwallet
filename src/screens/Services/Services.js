@@ -23,7 +23,6 @@ import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
@@ -58,9 +57,6 @@ import {
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
-// selectors
-import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
-
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
@@ -90,8 +86,6 @@ type Props = {
   theme: Theme,
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
-  isActiveAccountSmartWallet: boolean,
-  isSmartWalletActivated: boolean,
   user: User,
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
@@ -123,22 +117,12 @@ class ServicesScreen extends React.Component<Props> {
     const {
       navigation,
       theme,
-      isActiveAccountSmartWallet,
-      isSmartWalletActivated,
     } = this.props;
     const colors = getThemeColors(theme);
     const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
       label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length }),
       color: colors.primary,
     } : null;
-
-    const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
-    let SWServiceLabel;
-    if (SWServiceDisabled) {
-      SWServiceLabel = !isSmartWalletActivated
-        ? t('servicesContent.label.requiresActivation')
-        : t('servicesContent.label.forSmartWallet');
-    }
 
     const services = [];
     if (isOffersEngineEnabled) {
@@ -156,9 +140,7 @@ class ServicesScreen extends React.Component<Props> {
         key: 'depositPool',
         title: t('servicesContent.aaveDeposit.title'),
         body: t('servicesContent.aaveDeposit.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
-        action: () => isActiveAccountSmartWallet && navigation.navigate(LENDING_CHOOSE_DEPOSIT),
+        action: () => navigation.navigate(LENDING_CHOOSE_DEPOSIT),
       });
     }
     if (isPoolTogetherEnabled) {
@@ -166,7 +148,6 @@ class ServicesScreen extends React.Component<Props> {
         key: 'poolTogether',
         title: t('servicesContent.poolTogether.title'),
         body: t('servicesContent.poolTogether.description'),
-        hidden: !isActiveAccountSmartWallet,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       });
     }
@@ -175,8 +156,6 @@ class ServicesScreen extends React.Component<Props> {
         key: 'sablier',
         title: t('servicesContent.sablier.title'),
         body: t('servicesContent.sablier.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
         action: () => navigation.navigate(SABLIER_STREAMS),
       });
     }
@@ -378,16 +357,6 @@ const mapStateToProps = ({
   isAltalixAvailable,
 });
 
-const structuredSelector = createStructuredSelector({
-  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   loadAltalixInfo: () => dispatch(loadAltalixAvailability()),
 
@@ -397,4 +366,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ServicesScreen));

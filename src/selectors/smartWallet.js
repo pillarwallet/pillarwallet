@@ -27,13 +27,9 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
-import { checkIfLegacySmartWalletAccount } from 'utils/accounts';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
-
-// selectors
-import { activeAccountSelector } from 'selectors';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -63,12 +59,5 @@ export const useGasTokenSelector = createSelector(
   preferredGasTokenSelector,
   (isGasTokenSupported, preferredGasToken) => {
     return isGasTokenSupported && preferredGasToken !== ETH;
-  },
-);
-
-export const isActiveAccountSmartWalletSelector = createSelector(
-  activeAccountSelector,
-  (activeAccount) => {
-    return activeAccount && checkIfLegacySmartWalletAccount(activeAccount);
   },
 );

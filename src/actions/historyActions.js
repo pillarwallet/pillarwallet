@@ -17,43 +17,28 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import get from 'lodash.get';
+
 import isEmpty from 'lodash.isempty';
 
 // constants
 import {
   SET_HISTORY,
   SET_GAS_INFO,
-  TX_PENDING_STATUS,
   ADD_TRANSACTION,
-  UPDATING_TRANSACTION,
 } from 'constants/historyConstants';
 
 // utils
 import {
-  getTrxInfo,
-  parseFeeWithGasToken,
   updateAccountHistory,
-  updateHistoryRecord,
 } from 'utils/history';
 import {
   getAccountId,
   isEthersportSmartWalletType,
   findFirstEtherspotAccount,
 } from 'utils/accounts';
-import { getAssetsAsList } from 'utils/assets';
 import { reportLog } from 'utils/common';
-import {
-  getGasTokenDetails,
-  mapSdkToAppTxStatus,
-} from 'utils/smartWallet';
-
-// services
-import smartWalletService from 'services/smartWallet';
 
 // selectors
-import { smartAccountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import { historySelector } from 'selectors';
 
 // models, types
@@ -62,7 +47,7 @@ import type SDKWrapper from 'services/api';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
-import { fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
+import { loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
@@ -175,107 +160,106 @@ export const fetchGasInfoAction = () => {
   };
 };
 
-const transactionUpdate = (hash: string) => {
-  return {
-    type: UPDATING_TRANSACTION,
-    payload: hash,
-  };
-};
-
-export const updateTransactionStatusAction = (hash: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const { session: { data: { isOnline } } } = getState();
-    if (!isOnline) return;
-
-    const isSmartAccount = isActiveAccountSmartWalletSelector(getState());
-    dispatch(transactionUpdate(hash));
-
-    const trxInfo = await getTrxInfo(api, hash);
-
-    let sdkTransactionInfo;
-    let sdkToAppStatus;
-    if (isSmartAccount) {
-      sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
-      if (!sdkTransactionInfo) {
-        dispatch(transactionUpdate(''));
-        return;
-      }
-      sdkToAppStatus = mapSdkToAppTxStatus(sdkTransactionInfo.state);
-    }
-
-    // NOTE: if trxInfo is not null, that means transaction was mined or failed
-    if (isSmartAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
-      reportLog('Wrong transaction status', {
-        hash,
-        sdkToAppStatus,
-        sdkStatus: sdkTransactionInfo?.state,
-        blockchainStatus: trxInfo.status,
-      });
-      dispatch(transactionUpdate(''));
-      return;
-    }
-
-    // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
-    const stillPending = isSmartAccount
-      ? sdkToAppStatus === TX_PENDING_STATUS
-      : !trxInfo;
-
-    if (stillPending) {
-      dispatch(transactionUpdate(''));
-      return;
-    }
-
-    let gasPrice;
-    let gasUsed;
-    let status;
-    let feeWithGasToken;
-
-    if (isSmartAccount && sdkTransactionInfo) {
-      gasPrice = sdkTransactionInfo.gas.price;
-      gasUsed = sdkTransactionInfo.gas.used;
-      status = sdkToAppStatus;
-
-      // attach gas token info
-      const gasTokenAddress = sdkTransactionInfo.gasToken;
-      const transactionFee = sdkTransactionInfo.fee;
-      if (!isEmpty(gasTokenAddress) && transactionFee) {
-        const supportedAssets = get(getState(), 'assets.supportedAssets', []);
-        const accountAssets = getAssetsAsList(smartAccountAssetsSelector(getState()));
-        const gasToken = getGasTokenDetails(accountAssets, supportedAssets, gasTokenAddress);
-        if (!isEmpty(gasToken)) {
-          feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
-        }
-      }
-    } else if (trxInfo) {
-      ({
-        txInfo: { gasPrice },
-        txReceipt: { gasUsed },
-        status,
-      } = trxInfo);
-    }
-
-    const { history: { data: currentHistory } } = getState();
-    const { updatedHistory } = updateHistoryRecord(
-      currentHistory,
-      hash,
-      (transaction) => ({
-        ...transaction,
-        status,
-        gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
-        gasUsed: gasUsed ? gasUsed.toNumber() : transaction.gasUsed,
-        feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
-      }));
-
-    dispatch({
-      type: SET_HISTORY,
-      payload: updatedHistory,
-    });
-
-    dispatch(saveDbAction('history', { history: updatedHistory }, true));
-    dispatch(afterHistoryUpdatedAction());
-    dispatch(fetchAssetsBalancesAction());
-  };
-};
+// TODO: map with Etherspot events
+// const transactionUpdate = (hash: string) => {
+//   return {
+//     type: UPDATING_TRANSACTION,
+//     payload: hash,
+//   };
+// };
+// export const updateTransactionStatusAction = (hash: string) => {
+//   return async (dispatch: Dispatch, getState: GetState) => {
+//     const { session: { data: { isOnline } } } = getState();
+//     if (!isOnline) return;
+//     const isSmartAccount = isActiveAccountTypeEtherspotSelector(getState());
+//     dispatch(transactionUpdate(hash));
+//
+//     const trxInfo = await getTrxInfo(api, hash);
+//
+//     let sdkTransactionInfo;
+//     let sdkToAppStatus;
+//     if (isSmartAccount) {
+//       sdkTransactionInfo = await smartWalletService.getTransactionInfo(hash);
+//       if (!sdkTransactionInfo) {
+//         dispatch(transactionUpdate(''));
+//         return;
+//       }
+//       sdkToAppStatus = mapSdkToAppTxStatus(sdkTransactionInfo.state);
+//     }
+//
+//     // NOTE: if trxInfo is not null, that means transaction was mined or failed
+//     if (isSmartAccount && sdkToAppStatus === TX_PENDING_STATUS && trxInfo) {
+//       reportLog('Wrong transaction status', {
+//         hash,
+//         sdkToAppStatus,
+//         sdkStatus: sdkTransactionInfo?.state,
+//         blockchainStatus: trxInfo.status,
+//       });
+//       dispatch(transactionUpdate(''));
+//       return;
+//     }
+//
+//     // NOTE: when trxInfo is null, that means transaction status is still pending or timed out
+//     const stillPending = isSmartAccount
+//       ? sdkToAppStatus === TX_PENDING_STATUS
+//       : !trxInfo;
+//
+//     if (stillPending) {
+//       dispatch(transactionUpdate(''));
+//       return;
+//     }
+//
+//     let gasPrice;
+//     let gasUsed;
+//     let status;
+//     let feeWithGasToken;
+//
+//     if (isSmartAccount && sdkTransactionInfo) {
+//       gasPrice = sdkTransactionInfo.gas.price;
+//       gasUsed = sdkTransactionInfo.gas.used;
+//       status = sdkToAppStatus;
+//
+//       // attach gas token info
+//       const gasTokenAddress = sdkTransactionInfo.gasToken;
+//       const transactionFee = sdkTransactionInfo.fee;
+//       if (!isEmpty(gasTokenAddress) && transactionFee) {
+//         const supportedAssets = get(getState(), 'assets.supportedAssets', []);
+//         const accountAssets = getAssetsAsList(smartAccountAssetsSelector(getState()));
+//         const gasToken = getGasTokenDetails(accountAssets, supportedAssets, gasTokenAddress);
+//         if (!isEmpty(gasToken)) {
+//           feeWithGasToken = parseFeeWithGasToken(gasToken, transactionFee);
+//         }
+//       }
+//     } else if (trxInfo) {
+//       ({
+//         txInfo: { gasPrice },
+//         txReceipt: { gasUsed },
+//         status,
+//       } = trxInfo);
+//     }
+//
+//     const { history: { data: currentHistory } } = getState();
+//     const { updatedHistory } = updateHistoryRecord(
+//       currentHistory,
+//       hash,
+//       (transaction) => ({
+//         ...transaction,
+//         status,
+//         gasPrice: gasPrice ? gasPrice.toNumber() : transaction.gasPrice,
+//         gasUsed: gasUsed ? gasUsed.toNumber() : transaction.gasUsed,
+//         feeWithGasToken: feeWithGasToken || transaction.feeWithGasToken,
+//       }));
+//
+//     dispatch({
+//       type: SET_HISTORY,
+//       payload: updatedHistory,
+//     });
+//
+//     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+//     dispatch(afterHistoryUpdatedAction());
+//     dispatch(fetchAssetsBalancesAction());
+//   };
+// };
 
 export const insertTransactionAction = (historyTx: Transaction, accountId: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {

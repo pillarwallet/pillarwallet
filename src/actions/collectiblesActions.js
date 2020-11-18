@@ -18,13 +18,11 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { getEnv } from 'configs/envConfig';
 import { COLLECTIBLES } from 'constants/assetsConstants';
 import {
   UPDATE_COLLECTIBLES,
   SET_COLLECTIBLES_TRANSACTION_HISTORY,
   COLLECTIBLE_TRANSACTION,
-  UPDATING_COLLECTIBLE_TRANSACTION,
 } from 'constants/collectiblesConstants';
 import {
   getAccountAddress,
@@ -32,7 +30,6 @@ import {
   getActiveAccountAddress,
   getActiveAccountId,
 } from 'utils/accounts';
-import { getTrxInfo } from 'utils/history';
 
 import type SDKWrapper from 'services/api';
 import type { Collectible } from 'models/Collectible';
@@ -40,6 +37,7 @@ import type { GetState, Dispatch } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 
 import { saveDbAction } from './dbActions';
+
 
 const parseCollectibleMedia = (data) => {
   const {
@@ -78,14 +76,6 @@ export const collectibleFromResponse = (responseItem: Object): Collectible => {
     icon,
   };
 };
-
-const collectibleTransactionUpdate = (hash: string) => {
-  return {
-    type: UPDATING_COLLECTIBLE_TRANSACTION,
-    payload: hash,
-  };
-};
-
 
 export const fetchCollectiblesAction = (accountToFetchFor?: Account) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
@@ -240,43 +230,50 @@ export const fetchAllCollectiblesDataAction = () => {
   };
 };
 
-export const updateCollectibleTransactionAction = (hash: string) => {
-  return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
-    const {
-      session: { data: { isOnline } },
-      collectibles: { transactionHistory: collectiblesHistory },
-    } = getState();
-    if (!isOnline) return;
-
-    dispatch(collectibleTransactionUpdate(hash));
-    const trxInfo = await getTrxInfo(api, hash, getEnv().COLLECTIBLES_NETWORK);
-    if (!trxInfo) {
-      dispatch(collectibleTransactionUpdate(''));
-      return;
-    }
-    const {
-      txInfo,
-      txReceipt,
-      status,
-    } = trxInfo;
-
-    const accounts = Object.keys(collectiblesHistory);
-    const updatedHistory = accounts.reduce((history, accountId) => {
-      const accountHistory = collectiblesHistory[accountId].map(transaction => {
-        if (transaction.hash.toLowerCase() !== hash) {
-          return transaction;
-        }
-        return {
-          ...transaction,
-          status,
-          gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
-          gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
-        };
-      });
-      return { ...history, [accountId]: accountHistory };
-    }, {});
-
-    dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedHistory }, true));
-    dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedHistory });
-  };
-};
+// TODO: map with Etherspot events
+// const collectibleTransactionUpdate = (hash: string) => {
+//   return {
+//     type: UPDATING_COLLECTIBLE_TRANSACTION,
+//     payload: hash,
+//   };
+// };
+// export const updateCollectibleTransactionAction = (hash: string) => {
+//   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
+//     const {
+//       session: { data: { isOnline } },
+//       collectibles: { transactionHistory: collectiblesHistory },
+//     } = getState();
+//     if (!isOnline) return;
+//
+//     dispatch(collectibleTransactionUpdate(hash));
+//     const trxInfo = await getTrxInfo(api, hash, getEnv().COLLECTIBLES_NETWORK);
+//     if (!trxInfo) {
+//       dispatch(collectibleTransactionUpdate(''));
+//       return;
+//     }
+//     const {
+//       txInfo,
+//       txReceipt,
+//       status,
+//     } = trxInfo;
+//
+//     const accounts = Object.keys(collectiblesHistory);
+//     const updatedHistory = accounts.reduce((history, accountId) => {
+//       const accountHistory = collectiblesHistory[accountId].map(transaction => {
+//         if (transaction.hash.toLowerCase() !== hash) {
+//           return transaction;
+//         }
+//         return {
+//           ...transaction,
+//           status,
+//           gasPrice: txInfo.gasPrice ? txInfo.gasPrice.toNumber() : transaction.gasPrice,
+//           gasUsed: txReceipt.gasUsed ? txReceipt.gasUsed.toNumber() : transaction.gasUsed,
+//         };
+//       });
+//       return { ...history, [accountId]: accountHistory };
+//     }, {});
+//
+//     dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedHistory }, true));
+//     dispatch({ type: SET_COLLECTIBLES_TRANSACTION_HISTORY, payload: updatedHistory });
+//   };
+// };

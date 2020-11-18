@@ -77,7 +77,6 @@ import {
   TRANSACTION_EVENT,
   TRANSACTION_PENDING_EVENT,
   TX_PENDING_STATUS,
-  TX_CONFIRMED_STATUS,
 } from 'constants/historyConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
@@ -129,14 +128,11 @@ import {
   activeBlockchainSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
 import { goToInvitationFlowAction } from 'actions/referralsActions';
-import { updateTransactionStatusAction } from 'actions/historyActions';
 import { lookupAddressAction } from 'actions/ensRegistryActions';
-import { updateCollectibleTransactionAction } from 'actions/collectiblesActions';
 
 // types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -184,13 +180,10 @@ type SelectorProps = {|
   activeBlockchainNetwork: string,
   isPPNActivated: boolean,
   collectiblesHistory: CollectibleTrx[],
-  isSmartAccount: boolean,
 |};
 
 type DispatchProps = {|
   goToInvitationFlow: () => void,
-  updateTransactionStatus: (hash: string) => void,
-  updateCollectibleTransaction: (hash: string) => void,
   lookupAddress: (address: string) => void,
 |};
 
@@ -340,7 +333,6 @@ export class EventDetail extends React.Component<Props> {
     const txInfo = this.findTxInfo(event.type === COLLECTIBLE_TRANSACTION);
     if (!txInfo) return;
     this.syncEnsRegistry(txInfo);
-    this.syncTxStatus(txInfo);
   }
 
   componentDidUpdate() {
@@ -386,30 +378,6 @@ export class EventDetail extends React.Component<Props> {
 
     if (!ensRegistry[relatedAddress]) {
       lookupAddress(relatedAddress);
-    }
-  };
-
-  syncTxStatus = (txInfo: Transaction | CollectibleTrx) => {
-    if (txInfo.status === TX_PENDING_STATUS) {
-      const { isSmartAccount } = this.props;
-      this.timeout = setTimeout(this.updateTransaction, 500);
-      if (!isSmartAccount) {
-        this.timer = setInterval(this.updateTransaction, 10000);
-      }
-    }
-
-    if (txInfo.status === TX_CONFIRMED_STATUS && (!txInfo.gasUsed || !txInfo.gasPrice)) {
-      this.updateTransaction();
-    }
-  };
-
-  updateTransaction = () => {
-    const { event, updateCollectibleTransaction, updateTransactionStatus } = this.props;
-    const { type, hash } = event;
-    if (type === COLLECTIBLE_TRANSACTION) {
-      updateCollectibleTransaction(hash);
-    } else {
-      updateTransactionStatus(hash);
     }
   };
 
@@ -725,7 +693,6 @@ export class EventDetail extends React.Component<Props> {
       itemData,
       referralRewardIssuersAddresses,
       depositedAssets,
-      isSmartAccount,
       keyBasedWalletAddress,
       ensRegistry,
     } = this.props;
@@ -887,29 +854,27 @@ export class EventDetail extends React.Component<Props> {
       case POOLTOGETHER_DEPOSIT_TRANSACTION:
       case POOLTOGETHER_WITHDRAW_TRANSACTION: {
         const buttons = [];
-        if (isSmartAccount) {
-          const { extra: { symbol } } = event;
-          if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
-            buttons.push({
-              title: t('button.purchaseMore'),
-              onPress: () => this.goToPoolTogetherPurcharse(symbol),
-              secondary: true,
-            });
-          } else {
-            buttons.push({
-              title: t('button.withdrawMore'),
-              onPress: () => this.goToPoolTogetherWithdraw(symbol),
-              secondary: true,
-            });
-          }
-          buttons.push(
-            {
-              title: t('button.viewPoolTogetherPool'),
-              onPress: () => this.goToPoolTogetherPool(symbol),
-              secondary: true,
-            },
-          );
+        const { extra: { symbol } } = event;
+        if (event.tag === POOLTOGETHER_DEPOSIT_TRANSACTION) {
+          buttons.push({
+            title: t('button.purchaseMore'),
+            onPress: () => this.goToPoolTogetherPurcharse(symbol),
+            secondary: true,
+          });
+        } else {
+          buttons.push({
+            title: t('button.withdrawMore'),
+            onPress: () => this.goToPoolTogetherWithdraw(symbol),
+            secondary: true,
+          });
         }
+        buttons.push(
+          {
+            title: t('button.viewPoolTogetherPool'),
+            onPress: () => this.goToPoolTogetherPool(symbol),
+            secondary: true,
+          },
+        );
         eventData = {
           name: t('poolTogether'),
           customActionTitle: this.renderPoolTogetherTickets(event),
@@ -1479,7 +1444,6 @@ const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSe
   activeBlockchainNetwork: activeBlockchainSelector,
   isPPNActivated: isPPNActivatedSelector,
   collectiblesHistory: combinedCollectiblesHistorySelector,
-  isSmartAccount: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| ...SelectorProps, ...StateProps |} => ({
@@ -1489,8 +1453,6 @@ const combinedMapStateToProps = (state: RootReducerState, props: OwnProps): {| .
 
 const mapDispatchToProps = (dispatch: Dispatch): DispatchProps => ({
   goToInvitationFlow: () => dispatch(goToInvitationFlowAction()),
-  updateTransactionStatus: (hash) => dispatch(updateTransactionStatusAction(hash)),
-  updateCollectibleTransaction: (hash) => dispatch(updateCollectibleTransactionAction(hash)),
   lookupAddress: (address) => dispatch(lookupAddressAction(address)),
 });
 

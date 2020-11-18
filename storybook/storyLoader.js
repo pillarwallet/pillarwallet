@@ -24,7 +24,6 @@ function loadStories() {
 	require('../src/components/Modals/SlideModal/SlideModal.stories');
 	require('../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories');
 	require('../src/components/ReviewSummary/ReviewSummary.stories');
-	require('../src/components/SWActivationCard/SWActivationCard.stories');
 	require('../src/components/SearchBlock/SearchBlock.stories');
 	require('../src/components/Selector/Selector.stories');
 	require('../src/components/Table/Table.stories');
@@ -55,7 +54,6 @@ const stories = [
 	'../src/components/Modals/SlideModal/SlideModal.stories',
 	'../src/components/RetryGraphQueryBox/RetryGraphQueryBox.stories',
 	'../src/components/ReviewSummary/ReviewSummary.stories',
-	'../src/components/SWActivationCard/SWActivationCard.stories',
 	'../src/components/SearchBlock/SearchBlock.stories',
 	'../src/components/Selector/Selector.stories',
 	'../src/components/Table/Table.stories',
