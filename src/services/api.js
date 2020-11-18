@@ -72,7 +72,7 @@ type RegisterSmartWalletPayload = {
   walletId: string,
   privateKey: string,
   ethAddress: string,
-  fcmToken: string,
+  fcmToken: ?string,
 };
 
 type VerifyEmail = {|

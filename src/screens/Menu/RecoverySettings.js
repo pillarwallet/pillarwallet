@@ -158,16 +158,21 @@ class RecoverySettings extends React.Component<Props, State> {
       );
     }
 
+    // force hide, TODO: revisit once web recovery portal has Etherspot implementation
+    const showGlobalSection = false;
+
     return (
       <ContainerWithHeader
         headerProps={{ centerItems: [{ title: t('settingsContent.settingsItem.recoverySettings.screenTitle') }] }}
         inset={{ bottom: 'never' }}
       >
         <ScrollWrapper>
-          <SettingsSection
-            sectionTitle={t('settingsContent.settingsItem.recoverySettings.label.globalSettings')}
-            sectionItems={this.getGlobalSection()}
-          />
+          {!!showGlobalSection && (
+            <SettingsSection
+              sectionTitle={t('settingsContent.settingsItem.recoverySettings.label.globalSettings')}
+              sectionItems={this.getGlobalSection()}
+            />
+          )}
           <SettingsSection
             sectionTitle={t('settingsContent.settingsItem.recoverySettings.label.keyWalletSettings')}
             sectionItems={this.getKeyWalletSection()}

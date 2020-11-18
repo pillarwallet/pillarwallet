@@ -28,8 +28,6 @@ import {
   ADD_TRANSACTION,
   UPDATING_TRANSACTION,
 } from 'constants/historyConstants';
-import { SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 // utils
 import {
@@ -39,21 +37,16 @@ import {
   updateHistoryRecord,
 } from 'utils/history';
 import {
-  getAccountAddress,
   getAccountId,
-  findFirstLegacySmartAccount,
+  isEthersportSmartWalletType,
+  findFirstEtherspotAccount,
 } from 'utils/accounts';
 import { getAssetsAsList } from 'utils/assets';
-import { reportLog, uniqBy } from 'utils/common';
+import { reportLog } from 'utils/common';
 import {
-  deviceHasGasTokenSupport,
   getGasTokenDetails,
   mapSdkToAppTxStatus,
-  parseSmartWalletTransactions,
 } from 'utils/smartWallet';
-import { mapTransactionsHistoryWithAave } from 'utils/aave';
-import { mapTransactionsPoolTogether } from 'utils/poolTogether';
-import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -71,10 +64,8 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 // actions
 import { fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
-import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
-import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 
 export const afterHistoryUpdatedAction = () => {
@@ -84,90 +75,93 @@ export const afterHistoryUpdatedAction = () => {
   };
 };
 
-const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
-  const { history: { data: currentHistory } } = getState();
-  const accountHistory = currentHistory[accountId] || [];
+// TODO: remove in favor of Etherspot?
+// const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
+//   const { history: { data: currentHistory } } = getState();
+//   const accountHistory = currentHistory[accountId] || [];
+//
+//   const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
+//   const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
+//
+//   const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
+//   const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+//   dispatch(saveDbAction('history', { history: updatedHistory }, true));
+//
+//   dispatch({
+//     type: SET_HISTORY,
+//     payload: updatedHistory,
+//   });
+//
+//   dispatch(afterHistoryUpdatedAction());
+// };
 
-  const pendingTransactions = apiHistory.filter(tx => tx.status === TX_PENDING_STATUS);
-  const minedTransactions = apiHistory.filter(tx => tx.status !== TX_PENDING_STATUS);
-
-  const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
-  const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-  dispatch(saveDbAction('history', { history: updatedHistory }, true));
-
-  dispatch({
-    type: SET_HISTORY,
-    payload: updatedHistory,
-  });
-
-  dispatch(afterHistoryUpdatedAction());
-};
-
-export const fetchSmartWalletTransactionsAction = () => {
+export const fetchTransactionsHistoryAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
-      smartWallet: { lastSyncedTransactionId, connectedAccount },
+      // smartWallet: { lastSyncedTransactionId, connectedAccount },
       session: { data: { isOnline } },
     } = getState();
 
-    // key based history migration: clean existing
-    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (keyBasedAccount) {
-      const keyBasedAccountId = getAccountId(keyBasedAccount);
-      const currentHistory = historySelector(getState());
-      if (!isEmpty(currentHistory[keyBasedAccountId])) {
-        const updatedHistory = updateAccountHistory(currentHistory, keyBasedAccountId, []);
-        await dispatch(saveDbAction('history', { history: updatedHistory }, true));
-        dispatch({ type: SET_HISTORY, payload: updatedHistory });
-      }
-    }
+    const currentHistory = historySelector(getState());
+
+    // migration to etherspot: clean other accounts history
+    accounts
+      .filter((account) => !isEthersportSmartWalletType(account))
+      .forEach((account) => {
+        const accountId = getAccountId(account);
+        if (!isEmpty(currentHistory[accountId])) {
+          const updatedHistory = updateAccountHistory(currentHistory, accountId, []);
+          dispatch(saveDbAction('history', { history: updatedHistory }, true));
+          dispatch({ type: SET_HISTORY, payload: updatedHistory });
+        }
+      });
 
     if (!isOnline) return;
 
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
-    if (!smartWalletAccount || !connectedAccount) {
-      reportLog('fetchSmartWalletTransactionsAction failed, no connected account');
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      reportLog('fetchTransactionsHistoryAction failed, no Etherspot account');
       return;
     }
 
-    const devices = connectedAccount?.devices || [];
-
     await dispatch(loadSupportedAssetsAction());
-    const supportedAssets = get(getState(), 'assets.supportedAssets', []);
+    // const supportedAssets = get(getState(), 'assets.supportedAssets', []);
 
-    await dispatch(syncVirtualAccountTransactionsAction());
+    // TODO: implement etherspot
+    // await dispatch(syncVirtualAccountTransactionsAction());
 
-    const accountId = getAccountId(smartWalletAccount);
-    const accountAddress = getAccountAddress(smartWalletAccount);
-
-    const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
-    const accountAssets = smartAccountAssetsSelector(getState());
-    const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
-    const assetsList = getAssetsAsList(accountAssets);
-    const smartWalletTransactionHistory = parseSmartWalletTransactions(
-      smartWalletTransactions,
-      supportedAssets,
-      assetsList,
-      relayerExtensionDevice?.address,
-    );
-    const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
-    const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-    const history = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
-
-    if (!history.length) return;
-
-    if (smartWalletTransactions.length) {
-      const newLastSyncedId = smartWalletTransactions[0].id;
-      dispatch({
-        type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
-        payload: newLastSyncedId,
-      });
-      dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
-    }
-
-    syncAccountHistory(history, accountId, dispatch, getState);
-    dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
+    // const accountId = getAccountId(smartWalletAccount);
+    // const accountAddress = getAccountAddress(smartWalletAccount);
+    //
+    // const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
+    // const accountAssets = smartAccountAssetsSelector(getState());
+    //
+    // const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
+    // const assetsList = getAssetsAsList(accountAssets);
+    // const smartWalletTransactionHistory = parseSmartWalletTransactions(
+    //   smartWalletTransactions,
+    //   supportedAssets,
+    //   assetsList,
+    //   relayerExtensionDevice?.address,
+    // );
+    // const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
+    // const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
+    // const history = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    //
+    // if (!history.length) return;
+    //
+    // if (smartWalletTransactions.length) {
+    //   const newLastSyncedId = smartWalletTransactions[0].id;
+    //   dispatch({
+    //     type: SET_SMART_WALLET_LAST_SYNCED_TRANSACTION_ID,
+    //     payload: newLastSyncedId,
+    //   });
+    //   dispatch(saveDbAction('smartWallet', { lastSyncedTransactionId: newLastSyncedId }));
+    // }
+    //
+    // syncAccountHistory(history, accountId, dispatch, getState);
+    // dispatch(extractEnsInfoFromTransactionsAction(smartWalletTransactions));
   };
 };
 

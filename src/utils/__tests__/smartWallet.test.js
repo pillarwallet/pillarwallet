@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { userHasSmartWallet } from 'utils/smartWallet';
+import { userHasLegacySmartWallet } from 'utils/smartWallet';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import type { Accounts } from 'models/Account';
@@ -34,7 +34,7 @@ describe('Smartwallet utils', () => {
         },
       ];
 
-      expect(userHasSmartWallet(accounts)).toBe(false);
+      expect(userHasLegacySmartWallet(accounts)).toBe(false);
     });
 
     it('returns true when user has a smart wallet', () => {
@@ -53,7 +53,7 @@ describe('Smartwallet utils', () => {
         },
       ];
 
-      expect(userHasSmartWallet(accounts)).toBe(true);
+      expect(userHasLegacySmartWallet(accounts)).toBe(true);
     });
   });
 });

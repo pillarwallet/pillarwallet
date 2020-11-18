@@ -35,9 +35,12 @@ import Button from 'components/Button';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { getAccountName, isNotKeyBasedType } from 'utils/accounts';
+import {
+  getAccountName,
+  isEthersportSmartWalletType,
+} from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
-import { userHasSmartWallet } from 'utils/smartWallet';
+import { userHasLegacySmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { images } from 'utils/images';
@@ -180,7 +183,7 @@ const AccountsScreen = ({
 
 
   const walletsToShow = accounts
-    .filter(isNotKeyBasedType) // filter key based due deprecation
+    .filter(isEthersportSmartWalletType) // filter others due migration to etherspot
     .map((account: Account): ListItem => {
       const { id, isActive, type } = account;
       const accountBalances: Balances = balances[id];
@@ -219,7 +222,7 @@ const AccountsScreen = ({
       id: `NETWORK_${ppnNetwork.id}`,
       type: ITEM_TYPE.NETWORK,
       title: t('pillarNetwork'),
-      balance: userHasSmartWallet(accounts)
+      balance: userHasLegacySmartWallet(accounts)
         ? `${availableStakeFormattedAmount} ${PPN_TOKEN}`
         : t('label.notApplicable'),
       mainAction: setPPNAsActiveBlockchainNetwork,

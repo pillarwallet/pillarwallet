@@ -25,7 +25,7 @@ import { getFormattedBalanceInFiat } from 'screens/Exchange/utils';
 import type { Assets, Balance, Rates } from 'models/Asset';
 import { getEnabledAssets, getSmartWalletAddress } from 'utils/accounts';
 import { getAssetData, getAssetsAsList, getBalance } from 'utils/assets';
-import { userHasSmartWallet } from 'utils/smartWallet';
+import { userHasLegacySmartWallet } from 'utils/smartWallet';
 import { DEFAULT_ACCOUNTS_ASSETS_DATA_KEY } from 'constants/assetsConstants';
 import {
   assetsSelector,
@@ -60,7 +60,7 @@ export const smartAccountAssetsSelector = createSelector(
   accountsSelector,
   hiddenAssetsSelector,
   (assets, accounts, hiddenAssets) => {
-    const userHasSW = userHasSmartWallet(accounts);
+    const userHasSW = userHasLegacySmartWallet(accounts);
     if (!userHasSW) return {};
     const smartAccountId = getSmartWalletAddress(accounts);
     if (!smartAccountId) return {};

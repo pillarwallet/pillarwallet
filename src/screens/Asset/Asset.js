@@ -37,7 +37,6 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
-import SWActivationCard from 'components/SWActivationCard';
 import AddFundsModal from 'components/AddFundsModal';
 import Modal from 'components/Modal';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
@@ -63,7 +62,6 @@ import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import { isSWAddress, mapTransactionsHistory } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
 
@@ -79,9 +77,9 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
 import type { Assets, Balances, Asset } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Account, Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+
 
 type Props = {
   fetchAssetsBalances: () => void,
@@ -91,7 +89,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   baseFiatCurrency: ?string,
   resetHideRemoval?: Function,
-  smartWalletState: Object,
   accounts: Accounts,
   activeAccount: ?Account,
   paymentNetworkBalances: Balances,
@@ -239,7 +236,6 @@ class AssetScreen extends React.Component<Props> {
       fetchAssetsBalances,
       baseFiatCurrency,
       navigation,
-      smartWalletState,
       accounts,
       history,
       availableStake,
@@ -268,10 +264,6 @@ class AssetScreen extends React.Component<Props> {
       receive: isReceiveActive = true,
       disclaimer,
     } = assetsConfig[token] || {};
-
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const isSendActive = isAssetConfigSendActive && !Object.keys(sendingBlockedMessage).length;
 
     const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
     const mappedTransactions = mapTransactionsHistory(
@@ -360,11 +352,10 @@ class AssetScreen extends React.Component<Props> {
               onPressSend={() => this.goToSendTokenFlow(assetData)}
               onPressExchange={isSupportedByExchange ? () => this.goToExchangeFlow(token) : null}
               noBalance={isWalletEmpty}
-              isSendDisabled={!isSendActive}
+              isSendDisabled={!isAssetConfigSendActive}
               isReceiveDisabled={!isReceiveActive}
               showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
             />
-            {!isSendActive && <SWActivationCard />}
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
           <ActivityFeed
@@ -389,7 +380,6 @@ class AssetScreen extends React.Component<Props> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
-  smartWallet: smartWalletState,
   accounts: { data: accounts },
   exchange: {
     exchangeSupportedAssets,
@@ -399,7 +389,6 @@ const mapStateToProps = ({
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  smartWalletState,
   accounts,
   exchangeSupportedAssets,
   isFetchingUniswapTokens,

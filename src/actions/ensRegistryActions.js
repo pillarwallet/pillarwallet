@@ -32,7 +32,7 @@ import { lookupAddress } from 'utils/common';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { setSmartWalletEnsNameAction } from './smartWalletActions';
+import { setEtherspotEnsNameAction } from './etherspotActions';
 
 
 export const setUserEnsIfEmptyAction = () => {
@@ -43,7 +43,7 @@ export const setUserEnsIfEmptyAction = () => {
 
     // check if user needs to set the ens name
     if (!ensName && user.username && accountState === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletEnsNameAction(user.username));
+      dispatch(setEtherspotEnsNameAction(user.username));
     }
   };
 };

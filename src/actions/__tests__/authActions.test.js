@@ -29,7 +29,6 @@ import { UPDATE_SESSION } from 'constants/sessionConstants';
 import {
   SET_SMART_WALLET_CONNECTED_ACCOUNT,
   SET_SMART_WALLET_SDK_INIT,
-  SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import { SET_CONNECTED_DEVICES } from 'constants/connectedDevicesConstants';
 import { UPDATE_APP_SETTINGS } from 'constants/appSettingsConstants';
@@ -105,7 +104,6 @@ describe('Auth actions', () => {
       featureFlags: { data: {} },
       appSettings: { data: {} },
       session: { data: { isOnline: true } },
-      smartWallet: { upgrade: { status: SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE } },
       balances: { data: {} },
       user: { data: {} },
     });

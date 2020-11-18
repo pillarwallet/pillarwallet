@@ -39,7 +39,6 @@ import SlideModal from 'components/Modals/SlideModal';
 import Icon from 'components/Icon';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
-import SWActivationModal from 'components/SWActivationModal';
 import CollectibleImage from 'components/CollectibleImage';
 import Spinner from 'components/Spinner';
 import ProfileImage from 'components/ProfileImage';
@@ -134,7 +133,7 @@ import {
   activeBlockchainSelector,
 } from 'selectors';
 import { assetDecimalsSelector, accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 
 // actions
@@ -160,6 +159,7 @@ import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer'
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { Selector } from 'selectors';
 
+
 type StateProps = {|
   rates: Rates,
   baseFiatCurrency: ?string,
@@ -182,7 +182,6 @@ type StateProps = {|
 type SelectorProps = {|
   PPNTransactions: Transaction[],
   mergedPPNTransactions: Transaction[],
-  isSmartWalletActivated: boolean,
   assetDecimals: number,
   activeAccountAddress: string,
   accountAssets: Assets,
@@ -512,10 +511,6 @@ export class EventDetail extends React.Component<Props> {
     goToInvitationFlow();
   };
 
-  activateSW = () => {
-    Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
-  };
-
   topUpPillarNetwork = () => {
     const { navigation } = this.props;
     navigation.navigate(TANK_FUND_FLOW);
@@ -642,7 +637,6 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getWalletCreatedEventData = (event: Object): ?EventData => {
-    const { isSmartWalletActivated } = this.props;
     switch (event.eventTitle) {
       case 'Wallet created':
         return {
@@ -655,19 +649,14 @@ export class EventDetail extends React.Component<Props> {
           ],
         };
       case 'Smart Wallet created':
-        const activateButton = {
-          title: t('button.activate'),
-          onPress: this.activateSW,
-        };
-
-        const topUpButton = {
-          title: t('button.topUp'),
-          onPress: this.topUpSW,
-          secondary: true,
-        };
-
         return {
-          buttons: isSmartWalletActivated ? [topUpButton] : [activateButton],
+          buttons: [
+            {
+              title: t('button.topUp'),
+              onPress: this.topUpSW,
+              secondary: true,
+            },
+          ],
         };
       case 'Wallet imported':
         return {
@@ -686,7 +675,7 @@ export class EventDetail extends React.Component<Props> {
   };
 
   getUserEventData = (event: Object): ?EventData => {
-    const { isPPNActivated, isSmartWalletActivated } = this.props;
+    const { isPPNActivated } = this.props;
 
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -705,17 +694,6 @@ export class EventDetail extends React.Component<Props> {
                 title: t('button.topUp'),
                 onPress: this.topUpPillarNetwork,
                 squarePrimary: true,
-              },
-            ],
-          };
-        }
-        if (!isSmartWalletActivated) {
-          return {
-            actionTitle: t('label.created'),
-            buttons: [
-              {
-                title: t('button.activate'),
-                onPress: this.activateSW,
               },
             ],
           };
@@ -1523,7 +1501,6 @@ const mapStateToProps = ({
 const structuredSelector: Selector<SelectorProps, OwnProps> = createStructuredSelector({
   PPNTransactions: PPNTransactionsSelector,
   mergedPPNTransactions: combinedPPNTransactionsSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
   activeAccountAddress: activeAccountAddressSelector,
   accountAssets: accountAssetsSelector,

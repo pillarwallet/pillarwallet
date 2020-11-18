@@ -25,7 +25,6 @@ import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import { withNavigation } from 'react-navigation';
 import type { NavigationScreenProp } from 'react-navigation';
-import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 
 import Tabs from 'components/Tabs';
@@ -35,14 +34,12 @@ import { Wrapper, ScrollWrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
 import { LabelBadge } from 'components/LabelBadge';
-import SWActivationCard from 'components/SWActivationCard';
 import CollectiblesList from 'components/CollectiblesList';
 
 import { spacing } from 'utils/variables';
 
 import { TOKENS, COLLECTIBLES, defaultFiatCurrency } from 'constants/assetsConstants';
 import { SERVICES, ASSET_SEARCH, COLLECTIBLE } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 import { activeAccountAddressSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
@@ -50,10 +47,7 @@ import { accountCollectiblesSelector } from 'selectors/collectibles';
 
 import type { Balances, Rates } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { Theme } from 'models/Theme';
 
 // actions
@@ -64,7 +58,6 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { getThemeColors, themedColors } from 'utils/themes';
 
 // partials
@@ -84,11 +77,8 @@ type Props = {
   logScreenView: (view: string, screen: string) => void,
   balances: Balances,
   rates: Rates,
-  accounts: Accounts,
-  smartWalletState: SmartWalletReducerState,
   fetchAssetsBalances: () => void,
   fetchAllCollectiblesData: () => void,
-  showDeploySmartWallet?: boolean,
   theme: Theme,
   dismissSmartWalletInsight: () => void,
   SWInsightDismissed: boolean,
@@ -135,16 +125,6 @@ class WalletView extends React.Component<Props, State> {
     const { logScreenView } = this.props;
     this.setState({ activeTab });
     logScreenView(`View tab Assets.${activeTab}`, 'Assets');
-  };
-
-  shouldBlockAssetsView = () => {
-    const { accounts, smartWalletState } = this.props;
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-    const deploymentData = getDeploymentData(smartWalletState);
-    return !isEmpty(sendingBlockedMessage)
-      && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
-      && !deploymentData.error;
   };
 
   isInSearchAndFocus = () => {
@@ -196,9 +176,6 @@ class WalletView extends React.Component<Props, State> {
       rates,
       balances,
       baseFiatCurrency,
-      accounts,
-      smartWalletState,
-      showDeploySmartWallet,
       theme,
       dismissSmartWalletInsight,
       SWInsightDismissed,
@@ -211,14 +188,6 @@ class WalletView extends React.Component<Props, State> {
     const isInSearchMode = this.isInSearchMode();
 
     const balance = calculateBalanceInFiat(rates, balances, baseFiatCurrency || defaultFiatCurrency);
-
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    const hasSmartWallet = smartWalletStatus.hasAccount;
-    const showFinishSmartWalletActivation = !hasSmartWallet || showDeploySmartWallet;
-    const deploymentData = getDeploymentData(smartWalletState);
-
-    const blockAssetsView = this.shouldBlockAssetsView();
 
     const isInSearchAndFocus = this.isInSearchAndFocus();
     const isInsightVisible = showInsight && !this.isAllInsightListDone() && !isInSearchAndFocus;
@@ -241,60 +210,48 @@ class WalletView extends React.Component<Props, State> {
             onClose={() => { hideInsight(); }}
             wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
           />
-          {(blockAssetsView || !!deploymentData.error) && <SWActivationCard />}
-          {!deploymentData.error && !blockAssetsView && !isInSearchAndFocus && showDeploySmartWallet && (
-            SWInsightDismissed ?
-              <SWActivationCard message={t('smartWalletContent.activationCard.description.default')} />
-              : (
-                <InsightWithButton
-                  title={t('insight.smartWalletIntro.title')}
-                  description={t('insight.smartWalletIntro.description.intro')}
-                  itemsList={[
-                    t('insight.smartWalletIntro.description.recovery'),
-                    t('insight.smartWalletIntro.description.accessToPPN'),
-                    t('insight.smartWalletIntro.description.multipleKeys'),
-                  ]}
-                  buttonTitle={t('insight.smartWalletIntro.button.ok')}
-                  onButtonPress={dismissSmartWalletInsight}
-                />
-              )
-            )
-          }
-        </>
-        {!blockAssetsView &&
-        <>
-          <TouchableOpacity
-            onPress={() => this.props.navigation.navigate(ASSET_SEARCH)}
-            disabled={activeTab === COLLECTIBLES}
-          >
-            <SearchBlock
-              hideSearch={blockAssetsView}
-              searchInputPlaceholder={
-                activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')
-              }
-              onSearchChange={this.handleSearchChange}
-              wrapperStyle={{
-                paddingHorizontal: spacing.layoutSides,
-                paddingVertical: spacing.mediumLarge,
-                marginBottom: searchMarginBottom,
-              }}
-              onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
-              onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
-              itemSearchState={!!isInSearchMode}
-              navigation={navigation}
-              disabled={activeTab === TOKENS}
+          {!isInSearchAndFocus && !!SWInsightDismissed && (
+            <InsightWithButton
+              title={t('insight.smartWalletIntro.title')}
+              description={t('insight.smartWalletIntro.description.intro')}
+              itemsList={[
+                t('insight.smartWalletIntro.description.recovery'),
+                t('insight.smartWalletIntro.description.accessToPPN'),
+                t('insight.smartWalletIntro.description.multipleKeys'),
+              ]}
+              buttonTitle={t('insight.smartWalletIntro.button.ok')}
+              onButtonPress={dismissSmartWalletInsight}
             />
-          </TouchableOpacity>
-          {!isInSearchAndFocus &&
-            <Tabs
-              tabs={this.getAssetTabs()}
-              wrapperStyle={{ paddingTop: 22, paddingBottom: 8 }}
-              activeTab={activeTab}
-            />
-          }
+          )}
         </>
+        <TouchableOpacity
+          onPress={() => this.props.navigation.navigate(ASSET_SEARCH)}
+          disabled={activeTab === COLLECTIBLES}
+        >
+          <SearchBlock
+            searchInputPlaceholder={
+              activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')
+            }
+            onSearchChange={this.handleSearchChange}
+            wrapperStyle={{
+              paddingHorizontal: spacing.layoutSides,
+              paddingVertical: spacing.mediumLarge,
+              marginBottom: searchMarginBottom,
+            }}
+            onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
+            onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
+            itemSearchState={!!isInSearchMode}
+            navigation={navigation}
+            disabled={activeTab === TOKENS}
+          />
+        </TouchableOpacity>
+        {!isInSearchAndFocus &&
+          <Tabs
+            tabs={this.getAssetTabs()}
+            wrapperStyle={{ paddingTop: 22, paddingBottom: 8 }}
+            activeTab={activeTab}
+          />
         }
-        {!blockAssetsView &&
         <ListWrapper>
           {activeTab === TOKENS && (
             <AssetsList balance={balance} />
@@ -306,18 +263,19 @@ class WalletView extends React.Component<Props, State> {
               isSearching={query.length >= MIN_QUERY_LENGTH}
             />
           )}
-          {!isInSearchMode && (!balance || !!showFinishSmartWalletActivation) &&
-          <ActionsWrapper>
-            {!balance && !!activeAccountAddress && (
-              <ListItemChevron
-                label={t('button.buyTokensWithCreditCard')}
-                onPress={() => navigation.navigate(SERVICES)}
-                bordered
-                addon={(<LabelBadge label={t('badgeText.new')} />)}
-              />
-            )}
-          </ActionsWrapper>}
-        </ListWrapper>}
+          {!isInSearchMode && !balance && (
+            <ActionsWrapper>
+              {!balance && !!activeAccountAddress && (
+                <ListItemChevron
+                  label={t('button.buyTokensWithCreditCard')}
+                  onPress={() => navigation.navigate(SERVICES)}
+                  bordered
+                  addon={(<LabelBadge label={t('badgeText.new')} />)}
+                />
+              )}
+            </ActionsWrapper>
+          )}
+        </ListWrapper>
       </ScrollComponent>
     );
   }
@@ -326,14 +284,10 @@ class WalletView extends React.Component<Props, State> {
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rates: { data: rates },
-  accounts: { data: accounts },
-  smartWallet: smartWalletState,
   insights: { SWInsightDismissed },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   rates,
-  accounts,
-  smartWalletState,
   SWInsightDismissed,
 });
 

@@ -76,7 +76,7 @@ import {
   RESET_ESTIMATED_WITHDRAWAL_FEE,
   RESET_ESTIMATED_TOPUP_FEE,
 } from 'constants/paymentNetworkConstants';
-import { PIN_CODE, WALLET_ACTIVATED } from 'constants/navigationConstants';
+import { PIN_CODE } from 'constants/navigationConstants';
 import { DEVICE_CATEGORIES } from 'constants/connectedDevicesConstants';
 import { SABLIER_WITHDRAW, SABLIER_CANCEL_STREAM } from 'constants/sablierConstants';
 
@@ -100,7 +100,6 @@ import type {
   SmartWalletAccount,
   SmartWalletAccountDevice,
   SmartWalletDeploymentError,
-  InitSmartWalletProps,
 } from 'models/SmartWalletAccount';
 import type { TxToSettle } from 'models/PaymentNetwork';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -142,7 +141,7 @@ import {
   reportErrorLog,
   reportLog,
 } from 'utils/common';
-import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
+import { normalizeWalletAddress } from 'utils/wallet';
 
 // actions
 import { addAccountAction, setActiveAccountAction } from './accountsActions';
@@ -150,7 +149,7 @@ import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import {
-  fetchSmartWalletTransactionsAction,
+  fetchTransactionsHistoryAction,
   insertTransactionAction,
   afterHistoryUpdatedAction,
 } from './historyActions';
@@ -623,7 +622,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
         if (currentAccountState !== deployedDeviceState
           && accountUpgradeStatus !== SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
           dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
-          navigate(WALLET_ACTIVATED);
+          // navigate(WALLET_ACTIVATED);
         } else {
           // otherwise it's actual smart wallet device deployment
           Toast.show({
@@ -772,7 +771,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
               currentHistory = getState().history.data;
             }
           } else {
-            dispatch(fetchSmartWalletTransactionsAction());
+            dispatch(fetchTransactionsHistoryAction());
           }
           dispatch(fetchAssetsBalancesAction());
         }
@@ -1478,17 +1477,6 @@ export const setSmartWalletEnsNameAction = (username: string) => {
       },
     });
     dispatch(insertTransactionAction(historyTx, accountId));
-  };
-};
-
-export const initSmartWalletSdkWithPrivateKeyOrPinAction = ({ privateKey: _privateKey, pin }: InitSmartWalletProps) => {
-  return async (dispatch: Dispatch) => {
-    let privateKey = _privateKey;
-    if (!_privateKey && pin) {
-      privateKey = await getPrivateKeyFromPin(pin, dispatch);
-    }
-    if (!privateKey) return;
-    await dispatch(initSmartWalletSdkAction(privateKey));
   };
 };
 

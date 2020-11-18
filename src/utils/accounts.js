@@ -110,8 +110,6 @@ export const getAccountName = (accountType: AccountTypes | TranslatedString): st
   switch (accountType) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
       return t('smartWalletV2');
-    case ACCOUNT_TYPES.LEGACY_SMART_WALLET:
-      return t('smartWallet');
     default:
       return '';
   }
@@ -168,3 +166,5 @@ export const getInitials = (fullName: string = '') => {
 };
 
 export const isNotKeyBasedType = ({ type }: Account) => type !== ACCOUNT_TYPES.KEY_BASED;
+
+export const isEthersportSmartWalletType = ({ type }: Account) => type === ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET;

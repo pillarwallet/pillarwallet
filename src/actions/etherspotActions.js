@@ -23,14 +23,7 @@ import etherspot from 'services/etherspot';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import smartWalletService from 'services/smartWallet';
 import { reportErrorLog } from 'utils/common';
-import isEmpty from 'lodash.isempty';
-import {
-  SET_SMART_WALLET_ACCOUNTS,
-  SET_SMART_WALLET_CONNECTED_ACCOUNT,
-  SMART_WALLET_UPGRADE_STATUSES,
-} from 'constants/smartWalletConstants';
 import { saveDbAction } from 'actions/dbActions';
 import {
   addAccountAction,
@@ -38,26 +31,21 @@ import {
 } from 'actions/accountsActions';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { normalizeWalletAddress } from 'utils/wallet';
-import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import {
+  SET_INITIAL_ASSETS,
+} from 'constants/assetsConstants';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import {
-  connectSmartWalletAccountAction,
-  setSmartWalletConnectedAccount,
-  setSmartWalletUpgradeStatusAction,
-} from 'actions/smartWalletActions';
 import type SDKWrapper from 'services/api';
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
 import { addressesEqual } from 'utils/assets';
 import {
   SET_ETHERSPOT_ACCOUNTS,
 } from 'constants/etherspotConstants';
-import Toast from 'components/Toast';
-import t from 'translations/translate';
-import { sdkConstants } from '@smartwallet/sdk';
-import get from 'lodash.get';
-import { setConnectedDevicesAction } from 'actions/connectedDevicesActions';
+import {
+  findFirstEtherspotAccount,
+} from 'utils/accounts';
 import { Account as EtherspotAccount } from 'etherspot';
+
 
 export const initEtherspotServiceAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -71,9 +59,21 @@ export const initEtherspotServiceAction = (privateKey: string) => {
   };
 };
 
-export const setEtherspotAccountsAction = (accounts: Account[]) => {
+export const subscribeToEtherspotEventsAction = () => {
+  return async () => {
+    etherspot.subscribe();
+  };
+};
+
+export const unsubscribeToEtherspotEventsAction = () => {
+  return async () => {
+    etherspot.unsubscribe();
+  };
+};
+
+export const setEtherspotAccountsAction = (accounts: EtherspotAccount[]) => {
   return async (dispatch: Dispatch) => {
-    if (isEmpty(accounts)) {
+    if (!accounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
       reportErrorLog('setEtherspotAccountsAction failed: no accounts', { accounts });
       return;
@@ -98,13 +98,13 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
       return;
     }
 
-    if (!user.username) {
-      reportErrorLog('importEtherspotAccountsAction failed: no username', { user });
+    if (!user) {
+      reportErrorLog('importEtherspotAccountsAction failed: no user');
       return;
     }
 
     const etherspotAccounts = await etherspot.getAccounts();
-    if (isEmpty(etherspotAccounts)) {
+    if (!etherspotAccounts) {
       // Note: there should be always at least one account, it syncs on Etherspot SDK init, otherwise it's failure
       reportErrorLog('importEtherspotAccountsAction failed: no accounts', { etherspotAccounts });
       return;
@@ -112,12 +112,12 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
 
     await dispatch(setEtherspotAccountsAction(etherspotAccounts));
 
-    if (!user?.walletId) {
+    const { walletId } = user;
+
+    if (!walletId) {
       reportErrorLog('importEtherspotAccountsAction failed: no walletId', { user });
       return;
     }
-
-    const { walletId } = user;
 
     const backendAccounts = await api.listAccounts(walletId);
     if (!backendAccounts) {
@@ -133,7 +133,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
           walletId,
           privateKey,
           ethAddress: account.address,
-          fcmToken: session.fcmToken,
+          fcmToken: session?.fcmToken,
         }).catch((error) => {
           reportErrorLog('importEtherspotAccountsAction api.registerSmartWallet failed', { error });
           return Promise.resolve();
@@ -165,5 +165,43 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
     dispatch(saveDbAction('assets', { assets }, true));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
+  };
+};
+
+export const setEtherspotEnsNameAction = (username: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      session: { data: { isOnline } },
+    } = getState();
+
+    if (!isOnline) return; // nothing to do
+
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) {
+      reportErrorLog('setEtherspotEnsNameAction failed: no Etherspot account found');
+      return;
+    }
+
+    const reserved = await etherspot.reserveENSName(username);
+    if (!reserved) {
+      reportErrorLog('setEtherspotEnsNameAction reserveENSName failed', { username });
+    }
+  };
+};
+
+export const setupPPNAction = () => {
+  return () => {
+    // TODO: implement with etherspot
+    // const accountHistory = accountHistorySelector(getState());
+    // const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
+    // if (!hasPpnPayments) return;
+    // await dispatch(fetchVirtualAccountBalanceAction());
+    // const { paymentNetwork: { availableStake } } = getState();
+
+    // if (availableStake || hasPpnPayments) {
+    //   dispatch({ type: MARK_PLR_TANK_INITIALISED });
+    //   dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
+    // }
   };
 };

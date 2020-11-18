@@ -29,7 +29,6 @@ import t from 'translations/translate';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SWActivationCard from 'components/SWActivationCard';
 import ValueInput from 'components/ValueInput';
 import Modal from 'components/Modal';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
@@ -45,10 +44,8 @@ import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
 
 // constants
 import { ETH, PLR } from 'constants/assetsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 
 // utils, services
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { themedColors } from 'utils/themes';
 import { formatAmount, noop } from 'utils/common';
 import type { ExchangeOptions } from 'utils/exchange';
@@ -56,12 +53,10 @@ import type { ExchangeOptions } from 'utils/exchange';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
-import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 
 // models, types
 import type { ExchangeSearchRequest, Allowance, Offer } from 'models/Offer';
 import type { Asset, Assets, Balances, Rates } from 'models/Asset';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Accounts } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -76,7 +71,6 @@ import {
   provideOptions,
   getHeaderRightItems,
   shouldTriggerSearch,
-  shouldBlockView,
 } from './utils';
 import ExchangeSwapIcon from './ExchangeSwapIcon';
 
@@ -96,13 +90,11 @@ type Props = {
   markNotificationAsSeen: () => void,
   oAuthAccessToken: ?string,
   accounts: Accounts,
-  smartWalletState: Object,
   exchangeSupportedAssets: Asset[],
   getExchangeSupportedAssets: (callback: () => void) => void,
   hasSeenExchangeIntro: boolean,
   updateHasSeenExchangeIntro: () => void,
   theme: Theme,
-  isActiveAccountSmartWallet: boolean,
   offers: Offer[],
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
@@ -308,13 +300,6 @@ class ExchangeScreen extends React.Component<Props, State> {
     this.emptyMessageTimeout = null;
   };
 
-  checkIfAssetsExchangeIsAllowed = () => {
-    const { accounts, smartWalletState, isActiveAccountSmartWallet } = this.props;
-    if (!isActiveAccountSmartWallet) return true;
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    return smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE;
-  };
-
   provideOptions = (): ExchangeOptions => {
     const {
       assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency,
@@ -351,8 +336,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       exchangeAllowances,
       hasUnreadExchangeNotification,
       markNotificationAsSeen,
-      accounts,
-      smartWalletState,
       isFetchingUniswapTokens,
       uniswapTokensGraphQueryFailed,
       getExchangeSupportedAssets,
@@ -371,11 +354,6 @@ class ExchangeScreen extends React.Component<Props, State> {
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
     );
 
-    const deploymentData = getDeploymentData(smartWalletState);
-    const blockView = shouldBlockView(smartWalletState, accounts);
-
-    const disableNonFiatExchange = !this.checkIfAssetsExchangeIsAllowed();
-
     return (
       <ContainerWithHeader
         headerProps={{
@@ -384,35 +362,28 @@ class ExchangeScreen extends React.Component<Props, State> {
       }}
         inset={{ bottom: 'never' }}
       >
-        {(blockView || !!deploymentData.error) && <SWActivationCard />}
-        {!blockView &&
         <ScrollView
           onScroll={() => Keyboard.dismiss()}
           keyboardShouldPersistTaps="handled"
           disableOnAndroid
         >
-          {assetsLoaded &&
-          <FormWrapper>
-            {this.getFromInput()}
-            <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
-            {this.getToInput()}
-          </FormWrapper>}
-          {!!disableNonFiatExchange &&
-          <SWActivationCard
-            message={t('smartWalletContent.exchangeActivation.message')}
-            buttonTitle={t('smartWalletContent.exchangeActivation.button')}
-          />
-        }
-          {!!isSubmitted && isFormValid &&
-          <ExchangeOffers
-            fromAmount={fromAmount}
-            disableNonFiatExchange={disableNonFiatExchange}
-            isExchangeActive={isSubmitted}
-            showEmptyMessage={showEmptyMessage}
-            setFromAmount={val => this.setState({ fromAmount: val })}
-            navigation={navigation}
-          />}
-        </ScrollView>}
+          {assetsLoaded && (
+            <FormWrapper>
+              {this.getFromInput()}
+              <ExchangeSwapIcon onPress={this.handleBuySellSwap} />
+              {this.getToInput()}
+            </FormWrapper>
+          )}
+          {!!isSubmitted && isFormValid && (
+            <ExchangeOffers
+              fromAmount={fromAmount}
+              isExchangeActive={isSubmitted}
+              showEmptyMessage={showEmptyMessage}
+              setFromAmount={val => this.setState({ fromAmount: val })}
+              navigation={navigation}
+            />
+          )}
+        </ScrollView>
         <RetryGraphQueryBox
           message={t('error.theGraphQueryFailed.uniswapSupportedTokenList')}
           hasFailed={uniswapTokensGraphQueryFailed}
@@ -440,7 +411,6 @@ const mapStateToProps = ({
   },
   rates: { data: rates },
   accounts: { data: accounts },
-  smartWallet: smartWalletState,
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   rates,
@@ -449,7 +419,6 @@ const mapStateToProps = ({
   hasUnreadExchangeNotification,
   oAuthAccessToken,
   accounts,
-  smartWalletState,
   exchangeSupportedAssets,
   hasSeenExchangeIntro,
   offers,
@@ -460,7 +429,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
-  isActiveAccountSmartWallet: isActiveAccountSmartWalletSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

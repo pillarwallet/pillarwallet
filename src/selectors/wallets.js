@@ -20,7 +20,13 @@
 import isEmpty from 'lodash.isempty';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { createSelector } from 'reselect';
-import { getAccountAddress, getAccountName, getInactiveUserAccounts, isNotKeyBasedType } from 'utils/accounts';
+import {
+  getAccountAddress,
+  getAccountName,
+  getInactiveUserAccounts,
+  isEthersportSmartWalletType,
+  isNotKeyBasedType,
+} from 'utils/accounts';
 import { images } from 'utils/images';
 import { getThemeByType } from 'utils/themes';
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -46,13 +52,12 @@ export const availableWalletsSelector = createSelector(
     const keyWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED) || {};
     const availableWallets = [{ ...keyWallet }];
 
-    const smartWallet = accounts.find(({ type }) => type === ACCOUNT_TYPES.LEGACY_SMART_WALLET);
-    if (smartWallet) {
+    accounts.filter(isNotKeyBasedType).forEach((smartWallet) => {
       availableWallets.unshift({
         ...smartWallet,
         isActive: smartWallet.isActive,
       });
-    }
+    });
 
     return availableWallets;
   },
@@ -61,7 +66,7 @@ export const availableWalletsSelector = createSelector(
 export const inactiveUserWalletForSendSelector = createSelector(
   accountsSelector, themeSelector, (accounts, themeType) => {
     return getInactiveUserAccounts(accounts)
-      .filter(isNotKeyBasedType)
+      .filter(isEthersportSmartWalletType)
       .map(account => {
         const accountName = getAccountName(account.type);
         const theme = getThemeByType(themeType);

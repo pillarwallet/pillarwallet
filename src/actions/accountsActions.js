@@ -17,35 +17,33 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { sdkConstants } from '@smartwallet/sdk';
 
 // constants
 import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { PIN_CODE } from 'constants/navigationConstants';
 import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
 
 // actions
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import {
   checkIfSmartWalletWasRegisteredAction,
   connectSmartWalletAccountAction,
   initSmartWalletSdkAction,
-  setSmartWalletUpgradeStatusAction,
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
 import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
 
 // utils
-import { findFirstLegacySmartAccount, getAccountId, getActiveAccountType, isSupportedAccountType } from 'utils/accounts';
+import {
+  findFirstLegacySmartAccount,
+  getAccountId,
+  getActiveAccountType,
+  isSupportedAccountType,
+} from 'utils/accounts';
 import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-
-// services
-import { navigate } from 'services/navigation';
 
 // selectors
 import { activeAccountSelector } from 'selectors';
@@ -53,6 +51,7 @@ import { activeAccountSelector } from 'selectors';
 // types
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
+import { reportErrorLog } from 'utils/common';
 
 
 export const addAccountAction = (
@@ -115,69 +114,37 @@ export const removeAccountAction = (accountAddress: string) => {
 };
 
 export const setActiveAccountAction = (accountId: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      smartWallet: {
-        connectedAccount = {},
-        upgrade: {
-          status: upgradeStatus,
-        },
-      },
-    } = getState();
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
 
     const account = accounts.find(acc => acc.id === accountId);
-    if (!account) return;
+    if (!account) {
+      reportErrorLog('setActiveAccountAction failed: no account', { accounts, accountId });
+      return;
+    }
 
     const updatedAccounts = accounts.map(acc => ({ ...acc, isActive: acc.id === accountId }));
+
     dispatch({
       type: UPDATE_ACCOUNTS,
       payload: updatedAccounts,
     });
+
     dispatch(saveDbAction('accounts', { accounts: updatedAccounts }, true));
-
-    if (account.type !== ACCOUNT_TYPES.LEGACY_SMART_WALLET || !account.extra) return;
-
-    const { state = '' } = connectedAccount;
-    if (state === sdkConstants.AccountStates.Deployed) {
-      dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE));
-      return;
-    }
-    if ([
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYING,
-      SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE,
-    ].includes(upgradeStatus)) {
-      return;
-    }
-    dispatch(setSmartWalletUpgradeStatusAction(SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED));
   };
 };
 
 export const switchAccountAction = (accountId: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      accounts: { data: accounts },
-      smartWallet: { sdkInitialized },
-    } = getState();
-    const account = accounts.find(_acc => _acc.id === accountId) || {};
-
+  return (dispatch: Dispatch) => {
     dispatch({ type: CHANGING_ACCOUNT, payload: true });
 
-    if (account.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET) {
-      if (sdkInitialized) {
-        await dispatch(connectSmartWalletAccountAction(accountId));
-        dispatch(setUserEnsIfEmptyAction());
-      } else {
-        navigate(PIN_CODE, { initSmartWalletSdk: true, switchToAcc: accountId });
-        return;
-      }
-    }
-
+    dispatch(setActiveAccountAction(accountId));
     dispatch(setActiveBlockchainNetworkAction(BLOCKCHAIN_NETWORK_TYPES.ETHEREUM));
     dispatch(fetchAssetsBalancesAction());
     dispatch(fetchCollectiblesAction());
-    dispatch(fetchSmartWalletTransactionsAction());
+    dispatch(fetchTransactionsHistoryAction());
     dispatch(checkForMissedAssetsAction());
+
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
   };
 };

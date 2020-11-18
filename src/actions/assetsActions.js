@@ -22,7 +22,6 @@ import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
 
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -49,6 +48,7 @@ import { ERROR_TYPE } from 'constants/transactionsConstants';
 import Toast from 'components/Toast';
 
 import CryptoWallet from 'services/cryptoWallet';
+import etherspot from 'services/etherspot';
 
 import type {
   TokenTransactionPayload,
@@ -63,14 +63,12 @@ import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
 import { noop, parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
-  getActiveAccountAddress,
   getActiveAccount,
   getActiveAccountId,
-  getActiveAccountType,
   getAccountAddress,
   getAccountId,
   checkIfLegacySmartWalletAccount,
-  isNotKeyBasedType,
+  isEthersportSmartWalletType,
 } from 'utils/accounts';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 import { balancesSelector } from 'selectors';
@@ -79,7 +77,6 @@ import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
 import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
-import { ensureSmartAccountConnectedAction, fetchVirtualAccountBalanceAction } from './smartWalletActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
@@ -111,15 +108,15 @@ export const sendAssetAction = (
       collectibles: { data: collectibles, transactionHistory: collectiblesHistory },
     } = getState();
 
-    const accountId = getActiveAccountId(accounts);
     const activeAccount = getActiveAccount(accounts);
-    const accountAddress = getActiveAccountAddress(accounts);
-    const activeAccountType = getActiveAccountType(accounts);
-    if (!activeAccount) return;
 
-    if (activeAccountType === ACCOUNT_TYPES.LEGACY_SMART_WALLET) {
-      await dispatch(ensureSmartAccountConnectedAction(wallet.privateKey));
+    if (!activeAccount) {
+      reportErrorLog('sendAssetAction failed: no active account');
+      return;
     }
+
+    const accountId = getAccountId(activeAccount);
+    const accountAddress = getAccountAddress(activeAccount);
 
     let tokenTx = {};
     let historyTx;
@@ -338,6 +335,7 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
     const walletAddress = getAccountAddress(account);
     const accountId = getAccountId(account);
     if (!walletAddress || !accountId) return;
+
     const accountAssets = makeAccountEnabledAssetsSelector(accountId)(getState());
 
     dispatch({
@@ -345,10 +343,12 @@ export const fetchAccountAssetsBalancesAction = (account: Account) => {
       payload: FETCHING,
     });
 
-    const newBalances = await api.fetchBalances({
-      address: walletAddress,
-      assets: getAssetsAsList(accountAssets),
-    });
+    const newBalances = isEthersportSmartWalletType(account)
+      ? await etherspot.getBalances(walletAddress, getAssetsAsList(accountAssets))
+      : await api.fetchBalances({
+        address: walletAddress,
+        assets: getAssetsAsList(accountAssets),
+      });
 
     if (!isEmpty(newBalances)) {
       await dispatch(updateAccountBalancesAction(accountId, transformBalancesToObject(newBalances)));
@@ -366,9 +366,10 @@ export const fetchAssetsBalancesAction = () => {
     await dispatch(fetchAccountAssetsBalancesAction(activeAccount));
     dispatch(fetchAccountAssetsRatesAction());
 
-    if (checkIfLegacySmartWalletAccount(activeAccount)) {
-      dispatch(fetchVirtualAccountBalanceAction());
-    }
+    // TODO: etherspot implementation
+    // if (checkIfLegacySmartWalletAccount(activeAccount)) {
+    //   dispatch(fetchVirtualAccountBalanceAction());
+    // }
   };
 };
 
@@ -398,24 +399,24 @@ export const fetchAllAccountsBalancesAction = () => {
     if (!activeAccount) return;
 
     const promises = accounts
-      .filter(isNotKeyBasedType)
+      .filter(isEthersportSmartWalletType)
       .map((account) => dispatch(fetchAccountAssetsBalancesAction(account)));
 
     await Promise
       .all(promises)
       .catch((error) => reportErrorLog('fetchAllAccountsBalancesAction failed', { error }));
 
-    // migration for key based balances to remove existing
-    const keyBasedAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-    if (keyBasedAccount) {
-      dispatch(resetAccountBalancesAction(getAccountId(keyBasedAccount)));
-    }
+    // migration to etherspot, reset other balances
+    accounts
+      .filter((account) => !isEthersportSmartWalletType(account))
+      .forEach((account) => dispatch(resetAccountBalancesAction(getAccountId(account))));
 
     dispatch(fetchAllAccountsAssetsRatesAction());
 
-    if (checkIfLegacySmartWalletAccount(activeAccount)) {
-      dispatch(fetchVirtualAccountBalanceAction());
-    }
+    // TODO: etherspot implementation
+    // if (checkIfLegacySmartWalletAccount(activeAccount)) {
+    //   dispatch(fetchVirtualAccountBalanceAction());
+    // }
   };
 };
 
@@ -638,14 +639,14 @@ export const checkForMissedAssetsAction = () => {
     const walletSupportedAssets = get(getState(), 'assets.supportedAssets', []);
 
     const accountUpdatedAssets = accounts
-      .filter(isNotKeyBasedType)
+      .filter(isEthersportSmartWalletType)
       .map((acc) => getSupportedTokens(walletSupportedAssets, accountsAssets, acc))
       .reduce((memo, { id, ...rest }) => ({ ...memo, [id]: rest }), {});
 
     // check tx history if some assets are not enabled
     const ownedAssetsByAccount = await Promise.all(
       accounts
-        .filter(isNotKeyBasedType)
+        .filter(isEthersportSmartWalletType)
         .map(async (acc) => {
           const accountId = getAccountId(acc);
           const ownedAssets = await getAllOwnedAssets(api, accountId, walletSupportedAssets);

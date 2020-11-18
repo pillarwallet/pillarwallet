@@ -28,8 +28,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import { ALLOWED_PIN_ATTEMPTS, PIN_LOCK_MULTIPLIER } from 'configs/walletConfig';
 import { FORGOT_PIN } from 'constants/navigationConstants';
 import { loginAction } from 'actions/authActions';
-import { initSmartWalletSdkWithPrivateKeyOrPinAction } from 'actions/smartWalletActions';
-import { switchAccountAction } from 'actions/accountsActions';
 import { Container } from 'components/Layout';
 import Loader from 'components/Loader';
 import Header from 'components/Header';
@@ -43,17 +41,9 @@ import {
   type KeyChainData,
 } from 'utils/keychain';
 
-import type { InitSmartWalletProps } from 'models/SmartWalletAccount';
-
 
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
-
-type HandleUnlockActionProps = {
-  pin?: string,
-  privateKey?: string,
-  defaultAction: () => void,
-}
 
 type Props = {
   loginWithPin: (pin: string, callback: ?Function, useBiometrics: ?boolean) => void,
@@ -61,8 +51,6 @@ type Props = {
   wallet: Object,
   navigation: NavigationScreenProp<*>,
   useBiometrics: ?boolean,
-  initSmartWalletSdkWithPrivateKeyOrPin: (initProps: InitSmartWalletProps) => void,
-  switchAccount: (accountId: string) => void,
   isAuthorizing: boolean,
 };
 
@@ -140,20 +128,6 @@ class PinCodeUnlock extends React.Component<Props, State> {
     } else { this.setState({ showPin: true }); }
   };
 
-  handleUnlockAction = async ({ pin, privateKey, defaultAction }: HandleUnlockActionProps) => {
-    const { navigation, switchAccount, initSmartWalletSdkWithPrivateKeyOrPin } = this.props;
-    const shouldInitSmartWalletSdk = navigation.getParam('initSmartWalletSdk');
-    const accountIdToSwitchTo = navigation.getParam('switchToAcc');
-
-    if (shouldInitSmartWalletSdk) {
-      await initSmartWalletSdkWithPrivateKeyOrPin({ privateKey, pin });
-      if (accountIdToSwitchTo) switchAccount(accountIdToSwitchTo);
-      navigation.goBack();
-    } else {
-      defaultAction();
-    }
-  };
-
   loginWithPrivateKey = (data: KeyChainData) => {
     const { loginWithPrivateKey } = this.props;
     // migrate older users
@@ -164,10 +138,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
     const privateKey = getPrivateKeyFromKeychainData(data);
     if (privateKey) {
       removeAppStateChangeListener(this.handleAppStateChange);
-      this.handleUnlockAction({
-        privateKey,
-        defaultAction: () => loginWithPrivateKey(privateKey, this.onLoginSuccess),
-      });
+      loginWithPrivateKey(privateKey, this.onLoginSuccess);
     }
   };
 
@@ -240,10 +211,7 @@ class PinCodeUnlock extends React.Component<Props, State> {
 
   handlePinSubmit = async (pin: string) => {
     const { loginWithPin, useBiometrics } = this.props;
-    await this.handleUnlockAction({
-      pin,
-      defaultAction: () => loginWithPin(pin, this.onLoginSuccess, useBiometrics),
-    });
+    loginWithPin(pin, this.onLoginSuccess, useBiometrics);
     this.handleLocking(false);
   };
 
@@ -304,14 +272,10 @@ const mapStateToProps = ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  loginWithPin: (pin: string, callback: ?Function, useBiometrics: ?boolean) => dispatch(
+  loginWithPin: (pin: string, callback: ?() => void, useBiometrics: ?boolean) => dispatch(
     loginAction(pin, null, callback, useBiometrics),
   ),
   loginWithPrivateKey: (privateKey: string, callback: ?Function) => dispatch(loginAction(null, privateKey, callback)),
-  initSmartWalletSdkWithPrivateKeyOrPin: (
-    initProps: InitSmartWalletProps,
-  ) => dispatch(initSmartWalletSdkWithPrivateKeyOrPinAction(initProps)),
-  switchAccount: (accountId: string) => dispatch(switchAccountAction(accountId)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(PinCodeUnlock);

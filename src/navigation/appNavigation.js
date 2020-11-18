@@ -80,7 +80,6 @@ import CommunitySettingsScreen from 'screens/Menu/CommunitySettings';
 import WalletSettingsScreen from 'screens/Menu/WalletSettings';
 import PinCodeUnlockScreen from 'screens/PinCodeUnlock';
 import ExploreAppsScreen from 'screens/ExploreApps';
-import WalletActivatedScreen from 'screens/WalletActivated';
 import RecoveryPortalSetupIntoScreen from 'screens/RecoveryPortal/RecoveryPortalSetupIntro';
 import RecoveryPortalSetupSignUpScreen from 'screens/RecoveryPortal/RecoveryPortalSetupSignUp';
 import RecoveryPortalSetupConnectDeviceScreen from 'screens/RecoveryPortal/RecoveryPortalSetupConnectDevice';
@@ -211,7 +210,6 @@ import {
   SEND_TOKEN_FROM_HOME_FLOW,
   PIN_CODE,
   EXPLORE_APPS,
-  WALLET_ACTIVATED,
   REFERRAL_SENT,
   RECOVERY_PORTAL_SETUP_FLOW,
   RECOVERY_PORTAL_RECOVERY_FLOW,
@@ -724,7 +722,6 @@ const AppFlowNavigation = createStackNavigator(
     [MENU_FLOW]: menuFlow,
     [SEND_TOKEN_FROM_HOME_FLOW]: sendTokenFlow,
     [PIN_CODE]: PinCodeUnlockScreen,
-    [WALLET_ACTIVATED]: WalletActivatedScreen,
     [REFERRAL_SENT]: ReferralSentScreen,
     [REFERRAL_CONTACT_INFO_MISSING]: EmailPhoneMissingScreen,
     [REFERRAL_INCOMING_REWARD]: ReferralIncomingRewardScreen,

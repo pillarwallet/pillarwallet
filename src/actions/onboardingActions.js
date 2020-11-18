@@ -31,7 +31,6 @@ import {
   HOME,
   REFERRAL_INCOMING_REWARD,
   NEW_PROFILE,
-  RECOVERY_PORTAL_WALLET_RECOVERY_STARTED,
 } from 'constants/navigationConstants';
 import { SET_USER } from 'constants/userConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
@@ -63,10 +62,8 @@ import { getExchangeRates } from 'services/assets';
 import { firebaseMessaging } from 'services/firebase';
 
 // actions
-import { managePPNInitFlagAction } from 'actions/smartWalletActions';
 import { saveDbAction } from 'actions/dbActions';
 import { checkForWalletBackupToastAction, encryptAndSaveWalletAction } from 'actions/walletActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { logEventAction } from 'actions/analyticsActions';
 import { fetchBadgesAction } from 'actions/badgesActions';
 import { getWalletsCreationEventsAction } from 'actions/userEventsActions';
@@ -75,7 +72,6 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
-import { checkAndFinishSmartWalletRecoveryAction } from 'actions/recoveryPortalActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -83,7 +79,10 @@ import { initialAssets } from 'fixtures/assets';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import { importEtherspotAccountsAction } from 'actions/etherspotActions';
+import {
+  importEtherspotAccountsAction,
+  setupPPNAction,
+} from 'actions/etherspotActions';
 
 
 export const setupUserAction = (username: ?string, recoveryData?: Object) => {
@@ -251,8 +250,8 @@ export const setupAppServicesAction = (privateKey: ?string) => {
 
       // create smart wallet account only for new wallets
       await dispatch(importEtherspotAccountsAction(privateKey));
-      await dispatch(fetchSmartWalletTransactionsAction());
-      dispatch(managePPNInitFlagAction());
+      // await dispatch(fetchTransactionsHistoryAction()); TODO: etherspot
+      dispatch(setupPPNAction());
 
       // add wallet created / imported events
       dispatch(getWalletsCreationEventsAction());
@@ -350,15 +349,16 @@ export const beginOnboardingAction = (enableBiometrics?: boolean) => {
     await dispatch(setupWalletAction(enableBiometrics));
 
     // checks if wallet import is pending and in this state we don't want to auth any users yet
-    if (onboarding.isPortalRecovery) {
-      navigate(NavigationActions.navigate({
-        routeName: APP_FLOW,
-        params: {},
-        action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
-      }));
-      dispatch(checkAndFinishSmartWalletRecoveryAction());
-      return;
-    }
+    // TODO: revisit once recovery portal supports Etherspot
+    // if (onboarding.isPortalRecovery) {
+    //   navigate(NavigationActions.navigate({
+    //     routeName: APP_FLOW,
+    //     params: {},
+    //     action: NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_STARTED }),
+    //   }));
+    //   dispatch(checkAndFinishSmartWalletRecoveryAction());
+    //   return;
+    // }
 
     dispatch(finishOnboardingAction());
   };

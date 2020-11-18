@@ -37,8 +37,7 @@ import { Container } from 'components/Layout';
 import type { Assets } from 'models/Asset';
 import type { Collectible } from 'models/Collectible';
 import type { Badges } from 'models/Badge';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
-import type { Accounts, Account } from 'models/Account';
+import type { Account } from 'models/Account';
 import type { Transaction } from 'models/Transaction';
 import type { Theme } from 'models/Theme';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -49,18 +48,14 @@ import { logScreenViewAction } from 'actions/analyticsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 
 // constants
-import {
-  FETCH_INITIAL_FAILED,
-  FETCHED,
-} from 'constants/assetsConstants';
-import { PAYMENT_COMPLETED, SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
+import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
-import { getSmartWalletStatus, isDeployingSmartWallet, getDeploymentHash } from 'utils/smartWallet';
 import { getThemeColors } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
@@ -72,7 +67,7 @@ import { activeAccountSelector } from 'selectors';
 // local components
 import PPNView from 'screens/Assets/PPNView';
 import WalletView from 'screens/Assets/WalletView';
-import WalletActivation from 'screens/Assets/WalletActivation';
+
 
 type Props = {
   fetchInitialAssets: () => void,
@@ -81,8 +76,6 @@ type Props = {
   assetsState: ?string,
   navigation: NavigationScreenProp<*>,
   badges: Badges,
-  accounts: Accounts,
-  smartWalletState: Object,
   blockchainNetworks: Object[],
   activeAccount: ?Account,
   logScreenView: (view: string, screen: string) => void,
@@ -242,14 +235,8 @@ class AssetsScreen extends React.Component<Props, State> {
       assets,
       assetsState,
       fetchInitialAssets,
-      accounts,
-      smartWalletState,
     } = this.props;
     const { showSmartWalletInsight } = this.state;
-
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
 
     if (!Object.keys(assets).length && assetsState === FETCHED) {
       return (
@@ -265,16 +252,6 @@ class AssetsScreen extends React.Component<Props, State> {
       );
     }
 
-    if (isDeploying && viewType === VIEWS.SMART_WALLET_VIEW) {
-      const deploymentHash = getDeploymentHash(smartWalletState);
-
-      if (deploymentHash) {
-        return (
-          <WalletActivation deploymentHash={deploymentHash} />
-        );
-      }
-    }
-
     switch (viewType) {
       case VIEWS.PPN_VIEW:
         return <PPNView onScroll={onScroll} />;
@@ -283,9 +260,9 @@ class AssetsScreen extends React.Component<Props, State> {
           <WalletView
             showInsight={showSmartWalletInsight}
             hideInsight={() => this.hideWalletInsight('SMART')}
-            showDeploySmartWallet={smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED}
             onScroll={onScroll}
-          />);
+          />
+        );
       default:
         return null;
     }
@@ -329,20 +306,16 @@ class AssetsScreen extends React.Component<Props, State> {
 }
 
 const mapStateToProps = ({
-  accounts: { data: accounts },
   wallet: { backupStatus },
   assets: { assetsState },
   appSettings: { data: { useBiometrics } },
   badges: { data: badges },
-  smartWallet: smartWalletState,
   blockchainNetwork: { data: blockchainNetworks },
 }: RootReducerState): $Shape<Props> => ({
   backupStatus,
-  accounts,
   assetsState,
   useBiometrics,
   badges,
-  smartWalletState,
   blockchainNetworks,
 });
 

@@ -41,7 +41,7 @@ import Separator from 'components/Separator';
 import { EXCHANGE } from 'constants/navigationConstants';
 
 // actions
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -226,7 +226,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
+  fetchSmartWalletTransactions: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeInfo);

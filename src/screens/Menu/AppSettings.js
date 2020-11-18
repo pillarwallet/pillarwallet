@@ -39,14 +39,12 @@ import Modal from 'components/Modal';
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
-import { MANAGE_CONNECTED_DEVICES } from 'constants/navigationConstants';
 
 // utils
 import { spacing } from 'utils/variables';
 import SystemInfoModal from 'components/SystemInfoModal';
 import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import localeConfig from 'configs/localeConfig';
-import { addressesEqual } from 'utils/assets';
 
 // selectors
 import {
@@ -73,6 +71,7 @@ import { SettingsSection } from './SettingsSection';
 import BaseFiatCurrencyModal from './BaseFiatCurrencyModal';
 import LanguageModal from './LanguageModal';
 import AnalyticsModal from './AnalyticsModal';
+
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -110,16 +109,15 @@ class AppSettings extends React.Component<Props, State> {
       setPreferredGasToken,
       isSmartAccount,
       localisation,
-      navigation,
-      devices,
-      activeDeviceAddress,
       sessionLanguageCode,
     } = this.props;
 
     const showRelayerMigration = isSmartAccount && !isGasTokenSupported;
 
-    const hasOtherDevicesLinked = !!devices.length
-      && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
+    // TODO: revisit once web recovery portal has Etherspot implementation
+    // const hasOtherDevicesLinked = !!devices.length
+    //   && !!devices.filter(({ address }) => !addressesEqual(activeDeviceAddress, address)).length;
+
     const showGasTokenOption = isSmartAccount && firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.APP_FEES_PAID_WITH_PLR);
 
     return [
@@ -156,15 +154,16 @@ class AppSettings extends React.Component<Props, State> {
         value: themeType === DARK_THEME,
         onPress: () => setAppTheme(themeType === DARK_THEME ? LIGHT_THEME : DARK_THEME, true),
       },
-      {
-        key: 'linkedDevices',
-        title: t('settingsContent.settingsItem.linkedDevices.title'),
-        subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
-        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
-        bulletedLabel: !hasOtherDevicesLinked && {
-          label: t('label.notSet'),
-        },
-      },
+      // TODO: revisit once web recovery portal has Etherspot implementation
+      // {
+      //   key: 'linkedDevices',
+      //   title: t('settingsContent.settingsItem.linkedDevices.title'),
+      //   subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
+      //   onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
+      //   bulletedLabel: !hasOtherDevicesLinked && {
+      //     label: t('label.notSet'),
+      //   },
+      // },
       {
         key: 'analytics',
         title: t('settingsContent.settingsItem.analytics.title'),

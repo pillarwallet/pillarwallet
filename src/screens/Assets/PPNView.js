@@ -30,7 +30,7 @@ import t from 'translations/translate';
 
 // actions
 import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -40,8 +40,6 @@ import Tabs from 'components/Tabs';
 import Button from 'components/Button';
 import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
-import SWActivationModal from 'components/SWActivationModal';
-import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
@@ -56,7 +54,6 @@ import {
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
-  SMART_WALLET_UPGRADE_STATUSES,
 } from 'constants/smartWalletConstants';
 import {
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
@@ -66,7 +63,6 @@ import {
 
 // types
 import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
@@ -76,10 +72,10 @@ import type { Balances, BalancesStore, Rates } from 'models/Asset';
 import { getRate, addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
-import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
+import { isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { getThemeColors, themedColors } from 'utils/themes';
-import { findFirstLegacySmartAccount, getAccountId } from 'utils/accounts';
+import { findFirstEtherspotAccount, getAccountId } from 'utils/accounts';
 
 // selectors
 import {
@@ -99,7 +95,6 @@ type Props = {
   assetsOnNetwork: Object,
   fetchVirtualAccountBalance: () => void,
   accounts: Accounts,
-  smartWalletState: Object,
   PPNTransactions: Transaction[],
   history: Object[],
   fetchSmartWalletTransactions: () => void,
@@ -174,80 +169,42 @@ class PPNView extends React.Component<Props, State> {
       availableStake,
       accounts,
       balances,
-      smartWalletState,
     } = this.props;
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return null;
 
-    const isDeploying = isDeployingSmartWallet(smartWalletState, accounts);
-    if (isDeploying) {
-      return (
-        <InsightWithButton
-          spinner
-          footerChildren={
-            <BaseText
-              medium
-              center
-              style={{ marginTop: 20 }}
-            >
-              {t('insight.pillarNetworkActivate.deploying.description.smartWalletActivatingStatusCard')}
-            </BaseText>
-          }
-        />
-      );
-    }
+    const etherspotAccountId = getAccountId(etherspotAccount);
+    const accountBalances: Balances = balances[etherspotAccountId];
+    const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
 
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    if (smartWalletAccount && smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.DEPLOYMENT_COMPLETE) {
-      const smartWalletAccountId = getAccountId(smartWalletAccount);
-      const accountBalances: Balances = balances[smartWalletAccountId];
-      const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
-
-      if (!availableStake) {
-        const insightProps = {};
-        if (!hasPLRInSmartWallet) {
-          insightProps.buttonTitle = t('button.notEnoughPLR');
-          insightProps.buttonProps = { disabled: true, secondary: true };
-          insightProps.footerChildren = (
-            <Button
-              title={t('button.buyPLR')}
-              small
-              marginTop={12}
-              onPress={this.navigateToBuyPillar}
-              regularText
-            />);
-        } else {
-          insightProps.buttonTitle = t('button.topUpPLRTank');
-          insightProps.onButtonPress = this.navigateToFundTank;
-        }
-        return (
-          <InsightWithButton
-            title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
-            description={t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit')}
-            {...insightProps}
-          />
-        );
+    if (!availableStake) {
+      const insightProps = {};
+      if (!hasPLRInSmartWallet) {
+        insightProps.buttonTitle = t('button.notEnoughPLR');
+        insightProps.buttonProps = { disabled: true, secondary: true };
+        insightProps.footerChildren = (
+          <Button
+            title={t('button.buyPLR')}
+            small
+            marginTop={12}
+            onPress={this.navigateToBuyPillar}
+            regularText
+          />);
+      } else {
+        insightProps.buttonTitle = t('button.topUpPLRTank');
+        insightProps.onButtonPress = this.navigateToFundTank;
       }
 
-      return null;
-    } else if (smartWalletStatus.status === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED) {
       return (
         <InsightWithButton
-          title={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.title')}
-          itemsList={[
-            t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.instantTransactions'),
-            t('insight.pillarNetworkActivate.smartWalletIsNotActivated.description.singleTokenExperience')]}
-          buttonTitle={t('insight.pillarNetworkActivate.smartWalletIsNotActivated.button.activatePPN')}
-          onButtonPress={this.openSmartWalletModal}
+          title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
+          description={t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit')}
+          {...insightProps}
         />
       );
     }
 
     return null;
-  };
-
-  openSmartWalletModal = () => {
-    Modal.open(() => <SWActivationModal navigation={this.props.navigation} />);
   };
 
   render() {
@@ -258,7 +215,6 @@ class PPNView extends React.Component<Props, State> {
       fetchVirtualAccountBalance,
       navigation,
       accounts,
-      smartWalletState,
       PPNTransactions,
       baseFiatCurrency,
       rates,
@@ -283,15 +239,6 @@ class PPNView extends React.Component<Props, State> {
     }
 
     const availableFormattedAmount = formatMoney(availableStake, 4);
-    const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-    const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
-    const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
-      ? {
-        title: t('insight.smartWalletActivate.default.title'),
-        message: t('insight.smartWalletActivate.default.description'),
-      }
-      : smartWalletStatus.sendingBlockedMessage || {};
-    const disableTopUpAndSettle = Object.keys(sendingBlockedMessage).length;
 
     const PPNTransactionsMapped = mapTransactionsHistory(
       PPNTransactions,
@@ -393,7 +340,6 @@ class PPNView extends React.Component<Props, State> {
                 onPress={this.navigateToFundTank}
                 fontIcon="plus"
                 fontIconStyle={{ fontSize: fontSizes.big }}
-                disabled={!!disableTopUpAndSettle}
               />
               <CircleButton
                 label={t('button.withdraw')}
@@ -416,7 +362,7 @@ class PPNView extends React.Component<Props, State> {
               borderTopWidth: 0,
               borderBottomWidth: 1,
               borderColor: colors.border,
-              opacity: disableTopUpAndSettle ? 0.5 : 1,
+              opacity: 1,
             }}
             chevronStyle={{ color: colors.secondaryText }}
             label={t('label.incomingBalance')}
@@ -424,7 +370,6 @@ class PPNView extends React.Component<Props, State> {
             onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
             color={colors.text}
             bordered
-            disabled={!!disableTopUpAndSettle}
           />}
           {(!!PPNTransactionsMapped.length || availableStake > 0) &&
           <Tabs
@@ -453,7 +398,6 @@ class PPNView extends React.Component<Props, State> {
               width="auto"
               title={t('button.settleTransactions')}
               onPress={() => navigation.navigate(SETTLE_BALANCE)}
-              disabled={disableTopUpAndSettle}
             />
           </FloatingButtonView>
         }
@@ -465,13 +409,11 @@ class PPNView extends React.Component<Props, State> {
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
-  smartWallet: smartWalletState,
   accounts: { data: accounts },
   balances: { data: balances },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
-  smartWalletState,
   accounts,
   balances,
 });
@@ -491,7 +433,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
+  fetchSmartWalletTransactions: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));

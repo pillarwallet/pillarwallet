@@ -39,7 +39,9 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { saveDbAction } from 'actions/dbActions';
 
 // utils
-import { isNotKeyBasedType } from 'utils/accounts';
+import {
+  isEthersportSmartWalletType,
+} from 'utils/accounts';
 import { reportLog } from 'utils/common';
 
 // types
@@ -133,7 +135,7 @@ export const getWalletsCreationEventsAction = () => {
     }
 
     const walletCreatedEventsPromises = userAccounts
-      .filter(isNotKeyBasedType)
+      .filter(isEthersportSmartWalletType)
       .map((acc) => dispatch(addWalletCreationEventAction(acc.type, new Date(acc.createdAt).getTime() / 1000)));
 
     await Promise.all(walletCreatedEventsPromises);

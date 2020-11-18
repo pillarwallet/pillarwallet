@@ -57,7 +57,7 @@ import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI } from 'constants/assetsConstants';
 
 // actions
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
+import { fetchTransactionsHistoryAction } from 'actions/historyActions';
 import { hideHomeUpdateIndicatorAction } from 'actions/notificationsActions';
 import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 import { fetchBadgesAction, fetchBadgeAwardHistoryAction } from 'actions/badgesActions';
@@ -660,7 +660,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
+  fetchSmartWalletTransactions: () => dispatch(fetchTransactionsHistoryAction()),
   checkForMissedAssets: () => dispatch(checkForMissedAssetsAction()),
   hideHomeUpdateIndicator: () => dispatch(hideHomeUpdateIndicatorAction()),
   fetchAllCollectiblesData: () => dispatch(fetchAllCollectiblesDataAction()),

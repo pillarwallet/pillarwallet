@@ -33,7 +33,8 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 // constants
 import {
   BACKUP_WALLET_IN_SETTINGS_FLOW,
-  CHANGE_PIN_FLOW, MANAGE_CONNECTED_DEVICES, RECOVERY_PORTAL_SETUP_INTRO,
+  CHANGE_PIN_FLOW,
+  RECOVERY_PORTAL_SETUP_INTRO,
   RECOVERY_PORTAL_SETUP_SIGN_UP,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
@@ -232,32 +233,6 @@ class WalletSettings extends React.Component<Props, State> {
           mnemonicPhrase: wallet?.mnemonic,
         }),
         hidden: isBackedUp,
-      },
-    ];
-  };
-
-  getGlobalSection = () => {
-    const { navigation, isSmartWalletActivated, hasSeenRecoveryPortalIntro } = this.props;
-    const recoveryPortalSubtitle = isSmartWalletActivated
-      ? t('settingsContent.settingsItem.recoveryPortal.subtitle.default')
-      : t('settingsContent.settingsItem.recoveryPortal.subtitle.smartWalletNotActivated');
-
-    const recoveryPortalNavigationPath = hasSeenRecoveryPortalIntro
-      ? RECOVERY_PORTAL_SETUP_SIGN_UP
-      : RECOVERY_PORTAL_SETUP_INTRO;
-    return [
-      {
-        key: 'linkedDevices',
-        title: t('settingsContent.settingsItem.linkedDevices.title'),
-        subtitle: t('settingsContent.settingsItem.linkedDevices.subtitle'),
-        onPress: () => navigation.navigate(MANAGE_CONNECTED_DEVICES),
-      },
-      {
-        key: 'recoveryPortal',
-        title: t('settingsContent.settingsItem.recoveryPortal.title'),
-        subtitle: recoveryPortalSubtitle,
-        disabled: !isSmartWalletActivated,
-        onPress: () => isSmartWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
       },
     ];
   };

@@ -22,7 +22,7 @@ import orderBy from 'lodash.orderby';
 import { createSelector } from 'reselect';
 
 import { getSmartWalletAddress } from 'utils/accounts';
-import { userHasSmartWallet } from 'utils/smartWallet';
+import { userHasLegacySmartWallet } from 'utils/smartWallet';
 
 import {
   historySelector,
@@ -46,7 +46,7 @@ export const smartAccountHistorySelector = createSelector(
   historySelector,
   accountsSelector,
   (history, accounts) => {
-    const userHasSW = userHasSmartWallet(accounts);
+    const userHasSW = userHasLegacySmartWallet(accounts);
     if (!userHasSW) return [];
     const smartAccountId = getSmartWalletAddress(accounts);
     if (!smartAccountId) return [];

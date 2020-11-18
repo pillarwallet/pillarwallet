@@ -42,13 +42,10 @@ import {
   HOME,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
-  RECOVERY_PORTAL_WALLET_RECOVERY_PENDING,
 } from 'constants/navigationConstants';
 import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
-import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
 
 // utils
@@ -62,17 +59,13 @@ import {
   getWalletFromPkByPin,
   canLoginWithPkFromPin,
 } from 'utils/keychain';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
 import {
-  findFirstLegacySmartAccount,
   findFirstEtherspotAccount,
-  getActiveAccountType,
 } from 'utils/accounts';
 import { isTest } from 'utils/environment';
 
 // services
 import Storage from 'services/storage';
-import smartWalletService from 'services/smartWallet';
 import { navigate, getNavigationState, getNavigationPathAndParamsState } from 'services/navigation';
 import { firebaseIid, firebaseCrashlytics, firebaseMessaging } from 'services/firebase';
 import etherspot from 'services/etherspot';
@@ -85,24 +78,16 @@ import type SDKWrapper from 'services/api';
 import { saveDbAction } from './dbActions';
 import { getWalletsCreationEventsAction } from './userEventsActions';
 import { setupSentryAction } from './appActions';
-import { initOnLoginSmartWalletAccountAction, setActiveAccountAction } from './accountsActions';
 import {
   encryptAndSaveWalletAction,
   checkForWalletBackupToastAction,
   updatePinAttemptsAction,
 } from './walletActions';
-import { fetchSmartWalletTransactionsAction } from './historyActions';
 import { setAppThemeAction, initialDeeplinkExecutedAction, setAppLanguageAction } from './appSettingsActions';
-import { setActiveBlockchainNetworkAction } from './blockchainNetworkActions';
 import { loadFeatureFlagsAction } from './featureFlagsActions';
 import { getExchangeSupportedAssetsAction } from './exchangeActions';
 import { fetchReferralRewardAction } from './referralsActions';
 import { executeDeepLinkAction } from './deepLinkActions';
-import {
-  checkAndFinishSmartWalletRecoveryAction,
-  checkRecoveredSmartWalletStateAction,
-} from './recoveryPortalActions';
-import { importSmartWalletAccountsAction } from './smartWalletActions';
 import {
   checkIfKeyBasedWalletHasPositiveBalanceAction,
   checkKeyBasedAssetTransferTransactionsAction,
@@ -111,7 +96,8 @@ import { setSessionTranslationBundleInitialisedAction } from './sessionActions';
 import {
   importEtherspotAccountsAction,
   initEtherspotServiceAction,
-} from 'actions/etherspotActions';
+} from './etherspotActions';
+import { fetchTransactionsHistoryAction } from './historyActions';
 
 
 const storage = Storage.getInstance('db');
@@ -150,7 +136,7 @@ export const loginAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState, api: SDKWrapper) => {
     const {
-      appSettings: { data: { blockchainNetwork, useBiometrics: biometricsSetting, initialDeeplinkExecuted } },
+      appSettings: { data: { useBiometrics: biometricsSetting, initialDeeplinkExecuted } },
       oAuthTokens: { data: oAuthTokens },
       session: { data: { isOnline } },
       accounts: { data: accounts },
@@ -207,17 +193,18 @@ export const loginAction = (
         unlockedWallet = { ...unlockedWallet, privateKey: decryptedPrivateKey };
       }
 
+      // TODO: revisit once recovery portal supports Etherspot
       // web recovery portal recovery pending, let's navigate accordingly
-      if (getState().wallet.backupStatus.isRecoveryPending) {
-        dispatch({ type: SET_WALLET, payload: unlockedWallet });
-        navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
-        await smartWalletService.init(
-          decryptedPrivateKey,
-          (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
-        );
-        dispatch(checkAndFinishSmartWalletRecoveryAction());
-        return;
-      }
+      // if (getState().wallet.backupStatus.isRecoveryPending) {
+      //   dispatch({ type: SET_WALLET, payload: unlockedWallet });
+      //   navigate(NavigationActions.navigate({ routeName: RECOVERY_PORTAL_WALLET_RECOVERY_PENDING }));
+      //   await smartWalletService.init(
+      //     decryptedPrivateKey,
+      //     (event) => dispatch(checkRecoveredSmartWalletStateAction(event)),
+      //   );
+      //   dispatch(checkAndFinishSmartWalletRecoveryAction());
+      //   return;
+      // }
 
       /**
        * Important!
@@ -292,7 +279,7 @@ export const loginAction = (
           }
 
           dispatch(getWalletsCreationEventsAction());
-          // dispatch(fetchSmartWalletTransactionsAction());
+          dispatch(fetchTransactionsHistoryAction());
           dispatch(fetchReferralRewardAction());
 
           firebaseCrashlytics.setUserId(user.username);
@@ -478,11 +465,11 @@ export const resetAppServicesAction = () => {
     if (env) await storage.save('environment', env, true);
 
     /**
-     *  reset smart wallet service if it's not smart wallet recovery through web portal,
-     *  portal recovery initially resets smart wallet instance in order to create it's own
+     *  reset etherspot service if it's not account recovery through web portal,
+     *  portal recovery will reset etherspot instance itself in order to create it's own
      */
     if (!getState().onboarding.isPortalRecovery) {
-      await smartWalletService.reset();
+      await etherspot.logout();
     }
 
     // reset data stored in keychain

@@ -99,7 +99,7 @@ const getMessage = (
   }
 };
 
-export const userHasSmartWallet = (accounts: Accounts = []): boolean => {
+export const userHasLegacySmartWallet = (accounts: Accounts = []): boolean => {
   return accounts.some(acc => acc.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET);
 };
 
@@ -107,7 +107,7 @@ export const getSmartWalletStatus = (
   accounts: Accounts,
   smartWalletState: SmartWalletReducerState,
 ): SmartWalletStatus => {
-  const hasAccount = userHasSmartWallet(accounts);
+  const hasAccount = userHasLegacySmartWallet(accounts);
   const activeAccount = getActiveAccount(accounts);
   const isSmartWalletActive = !!activeAccount && activeAccount.type === ACCOUNT_TYPES.LEGACY_SMART_WALLET;
 

@@ -27,10 +27,19 @@ import {
 } from 'etherspot';
 
 // utils
-import { reportErrorLog } from 'utils/common';
-import type SDKWrapper from 'services/api';
-import type { SmartWalletAccount } from 'models/SmartWalletAccount';
-import { addressesEqual } from 'utils/assets';
+import {
+  isCaseInsensitiveMatch,
+  reportErrorLog,
+} from 'utils/common';
+import type {
+  Asset,
+  Balance,
+} from 'models/Asset';
+import {
+  constants,
+  utils,
+} from 'ethers';
+import { ETH } from 'constants/assetsConstants';
 
 
 class EtherspotService {
@@ -53,26 +62,69 @@ class EtherspotService {
       }),
     });
     await this.sdk.computeContractAccount({ sync: true }).catch((error) => {
-      reportErrorLog('EtherspotService.init computeContractAccount failed', { error });
+      reportErrorLog('EtherspotService init computeContractAccount failed', { error });
     });
+  }
+
+  subscribe() {
+    // return this.sdk.api.subscribe()
+  }
+
+  unsubscribe() {
+    // return this.sdk.api.subscribe()
   }
 
   getAccounts(): ?EtherspotAccount[] {
     return this.sdk.getConnectedAccounts()
       .then(({ items }: EtherspotAccounts) => items) // TODO: pagination
       .catch((error) => {
-        reportErrorLog('EtherspotService.getAccounts getConnectedAccounts failed', { error });
+        reportErrorLog('EtherspotService getAccounts -> getConnectedAccounts failed', { error });
         return null;
       });
   }
 
-  connectAccount(): ?EtherspotAccount[] {
-    return this.sdk.getConnectedAccounts()
-      .then(({ items }: EtherspotAccounts) => items) // TODO: pagination
+  reserveENSName(name: string): ?EtherspotAccount[] {
+    return this.sdk.reserveENSName(name).catch((error) => {
+      reportErrorLog('EtherspotService reserveENSName failed', { error });
+      return null;
+    });
+  }
+
+  async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
+    const assetAddresses = assets
+      // 0x0...0 is default ETH address in our assets, but it's not a token
+      .filter(({ address }) => isCaseInsensitiveMatch(address, constants.AddressZero))
+      .map(({ address }) => address);
+
+    // gets balances by provided token (asset) address and ETH balance regardless
+    const accountBalances = await this.sdk
+      .getAccountBalances(accountAddress, assetAddresses)
       .catch((error) => {
-        reportErrorLog('EtherspotService.getAccounts getConnectedAccounts failed', { error });
+        reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
         return null;
       });
+
+    // map to our Balance type
+    return accountBalances.items.reduce((balances, { balance, token }) => {
+      // if SDK returned token value is null then it's ETH
+      const asset = assets.find(({
+        address,
+        symbol,
+      }) => token === null ? symbol === ETH : isCaseInsensitiveMatch(address, token));
+
+      if (!asset) {
+        reportErrorLog('EtherspotService getBalances asset mapping failed', { token });
+        return balances;
+      }
+
+      return [
+        ...balances,
+        {
+          symbol: asset.symbol,
+          balance: utils.formatUnits(balance, asset.decimals),
+        },
+      ];
+    }, []);
   }
 
   async logout() {
