@@ -34,7 +34,6 @@ import Spinner from 'components/Spinner';
 
 // utils
 import { fontStyles, fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 // types
 import type { Props as ButtonProps } from 'components/Button';
@@ -76,7 +75,6 @@ const Wrapper = styled(SafeAreaView)`
 
 const EventTime = styled(BaseText)`
   ${fontStyles.tiny};
-  color: ${themedColors.secondaryText};
   margin-bottom: ${spacing.xs}px;
 `;
 
@@ -86,7 +84,6 @@ const Title = styled(MediumText)`
 
 const Subtitle = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
 `;
 
 const ChildrenWrapper = styled.View`
@@ -97,7 +94,6 @@ const ChildrenWrapper = styled.View`
 
 const FeeText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
   margin-bottom: ${spacing.s}px;
 `;
 
@@ -116,7 +112,7 @@ const ButtonWrapper = styled.View`
 const DetailText = styled(MediumText)`
   font-size: ${fontSizes.large};
   line-height: ${fontSizes.large};
-  color: ${({ color = themedColors.text }) => color};
+  color: ${({ color, theme }) => color || theme.colors.basic010};
 `;
 
 const RowWrapper = styled.View`
@@ -146,7 +142,7 @@ export const DetailRow = ({ children, color }: RowProps) => (
 
 export const DetailParagraph = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   text-align: center;
 `;
 
@@ -159,7 +155,7 @@ const Fee = ({ fee }: { fee: void | string | FeePending }) => {
   }
 
   if (typeof fee === 'string') {
-    return <FeeText>{fee}</FeeText>;
+    return <FeeText secondary>{fee}</FeeText>;
   }
 
   return null;
@@ -189,9 +185,9 @@ const DetailModal = ({
         forceInset={{ top: 'never', bottom: 'always' }}
         hasDate={hasDate}
       >
-        {hasDate && <EventTime>{formatDate(date, DATE_FORMAT)}</EventTime>}
+        {hasDate && <EventTime secondary>{formatDate(date, DATE_FORMAT)}</EventTime>}
         <Title>{title}</Title>
-        {!!subtitle && <Subtitle>{subtitle}</Subtitle>}
+        {!!subtitle && <Subtitle secondary>{subtitle}</Subtitle>}
 
         <Spacing h={spacing.m} />
         {image}
