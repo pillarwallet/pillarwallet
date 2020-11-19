@@ -24,17 +24,16 @@ import {
   SET_FETCHING_RARI_FUND_BALANCE,
   SET_FETCHING_RARI_APY,
   SET_FETCHING_RARI_USER_DATA,
+  RARI_POOLS,
 } from 'constants/rariConstants';
+import type { RariPool, Interests } from 'models/RariPool';
+
 
 export type RariReducerState = {
   rariFundBalance: number,
-  rariApy: number,
-  rariUserData: {
-    userDepositInUSD: number,
-    userDepositInRSPT: number,
-    userInterests: number,
-    userInterestsPercentage: number,
-  },
+  rariApy: {[RariPool]: number},
+  userDepositInUSD: {[RariPool]: number},
+  userInterests: {[RariPool]: ?Interests},
   isFetchingFundBalance: boolean,
   isFetchingRariAPY: boolean,
   isFetchingRariUserData: boolean,
@@ -47,12 +46,29 @@ export type RariReducerAction = {
 
 const initialState = {
   rariFundBalance: 0,
-  rariApy: 0,
-  rariUserData: {
-    userDepositInUSD: 0,
-    userDepositInRSPT: 0,
-    userInterests: 0,
-    userInterestsPercentage: 0,
+  rariApy: {
+    [RARI_POOLS.STABLE_POOL]: 0,
+    [RARI_POOLS.YIELD_POOL]: 0,
+    [RARI_POOLS.ETH_POOL]: 0,
+  },
+  userDepositInUSD: {
+    [RARI_POOLS.STABLE_POOL]: 0,
+    [RARI_POOLS.YIELD_POOL]: 0,
+    [RARI_POOLS.ETH_POOL]: 0,
+  },
+  userInterests: {
+    [RARI_POOLS.STABLE_POOL]: {
+      interests: 0,
+      interestsPercentage: 0,
+    },
+    [RARI_POOLS.YIELD_POOL]: {
+      interests: 0,
+      interestsPercentage: 0,
+    },
+    [RARI_POOLS.ETH_POOL]: {
+      interests: 0,
+      interestsPercentage: 0,
+    },
   },
   isFetchingFundBalance: false,
   isFetchingRariAPY: false,
@@ -79,7 +95,7 @@ export default function rariReducer(
     case SET_RARI_USER_DATA:
       return {
         ...state,
-        rariUserData: action.payload,
+        ...action.payload,
         isFetchingRariUserData: false,
       };
     case SET_FETCHING_RARI_FUND_BALANCE:

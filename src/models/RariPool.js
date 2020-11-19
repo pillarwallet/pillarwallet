@@ -17,21 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_RARI_FUND_BALANCE = 'SET_RARI_FUND_BALANCE';
-export const SET_RARI_APY = 'SET_RARI_APY';
-export const SET_RARI_USER_DATA = 'SET_RARI_USER_DATA';
-export const SET_FETCHING_RARI_FUND_BALANCE = 'SET_FETCHING_RARI_FUND_BALANCE';
-export const SET_FETCHING_RARI_APY = 'SET_FETCHING_RARI_APY';
-export const SET_FETCHING_RARI_USER_DATA = 'SET_FETCHING_RARI_USER_DATA';
+import { RARI_POOLS } from 'constants/rariConstants';
 
-export const STABLE_POOL = 'STABLE_POOL';
-export const YIELD_POOL = 'YIELD_POOL';
-export const ETH_POOL = 'ETH_POOL';
+export type RariPool = $Values<typeof RARI_POOLS>;
 
-export const RARI_POOLS = {
-  STABLE_POOL: ('STABLE_POOL': 'STABLE_POOL'),
-  YIELD_POOL: ('YIELD_POOL': 'YIELD_POOL'),
-  ETH_POOL: ('ETH_POOL': 'ETH_POOL'),
+export type Interests = {
+  interests: number,
+  interestsPercentage: number,
 };
-
-export const RARI_POOLS_ARRAY: $Values<typeof RARI_POOLS>[] = Object.keys(RARI_POOLS);

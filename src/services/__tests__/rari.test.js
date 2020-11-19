@@ -108,6 +108,22 @@ const rawFundBalancesAndPricesMock = [
   ],
 ];
 
+const rawFundBalancesMock = [
+  EthersBigNumber.from('13346167424260468551740'),
+  [0, 1, 2, 3],
+  [
+    EthersBigNumber.from('0'),
+    EthersBigNumber.from('4747552986564061859255'),
+    EthersBigNumber.from('0'),
+    EthersBigNumber.from('91147987192706265863422'),
+  ],
+];
+
+const ETH_USD = 5;
+
+const rates = {
+  ETH: { USD: ETH_USD },
+};
 
 describe('Rari service', () => {
   it('fetches fund balance in USD', async () => {
@@ -118,8 +134,8 @@ describe('Rari service', () => {
       },
     }));
 
-    const fundBalance = await rariServices.getRariFundBalanceInUSD();
-    expect(fundBalance).toEqual(123.45);
+    const fundBalance = await rariServices.getRariFundBalanceInUSD(rates);
+    expect(fundBalance).toEqual(123.45 * (2 + ETH_USD));
 
     getContractMock.mockRestore();
   });
@@ -133,19 +149,19 @@ describe('Rari service', () => {
     }));
 
     const accountsBalance = await rariServices.getAccountDepositInUSD('0x0000');
-    expect(accountsBalance).toEqual(123.45);
+    expect(accountsBalance).toEqual({ ETH_POOL: 123.45, STABLE_POOL: 123.45, YIELD_POOL: 123.45 });
 
     getContractMock.mockRestore();
   });
 
-  it('fetches account balance in RSPT', async () => {
+  it('fetches account balance in pool token', async () => {
     const getContractMock = jest.spyOn(assetsServices, 'getContract');
     getContractMock.mockImplementation(() => ({
       balanceOf: (address) => address === '0x0000' && Promise.resolve(EthersBigNumber.from('123450000000000000000')),
     }));
 
-    const accountsBalance = await rariServices.getAccountDepositInRSPT('0x0000');
-    expect(accountsBalance).toEqual(123.45);
+    const accountsBalance = await rariServices.getAccountDepositInPoolToken('0x0000');
+    expect(accountsBalance).toEqual({ ETH_POOL: 123.45, STABLE_POOL: 123.45, YIELD_POOL: 123.45 });
 
     getContractMock.mockRestore();
   });
@@ -172,8 +188,18 @@ describe('Rari service', () => {
 
     const accountsInterests = await rariServices.getUserInterests('0x0000');
     expect(accountsInterests).toEqual({
-      interests: 400,
-      interestsPercentage: 84.1892574507493,
+      STABLE_POOL: {
+        interests: 400,
+        interestsPercentage: 84.1892574507493,
+      },
+      YIELD_POOL: {
+        interests: 400,
+        interestsPercentage: 84.1892574507493,
+      },
+      ETH_POOL: {
+        interests: 400,
+        interestsPercentage: 84.1892574507493,
+      },
     });
 
     getContractMock.mockRestore();
@@ -187,6 +213,7 @@ describe('Rari service', () => {
     expect(dxdyPoolAPY).toEqual({
       USDC: EthersBigNumber.from('23307399005018100'),
       DAI: EthersBigNumber.from('59770087371939824'),
+      ETH: EthersBigNumber.from('1542132384768368'),
     });
     axiosGetMock.mockRestore();
   });
@@ -235,24 +262,28 @@ describe('Rari service', () => {
     getContractMock.mockImplementation(() => ({
       callStatic: {
         getRawFundBalancesAndPrices: () => Promise.resolve(rawFundBalancesAndPricesMock),
+        getRawFundBalances: () => Promise.resolve(rawFundBalancesMock),
       },
     }));
     const dxdyMock = jest.spyOn(rariPoolsAPYServices, 'getDydxApyBNs');
     dxdyMock.mockImplementation(() => ({
       USDC: EthersBigNumber.from('20371538472554336'),
       DAI: EthersBigNumber.from('57526787682671872'),
+      ETH: EthersBigNumber.from('57526787682671872'),
     }));
     const compoundMock = jest.spyOn(rariPoolsAPYServices, 'getCompoundApyBNs');
     compoundMock.mockImplementation(() => ({
       USDT: EthersBigNumber.from('118139984932180496'),
       USDC: EthersBigNumber.from('57545168116122852'),
       DAI: EthersBigNumber.from('57124181513273156'),
+      ETH: EthersBigNumber.from('57526787682671872'),
     }));
     const aaveMock = jest.spyOn(rariPoolsAPYServices, 'getAaveApyBNs');
     aaveMock.mockImplementation(() => ({
       sUSD: EthersBigNumber.from('82578073887035934'),
       DAI: EthersBigNumber.from('58221906578824085'),
       USDC: EthersBigNumber.from('114180230046107991'),
+      ETH: EthersBigNumber.from('57526787682671872'),
     }));
     const mStableMock = jest.spyOn(rariPoolsAPYServices, 'getMStableApyBN');
     mStableMock.mockImplementation(() => ({
@@ -261,7 +292,7 @@ describe('Rari service', () => {
 
 
     const apy = await rariServices.getRariAPY();
-    expect(apy).toBeCloseTo(6.18, 1);
+    expect(apy).toEqual({ ETH_POOL: 5.049868315523945, STABLE_POOL: 6.18867160941854, YIELD_POOL: 6.18867160941854 });
 
     getContractMock.mockRestore();
     dxdyMock.mockRestore();

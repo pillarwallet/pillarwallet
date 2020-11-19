@@ -52,7 +52,7 @@ const MainContainer = styled.View`
 
 const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
   const {
-    transactionPayload, assetSymbol, amount, exchangeFeeBN, slippage,
+    transactionPayload, assetSymbol, amount, exchangeFeeBN, slippage, rariPool,
   } = navigation.state.params;
 
   const onNextButtonPress = () => navigation.navigate(SEND_TOKEN_PIN_CONFIRM, { transactionPayload });
@@ -62,6 +62,12 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
   const decimals = feeInfo?.gasToken?.decimals || 18;
   const fee = feeInfo?.fee;
   const formattedFee = fee ? formatUnits(fee.toString(), decimals) : '0';
+
+  const summaryTitles = {
+    STABLE_POOL: t('rariContent.label.youAreDepositingToStablePool'),
+    YIELD_POOL: t('rariContent.label.youAreDepositingToYieldPool'),
+    ETH_POOL: t('rariContent.label.youAreDepositingToEthPool'),
+  };
 
   return (
     <ContainerWithHeader
@@ -74,7 +80,7 @@ const RariAddDepositReviewScreen = ({ navigation, feeInfo }: Props) => {
         <TokenReviewSummary
           assetSymbol={assetSymbol}
           amount={amount}
-          text={t('rariContent.label.youAreAdding')}
+          text={summaryTitles[rariPool]}
         />
         <Spacing h={34} />
         {(slippage || exchangeFeeBN.gt(0)) && (

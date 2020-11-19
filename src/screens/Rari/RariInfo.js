@@ -49,7 +49,6 @@ type Props = {
   fetchRariFundBalance: () => void,
   isFetchingFundBalance: boolean,
   rariFundBalance: number,
-  rariApy: number,
   baseFiatCurrency: ?string,
   rates: Rates,
 };
@@ -105,7 +104,6 @@ const RariInfoScreen = ({
   fetchRariFundBalance,
   isFetchingFundBalance,
   rariFundBalance,
-  rariApy,
   baseFiatCurrency,
   rates,
 }: Props) => {
@@ -154,27 +152,28 @@ const RariInfoScreen = ({
             <BaseText secondary small>{t('rariContent.label.totalSupply')}</BaseText>
           </Card>
           <Spacing w={16} />
-          <Card>
-            <MediumText big>{t('percentValue', { value: rariApy.toFixed(2) })}</MediumText>
-            <BaseText secondary small>{t('rariContent.label.currentAPY')}</BaseText>
-          </Card>
         </Row>
-        <Spacing h={36} />
-        <Subtitle>{t('rariContent.infoContent.subtitle.generatingYield')}</Subtitle>
-        <Spacing h={14} />
-        <Paragraph>{t('rariContent.infoContent.paragraph.generatingYield')}</Paragraph>
         <Insight
           isVisible
-          insightChecklist={[
-            { title: t('rariContent.infoContent.insight.dYdX') },
-            { title: t('rariContent.infoContent.insight.compound') },
-            { title: t('rariContent.infoContent.insight.aave') },
-            { title: t('rariContent.infoContent.insight.mStable') },
+          insightNumberedList={[
+            t('rariContent.infoContent.tableOfContents.whatIsRari'),
+            t('rariContent.infoContent.tableOfContents.howDoesRariEarn'),
+            t('rariContent.infoContent.tableOfContents.rariPools'),
+            t('rariContent.infoContent.tableOfContents.howToDeposit'),
+            t('rariContent.infoContent.tableOfContents.RGT'),
+            t('rariContent.infoContent.tableOfContents.fees'),
           ]}
           borderRadius={30}
         />
         <Spacing h={5} />
-        <Paragraph>{t('rariContent.infoContent.paragraph.exchangingAssets')}</Paragraph>
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.whatIsRari'),
+          t('rariContent.infoContent.paragraph.whatIsRari'),
+        )}
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.howDoesRariEarn'),
+          t('rariContent.infoContent.paragraph.howDoesRariEarn'),
+        )}
         <InsightWithButton
           title={t('rariContent.infoContent.maximizeYieldInsight.title')}
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
@@ -182,17 +181,18 @@ const RariInfoScreen = ({
         />
         <Spacing h={26} />
         {renderParagraph(
-          t('rariContent.infoContent.subtitle.RSPT'),
-          t('rariContent.infoContent.paragraph.RSPT'),
+          t('rariContent.infoContent.subtitle.rariPools'),
+          t('rariContent.infoContent.paragraph.rariPools'),
         )}
-        {renderParagraph(
-          t('rariContent.infoContent.subtitle.performanceFee'),
-          t('rariContent.infoContent.paragraph.performanceFee'),
-          )}
-        {renderParagraph(
-          t('rariContent.infoContent.subtitle.COMP'),
-          t('rariContent.infoContent.paragraph.COMP'),
-          )}
+        <Insight
+          isVisible
+          insightChecklist={[
+            { title: t('rariContent.infoContent.poolsInsight.stablePool') },
+            { title: t('rariContent.infoContent.poolsInsight.yieldPool') },
+            { title: t('rariContent.infoContent.poolsInsight.ethPool') },
+          ]}
+          borderRadius={30}
+        />
         {renderParagraph(
           t('rariContent.infoContent.subtitle.deposits'),
           t('rariContent.infoContent.paragraph.deposits'),
@@ -201,6 +201,31 @@ const RariInfoScreen = ({
           t('rariContent.infoContent.subtitle.withdrawals'),
           t('rariContent.infoContent.paragraph.withdrawals'),
           )}
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.RGT'),
+          t('rariContent.infoContent.paragraph.RGT'),
+          )}
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.performanceFee'),
+          t('rariContent.infoContent.paragraph.performanceFee'),
+          )}
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.withdrawalFee'),
+          t('rariContent.infoContent.paragraph.withdrawalFee'),
+          )}
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.RGTFee'),
+          t('rariContent.infoContent.paragraph.RGTFee'),
+          )}
+        {renderParagraph(
+          t('rariContent.infoContent.subtitle.rariFee'),
+          t('rariContent.infoContent.paragraph.rariFee'),
+          )}
+        <InsightWithButton
+          title={t('rariContent.infoContent.maximizeYieldInsight.title')}
+          buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
+          buttonProps={{ small: false }}
+        />
       </MainContainer>
     </ContainerWithHeader>
   );
@@ -211,14 +236,12 @@ const mapStateToProps = ({
   rari: {
     isFetchingFundBalance,
     rariFundBalance,
-    rariApy,
   },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   isFetchingFundBalance,
   rariFundBalance,
-  rariApy,
   rates,
 });
 

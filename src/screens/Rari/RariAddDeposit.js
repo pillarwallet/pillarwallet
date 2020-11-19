@@ -51,12 +51,13 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Rates, Asset, Balances, Assets } from 'models/Asset';
+import type { RariPool } from 'models/RariPool';
 
 
 type Props = {
   assets: Assets,
   navigation: NavigationScreenProp<*>,
-  rariApy: number,
+  rariApy: {[RariPool]: number},
   calculateRariDepositTransactionEstimate: (Object[]) => void,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
@@ -96,6 +97,8 @@ const RariAddDepositScreen = ({
   const [slippage, setSlippage] = useState(null);
   const [inputValid, setInputValid] = useState(false);
 
+  const rariPool = navigation.getParam('rariPool');
+
   let notEnoughForFee = false;
   if (feeInfo && parseFloat(assetValue)) {
     notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
@@ -115,6 +118,7 @@ const RariAddDepositScreen = ({
     if (!assetValue || !parseFloat(assetValue) || !selectedAsset) return;
     setEstimatingTransaction(true);
     getRariDepositTransactionsAndExchangeFee(
+      rariPool,
       activeAccountAddress,
       assetValue,
       selectedAsset,
@@ -153,6 +157,7 @@ const RariAddDepositScreen = ({
 
   const onNextButtonPress = () => {
     navigation.navigate(RARI_ADD_DEPOSIT_REVIEW, {
+      rariPool,
       assetSymbol: selectedAsset.symbol,
       amount: assetValue,
       transactionPayload,
@@ -206,7 +211,7 @@ const RariAddDepositScreen = ({
         />
         <Spacing h={24} />
         <BaseText regular secondary>{t('rariContent.label.currentAPY')}{' '}
-          <BaseText>{t('percentValue', { value: rariApy.toFixed(2) })}</BaseText>
+          <BaseText>{t('percentValue', { value: rariApy[rariPool].toFixed(2) })}</BaseText>
         </BaseText>
       </ValueInputWrapper>
     </ContainerWithHeader>

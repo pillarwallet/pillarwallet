@@ -21,7 +21,6 @@ import {
   getRariFundBalanceInUSD,
   getRariAPY,
   getUserInterests,
-  getAccountDepositInRSPT,
   getAccountDepositInUSD,
 } from 'services/rari';
 import {
@@ -38,9 +37,10 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
 export const fetchRariFundBalanceAction = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_FETCHING_RARI_FUND_BALANCE });
-    const rariFundBalance = await getRariFundBalanceInUSD();
+    const { rates: { data: rates } } = getState();
+    const rariFundBalance = await getRariFundBalanceInUSD(rates);
     dispatch({ type: SET_RARI_FUND_BALANCE, payload: rariFundBalance });
   };
 };
@@ -64,9 +64,8 @@ export const fetchRariUserDataAction = () => {
 
     dispatch({ type: SET_FETCHING_RARI_USER_DATA });
 
-    const [userDepositInUSD, userDepositInRSPT, userInterests] = await Promise.all([
+    const [userDepositInUSD, userInterests] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),
-      getAccountDepositInRSPT(smartWalletAddress),
       getUserInterests(smartWalletAddress),
     ]);
 
@@ -74,9 +73,7 @@ export const fetchRariUserDataAction = () => {
       type: SET_RARI_USER_DATA,
       payload: {
         userDepositInUSD,
-        userDepositInRSPT,
-        userInterests: userInterests?.interests || 0,
-        userInterestsPercentage: userInterests?.interestsPercentage || 0,
+        userInterests,
       },
     });
   };

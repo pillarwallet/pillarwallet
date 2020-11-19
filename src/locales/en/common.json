@@ -1451,10 +1451,13 @@
       "currentAPY": "Current APY",
       "earned": "Earned",
       "totalSupply": "Total supply",
-      "youAreAdding": "You are adding",
       "rariExchangeFee": "Rari fee",
       "depositDetails": "Deposit details",
-      "maxSlippage": "Max. slippage"
+      "maxSlippage": "Max. slippage",
+      "poolBalance": "Pool Balance",
+      "youAreDepositingToStablePool": "You are depositing to Stable pool",
+      "youAreDepositingToYieldPool": "You are depositing to Yield pool",
+      "youAreDepositingToEthPool": "You are depositing to ETH pool"
     },
     "button": {
       "withdraw": "Withdraw",
@@ -1467,32 +1470,51 @@
     "infoContent": {
       "subtitle": {
         "keyFacts": "Key facts",
-        "generatingYield": "Generating yield",
-        "RSPT": "RSPT (Rari Stable Pool Token)",
-        "performanceFee": "Performance Fee",
-        "COMP": "COMP",
+        "whatIsRari": "What is Rari?",
+        "howDoesRariEarn": "How does Rari Earn Yield?",
+        "rariPools":"Rari Pools",
         "deposits": "Deposits",
-        "withdrawals": "Withdrawals"
+        "withdrawals": "Withdrawals",
+        "RGT": "$RGT (Rari Governance Token)",
+        "performanceFee": "Performance Fee",
+        "withdrawalFee": "Withdrawal fee",
+        "RGTFee": "RGT Claim Fee",
+        "rariFee": "Rari fee"
       },
       "paragraph": {
-        "generatingYield": "Currently, the Rari Stable Pool generates yield by depositing a combination of:",
-        "exchangingAssets": "Rari optimizes yield not only by allocating assets to the pools with the highest interest rates, but also by exchanging assets to the stablecoins with the highest interest rates via a combination of:",
-        "RSPT": "Each user's share of the Rari Stable Pool is represented by their RSPT (Rari Stable Pool Token) balance. When you deposit funds to the Stable Pool, an equivalent amount of RSPT is minted to your account. When you withdraw funds from the Stable Pool, the equivalent amount of RSPT is burned from your account. As soon as you deposit, you start earning yield. Essentially, Rari Stable Pool holdings and yield are split up across RSPT holders proportionally to their balances.",
-        "performanceFee": "A 20% performance fee is deducted from all interest earned by RSPT holders. This fee is liable to change in the future (but fees on past interest cannot be changed).",
-        "COMP": "All COMP (Compound's governance token) earned by the fund is liquidated into additional interest for RSPT holders approximately every 3 days.",
+        "whatIsRari": "Rari Capital is an easy interface to earn yield within DeFi.\n\nRari Capital began by delivering on this mission in a safe way that enables individuals to autonomously and easily earn yield on their stable assets in a lossless manner. From there, it transformed into a solution that leveraged yield farming strategies to increase the returns offered to users.",
+        "howDoesRariEarn": "Currently, the product optimizes for yield across a series of stable-assets (swapping via 0x) in the stable and yield pools and Ethereum in the ETH pool. It earns yield by lending and farming across various DeFi protocols like Compound, dYdX, KeeperDAO, mStable, yEarn, and Aave. We are actively expanding our strategy set to focus on more sustainable yields off of the chain. We expect lending to compose the minority of the pool's allocation once mass protocol expansion has begun.",
+        "rariPools": "The first pool is the stable pool ($RSPT) which interacts safely with exclusively audited contracts. The next pool is the yield pool ($RYPT) that will maximize for yield at all costs, whether it is leverage or unaudited contracts--the yield pool will always have the highest returns. Lastly, the ETH ($REPT) fund will work to deliver safe and stable returns with ETH as the base asset. ",
         "deposits": "Only certain stablecoins are accepted for direct deposits (direct meaning without exchange to an accepted currency). To deposit another currency, you must exchange your funds before depositing. Fortunately, Rari can exchange and deposit your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to deposit via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
-        "withdrawals": "Only the stablecoins currently held by the Rari Stable Pool are available for direct withdrawals. To withdraw another currency, you must exchange your funds after withdrawing. Fortunately, Rari can withdraw and exchange your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to withdraw via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage."
+        "withdrawals": "Only the stablecoins currently held by the Rari Stable Pool are available for direct withdrawals. To withdraw another currency, you must exchange your funds after withdrawing. Fortunately, Rari can withdraw and exchange your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to withdraw via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
+        "RGT": "The $RGT is the Rari Governance Token. It can be used to propose and vote proposals made by the Rari Team or fellow token-holding community members. Users can also delegate their voting power to another address to pool voting power.\n\n$RGT enables transaction discounts for users, a unique feature of $RGT and the Rari Protocol. By staking held $RGT tokens in Rari, users can gain discounts on Rari Protocol fees. Rari normally charges a 9.5% fee on all gains, however, staking $RGT can reduce these fees over certain intervals. Fees accumulate through time and discounts are determined by the ratio between deposited funds to staked $RGT. ",
+        "performanceFee": "There is a 9.5% fee on all profits accrued through the Rari Protocol. ",
+        "withdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools. This 0.5% figure is inspired by yEarn, as they have the same standard for their yVaults.",
+        "RGTFee": "The RGT Claim Fee is a slight fee that takes place when a user attempts to claim their token within the first sixty days of the mining of it.\n\nAttempting to claim the token right after earning it will result in a 33% fee. From there, it decreases linearly across the subsequent sixty days. This is highlighted in the chart below. If you wait sixty days, you will not have any claim fee. You can view day-by-day data here. ",
+        "rariFee": "When you are depositing tokens, which is not supported by the Rari Stable Pool,  your funds must be exchanged first."
       },
-      "insight": {
-        "dYdX": "DAI and USDC to the lending protocol dYdX",
-        "compound": "DAI, USDC, and USDT to the lending protocol Compound",
-        "aave": "DAI, USDC, USDT, TUSD, BUSD, and sUSD to the lending protocol Aave",
-        "mStable": "mUSD to the savings protocol from mStable" 
+      "tableOfContents": {
+        "whatIsRari": "What is Rari?",
+        "howDoesRariEarn": "How does Rari Earn Yield?",
+        "rariPools": "Rari Pools",
+        "howToDeposit": "How to Deposit and Withdraw",
+        "RGT": "$RGT",
+        "fees": "Fees"
       },
       "maximizeYieldInsight": {
         "title": "Maximize yield in DeFi",
         "button": "Deposit now"
+      },
+      "poolsInsight": {
+        "stablePool": "The Rari Stable Pool allows users to deposit ETH or any ERC20 token to mint the native token, $RSPT.",
+        "yieldPool": "The Rari Yield Pool provides users with the opportunity to earn a high yield by depositing ETH or any ERC20 token to mint the native token, $RYPT.",
+        "ethPool": "The Rari ETH Pool allows Rari users to deposit ETH or any ERC20 tokens to immediately start earning interest through the $REPT."
       }
+    },
+    "tabs": {
+      "stablePool": "Stable Pool",
+      "yieldPool": "Yield Pool",
+      "ethPool": "ETH Pool"
     }
   },
 

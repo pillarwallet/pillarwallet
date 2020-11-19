@@ -19,6 +19,7 @@
 */
 import axios from 'axios';
 import { BigNumber as EthersBigNumber } from 'ethers';
+import { ETH } from 'constants/assetsConstants';
 import { reportErrorLog } from 'utils/common';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv } from 'configs/envConfig';
@@ -37,7 +38,7 @@ export const getDydxApyBNs = async () => {
     return null;
   }
   const result = markets
-    .filter(market => ['DAI', 'USDC', 'USDT'].includes(market.symbol))
+    .filter(market => ['DAI', 'USDC', 'USDT', 'ETH'].includes(market.symbol))
     .reduce((APY, market) => {
       APY[market.symbol] = floatingPointToBN(market.totalSupplyAPR);
       return APY;
@@ -54,7 +55,7 @@ export const getCompoundApyBNs = async () => {
     return null;
   }
   const result = cToken
-    .filter(token => ['DAI', 'USDC', 'USDT'].includes(token.underlying_symbol))
+    .filter(token => ['DAI', 'USDC', 'USDT', 'ETH'].includes(token.underlying_symbol))
     .reduce((APY, token) => {
       const supplyAPY = floatingPointToBN(token.supply_rate.value);
       const compAPY = floatingPointToBN(token.comp_supply_apy.value / 100);
@@ -68,8 +69,9 @@ export const getAaveApyBNs = async () => {
   /* eslint-disable i18next/no-literal-string */
   const query = `{
     reserves(where: {
-      symbol_in: ["DAI", "USDC", "USDT", "TUSD", "BUSD", "SUSD"]
+      symbol_in: ["DAI", "USDC", "USDT", "TUSD", "BUSD", "SUSD", "ETH"]
     }) {
+      id
       symbol
       liquidityRate
     }
@@ -77,12 +79,17 @@ export const getAaveApyBNs = async () => {
   /* eslint-enable i18next/no-literal-string */
   const data = await callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query);
   if (!data) return null;
-  const result = data.reserves.reduce((APY, reserve) => {
+  const result = data.reserves
+    .filter(reserve => {
+      return reserve.symbol !== ETH ||
+        reserve.id === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0x24a42fd28c976a61df5d00d0599c34c4f90748c8';
+    })
+    .reduce((APY, reserve) => {
     // eslint-disable-next-line i18next/no-literal-string
-    const symbol = reserve.symbol === 'SUSD' ? 'sUSD' : reserve.symbol;
-    APY[symbol] = EthersBigNumber.from(reserve.liquidityRate).div(EthersBigNumber.from(1e9));
-    return APY;
-  }, {});
+      const symbol = reserve.symbol === 'SUSD' ? 'sUSD' : reserve.symbol;
+      APY[symbol] = EthersBigNumber.from(reserve.liquidityRate).div(EthersBigNumber.from(1e9));
+      return APY;
+    }, {});
   return result;
 };
 
