@@ -144,7 +144,7 @@ const RariInfoScreen = ({
         <Row>
           <Card>
             {isFetchingFundBalance ?
-              <Spinner width={20} height={20} style={{ marginVertical: 5 }} /> :
+              <Spinner size={20} style={{ marginVertical: 5 }} /> :
               <MediumText big>
                 {formatFiat(convertUSDToFiat(rariFundBalance, rates, fiatCurrency), fiatCurrency, { skipCents: true })}
               </MediumText>

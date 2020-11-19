@@ -33,6 +33,7 @@ import CircleButton from 'components/CircleButton';
 import BalanceView from 'components/PortfolioBalance/BalanceView';
 import Tabs from 'components/Tabs';
 import Table, { TableRow, TableLabel } from 'components/Table';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { getThemeColors, themedColors } from 'utils/themes';
 import { formatFiat } from 'utils/common';
@@ -42,7 +43,7 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { RARI_INFO, RARI_ADD_DEPOSIT } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
-import { fetchRariUserDataAction, fetchRariAPYAction } from 'actions/rariActions';
+import { fetchRariDataAction } from 'actions/rariActions';
 
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
@@ -54,13 +55,12 @@ type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   navigation: NavigationScreenProp<*>,
-  fetchRariUserData: () => void,
-  fetchRariAPY: () => void,
+  fetchRariData: () => void,
   rariApy: {[RariPool]: number},
   userDepositInUSD: {[RariPool]: number},
   userInterests: {[RariPool]: ?Interests},
-  isFetchingRariAPY: boolean,
-  isFetchingRariUserData: boolean,
+  isFetchingRariData: boolean,
+  rariDataFetchFailed: boolean,
   rates: Rates,
 };
 
@@ -96,19 +96,18 @@ const PoolContainer = styled.View`
 `;
 
 const RariDepositScreen = ({
-  baseFiatCurrency, theme, navigation, fetchRariUserData, fetchRariAPY,
+  baseFiatCurrency, theme, navigation, fetchRariData,
   rariApy,
   userDepositInUSD,
   userInterests,
-  isFetchingRariAPY,
-  isFetchingRariUserData,
+  isFetchingRariData,
+  rariDataFetchFailed,
   rates,
 }: Props) => {
   const [activeTab, setActiveTab] = useState(RARI_POOLS.STABLE_POOL);
 
   useEffect(() => {
-    fetchRariUserData();
-    fetchRariAPY();
+    fetchRariData();
   }, []);
 
   const colors = getThemeColors(theme);
@@ -269,11 +268,8 @@ const RariDepositScreen = ({
       <ScrollWrapper
         refreshControl={
           <RefreshControl
-            refreshing={isFetchingRariAPY || isFetchingRariUserData}
-            onRefresh={() => {
-              fetchRariUserData();
-              fetchRariAPY();
-            }}
+            refreshing={isFetchingRariData}
+            onRefresh={fetchRariData}
           />
         }
       >
@@ -301,6 +297,12 @@ const RariDepositScreen = ({
           {renderTab()}
         </MainContainer>
       </ScrollWrapper>
+      <RetryGraphQueryBox
+        message={t('error.theGraphQueryFailed.rari')}
+        hasFailed={rariDataFetchFailed}
+        isFetching={isFetchingRariData}
+        onRetry={fetchRariData}
+      />
     </ContainerWithHeader>
   );
 };
@@ -311,8 +313,8 @@ const mapStateToProps = ({
     rariApy,
     userDepositInUSD,
     userInterests,
-    isFetchingRariAPY,
-    isFetchingRariUserData,
+    isFetchingRariData,
+    rariDataFetchFailed,
   },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
@@ -320,14 +322,13 @@ const mapStateToProps = ({
   rariApy,
   userDepositInUSD,
   userInterests,
-  isFetchingRariAPY,
-  isFetchingRariUserData,
+  isFetchingRariData,
+  rariDataFetchFailed,
   rates,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  fetchRariUserData: () => dispatch(fetchRariUserDataAction()),
-  fetchRariAPY: () => dispatch(fetchRariAPYAction()),
+  fetchRariData: () => dispatch(fetchRariDataAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(RariDepositScreen));

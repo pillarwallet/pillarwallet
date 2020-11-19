@@ -495,7 +495,8 @@
       "poolTogetherStats": "Can't connect to Pool Together",
       "sablierStreams": "Can't connect to Sablier",
       "isTokenSupportedByUniswap": "Can't connect to exchange service",
-      "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete."
+      "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
+      "rari": "Can't connect to Rari service."
     }
   },
 

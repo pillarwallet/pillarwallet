@@ -22,9 +22,9 @@ import {
   SET_RARI_APY,
   SET_RARI_USER_DATA,
   SET_FETCHING_RARI_FUND_BALANCE,
-  SET_FETCHING_RARI_APY,
-  SET_FETCHING_RARI_USER_DATA,
   RARI_POOLS,
+  SET_FETCHING_RARI_DATA,
+  SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
 import type { RariPool, Interests } from 'models/RariPool';
 
@@ -35,8 +35,8 @@ export type RariReducerState = {
   userDepositInUSD: {[RariPool]: number},
   userInterests: {[RariPool]: ?Interests},
   isFetchingFundBalance: boolean,
-  isFetchingRariAPY: boolean,
-  isFetchingRariUserData: boolean,
+  isFetchingRariData: boolean,
+  rariDataFetchFailed: boolean,
 }
 
 export type RariReducerAction = {
@@ -72,7 +72,8 @@ const initialState = {
   },
   isFetchingFundBalance: false,
   isFetchingRariAPY: false,
-  isFetchingRariUserData: false,
+  isFetchingRariData: false,
+  rariDataFetchFailed: false,
 };
 
 export default function rariReducer(
@@ -90,28 +91,26 @@ export default function rariReducer(
       return {
         ...state,
         rariApy: action.payload,
-        isFetchingRariAPY: false,
       };
     case SET_RARI_USER_DATA:
       return {
         ...state,
         ...action.payload,
-        isFetchingRariUserData: false,
       };
     case SET_FETCHING_RARI_FUND_BALANCE:
       return {
         ...state,
         isFetchingFundBalance: action.payload ?? true,
       };
-    case SET_FETCHING_RARI_APY:
+    case SET_FETCHING_RARI_DATA:
       return {
         ...state,
-        isFetchingRariAPY: action.payload ?? true,
+        isFetchingRariData: action.payload ?? true,
       };
-    case SET_FETCHING_RARI_USER_DATA:
+    case SET_FETCHING_RARI_DATA_ERROR:
       return {
         ...state,
-        isFetchingRariUserData: action.payload ?? true,
+        rariDataFetchFailed: action.payload ?? true,
       };
     default:
       return state;

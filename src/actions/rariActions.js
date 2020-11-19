@@ -28,8 +28,8 @@ import {
   SET_RARI_APY,
   SET_RARI_USER_DATA,
   SET_FETCHING_RARI_FUND_BALANCE,
-  SET_FETCHING_RARI_APY,
-  SET_FETCHING_RARI_USER_DATA,
+  SET_FETCHING_RARI_DATA,
+  SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { estimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
@@ -45,15 +45,7 @@ export const fetchRariFundBalanceAction = () => {
   };
 };
 
-export const fetchRariAPYAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_FETCHING_RARI_APY });
-    const rariAPY = await getRariAPY();
-    dispatch({ type: SET_RARI_APY, payload: rariAPY });
-  };
-};
-
-export const fetchRariUserDataAction = () => {
+export const fetchRariDataAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -62,20 +54,28 @@ export const fetchRariUserDataAction = () => {
     if (!smartWalletAccount) return;
     const smartWalletAddress = getAccountAddress(smartWalletAccount);
 
-    dispatch({ type: SET_FETCHING_RARI_USER_DATA });
+    dispatch({ type: SET_FETCHING_RARI_DATA });
 
-    const [userDepositInUSD, userInterests] = await Promise.all([
+    const [userDepositInUSD, userInterests, rariAPY] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),
       getUserInterests(smartWalletAddress),
+      getRariAPY(),
     ]);
 
-    dispatch({
-      type: SET_RARI_USER_DATA,
-      payload: {
-        userDepositInUSD,
-        userInterests,
-      },
-    });
+    if (userDepositInUSD && userInterests && rariAPY) {
+      dispatch({
+        type: SET_RARI_USER_DATA,
+        payload: {
+          userDepositInUSD,
+          userInterests,
+        },
+      });
+      dispatch({ type: SET_RARI_APY, payload: rariAPY });
+      dispatch({ type: SET_FETCHING_RARI_DATA_ERROR, payload: false });
+    } else {
+      dispatch({ type: SET_FETCHING_RARI_DATA_ERROR });
+    }
+    dispatch({ type: SET_FETCHING_RARI_DATA, payload: false });
   };
 };
 

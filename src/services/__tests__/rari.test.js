@@ -79,8 +79,8 @@ const aaveResponseMock = {
 };
 
 const mstableResponseMock = {
-  day0: [{ exchangeRate: '1.122246649538691619', timestamp: 1603798181 }],
-  day1: [{ exchangeRate: '1.122399899360735757', timestamp: 1603879625 }],
+  day0: [{ rate: '1.122246649538691619', timestamp: 1603798181 }],
+  day1: [{ rate: '1.122399899360735757', timestamp: 1603879625 }],
 };
 
 const rawFundBalancesAndPricesMock = [
