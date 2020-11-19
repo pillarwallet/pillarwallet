@@ -22,18 +22,27 @@ import * as React from 'react';
 import { Clipboard } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import t from 'translations/translate';
+
+// components
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
+import Modal from 'components/Modal';
+import Tooltip from 'components/Tooltip';
+
+// utils
 import { themedColors } from 'utils/themes';
-import { fontStyles, spacing, UIColors, baseColors } from 'utils/variables';
+import { fontStyles, spacing, baseColors } from 'utils/variables';
+import { hitslop10 } from 'utils/common';
+
+// models, constants
 import type { WBTCFeesWithRate } from 'models/WBTC';
 import { BTC, WBTC } from 'constants/assetsConstants';
-import { hitslop10, hitslopFull } from 'utils/common';
-import Modal from 'components/Modal';
-import t from 'translations/translate';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+
+// partials
 import WBTCSlippageModal from './WBTCSlippageModal';
 import WBTCCafeAddress from './WBTCCafeAddress';
 
@@ -77,40 +86,6 @@ const Label = styled(BaseText)`
 
 const ButtonWrapper = styled.View`
   margin: 0px ${spacing.layoutSides}px 20px;
-`;
-
-const Tooltip = styled.TouchableOpacity`
-  position: absolute;
-  bottom: 15px;
-  width: 230px;
-  align-items: center;
-  `;
-
-const TooltipBody = styled.View`
-  padding: 15px;
-  background-color: ${UIColors.darkShadowColor};
-  border-width: 1px;
-  border-radius: 16;
-  border-color: ${UIColors.darkShadowColor};
-  opacity: 0.8;
-  border-width: 0;
-`;
-
-const TooltipText = styled(BaseText)`
-  ${fontStyles.small};
-  color: ${themedColors.control};
-  opacity: 1;
-`;
-
-const TooltipArrow = styled.View`
-  width: 0px;
-  height: 0px;
-  border-left-width: 10px;
-  border-right-width: 10px;
-  border-top-width: 10px;
-  border-color: transparent;
-  border-top-color: ${UIColors.darkShadowColor};
-  opacity: 0.8;
 `;
 
 const TextRow = styled.View`
@@ -199,13 +174,6 @@ const WBTCCafeInfo = (props: Props) => {
 
   const switchOffFeeInfo = () => showRenFeeInfo && setShowRenFeeInfo(false);
 
-  const getTooltip = () => (
-    <Tooltip activeOpacity={1} onPress={switchOffFeeInfo} hitSlop={hitslopFull}>
-      <TooltipBody><TooltipText>{t('wbtcCafe.renDescription')}</TooltipText></TooltipBody>
-      <TooltipArrow />
-    </Tooltip>
-  );
-
   const getFeeNumber = () => {
     if (!wbtcData) return 0;
     const { renVMFee = 0, networkFee = 0 } = wbtcData;
@@ -235,14 +203,15 @@ const WBTCCafeInfo = (props: Props) => {
               <TextRow>
                 <Label>{t('wbtcCafe.renFee')}</Label>
                 <IconWrapper style={{ alignItems: 'center' }}>
-                  {showRenFeeInfo && getTooltip()}
-                  <RenFeeIcon
-                    onPress={() => setShowRenFeeInfo(!showRenFeeInfo)}
-                    activeOpacity={1}
-                    hitSlop={hitslop10}
-                  >
-                    <RenFeeIconText>?</RenFeeIconText>
-                  </RenFeeIcon>
+                  <Tooltip body={t('wbtcCafe.renDescription')} isVisible={showRenFeeInfo} positionOnBottom={false}>
+                    <RenFeeIcon
+                      onPress={() => setShowRenFeeInfo(!showRenFeeInfo)}
+                      activeOpacity={1}
+                      hitSlop={hitslop10}
+                    >
+                      <RenFeeIconText>?</RenFeeIconText>
+                    </RenFeeIcon>
+                  </Tooltip>
                 </IconWrapper>
               </TextRow>
               <Label>{wbtcData ? wbtcData.renVMFee.toFixed(8) : '-'}</Label>

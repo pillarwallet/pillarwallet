@@ -680,10 +680,3 @@ export const hitslop10 = {
   left: 10,
   right: 10,
 };
-
-export const hitslopFull = {
-  top: getDeviceHeight(),
-  bottom: getDeviceHeight(),
-  left: getDeviceWidth(),
-  right: getDeviceWidth(),
-};
