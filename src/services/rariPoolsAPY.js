@@ -100,19 +100,19 @@ const calculateMStableApyBN = async () => {
   /* eslint-disable i18next/no-literal-string */
   const query = `{
     day0: exchangeRates(where: {timestamp_lt: ${epoch24HrsAgo}}, orderDirection: desc, orderBy: timestamp, first: 1) {
-      exchangeRate
+      rate
       timestamp
     }
     day1: exchangeRates(where: {timestamp_lt: ${epochNow}}, orderDirection: desc, orderBy: timestamp, first: 1) {
-      exchangeRate
+      rate
       timestamp
     }
   }`;
   /* eslint-enable i18next/no-literal-string */
   const data = await callSubgraph(getEnv().MSTABLE_SUBGRAPH_NAME, query);
   if (!data) return null;
-  const startExchangeRate = data.day0[0].exchangeRate;
-  const endExchangeRate = data.day1[0].exchangeRate;
+  const startExchangeRate = data.day0[0].rate;
+  const endExchangeRate = data.day1[0].rate;
   const SCALE = 1e18;
   const YEAR_BN = 365 * 24 * 60 * 60;
 

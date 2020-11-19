@@ -162,6 +162,9 @@ const tokens = {
 // stable pool and yield pool are very similar
 const getStablecoinPoolAPY = async (rariPool: RariPool, servicesApys: Object[]) => {
   const [dydxApyBNs, compoundApyBNs, aaveApyBNs, mstableApyBNs] = servicesApys;
+  if (!dydxApyBNs || !compoundApyBNs || !aaveApyBNs || !mstableApyBNs) {
+    return 0;
+  }
 
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_PROXY_CONTRACT_ADDRESS,
@@ -243,6 +246,10 @@ const getStablecoinPoolAPY = async (rariPool: RariPool, servicesApys: Object[]) 
 // ETH pool has slightly different contracts
 const getEthPoolAPY = async (servicesApys: Object[]) => {
   const [dydxApyBNs, compoundApyBNs, aaveApyBNs] = servicesApys;
+  if (!dydxApyBNs || !compoundApyBNs || !aaveApyBNs) {
+    return 0;
+  }
+
   const rariContract = getContract(
     getRariPoolsEnv(RARI_POOLS.ETH_POOL).RARI_FUND_CONTROLLER_CONTRACT_ADDRESS,
     RARI_FUND_CONTROLLER_ETH_CONTRACT_ABI,
