@@ -24,10 +24,6 @@ export const SET_FETCHING_RARI_FUND_BALANCE = 'SET_FETCHING_RARI_FUND_BALANCE';
 export const SET_FETCHING_RARI_APY = 'SET_FETCHING_RARI_APY';
 export const SET_FETCHING_RARI_USER_DATA = 'SET_FETCHING_RARI_USER_DATA';
 
-export const STABLE_POOL = 'STABLE_POOL';
-export const YIELD_POOL = 'YIELD_POOL';
-export const ETH_POOL = 'ETH_POOL';
-
 export const RARI_POOLS = {
   STABLE_POOL: ('STABLE_POOL': 'STABLE_POOL'),
   YIELD_POOL: ('YIELD_POOL': 'YIELD_POOL'),
@@ -35,3 +31,6 @@ export const RARI_POOLS = {
 };
 
 export const RARI_POOLS_ARRAY: $Values<typeof RARI_POOLS>[] = Object.keys(RARI_POOLS);
+
+export const RARI_AAVE_ETH_RESERVE_ID =
+  '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0x24a42fd28c976a61df5d00d0599c34c4f90748c8';

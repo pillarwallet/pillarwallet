@@ -114,10 +114,8 @@ const RariDepositScreen = ({
   const colors = getThemeColors(theme);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const totalUserInterests = Object.keys(userInterests)
-    .map(k => userInterests[k])
-    .filter(pool => pool)
-    .map(pool => pool?.interests)
+  const totalUserInterests = (Object.values(userInterests): any[])
+    .map(pool => pool?.interests ?? 0)
     .reduce((sum, interests) => sum + interests, 0);
   const summedUserDepositsInUSD = (Object.values(userDepositInUSD): any).reduce((sum, v) => sum + v, 0);
   const totalInterestsPercentage =
@@ -158,7 +156,7 @@ const RariDepositScreen = ({
         <BaseText regular secondary center>{t('rariContent.label.poolBalance')}</BaseText>
         <Spacing h={4} />
         <BalanceView
-          fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
+          fiatCurrency={fiatCurrency}
           balance={convertUSDToFiat(userDepositInUSD[activeTab], rates, fiatCurrency)}
           currencyTextStyle={{ fontSize: 16, lineHeight: 16 }}
           balanceTextStyle={{ fontSize: 24, lineHeight: 24 }}
@@ -284,7 +282,7 @@ const RariDepositScreen = ({
           <RariLogo source={rariLogo} />
           <Spacing h={32} />
           <BalanceView
-            fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
+            fiatCurrency={fiatCurrency}
             balance={convertUSDToFiat(summedUserDepositsInUSD, rates, fiatCurrency)}
           />
           <Spacing h={58} />

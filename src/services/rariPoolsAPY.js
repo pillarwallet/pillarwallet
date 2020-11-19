@@ -20,6 +20,7 @@
 import axios from 'axios';
 import { BigNumber as EthersBigNumber } from 'ethers';
 import { ETH } from 'constants/assetsConstants';
+import { RARI_AAVE_ETH_RESERVE_ID } from 'constants/rariConstants';
 import { reportErrorLog } from 'utils/common';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv } from 'configs/envConfig';
@@ -82,7 +83,7 @@ export const getAaveApyBNs = async () => {
   const result = data.reserves
     .filter(reserve => {
       return reserve.symbol !== ETH ||
-        reserve.id === '0xeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee0x24a42fd28c976a61df5d00d0599c34c4f90748c8';
+        reserve.id === RARI_AAVE_ETH_RESERVE_ID;
     })
     .reduce((APY, reserve) => {
     // eslint-disable-next-line i18next/no-literal-string
