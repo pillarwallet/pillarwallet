@@ -204,7 +204,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
       || fromAsset !== prevFromAsset || toAsset !== prevToAsset) {
       this.options = this.provideOptions();
-      if (!isWbtcCafe(prevFromAsset.symbol) && isWbtcCafe(fromAsset.symbol)) getWbtcFees();
+      if (!isWbtcCafe(prevFromAsset?.symbol) && isWbtcCafe(fromAsset?.symbol)) getWbtcFees();
     }
 
     if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
@@ -400,7 +400,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       wbtcData,
     } = this.state;
 
-    const displayWbtcCafe = isWbtcCafe(fromAsset.symbol);
+    const displayWbtcCafe = isWbtcCafe(fromAsset?.symbol);
     const { fromOptions, toOptions } = this.options;
     const assetsLoaded = !!fromOptions.length && !!toOptions.length;
     const rightItems = getHeaderRightItems(
