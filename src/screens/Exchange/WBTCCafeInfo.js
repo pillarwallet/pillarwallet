@@ -64,7 +64,7 @@ const InfoWrapper = styled.View`
   border-radius: 4;
   border-width: ${({ noBorder = false }) => noBorder ? '0px' : '1px'};
   border-style: solid;
-  border-color: ${themedColors.secondaryAccent};
+  border-color: ${themedColors.tertiary};
   margin-bottom: 30px;
 `;
 
@@ -76,7 +76,7 @@ const Row = styled.TouchableOpacity`
   align-items: center;
   border-bottom-width: ${({ noBorder = false }) => noBorder ? '0px' : '1px'};
   border-style: solid;
-  border-color: ${themedColors.secondaryAccent};
+  border-color: ${themedColors.tertiary};
 `;
 
 const Label = styled(BaseText)`
