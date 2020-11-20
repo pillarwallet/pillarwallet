@@ -22,11 +22,10 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import { UPDATE_RATES } from 'constants/ratesConstants';
-import { BTC } from 'constants/assetsConstants';
 
 // services
 import { getExchangeRates } from 'services/assets';
-import { getCoinGeckoBitcoinPrice } from 'services/coinGecko';
+import { getCoinGeckoBitcoinAndWBTCPrices } from 'services/coinGecko';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -105,9 +104,11 @@ export const fetchSingleAssetRatesAction = (assetCode: string) => {
 
 export const fetchBitcoinRateAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const btcRate = await getCoinGeckoBitcoinPrice();
-    const { rates: { data: currentRates } } = getState();
-    const updatedRates = { ...currentRates, [BTC]: btcRate };
-    dispatch(setRatesAction(updatedRates));
+    const btcRates = await getCoinGeckoBitcoinAndWBTCPrices();
+    if (btcRates && !isEmpty(btcRates)) {
+      const { rates: { data: currentRates } } = getState();
+      const updatedRates = { ...currentRates, ...btcRates };
+      dispatch(setRatesAction(updatedRates));
+    }
   };
 };
