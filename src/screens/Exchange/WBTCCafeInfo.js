@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
+import React, { useState } from 'react';
 import { Clipboard } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -26,16 +26,14 @@ import t from 'translations/translate';
 
 // components
 import { BaseText } from 'components/Typography';
-import Icon from 'components/Icon';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
-import Tooltip from 'components/Tooltip';
+import Table, { TableRow, TableAmount } from 'components/Table';
 
 // utils
 import { themedColors } from 'utils/themes';
 import { fontStyles, spacing, baseColors } from 'utils/variables';
-import { hitslop10 } from 'utils/common';
 
 // models, constants
 import type { WBTCFeesWithRate } from 'models/WBTC';
@@ -45,6 +43,8 @@ import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
 // partials
 import WBTCSlippageModal from './WBTCSlippageModal';
 import WBTCCafeAddress from './WBTCCafeAddress';
+import { ExchangeIcon, TableWrapper } from './ConfirmationTable';
+import RenFeeIcon from './RenFeeIcon';
 
 type Props = {
   wbtcData: ?WBTCFeesWithRate,
@@ -55,28 +55,9 @@ type Props = {
   error?: boolean,
 }
 
-const Container = styled.TouchableOpacity`
-  margin-horizontal: ${spacing.large}px;
-`;
-
-const InfoWrapper = styled.View`
-  width: 100%;
-  border-radius: 4;
-  border-width: ${({ noBorder = false }) => noBorder ? '0px' : '1px'};
-  border-style: solid;
-  border-color: ${themedColors.tertiary};
-  margin-bottom: 30px;
-`;
-
-const Row = styled.TouchableOpacity`
+const Row = styled.View`
   flex-direction: row;
-  height: 40px;
-  justify-content: space-between;
-  padding-horizontal: ${spacing.large}px;
   align-items: center;
-  border-bottom-width: ${({ noBorder = false }) => noBorder ? '0px' : '1px'};
-  border-style: solid;
-  border-color: ${themedColors.tertiary};
 `;
 
 const Label = styled(BaseText)`
@@ -86,34 +67,6 @@ const Label = styled(BaseText)`
 
 const ButtonWrapper = styled.View`
   margin: 0px ${spacing.layoutSides}px 20px;
-`;
-
-const TextRow = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const RenFeeIcon = styled.TouchableOpacity`
-  height: 13px;
-  width: 13px;
-  border-color: ${themedColors.inactiveTabBarIcon};
-  border-width: 1px;
-  border-radius: 7;
-  justify-content: center;
-  align-items: center;
-  margin-left: 5px;
-  margin-right: 5px;
-  text-align: center;
-`;
-
-const RenFeeIconText = styled(BaseText)`
-  color: ${themedColors.inactiveTabBarIcon};
-  font-size: 10px;
-  text-align: center;
-`;
-
-const IconWrapper = styled.View`
-  align-items: center;
 `;
 
 const FeeRow = styled.View`
@@ -136,20 +89,8 @@ const Fee = styled(BaseText)`
   color: ${baseColors.white};
 `;
 
-const ExchangeIcon = styled(Icon)`
-  color: ${themedColors.primary};
-  font-size: 16px;
-  margin-right: 4px;
-`;
-
-const RateWrapper = styled.View`
-  flex-direction: row;
-  align-items: center;
-`;
-
-const WBTCCafeInfo = (props: Props) => {
-  const [maxSlippage, setMaxSlippage] = React.useState<number>(0.5);
-  const [showRenFeeInfo, setShowRenFeeInfo] = React.useState<boolean>(false);
+const WBTCCafeInfo = (props: Props): JSX.Element => {
+  const [maxSlippage, setMaxSlippage] = useState<number>(0.5);
 
   const handleSlippagePress = () => Modal.open(() => (
     <WBTCSlippageModal onModalWillHide={selectedVal => setMaxSlippage(selectedVal)} />
@@ -167,12 +108,8 @@ const WBTCCafeInfo = (props: Props) => {
       });
     }
     Clipboard.setString(address || '');
-    const message = t('toast.addressCopiedToClipboard');
-    Toast.show({ message, emoji: 'ok_hand' });
-    return null;
+    return Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
   };
-
-  const switchOffFeeInfo = () => showRenFeeInfo && setShowRenFeeInfo(false);
 
   const getFeeNumber = () => {
     if (!wbtcData) return 0;
@@ -186,65 +123,67 @@ const WBTCCafeInfo = (props: Props) => {
 
   const rate = wbtcData?.exchangeRate;
   const rateString = rate ? `1 ${BTC} = ${rate.toFixed(4)} ${WBTC}` : '-';
-  const buttonDisabled = error || !wbtcData?.estimate || showRenFeeInfo || (extendedInfo && !address);
+  const buttonDisabled = error || !wbtcData?.estimate || (extendedInfo && !address);
   return (
-    <Container activeOpacity={1} onPress={switchOffFeeInfo}>
-      <InfoWrapper noBorder={!extendedInfo}>
-        <Row disabled>
+    <TableWrapper>
+      <Table>
+        <TableRow>
           <Label>{t('wbtcCafe.rate')}</Label>
-          <RateWrapper>
+          <Row>
             <ExchangeIcon name="exchange" />
             <Label textColor={themedColors.text}>{rateString}</Label>
-          </RateWrapper>
-        </Row>
+          </Row>
+        </TableRow>
         {extendedInfo && (
-          <>
-            <Row disabled>
-              <TextRow>
-                <Label>{t('wbtcCafe.renFee')}</Label>
-                <IconWrapper style={{ alignItems: 'center' }}>
-                  <Tooltip body={t('wbtcCafe.renDescription')} isVisible={showRenFeeInfo} positionOnBottom={false}>
-                    <RenFeeIcon
-                      onPress={() => setShowRenFeeInfo(!showRenFeeInfo)}
-                      activeOpacity={1}
-                      hitSlop={hitslop10}
-                    >
-                      <RenFeeIconText>?</RenFeeIconText>
-                    </RenFeeIcon>
-                  </Tooltip>
-                </IconWrapper>
-              </TextRow>
-              <Label>{wbtcData ? wbtcData.renVMFee.toFixed(8) : '-'}</Label>
+          <TableRow>
+            <Row>
+              <Label>{t('wbtcCafe.renFee')}</Label>
+              <RenFeeIcon />
             </Row>
-            <Row disabled>
-              <Label>{t('wbtcCafe.btcFee')}</Label>
-              <Label>{wbtcData ? wbtcData.networkFee.toFixed(8) : '-'}</Label>
-            </Row>
-            <Row disabled>
-              <Label>{t('transactions.label.pillarFee')}</Label>
-              <Label textColor={themedColors.positive}>{t('label.free')}</Label>
-            </Row>
-          </>
+            <TableAmount amount={wbtcData?.renVMFee || 0} token={BTC} />
+          </TableRow>
         )}
-        <Row onPress={handleSlippagePress} noBorder disabled={extendedInfo || showRenFeeInfo}>
+        {extendedInfo && (
+          <TableRow>
+            <Label>{t('wbtcCafe.btcFee')}</Label>
+            <TableAmount amount={wbtcData?.networkFee || 0} token={BTC} />
+          </TableRow>
+        )}
+        {extendedInfo && (
+          <TableRow>
+            <Label>{t('transactions.label.pillarFee')}</Label>
+            <Label textColor={themedColors.positive}>{t('label.free')}</Label>
+          </TableRow>
+        )}
+        <TableRow>
           <Label>{t('wbtcCafe.slippage')}</Label>
-          <Label textColor={extendedInfo ? null : themedColors.link}>{`${maxSlippage}%`}</Label>
-        </Row>
-      </InfoWrapper>
+          <Label
+            onPress={handleSlippagePress}
+            disabled={extendedInfo}
+            textColor={extendedInfo ? null : themedColors.link}
+          >
+            {`${maxSlippage}%`}
+          </Label>
+        </TableRow>
+        {extendedInfo && (
+          <TableRow>
+            <Label >{t('transactions.label.totalFee')}</Label>
+            <TableAmount amount={getFeeNumber()} token={BTC} />
+          </TableRow>
+        )}
+      </Table>
       {extendedInfo
       ? <WBTCCafeAddress amount={amount} address={address} error={error} />
       : (
         <FeeRow>
           <Label>{t('transactions.label.transactionFee')}</Label>
-          <FeeWrapper>
-            <Fee>{getFeeInfo()}</Fee>
-          </FeeWrapper>
+          <FeeWrapper><Fee>{getFeeInfo()}</Fee></FeeWrapper>
         </FeeRow>
       )}
       <ButtonWrapper>
         <Button title={getButtonTitle()} onPress={handleNextPress} disabled={buttonDisabled} />
       </ButtonWrapper>
-    </Container>
+    </TableWrapper>
   );
 };
 

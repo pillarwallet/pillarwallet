@@ -42,13 +42,14 @@ type Props = {
   theme: Theme,
 };
 
-const TableWrapper = styled.View`
+export const TableWrapper = styled.View`
   padding: 0 20px;
 `;
 
-const ExchangeIcon = styled(Icon)`
+export const ExchangeIcon = styled(Icon)`
   color: ${themedColors.primary};
   font-size: 16px;
+  margin-right: 4px;
 `;
 
 const Row = styled.View`
@@ -70,7 +71,6 @@ const ConfirmationTable = (props: Props) => {
           <TableLabel>{t('exchangeContent.label.exchangeRate')}</TableLabel>
           <Row>
             <ExchangeIcon name="exchange" />
-            <Spacing w={4} />
             <BaseText regular>
               {t('exchangeContent.label.exchangeRateLayout', {
                 rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),

@@ -117,7 +117,7 @@ const Table = ({ children, title }: Props) => {
       {React.Children.map(children, (child, index) => {
         return (
           <>
-            {index > 0 && <Divider />}
+            {!!child && index > 0 && <Divider />}
             {child}
           </>
         );
