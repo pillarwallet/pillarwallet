@@ -141,3 +141,25 @@ export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
       return null;
     });
 };
+
+export const getCoinGeckoBitcoinPrice = async (): Promise<?Object> => {
+  const id = 'bitcoin'; // eslint-disable-line i18next/no-literal-string
+  const walletCurrencies = supportedFiatCurrencies.concat(ETH);
+  const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
+  return axios.get(
+    `${COINGECKO_API_URL}/simple/price?ids=${id}&vs_currencies=${vsCurrenciesQuery}`,
+    requestConfig,
+  )
+    .then(({ data: responseData }: AxiosResponse) => {
+      if (!responseData) {
+        reportErrorLog('getCoinGeckoBitcoinPrice failed: unexpected response', { response: responseData });
+        return null;
+      }
+
+      return mapWalletAndCoinGeckoCurrencies(responseData[id], walletCurrencies);
+    })
+    .catch((error) => {
+      reportErrorLog('getCoinGeckoEtherPrice failed: API request error', { error });
+      return null;
+    });
+};

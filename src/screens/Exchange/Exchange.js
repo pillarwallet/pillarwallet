@@ -43,6 +43,7 @@ import {
   getWbtcFeesAction,
 } from 'actions/exchangeActions';
 import { hasSeenExchangeIntroAction } from 'actions/appSettingsActions';
+import { fetchBitcoinRateAction } from 'actions/ratesActions';
 
 // constants
 import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
@@ -112,6 +113,7 @@ type Props = {
   getWbtcFees: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
+  getBtcRate: () => void,
 };
 
 type State = {
@@ -192,6 +194,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       exchangeSupportedAssets,
       oAuthAccessToken,
       getWbtcFees,
+      getBtcRate,
     } = this.props;
     const {
       fromAsset, toAsset, fromAmount, isFormValid,
@@ -204,7 +207,10 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
       || fromAsset !== prevFromAsset || toAsset !== prevToAsset) {
       this.options = this.provideOptions();
-      if (!isWbtcCafe(prevFromAsset?.symbol) && isWbtcCafe(fromAsset?.symbol)) getWbtcFees();
+      if (!isWbtcCafe(prevFromAsset?.symbol) && isWbtcCafe(fromAsset?.symbol)) {
+        getWbtcFees();
+        getBtcRate();
+      }
     }
 
     if (!prevProps.hasSeenExchangeIntro && this.props.hasSeenExchangeIntro) {
@@ -239,11 +245,7 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   handleBuySellSwap = () => {
     const { fromAsset, toAsset } = this.state;
-    this.setState({
-      toAsset: fromAsset,
-      fromAsset: toAsset,
-      fromAmount: '',
-    }, () => {
+    this.setState({ toAsset: fromAsset, fromAsset: toAsset, fromAmount: '' }, () => {
       this.resetSearch();
       this.focusInputWithKeyboard();
     });
@@ -356,9 +358,7 @@ class ExchangeScreen extends React.Component<Props, State> {
   };
 
   triggerSearch = () => {
-    const {
-      searchOffers,
-    } = this.props;
+    const { searchOffers } = this.props;
     const { fromAmount, fromAsset, toAsset } = this.state;
     const { symbol: from } = fromAsset;
     const { symbol: to } = toAsset;
@@ -514,6 +514,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getExchangeSupportedAssets: (callback) => dispatch(getExchangeSupportedAssetsAction(callback)),
   updateHasSeenExchangeIntro: () => dispatch(hasSeenExchangeIntroAction()),
   getWbtcFees: () => dispatch(getWbtcFeesAction()),
+  getBtcRate: () => dispatch(fetchBitcoinRateAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeScreen));
