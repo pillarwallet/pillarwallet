@@ -89,7 +89,7 @@ const Fee = styled(BaseText)`
   color: ${baseColors.white};
 `;
 
-const WBTCCafeInfo = (props: Props): JSX.Element => {
+const WBTCCafeInfo = (props: Props) => {
   const [maxSlippage, setMaxSlippage] = useState<number>(0.5);
 
   const handleSlippagePress = () => Modal.open(() => (

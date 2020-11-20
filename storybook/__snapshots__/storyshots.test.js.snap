@@ -47819,24 +47819,49 @@ exports[`Storyshots Table default 1`] = `
                 ]
               }
             >
-              <Text
-                onPress={[Function]}
-                regular={true}
+              <View
+                accessible={true}
+                focusable={true}
+                hitSlop={
+                  Object {
+                    "bottom": 10,
+                    "left": 10,
+                    "right": 10,
+                    "top": 10,
+                  }
+                }
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "opacity": 1,
+                  }
                 }
               >
-                £ 0
-              </Text>
+                <Text
+                  regular={true}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  £ 0
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -48069,24 +48094,49 @@ exports[`Storyshots Table default 1`] = `
                 ]
               }
             >
-              <Text
-                onPress={[Function]}
-                regular={true}
+              <View
+                accessible={true}
+                focusable={true}
+                hitSlop={
+                  Object {
+                    "bottom": 10,
+                    "left": 10,
+                    "right": 10,
+                    "top": 10,
+                  }
+                }
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "opacity": 1,
+                  }
                 }
               >
-                £ 0
-              </Text>
+                <Text
+                  regular={true}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  £ 0
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -48159,24 +48209,49 @@ exports[`Storyshots Table default 1`] = `
                 ]
               }
             >
-              <Text
-                onPress={[Function]}
-                regular={true}
+              <View
+                accessible={true}
+                focusable={true}
+                hitSlop={
+                  Object {
+                    "bottom": 10,
+                    "left": 10,
+                    "right": 10,
+                    "top": 10,
+                  }
+                }
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "opacity": 1,
+                  }
                 }
               >
-                £ 0
-              </Text>
+                <Text
+                  regular={true}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  £ 0
+                </Text>
+              </View>
             </View>
           </View>
         </View>
