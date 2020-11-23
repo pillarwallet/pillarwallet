@@ -31,7 +31,7 @@ import { getContract, encodeContractMethod } from 'services/assets';
 import { getEthereumProvider, parseTokenBigNumberAmount, reportOrWarn } from 'utils/common';
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
-import { PROVIDER_SYNTHETIX } from 'constants/exchangeConstants';
+import { PROVIDER_SYNTHETIX, SYNTHETIX_VP_CODE } from 'constants/exchangeConstants';
 
 // models
 import type { Asset } from 'models/Asset';
@@ -52,11 +52,13 @@ export const createSynthetixOrder = async (
     const exchangeAddress = getEnv().SYNTHETIX_EXCHANGE_ADDRESS;
     const data = encodeContractMethod(
       EXCHANGE_ABI,
-      'exchange',
+      'exchangeWithTracking',
       [
         utils.formatBytes32String(fromAsset.symbol),
         parseTokenBigNumberAmount(amount, fromAsset.decimals),
         utils.formatBytes32String(toAsset.symbol),
+        clientSendAddress,
+        SYNTHETIX_VP_CODE,
       ],
     );
 
