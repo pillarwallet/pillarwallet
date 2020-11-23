@@ -278,7 +278,7 @@ const ExchangeConfirmScreen = ({
                   <Spacing w={4} />
                   <BaseText regular>
                     {t('exchangeContent.label.exchangeRateLayout', {
-                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
+                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toFixed(2),
                       toAssetCode,
                       fromAssetCode,
                     })}
@@ -355,7 +355,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     value: number,
     data?: string,
     assetData?: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
+  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

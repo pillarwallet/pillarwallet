@@ -26,6 +26,8 @@ import Toast from 'components/Toast';
 import { convertToBaseUnits, reportLog } from 'utils/common';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
+export const EXCHANGE_URL = 'https://api.1inch.exchange/v2.0';
+export const EXCHANGE_ADDRESS = '0xe4c9194962532feb467dce8b3d42419641c6ed2e';
 
 type CommonUrlParams = {
   safeFromAddress: string,
@@ -78,8 +80,7 @@ export const getResponseData = async (url: string, errorMessage: string, toastMe
   return response.data;
 };
 
-export const parseAssets = (assets: Asset[]) => {
-  assets.forEach(asset => {
-    asset.code = asset.symbol;
-  });
-};
+export const parseAssets = (assets: Asset[]): any => assets.map((asset) => ({
+  ...asset,
+  code: asset.symbol,
+}));

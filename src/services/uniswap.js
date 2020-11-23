@@ -138,17 +138,18 @@ export const getUniswapOffer = async (
   quantity: number | string,
   clientAddress: string,
 ): Promise<Offer | null> => {
-  parseAssets([fromAsset, toAsset]);
-  const decimalsBN = new BigNumber(fromAsset.decimals);
+  const [fromAssetParsed, toAssetParsed] = parseAssets([fromAsset, toAsset]);
+
+  const decimalsBN = new BigNumber(fromAssetParsed.decimals);
   const quantityBN = new BigNumber(quantity);
   const fromAssetQuantityBaseUnits = convertToBaseUnits(decimalsBN, quantityBN);
-  const route: ?Route = await getRoute(fromAsset, toAsset);
+  const route: ?Route = await getRoute(fromAssetParsed, toAssetParsed);
   if (!route) return null;
-  const trade: Trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
+  const trade: Trade = await getTrade(fromAssetParsed.address, fromAssetQuantityBaseUnits.toFixed(), route);
   const askRate = getAskRate(trade);
-  const allowanceSet = await getAllowanceSet(clientAddress, fromAsset);
-  const offer: Offer = parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_UNISWAP);
-  return offer;
+  const allowanceSet = await getAllowanceSet(clientAddress, fromAssetParsed);
+
+  return parseOffer(fromAssetParsed, toAssetParsed, allowanceSet, askRate, PROVIDER_UNISWAP);
 };
 
 const getUniswapOrderData = async (
@@ -266,9 +267,7 @@ export const createUniswapOrder = async (
     return null;
   }
 
-  const txCount = await ethProvider.getTransactionCount(clientSendAddress);
   const txObject = generateTxObject(
-    txCount.toString(),
     ADDRESSES.router,
     txValue,
     txData,
