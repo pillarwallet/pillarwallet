@@ -44,7 +44,7 @@ import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { addressesEqual, getRate, getAssetDataByAddress } from 'utils/assets';
 import {
   formatFiat,
@@ -271,7 +271,7 @@ const IconCircle = styled.View`
   width: 64px;
   height: 64px;
   border-radius: ${({ borderRadius }) => borderRadius || 32}px;
-  background-color: ${props => props.backgroundColor || themedColors.tertiary};
+  background-color: ${({ backgroundColor, theme }) => backgroundColor || theme.colors.basic060};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -307,12 +307,12 @@ const SettleWrapper = styled.View`
 const Divider = styled.View`
   width: 100%;
   height: 1px;
-  background-color: ${themedColors.tertiary};
+  background-color: ${({ theme }) => theme.colors.basic060};
   margin: 8px 0px 18px;
 `;
 
 const ErrorMessage = styled(BaseText)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   margin-bottom: ${spacing.large}px;
   width: 100%;
   text-align: center;

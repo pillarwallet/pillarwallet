@@ -18,7 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import styled from 'styled-components/native';
+import styled, { css } from 'styled-components/native';
+import { getColorByTheme } from 'utils/themes';
 
 const Wrapper = styled.View`
   flex-wrap: wrap;
@@ -34,7 +35,9 @@ const Wrapper = styled.View`
 const Dot = styled.View`
   width: 16px;
   height: 16px;
-  background-color: ${({ active, theme }) => active ? theme.colors.primary : theme.colors.secondaryAccent};
+  background-color: ${({ active, theme }) => active
+    ? theme.colors.primaryAccent130
+    : css`${getColorByTheme({ lightKey: 'basic005', darkKey: 'basic030' })}`};
   border-radius: 8;
 `;
 

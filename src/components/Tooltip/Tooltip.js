@@ -23,8 +23,8 @@ import { View, Animated } from 'react-native';
 import styled from 'styled-components/native';
 
 import { Paragraph } from 'components/Typography';
-import { spacing, fontStyles, UIColors } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { spacing, fontStyles } from 'utils/variables';
+import { getColorByTheme, themedColors } from 'utils/themes';
 import { getDeviceWidth, reportLog } from 'utils/common';
 import { measure } from 'utils/ui';
 
@@ -72,7 +72,8 @@ const TooltipArrow = styled.View`
   height: ${ARROW_SIZE}px;
   border-radius: 2px;
   transform: rotate(45deg);
-  background-color: ${UIColors.tooltipBackground};
+  background-color: ${getColorByTheme({ lightCustom: '#060f1e', darkKey: 'basic040' })};
+  opacity: 0.8;
   left: 4px;
 `;
 
@@ -83,7 +84,8 @@ const BalloonWrapper = styled.View`
 `;
 
 const TooltipBalloon = styled.View`
-  background-color: ${UIColors.tooltipBackground};
+  background-color: ${getColorByTheme({ lightCustom: '#060f1e', darkKey: 'basic040' })};
+  opacity: 0.8;
   padding: ${spacing.mediumLarge}px;
   border-radius: 14px;
   align-items: center;

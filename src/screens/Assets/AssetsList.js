@@ -49,7 +49,7 @@ import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
 import { formatMoney, formatFiat, formatAmount } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -101,8 +101,7 @@ const ListHeaderWrapper = styled.View`
 `;
 
 const HeaderTitle = styled(MediumText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
+  ${fontStyles.big};
 `;
 
 

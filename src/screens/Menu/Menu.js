@@ -30,7 +30,7 @@ import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { images } from 'utils/images';
 
@@ -103,8 +103,6 @@ const LinksSection = styled.View`
 `;
 
 const LogoutSection = styled.View`
-  border-top-color: ${themedColors.tertiary};
-  border-top-width: 1px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -112,8 +110,9 @@ const LogoutSection = styled.View`
 `;
 
 const LockScreenSection = styled.View`
-  border-top-color: ${themedColors.tertiary};
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   border-top-width: 1px;
+  border-bottom-width: 1px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -126,7 +125,7 @@ const HeaderLogo = styled(CachedImage)`
 `;
 
 const LogoutIcon = styled(Icon)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   ${fontStyles.regular};
   margin-right: 5px;
 `;
@@ -136,12 +135,11 @@ const LegalTextLink = styled(TextLink)`
 `;
 
 const LogoutTextLink = styled(TextLink)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   ${fontStyles.regular};
 `;
 
 const LockScreenTextLink = styled(TextLink)`
-  color: ${themedColors.link};
   ${fontStyles.regular};
 `;
 
@@ -150,7 +148,7 @@ const IconWrapper = styled.View`
 `;
 
 const ItemIcon = styled(Icon)`
-  color: ${({ color }) => color || themedColors.accent};
+  color: ${({ color, theme }) => color || theme.colors.basic020};
   font-size: ${fontSizes.big}px;
 `;
 
