@@ -66,7 +66,7 @@ export const getAskRate = (trade: Trade): string => {
   return excutionPriceBN.toFixed();
 };
 
-export const parseAssets = (assets: Asset[]): any => assets.map((asset) => ({
+export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
   ...asset,
   address: toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address),
   code: asset.symbol,

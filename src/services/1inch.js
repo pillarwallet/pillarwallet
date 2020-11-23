@@ -116,7 +116,7 @@ export const create1inchOrder = async (
 
   const response = await getResponseData(url, 'Failed to create 1inch order', t('toast.failedToCreateOrder'));
 
-  if (!response || response?.tx) {
+  if (!response || !response?.tx) {
     reportErrorLog('Failed to create 1inch order after successful response', { response });
     return null;
   }

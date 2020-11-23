@@ -80,7 +80,7 @@ export const getResponseData = async (url: string, errorMessage: string, toastMe
   return response.data;
 };
 
-export const parseAssets = (assets: Asset[]): any => assets.map((asset) => ({
+export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
   ...asset,
   code: asset.symbol,
 }));
