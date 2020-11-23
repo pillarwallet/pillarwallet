@@ -38,7 +38,7 @@ type Props = {
   onPress?: ?() => void,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
-  disabled?: ?boolean,
+  disabled?: boolean,
   bordered?: ?boolean,
   isSelected?: boolean,
   icon?: string,

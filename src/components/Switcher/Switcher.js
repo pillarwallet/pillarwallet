@@ -24,9 +24,9 @@ import { getColorByTheme } from 'utils/themes';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 type Props = {
-  isOn: ?boolean,
+  isOn?: boolean,
   onToggle: ?() => void,
-  disabled?: ?boolean,
+  disabled?: boolean,
 };
 
 type State = {
