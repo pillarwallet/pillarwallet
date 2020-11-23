@@ -3011,7 +3011,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               Object {
                 "alignItems": "center",
                 "alignSelf": "auto",
-                "backgroundColor": "#007AFF",
+                "backgroundColor": "#BD573A",
                 "borderRadius": 3,
                 "flexBasis": 0,
                 "flexDirection": "row",
@@ -3055,7 +3055,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   ],
                 ]
               }
-              variant="default"
+              variant="danger"
             >
               button.cancel
             </Text>

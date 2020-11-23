@@ -44665,7 +44665,7 @@ exports[`Storyshots RetryGraphQueryBox default 1`] = `
             Object {
               "alignItems": "center",
               "alignSelf": "auto",
-              "backgroundColor": "#007AFF",
+              "backgroundColor": "#BD573A",
               "borderRadius": 3,
               "flexBasis": 0,
               "flexDirection": "row",
@@ -44709,7 +44709,7 @@ exports[`Storyshots RetryGraphQueryBox default 1`] = `
                 ],
               ]
             }
-            variant="default"
+            variant="danger"
           >
             button.cancel
           </Text>
