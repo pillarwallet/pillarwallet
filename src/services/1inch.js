@@ -33,7 +33,7 @@ import {
   parseAssets,
 } from 'utils/1inch';
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
-import { reportErrorLog } from 'utils/common';
+import { reportLog } from 'utils/common';
 
 // constants
 import { PROVIDER_1INCH, ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
@@ -142,12 +142,10 @@ export const fetch1inchSupportedTokens = async (): Promise<string[]> => {
   const response = await axios.get('https://api.1inch.exchange/v2.0/tokens');
 
   if (!response?.data?.tokens) {
-    if (response?.status !== 200) {
-      reportErrorLog('fetch1inchSupportedTokens API call failed', {
-        responseStatus: response?.status,
-        responseData: response?.data,
-      })
-    }
+    reportLog('fetch1inchSupportedTokens API call failed', {
+      responseStatus: response?.status,
+      responseData: response?.data,
+    })
     return [];
   }
 
