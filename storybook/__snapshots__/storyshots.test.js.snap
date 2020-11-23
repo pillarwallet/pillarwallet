@@ -5740,7 +5740,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#EBF0F5",
+                            "color": "#FFFFFF",
                             "fontSize": 8,
                           },
                           Object {
@@ -8042,7 +8042,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#EBF0F5",
+                            "color": "#FFFFFF",
                             "fontSize": 8,
                           },
                           Object {
@@ -42908,7 +42908,7 @@ exports[`Storyshots ListCard with label 1`] = `
                               },
                               Array [
                                 Object {
-                                  "color": "#EBF0F5",
+                                  "color": "#FFFFFF",
                                   "fontSize": 8,
                                 },
                                 Object {

@@ -28,6 +28,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { fontStyles, spacing } from 'utils/variables';
+import { getColorByTheme } from 'utils/themes';
 
 
 type Props = {
@@ -47,7 +48,7 @@ const HeaderWrapper = styled.View`
   justify-content: center;
   position: relative;
   height: 136px;
-  background-color: ${({ theme }) => theme.colors.basic060};
+  background-color: ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic060' })};
   padding: ${spacing.large}px 36px;
 `;
 
