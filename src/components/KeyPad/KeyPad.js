@@ -21,11 +21,11 @@ import * as React from 'react';
 import { Platform, TouchableNativeFeedback, Image as RNImage, Dimensions } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { fontSizes } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
 import { KEYPAD_BUTTON_FORGOT } from 'constants/keyPadButtonsConstants';
 import type { Theme } from 'models/Theme';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import { getThemeColors } from 'utils/themes';
 import keyPadTypes from './keyPadTypes';
 
 const { height } = Dimensions.get('window');
@@ -58,7 +58,6 @@ const PinButton = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(BaseText)`
-  color: ${themedColors.text};
   font-size: ${props => props.fontSize || fontSizes.large}px;
   align-self: center;
   line-height: 56px;
@@ -127,11 +126,12 @@ class KeyPad extends React.Component<Props> {
     } = btn;
     const { theme } = this.props;
     const { current: currentTheme = LIGHT_THEME } = theme;
+    const colors = getThemeColors(theme);
     if (type === IMAGE) {
       const img = currentTheme === LIGHT_THEME ? image : imageDarkTheme;
       return (
         <ImageHolder>
-          <Image source={img} />
+          <Image source={img} style={{ tintColor: colors.basic010 }} />
         </ImageHolder>
       );
     }

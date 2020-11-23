@@ -39,15 +39,15 @@ import { BaseText, MediumText } from 'components/Typography';
 import TextInput from 'components/TextInput';
 import Flag from 'components/Flag';
 import Button from 'components/Button';
-import { LabelBadge } from 'components/LabelBadge';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
 import Modal from 'components/Modal';
+import Icon from 'components/Icon';
 
 // utils
-import { spacing, appFont, fontSizes, lineHeights } from 'utils/variables';
+import { spacing, appFont, fontSizes } from 'utils/variables';
 import countries from 'utils/countries.json';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { getEnsName } from 'utils/accounts';
 import { images } from 'utils/images';
 import { EmailStruct, PhoneStruct } from 'utils/validators';
@@ -106,15 +106,6 @@ const ImageWrapper = styled.View`
   justify-content: center;
 `;
 
-const ProfileImagePlaceholder = styled.View`
-  width: 96px;
-  height: 96px;
-  border-radius: 48px;
-  align-items: center;
-  justify-content: center;
-  background-color: ${themedColors.avatarPlaceholderBackground};
-`;
-
 const CountryWrapper = styled.TouchableOpacity`
   padding: 20px;
   flex-direction: row;
@@ -151,6 +142,10 @@ const FieldIcon = styled(CachedImage)`
 
 const DescriptionWrapper = styled.View`
   padding: 0 11px 0 64px;
+`;
+
+const CheckIcon = styled(Icon)`
+  color: ${({ theme }) => theme.colors.secondaryAccent140};
 `;
 
 const ProfileFormTemplate = (locals: Object) => {
@@ -208,11 +203,7 @@ const ProfileFormTemplate = (locals: Object) => {
 
     if (isVerified) {
       sideComponent = (
-        <LabelBadge
-          positive
-          labelStyle={{ fontSize: fontSizes.tiny, lineHeight: lineHeights.tiny }}
-          label={t('label.verified')}
-        />
+        <CheckIcon name="check" />
       );
     } else {
       const buttonTitle = fieldDisplayValue ? t('button.verify') : t('button.add');
@@ -334,7 +325,6 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
       focusedField: null,
     };
   }
-
 
   getFormOptions = () => {
     const { theme, user } = this.props;
@@ -568,18 +558,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
   };
 
   render() {
-    const {
-      value,
-      focusedField,
-    } = this.state;
+    const { value, focusedField } = this.state;
     const {
       user: { username },
-      theme,
       accounts,
       profileImage,
     } = this.props;
-
-    const colors = getThemeColors(theme);
 
     const ensName = getEnsName(accounts);
 
@@ -598,16 +582,12 @@ class AddOrEditUser extends React.PureComponent<Props, State> {
               <View pointerEvents={focusedField ? 'none' : 'auto'}>
                 <TouchableOpacity onPress={this.openProfileImageModal}>
                   <ImageWrapper>
-                    {!!profileImage && <ProfileImage
+                    <ProfileImage
                       uri={profileImage}
                       userName={username || ''}
                       diameter={96}
-                    />}
-                    {!profileImage && !!username && (
-                      <ProfileImagePlaceholder>
-                        <MediumText big color={colors.avatarPlaceholderText}>{username.substring(0, 1)}</MediumText>
-                      </ProfileImagePlaceholder>
-                    )}
+                      initialsSize={36}
+                    />
                   </ImageWrapper>
                 </TouchableOpacity>
                 <Spacing h={20} />

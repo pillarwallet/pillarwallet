@@ -35,7 +35,7 @@ const BadgeWrapper = styled.View`
 `;
 
 const Bullet = styled.View`
-  background-color: ${({ color, theme }) => color || theme.colors.primary};
+  background-color: ${({ color, theme }) => color || theme.colors.primaryAccent130};
   height: 10px;
   width: 10px;
   border-radius: 10px;

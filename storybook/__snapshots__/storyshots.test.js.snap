@@ -5740,7 +5740,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#FCFDFF",
+                            "color": "#FFFFFF",
                             "fontSize": 8,
                           },
                           Object {
@@ -8042,7 +8042,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#FCFDFF",
+                            "color": "#FFFFFF",
                             "fontSize": 8,
                           },
                           Object {
@@ -9924,7 +9924,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#6690eb",
                           "fontSize": 16,
                         },
                         undefined,
@@ -10234,7 +10234,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#6690eb",
                           "fontSize": 16,
                         },
                         undefined,
@@ -10544,7 +10544,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#6690eb",
                           "fontSize": 16,
                         },
                         undefined,
@@ -42908,7 +42908,7 @@ exports[`Storyshots ListCard with label 1`] = `
                               },
                               Array [
                                 Object {
-                                  "color": "#FCFDFF",
+                                  "color": "#FFFFFF",
                                   "fontSize": 8,
                                 },
                                 Object {
@@ -44244,7 +44244,7 @@ exports[`Storyshots ProfileImage custom diameter 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#007AFF",
+                      "color": "#6690eb",
                       "fontSize": 26,
                     },
                     undefined,
@@ -44422,7 +44422,7 @@ exports[`Storyshots ProfileImage just initials 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#007AFF",
+                      "color": "#6690eb",
                       "fontSize": 16,
                     },
                     undefined,
