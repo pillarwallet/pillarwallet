@@ -84,7 +84,7 @@ const baseStyles = (colors) => {
       strong: boldStyle,
       a: {
         ...boldStyle,
-        color: colors.primary,
+        color: colors.basic000,
         fontSize: fontSizes.regular,
         lineHeight: lineHeights.regular,
       },
@@ -185,7 +185,7 @@ class HTMLContentModal extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
 
     const commonTextStyle = {
-      color: colors.text,
+      color: colors.basic010,
       fontFamily: appFont.regular,
     };
 

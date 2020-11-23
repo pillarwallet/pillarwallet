@@ -26,7 +26,6 @@ import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import type { TranslatedString } from 'models/Translations';
 
 type Props = {
@@ -47,7 +46,7 @@ const ContentHolder = styled.View`
 
 const MessageText = styled(MediumText)`
   ${fontStyles.large};
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   position: absolute;
   top: 62px;
   left: 0;

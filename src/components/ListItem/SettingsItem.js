@@ -31,17 +31,14 @@ import Switcher from 'components/Switcher';
 import { LabelBadge } from 'components/LabelBadge';
 import { LabelBulleted } from 'components/LabelBulleted';
 
-import { themedColors } from 'utils/themes';
-
-
 type Props = {
   label: string,
   notificationsCount?: number,
   warningNotification?: ?boolean,
-  onPress?: ?Function,
+  onPress?: ?() => void,
   toggle?: ?boolean,
   value?: ?string | ?boolean,
-  disabled?: ?boolean,
+  disabled?: boolean,
   bordered?: ?boolean,
   isSelected?: boolean,
   icon?: string,
@@ -56,7 +53,7 @@ type Props = {
     label: string,
     color: string,
   },
-}
+};
 
 const MainWrapper = styled.View`
   flex: 1;
@@ -91,7 +88,7 @@ const Badge = styled(NBBadge)`
 `;
 
 const BadgeText = styled(BaseText)`
-  color: ${themedColors.control};
+  color: ${({ theme }) => theme.colors.basic005};
   font-size: ${fontSizes.small}px;
   text-align: center;
   width: 100%;
@@ -99,13 +96,13 @@ const BadgeText = styled(BaseText)`
 `;
 
 const ItemLabel = styled(MediumText)`
-  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.text};
+  color: ${({ primary, theme }) => primary ? theme.colors.primary : theme.colors.basic010};
   ${fontStyles.big};
 `;
 
 const ItemValue = styled(BaseText)`
   font-size: ${fontSizes.medium}px;
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   flex-wrap: wrap;
   text-align: right;
   margin-left: ${spacing.medium}px
@@ -115,7 +112,7 @@ const ItemValue = styled(BaseText)`
 const WarningIcon = styled(Icon)`
   font-size: ${fontSizes.big}px;
   margin-right: 10px;
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
 `;
 
 const ListAddon = styled.View`
@@ -128,20 +125,20 @@ const ListAddon = styled.View`
 `;
 
 const LeftIcon = styled(Icon)`
-  color: ${({ color }) => color || themedColors.accent};
+  color: ${({ color, theme }) => color || theme.colors.basic020};
   font-size: ${fontSizes.big}px;
   margin-right: 10px;
 `;
 
 const RightLabel = styled(BaseText)`
-  color: ${themedColors.link};
+  color: ${({ theme }) => theme.colors.basic000};
   ${fontStyles.regular};
   text-align: right;
   padding-left: ${spacing.medium}px;
 `;
 
 const Description = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.regular};
   padding-right: 10%;
 `;
@@ -211,7 +208,7 @@ class SettingsListItem extends React.Component<Props> {
           </LabelWrapper>
           <ListAddon>
             <Switcher
-              isOn={processedValue}
+              isOn={!!processedValue}
               onToggle={onPress}
               disabled={disabled}
             />
@@ -225,6 +222,7 @@ class SettingsListItem extends React.Component<Props> {
       onPress,
       toggle,
       value,
+      disabled,
     } = this.props;
 
     let processedValue;
@@ -242,7 +240,7 @@ class SettingsListItem extends React.Component<Props> {
     }
 
     return (
-      <NativeTouchable onPress={onPress}>
+      <NativeTouchable onPress={onPress} disabled={!!disabled}>
         {this.renderContent(processedValue)}
       </NativeTouchable>
     );
