@@ -221,8 +221,10 @@ const ExchangeConfirmScreen = ({
     return null;
   }
 
-  const { code: fromAssetCode } = fromAsset;
-  const { code: toAssetCode } = toAsset;
+  const { code: fromCode, symbol: fromSymbol } = fromAsset;
+  const { code: toCode, symbol: toSymbol } = toAsset;
+  const fromAssetCode = fromCode || fromSymbol;
+  const toAssetCode = toCode || toSymbol;
 
   const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
