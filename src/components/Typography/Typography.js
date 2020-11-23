@@ -52,15 +52,14 @@ const getTextStyle = (props) => {
   const textProps = {};
 
   // color types
-  if (props.primary) textProps.color = colors.primary;
-  if (props.secondary) textProps.color = colors.secondaryText;
-  if (props.negative) textProps.color = colors.negative;
-  if (props.positive) textProps.color = colors.positive;
-  if (props.tertiary) textProps.color = colors.tertiary;
-  if (props.accent) textProps.color = colors.accent;
-  if (props.synthetic) textProps.color = colors.synthetic;
-  if (props.link) textProps.color = colors.link;
-  if (props.danger) textProps.color = colors.danger;
+  if (props.primary) textProps.color = colors.basic000;
+  if (props.secondary) textProps.color = colors.basic030;
+  if (props.negative) textProps.color = colors.secondaryAccent240;
+  if (props.positive) textProps.color = colors.secondaryAccent140;
+  if (props.accent) textProps.color = colors.basic020;
+  if (props.synthetic) textProps.color = colors.synthetic140;
+  if (props.link) textProps.color = colors.basic000;
+  if (props.danger) textProps.color = colors.secondaryAccent240;
   if (props.color) textProps.color = props.color; // for custom color
 
   // positioning

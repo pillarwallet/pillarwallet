@@ -20,8 +20,8 @@
 import * as React from 'react';
 import styled from 'styled-components/native';
 import { MediumText } from 'components/Typography';
-import { themedColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
+import { getColorByTheme } from 'utils/themes';
 
 type Props = {
   label: string,
@@ -47,11 +47,11 @@ const getBackgroundColor = (props: BadgeProps) => {
   if (color) {
     return color;
   } else if (primary) {
-    return theme.colors.primary;
+    return theme.colors.primaryAccent130;
   } else if (positive) {
-    return theme.colors.positive;
+    return theme.colors.secondaryAccent140;
   }
-  return theme.colors.positive;
+  return theme.colors.secondaryAccent140;
 };
 
 const BadgeWrapper = styled.View`
@@ -62,7 +62,7 @@ const BadgeWrapper = styled.View`
 
 const Label = styled(MediumText)`
   font-size: 8px;
-  color: ${themedColors.control};
+  color: ${getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
 `;
 
 export const LabelBadge = (props: Props) => {
