@@ -1369,7 +1369,7 @@
     "cannotSendAsset": "Cannot send asset. Please try again.",
     "cannotDepositAsset": "Cannot deposit asset. Please try again.",
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
-    "failedToEstimateTransactionMessage": "Failed to estimate transaction: {{message}}"
+    "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\""
   },
 
   "exchangeContent": {

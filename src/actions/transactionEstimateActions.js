@@ -109,7 +109,7 @@ export const estimateTransactionAction = (
       .estimateAccountTransaction(transaction, assetData)
       .catch((error) => {
         errorMessage = error?.message
-          ? t('toast.failedToEstimateTransactionMessage', { message: error.message })
+          ? t('toast.failedToEstimateTransactionWithMessage', { message: error.message })
           : t('toast.transactionFeeEstimationFailed');
         return null;
       });
