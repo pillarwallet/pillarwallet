@@ -877,7 +877,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#0A1427",
                       "fontSize": 12,
                       "lineHeight": 18,
                       "textAlign": "center",
@@ -896,7 +895,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             Array [
               Object {
                 "borderBottomWidth": 1,
-                "borderColor": "#EDEDED",
+                "borderColor": "#EBF0F6",
                 "borderTopWidth": 1,
                 "flexBasis": 0,
                 "flexGrow": 1,
@@ -3012,7 +3011,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               Object {
                 "alignItems": "center",
                 "alignSelf": "auto",
-                "backgroundColor": "#007AFF",
+                "backgroundColor": "#BD573A",
                 "borderRadius": 3,
                 "flexBasis": 0,
                 "flexDirection": "row",
@@ -3056,7 +3055,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   ],
                 ]
               }
-              variant="default"
+              variant="danger"
             >
               button.cancel
             </Text>
