@@ -106,14 +106,14 @@ const HeaderActionButton = (props: Props) => {
     onPress,
     hasChevron,
     isActive,
-    wrapperStyle = {},
+    wrapperStyle,
     backgroundColor,
     color,
-    style = {},
+    style,
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={{ ...wrapperStyle, ...style }}>
+    <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={[wrapperStyle, style]}>
       {isActive !== undefined && <Status isActive={isActive} />}
       <RoundedButtonLabel isLight={!!backgroundColor} color={color}>{label}</RoundedButtonLabel>
       {!!hasChevron && <ChevronIcon name="chevron-right" isLight={!!backgroundColor} color={color} />}
