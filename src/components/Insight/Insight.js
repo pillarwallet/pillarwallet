@@ -37,16 +37,11 @@ type InsightChecklistItem = {
   onPress: () => void,
 };
 
-type InsightNumberedListItem = {
-  title: string,
-  body: string,
-};
-
 type Props = {
   title?: string,
   onClose?: () => void,
   insightChecklist: InsightChecklistItem[],
-  insightNumberedList: InsightNumberedListItem[],
+  insightNumberedList: string[],
   children?: React.Node,
   isVisible: boolean,
   onLayout?: Function,
@@ -123,7 +118,7 @@ const CheckIcon = styled(Icon)`
 
 const NumberedListItem = styled.View`
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   margin-bottom: 8px;
 `;
@@ -158,13 +153,8 @@ const ListNumber = styled(BaseText)`
   line-height: 16px;
 `;
 
-const ListTitle = styled(MediumText)`
-  color: ${themedColors.text};
-  ${fontStyles.regular};
-`;
-
-const ListBody = styled(BaseText)`
-  color: ${themedColors.accent};
+const NumberedListItemText = styled(BaseText)`
+  color: ${themedColors.secondaryText};
   ${fontStyles.regular};
   flex-wrap: wrap;
   flex: 1;
@@ -239,7 +229,6 @@ const Insight = (props: Props) => {
               extraData={props}
               keyExtractor={(item) => item.title}
               renderItem={({ item, index }) => {
-                const { title: itemTitle, body } = item;
                 return (
                   <NumberedListItem>
                     <ListNumberWrapper>
@@ -247,10 +236,7 @@ const Insight = (props: Props) => {
                     </ListNumberWrapper>
                     <TextWrapper>
                       <TextRow>
-                        <ListTitle>{itemTitle}</ListTitle>
-                      </TextRow>
-                      <TextRow>
-                        <ListBody>{body}</ListBody>
+                        <NumberedListItemText>{item}</NumberedListItemText>
                       </TextRow>
                     </TextWrapper>
                   </NumberedListItem>

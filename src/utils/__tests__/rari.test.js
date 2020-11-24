@@ -22,6 +22,7 @@ import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
 import * as assetsServices from 'services/assets';
 import * as _0xService from 'services/0x';
 import { getEnv } from 'configs/envConfig';
+import { RARI_POOLS } from 'constants/rariConstants';
 
 const ETH_USD = 5;
 
@@ -142,7 +143,7 @@ describe('Rari utils', () => {
 
     it('should return data for directly depositable currency', async () => {
       const data = await getRariDepositTransactionsAndExchangeFee(
-        senderAddress, 1.23, supportedAssetsMock[2], supportedAssetsMock, rates,
+        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[2], supportedAssetsMock, rates,
       );
 
       expect(data).toEqual({
@@ -169,7 +170,7 @@ describe('Rari utils', () => {
 
     it('should return data for stablecoin (mStable swap)', async () => {
       const data = await getRariDepositTransactionsAndExchangeFee(
-        senderAddress, 1.23, supportedAssetsMock[1], supportedAssetsMock, rates,
+        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[1], supportedAssetsMock, rates,
       );
 
       expect(data).toEqual({
@@ -196,7 +197,7 @@ describe('Rari utils', () => {
 
     it('should return correct data on other token (0x exchange)', async () => {
       const data = await getRariDepositTransactionsAndExchangeFee(
-        senderAddress, 0.0001, supportedAssetsMock[0], supportedAssetsMock, rates,
+        RARI_POOLS.STABLE_POOL, senderAddress, 0.0001, supportedAssetsMock[0], supportedAssetsMock, rates,
       );
 
       expect(data).toEqual({

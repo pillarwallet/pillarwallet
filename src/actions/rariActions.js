@@ -21,39 +21,35 @@ import {
   getRariFundBalanceInUSD,
   getRariAPY,
   getUserInterests,
-  getAccountDepositInRSPT,
   getAccountDepositInUSD,
 } from 'services/rari';
+import { GraphQueryError } from 'services/theGraph';
+import t from 'translations/translate';
 import {
   SET_RARI_FUND_BALANCE,
   SET_RARI_APY,
   SET_RARI_USER_DATA,
   SET_FETCHING_RARI_FUND_BALANCE,
-  SET_FETCHING_RARI_APY,
-  SET_FETCHING_RARI_USER_DATA,
+  SET_FETCHING_RARI_DATA,
+  SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { reportErrorLog } from 'utils/common';
 import { estimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
+import Toast from 'components/Toast';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
 export const fetchRariFundBalanceAction = () => {
-  return async (dispatch: Dispatch) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
     dispatch({ type: SET_FETCHING_RARI_FUND_BALANCE });
-    const rariFundBalance = await getRariFundBalanceInUSD();
+    const { rates: { data: rates } } = getState();
+    const rariFundBalance = await getRariFundBalanceInUSD(rates);
     dispatch({ type: SET_RARI_FUND_BALANCE, payload: rariFundBalance });
   };
 };
 
-export const fetchRariAPYAction = () => {
-  return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_FETCHING_RARI_APY });
-    const rariAPY = await getRariAPY();
-    dispatch({ type: SET_RARI_APY, payload: rariAPY });
-  };
-};
-
-export const fetchRariUserDataAction = () => {
+export const fetchRariDataAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -62,23 +58,39 @@ export const fetchRariUserDataAction = () => {
     if (!smartWalletAccount) return;
     const smartWalletAddress = getAccountAddress(smartWalletAccount);
 
-    dispatch({ type: SET_FETCHING_RARI_USER_DATA });
+    dispatch({ type: SET_FETCHING_RARI_DATA });
 
-    const [userDepositInUSD, userDepositInRSPT, userInterests] = await Promise.all([
+    const [userDepositInUSD, userInterests, rariAPY] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),
-      getAccountDepositInRSPT(smartWalletAddress),
       getUserInterests(smartWalletAddress),
-    ]);
-
-    dispatch({
-      type: SET_RARI_USER_DATA,
-      payload: {
-        userDepositInUSD,
-        userDepositInRSPT,
-        userInterests: userInterests?.interests || 0,
-        userInterestsPercentage: userInterests?.interestsPercentage || 0,
-      },
+      getRariAPY(),
+    ]).catch(error => {
+      if (error instanceof GraphQueryError) {
+        dispatch({ type: SET_FETCHING_RARI_DATA_ERROR });
+      } else {
+        reportErrorLog('Rari service failed: Error fetching rari data', { error });
+        Toast.show({
+          message: t('toast.rariFetchDataFailed'),
+          emoji: 'hushed',
+          supportLink: true,
+          autoClose: false,
+        });
+      }
+      return [];
     });
+
+    if (userDepositInUSD && userInterests && rariAPY) {
+      dispatch({
+        type: SET_RARI_USER_DATA,
+        payload: {
+          userDepositInUSD,
+          userInterests,
+        },
+      });
+      dispatch({ type: SET_RARI_APY, payload: rariAPY });
+      dispatch({ type: SET_FETCHING_RARI_DATA_ERROR, payload: false });
+    }
+    dispatch({ type: SET_FETCHING_RARI_DATA, payload: false });
   };
 };
 
