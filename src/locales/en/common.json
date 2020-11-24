@@ -1377,7 +1377,8 @@
     "cannotDepositAsset": "Cannot deposit asset. Please try again.",
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "walletBackedUp": "Your wallet is backed up now.",
-    "rariServiceFailed": "An error occured. Please try again or try depositing another token."
+    "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
+    "rariFetchDataFailed": "Cannot fetch Rari data. Please try again"
   },
 
   "exchangeContent": {
