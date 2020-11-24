@@ -19,6 +19,8 @@
 */
 import axios from 'axios';
 import { BigNumber as EthersBigNumber } from 'ethers';
+import { ETH } from 'constants/assetsConstants';
+import { RARI_AAVE_ETH_RESERVE_ID } from 'constants/rariConstants';
 import { reportErrorLog } from 'utils/common';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv } from 'configs/envConfig';
@@ -37,7 +39,7 @@ export const getDydxApyBNs = async () => {
     return null;
   }
   const result = markets
-    .filter(market => ['DAI', 'USDC', 'USDT'].includes(market.symbol))
+    .filter(market => ['DAI', 'USDC', 'USDT', 'ETH'].includes(market.symbol))
     .reduce((APY, market) => {
       APY[market.symbol] = floatingPointToBN(market.totalSupplyAPR);
       return APY;
@@ -54,7 +56,7 @@ export const getCompoundApyBNs = async () => {
     return null;
   }
   const result = cToken
-    .filter(token => ['DAI', 'USDC', 'USDT'].includes(token.underlying_symbol))
+    .filter(token => ['DAI', 'USDC', 'USDT', 'ETH'].includes(token.underlying_symbol))
     .reduce((APY, token) => {
       const supplyAPY = floatingPointToBN(token.supply_rate.value);
       const compAPY = floatingPointToBN(token.comp_supply_apy.value / 100);
@@ -68,8 +70,9 @@ export const getAaveApyBNs = async () => {
   /* eslint-disable i18next/no-literal-string */
   const query = `{
     reserves(where: {
-      symbol_in: ["DAI", "USDC", "USDT", "TUSD", "BUSD", "SUSD"]
+      symbol_in: ["DAI", "USDC", "USDT", "TUSD", "BUSD", "SUSD", "ETH"]
     }) {
+      id
       symbol
       liquidityRate
     }
@@ -77,12 +80,17 @@ export const getAaveApyBNs = async () => {
   /* eslint-enable i18next/no-literal-string */
   const data = await callSubgraph(getEnv().AAVE_SUBGRAPH_NAME, query);
   if (!data) return null;
-  const result = data.reserves.reduce((APY, reserve) => {
+  const result = data.reserves
+    .filter(reserve => {
+      return reserve.symbol !== ETH ||
+        reserve.id === RARI_AAVE_ETH_RESERVE_ID;
+    })
+    .reduce((APY, reserve) => {
     // eslint-disable-next-line i18next/no-literal-string
-    const symbol = reserve.symbol === 'SUSD' ? 'sUSD' : reserve.symbol;
-    APY[symbol] = EthersBigNumber.from(reserve.liquidityRate).div(EthersBigNumber.from(1e9));
-    return APY;
-  }, {});
+      const symbol = reserve.symbol === 'SUSD' ? 'sUSD' : reserve.symbol;
+      APY[symbol] = EthersBigNumber.from(reserve.liquidityRate).div(EthersBigNumber.from(1e9));
+      return APY;
+    }, {});
   return result;
 };
 
@@ -92,19 +100,19 @@ const calculateMStableApyBN = async () => {
   /* eslint-disable i18next/no-literal-string */
   const query = `{
     day0: exchangeRates(where: {timestamp_lt: ${epoch24HrsAgo}}, orderDirection: desc, orderBy: timestamp, first: 1) {
-      exchangeRate
+      rate
       timestamp
     }
     day1: exchangeRates(where: {timestamp_lt: ${epochNow}}, orderDirection: desc, orderBy: timestamp, first: 1) {
-      exchangeRate
+      rate
       timestamp
     }
   }`;
   /* eslint-enable i18next/no-literal-string */
   const data = await callSubgraph(getEnv().MSTABLE_SUBGRAPH_NAME, query);
   if (!data) return null;
-  const startExchangeRate = data.day0[0].exchangeRate;
-  const endExchangeRate = data.day1[0].exchangeRate;
+  const startExchangeRate = data.day0[0].rate;
+  const endExchangeRate = data.day1[0].rate;
   const SCALE = 1e18;
   const YEAR_BN = 365 * 24 * 60 * 60;
 

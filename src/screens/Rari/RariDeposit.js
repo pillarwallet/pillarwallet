@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
@@ -31,34 +31,36 @@ import { BaseText } from 'components/Typography';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import CircleButton from 'components/CircleButton';
 import BalanceView from 'components/PortfolioBalance/BalanceView';
+import Tabs from 'components/Tabs';
+import Table, { TableRow, TableLabel } from 'components/Table';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { getThemeColors, themedColors } from 'utils/themes';
-import { formatFiat, formatAmount } from 'utils/common';
+import { formatFiat } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
-import { defaultFiatCurrency, RSPT } from 'constants/assetsConstants';
+import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { RARI_INFO, RARI_ADD_DEPOSIT } from 'constants/navigationConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 
-import { fetchRariUserDataAction, fetchRariAPYAction } from 'actions/rariActions';
+import { fetchRariDataAction } from 'actions/rariActions';
 
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Rates } from 'models/Asset';
+import type { RariPool, Interests } from 'models/RariPool';
 
 
 type Props = {
   theme: Theme,
   baseFiatCurrency: ?string,
   navigation: NavigationScreenProp<*>,
-  fetchRariUserData: () => void,
-  fetchRariAPY: () => void,
-  rariApy: number,
-  userDepositInUSD: number,
-  userDepositInRSPT: number,
-  userInterests: number,
-  userInterestsPercentage: number,
-  isFetchingRariAPY: boolean,
-  isFetchingRariUserData: boolean,
+  fetchRariData: () => void,
+  rariApy: {[RariPool]: number},
+  userDepositInUSD: {[RariPool]: number},
+  userInterests: {[RariPool]: ?Interests},
+  isFetchingRariData: boolean,
+  rariDataFetchFailed: boolean,
   rates: Rates,
 };
 
@@ -79,7 +81,7 @@ const EarnedCard = styled.View`
 
 const ButtonsContainer = styled.View`
   flex-direction: row;
-  justify-content: center;
+  justify-content: space-between;
   width: 100%;
 `;
 
@@ -89,51 +91,165 @@ const RariLogo = styled(CachedImage)`
   align-self: center;
 `;
 
-const Spacer = styled.View`
-  flex: 1;
-`;
+const PoolContainer = styled.View`
 
-const Row = styled.View`
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
 `;
 
 const RariDepositScreen = ({
-  baseFiatCurrency, theme, navigation, fetchRariUserData, fetchRariAPY,
+  baseFiatCurrency, theme, navigation, fetchRariData,
   rariApy,
   userDepositInUSD,
-  userDepositInRSPT,
   userInterests,
-  userInterestsPercentage,
-  isFetchingRariAPY,
-  isFetchingRariUserData,
+  isFetchingRariData,
+  rariDataFetchFailed,
   rates,
 }: Props) => {
+  const [activeTab, setActiveTab] = useState(RARI_POOLS.STABLE_POOL);
+
   useEffect(() => {
-    fetchRariUserData();
-    fetchRariAPY();
+    fetchRariData();
   }, []);
 
   const colors = getThemeColors(theme);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const interestsInUserCurrency = convertUSDToFiat(Math.abs(userInterests), rates, fiatCurrency);
-  const formattedFiatValue = formatFiat(interestsInUserCurrency, fiatCurrency);
-  const formattedInterestsPercentage = Math.abs(userInterestsPercentage).toFixed(2);
 
-  let earnedFiatTranslation = formattedFiatValue;
-  let earnedPercentTranslation = t('percentValue', { value: formattedInterestsPercentage });
-  let earnedPercentColor = colors.text;
+  const totalUserInterests = (Object.values(userInterests): any[])
+    .map(pool => pool?.interests ?? 0)
+    .reduce((sum, interests) => sum + interests, 0);
+  const summedUserDepositsInUSD = (Object.values(userDepositInUSD): any).reduce((sum, v) => sum + v, 0);
+  const totalInterestsPercentage =
+    ((summedUserDepositsInUSD / (summedUserDepositsInUSD - totalUserInterests)) - 1) * 100;
 
-  if (userInterests > 0) {
-    earnedFiatTranslation = t('positiveValue', { value: formattedFiatValue });
-    earnedPercentTranslation = t('positivePercentValue', { value: formattedInterestsPercentage });
-    earnedPercentColor = colors.positive;
-  } else if (userInterests < 0) {
-    earnedFiatTranslation = t('negativeValue', { value: formattedFiatValue });
-    earnedPercentTranslation = t('negativePercentValue', { value: formattedInterestsPercentage });
-    earnedPercentColor = colors.negative;
-  }
+  const tabs = [
+    {
+      id: RARI_POOLS.STABLE_POOL,
+      name: t('rariContent.tabs.stablePool'),
+      onPress: () => setActiveTab(RARI_POOLS.STABLE_POOL),
+    },
+    {
+      id: RARI_POOLS.YIELD_POOL,
+      name: t('rariContent.tabs.yieldPool'),
+      onPress: () => setActiveTab(RARI_POOLS.YIELD_POOL),
+    },
+    {
+      id: RARI_POOLS.ETH_POOL,
+      name: t('rariContent.tabs.ethPool'),
+      onPress: () => setActiveTab(RARI_POOLS.ETH_POOL),
+    },
+  ];
+
+  const renderEmptyDepositSection = () => {
+    return (
+      <CircleButton
+        label={t('rariContent.button.deposit')}
+        fontIcon="plus"
+        onPress={() => navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: activeTab })}
+      />
+    );
+  };
+
+  const renderDepositSection = () => {
+    return (
+      <>
+        <Spacing h={32} />
+        <BaseText regular secondary center>{t('rariContent.label.poolBalance')}</BaseText>
+        <Spacing h={4} />
+        <BalanceView
+          fiatCurrency={fiatCurrency}
+          balance={convertUSDToFiat(userDepositInUSD[activeTab], rates, fiatCurrency)}
+          currencyTextStyle={{ fontSize: 16, lineHeight: 16 }}
+          balanceTextStyle={{ fontSize: 24, lineHeight: 24 }}
+        />
+        <Spacing h={60} />
+        <ButtonsContainer>
+          <CircleButton
+            label={t('rariContent.button.withdraw')}
+            fontIcon="back"
+            fontIconStyle={{ transform: [{ rotate: '90deg' }] }}
+            onPress={() => {}}
+          />
+          <CircleButton
+            label={t('rariContent.button.deposit')}
+            fontIcon="plus"
+            onPress={() => navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: activeTab })}
+          />
+          <CircleButton
+            label={t('rariContent.button.transfer')}
+            fontIcon="back"
+            fontIconStyle={{ transform: [{ rotate: '180deg' }] }}
+            onPress={() => {}}
+          />
+        </ButtonsContainer>
+      </>
+    );
+  };
+
+  const renderEarnedInterests = (interestsInUSD: number) => {
+    const interestsInUserCurrency = convertUSDToFiat(Math.abs(interestsInUSD), rates, fiatCurrency);
+    const formattedFiatValue = formatFiat(interestsInUserCurrency, fiatCurrency);
+    let earnedFiatTranslation = formattedFiatValue;
+
+    if (interestsInUSD > 0) {
+      earnedFiatTranslation = t('positiveValue', { value: formattedFiatValue });
+    } else if (interestsInUSD < 0) {
+      earnedFiatTranslation = t('negativeValue', { value: formattedFiatValue });
+    }
+
+    return (
+      <BaseText regular>{earnedFiatTranslation}</BaseText>
+    );
+  };
+
+  const renderEarnedInterestsPercent = (interestsPercentage: number) => {
+    const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
+    let earnedPercentTranslation = t('percentValue', { value: formattedInterestsPercentage });
+    let earnedPercentColor = colors.text;
+
+    if (interestsPercentage > 0) {
+      earnedPercentTranslation = t('positivePercentValue', { value: formattedInterestsPercentage });
+      earnedPercentColor = colors.positive;
+    } else if (interestsPercentage < 0) {
+      earnedPercentTranslation = t('negativePercentValue', { value: formattedInterestsPercentage });
+      earnedPercentColor = colors.negative;
+    }
+
+    return (
+      <BaseText color={earnedPercentColor} regular>{earnedPercentTranslation}</BaseText>
+    );
+  };
+
+  const renderInterestsRow = () => {
+    const currentPoolUserInterests = userInterests[activeTab];
+    if (!currentPoolUserInterests) return null;
+    const { interests, interestsPercentage } = currentPoolUserInterests;
+    return (
+      <TableRow>
+        <TableLabel>{t('rariContent.label.earned')}</TableLabel>
+        <BaseText regular>
+          {renderEarnedInterests(interests)}{' '}
+          {renderEarnedInterestsPercent(interestsPercentage)}
+        </BaseText>
+      </TableRow>
+    );
+  };
+
+  const renderTab = () => {
+    const hasDeposit = userDepositInUSD[activeTab] > 0;
+
+    return (
+      <PoolContainer>
+        <Spacing h={34} />
+        <Table>
+          <TableRow>
+            <TableLabel>{t('rariContent.label.currentAPY')}</TableLabel>
+            <BaseText regular>{t('percentValue', { value: rariApy[activeTab].toFixed(2) })}</BaseText>
+          </TableRow>
+          {hasDeposit && renderInterestsRow()}
+        </Table>
+        {hasDeposit ? renderDepositSection() : renderEmptyDepositSection()}
+      </PoolContainer>
+    );
+  };
 
   return (
     <ContainerWithHeader
@@ -152,70 +268,41 @@ const RariDepositScreen = ({
       <ScrollWrapper
         refreshControl={
           <RefreshControl
-            refreshing={isFetchingRariAPY || isFetchingRariUserData}
-            onRefresh={() => {
-              fetchRariUserData();
-              fetchRariAPY();
-            }}
+            refreshing={isFetchingRariData}
+            onRefresh={fetchRariData}
           />
         }
       >
         <MainContainer>
-          <Row>
-            <BaseText secondary regular center style={{ alignItems: 'center' }}>
-              {t('rariContent.label.currentAPY')}
-            </BaseText>
-            <Spacing w={4} />
-            <BaseText regular>{t('percentValue', { value: rariApy.toFixed(2) })}</BaseText>
-          </Row>
           <Spacing h={32} />
           <RariLogo source={rariLogo} />
           <Spacing h={32} />
           <BalanceView
-            fiatCurrency={baseFiatCurrency || defaultFiatCurrency}
-            balance={convertUSDToFiat(userDepositInUSD, rates, fiatCurrency)}
+            fiatCurrency={fiatCurrency}
+            balance={convertUSDToFiat(summedUserDepositsInUSD, rates, fiatCurrency)}
           />
-          <BaseText small center>
-            {t('tokenValue', { token: RSPT, value: formatAmount(userDepositInRSPT, 2) })}
-          </BaseText>
-          <Spacing h={50} />
-          <EarnedCard>
-            <BaseText secondary regular>{t('rariContent.label.earned')}</BaseText>
-            <BaseText regular>{earnedFiatTranslation}</BaseText>
-            <BaseText color={earnedPercentColor} regular>{earnedPercentTranslation}</BaseText>
-          </EarnedCard>
+          <Spacing h={58} />
+          {summedUserDepositsInUSD > 0 && (
+            <EarnedCard>
+              <BaseText secondary regular>{t('rariContent.label.earned')}</BaseText>
+              {renderEarnedInterests(summedUserDepositsInUSD)}
+              {renderEarnedInterestsPercent(totalInterestsPercentage)}
+            </EarnedCard>
+          )}
           <Spacing h={60} />
-          <ButtonsContainer>
-            {userDepositInRSPT > 0 && (
-            <>
-              <CircleButton
-                label={t('rariContent.button.withdraw')}
-                fontIcon="back"
-                fontIconStyle={{ transform: [{ rotate: '90deg' }] }}
-                onPress={() => {}}
-              />
-              <Spacer />
-            </>
-          )}
-            <CircleButton
-              label={t('rariContent.button.deposit')}
-              fontIcon="plus"
-              onPress={() => navigation.navigate(RARI_ADD_DEPOSIT)}
-            />
-            {userDepositInRSPT > 0 && (
-            <>
-              <Spacer />
-              <CircleButton
-                label={t('rariContent.button.transfer')}
-                fontIcon="back"
-                fontIconStyle={{ transform: [{ rotate: '180deg' }] }}
-                onPress={() => {}}
-              />
-            </>
-          )}
-          </ButtonsContainer>
+          <Tabs
+            tabs={tabs}
+            activeTab={activeTab}
+          />
+          {renderTab()}
         </MainContainer>
       </ScrollWrapper>
+      <RetryGraphQueryBox
+        message={t('error.theGraphQueryFailed.rari')}
+        hasFailed={rariDataFetchFailed}
+        isFetching={isFetchingRariData}
+        onRetry={fetchRariData}
+      />
     </ContainerWithHeader>
   );
 };
@@ -224,31 +311,24 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rari: {
     rariApy,
-    rariUserData: {
-      userDepositInUSD,
-      userDepositInRSPT,
-      userInterests,
-      userInterestsPercentage,
-    },
-    isFetchingRariAPY,
-    isFetchingRariUserData,
+    userDepositInUSD,
+    userInterests,
+    isFetchingRariData,
+    rariDataFetchFailed,
   },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   rariApy,
   userDepositInUSD,
-  userDepositInRSPT,
   userInterests,
-  userInterestsPercentage,
-  isFetchingRariAPY,
-  isFetchingRariUserData,
+  isFetchingRariData,
+  rariDataFetchFailed,
   rates,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({
-  fetchRariUserData: () => dispatch(fetchRariUserDataAction()),
-  fetchRariAPY: () => dispatch(fetchRariAPYAction()),
+  fetchRariData: () => dispatch(fetchRariDataAction()),
 });
 
 export default withTheme(connect(mapStateToProps, mapDispatchToProps)(RariDepositScreen));

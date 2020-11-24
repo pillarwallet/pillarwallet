@@ -20,19 +20,24 @@
 import { BigNumber as EthersBigNumber, utils, constants as ethersConstants } from 'ethers';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
 import { get0xSwapOrders } from 'services/0x.js';
-import { getEnv } from 'configs/envConfig';
+import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 import { reportErrorLog, parseTokenBigNumberAmount } from 'utils/common';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import MSTABLE_CONTRACT_ABI from 'abi/mAsset.json';
 import type { Asset, Rates } from 'models/Asset';
+import type { RariPool } from 'models/RariPool';
 
 
-const getRariAcceptedCurrencies = () => {
+const getRariAcceptedCurrencies = (rariPool: RariPool) => {
+  if (rariPool === RARI_POOLS.ETH_POOL) {
+    return [ETH];
+  }
   const rariContract = getContract(
-    getEnv().RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+    getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,
   );
   if (!rariContract) return null;
@@ -62,9 +67,9 @@ const getMStableSwapOutput = (
 };
 
 const getRariDepositTransactionData = async (
-  amountBN: EthersBigNumber, token: Asset, supportedAssets: Asset[], rates: Rates,
+  rariPool: RariPool, amountBN: EthersBigNumber, token: Asset, supportedAssets: Asset[], rates: Rates,
 ) => {
-  const acceptedCurrencies = await getRariAcceptedCurrencies();
+  const acceptedCurrencies = await getRariAcceptedCurrencies(rariPool);
   if (!acceptedCurrencies) return null;
 
   let txValue = EthersBigNumber.from(0);
@@ -82,7 +87,7 @@ const getRariDepositTransactionData = async (
       txValue,
       exchangeFeeBN: EthersBigNumber.from(0),
       slippage: 0,
-      rariContractAddress: getEnv().RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+      rariContractAddress: getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     };
   }
 
@@ -117,7 +122,6 @@ const getRariDepositTransactionData = async (
         const formattedInput = utils.formatUnits(amountBN, token.decimals);
         const formattedOutput = utils.formatUnits(mStableSwapOutput.output, acceptedAsset.decimals);
         const mStableFeeUSD = formattedInput - formattedOutput; // we assume that stablecoins price is 1$
-
         return {
           depositTransactionData: encodeContractMethod(
             RARI_FUND_PROXY_CONTRACT_ABI,
@@ -130,7 +134,7 @@ const getRariDepositTransactionData = async (
           txValue,
           exchangeFeeBN: utils.parseEther((mStableFeeUSD / ethRates[USD]).toFixed(18)),
           slippage: 0, // mStable has no slippage
-          rariContractAddress: getEnv().RARI_FUND_PROXY_CONTRACT_ADDRESS,
+          rariContractAddress: getRariPoolsEnv(rariPool).RARI_FUND_PROXY_CONTRACT_ADDRESS,
         };
       }
     }
@@ -190,15 +194,15 @@ const getRariDepositTransactionData = async (
     txValue: txValue.add(protocolFee),
     exchangeFeeBN: EthersBigNumber.from(protocolFee),
     slippage,
-    rariContractAddress: getEnv().RARI_FUND_PROXY_CONTRACT_ADDRESS,
+    rariContractAddress: getRariPoolsEnv(rariPool).RARI_FUND_PROXY_CONTRACT_ADDRESS,
   };
 };
 
 export const getRariDepositTransactionsAndExchangeFee = async (
-  senderAddress: string, amount: number, token: Asset, supportedAssets: Asset[], rates: Rates,
+  rariPool: RariPool, senderAddress: string, amount: number, token: Asset, supportedAssets: Asset[], rates: Rates,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
-  const data = await getRariDepositTransactionData(amountBN, token, supportedAssets, rates);
+  const data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
   if (!data) return null;
 
   const {
