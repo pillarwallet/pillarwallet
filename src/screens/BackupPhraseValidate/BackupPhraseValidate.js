@@ -39,6 +39,7 @@ import { ScrollWrapper } from 'components/Layout';
 import { Paragraph, Label, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import IconButton from 'components/IconButton';
+import Toast from 'components/Toast';
 
 // types
 import type { Dispatch } from 'reducers/rootReducer';
@@ -219,6 +220,10 @@ const BackupPhraseValidate = ({
   const handlePassedValidation = () => {
     backupWallet();
     navigation.dismiss();
+    Toast.show({
+      message: t('toast.walletBackedUp'),
+      emoji: 'ok_hand',
+    });
   };
 
   return (
