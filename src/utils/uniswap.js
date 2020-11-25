@@ -152,7 +152,6 @@ export const swapExactEthToTokens = (
 };
 
 export const generateTxObject = (
-  txCount: string,
   to: string,
   value: string,
   txData: string,
@@ -160,9 +159,6 @@ export const generateTxObject = (
   return {
     to,
     value,
-    nonce: txCount,
-    gasLimit: '0',
-    gasPrice: '0',
     chainId,
     data: txData,
   };

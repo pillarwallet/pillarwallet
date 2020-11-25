@@ -56,7 +56,7 @@ import { activeAccountMappedCollectiblesSelector } from 'selectors/collectibles'
 
 // types
 import type { NavigationScreenProp } from 'react-navigation';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TokenTransactionPayload, TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
 import type { Balances, AssetData } from 'models/Asset';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { SessionData } from 'models/Session';
@@ -79,7 +79,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (recipient: string, value: number, assetData: AssetData) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
 };
 
 const renderFeeToggle = (
@@ -162,7 +162,7 @@ const SendAsset = ({
       return;
     }
 
-    estimateTransaction(selectedContact.ethAddress, value, mapToAssetDataType(assetData));
+    estimateTransaction({ to: selectedContact.ethAddress, value, assetData: mapToAssetDataType(assetData) });
   };
 
   const updateTxFeeDebounced = useCallback(
@@ -295,11 +295,11 @@ const SendAsset = ({
     // update fee only on max balance
     if (maxBalance === calculatedBalanceAmount && selectedContact) {
       // await needed for initial max available send calculation to get estimate before showing max available after fees
-      await estimateTransaction(
-        selectedContact.ethAddress,
-        Number(calculatedBalanceAmount),
-        mapToAssetDataType(assetData),
-      );
+      await estimateTransaction({
+        to: selectedContact.ethAddress,
+        value: Number(calculatedBalanceAmount),
+        assetData: mapToAssetDataType(assetData),
+      });
     }
     return null;
   };
@@ -435,11 +435,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendAsset);

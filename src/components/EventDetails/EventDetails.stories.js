@@ -186,7 +186,7 @@ storiesOf('EventDetail', module)
         itemImageSource: keyWalletIcon,
         subtext: 'to Smart Wallet',
         isBetweenAccounts: true,
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -207,7 +207,7 @@ storiesOf('EventDetail', module)
         itemImageSource: smartWalletIcon,
         subtext: 'from Key wallet',
         isBetweenAccounts: true,
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -230,7 +230,7 @@ storiesOf('EventDetail', module)
         avatarUrl: '',
         iconName: 'received',
         iconColor: 'transactionReceivedIcon',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -254,7 +254,7 @@ storiesOf('EventDetail', module)
         avatarUrl: '',
         iconName: 'received',
         iconColor: 'transactionReceivedIcon',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -277,7 +277,7 @@ storiesOf('EventDetail', module)
         avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'transactionReceivedIcon',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -301,7 +301,7 @@ storiesOf('EventDetail', module)
         avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'transactionReceivedIcon',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -324,7 +324,7 @@ storiesOf('EventDetail', module)
         avatarUrl: '',
         iconName: 'sent',
         iconColor: 'negative',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -347,7 +347,7 @@ storiesOf('EventDetail', module)
         avatarUrl: '',
         iconName: 'sent',
         iconColor: 'negative',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -369,7 +369,7 @@ storiesOf('EventDetail', module)
         avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'negative',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -392,7 +392,7 @@ storiesOf('EventDetail', module)
         avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'negative',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -460,7 +460,7 @@ storiesOf('EventDetail', module)
         avatarUrl: '',
         iconName: 'received',
         iconColor: 'transactionReceivedIcon',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -483,7 +483,7 @@ storiesOf('EventDetail', module)
         avatarUrl: placeholderImage,
         iconName: null,
         iconColor: 'transactionReceivedIcon',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
         isReceived: true,
       }}
     />
@@ -506,7 +506,7 @@ storiesOf('EventDetail', module)
         avatarUrl: '',
         iconName: 'sent',
         iconColor: 'negative',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -527,7 +527,7 @@ storiesOf('EventDetail', module)
         itemImageSource: smartWalletIcon,
         subtext: 'to Key wallet',
         isBetweenAccounts: true,
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -549,7 +549,7 @@ storiesOf('EventDetail', module)
         subtext: 'from Smart wallet',
         isBetweenAccounts: true,
         isReceived: true,
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
       }}
     />
   ))
@@ -569,7 +569,7 @@ storiesOf('EventDetail', module)
         itemImageUrl: placeholderImage,
         subtext: 'Collectible from Smart Wallet',
         actionLabel: 'Received',
-        iconBackgroundColor: 'card',
+        iconBackgroundColor: 'basic060',
         iconBorder: true,
         fallbackToGenericToken: true,
         isReceived: true,
@@ -618,7 +618,7 @@ storiesOf('EventDetail', module)
         itemImageSource: PPNIcon,
         fullItemValue: '+ 10 PLR',
         subtext: 'from Smart Wallet',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
       }}
     />
   ))
@@ -633,7 +633,7 @@ storiesOf('EventDetail', module)
         itemImageSource: smartWalletIcon,
         fullItemValue: '- 10 PLR',
         subtext: 'to Pillar Network',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -719,7 +719,7 @@ storiesOf('EventDetail', module)
         itemImageSource: PPNIcon,
         fullItemValue: '- 10 PLR',
         subtext: 'to Smart Wallet',
-        valueColor: 'text',
+        valueColor: 'basic010',
       }}
     />
   ))
@@ -738,7 +738,7 @@ storiesOf('EventDetail', module)
         itemImageSource: smartWalletIcon,
         fullItemValue: '+ 10 PLR',
         subtext: 'from Pillar Network',
-        valueColor: 'positive',
+        valueColor: 'secondaryAccent140',
       }}
     />
   ))

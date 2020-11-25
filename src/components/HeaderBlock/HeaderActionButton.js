@@ -18,41 +18,42 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
+import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes } from 'utils/variables';
 import { MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import Animation from 'components/Animation';
-import { themedColors } from 'utils/themes';
+import { getColorByTheme } from 'utils/themes';
 
 type Props = {
   label: string,
-  onPress: Function,
+  onPress: () => void,
   hasChevron?: boolean,
   isActive?: boolean,
-  wrapperStyle?: Object,
+  wrapperStyle?: StyleSheet.Style,
   backgroundColor?: string,
+  style?: StyleSheet.Style,
+  color?: string,
 }
 
 const HeaderButtonRounded = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
   padding: 2px 6px;
-  border: 1px solid;
-  border-color: ${props => props.backgroundColor ? 'transparent' : themedColors.border};
-  background-color: ${props => props.backgroundColor ? props.backgroundColor : 'transparent'};
+  ${({ backgroundColor }) => backgroundColor && `background-color: ${backgroundColor}`};
   border-radius: 6px;
 `;
 
 const RoundedButtonLabel = styled(MediumText)`
   font-size: ${fontSizes.regular};
   line-height: 20px;
-  color: ${props => props.isLight ? themedColors.control : themedColors.text};
+  color: ${({ color }) => color || getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
   margin-left: 6px;
 `;
 const ChevronIcon = styled(Icon)`
   font-size: 6px;
-  color: ${props => props.isLight ? themedColors.control : themedColors.text};
+  color: ${({ color }) => color || getColorByTheme({ lightKey: 'basic050', darkKey: 'basic090' })};
   transform: rotate(90deg);
   margin-top: 2px;
   margin-left: 9px;
@@ -63,7 +64,9 @@ const StatusIcon = styled.View`
   height: 8px;
   width: 8px;
   border-radius: 4px;
-  background-color: ${({ isActive, theme }) => isActive ? theme.colors.positive : theme.colors.negative};
+  background-color: ${({ isActive, theme }) => isActive
+    ? theme.colors.secondaryAccent140
+    : theme.colors.secondaryAccent240};
 `;
 
 const StatusIndicatorHolder = styled.View`
@@ -105,13 +108,15 @@ const HeaderActionButton = (props: Props) => {
     isActive,
     wrapperStyle,
     backgroundColor,
+    color,
+    style,
   } = props;
 
   return (
-    <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={wrapperStyle}>
+    <HeaderButtonRounded onPress={onPress} backgroundColor={backgroundColor} style={[wrapperStyle, style]}>
       {isActive !== undefined && <Status isActive={isActive} />}
-      <RoundedButtonLabel isLight={!!backgroundColor}>{label}</RoundedButtonLabel>
-      {!!hasChevron && <ChevronIcon name="chevron-right" isLight={!!backgroundColor} />}
+      <RoundedButtonLabel isLight={!!backgroundColor} color={color}>{label}</RoundedButtonLabel>
+      {!!hasChevron && <ChevronIcon name="chevron-right" isLight={!!backgroundColor} color={color} />}
     </HeaderButtonRounded>
   );
 };

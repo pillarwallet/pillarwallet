@@ -266,9 +266,7 @@ export const createUniswapOrder = async (
     return null;
   }
 
-  const txCount = await ethProvider.getTransactionCount(clientSendAddress);
   const txObject = generateTxObject(
-    txCount.toString(),
     ADDRESSES.router,
     txValue,
     txData,

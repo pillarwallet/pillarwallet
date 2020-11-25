@@ -135,12 +135,8 @@ export const createAllowanceTx = async (
       [contractAddress, constants.MaxUint256.toString()],
     );
 
-    const txCount = await ethProvider().getTransactionCount(clientAddress);
-
     return {
-      nonce: txCount.toString(),
       to: fromAssetAddress,
-      chainId: '1',
       data: encodedContractFunction,
     };
   } catch (e) {

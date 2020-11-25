@@ -26,8 +26,7 @@ import { MediumText, TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 
 // utils
-import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
+import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import Spinner from 'components/Spinner';
 
 
@@ -60,8 +59,7 @@ const SectionHeaderPart = styled.TouchableOpacity`
 `;
 
 const SectionTitle = styled(MediumText)`
-  ${fontStyles.regular};
-  color: ${themedColors.accent};
+  ${fontStyles.big};
 `;
 
 const SectionLink = styled(TextLink)`
@@ -69,10 +67,13 @@ const SectionLink = styled(TextLink)`
 `;
 
 const ChevronIcon = styled(Icon)`
-  color: ${themedColors.accent};
-  font-size: 6px;
-  margin-left: 10px;
-  margin-top: 2px;
+  color: ${({ theme }) => theme.colors.basic020};
+  font-size: ${fontSizes.tiny}px;
+  align-self: center;
+  justify-content: center;
+  padding: 0 10px;
+  transform: ${({ open }) => (open ? 'rotate(-90deg)' : 'rotate(90deg)')};
+  ${({ open }) => !open && 'margin-top: 2px;'}
 `;
 
 const CollapsibleSection = (props: Props) => {
@@ -88,14 +89,12 @@ const CollapsibleSection = (props: Props) => {
     showLoadingSpinner,
   } = props;
 
-  const rotate = open ? '-90deg' : '90deg';
-
   return (
     <Section style={sectionWrapperStyle}>
       <SectionHeader>
         <SectionHeaderPart onPress={collapseContent && onPress}>
           <SectionTitle>{label}</SectionTitle>
-          {!!collapseContent && <ChevronIcon name="chevron-right" style={{ transform: [{ rotate }] }} />}
+          {!!collapseContent && <ChevronIcon name="chevron-right" open={open} />}
         </SectionHeaderPart>
         {showLoadingSpinner && <Spinner size={20} trackWidth={2} />}
         {!showLoadingSpinner && !!labelRight && (

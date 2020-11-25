@@ -18,3 +18,9 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+export type EtherspotTransaction = {
+  to: string,
+  value: number,
+  data?: string,
+}
+

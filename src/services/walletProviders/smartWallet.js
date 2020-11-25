@@ -62,7 +62,7 @@ export default class SmartWalletProvider {
       amount,
       gasToken,
       data: transactionData,
-      sequentialSmartWalletTransactions = [],
+      sequentialTransactions: sequentialSmartWalletTransactions = [],
     } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);

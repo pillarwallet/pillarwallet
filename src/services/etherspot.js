@@ -18,28 +18,25 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import { constants, utils } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
   Env,
   Account as EtherspotAccount,
   Accounts as EtherspotAccounts,
+  GatewayEstimatedBatch,
 } from 'etherspot';
 
 // utils
-import {
-  isCaseInsensitiveMatch,
-  reportErrorLog,
-} from 'utils/common';
-import type {
-  Asset,
-  Balance,
-} from 'models/Asset';
-import {
-  constants,
-  utils,
-} from 'ethers';
+import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import type { Asset, Balance } from 'models/Asset';
+
+// constants
 import { ETH } from 'constants/assetsConstants';
+
+// types
+import type { EtherspotTransaction } from 'models/Etherspot';
 
 
 class EtherspotService {
@@ -90,15 +87,30 @@ class EtherspotService {
     });
   }
 
+  clearTransactionsBatch() {
+    return this.sdk.clearGatewayBatch();
+  }
+
+  setTransactionsBatch(transactions: EtherspotTransaction[]): ?GatewayEstimatedBatch {
+    return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
+  }
+
+  estimateTransactionsBatch() {
+    return this.sdk.estimateGatewayBatch().then((result) => result?.estimation);
+  }
+
   async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
     const assetAddresses = assets
       // 0x0...0 is default ETH address in our assets, but it's not a token
-      .filter(({ address }) => isCaseInsensitiveMatch(address, constants.AddressZero))
+      .filter(({ address }) => !isCaseInsensitiveMatch(address, constants.AddressZero))
       .map(({ address }) => address);
 
     // gets balances by provided token (asset) address and ETH balance regardless
     const accountBalances = await this.sdk
-      .getAccountBalances(accountAddress, assetAddresses)
+      .getAccountBalances({
+        account: accountAddress,
+        tokens: assetAddresses,
+      })
       .catch((error) => {
         reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
         return null;
@@ -125,6 +137,23 @@ class EtherspotService {
         },
       ];
     }, []);
+  }
+
+  async setTransactionsBatchAndSend(transactions: EtherspotTransaction[]) {
+    // clear batch
+    this.clearTransactionsBatch();
+
+    // set batch
+    await this.setTransactionsBatch(transactions).catch((error) => {
+      reportErrorLog('setTransactionsBatchAndSend -> setTransactionsBatch failed', { error, transactions });
+      throw error;
+    });
+
+    // estimate current batch
+    await this.estimateTransactionsBatch();
+
+    // submit current batch
+    return this.sdk.submitGatewayBatch();
   }
 
   async logout() {

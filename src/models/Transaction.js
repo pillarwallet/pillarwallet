@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import type { AssetData } from 'models/Asset';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -132,7 +133,7 @@ export type TokenTransactionPayload = {
   extra?: Object,
   usePPN?: boolean,
   gasToken?: ?GasToken,
-  sequentialSmartWalletTransactions?: TokenTransactionPayload[],
+  sequentialTransactions?: TokenTransactionPayload[],
 }
 
 export type CollectibleTransactionPayload = {
@@ -189,4 +190,11 @@ export type AllowanceTransaction = {
   to: string,
   chainId: string,
   data: string,
+};
+
+export type TransactionDraft = {
+  to: string,
+  value: number,
+  assetData?: AssetData,
+  data: ?string,
 };

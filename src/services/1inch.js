@@ -112,15 +112,10 @@ export const create1inchOrder = async (
   const response = await getResponseData(url, 'Failed to create 1inch order', t('toast.failedToCreateOrder'));
 
   if (!response) return null;
-  const txCount = await ethProvider().getTransactionCount(clientSendAddress);
 
   const txObject = {
     data: response.data,
-    nonce: txCount.toString(),
     to: response.to,
-    gasLimit: response.gas || '0',
-    gasPrice: response.gasPrice || '0',
-    chainId: '1',
     value: response.value,
   };
 

@@ -94,7 +94,7 @@ const DepositTransactionConfirm = ({
     if (aaveDepositTransactions.length > 1) {
       transactionPayload = {
         ...transactionPayload,
-        sequentialSmartWalletTransactions: aaveDepositTransactions.slice(1), // take the rest except first,
+        sequentialTransactions: aaveDepositTransactions.slice(1), // take the rest except first,
       };
     }
 

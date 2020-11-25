@@ -58,7 +58,7 @@
     "dns.js": "^1.0.1",
     "ethereumjs-util": "^6.1.0",
     "ethers": "5.0.19",
-    "etherspot": "^1.0.0-alpha.58",
+    "etherspot": "^1.0.0-alpha.62",
     "events": "^1.0.0",
     "gas-price-oracle": "^0.1.4",
     "https-browserify": "~0.0.0",

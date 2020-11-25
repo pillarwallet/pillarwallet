@@ -780,7 +780,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       collectibleUrl: isSvgImage(image) ? image : icon,
       subtext,
       actionLabel: isReceived ? this.STATUSES().RECEIVED : this.STATUSES().SENT,
-      iconBackgroundColor: 'card',
+      iconBackgroundColor: 'basic070',
       iconBorder: true,
       fallbackToGenericToken: true,
       isReceived,

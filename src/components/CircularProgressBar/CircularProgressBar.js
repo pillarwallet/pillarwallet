@@ -117,7 +117,7 @@ const CircularProgressBar = ({
       <AnimatedPath
         d={path}
         fill="transparent"
-        stroke={getThemeType(theme) === DARK_THEME ? colors.tertiary : '#F7F9FB'}
+        stroke={getThemeType(theme) === DARK_THEME ? colors.basic080 : '#F7F9FB'}
         strokeWidth={circleWidth}
         strokeLinecap="round"
         strokeDasharray={[circumference, circumference]}

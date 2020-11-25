@@ -18,28 +18,29 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import * as React from 'react';
-import { withTheme } from 'styled-components/native';
-import Icon from 'components/Icon';
-import { getThemeColors } from 'utils/themes';
-import type { Theme } from 'models/Theme';
+import BigNumber from 'bignumber.js';
+import type { GatewayEstimatedBatch } from 'etherspot';
+
+// types
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 
-type Props = {
-  theme: Theme
+export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: boolean = false): TransactionFeeInfo => {
+  if (!estimated) return { fee: null };
+
+  // TODO: revisit etherspot gasToken
+  const { estimatedGas, estimatedGasPrice, gasToken = null } = estimated;
+
+  const ethCost = new BigNumber(estimatedGasPrice.mul(estimatedGas).toString());
+
+  if (!useGasToken || !gasToken) {
+    return { fee: ethCost };
+  }
+
+  const gasTokenCost = null;
+
+  return {
+    fee: gasTokenCost,
+    gasToken,
+  };
 };
-
-const ArrowIcon = ({ theme }: Props) => {
-  return (
-    <Icon
-      name="direct"
-      style={{
-        fontSize: 24,
-        color: getThemeColors(theme).basic010,
-      }}
-    />
-  );
-};
-
-export default withTheme(ArrowIcon);
-

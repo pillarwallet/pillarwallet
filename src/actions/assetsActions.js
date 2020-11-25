@@ -174,17 +174,13 @@ export const sendAssetAction = (
     // send Ether
     } else if (symbol === ETH) {
       // $FlowFixMe
-      tokenTx = await walletProvider.transferETH(
-        activeAccount,
-        // $FlowFixMe
-        transaction,
-        getState(),
-      );
+      tokenTx = await walletProvider.transferETH(transaction);
 
       // $FlowFixMe
       if (tokenTx.hash) {
         historyTx = buildHistoryTransaction({
           ...tokenTx,
+          from: accountAddress,
           asset: symbol,
           note,
           gasPrice: transaction.gasPrice,
@@ -204,17 +200,13 @@ export const sendAssetAction = (
         // $FlowFixMe
       } = (transaction: TokenTransactionPayload);
 
-      tokenTx = await walletProvider.transferERC20(
-        activeAccount,
-        // $FlowFixMe
-        transaction,
-        getState(),
-      );
+      tokenTx = await walletProvider.transferERC20(transaction);
 
       // $FlowFixMe
       if (tokenTx.hash) {
         historyTx = buildHistoryTransaction({
           ...tokenTx,
+          from: accountAddress,
           asset: symbol,
           value: parseTokenAmount(amount, decimals),
           to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
@@ -615,7 +607,14 @@ export const loadSupportedAssetsAction = () => {
       return;
     }
 
-    const supportedAssets = await api.fetchSupportedAssets(walletId);
+    let supportedAssets = await api.fetchSupportedAssets(walletId);
+
+    // TODO: remove once etherspot testnet available
+    //  map EDG (0 decimals) into etherspot Wrapped token
+    supportedAssets = supportedAssets.map((asset) => ({
+      ...asset,
+      address: asset.symbol === 'EDG' ? '0xA80a6FaBFF18a478deC3a833843eF9577F3553ca' : asset.address,
+    }));
 
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;
