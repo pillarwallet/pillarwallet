@@ -365,7 +365,7 @@ class SelectorOptions extends React.Component<Props, State> {
       optionsTitle,
       horizontalOptionsData = [],
       searchPlaceholder,
-      iconProps,
+      iconProps = {},
       allowEnteringCustomAddress,
     } = this.props;
     const {
@@ -455,7 +455,7 @@ class SelectorOptions extends React.Component<Props, State> {
               inputRef={ref => { this.searchInput = ref; }}
               noClose
               marginBottom="0"
-              iconProps={iconProps}
+              iconProps={{ ...iconProps, persistIconOnFocus: true }}
             />
           </SearchBarWrapper>
           {!!optionTabs && <Tabs
