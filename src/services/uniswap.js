@@ -30,9 +30,16 @@ import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
+import axios, { AxiosResponse } from 'axios';
 
 // utils
-import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
+import {
+  reportOrWarn,
+  reportLog,
+  convertToBaseUnits,
+  getEthereumProvider,
+  reportErrorLog,
+} from 'utils/common';
 import {
   chainId,
   ADDRESSES,
@@ -49,7 +56,7 @@ import {
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
 // services
-import { callSubgraph } from 'services/theGraph';
+import { defaultAxiosRequestConfig } from 'services/api';
 
 // models
 import type { Asset } from 'models/Asset';
@@ -57,7 +64,7 @@ import type { Offer } from 'models/Offer';
 import type { AllowanceTransaction } from 'models/Transaction';
 
 // constants
-import { PROVIDER_UNISWAP, UNISWAP_SUBGRAPH_NAME } from 'constants/exchangeConstants';
+import { PROVIDER_UNISWAP } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 
 // assets
@@ -286,36 +293,18 @@ export const createUniswapAllowanceTx =
     return allowanceTx;
   };
 
-export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
-  let finished = false;
-  let i = 0;
-  let results = [];
-  const parsedAssetCodes = supportedAssetCodes.map(a => `"${a}"`);
-  while (!finished) {
-    /* eslint-disable no-await-in-loop */
-    /* eslint-disable i18next/no-literal-string */
-    const query = `
-      {
-        tokens(first: 1000, skip: ${i * 1000},
-          where: { 
-            symbol_in: [${parsedAssetCodes.toString()}]
-          }
-        ) {
-          symbol
-        }
-      }
-    `;
-    /* eslint-enable i18next/no-literal-string */
-    const response = await callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
-    const assets = response?.tokens;
-    if (assets) {
-      results = results.concat(assets.map(a => a.symbol));
+export const fetchUniswapSupportedTokens = (): Promise<?string[]> => axios
+  .get(getEnv().UNISWAP_CACHED_SUBGRAPH_ASSETS_URL, defaultAxiosRequestConfig)
+  .then(({ data: responseData }: AxiosResponse) => {
+    if (!responseData) {
+      reportErrorLog('fetchUniswapSupportedTokens failed: unexpected response', { response: responseData });
+      return null;
     }
-    if (!assets || assets.length !== 1000) {
-      finished = true;
-    } else {
-      i++;
-    }
-  }
-  return results;
-};
+
+    // response is CSV
+    return responseData.split(',');
+  })
+  .catch((error) => {
+    reportErrorLog('fetchUniswapSupportedTokens failed: API request error', { error });
+    return null;
+  });
