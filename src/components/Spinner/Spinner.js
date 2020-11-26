@@ -30,14 +30,10 @@ type Props = {|
   trackWidth?: number,
   color?: ?string,
   style?: StyleSheet.Styles,
+  theme?: Theme,
 |};
 
-type CombinedProps = {
-  ...Props,
-  theme: Theme,
-}
-
-const getSpinnerColor = (props: CombinedProps) => {
+const getSpinnerColor = (props: Props) => {
   const { theme, basic, color } = props;
   if (color) return color;
   const colors = getThemeColors(theme);
@@ -45,7 +41,7 @@ const getSpinnerColor = (props: CombinedProps) => {
   return colors.primaryAccent130;
 };
 
-const Spinner = (props: CombinedProps) => {
+const Spinner = (props: Props) => {
   const {
     size = 40,
     trackWidth = 3,
