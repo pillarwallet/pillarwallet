@@ -166,7 +166,8 @@ class ServicesScreen extends React.Component<Props> {
         key: 'poolTogether',
         title: t('servicesContent.poolTogether.title'),
         body: t('servicesContent.poolTogether.description'),
-        hidden: !isActiveAccountSmartWallet,
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
         action: () => navigation.navigate(POOLTOGETHER_DASHBOARD),
       });
     }
