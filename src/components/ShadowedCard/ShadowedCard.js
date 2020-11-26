@@ -23,7 +23,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { Animated, TouchableWithoutFeedback, View } from 'react-native';
 import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import { Shadow } from 'components/Shadow';
-import { themedColors, getThemeType } from 'utils/themes';
+import { getThemeType } from 'utils/themes';
 import { noop } from 'utils/common';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
@@ -37,7 +37,7 @@ const ContentWrapper = styled.View`
   flex-direction: column;
   justify-content: flex-start;
   border-radius: ${({ borderRadius }) => borderRadius}px;
-  background: ${themedColors.card};
+  background: ${({ theme }) => theme.colors.basic050};
   width: 100%;
   opacity: ${({ opacity }) => opacity};
   ${({ isAnimated }) => isAnimated && `

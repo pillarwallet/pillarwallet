@@ -19,13 +19,12 @@
 */
 
 import * as React from 'react';
-import { Platform, View } from 'react-native';
+import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import Icon from 'components/Icon';
 import t from 'translations/translate';
 
-import IconButton from 'components/IconButton';
 import { BaseText, MediumText } from 'components/Typography';
 import ProfileImage from 'components/ProfileImage';
 import Button from 'components/Button';
@@ -35,11 +34,11 @@ import TankAssetBalance from 'components/TankAssetBalance';
 import { LabelBadge } from 'components/LabelBadge/LabelBadge';
 import CollectibleImage from 'components/CollectibleImage';
 
-import { ACTION, CHAT_ITEM, DEFAULT } from 'constants/listItemConstants';
+import { ACTION, DEFAULT } from 'constants/listItemConstants';
 
 import { formatAmount, getDecimalPlaces } from 'utils/common';
 import { fontSizes, spacing, fontTrackings, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 
 import type { Theme, ThemeColors } from 'models/Theme';
@@ -58,8 +57,6 @@ type Props = {
   iconDiameter?: ?number,
   itemImageUrl?: string,
   fallbackSource?: string,
-  timeSent?: string,
-  unreadCount?: number | string,
   itemValue?: ?string,
   itemStatusIcon?: string,
   valueColor?: ?string,
@@ -70,8 +67,6 @@ type Props = {
   secondaryButton?: boolean,
   actionLabel?: ?string,
   actionLabelColor?: ?string,
-  rejectInvitation?: ?Function,
-  acceptInvitation?: ?Function,
   type?: string,
   children?: React.Node,
   small?: boolean,
@@ -110,7 +105,6 @@ type Props = {
 };
 
 type AddonProps = {
-  unreadCount?: number | string,
   itemValue?: ?string,
   itemStatusIcon?: string,
   valueColor?: ?string,
@@ -120,8 +114,6 @@ type AddonProps = {
   secondaryButton?: boolean,
   actionLabel?: ?string,
   actionLabelColor?: ?string,
-  rejectInvitation?: ?() => void,
-  acceptInvitation?: ?() => void,
   balance?: Object,
   colors: ThemeColors,
   statusIconColor?: string,
@@ -170,27 +162,26 @@ const InfoWrapper = styled.View`
 const Column = styled.View`
   flex-direction: column;
   align-items: ${props => props.rightColumn ? 'flex-end' : 'flex-start'};
-  justify-content: ${props => props.type === CHAT_ITEM ? 'flex-start' : 'center'};
-  margin-top: ${props => props.type === CHAT_ITEM ? '-2px' : 0};
+  justify-content: center;
   ${props => props.rightColumn ? 'margin-left: 10px;' : 'flex: 1;'}
   min-height: 54px;
 `;
 
 const ItemTitle = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.big};
   width: 100%;
 `;
 
 const ItemParagraph = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.regular};
   letter-spacing: ${fontTrackings.tiny}px;
   flex: 1;
 `;
 
 const ItemSubText = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   font-size: ${fontSizes.regular}px;
 `;
 
@@ -200,20 +191,20 @@ const IconRounded = styled.View`
     height: ${(!borderRadius && diameter) || 52}px;
     border-radius: ${borderRadius || (diameter ? diameter / 2 : 26)}px;
   `}
-  background-color: ${props => props.backgroundColor || themedColors.tertiary};
+  background-color: ${({ backgroundColor }) => backgroundColor
+    || getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
   align-items: center;
   justify-content: center;
   text-align: center;
-  ${({ border, theme }) => border && `
-    border-color: ${theme.colors.border};
-    border-width: 1px;
-  `}
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
+  border-width: 0;
+  ${({ border }) => border && 'border-width: 1px;'}
   overflow: hidden;
 `;
 
 const ItemIcon = styled(Icon)`
   font-size: ${props => props.fontSize || 48}px;
-  color: ${({ iconColor, theme }) => iconColor || theme.colors.primary};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.basic000};
 `;
 
 const IconImage = styled(CachedImage)`
@@ -239,93 +230,46 @@ const StyledCollectibleImage = styled(CollectibleImage)`
   `}
 `;
 
-const TimeWrapper = styled.View`
-  align-items: flex-start;
-  margin-top: ${Platform.OS === 'ios' ? 6 : 4}px;
-`;
-
-const TimeSent = styled(BaseText)`
-  color: ${themedColors.secondaryText};
-  ${fontStyles.regular};
-  text-align-vertical: bottom;
-`;
-
-const ItemBadge = styled.View`
-  height: 20px;
-  width: 20px;
-  border-radius: 10px;
-  background-color: ${themedColors.secondaryText}
-  align-self: flex-end;
-  padding: 3px 0;
-  margin-right: 1px;
-`;
-
-const UnreadNumber = styled(BaseText)`
-  color: ${themedColors.control};
-  font-size: ${fontSizes.tiny}px;
-  align-self: center;
-  width: 20px;
-  text-align: center;
-`;
-
 const ItemValue = styled(BaseText)`
   ${fontStyles.big};
-  color: ${({ color, theme }) => color || theme.colors.text};
+  color: ${({ color, theme }) => color || theme.colors.basic010};
   text-align: right;
 `;
 
 const BalanceValue = styled(BaseText)`
   ${fontStyles.big};
-  color: ${({ color, theme }) => color || theme.colors.text};
+  color: ${({ color, theme }) => color || theme.colors.basic010};
   text-align: right;
 `;
 
 const BalanceFiatValue = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   text-align: right;
 `;
 
 const ItemValueStatus = styled(Icon)`
   margin-left: 12px;
-  color: ${({ iconColor }) => iconColor || themedColors.secondaryText};
+  color: ${({ iconColor, theme }) => iconColor || theme.colors.basic020};
   ${fontStyles.big};
-`;
-
-const IndicatorsRow = styled.View`
-  flex-direction: row;
-  padding-left: 8px;
 `;
 
 const ActionLabel = styled.View`
   align-items: center;
   justify-content: center;
-  ${({ button, theme }) => button && `border: 1px solid ${theme.colors.border}`}
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic040' })};
+  border-width: 0;
+  ${({ button }) => button && 'border-width: 1px'}
   ${({ button }) => button && 'border-radius: 3px;'}
   ${({ button }) => button && 'height: 34px;'}
 `;
 
 const ActionLabelText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${({ color, theme }) => color || theme.colors.secondaryText};
+  color: ${({ color, theme }) => color || theme.colors.basic020};
   margin-left: auto;
   margin-bottom: ${props => props.button ? '2px' : 0};
   padding: ${props => props.button ? `0 ${spacing.large}px` : '6px 0'};
-`;
-
-const ButtonIconWrapper = styled.View`
-  margin-left: auto;
-  flex-direction: row;
-`;
-
-const ActionCircleButton = styled(IconButton)`
-  height: 24px;
-  width: 24px;
-  border-radius: 17px;
-  margin: 0 0 0 10px;
-  justify-content: center;
-  align-items: center;
-  background: ${({ accept, theme }) => accept ? theme.colors.primary : 'transparent'};
 `;
 
 const ImageAddonHolder = styled.View`
@@ -492,9 +436,7 @@ const ItemImage = (props: Props) => {
       userName={label}
       diameter={diameter || 52}
       textStyle={{ fontSize: fontSizes.big }}
-      noShadow
       fallbackImage={fallbackSource}
-      borderWidth={0}
       cornerIcon={cornerIcon}
       cornerIconSize={16}
     />
@@ -532,7 +474,6 @@ const ImageAddon = (props: Props) => {
         userName={imageAddonName}
         diameter={22}
         borderWidth={2}
-        noShadow
         initialsSize={fontSizes.small}
       />
     </ImageAddonHolder>
@@ -541,7 +482,6 @@ const ImageAddon = (props: Props) => {
 
 const Addon = (props: AddonProps) => {
   const {
-    unreadCount,
     itemValue,
     itemStatusIcon,
     statusIconColor,
@@ -552,8 +492,6 @@ const Addon = (props: AddonProps) => {
     secondaryButton,
     actionLabel,
     actionLabelColor,
-    rejectInvitation,
-    acceptInvitation,
     balance,
     colors,
   } = props;
@@ -573,22 +511,10 @@ const Addon = (props: AddonProps) => {
   if (actionLabel) {
     return (
       <ActionLabel button={actionLabelAsButton}>
-        <ActionLabelText button={actionLabelAsButton} color={actionLabelAsButton ? colors.primary : actionLabelColor}>
+        <ActionLabelText button={actionLabelAsButton} color={actionLabelAsButton ? colors.basic000 : actionLabelColor}>
           {actionLabel}
         </ActionLabelText>
       </ActionLabel>
-    );
-  }
-
-  if (unreadCount) {
-    return (
-      <IndicatorsRow>
-        <ItemBadge>
-          <UnreadNumber>
-            {unreadCount}
-          </UnreadNumber>
-        </ItemBadge>
-      </IndicatorsRow>
     );
   }
 
@@ -599,30 +525,9 @@ const Addon = (props: AddonProps) => {
         onPress={buttonAction}
         small
         secondary={secondaryButton}
-        listItemButton
+        horizontalPaddings={8}
+        block={false}
       />
-    );
-  }
-
-  if (rejectInvitation && acceptInvitation) {
-    return (
-      <ButtonIconWrapper>
-        <ActionCircleButton
-          color={colors.secondaryText}
-          margin={0}
-          icon="close"
-          fontSize={fontSizes.regular}
-          onPress={rejectInvitation}
-        />
-        <ActionCircleButton
-          color={colors.control}
-          margin={0}
-          accept
-          icon="check"
-          fontSize={fontSizes.small}
-          onPress={acceptInvitation}
-        />
-      </ButtonIconWrapper>
     );
   }
 
@@ -665,9 +570,6 @@ const getType = (props: Props) => {
   if ((props.subtext && !props.small) || props.iconName) {
     return ACTION;
   }
-  if (props.paragraph) {
-    return CHAT_ITEM;
-  }
   return DEFAULT;
 };
 
@@ -679,7 +581,6 @@ const ListItemWithImage = (props: Props) => {
     paragraphLines = 2,
     customAddon,
     onPress,
-    timeSent,
     children,
     imageAddonUrl,
     imageAddonIconName,
@@ -721,11 +622,6 @@ const ListItemWithImage = (props: Props) => {
               <Row>
                 {!!customLabel && customLabel}
                 {!!label && <ItemTitle numberOfLines={2} ellipsizeMode="tail" type={type}>{label}</ItemTitle>}
-                {(type === CHAT_ITEM && !!timeSent) &&
-                <TimeWrapper>
-                  <TimeSent>{timeSent}</TimeSent>
-                </TimeWrapper>
-                }
               </Row>
               }
               {!!paragraph &&

@@ -53,7 +53,7 @@ import { changeLanguageAction, updateTranslationResourceOnContextChangeAction } 
 // constants
 import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { STAGING } from 'constants/envConstants';
-import { FEATURE_FLAGS, INITIAL_FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG, INITIAL_REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import { Container } from 'components/Layout';
@@ -174,7 +174,7 @@ class App extends React.Component<Props, *> {
      */
 
     remoteConfig()
-      .setDefaults(INITIAL_FEATURE_FLAGS)
+      .setDefaults(INITIAL_REMOTE_CONFIG)
       .then(() => log.info('Firebase Config: Defaults loaded and available.'))
       .catch(e => log.error('Firebase Config: An error occurred loading defaults:', e));
 
@@ -193,7 +193,7 @@ class App extends React.Component<Props, *> {
       .activate()
       .then((r) => {
         log.info('Firebase Config: Activation result was:', r);
-        if (sessionLanguageVersion !== firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP)) {
+        if (sessionLanguageVersion !== firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP)) {
           updateTranslationResourceOnContextChange();
         }
       })

@@ -40,7 +40,6 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
 } from 'constants/exchangeConstants';
 import { fetchUniswapSupportedTokens } from 'services/uniswap';
-import { GraphQueryError } from 'services/theGraph';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
@@ -132,8 +131,6 @@ describe('Exchange actions test', () => {
     });
 
     it('updates query status in case of a successful response', async () => {
-      (fetchUniswapSupportedTokens: any).mockImplementationOnce(async () => ['ETH']);
-
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
         payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
@@ -150,9 +147,7 @@ describe('Exchange actions test', () => {
     });
 
     it('updates query status in case of an error', async () => {
-      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() =>
-        Promise.reject(new GraphQueryError('subgraph', 'query', new Error())),
-      );
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
 
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,

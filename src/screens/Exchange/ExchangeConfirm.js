@@ -54,7 +54,6 @@ import {
   getBalance,
 } from 'utils/assets';
 import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
-import { themedColors } from 'utils/themes';
 import { isProdEnv } from 'utils/environment';
 
 // types
@@ -104,7 +103,7 @@ const TableWrapper = styled.View`
 `;
 
 const ExchangeIcon = styled(Icon)`
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.primaryAccent130};
   font-size: 16px;
 `;
 
@@ -222,8 +221,10 @@ const ExchangeConfirmScreen = ({
     return null;
   }
 
-  const { code: fromAssetCode } = fromAsset;
-  const { code: toAssetCode } = toAsset;
+  const { code: fromCode, symbol: fromSymbol } = fromAsset;
+  const { code: toCode, symbol: toSymbol } = toAsset;
+  const fromAssetCode = fromCode || fromSymbol;
+  const toAssetCode = toCode || toSymbol;
 
   const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -279,7 +280,7 @@ const ExchangeConfirmScreen = ({
                   <Spacing w={4} />
                   <BaseText regular>
                     {t('exchangeContent.label.exchangeRateLayout', {
-                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
+                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toFixed(2),
                       toAssetCode,
                       fromAssetCode,
                     })}
@@ -356,7 +357,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     value: number,
     data?: string,
     assetData?: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
+  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

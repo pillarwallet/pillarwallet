@@ -27,7 +27,6 @@ import SlideModal from 'components/Modals/SlideModal';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import { fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import { getEnv } from 'configs/envConfig';
 
 const LabeledRow = styled.View`
@@ -36,7 +35,7 @@ const LabeledRow = styled.View`
 
 const Label = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
   letter-spacing: 0.5;
 `;
 

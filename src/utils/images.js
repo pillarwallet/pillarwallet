@@ -29,10 +29,6 @@ const genericTokenDark = require('assets/images/tokens/genericTokenDark.png');
 const pillarLogo = require('assets/images/pillar-logo-pixel.png');
 const pillarLogoSmallLight = require('assets/images/logo-small-on-light.png');
 const pillarLogoSmallDark = require('assets/images/logo-small-on-dark.png');
-const actionButtonBackgroundLight = require('assets/images/bg_action_button.png');
-const actionButtonBackgroundDark = require('assets/images/bg_action_button_dark.png');
-const actionButtonBackgroundLightDisabled = require('assets/images/bg_action_button_disabled.png');
-const actionButtonBackgroundDarkDisabled = require('assets/images/bg_action_button_dark_disabled.png');
 const keyWalletIcon = require('assets/icons/icon_key_wallet.png');
 const keyWalletIconDark = require('assets/icons/key_wallet_dark.png');
 const smartWalletIcon = require('assets/icons/icon_smart_wallet.png');
@@ -41,15 +37,15 @@ const PPNIcon = require('assets/icons/icon_PPN.png');
 const swActivatedLight = require('assets/images/swActivatedLight.png');
 const swActivatedDark = require('assets/images/swActivatedDark.png');
 const emailIconLight = require('assets/icons/icon_email_light.png');
-const emailIconDark = require('assets/icons/icon_email_dark.png');
+const emailIconDark = require('assets/icons/icon_circle_mail_dark.png');
 const phoneIconLight = require('assets/icons/icon_phone_light.png');
-const phoneIconDark = require('assets/icons/icon_phone_dark.png');
+const phoneIconDark = require('assets/icons/icon_circle_phone_device.png');
 const exchangeIconLight = require('assets/icons/exchange.png');
 const exchangeIconDark = require('assets/icons/exchange_dark.png');
 const walletIconLight = require('assets/icons/iconRoundedWalletLight.png');
-const walletIconDark = require('assets/icons/iconRoundedWalletDark.png');
+const walletIconDark = require('assets/icons/icon_rounded_wallet_dark.png');
 const personIconLight = require('assets/icons/iconRoundedPersonLight.png');
-const personIconDark = require('assets/icons/iconRoundedPersonDark.png');
+const personIconDark = require('assets/icons/icon_rounded_person_dark.png');
 const highFeesLight = require('assets/icons/high_fees.png');
 const highFeesDark = require('assets/icons/high_fees_dark.png');
 
@@ -98,14 +94,6 @@ export const images = (theme: Theme) => {
     pillarLogoSmall: getImageByTheme(currentTheme, {
       lightTheme: pillarLogoSmallLight,
       darkTheme: pillarLogoSmallDark,
-    }),
-    actionButtonBackground: getImageByTheme(currentTheme, {
-      lightTheme: actionButtonBackgroundLight,
-      darkTheme: actionButtonBackgroundDark,
-    }),
-    actionButtonBackgroundDisabled: getImageByTheme(currentTheme, {
-      lightTheme: actionButtonBackgroundLightDisabled,
-      darkTheme: actionButtonBackgroundDarkDisabled,
     }),
     keyWalletIcon: getImageByTheme(currentTheme, {
       lightTheme: keyWalletIcon,

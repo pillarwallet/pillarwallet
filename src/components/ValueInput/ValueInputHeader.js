@@ -26,7 +26,6 @@ import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
-import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -64,7 +63,7 @@ const Image = styled(CachedImage)`
 
 const SelectorChevron = styled(Icon)`
   font-size: 16px;
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
 `;
 
 const ChevronWrapper = styled.View`
@@ -75,13 +74,12 @@ const ChevronWrapper = styled.View`
 
 const AssetName = styled(MediumText)`
   ${fontStyles.medium};
-  ${({ theme }) => `color: ${theme.colors.text};`}
   flex: 1;
 `;
 
 const LabelText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.link};
+  color: ${({ theme }) => theme.colors.basic000};
   margin-top: 1px;
 `;
 

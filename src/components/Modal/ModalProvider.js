@@ -145,7 +145,7 @@ class ModalProvider extends React.Component<{||}, State> {
     // In case closeAll was called because of a navigation event, it might have
     // happened after the destination screen was rendered with a different modal,
     // so modals opened right before this moment are ignored.
-    const wasJustOpened = ({ openedAt }) => now - openedAt < 10;
+    const wasJustOpened = ({ openedAt }) => now - openedAt < 100;
 
     this.setState(({ stack, pending }) => pending === null ? ({
       stack: stack.filter(m => !wasJustOpened(m)),

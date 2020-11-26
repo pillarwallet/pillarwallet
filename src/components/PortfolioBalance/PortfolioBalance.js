@@ -35,7 +35,6 @@ import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import { allBalancesSelector } from 'selectors/balances';
 
 
@@ -67,8 +66,8 @@ const ContentWrapper = styled.View`
 `;
 
 const ToggleIcon = styled(Icon)`
-  font-size: ${({ bigger }) => bigger ? fontSizes.large : fontSizes.medium}px;
-  color: ${themedColors.accent};
+  font-size: ${fontSizes.medium}px;
+  color: ${({ theme }) => theme.colors.basic020};
   margin-left: 6px;
   margin-bottom: 5px;
 `;
@@ -79,7 +78,6 @@ const BalanceText = styled(MediumText)`
 `;
 
 const LabelText = styled(BaseText)`
-  color: ${themedColors.secondaryText};
   font-size: ${fontSizes.regular}px;
   margin-bottom: 8px;
 `;
@@ -108,11 +106,11 @@ class PortfolioBalance extends React.PureComponent<Props> {
 
     return (
       <BalanceWrapper>
-        <LabelText>{t('title.totalBalance')}</LabelText>
+        <LabelText secondary>{t('title.totalBalance')}</LabelText>
         <BalanceButton onPress={toggleBalanceVisibility}>
           <ContentWrapper>
             {!showBalance
-              ? <BalanceText>{t('button.viewBalance')}</BalanceText>
+              ? <BalanceText secondary>{t('button.viewBalance')}</BalanceText>
               : (
                 <BalanceView
                   style={style}

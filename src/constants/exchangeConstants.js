@@ -41,9 +41,6 @@ export const SLOW = 'min';
 export const NORMAL = 'avg';
 export const FAST = 'max';
 
-// mainnet only
-export const UNISWAP_SUBGRAPH_NAME = 'uniswap/uniswap-v2';
-
 export const ALLOWED_SLIPPAGE = 3; // 3%
 
 export const UNISWAP_TOKENS_QUERY_STATUS = {
@@ -51,3 +48,6 @@ export const UNISWAP_TOKENS_QUERY_STATUS = {
   SUCCESS: ('SUCCESS': 'SUCCESS'),
   ERROR: ('ERROR': 'ERROR'),
 };
+
+// bytes32
+export const SYNTHETIX_VP_CODE = '0x50494c4c415257414c4c45540000000000000000000000000000000000000000';

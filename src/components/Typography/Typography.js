@@ -21,7 +21,7 @@
 
 import styled from 'styled-components/native';
 import { fontStyles, appFont, fontSizes, lineHeights } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 
 
 const getFontSize = (props) => {
@@ -52,15 +52,14 @@ const getTextStyle = (props) => {
   const textProps = {};
 
   // color types
-  if (props.primary) textProps.color = colors.primary;
-  if (props.secondary) textProps.color = colors.secondaryText;
-  if (props.negative) textProps.color = colors.negative;
-  if (props.positive) textProps.color = colors.positive;
-  if (props.tertiary) textProps.color = colors.tertiary;
-  if (props.accent) textProps.color = colors.accent;
-  if (props.synthetic) textProps.color = colors.synthetic;
-  if (props.link) textProps.color = colors.link;
-  if (props.danger) textProps.color = colors.danger;
+  if (props.primary) textProps.color = colors.basic000;
+  if (props.secondary) textProps.color = colors.basic030;
+  if (props.negative) textProps.color = colors.secondaryAccent240;
+  if (props.positive) textProps.color = colors.secondaryAccent140;
+  if (props.accent) textProps.color = colors.basic020;
+  if (props.synthetic) textProps.color = colors.synthetic140;
+  if (props.link) textProps.color = colors.basic000;
+  if (props.danger) textProps.color = colors.secondaryAccent240;
   if (props.color) textProps.color = props.color; // for custom color
 
   // positioning
@@ -90,28 +89,28 @@ const getTextStyle = (props) => {
 export const BaseText = styled.Text`
   font-family: ${appFont.regular};
   text-align-vertical: center;
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const BoldText = styled(BaseText)`
   font-family: ${appFont.bold};
   text-align-vertical: center;
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const LightText = styled(BaseText)`
   font-family: ${appFont.light};
   text-align-vertical: center;
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const MediumText = styled(BaseText)`
   font-family: ${appFont.medium};
   text-align-vertical: center;
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
@@ -124,44 +123,44 @@ export const Title = styled(BaseText)`
 
 export const SubTitle = styled(BaseText)`
  ${fontStyles.big};
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.basic000};
   text-align: ${props => (props.align || 'left')};
   margin: ${props => props.margin || '0 0 20px'};
 `;
 
 export const SubHeading = styled(LightText)`
   ${fontStyles.small};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic020};
   letter-spacing: 0.4;
 `;
 
 export const SubHeadingMedium = styled(MediumText)`
   ${fontStyles.small};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic020};
   letter-spacing: 0.4;
 `;
 
 export const Paragraph = styled(BaseText)`
   ${props => props.small ? fontStyles.medium : fontStyles.big};
   margin-bottom: ${props => props.small ? '5px' : '10px'};
-  color: ${props => props.light ? themedColors.secondaryText : themedColors.text};
+  color: ${({ light, theme }) => light ? theme.colors.basic020 : theme.colors.basic010};
   text-align: ${props => props.center ? 'center' : 'left'};
   flex-wrap: wrap;
 `;
 
 export const TextLink = styled(BaseText)`
   ${fontStyles.medium};
-  color: ${themedColors.link};
+  color: ${({ theme }) => theme.colors.basic000};
   ${(props) => getTextStyle(props)}
 `;
 
 export const Label = styled(MediumText)`
   ${props => props.small ? fontStyles.medium : fontStyles.regular}px;
-  color: ${props => props.color || themedColors.secondaryText};
+  color: ${({ color, theme }) => color || theme.colors.basic020};
 `;
 
 export const HelpText = styled(BaseText)`
   ${fontStyles.regular};
   ${({ noPadding }) => !noPadding && 'padding: 10px;'}
-  color: ${({ color }) => color || 'grey'};
+  color: ${({ color, theme }) => color || theme.colors.basic020};
 `;

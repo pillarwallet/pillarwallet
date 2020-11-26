@@ -39,19 +39,17 @@ import { resetIncorrectPasswordAction } from 'actions/authActions';
 
 // utils
 import { spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 // types
 import type { Dispatch } from 'reducers/rootReducer';
 import type { Wallet } from 'ethers';
-
 
 const FooterWrapper = styled.View`
   justify-content: center;
   align-items: center;
   padding: ${spacing.large}px;
   width: 100%;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 type Props = {

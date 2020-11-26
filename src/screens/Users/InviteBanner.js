@@ -28,9 +28,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 
 import { fontStyles, spacing } from 'utils/variables';
-import { getThemeType, themedColors } from 'utils/themes';
-
-import { DARK_THEME } from 'constants/appSettingsConstants';
+import { getColorByTheme } from 'utils/themes';
 
 
 type Props = {
@@ -50,7 +48,7 @@ const HeaderWrapper = styled.View`
   justify-content: center;
   position: relative;
   height: 136px;
-  background-color: ${({ theme }) => getThemeType(theme) === DARK_THEME ? themedColors.tertiary : themedColors.surface};
+  background-color: ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic060' })};
   padding: ${spacing.large}px 36px;
 `;
 
@@ -95,9 +93,9 @@ const InviteBanner = (props: Props) => {
           </BodyText>}
           <Button
             title={t('button.inviteFriends')}
-            block
             onPress={onInvitePress}
             marginTop={isReferralActive ? 0 : 14}
+            primarySecond
           />
         </BodyWrapper>
       </ShadowedCard>

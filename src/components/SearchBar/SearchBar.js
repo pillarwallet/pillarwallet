@@ -27,7 +27,7 @@ import TextInput from 'components/Input';
 import t from 'translations/translate';
 
 import { fontSizes, appFont, spacing } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
 
 import type { Theme, ThemeColors } from 'models/Theme';
 import type { Event } from 'react-native';
@@ -45,13 +45,20 @@ type InputPropsType = {
   validator?: (val: string) => string,
 };
 
+type IconProps = {|
+  icon: string,
+  style?: Object,
+  onPress?: () => void,
+  persistIconOnFocus?: boolean,
+|};
+
 type CommonComponentsProps = {
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: RNTextInput,
   inputIconName?: string,
-  iconProps?: Object,
+  iconProps?: IconProps,
 };
 
 type Props = CommonComponentsProps & {
@@ -109,9 +116,10 @@ const CancelButton = styled.TouchableOpacity`
 const InputField = styled(TextInput)`
   flex: 1;
   height: 42px;
-  padding-left: 14px;
-  padding-right: 46px;
-  color: ${themedColors.text};
+  padding: 10px;
+  padding-left: ${({ needsExtraPadding }) => needsExtraPadding ? 40 : 14}px;
+  padding-right: 16px;
+  color: ${({ theme }) => theme.colors.basic010};
   font-size: ${fontSizes.regular}px;
   font-family: ${appFont.regular};
 `;
@@ -119,7 +127,7 @@ const InputField = styled(TextInput)`
 const InputIcon = styled(IconButton)`
   flex: 0 0 20px;
   position: absolute;
-  right: 10px;
+  left: 10px;
   top: 7px;
 `;
 
@@ -134,15 +142,17 @@ const InputWrapper = styled.View`
 
 const Error = styled(BaseText)`
   text-align: center;
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   margin-top: ${spacing.medium}px;
 `;
 
 
-const getBorderColor = ({ isFocused, error, colors }) => {
-  if (error) return colors.negative;
-  if (isFocused) return colors.primary;
-  return colors.tertiary;
+const getBorderColor = ({
+  isFocused, error, colors, defaultColor,
+}) => {
+  if (error) return colors.secondaryAccent240;
+  if (isFocused) return colors.basic000;
+  return defaultColor;
 };
 
 const SearchInput = (props: SearchInputProps) => {
@@ -162,15 +172,21 @@ const SearchInput = (props: SearchInputProps) => {
     borderColor,
   } = props;
 
-  const { icon, style: iconStyle = {}, onPress } = iconProps;
+  const {
+    icon,
+    style: iconStyle = {},
+    onPress,
+    persistIconOnFocus,
+  } = iconProps;
   const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
   const onIconPress = onPress || defaultOnIconPress;
   const iconName = icon || 'search'; // eslint-disable-line i18next/no-literal-string
+  const showIcon = persistIconOnFocus || !isFocused;
 
   return (
     <InputWrapper
       borderColor={borderColor}
-      backgroundColor={backgroundColor || colors.tertiary}
+      backgroundColor={backgroundColor}
     >
       <InputField
         {...inputProps}
@@ -183,18 +199,20 @@ const SearchInput = (props: SearchInputProps) => {
         underlineColorAndroid="transparent"
         autoCorrect={false}
         innerRef={inputRef}
+        needsExtraPadding={showIcon}
       />
+      {showIcon &&
       <InputIcon
         icon={iconName}
         onPress={onIconPress}
         iconStyle={{
           width: 24,
           height: 24,
-          color: colors.primary,
+          color: colors.basic020,
           fontSize: 24,
           ...iconStyle,
         }}
-      />
+      />}
     </InputWrapper>
   );
 };
@@ -301,13 +319,22 @@ class SearchBar extends React.Component<Props, State> {
     const { animShrink, isFocused, errorMessage } = this.state;
     const { value = '' } = inputProps;
     const colors = getThemeColors(theme);
-    const borderColor = getBorderColor({ isFocused, error: !!errorMessage, colors });
+    const currentTheme = getThemeType(theme);
+    const defaultInputBackgroundColor = getColorByThemeOutsideStyled(currentTheme, {
+      lightKey: 'basic060', darkKey: 'basic080',
+    });
+    const borderColor = getBorderColor({
+      isFocused,
+      error: !!errorMessage,
+      colors,
+      defaultColor: defaultInputBackgroundColor,
+    });
 
     const customInputProps = {
       inputProps,
       isFocused,
       colors,
-      backgroundColor,
+      backgroundColor: backgroundColor || defaultInputBackgroundColor,
       value,
       placeholder,
       inputRef,
@@ -343,7 +370,7 @@ class SearchBar extends React.Component<Props, State> {
           </Animated.View>
           {(isFocused || !!value || forceShowCloseButton) &&
           <CancelButton onPress={customCloseAction || this.handleCancel}>
-            <BaseText style={{ color: colors.link }}>{t('button.close')}</BaseText>
+            <BaseText style={{ color: colors.basic000 }}>{t('button.close')}</BaseText>
           </CancelButton>
           }
         </Row>

@@ -39,7 +39,7 @@ import { activeAccountAddressSelector } from 'selectors';
 
 // utils
 import { isValidAddress } from 'utils/validators';
-import { themedColors } from 'utils/themes';
+import { getColorByTheme } from 'utils/themes';
 import { noop } from 'utils/common';
 
 // types
@@ -63,11 +63,10 @@ export type Props = {|
   children?: any,
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
-  onCustomOptionSet?: (option: Option) => void,
 |};
 
 const SelectorPill = styled.TouchableOpacity`
-  background-color: ${themedColors.tertiary};
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   padding: 10px 16px;
   border-radius: 24px;
 `;
@@ -93,7 +92,6 @@ const Selector = ({
   children,
   customOptionButtonLabel,
   customOptionButtonOnPress,
-  onCustomOptionSet,
 }: Props) => {
   const optionsRef = useRef();
 
@@ -139,7 +137,6 @@ const Selector = ({
         }}
         validator={handleSearchValidation}
         allowEnteringCustomAddress={allowEnteringCustomAddress}
-        onCustomOptionSet={onCustomOptionSet}
         customOptionButtonLabel={customOptionButtonLabel}
         customOptionButtonOnPress={customOptionButtonOnPress}
       />

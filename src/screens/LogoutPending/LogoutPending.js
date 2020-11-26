@@ -16,7 +16,7 @@ const LogoutPending = (props: Props) => {
   const { theme } = props;
   const colors = getThemeColors(theme);
   return (
-    <Wrapper fullscreen center style={{ backgroundColor: colors.surface }}>
+    <Wrapper fullscreen center style={{ backgroundColor: colors.basic070 }}>
       <Loader
         messages={[t('paragraph.loggingOutFirstMessage'), t('paragraph.loggingOutSecondMessage')]}
         firstMessageWithoutDelay

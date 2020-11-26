@@ -23,8 +23,9 @@ import { storiesOf } from '@storybook/react-native';
 
 import { noop } from 'utils/common';
 import RetryGraphQueryBox from './RetryGraphQueryBox';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
-const stories = storiesOf('RetryGraphQueryBox', module);
+const stories = storiesOf('RetryGraphQueryBox', module).addDecorator(WithThemeDecorator);
 
 stories.add('default', () => (
   <RetryGraphQueryBox

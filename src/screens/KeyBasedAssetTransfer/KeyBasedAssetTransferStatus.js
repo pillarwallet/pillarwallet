@@ -131,7 +131,6 @@ const KeyBasedAssetTransferStatus = ({
             <Animation source={animationSuccess} />
             <Title center>{t('transactions.title.keyBasedAssetsMigrationComplete')}</Title>
             <Button
-              block
               title={t('button.magic')}
               onPress={() => navigation.goBack()}
               marginTop={50}
@@ -143,7 +142,7 @@ const KeyBasedAssetTransferStatus = ({
         <ScrollWrapper contentContainerStyle={{ paddingVertical: spacing.large }}>
           <LoadingWrapper>
             <Paragraph center>{t('transactions.title.creatingTransactions')}</Paragraph>
-            <Spinner style={{ marginTop: spacing.small }} width={25} height={25} />
+            <Spinner style={{ marginTop: spacing.small }} size={25} trackWidth={2} />
           </LoadingWrapper>
         </ScrollWrapper>
       )}

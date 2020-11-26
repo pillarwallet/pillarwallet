@@ -81,6 +81,7 @@ const DetailsWrapper = styled.View`
 
 const FooterInner = styled.View`
   align-items: center;
+  width: 100%;
 `;
 
 const NotEnoughFee = styled(BaseText)`

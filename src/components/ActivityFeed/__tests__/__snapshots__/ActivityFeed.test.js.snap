@@ -103,9 +103,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -134,7 +132,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#0A1427",
                       "fontSize": 14,
                       "lineHeight": 22,
                     },
@@ -155,9 +153,7 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -218,7 +214,9 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                       Object {
                         "alignItems": "center",
                         "backgroundColor": "#EBF0F6",
+                        "borderColor": "#EBF0F6",
                         "borderRadius": 24,
+                        "borderWidth": 0,
                         "height": 48,
                         "justifyContent": "center",
                         "overflow": "hidden",
@@ -274,7 +272,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           "flexGrow": 1,
                           "flexShrink": 1,
                           "justifyContent": "center",
-                          "marginTop": 0,
                           "minHeight": 54,
                         },
                         Object {
@@ -339,7 +336,6 @@ exports[`ActivityFeed does not fail for invalid values 1`] = `
                           "flexDirection": "column",
                           "justifyContent": "center",
                           "marginLeft": 10,
-                          "marginTop": 0,
                           "minHeight": 54,
                         },
                         Object {
@@ -520,9 +516,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -551,7 +545,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
+                      "color": "#0A1427",
                       "fontSize": 14,
                       "lineHeight": 22,
                     },
@@ -572,9 +566,7 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
         <View
           style={
             Array [
-              Object {
-                "backgroundColor": "#FAFAFA",
-              },
+              Object {},
               undefined,
             ]
           }
@@ -635,7 +627,9 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                       Object {
                         "alignItems": "center",
                         "backgroundColor": "#EBF0F6",
+                        "borderColor": "#EBF0F6",
                         "borderRadius": 24,
+                        "borderWidth": 0,
                         "height": 48,
                         "justifyContent": "center",
                         "overflow": "hidden",
@@ -691,7 +685,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           "flexGrow": 1,
                           "flexShrink": 1,
                           "justifyContent": "center",
-                          "marginTop": 0,
                           "minHeight": 54,
                         },
                         Object {
@@ -756,7 +749,6 @@ exports[`ActivityFeed renders the Asset correctly 1`] = `
                           "flexDirection": "column",
                           "justifyContent": "center",
                           "marginLeft": 10,
-                          "marginTop": 0,
                           "minHeight": 54,
                         },
                         Object {

@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { FlatList, Alert, View } from 'react-native';
+import { FlatList, Alert } from 'react-native';
 import Emoji from 'react-native-emoji';
 import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
@@ -30,13 +30,12 @@ import t from 'translations/translate';
 import type { NavigationScreenProp } from 'react-navigation';
 
 // utils
-import { getThemeColors, themedColors } from 'utils/themes';
-import { spacing, fontStyles } from 'utils/variables';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
+import { spacing, fontStyles, fontSizes } from 'utils/variables';
 import { images } from 'utils/images';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import SettingsListItem from 'components/ListItem/SettingsItem';
 import { ListCard } from 'components/ListItem/ListCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
@@ -55,7 +54,7 @@ import {
   KEY_BASED_ASSET_TRANSFER_STATUS,
   CONTACTS_FLOW,
 } from 'constants/navigationConstants';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { lockScreenAction, logoutAction } from 'actions/authActions';
@@ -88,6 +87,12 @@ type Props = {
   keyBasedWalletHasPositiveBalance: boolean,
 };
 
+type IconProps = {
+  emoji?: string,
+  icon?: string,
+  iconColor?: string,
+};
+
 const Footer = styled.View``;
 
 const LinksSection = styled.View`
@@ -98,8 +103,6 @@ const LinksSection = styled.View`
 `;
 
 const LogoutSection = styled.View`
-  border-top-color: ${themedColors.tertiary};
-  border-top-width: 1px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -107,8 +110,9 @@ const LogoutSection = styled.View`
 `;
 
 const LockScreenSection = styled.View`
-  border-top-color: ${themedColors.tertiary};
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   border-top-width: 1px;
+  border-bottom-width: 1px;
   flex-direction: row;
   justify-content: center;
   align-items: center;
@@ -121,7 +125,7 @@ const HeaderLogo = styled(CachedImage)`
 `;
 
 const LogoutIcon = styled(Icon)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   ${fontStyles.regular};
   margin-right: 5px;
 `;
@@ -131,16 +135,30 @@ const LegalTextLink = styled(TextLink)`
 `;
 
 const LogoutTextLink = styled(TextLink)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   ${fontStyles.regular};
 `;
 
 const LockScreenTextLink = styled(TextLink)`
-  color: ${themedColors.link};
   ${fontStyles.regular};
 `;
 
+const IconWrapper = styled.View`
+  margin-right: 10px;
+`;
+
+const ItemIcon = styled(Icon)`
+  color: ${({ color, theme }) => color || theme.colors.basic020};
+  font-size: ${fontSizes.big}px;
+`;
+
 const SEPARATOR_SYMBOL = '  •  ';
+
+const CustomIcon = ({ emoji, icon, iconColor }: IconProps) => {
+  if (emoji) return (<IconWrapper><Emoji name={emoji} /></IconWrapper>);
+  if (icon) return (<IconWrapper><ItemIcon name={icon} color={iconColor} /></IconWrapper>);
+  return null;
+};
 
 const Menu = ({
   theme,
@@ -161,7 +179,7 @@ const Menu = ({
   const isBackedUp = backupStatus.isImported || backupStatus.isBackedUp || __DEV__;
   const colors = getThemeColors(theme);
 
-  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(FEATURE_FLAGS.KEY_BASED_ASSETS_MIGRATION);
+  const isKeyBasedAssetsMigrationEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.KEY_BASED_ASSETS_MIGRATION);
   const isKeyBasedAssetsMigrationHidden = !isKeyBasedAssetsMigrationEnabled || (
     !hasKeyBasedAssetsTransferInProgress && !keyBasedWalletHasPositiveBalance
   );
@@ -171,28 +189,24 @@ const Menu = ({
       key: 'appSettings',
       title: t('settingsContent.settingsItem.appSettings.title'),
       emoji: 'gear',
-      card: true,
       action: () => navigation.navigate(APP_SETTINGS),
     },
     {
       key: 'userProfile',
       title: t('settingsContent.settingsItem.userProfile.title'),
       emoji: 'male-singer',
-      card: true,
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
-      card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
     },
     {
       key: 'walletSettings',
       title: t('settingsContent.settingsItem.walletSettings.title'),
       emoji: 'moneybag',
-      card: true,
       action: () => navigation.navigate(WALLET_SETTINGS),
       labelBadge: !isBackedUp && {
         label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
@@ -256,10 +270,6 @@ const Menu = ({
       title,
       action,
       labelBadge,
-      card,
-      emoji,
-      icon,
-      iconColor,
       hidden,
     } = item;
 
@@ -267,25 +277,13 @@ const Menu = ({
       return null;
     }
 
-    if (card) {
-      return (
-        <ListCard
-          title={title}
-          action={action}
-          labelBadge={labelBadge}
-          contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
-          customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
-        />
-      );
-    }
-
     return (
-      <SettingsListItem
-        label={title}
-        onPress={action}
+      <ListCard
+        title={title}
+        action={action}
         labelBadge={labelBadge}
-        icon={icon}
-        iconColor={iconColor}
+        contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
+        customIcon={<CustomIcon {...item} />}
       />
     );
   };

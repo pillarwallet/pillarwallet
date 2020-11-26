@@ -20,14 +20,12 @@
 import * as React from 'react';
 import { TouchableWithoutFeedback } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
-import styled, { withTheme } from 'styled-components/native';
+import styled from 'styled-components/native';
 import SlideModal from 'components/Modals/SlideModal';
-import { getThemeColors, themedColors } from 'utils/themes';
 import { MediumText, BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
 import { spacing, fontStyles } from 'utils/variables';
 import { noop } from 'utils/common';
-import type { Theme } from 'models/Theme';
 
 type ItemType = {
   label: string,
@@ -38,14 +36,9 @@ type ItemType = {
   isDisabled?: boolean,
 }
 
-type OwnProps = {|
+type Props = {|
   items: ItemType[],
   doNotCloseOnPress?: boolean,
-|};
-
-type Props = {|
-  ...OwnProps,
-  theme: Theme,
 |};
 
 type ItemProps = {
@@ -75,12 +68,12 @@ const Row = styled.View`
 `;
 
 const ChevronIcon = styled(Icon)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.tiny};
 `;
 
 const Paragraph = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.medium};
   margin-top: 8px;
 `;
@@ -131,14 +124,10 @@ class ActionModal extends React.Component<Props> {
   };
 
   render() {
-    const { theme } = this.props;
-    const colors = getThemeColors(theme);
-
     return (
       <SlideModal
         ref={this.modalRef}
         noClose
-        backgroundColor={colors.card}
         hideHeader
         sideMargins={spacing.large}
       >
@@ -148,4 +137,4 @@ class ActionModal extends React.Component<Props> {
   }
 }
 
-export default (withTheme(ActionModal): React.AbstractComponent<OwnProps>);
+export default (ActionModal: React.AbstractComponent<Props>);

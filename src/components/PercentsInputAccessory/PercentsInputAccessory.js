@@ -20,9 +20,7 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled from 'styled-components/native';
-import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
-
 
 type Props = {
   handleUsePercent: (number) => any,
@@ -34,9 +32,9 @@ const AccessoryContentWrapper = styled.View`
   flex-direction: row;
   justify-content: space-around;
   padding: 10px 0;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   border-top-width: 1px;
-  border-color: ${themedColors.tertiary};
+  border-color: ${({ theme }) => theme.colors.basic060};
 `;
 
 const PercentsInputAccessory = ({ handleUsePercent }: Props) => {

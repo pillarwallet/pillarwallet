@@ -20,18 +20,13 @@
 
 import * as React from 'react';
 import { storiesOf } from '@storybook/react-native';
-import styled, { withTheme } from 'styled-components/native';
+import { withTheme } from 'styled-components/native';
 import { GBP } from 'constants/assetsConstants';
 
 import { ValueInputComponent } from 'components/ValueInput';
+import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
+import CenterViewStretchDecorator from '../../../storybook/CenterViewStretchDecorator';
 
-
-const Wrapper = styled.View`
-  align-items: center;
-  justify-content: center;
-  padding: 20px;
-  flex: 1;
-`;
 
 const reduxMock = {
   assets: [
@@ -116,15 +111,15 @@ const reduxMock = {
 const ValueInputWithTheme = withTheme(ValueInputComponent);
 
 storiesOf('Value Input', module)
+  .addDecorator(CenterViewStretchDecorator)
+  .addDecorator(WithThemeDecorator)
   .add('default', () => (
-    <Wrapper>
-      <ValueInputWithTheme
-        {...reduxMock}
-        value=""
-        onValueChange={() => {}}
-        assetData={reduxMock.assets[0]}
-        onAssetPress={() => {}}
-        onAssetDataChange={() => {}}
-      />
-    </Wrapper>
+    <ValueInputWithTheme
+      {...reduxMock}
+      value=""
+      onValueChange={() => {}}
+      assetData={reduxMock.assets[0]}
+      onAssetPress={() => {}}
+      onAssetDataChange={() => {}}
+    />
   ));

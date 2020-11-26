@@ -29,7 +29,6 @@ import t from 'translations/translate';
 
 import Modal from 'components/Modal';
 import Button from 'components/Button';
-import ButtonText from 'components/ButtonText';
 import Header from 'components/Header';
 import { Footer } from 'components/Layout';
 import IconButton from 'components/IconButton';
@@ -135,7 +134,7 @@ const ResultScreen = styled.View`
   justify-content: center;
   align-items: center;
   padding: 30px;
-  background-color: ${themedColors.surface};
+  background-color: ${({ theme }) => theme.colors.basic070};
   z-index: 10;
 `;
 
@@ -446,8 +445,8 @@ class Camera extends React.Component<Props, State> {
             {preview}
           </PreviewWrapper>
           <ResultScreenFooter>
-            <Button marginBottom="20px" onPress={this.setImage} title={t('button.confirm')} />
-            <ButtonText buttonText={t('button.tryAgain')} onPress={this.getBackToCamera} />
+            <Button marginBottom="4px" onPress={this.setImage} title={t('button.confirm')} block={false} />
+            <Button onPress={this.getBackToCamera} title={t('button.tryAgain')} transparent />
           </ResultScreenFooter>
         </ResultScreen>
         }

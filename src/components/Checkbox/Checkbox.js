@@ -20,12 +20,12 @@
 import * as React from 'react';
 import { TouchableOpacity } from 'react-native';
 import { BaseText } from 'components/Typography';
-import styled, { withTheme } from 'styled-components/native';
+import styled, { withTheme, css } from 'styled-components/native';
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import Icon from 'components/Icon';
-import { LIGHT_THEME, DARK_THEME } from 'constants/appSettingsConstants';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
-import { getThemeColors, getThemeType } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 
 
 type Props = {
@@ -42,18 +42,6 @@ type Props = {
   positive?: boolean,
 };
 
-const getCheckboxBorderColor = (theme: Theme, active: boolean, positive: boolean, rounded: boolean) => {
-  const colors = getThemeColors(theme);
-  if (rounded || getThemeType(theme) === DARK_THEME) {
-    return 'transparent';
-  }
-  if (active) {
-    if (positive) return colors.positive;
-    return colors.primary;
-  }
-  return colors.border;
-};
-
 const CheckboxBox = styled.View`
   width: 24;
   height: 24;
@@ -61,20 +49,12 @@ const CheckboxBox = styled.View`
   border-radius: ${({ rounded }) => rounded ? 12 : 2}px;
   flex: 0 0 24px;
   border-width: 1px;
-  border-color: ${({
-    theme, active, positive, rounded,
-  }) => getCheckboxBorderColor(theme, active, positive, rounded)};
+  border-color: ${({ active }) => active
+    ? css`${getColorByTheme({ lightKey: 'primaryAccent130', darkKey: 'basic090' })}`
+    : css`${getColorByTheme({ lightKey: 'basic080', darkKey: 'basic090' })}`};
   justify-content: center;
   align-items: center;
-  ${({ rounded, theme }) => {
-    if (rounded) {
-      return `background-color: ${theme.colors.card}`;
-    }
-    if (getThemeType(theme) === DARK_THEME) {
-      return `background-color: ${theme.colors.tertiary}`;
-    }
-    return '';
-  }};
+  background-color: ${getColorByTheme({ lightKey: 'basic070', darkKey: 'basic090' })};
   ${({ rounded, clickable, theme }) => rounded && clickable && theme.current === LIGHT_THEME
     ? `
       shadow-color: #000000;
@@ -87,7 +67,7 @@ const CheckboxBox = styled.View`
 
 const CheckboxText = styled(BaseText)`
   ${props => props.small ? fontStyles.regular : fontStyles.medium};
-  color: ${({ light, theme }) => light ? theme.colors.accent : theme.colors.text};
+  color: ${({ light, theme }) => light ? theme.colors.basic020 : theme.colors.basic010};
   flex-wrap: wrap;
 `;
 

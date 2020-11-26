@@ -33,7 +33,7 @@ import { DAI, ETH } from 'constants/assetsConstants';
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
-import { fontSizes, fontStyles, spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
@@ -178,10 +178,7 @@ const PoolTokenAllowModal = ({
             if (modalRef.current) modalRef.current.close();
             onAllow();
           }}
-          regularText
           style={{ marginTop: 28 }}
-          textStyle={{ fontSize: fontSizes.medium }}
-          block
           disabled={isDisabled}
         />
       </ContentWrapper>

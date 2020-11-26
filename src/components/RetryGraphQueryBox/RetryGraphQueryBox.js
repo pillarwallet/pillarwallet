@@ -78,7 +78,7 @@ const RetryGraphQueryBox = ({
       <Row>
         <RowButton
           small
-          negative
+          danger
           title={t('button.cancel')}
           onPress={() => {
             setCancelled(true);

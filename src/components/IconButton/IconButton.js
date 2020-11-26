@@ -23,7 +23,7 @@ import { StyleSheet } from 'react-native';
 import Icon from 'components/Icon';
 import { MediumText } from 'components/Typography';
 import { fontSizes } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 
 export type Props = {
@@ -40,6 +40,7 @@ export type Props = {
   horizontalAlign?: string,
   theme: Theme,
   secondary?: boolean,
+  hitSlop?: { top: number, left: number, bottom: number, right: number },
 }
 
 const IconButtonWrapper = styled.TouchableOpacity`
@@ -49,7 +50,7 @@ const IconButtonWrapper = styled.TouchableOpacity`
 `;
 
 const ButtonText = styled(MediumText)`
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.basic000};
   font-size: ${fontSizes.small}px;
 `;
 
@@ -68,9 +69,10 @@ const IconButton = (props: Props) => {
     horizontalAlign,
     secondary,
     theme,
+    hitSlop,
   } = props;
   const colors = getThemeColors(theme);
-  const iconColor = secondary ? colors.secondaryText : color;
+  const iconColor = secondary ? colors.basic030 : color;
   const iconParams = {
     active: false,
     name: icon,
@@ -87,7 +89,7 @@ const IconButton = (props: Props) => {
     type,
   };
   return (
-    <IconButtonWrapper style={style} onPress={onPress} horizontalAlign={horizontalAlign}>
+    <IconButtonWrapper style={style} onPress={onPress} horizontalAlign={horizontalAlign} hitSlop={hitSlop}>
       <Icon {...iconParams} />
       {!!iconText && <ButtonText style={iconTextStyle}>{iconText}</ButtonText>}
     </IconButtonWrapper>

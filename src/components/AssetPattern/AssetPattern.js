@@ -24,7 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
 import { CachedImage } from 'react-native-cached-image';
 
-import { getThemeType, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeType } from 'utils/themes';
 import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Theme } from 'models/Theme';
@@ -75,7 +75,7 @@ const NoIconWrapper = styled.View`
 const IconWrapper = styled.View`
   height: ${props => props.diameter}px;
   width: ${props => props.diameter}px;
-  border: 2px solid ${themedColors.card};
+  border: 2px solid ${({ theme }) => theme.colors.basic050};
   position: absolute;
   z-index: ${props => props.zIndex};
   top: ${props => props.top}px;
@@ -83,11 +83,11 @@ const IconWrapper = styled.View`
   justify-content: center;
   align-items: center;
   elevation: ${props => props.addShadow ? props.elevation : 0};
-  shadow-color: ${themedColors.text};
+  shadow-color: ${getColorByTheme({ lightKey: 'basic010', darkCustom: 'transparent' })};
   shadow-offset: ${props => props.addShadow ? '0px 3px' : 0};
   shadow-opacity: ${props => props.addShadow ? props.shadowOpacity : 0};
   shadow-radius: 6px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 const NoIconImage = styled(CachedImage)`

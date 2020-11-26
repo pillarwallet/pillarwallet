@@ -26,15 +26,15 @@ type Props = {
   centerText?: boolean,
   color?: string,
   style?: Object,
-}
+};
 
 const StyledText = styled(MediumText)`
   font-size: ${fontSizes.medium}px;
-  line-height: 24px;
-  color: ${({ color, theme }) => color || theme.colors.text};
+  line-height: 20px;
+  color: ${({ color, theme }) => color || theme.colors.basic010};
   text-align: ${props => props.centerText ? 'center' : 'left'};
 `;
 
-const HeaderTitleText = (props: Props) => <StyledText {...props} />;
+const HeaderTitleText = (props: Props) => <StyledText {...props} ellipsizeMode="tail" numberOfLines={2} />;
 
 export default HeaderTitleText;

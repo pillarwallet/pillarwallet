@@ -18,15 +18,14 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import { View } from 'react-native';
 import { getStorybookUI, configure, addDecorator } from '@storybook/react-native';
 import AsyncStorage from '@react-native-community/async-storage';
 import { withI18next } from 'storybook-addon-i18next';
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
+import { createAppContainer, createSwitchNavigator } from 'react-navigation';
 
 import { loadStories } from './storyLoader';
-import withTheme from './withTheme';
 import './rn-addons';
 
 
@@ -35,7 +34,6 @@ i18n
   .init();
 
 configure(loadStories, module);
-addDecorator(withTheme);
 addDecorator(withI18next({
   i18n,
 }));
@@ -44,10 +42,9 @@ const StorybookUIRoot = () => {
   const StorybookComponent = getStorybookUI({
     asyncStorage: AsyncStorage,
   });
-  return (
-    <View style={{ flex: 1, backgroundColor: '#FFFFFF' }}>
-      <StorybookComponent />
-    </View>);
+  return <StorybookComponent />;
 };
 
-export default StorybookUIRoot;
+const StorybookWithNav = createAppContainer(createSwitchNavigator({ Screen: StorybookUIRoot }));
+
+export default StorybookWithNav;

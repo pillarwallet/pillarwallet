@@ -34,7 +34,7 @@ import { getThemeColors } from 'utils/themes';
 import { reportErrorLog } from 'utils/common';
 
 // constants
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -84,7 +84,7 @@ const baseStyles = (colors) => {
       strong: boldStyle,
       a: {
         ...boldStyle,
-        color: colors.primary,
+        color: colors.basic000,
         fontSize: fontSizes.regular,
         lineHeight: lineHeights.regular,
       },
@@ -117,7 +117,7 @@ class HTMLContentModal extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    const endpointPrefix = firebaseRemoteConfig.getString(FEATURE_FLAGS.LEGAL_HTML_ENDPOINT_PREFIX);
+    const endpointPrefix = firebaseRemoteConfig.getString(REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX);
     const { htmlEndpoint } = this.props;
     // eslint-disable-next-line i18next/no-literal-string
     const htmlEndpointFull = `${endpointPrefix}${htmlEndpoint}.html`;
@@ -185,7 +185,7 @@ class HTMLContentModal extends React.Component<Props, State> {
     const colors = getThemeColors(theme);
 
     const commonTextStyle = {
-      color: colors.text,
+      color: colors.basic010,
       fontFamily: appFont.regular,
     };
 

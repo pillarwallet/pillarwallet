@@ -66,7 +66,7 @@ const SimpleSwitcher = (props: Props) => {
     <WalletTogleWrapper>
       <TouchableOpacity onPress={onPress} disabled={isLoading}>
         <Row>
-          {!isLoading ? <ToggleText>{title}</ToggleText> : <Spinner width={14} height={14} />}
+          {!isLoading ? <ToggleText>{title}</ToggleText> : <Spinner size={14} trackWidth={1} />}
           <ToggleIcon name="selector" />
         </Row>
       </TouchableOpacity>

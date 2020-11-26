@@ -76,12 +76,14 @@ const ExploreAppsItem = (props: Props) => {
             ? t('walletConnectContent.label.upcomingApp')
             : t('walletConnectContent.button.checkApp')
           }
+          transparent={item.disabled}
           onPress={handleAppUrl}
           small
           height={32}
           horizontalPaddings={9}
           disabled={item.disabled}
           style={{ maxWidth: 150 }}
+          block={false}
         />
       </AppItemRowWrapper>
       <AppText>

@@ -46,7 +46,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getCachedTranslationResources } from 'utils/cache';
-import { FEATURE_FLAGS } from 'constants/featureFlagsConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 import { CACHE_STATUS } from 'constants/cacheConstants';
 
 
@@ -105,8 +105,8 @@ const getLocalTranslations = (language: string) => {
 const getTranslationsResources = async (props: GetTranslationResourcesProps) => {
   const { language, dispatch, getState } = props;
   let resources;
-  let version = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_LATEST_TIMESTAMP);
-  const baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
+  let version = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP);
+  const baseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_URL);
 
   const missingNsArray = [];
   const translationsData = getTranslationData(language, baseUrl, version);
@@ -341,7 +341,7 @@ export const updateTranslationResourceOnContextChangeAction = () => {
 
     if (!isFetched) return;
 
-    const baseUrl = firebaseRemoteConfig.getString(FEATURE_FLAGS.APP_LOCALES_URL);
+    const baseUrl = firebaseRemoteConfig.getString(REMOTE_CONFIG.APP_LOCALES_URL);
 
     if (!translationsInitialised || !localeConfig.isEnabled || !baseUrl) return;
 

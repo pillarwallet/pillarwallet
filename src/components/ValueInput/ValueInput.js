@@ -37,7 +37,7 @@ import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
 import { formatAmount, isValidNumber } from 'utils/common';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount } from 'utils/assets';
 
@@ -91,7 +91,7 @@ const CollectibleWrapper = styled.View`
 
 const SelectorChevron = styled(Icon)`
   font-size: 16px;
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
 `;
 
 export const getErrorMessage = (

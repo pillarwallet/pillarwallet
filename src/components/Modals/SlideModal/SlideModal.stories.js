@@ -22,8 +22,9 @@ import React from 'react';
 import { storiesOf } from '@storybook/react-native';
 
 import SlideModal from './SlideModal';
+import WithThemeDecorator from '../../../../storybook/WithThemeDecorator';
 
-const stories = storiesOf('SlideModal', module);
+const stories = storiesOf('SlideModal', module).addDecorator(WithThemeDecorator);
 
 stories.add('default', () => (
   <SlideModal title="title" />

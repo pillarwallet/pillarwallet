@@ -73,22 +73,18 @@ const DeleteAvatarModal: AbstractComponent<{||}> = () => {
           uri={profileImage}
           userName={username}
           diameter={64}
-          borderWidth={0}
-          noShadow
         />
         <Spacing h={20} />
         <BaseText medium center>{t('profileContent.modal.deleteAvatar.paragraph.areYouSure')}</BaseText>
         <Spacing h={34} />
         <Button
-          negative
-          block
+          danger
           title={t('profileContent.modal.deleteAvatar.button.delete')}
           onPress={handleDeletePress}
         />
         <Spacing h={8} />
         <Button
-          squarePrimary
-          block
+          transparent
           title={t('profileContent.modal.deleteAvatar.button.cancel')}
           onPress={close}
         />

@@ -40,7 +40,7 @@ import Tabs from 'components/Tabs';
 import CollectiblesList from 'components/CollectiblesList';
 
 import { fontSizes, spacing, fontStyles } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { getMatchingSortedData } from 'utils/textInput';
 import { isValidAddress } from 'utils/validators';
@@ -69,7 +69,6 @@ type OwnProps = {|
   forceTab?: string,
   customOptionButtonLabel?: string,
   customOptionButtonOnPress?: (option: Option) => void | Promise<void>,
-  onCustomOptionSet?: (option: Option) => void,
   onOpen?: () => void,
 |};
 
@@ -82,34 +81,34 @@ type State = {|
   query: ?string,
   hasSearchError: boolean,
   customAddressAsAnOption: ?Option,
+  isQueryValidAddress: boolean,
   activeTab: ?string,
 |};
 
 
 const DIAMETER = 64;
+const ITEM_SPACING = 13;
 
 const OptionsHeader = styled(MediumText)`
   margin: ${spacing.large}px ${spacing.layoutSides}px 0;
   ${fontStyles.regular};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
 `;
 
 const HorizontalOptions = styled.View`
-  border-bottom-width: 1px;
-  border-style: solid;
-  border-color: ${themedColors.border};
-  padding-bottom: ${spacing.small}px;
+  margin-bottom: ${spacing.small}px;
+  background-color: ${({ theme }) => theme.colors.basic070};
 `;
 
 const HorizontalOptionItem = styled.TouchableOpacity`
   align-items: center;
-  width: 90px;
+  width: ${DIAMETER + (ITEM_SPACING * 2)}px;
   padding-top: ${spacing.medium}px;
 `;
 
 const HorizontalOptionItemName = styled(BaseText)`
   ${fontStyles.small};
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic010};
   padding: 0 4px;
   margin-top: 8px;
 `;
@@ -128,7 +127,7 @@ const IconCircle = styled.View`
   width: ${DIAMETER}px;
   height: ${DIAMETER}px;
   border-radius: ${DIAMETER / 2}px;
-  background-color: ${themedColors.tertiary};
+  background-color: ${({ theme }) => theme.colors.basic020};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -159,6 +158,7 @@ class SelectorOptions extends React.Component<Props, State> {
     this.state = {
       query: null,
       customAddressAsAnOption: null,
+      isQueryValidAddress: false,
       hasSearchError: false,
       activeTab: this.props.optionTabs ? this.props.optionTabs[0]?.id : null,
     };
@@ -191,27 +191,22 @@ class SelectorOptions extends React.Component<Props, State> {
 
   handleCustomAddress = (query: string) => {
     const isValid = isValidAddress(query);
-    const address = (isValid && query) ? query : null;
-    this.handleCustomAddressAsAnOption(address);
+
+    this.setState({
+      isQueryValidAddress: isValid,
+      customAddressAsAnOption: isValid && query
+        ? this.getCustomOption(query)
+        : null,
+    });
   };
 
-  handleCustomAddressAsAnOption = (address: ?string) => {
-    const { customAddressAsAnOption } = this.state;
-    if (!customAddressAsAnOption && !address) return;
-    if (!!customAddressAsAnOption && !address) {
-      this.setState({ customAddressAsAnOption: null });
-      return;
-    }
-    if (address) this.addCustomOption(address);
-  };
-
-  addCustomOption = (address: string) => {
+  getCustomOption = (address: string) => {
     let option = {
       value: address,
       name: address,
       ethAddress: address,
     };
-    const { customOptionButtonLabel, customOptionButtonOnPress, onCustomOptionSet } = this.props;
+    const { customOptionButtonLabel, customOptionButtonOnPress } = this.props;
     if (customOptionButtonLabel && customOptionButtonOnPress) {
       option = {
         ...option,
@@ -219,9 +214,8 @@ class SelectorOptions extends React.Component<Props, State> {
         buttonAction: () => customOptionButtonOnPress(option),
       };
     }
-    this.setState({ customAddressAsAnOption: option }, () => {
-      if (onCustomOptionSet) onCustomOptionSet(option);
-    });
+
+    return option;
   };
 
   renderHorizontalOptions = (horizontalOptionsData: HorizontalOption[]) => {
@@ -240,7 +234,7 @@ class SelectorOptions extends React.Component<Props, State> {
             keyboardShouldPersistTaps="always"
             renderItem={this.renderHorizontalOption}
             horizontal
-            contentContainerStyle={{ paddingHorizontal: spacing.layoutSides, paddingVertical: spacing.medium }}
+            contentContainerStyle={{ paddingHorizontal: 7, paddingVertical: spacing.medium }}
             ItemSeparatorComponent={() => <View style={{ width: 2, height: 1 }} />}
           />
         </HorizontalOptions>
@@ -277,8 +271,6 @@ class SelectorOptions extends React.Component<Props, State> {
             userName={name}
             diameter={DIAMETER}
             textStyle={{ fontSize: fontSizes.medium }}
-            noShadow
-            borderWidth={0}
             fallbackImage={genericToken}
           />
           }
@@ -373,12 +365,13 @@ class SelectorOptions extends React.Component<Props, State> {
       optionsTitle,
       horizontalOptionsData = [],
       searchPlaceholder,
-      iconProps,
+      iconProps = {},
       allowEnteringCustomAddress,
     } = this.props;
     const {
       query,
       customAddressAsAnOption,
+      isQueryValidAddress,
       hasSearchError,
       activeTab,
     } = this.state;
@@ -406,7 +399,9 @@ class SelectorOptions extends React.Component<Props, State> {
 
     const showEmptyState = !customAddressAsAnOption && !filteredOptions?.length
       && !filteredHorizontalOptionsData.some(({ data }) => data.length);
-    const emptyStateMessage = allowEnteringCustomAddress ? t('error.invalid.address') : t('label.nothingFound');
+    const emptyStateMessage = (allowEnteringCustomAddress && !!query && !isQueryValidAddress)
+      ? t('error.invalid.address')
+      : t('label.nothingFound');
 
     const extendedHeaderItems = {
       value: 'extendedHeaderItems', /* eslint-disable-line i18next/no-literal-string */
@@ -438,7 +433,8 @@ class SelectorOptions extends React.Component<Props, State> {
         onModalHide={this.props.onHide}
         noSwipeToDismiss
         noClose
-        backgroundColor={colors.card}
+        backgroundColor={colors.basic050}
+        noTopPadding
       >
         <ContainerWithHeader
           headerProps={{
@@ -459,7 +455,7 @@ class SelectorOptions extends React.Component<Props, State> {
               inputRef={ref => { this.searchInput = ref; }}
               noClose
               marginBottom="0"
-              iconProps={iconProps}
+              iconProps={{ ...iconProps, persistIconOnFocus: true }}
             />
           </SearchBarWrapper>
           {!!optionTabs && <Tabs

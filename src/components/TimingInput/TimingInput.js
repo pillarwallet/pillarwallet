@@ -23,24 +23,21 @@ import styled from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 
 import { MediumText } from 'components/Typography';
-
-import { themedColors } from 'utils/themes';
+import { getColorByTheme } from 'utils/themes';
 
 
 type Props = {
   value: ?Date,
-  onPress?: Function,
+  onPress?: () => void,
   filled?: boolean,
 };
 
 const TextInputWrapper = styled.TouchableOpacity`
-  background-color: ${({ filled, theme }) => filled ? theme.colors.tertiary : 'transparent'};
+  background-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   padding: 13px 16px;
   border-radius: 6px;
   flex-direction: row;
   justify-content: space-between;
-  border-width: ${({ filled }) => filled ? '0' : '1px'};
-  border-color: ${themedColors.inactiveTabBarIcon};
   min-height: 56px;
 `;
 

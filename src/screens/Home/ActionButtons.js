@@ -42,6 +42,7 @@ import { accountBalancesSelector } from 'selectors/balances';
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
+import { spacing } from 'utils/variables';
 
 // models, types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -62,17 +63,13 @@ type Props = {
   smartWalletState: SmartWalletReducerState,
 };
 
-const Sizer = styled.View`
-  max-width: 350px;
+const ActionButtonsWrapper = styled.View`
+  flex-direction: row;
   align-items: center;
   align-self: center;
-`;
-
-const ActionButtonsWrapper = styled.View`
+  justify-content: center;
   width: 100%;
-  padding: 14px 10px 36px;
-  flex-direction: row;
-  justify-content: space-between;
+  padding: 18px ${spacing.layoutSides}px 28px ${spacing.layoutSides}px;
 `;
 
 const ActionButtons = ({
@@ -95,7 +92,7 @@ const ActionButtons = ({
     && isEmpty(smartWalletStatus?.sendingBlockedMessage);
 
   return (
-    <Sizer>
+    <React.Fragment>
       <ActionButtonsWrapper>
         <CircleButton
           label={t('button.addFunds')}
@@ -114,7 +111,7 @@ const ActionButtons = ({
           onPress={() => navigation.navigate(EXCHANGE)}
         />
       </ActionButtonsWrapper>
-    </Sizer>
+    </React.Fragment>
   );
 };
 
