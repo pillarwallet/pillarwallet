@@ -131,8 +131,6 @@ describe('Exchange actions test', () => {
     });
 
     it('updates query status in case of a successful response', async () => {
-      (fetchUniswapSupportedTokens: any).mockImplementationOnce(async () => ['ETH']);
-
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
         payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING },
