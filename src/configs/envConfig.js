@@ -68,7 +68,7 @@ const envVars = {
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier',
     SYNTHETIX_EXCHANGE_ADDRESS: '0xC011a73ee8576Fb46F5E1c5751cA3B9Fe0af2a6F',
     SYNTHETIX_RATES_ADDRESS: '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80',
-    UNISWAP_CACHED_SUBGRAPH_ASSETS_URL: 'https://pillar-qa-token-cacher-files.s3.eu-west-2.amazonaws.com/uniswap.csv',
+    UNISWAP_CACHED_SUBGRAPH_ASSETS_URL: 'https://pillar-prod-token-cacher-files.s3.eu-west-2.amazonaws.com/uniswap.csv',
     ...buildEnvironment,
     ...devOptions,
   },
