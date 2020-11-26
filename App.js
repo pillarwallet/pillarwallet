@@ -373,7 +373,7 @@ const AppRoot = () => (
   <Suspense fallback={<View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}><Spinner /></View>}>
     <Provider store={store}>
       <PersistGate
-        loading={<Container defaultTheme={defaultTheme}><LoadingSpinner /></Container>}
+        loading={<Container defaultTheme={defaultTheme}><LoadingSpinner theme={defaultTheme} /></Container>}
         persistor={persistor}
       >
         {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
