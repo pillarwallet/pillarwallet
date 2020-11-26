@@ -167,7 +167,6 @@ describe('Auth actions', () => {
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
-        expect(actualActions).toEqual(expectedActions);
       });
   });
 });
