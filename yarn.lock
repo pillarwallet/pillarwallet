@@ -14087,7 +14087,7 @@ react-native-branch@^4.2.1:
 
 "react-native-cached-image@https://github.com/pillarwallet/react-native-cached-image":
   version "1.4.5"
-  resolved "https://github.com/pillarwallet/react-native-cached-image#105378788f2b447a7bc43b949bc7835298bf3e6a"
+  resolved "https://github.com/pillarwallet/react-native-cached-image#1ae18ecce5c95e97ca76f2e64737297f6d7c4756"
   dependencies:
     "@react-native-community/netinfo" "^5.6.1"
     crypto-js "3.1.9-1"
