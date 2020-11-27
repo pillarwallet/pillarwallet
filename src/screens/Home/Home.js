@@ -50,10 +50,12 @@ import {
   WALLETCONNECT,
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
+  RARI_DEPOSIT,
 } from 'constants/navigationConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
-import { DAI } from 'constants/assetsConstants';
+import { DAI, defaultFiatCurrency } from 'constants/assetsConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 
 // actions
 import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
@@ -71,12 +73,14 @@ import {
   toggleLendingDepositsAction,
   togglePoolTogetherAction,
   toggleSablierAction,
+  toggleRariAction,
 } from 'actions/appSettingsActions';
 import { checkForMissedAssetsAction, fetchAllAccountsBalancesAction } from 'actions/assetsActions';
 import { dismissReferFriendsOnHomeScreenAction } from 'actions/insightsActions';
 import { fetchDepositedAssetsAction } from 'actions/lendingActions';
 import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 import { fetchUserStreamsAction } from 'actions/sablierActions';
+import { fetchRariDataAction } from 'actions/rariActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -90,7 +94,7 @@ import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'utils/feedData';
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
-import { formatAmountDisplay } from 'utils/common';
+import { formatAmountDisplay, formatFiat } from 'utils/common';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -102,6 +106,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
 import type { DepositedAsset } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
+import type { RariPool, Interests } from 'models/RariPool';
 
 // partials
 import WalletsPart from './WalletsPart';
@@ -156,6 +161,13 @@ type Props = {
   hideSablier: boolean,
   fetchUserStreams: () => void,
   sablierEvents: Object[],
+  toggleRari: () => void,
+  hideRari: boolean,
+  isFetchingRariData: boolean,
+  rariApy: {[RariPool]: number},
+  rariUserDepositInUSD: {[RariPool]: number},
+  rariUserInterests: {[RariPool]: ?Interests},
+  fetchRariData: () => void,
 };
 
 const RequestsWrapper = styled.View`
@@ -178,6 +190,7 @@ const aaveImage = require('assets/images/apps/aave.png');
 const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
+const rariLogo = require('assets/images/rari_logo.png');
 
 class HomeScreen extends React.Component<Props> {
   _willFocus: NavigationEventSubscription;
@@ -194,6 +207,7 @@ class HomeScreen extends React.Component<Props> {
       isSmartWalletActive,
       fetchPoolStats,
       fetchUserStreams,
+      fetchRariData,
     } = this.props;
 
     logScreenView('View home', 'Home');
@@ -212,6 +226,7 @@ class HomeScreen extends React.Component<Props> {
     fetchReferralRewardsIssuerAddresses();
     fetchDepositedAssets();
     fetchUserStreams();
+    fetchRariData();
   }
 
   componentWillUnmount() {
@@ -249,6 +264,7 @@ class HomeScreen extends React.Component<Props> {
       fetchPoolStats,
       isSmartWalletActive,
       fetchUserStreams,
+      fetchRariData,
     } = this.props;
 
     checkForMissedAssets();
@@ -263,6 +279,7 @@ class HomeScreen extends React.Component<Props> {
     if (isSmartWalletActive) {
       fetchPoolStats();
       fetchUserStreams();
+      fetchRariData();
     }
   };
 
@@ -341,6 +358,61 @@ class HomeScreen extends React.Component<Props> {
     return <SablierStream stream={stream} />;
   };
 
+  renderEarnedInterestsPercent = (interestsPercentage: number) => {
+    const { theme } = this.props;
+    const colors = getThemeColors(theme);
+    const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
+    let earnedPercentTranslation = t('percentValue', { value: formattedInterestsPercentage });
+    let earnedPercentColor = colors.text;
+
+    if (interestsPercentage > 0) {
+      earnedPercentTranslation = t('positivePercentValue', { value: formattedInterestsPercentage });
+      earnedPercentColor = colors.positive;
+    } else if (interestsPercentage < 0) {
+      earnedPercentTranslation = t('negativePercentValue', { value: formattedInterestsPercentage });
+      earnedPercentColor = colors.negative;
+    }
+
+    return (
+      <BaseText color={earnedPercentColor} regular>{earnedPercentTranslation}</BaseText>
+    );
+  };
+
+  renderRariPool = ({ item: deposit }) => {
+    const {
+      pool,
+      balanceInUSD,
+    } = deposit;
+    const {
+      rariApy,
+      baseFiatCurrency,
+      rariUserInterests,
+    } = this.props;
+
+    const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    const poolsLabels = {
+      [RARI_POOLS.STABLE_POOL]: t('rariContent.depositsList.stablePool'),
+      [RARI_POOLS.YIELD_POOL]: t('rariContent.depositsList.yieldPool'),
+      [RARI_POOLS.ETH_POOL]: t('rariContent.depositsList.ethPool'),
+    };
+
+    return (
+      <ListItemWithImage
+        label={poolsLabels[pool]}
+        subtext={t('rariContent.label.currentAPYWithPercentage', { percentage: formatAmountDisplay(rariApy[pool]) })}
+        itemImageSource={rariLogo}
+        onPress={() => this.props.navigation.navigate(RARI_DEPOSIT)}
+        iconImageSize={48}
+        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
+      >
+        <DepositedAssetGain>
+          {formatFiat(balanceInUSD, fiatCurrency)}
+        </DepositedAssetGain>
+        {this.renderEarnedInterestsPercent(rariUserInterests[pool].interestsPercentage)}
+      </ListItemWithImage>
+    );
+  }
+
   render() {
     const {
       intercomNotificationsCount,
@@ -375,6 +447,10 @@ class HomeScreen extends React.Component<Props> {
       toggleSablier,
       hideSablier,
       sablierEvents,
+      toggleRari,
+      hideRari,
+      isFetchingRariData,
+      rariUserDepositInUSD,
     } = this.props;
 
     const tokenTxHistory = history
@@ -422,6 +498,14 @@ class HomeScreen extends React.Component<Props> {
     const latestOutgoingStream = outgoingStreams.sort((a, b) => (+b.startTime) - (+a.startTime))[0];
     const streams = [latestOutgoingStream, latestIncomingStream].filter(stream => !!stream);
     const hasStreams = !!streams.length;
+
+    const rariDeposits = Object.keys(rariUserDepositInUSD)
+      .map(rariPool => ({
+        pool: rariPool,
+        balanceInUSD: rariUserDepositInUSD[rariPool],
+      }))
+      .filter(pool => !!pool.balanceInUSD);
+    const hasRariDeposits = !!rariDeposits.length;
 
     return (
       <React.Fragment>
@@ -574,6 +658,25 @@ class HomeScreen extends React.Component<Props> {
                       open={!hideSablier}
                     />
                   }
+                  {!!hasRariDeposits && !!isSmartWalletActive &&
+                    <CollapsibleSection
+                      label={t('rariContent.depositsList.title')}
+                      showLoadingSpinner={isFetchingRariData}
+                      labelRight={isFetchingRariData ? null : t('button.viewAll')}
+                      onPressLabelRight={() => navigation.navigate(RARI_DEPOSIT)}
+                      collapseContent={
+                        <FlatList
+                          data={rariDeposits}
+                          keyExtractor={(item) => item.id}
+                          renderItem={this.renderRariPool}
+                          initialNumToRender={2}
+                          listKey="rari"
+                        />
+                      }
+                      onPress={toggleRari}
+                      open={!hideRari}
+                    />
+                  }
                 </React.Fragment>
               )}
               flatListProps={{
@@ -602,7 +705,7 @@ const mapStateToProps = ({
   userEvents: { data: userEvents },
   appSettings: {
     data: {
-      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier,
+      baseFiatCurrency, hideBadges, hideLendingDeposits, hidePoolTogether, hideSablier, hideRari,
     },
   },
   walletConnect: { requests: walletConnectRequests },
@@ -611,6 +714,9 @@ const mapStateToProps = ({
   lending: { depositedAssets, isFetchingDepositedAssets },
   poolTogether: { isFetchingPoolStats },
   sablier: { incomingStreams, outgoingStreams, isFetchingStreams },
+  rari: {
+    isFetchingRariData, rariApy, userDepositInUSD: rariUserDepositInUSD, userInterests: rariUserInterests,
+  },
 }: RootReducerState): $Shape<Props> => ({
   user,
   intercomNotificationsCount,
@@ -622,6 +728,7 @@ const mapStateToProps = ({
   hideBadges,
   hidePoolTogether,
   hideSablier,
+  hideRari,
   walletConnectRequests,
   isPillarRewardCampaignActive,
   referFriendsOnHomeScreenDismissed,
@@ -632,6 +739,10 @@ const mapStateToProps = ({
   incomingStreams,
   outgoingStreams,
   isFetchingStreams,
+  isFetchingRariData,
+  rariApy,
+  rariUserDepositInUSD,
+  rariUserInterests,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -667,6 +778,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: () => dispatch(fetchAllPoolsPrizes()),
   fetchUserStreams: () => dispatch(fetchUserStreamsAction()),
   toggleSablier: () => dispatch(toggleSablierAction()),
+  toggleRari: () => dispatch(toggleRariAction()),
+  fetchRariData: () => dispatch(fetchRariDataAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

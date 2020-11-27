@@ -19,7 +19,6 @@
 */
 import { getRariPoolsEnv, getEnv } from 'configs/envConfig';
 
-export const SET_RARI_APY = 'SET_RARI_APY';
 export const SET_RARI_USER_DATA = 'SET_RARI_USER_DATA';
 export const SET_FETCHING_RARI_DATA = 'SET_FETCHING_RARI_DATA';
 export const SET_FETCHING_RARI_DATA_ERROR = 'SET_FETCHING_RARI_DATA_ERROR';

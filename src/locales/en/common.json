@@ -1477,7 +1477,8 @@
       "claimedSoFar": "{{amount}} RGT claimed so far",
       "youAreClaiming": "You are claiming rewards",
       "rgtPrice": "RGT price",
-      "rgtSupply": "RGT supply"
+      "rgtSupply": "RGT supply",
+      "currentAPYWithPercentage": "Current APY: {{percentage}}%"
     },
     "button": {
       "withdraw": "Withdraw",
@@ -1537,6 +1538,12 @@
       "stablePool": "Stable Pool",
       "yieldPool": "Yield Pool",
       "ethPool": "ETH Pool"
+    },
+    "depositsList": {
+      "title": "Rari Capital",
+      "stablePool": "Stable pool",
+      "yieldPool": "Yield pool",
+      "ethPool": "ETH pool"
     }
   },
 

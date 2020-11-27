@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  SET_RARI_APY,
   SET_RARI_USER_DATA,
   RARI_POOLS,
   SET_FETCHING_RARI_DATA,
@@ -103,11 +102,6 @@ export default function rariReducer(
   action: RariReducerAction,
 ): RariReducerState {
   switch (action.type) {
-    case SET_RARI_APY:
-      return {
-        ...state,
-        rariApy: action.payload,
-      };
     case SET_RARI_USER_DATA:
       return {
         ...state,
