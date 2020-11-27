@@ -44,7 +44,7 @@ import { addContactAction } from 'actions/contactsActions';
 
 import { ETH } from 'constants/assetsConstants';
 import { RARI_TRANSFER_REVIEW } from 'constants/navigationConstants';
-import { RARI_TOKENS_DATA } from 'constants/rariConstants';
+import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
@@ -171,6 +171,12 @@ const RariTransferScreen = ({
       symbol: rariTokenData.symbol,
       contractAddress: rariTokenData.contractAddress,
       decimals: rariTokenData.decimals,
+      tag: RARI_TRANSFER_TRANSACTION,
+      extra: {
+        amount,
+        token: rariTokenData.symbol,
+        recipient: selectedContact.ensName || selectedContact.ethAddress,
+      },
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;

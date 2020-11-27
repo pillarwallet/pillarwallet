@@ -1379,7 +1379,11 @@
     "walletBackedUp": "Your wallet is backed up now.",
     "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
     "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
-    "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again."
+    "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",
+    "rariDeposit": "{{amount}} {{token}} deposited to Rari Capital.",
+    "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
+    "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
+    "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital."
   },
 
   "exchangeContent": {

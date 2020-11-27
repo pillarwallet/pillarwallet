@@ -24,7 +24,14 @@ import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } f
 import { get0xSwapOrders } from 'services/0x.js';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
-import { RARI_POOLS, RARI_TOKENS } from 'constants/rariConstants';
+import {
+  RARI_POOLS,
+  RARI_TOKENS,
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+} from 'constants/rariConstants';
 import { getAccountDepositInUSDBN } from 'services/rari';
 import { reportErrorLog, parseTokenBigNumberAmount, scaleBN } from 'utils/common';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
@@ -272,6 +279,14 @@ export const getRariDepositTransactionsAndExchangeFee = async (
       ];
     }
   }
+  depositTransactions[0] = {
+    ...depositTransactions[0],
+    tag: RARI_DEPOSIT_TRANSACTION,
+    extra: {
+      amount,
+      token: token.symbol,
+    },
+  };
   return { depositTransactions, exchangeFeeBN, slippage };
 };
 
@@ -622,6 +637,11 @@ export const getRariWithdrawTransaction = async (
     data: withdrawTransactionData,
     amount: parseFloat(utils.formatEther(exchangeFeeBN)),
     symbol: ETH,
+    tag: RARI_WITHDRAW_TRANSACTION,
+    extra: {
+      amount,
+      token: token.symbol,
+    },
   };
 
   return { withdrawTransaction, exchangeFeeBN, slippage };
@@ -819,5 +839,18 @@ export const getRariClaimRgtTransaction = (senderAddress: string, amount: number
     amount: 0,
     symbol: ETH,
     txFeeInWei,
+    extra: {
+      amount,
+    },
+    tag: RARI_CLAIM_TRANSACTION,
   };
+};
+
+export const isRariTransactionTag = (txTag: string) => {
+  return [
+    RARI_DEPOSIT_TRANSACTION,
+    RARI_WITHDRAW_TRANSACTION,
+    RARI_CLAIM_TRANSACTION,
+    RARI_TRANSFER_TRANSACTION,
+  ].includes(txTag);
 };

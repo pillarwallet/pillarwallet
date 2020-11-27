@@ -178,6 +178,11 @@ describe('Rari utils', () => {
             from: '0x0000',
             symbol: 'ETH',
             to: supportedAssetsMock[2].address,
+            extra: {
+              amount: 1.23,
+              token: 'USDC',
+            },
+            tag: 'RARI_DEPOSIT',
           },
           {
             amount: 0,
@@ -205,6 +210,11 @@ describe('Rari utils', () => {
             from: '0x0000',
             symbol: 'ETH',
             to: supportedAssetsMock[1].address,
+            extra: {
+              amount: 1.23,
+              token: 'DAI',
+            },
+            tag: 'RARI_DEPOSIT',
           },
           {
             amount: 0,
@@ -233,6 +243,11 @@ describe('Rari utils', () => {
             from: '0x0000',
             symbol: 'ETH',
             to: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_PROXY_CONTRACT_ADDRESS,
+            extra: {
+              amount: 0.0001,
+              token: 'ETH',
+            },
+            tag: 'RARI_DEPOSIT',
           },
         ],
         exchangeFeeBN: EthersBigNumber.from('123456'),
@@ -302,6 +317,11 @@ describe('Rari utils', () => {
           from: senderAddress,
           symbol: 'ETH',
           to: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+          extra: {
+            amount: 1.23,
+            token: 'USDC',
+          },
+          tag: 'RARI_WITHDRAW',
         },
       });
     });
@@ -330,6 +350,11 @@ describe('Rari utils', () => {
           from: senderAddress,
           symbol: 'ETH',
           to: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_PROXY_CONTRACT_ADDRESS,
+          extra: {
+            amount: 1.23,
+            token: 'DAI',
+          },
+          tag: 'RARI_WITHDRAW',
         },
       });
     });
@@ -361,6 +386,11 @@ describe('Rari utils', () => {
           from: senderAddress,
           symbol: 'ETH',
           to: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_PROXY_CONTRACT_ADDRESS,
+          extra: {
+            amount: 1.23,
+            token: 'ETH',
+          },
+          tag: 'RARI_WITHDRAW',
         },
       });
     });
