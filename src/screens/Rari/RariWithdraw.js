@@ -91,9 +91,7 @@ const RariWithdrawScreen = ({
   const [selectedAsset, setSelectedAsset] = useState(assets[ETH]);
   const [assetValue, setAssetValue] = useState('');
   const [inputValid, setInputValid] = useState(false);
-  const [transactionPayload, setTransactionPayload] = useState(null);
-  const [exchangeFeeBN, setExchangeFee] = useState(null);
-  const [slippage, setSlippage] = useState(null);
+  const [transactionData, setTransactionData] = useState(null);
   const [isCalculatingMaxAmount, setIsCalculatingMaxAmount] = useState(false);
   const [customBalances, setCustomBalances] = useState({});
 
@@ -128,9 +126,11 @@ const RariWithdrawScreen = ({
           return;
         }
         const { withdrawTransaction, exchangeFeeBN: _exchangeFeeBN, slippage: _slippage } = txsAndExchangeFee;
-        setTransactionPayload(withdrawTransaction);
-        setExchangeFee(_exchangeFeeBN);
-        setSlippage(_slippage);
+        setTransactionData({
+          transactionPayload: withdrawTransaction,
+          exchangeFeeBN: _exchangeFeeBN,
+          slippage: _slippage,
+        });
         calculateRariWithdrawTransactionEstimate(withdrawTransaction);
       })
       .catch((error) => {
@@ -147,7 +147,7 @@ const RariWithdrawScreen = ({
     setIsCalculatingMaxAmount(true);
     // we set balance to a very high number to avoid showing user "insufficient balance" error
     // when switching assets before we even fetch the max
-    setCustomBalances({ [selectedAsset.symbol]: { symbol: selectedAsset.symbol, balance: 1e18 } });
+    setCustomBalances({ [selectedAsset.symbol]: { symbol: selectedAsset.symbol, balance: 1e18 }, ...customBalances });
     getMaxWithdrawAmount(rariPool, selectedAsset, activeAccountAddress)
       .then((maxWithdrawAmount) => {
         if (!maxWithdrawAmount) {
@@ -158,6 +158,7 @@ const RariWithdrawScreen = ({
           return;
         }
         setCustomBalances({
+          ...customBalances,
           [selectedAsset.symbol]: {
             symbol: selectedAsset.symbol,
             balance: formatUnits(maxWithdrawAmount, selectedAsset.decimals),
@@ -171,6 +172,7 @@ const RariWithdrawScreen = ({
           message: t('toast.rariServiceFailed'),
           emoji: 'hushed',
         });
+        setIsCalculatingMaxAmount(false);
       });
   }, [selectedAsset]);
 
@@ -179,9 +181,7 @@ const RariWithdrawScreen = ({
       rariPool,
       assetSymbol: selectedAsset.symbol,
       amount: assetValue,
-      transactionPayload,
-      exchangeFeeBN,
-      slippage,
+      ...transactionData,
     });
   };
 

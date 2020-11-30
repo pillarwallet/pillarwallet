@@ -35,6 +35,9 @@ import type { Asset, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
 
+const MSTABLE_TOKENS = ['DAI', 'USDC', 'USDT', 'TUSD'];
+const MSTABLE_TOKENS_WITH_MUSD = [...MSTABLE_TOKENS, 'mUSD'];
+
 const getRariAcceptedCurrencies = (rariPool: RariPool) => {
   if (rariPool === RARI_POOLS.ETH_POOL) {
     return [ETH];
@@ -352,12 +355,12 @@ export const getRariWithdrawTransactionData = async (
   let totalProtocolFeeBN = EthersBigNumber.from(0);
 
   // try to use mStable
-  if (['DAI', 'USDC', 'USDT', 'TUSD'].includes(token.symbol)) {
+  if (MSTABLE_TOKENS.includes(token.symbol)) {
     const mStableFee = await getMStableFee();
 
     for (let i = 0; i < inputCandidates.length; ++i) {
       const inputCandidate = inputCandidates[i];
-      if (!['DAI', 'USDC', 'USDT', 'TUSD', 'mUSD'].includes(inputCandidate.currencyCode)) {
+      if (!MSTABLE_TOKENS_WITH_MUSD.includes(inputCandidate.currencyCode)) {
         continue;
       }
       if (inputCandidate.rawFundBalanceBN.isZero()) {
@@ -640,10 +643,10 @@ export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, sen
   }
 
   // try to use mStable
-  if (['DAI', 'USDC', 'USDT', 'TUSD'].includes(token.symbol)) {
+  if (MSTABLE_TOKENS.includes(token.symbol)) {
     for (let i = 0; i < inputCandidates.length; ++i) {
       const inputCandidate = inputCandidates[i];
-      if (!['DAI', 'USDC', 'USDT', 'TUSD', 'mUSD'].includes(inputCandidate.currencyCode)) {
+      if (!MSTABLE_TOKENS_WITH_MUSD.includes(inputCandidate.currencyCode)) {
         continue;
       }
       if (inputCandidate.rawFundBalanceBN.isZero()) {
