@@ -57,9 +57,9 @@ import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
 import { isProdEnv } from 'utils/environment';
 
 // types
-import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
+import type { Asset, Assets, Balances, Rates } from 'models/Asset';
 import type { OfferOrder } from 'models/Offer';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TokenTransactionPayload, TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Account } from 'models/Account';
 import type { Theme } from 'models/Theme';
@@ -86,7 +86,7 @@ type Props = {
   accountAssets: Assets,
   supportedAssets: Asset[],
   isOnline: boolean,
-  estimateTransaction: (recipient: string, value: number, data?: string, assetData?: AssetData) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
@@ -172,7 +172,12 @@ const ExchangeConfirmScreen = ({
       decimals: estimateAsset.decimals,
     };
 
-    estimateTransaction(recipient, Number(amount || 0), data, estimateAssetData);
+    estimateTransaction({
+      to: recipient,
+      value: Number(amount || 0),
+      assetData: estimateAssetData,
+      data,
+    });
   };
 
   useEffect(() => { fetchTransactionEstimate(); }, []);
@@ -352,12 +357,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissTransaction: () => dispatch(setDismissTransactionAction()),
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    data?: string,
-    assetData?: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

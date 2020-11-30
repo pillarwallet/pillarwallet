@@ -19,23 +19,33 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+
+// components
 import CheckAuth from 'components/CheckAuth';
+
+// actions
 import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
+
+// constants
 import { SEND_TOKEN_TRANSACTION, WALLETCONNECT } from 'constants/navigationConstants';
+
+// utils
 import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet';
 
+// types
 import type { TransactionPayload } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
+
 
 type Props = {
   requests: CallRequest[],
   navigation: NavigationScreenProp<*>,
   approveCallRequest: (callId: number, result: any) => Function,
   rejectCallRequest: (callId: number, errorMsg?: string) => Function,
-  sendAsset: (payload: TransactionPayload, wallet: Object, navigate: Function) => Function,
+  sendAsset: (payload: TransactionPayload, navigate: Function) => Function,
   resetIncorrectPassword: () => Function,
   useBiometrics: boolean,
 };
@@ -73,7 +83,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
-  handleCallRequest = (pin: string, wallet: Object) => {
+  handleCallRequest = () => {
     const { request } = this;
 
     if (!request) {
@@ -84,14 +94,14 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
     switch (request.method) {
       case 'eth_sendTransaction':
-        callback = () => this.handleSendTransaction(request, wallet);
+        callback = () => this.handleSendTransaction(request);
         break;
       case 'eth_signTransaction':
-        callback = () => this.handleSignTransaction(request, wallet);
+        callback = () => this.handleSignTransaction(request);
         break;
       case 'eth_sign':
       case 'personal_sign':
-        callback = () => this.handleSignMessage(request, wallet);
+        callback = () => this.handleSignMessage(request);
         break;
       default:
         break;
@@ -100,12 +110,12 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     this.setState({ isChecking: true }, callback);
   };
 
-  handleSendTransaction = (request: CallRequest, wallet: Object) => {
+  handleSendTransaction = (request: CallRequest) => {
     const {
       sendAsset, approveCallRequest, rejectCallRequest, navigation,
     } = this.props;
     const transactionPayload = navigation.getParam('transactionPayload', {});
-    sendAsset(transactionPayload, wallet, async (txStatus: Object) => {
+    sendAsset(transactionPayload, async (txStatus: Object) => {
       if (txStatus.isSuccess) {
         await approveCallRequest(request.callId, txStatus.txHash);
       } else {
@@ -212,8 +222,8 @@ const mapDispatchToProps = dispatch => ({
   rejectCallRequest: (callId: number, errorMsg?: string) => {
     dispatch(rejectCallRequestAction(callId, errorMsg));
   },
-  sendAsset: (transaction: TransactionPayload, wallet: Object, navigate) => {
-    dispatch(sendAssetAction(transaction, wallet, navigate));
+  sendAsset: (transaction: TransactionPayload, navigate) => {
+    dispatch(sendAssetAction(transaction, navigate));
   },
   resetIncorrectPassword: () => dispatch(resetIncorrectPasswordAction()),
 });

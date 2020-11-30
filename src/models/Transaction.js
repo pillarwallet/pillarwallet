@@ -140,7 +140,7 @@ export type CollectibleTransactionPayload = {
   to: string,
   receiverEnsName?: string,
   name: string,
-  contractAddress: ?string,
+  contractAddress: string,
   tokenType: string,
   tokenId: string,
   note?: ?string,
@@ -153,7 +153,7 @@ export type CollectibleTransactionPayload = {
   txFeeInWei: number,
 }
 
-export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
+export type TransactionPayload = $Shape<TokenTransactionPayload & CollectibleTransactionPayload>;
 
 export type TransactionEthers = {
   from: string,
@@ -186,9 +186,7 @@ export type TransactionFeeInfo = {
 };
 
 export type AllowanceTransaction = {
-  nonce: string,
   to: string,
-  chainId: string,
   data: string,
 };
 
@@ -196,5 +194,5 @@ export type TransactionDraft = {
   to: string,
   value: number,
   assetData?: AssetData,
-  data: ?string,
+  data?: string,
 };

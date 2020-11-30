@@ -22,7 +22,6 @@ import { Platform } from 'react-native';
 import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
 import { constants } from 'ethers';
-import { getEnv } from 'configs/envConfig';
 
 // models
 import type { Offer } from 'models/Offer';
@@ -40,7 +39,7 @@ import { encodeContractMethod } from 'services/assets';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
 import { chainId } from './uniswap';
-import { reportOrWarn, getEthereumProvider } from './common';
+import { reportOrWarn } from './common';
 
 export type ExchangeOptions = {
   fromOptions: Option[],
@@ -116,8 +115,6 @@ const setAllowanceAbiFunction = [{
   type: 'function',
   gas: 38769,
 }];
-
-const ethProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 export const createAllowanceTx = async (
   fromAssetAddress: string,

@@ -51,11 +51,11 @@ import { ETH } from 'constants/assetsConstants';
 import { PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TX, REQUEST_TYPE } from 'constants/walletConnectConstants';
 
 // types
-import type { Asset, AssetData, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TokenTransactionPayload, TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
@@ -80,7 +80,7 @@ type Props = {
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  estimateTransaction: (recipient: string, value: number, data: ?string, assetData: AssetData) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
   resetEstimateTransaction: () => void,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
@@ -165,7 +165,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
 
     const assetData = { contractAddress, token: symbol, decimals };
 
-    estimateTransaction(to, value, data, assetData);
+    estimateTransaction({
+      to,
+      value,
+      data,
+      assetData,
+    });
   };
 
   handleFormSubmit = (request, transactionPayload) => {
@@ -405,12 +410,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    data: ?string,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

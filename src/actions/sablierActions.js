@@ -83,14 +83,14 @@ export const calculateSablierWithdrawTransactionEstimateAction = (
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
-    const { to: recipient, amount: value, data } = getSablierWithdrawTransaction(
+    const { to, amount: value, data } = getSablierWithdrawTransaction(
       getAccountAddress(smartWalletAccount),
       amount,
       asset,
       stream,
     );
 
-    dispatch(estimateTransactionAction(recipient, value, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };
 
@@ -100,6 +100,6 @@ export const calculateSablierCancelTransactionEstimateAction = (stream: Stream) 
 
     const { to, data } = getSablierCancellationTransaction(stream);
 
-    dispatch(estimateTransactionAction(to, 0, data));
+    dispatch(estimateTransactionAction({ to, value: 0, data }));
   };
 };

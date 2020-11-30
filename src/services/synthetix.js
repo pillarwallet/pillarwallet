@@ -43,7 +43,6 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import RATES_ABI from 'abi/synthetixRates.json';
 import EXCHANGE_ABI from 'abi/synthetixExchange.json';
 
-const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 export const createSynthetixOrder = async (
   fromAsset: Asset, toAsset: Asset, amount: string | number, clientSendAddress: string,

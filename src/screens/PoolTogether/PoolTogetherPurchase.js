@@ -73,7 +73,7 @@ import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 
 import { getApproveTransaction, getPurchaseTicketTransaction } from 'services/poolTogether';
 
 // types
-import type { TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
 
 // local components
 import PoolTokenAllowModal from './PoolTokenAllowModal';
@@ -117,11 +117,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (
-    receiver: string,
-    amount: number,
-    data: string,
-  ) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
   resetEstimateTransaction: () => void,
 };
 
@@ -181,8 +177,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const hasAllowance = poolAllowance[poolToken];
     if (!hasAllowance) {
       const allowPayload = getApproveTransaction(poolToken);
-      const { to, data, amount } = allowPayload;
-      estimateTransaction(to, amount, data);
+      const { to, data, amount: value } = allowPayload;
+      estimateTransaction({ to, value, data });
       this.setState({ allowPayload });
     }
   }
@@ -192,8 +188,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const { poolAllowance, estimateTransaction } = this.props;
     if (poolAllowance[poolToken]) {
       const purchasePayload = getPurchaseTicketTransaction(numberOfTickets, poolToken);
-      const { to, data, amount } = purchasePayload;
-      estimateTransaction(to, amount, data);
+      const { to, data, amount: value } = purchasePayload;
+      estimateTransaction({ to, value, data });
       this.setState({ purchasePayload });
     }
   }
@@ -214,8 +210,8 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     const { poolToken, allowPayload } = this.state;
     const { estimateTransaction, resetEstimateTransaction } = this.props;
     resetEstimateTransaction();
-    const { to, data, amount } = allowPayload;
-    estimateTransaction(to, amount, data);
+    const { to, data, amount: value } = allowPayload;
+    estimateTransaction({ to, value, data });
     Modal.open(() => (
       <PoolTokenAllowModal
         assetSymbol={poolToken}
@@ -445,11 +441,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
   fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
   setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
-  estimateTransaction: (
-    receiver: string,
-    amount: number,
-    data: string,
-  ) => dispatch(estimateTransactionAction(receiver, amount, data)),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

@@ -4,7 +4,6 @@ import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 
 import KeyBasedWalletProvider from './walletProviders/keyBasedWallet';
 import SmartWalletProvider from './walletProviders/smartWallet';
-import EtherspotProvider from 'services/walletProviders/etherspot';
 
 
 export default class CryptoWallet {
@@ -22,16 +21,12 @@ export default class CryptoWallet {
         this.walletProvider = new SmartWalletProvider(privateKey, account);
         this.initWalletProviderPromise = this.walletProvider.getInitStatus();
         break;
-      case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-        this.walletProvider = new EtherspotProvider(privateKey);
-        this.initWalletProviderPromise = this.walletProvider.getInitStatus();
-        break;
       default:
         throw new Error('Unsupported account type provided'); // eslint-disable-line i18next/no-literal-string
     }
   }
 
-  async getProvider(): Promise<KeyBasedWalletProvider | SmartWalletProvider | EtherspotProvider> {
+  async getProvider(): Promise<KeyBasedWalletProvider | SmartWalletProvider> {
     return this.walletProviderInitialized
       ? Promise.resolve(this.walletProvider)
       : this.initWalletProviderPromise.then(this.finishProviderInitialization);

@@ -30,10 +30,7 @@ import { buildERC721TransactionData } from 'services/assets';
 
 // utils
 import { buildTxFeeInfo } from 'utils/etherspot';
-import { getEthereumProvider, reportErrorLog } from 'utils/common';
-
-// config
-import { getEnv } from 'configs/envConfig';
+import { reportErrorLog } from 'utils/common';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
@@ -75,7 +72,6 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
     }
 
     const activeAccountAddress = activeAccountAddressSelector(getState());
-    const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
 
     const etherspotTransactions: EtherspotTransaction[] = await Promise.all(
       transactions.map(async (transactionDraft) => {
@@ -98,7 +94,7 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
                 tokenId: id,
                 contractAddress,
                 tokenType,
-              }, provider);
+              });
               value = 0;
               break;
             default: break;

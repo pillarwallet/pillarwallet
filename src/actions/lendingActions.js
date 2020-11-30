@@ -21,7 +21,7 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { estimateTransactionAction, estimateTransactionsAction } from 'actions/transactionEstimateActions';
 
 // services
 import aaveService from 'services/aave';
@@ -147,21 +147,11 @@ export const calculateLendingDepositTransactionEstimateAction = (
       asset,
     );
 
-    const sequentialTransactions = aaveDepositNeededTransactions
-      .slice(1) // exclude first, take rest if exist
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const sequentialTransactions = aaveDepositNeededTransactions.map(
+      ({ to, amount: value, data }) => ({ to, value, data }),
+    );
 
-    dispatch(estimateTransactionAction(
-      aaveDepositNeededTransactions[0].to,
-      aaveDepositNeededTransactions[0].amount,
-      aaveDepositNeededTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(sequentialTransactions));
   };
 };
 
@@ -177,12 +167,12 @@ export const calculateLendingWithdrawTransactionEstimateAction = (
     // initiate state earlier
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
-    const { to, amount, data } = await getAaveWithdrawTransaction(
+    const { to, amount: value, data } = await getAaveWithdrawTransaction(
       getAccountAddress(smartWalletAccount),
       withdrawAmount,
       depositedAsset,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };

@@ -21,8 +21,21 @@
 import BigNumber from 'bignumber.js';
 import type { GatewayEstimatedBatch } from 'etherspot';
 
+// constants
+import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+
+// utils
+import { parseTokenAmount } from 'utils/common';
+
+// services
+import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
+
+// abi
+import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+
 // types
-import type { TransactionFeeInfo } from 'models/Transaction';
+import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
+import type { EtherspotTransaction } from 'models/Etherspot';
 
 
 export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: boolean = false): TransactionFeeInfo => {
@@ -43,4 +56,62 @@ export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: b
     fee: gasTokenCost,
     gasToken,
   };
+};
+
+
+export const mapToEtherspotTransactionsBatch = async (
+  transaction: TransactionPayload,
+  fromAddress: string,
+): Promise<EtherspotTransaction[]> => {
+  // $FlowFixMe
+  const {
+    symbol,
+    amount,
+    contractAddress,
+    decimals = 18,
+    sequentialTransactions = [],
+  } = transaction;
+  // $FlowFixMe
+  let { to, data } = transaction;
+  let value;
+
+  if (transaction.tokenType !== COLLECTIBLES) {
+    value = parseTokenAmount(amount.toString(), decimals);
+    if (symbol !== ETH && !data) {
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value]);
+      to = contractAddress;
+      value = 0; // value is in encoded transfer method as data
+    }
+  } else {
+    const { tokenId } = transaction;
+    data = await buildERC721TransactionData({
+      from: fromAddress,
+      to,
+      tokenId,
+      contractAddress,
+    });
+    to = contractAddress;
+    value = 0;
+  }
+
+  let etherspotTransactions = [{
+    to,
+    data,
+    value,
+  }];
+
+  // important: maintain array sequence, this gets mapped into arrays as well by reusing same method
+  const mappedSequential = await Promise.all(sequentialTransactions.map((sequential) =>
+    mapToEtherspotTransactionsBatch(sequential, fromAddress),
+  ));
+
+  // append sequential to transactions batch
+  mappedSequential.forEach((sequential) => {
+    etherspotTransactions = [
+      ...etherspotTransactions,
+      ...sequential,
+    ];
+  });
+
+  return etherspotTransactions;
 };

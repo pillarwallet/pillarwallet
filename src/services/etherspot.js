@@ -30,13 +30,13 @@ import {
 
 // utils
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
-import type { Asset, Balance } from 'models/Asset';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
 
 // types
 import type { EtherspotTransaction } from 'models/Etherspot';
+import type { Asset, Balance } from 'models/Asset';
 
 
 class EtherspotService {
@@ -91,7 +91,7 @@ class EtherspotService {
     return this.sdk.clearGatewayBatch();
   }
 
-  setTransactionsBatch(transactions: EtherspotTransaction[]): ?GatewayEstimatedBatch {
+  setTransactionsBatch(transactions: EtherspotTransaction[]): Promise<?GatewayEstimatedBatch> {
     return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
   }
 

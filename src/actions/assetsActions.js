@@ -21,7 +21,9 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
+import BigNumber from 'bignumber.js';
 
+// constants
 import {
   UPDATE_ASSETS_STATE,
   UPDATE_ASSETS,
@@ -45,22 +47,12 @@ import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
 
+// components
 import Toast from 'components/Toast';
 
-import CryptoWallet from 'services/cryptoWallet';
-import etherspot from 'services/etherspot';
-
-import type {
-  TokenTransactionPayload,
-  CollectibleTransactionPayload,
-  TransactionPayload,
-  SyntheticTransaction,
-} from 'models/Transaction';
-import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
-import type { Account } from 'models/Account';
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+// utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import { noop, parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
+import { parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccount,
@@ -70,37 +62,80 @@ import {
   checkIfLegacySmartWalletAccount,
   isEthersportSmartWalletType,
 } from 'utils/accounts';
-import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+import { catchTransactionError } from 'utils/wallet';
+import { mapToEtherspotTransactionsBatch } from 'utils/etherspot';
+
+// services
+import etherspot from 'services/etherspot';
+
+// selectors
 import { balancesSelector } from 'selectors';
-import { logEventAction } from 'actions/analyticsActions';
-import { commitSyntheticsTransaction } from 'actions/syntheticsActions';
+import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
+
+// types
+import type { TransactionPayload, SyntheticTransaction } from 'models/Transaction';
+import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
+import type { Account } from 'models/Account';
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
+
+// actions
 import { saveDbAction } from './dbActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
 import { addExchangeAllowanceAction } from './exchangeActions';
 import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
+import { logEventAction } from './analyticsActions';
+import { commitSyntheticsTransaction } from './syntheticsActions';
+
 
 type TransactionStatus = {
   isSuccess: boolean,
   error: ?string,
+  noRetry?: boolean,
+  to: string,
+  note: ?string,
+};
+
+type TransactionResult = {
+  error?: string,
+  hash?: string,
+  to?: string,
+  value?: BigNumber | number | string,
+  transactionCount?: number,
+  nonce?: number,
+  noRetry?: boolean,
 };
 
 export const sendAssetAction = (
   transaction: TransactionPayload,
-  wallet: Object,
-  callback: Function = noop,
+  callback: (result: TransactionStatus) => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const tokenType = get(transaction, 'tokenType', '');
-    const symbol = get(transaction, 'symbol', '');
-    const allowancePayload = get(transaction, 'extra.allowance', {});
-    const usePPN = get(transaction, 'usePPN', false);
-    const receiverEnsName = get(transaction, 'receiverEnsName');
+    const {
+      tokenType,
+      symbol,
+      usePPN,
+      receiverEnsName,
+      note,
+      gasToken,
+      txFeeInWei,
+      extra: transactionExtra,
+    } = transaction;
 
-    if (tokenType === COLLECTIBLES) {
+    const to = toChecksumAddress(transaction.to);
+    const isCollectibleTransaction = tokenType === COLLECTIBLES;
+
+    // used for logging purpose omnly
+    let logTransactionType;
+
+    // fetch latest
+    if (isCollectibleTransaction) {
+      logTransactionType = 'ERC721'; // eslint-disable-line i18next/no-literal-string
       await dispatch(fetchCollectiblesAction());
+    } else {
+      logTransactionType = symbol === ETH ? 'ETH' : 'ERC20'; // eslint-disable-line i18next/no-literal-string
     }
 
     const {
@@ -118,170 +153,150 @@ export const sendAssetAction = (
     const accountId = getAccountId(activeAccount);
     const accountAddress = getAccountAddress(activeAccount);
 
-    let tokenTx = {};
-    let historyTx;
     const accountCollectibles = collectibles[accountId] || [];
     const accountCollectiblesHistory = collectiblesHistory[accountId] || [];
-    const to = toChecksumAddress(transaction.to);
-    const { note, gasToken, txFeeInWei } = transaction;
 
-    // get wallet provider
-    const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
-    const walletProvider = await cryptoWallet.getProvider();
+    let collectibleInfo;
+    if (isCollectibleTransaction) {
+      collectibleInfo = accountCollectibles.find(item => item.id === transaction.tokenId);
+      if (!collectibleInfo) {
+        callback({
+          isSuccess: false,
+          error: ERROR_TYPE.NOT_OWNED,
+          to,
+          note,
+          noRetry: true,
+        });
+        return;
+      }
+    }
 
     // build fee with gas token if present
     const feeWithGasToken = !isEmpty(gasToken)
       ? parseFeeWithGasToken(gasToken, txFeeInWei)
       : null;
 
-    // send collectible
-    if (tokenType === COLLECTIBLES) {
-      // $FlowFixMe
-      const { tokenId } = (transaction: CollectibleTransactionPayload);
-      const collectibleInfo = accountCollectibles.find(item => item.id === tokenId);
-      if (!collectibleInfo) {
-        tokenTx = {
-          error: ERROR_TYPE.NOT_OWNED,
-          hash: null,
-          noRetry: true,
+    const etherspotTransactions = await mapToEtherspotTransactionsBatch(transaction, accountAddress);
+
+    const transactionResult: TransactionResult = await etherspot
+      .setTransactionsBatchAndSend(etherspotTransactions)
+      .then(({ hash, value }) => ({ hash, to, value }))
+      .catch((error) => catchTransactionError(error, logTransactionType, transaction));
+
+    const transactionHash = transactionResult?.hash;
+    if (!transactionHash) {
+      callback({
+        isSuccess: false,
+        error: transactionResult?.error || t('error.transactionFailed.default'),
+        to,
+        note,
+      });
+      return;
+    }
+
+    let historyTx;
+
+    if (transactionHash) {
+      historyTx = buildHistoryTransaction({
+        ...transactionResult,
+        to,
+        from: accountAddress,
+        asset: isCollectibleTransaction ? transaction.name : symbol,
+        note,
+        gasPrice: transaction.gasPrice,
+        gasLimit: transaction.gasLimit,
+        isPPNTransaction: !!usePPN,
+        status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+        feeWithGasToken,
+      });
+
+      if (transaction.extra) {
+        historyTx = {
+          ...historyTx,
+          extra: transaction.extra,
         };
-      } else {
-        // $FlowFixMe
-        tokenTx = await walletProvider.transferERC721(
-          activeAccount,
-          // $FlowFixMe
-          transaction,
-          getState(),
-        );
-
-        // $FlowFixMe
-        if (tokenTx.hash) {
-          historyTx = {
-            ...buildHistoryTransaction({
-              ...tokenTx,
-              asset: transaction.name,
-              note,
-              feeWithGasToken,
-            }),
-            to,
-            from: accountAddress,
-            assetData: { ...collectibleInfo },
-            type: COLLECTIBLE_TRANSACTION,
-            icon: collectibleInfo.icon,
-          };
-        }
       }
-    // send Ether
-    } else if (symbol === ETH) {
-      // $FlowFixMe
-      tokenTx = await walletProvider.transferETH(transaction);
 
-      // $FlowFixMe
-      if (tokenTx.hash) {
-        historyTx = buildHistoryTransaction({
-          ...tokenTx,
-          from: accountAddress,
-          asset: symbol,
-          note,
-          gasPrice: transaction.gasPrice,
-          gasLimit: transaction.gasLimit,
-          isPPNTransaction: usePPN,
-          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
-          extra: transaction.extra || null,
-          tag: transaction.tag || null,
-          feeWithGasToken,
-        });
+      if (transaction.tag) {
+        historyTx = {
+          ...historyTx,
+          tag: transaction.tag,
+        };
       }
-    // send ERC20 token
-    } else {
-      const {
-        amount,
-        decimals,
-        // $FlowFixMe
-      } = (transaction: TokenTransactionPayload);
 
-      tokenTx = await walletProvider.transferERC20(transaction);
-
-      // $FlowFixMe
-      if (tokenTx.hash) {
-        historyTx = buildHistoryTransaction({
-          ...tokenTx,
-          from: accountAddress,
-          asset: symbol,
-          value: parseTokenAmount(amount, decimals),
-          to, // HACK: in the real ERC20Trx object the 'To' field contains smart contract address
-          note,
-          gasPrice: transaction.gasPrice,
-          gasLimit: transaction.gasLimit,
-          isPPNTransaction: usePPN,
-          status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
-          extra: transaction.extra || null,
-          tag: transaction.tag || null,
-          feeWithGasToken,
-        });
+      if (isCollectibleTransaction) {
+        historyTx = {
+          ...historyTx,
+          type: COLLECTIBLE_TRANSACTION,
+          icon: collectibleInfo?.icon,
+          assetData: collectibleInfo,
+        };
+      } else if (transaction.amount) {
+        historyTx = {
+          ...historyTx,
+          value: parseTokenAmount(transaction.amount, transaction.decimals),
+        };
       }
     }
 
-    if (checkIfLegacySmartWalletAccount(activeAccount) && !usePPN && tokenTx.hash) {
+    if (checkIfLegacySmartWalletAccount(activeAccount) && !usePPN) {
       dispatch({
         type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
-        payload: tokenTx.hash,
+        payload: transactionHash,
       });
     }
 
     // update transaction history
-    if (historyTx) {
-      if (transaction.tokenType && transaction.tokenType === COLLECTIBLES) {
-        dispatch({
-          type: ADD_COLLECTIBLE_TRANSACTION,
-          payload: {
-            transactionData: { ...historyTx },
-            tokenId: transaction.tokenId,
-            accountId,
-          },
-        });
-        const updatedCollectiblesHistory = {
-          ...collectiblesHistory,
-          [accountId]: [...accountCollectiblesHistory, historyTx],
-        };
-        await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
-        const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
-        const updatedCollectibles = {
-          ...collectibles,
-          [accountId]: updatedAccountCollectibles,
-        };
-        dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
-      } else {
-        // check if there's a need to commit synthetic asset transaction
-        const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
-        if (!isEmpty(syntheticTransactionExtra)) {
-          const { transactionId, toAddress } = syntheticTransactionExtra;
-          if (transactionId) {
-            dispatch(commitSyntheticsTransaction(transactionId, historyTx.hash));
-            // change history receiver address to actual receiver address rather than synthetics service address
-            historyTx = { ...historyTx, to: toAddress };
-          } else {
-            reportLog('Failed to get transactionId during synthetics exchange.', { hash: historyTx.hash });
-          }
+    if (isCollectibleTransaction) {
+      dispatch({
+        type: ADD_COLLECTIBLE_TRANSACTION,
+        payload: {
+          transactionData: { ...historyTx },
+          tokenId: transaction.tokenId,
+          accountId,
+        },
+      });
+      const updatedCollectiblesHistory = {
+        ...collectiblesHistory,
+        [accountId]: [...accountCollectiblesHistory, historyTx],
+      };
+      await dispatch(saveDbAction('collectiblesHistory', { collectiblesHistory: updatedCollectiblesHistory }, true));
+      const updatedAccountCollectibles = accountCollectibles.filter(item => item.id !== transaction.tokenId);
+      const updatedCollectibles = {
+        ...collectibles,
+        [accountId]: updatedAccountCollectibles,
+      };
+      dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
+    } else {
+      // check if there's a need to commit synthetic asset transaction
+      const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
+      if (!isEmpty(syntheticTransactionExtra)) {
+        const { transactionId, toAddress } = syntheticTransactionExtra;
+        if (transactionId) {
+          dispatch(commitSyntheticsTransaction(transactionId, transactionHash));
+          // change history receiver address to actual receiver address rather than synthetics service address
+          historyTx = { ...historyTx, to: toAddress };
+        } else {
+          reportLog('Failed to get transactionId during synthetics exchange.', { hash: transactionHash });
         }
-
-        dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
-
-        const { history: { data: currentHistory } } = getState();
-        const accountHistory = currentHistory[accountId] || [];
-        const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
-        const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-        dispatch(saveDbAction('history', { history: updatedHistory }, true));
       }
 
-      if (receiverEnsName) {
-        dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
-      }
+      dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
+
+      const { history: { data: currentHistory } } = getState();
+      const accountHistory = currentHistory[accountId] || [];
+      const updatedAccountHistory = uniqBy([historyTx, ...accountHistory], 'hash');
+      const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+      dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    }
+
+    if (receiverEnsName) {
+      dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
     }
 
     // update transaction count
-    if (tokenTx.hash && tokenTx.transactionCount) {
-      const txCountNew = { lastCount: tokenTx.transactionCount, lastNonce: tokenTx.nonce };
+    if (transactionResult.transactionCount) {
+      const txCountNew = { lastCount: transactionResult.transactionCount, lastNonce: transactionResult.nonce };
       dispatch({
         type: UPDATE_TX_COUNT,
         payload: txCountNew,
@@ -289,20 +304,19 @@ export const sendAssetAction = (
       dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
     }
 
-    const txStatus: TransactionStatus = tokenTx.hash
-      ? {
-        isSuccess: true, error: null, note, to, txHash: tokenTx.hash,
-      }
-      : {
-        isSuccess: false, error: tokenTx.error, note, to, noRetry: tokenTx.noRetry,
-      };
-
-    if (Object.keys(allowancePayload).length && tokenTx.hash) {
+    const allowancePayload = transactionExtra?.allowance;
+    if (allowancePayload && !isEmpty(allowancePayload)) {
       const { provider, fromAssetCode, toAssetCode } = allowancePayload;
-      dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, tokenTx.hash));
+      dispatch(addExchangeAllowanceAction(provider, fromAssetCode, toAssetCode, transactionHash));
     }
 
-    callback(txStatus);
+    callback({
+      isSuccess: true,
+      error: null,
+      txHash: transactionHash,
+      note,
+      to,
+    });
   };
 };
 
@@ -610,7 +624,7 @@ export const loadSupportedAssetsAction = () => {
     let supportedAssets = await api.fetchSupportedAssets(walletId);
 
     // TODO: remove once etherspot testnet available
-    //  map EDG (0 decimals) into etherspot Wrapped token
+    // map EDG (0 decimals) into etherspot Wrapped token
     supportedAssets = supportedAssets.map((asset) => ({
       ...asset,
       address: asset.symbol === 'EDG' ? '0xA80a6FaBFF18a478deC3a833843eF9577F3553ca' : asset.address,
