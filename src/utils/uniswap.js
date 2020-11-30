@@ -66,12 +66,11 @@ export const getAskRate = (trade: Trade): string => {
   return excutionPriceBN.toFixed();
 };
 
-export const parseAssets = (assets: Asset[]) => {
-  assets.forEach(asset => {
-    asset.address = toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address);
-    asset.code = asset.symbol;
-  });
-};
+export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
+  ...asset,
+  address: toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address),
+  code: asset.symbol,
+}));
 
 export const getExpectedOutput = (
   trade: Trade,

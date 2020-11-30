@@ -435,7 +435,7 @@ jest.setMock('services/uniswap', {
     provider: PROVIDER_UNISWAP,
   }),
   createUniswapOrder: () => Promise.resolve({}),
-  fetchUniswapSupportedTokens: jest.fn(),
+  fetchUniswapSupportedTokens: jest.fn(() => Promise.resolve([ETH])),
 });
 
 jest.setMock('services/1inch', {

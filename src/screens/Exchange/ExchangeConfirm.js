@@ -285,7 +285,7 @@ const ExchangeConfirmScreen = ({
                   <Spacing w={4} />
                   <BaseText regular>
                     {t('exchangeContent.label.exchangeRateLayout', {
-                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toPrecision(2),
+                      rate: (parseFloat(receiveQuantity) / parseFloat(payQuantity)).toFixed(2),
                       toAssetCode,
                       fromAssetCode,
                     })}
