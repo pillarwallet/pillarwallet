@@ -158,7 +158,6 @@ export const generateTxObject = (
   return {
     to,
     value,
-    chainId,
     data: txData,
   };
 };
