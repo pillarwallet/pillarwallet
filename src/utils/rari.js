@@ -314,6 +314,18 @@ const compareInputCandidatesByUsdBurned = (a, b) => {
   return bOutput.gt(aOutput) ? 1 : -1;
 };
 
+/* Rari withdraw logic
+Rari has some tokens available directly for withdrawals (for example for stable pool it's USDC and mUSD).
+  - If user selects such token, we can withdraw with just one simple withdraw call.
+  - If user selects stable coin, we can exchange directly withdrawable coin -> user coin via mStable.
+  - If user selects other coin, we can exchange via 0x.
+The tricky part is that rari can hold several tokens, and sometimes one exchange is not enough.
+For example if rari holds 100 USDC, 100 mUSD and user wants to withdraw 150 DAI, we must do two exchanges via mStable.
+That should be rare though, Rari holds thousands of dollars in USDC and mUSD for now.
+It can be mixed so if we want to withdraw 150 USDC in situation above, we can withdraw 100 USDC
+directly and exchange 50 mUSD. In one transaction. The same applies to 0x of course. And on 0x
+tokens have different exchange rates (mStable always exchanges 1:(1-fee)), so we choose the most profitable for us.
+*/
 export const getRariWithdrawTransactionData = async (
   rariPool: RariPool, amountBN: EthersBigNumber, token: Asset,
 ) => {
@@ -613,6 +625,16 @@ export const getRariWithdrawTransaction = async (
   return { withdrawTransaction, exchangeFeeBN, slippage };
 };
 
+/* Rari max withdrawal amount logic
+It works similar to withdrawal transaction logic.
+We take user's deposit in USD and:
+ - If we can withdraw directly, we withdraw as much as we can. We have prices from Rari contract.
+ - If we can exchange via mStable, we calculate how much of rari directly withdrawable coin we must
+   send to mStable and how much we receive. Keep in mind there is mStable fee. And tokens can have
+   different decimals and there are problems with rounding.
+ - For 0x we just calculate how much of directly withdrawable coin we can sell and choose the most profitable option.
+And there can be several exchanges too like in withdraw transaction logic.
+*/
 export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, senderAddress: string) => {
   const senderUsdBalance = await getAccountDepositInUSDBN(rariPool, senderAddress);
   if (!senderUsdBalance) return null;
