@@ -148,6 +148,7 @@ const RariWithdrawScreen = ({
     // we set balance to a very high number to avoid showing user "insufficient balance" error
     // when switching assets before we even fetch the max
     setCustomBalances({ [selectedAsset.symbol]: { symbol: selectedAsset.symbol, balance: 1e18 }, ...customBalances });
+    // eslint-disable-next-line promise/catch-or-return
     getMaxWithdrawAmount(rariPool, selectedAsset, activeAccountAddress)
       .then((maxWithdrawAmount) => {
         if (!maxWithdrawAmount) {
@@ -155,7 +156,6 @@ const RariWithdrawScreen = ({
             message: t('toast.rariServiceFailed'),
             emoji: 'hushed',
           });
-          setIsCalculatingMaxAmount(false);
           return;
         }
         setCustomBalances({
@@ -165,7 +165,6 @@ const RariWithdrawScreen = ({
             balance: formatUnits(maxWithdrawAmount, selectedAsset.decimals),
           },
         });
-        setIsCalculatingMaxAmount(false);
       })
       .catch((error) => {
         reportErrorLog('Rari service failed: Error getting max balance', { error });
@@ -173,8 +172,8 @@ const RariWithdrawScreen = ({
           message: t('toast.rariServiceFailed'),
           emoji: 'hushed',
         });
-        setIsCalculatingMaxAmount(false);
-      });
+      })
+      .then(() => setIsCalculatingMaxAmount(false));
   }, [selectedAsset]);
 
   const onNextButtonPress = () => {
