@@ -26,9 +26,14 @@ import { PLR } from 'constants/assetsConstants';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { MixedBalance } from 'models/Asset';
+import type { LendingReducerState } from 'reducers/lendingReducer';
 
 // selectors
-import { balancesSelector, activeAccountIdSelector } from './selectors';
+import {
+  balancesSelector,
+  activeAccountIdSelector,
+  lendingSelector,
+} from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
 
@@ -71,6 +76,13 @@ export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   (hasPositiveBalance) => !!hasPositiveBalance,
 );
 
+const aaveBalanceListSelector = createSelector(
+  lendingSelector,
+  (lending: LendingReducerState): MixedBalance[] =>
+    lending.depositedAssets.map(({ currentBalance: balance, symbol }) => ({ symbol, balance })),
+);
+
 export const servicesBalanceListSelector = createSelector(
+  aaveBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );

@@ -81,3 +81,5 @@ export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
   get(poolTogether, 'poolStats', {});
 
 export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
+
+export const lendingSelector = ({ lending }: RootReducerState) => lending;
