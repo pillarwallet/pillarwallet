@@ -155,6 +155,7 @@ const RariWithdrawScreen = ({
             message: t('toast.rariServiceFailed'),
             emoji: 'hushed',
           });
+          setIsCalculatingMaxAmount(false);
           return;
         }
         setCustomBalances({

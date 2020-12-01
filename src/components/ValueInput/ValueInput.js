@@ -251,7 +251,7 @@ export const ValueInputComponent = (props: Props) => {
     if (onFormValid) {
       onFormValid(!errorMessage);
     }
-  }, [value, assetData, customBalances]);
+  }, [errorMessage]);
 
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
