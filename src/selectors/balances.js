@@ -25,6 +25,7 @@ import { PLR } from 'constants/assetsConstants';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { MixedBalance } from 'models/Asset';
 
 // selectors
 import { balancesSelector, activeAccountIdSelector } from './selectors';
@@ -68,4 +69,8 @@ export const allBalancesSelector = createSelector(
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
   (hasPositiveBalance) => !!hasPositiveBalance,
+);
+
+export const servicesBalanceListSelector = createSelector(
+  (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );
