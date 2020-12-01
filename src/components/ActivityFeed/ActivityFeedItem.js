@@ -98,7 +98,6 @@ import { DAI } from 'constants/assetsConstants';
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
 import type { ColorKey, Theme } from 'models/Theme';
@@ -109,6 +108,7 @@ import type { TransactionsGroup } from 'utils/feedData';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
+
 
 type Props = {
   type?: string,
@@ -121,7 +121,6 @@ type Props = {
   feedType?: string,
   activeAccountAddress: string,
   accounts: Accounts,
-  isSmartWalletActivated: boolean,
   assetDecimals: number,
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
@@ -322,7 +321,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getWalletCreatedEventData = (event: Object) => {
-    const { isSmartWalletActivated, theme } = this.props;
+    const { theme } = this.props;
     const { keyWalletIcon, smartWalletIcon } = images(theme);
     switch (event.eventTitle) {
       case 'Wallet created':
@@ -336,7 +335,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: this.STATUSES().CREATED,
-          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case 'Wallet imported':
         return {
@@ -350,7 +348,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   getUserEventData = (event: Object) => {
-    const { isSmartWalletActivated, theme } = this.props;
+    const { theme } = this.props;
     const { keyWalletIcon, PPNIcon } = images(theme);
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -360,7 +358,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES().PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: this.STATUSES().CREATED,
-          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case WALLET_BACKUP_EVENT:
         return {
@@ -868,7 +865,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });
 

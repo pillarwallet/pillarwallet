@@ -54,7 +54,6 @@ import {
   getAccountAddress,
   checkIfLegacySmartWalletAccount,
 } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // services
@@ -65,12 +64,12 @@ import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
 // assets
 import PROVIDERS_META from 'assets/exchange/providersMeta.json';
+
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
@@ -88,7 +87,6 @@ type Props = {
   getMetaData: () => void,
   user: User,
   accounts: Accounts,
-  smartWalletState: SmartWalletReducerState,
   getApi: () => SDKWrapper,
   isAltalixAvailable: null | boolean,
   loadAltalixInfo: () => void,
@@ -250,17 +248,9 @@ class ServicesScreen extends React.Component<Props> {
   }
 
   getCryptoPurchaseAddress = (): string | null => {
-    const { accounts, smartWalletState } = this.props;
+    const { accounts } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
-    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    if (!smartWalletStatus.hasAccount) {
-      Modal.open(() => (
-        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.NO_SW_ACCOUNT} />
-      ));
-      return null;
-    }
 
     if (!activeAccount || !checkIfLegacySmartWalletAccount(activeAccount)) {
       Modal.open(() => (
@@ -348,12 +338,10 @@ class ServicesScreen extends React.Component<Props> {
 const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
-  smartWallet: smartWalletState,
   fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
   user,
   accounts,
-  smartWalletState,
   isAltalixAvailable,
 });
 

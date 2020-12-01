@@ -28,16 +28,11 @@ import { getRate, getBalance, sortAssets } from 'utils/assets';
 import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { Rates, Asset, Assets, Balances } from 'models/Asset';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Allowance, Offer } from 'models/Offer';
 import type { ExchangeOptions } from 'utils/exchange';
 
@@ -266,12 +261,3 @@ export const shouldTriggerSearch = (
   toAsset: Option,
   fromAmount: number,
 ) => !!+fromAmount && fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
-
-export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
-  const deploymentData = getDeploymentData(smartWalletState);
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-  return !isEmpty(sendingBlockedMessage)
-    && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
-    && !deploymentData.error;
-};
