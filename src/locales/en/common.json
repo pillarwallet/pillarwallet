@@ -201,7 +201,11 @@
     "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline",
     "payWithPLR": "Pay with PLR",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "deposit": "Deposit",
+    "claim": "Claim",
+    "fromRariToWallet": "Rari Capital → Wallet",
+    "fromWalletToRari": "Wallet → Rari Capital"
   },
 
   "button": {

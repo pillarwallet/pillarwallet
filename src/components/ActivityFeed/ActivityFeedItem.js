@@ -94,6 +94,14 @@ import {
   SABLIER_EVENT,
 } from 'constants/sablierConstants';
 import { DAI } from 'constants/assetsConstants';
+import {
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_TOKENS_DATA,
+  RARI_GOVERNANCE_TOKEN_DATA,
+} from 'constants/rariConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -180,6 +188,7 @@ const ItemValue = styled(BaseText)`
 `;
 
 const aaveImage = require('assets/images/apps/aave.png');
+const rariLogo = require('assets/images/rari_logo.png');
 
 export class ActivityFeedItem extends React.Component<Props> {
   NAMES = () => ({
@@ -631,6 +640,76 @@ export class ActivityFeedItem extends React.Component<Props> {
             isFailed: true,
           };
         }
+        break;
+      }
+      case RARI_DEPOSIT_TRANSACTION:
+      case RARI_WITHDRAW_TRANSACTION:
+      case RARI_CLAIM_TRANSACTION: {
+        const {
+          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool,
+        } = event.extra;
+        let label = null;
+        let subtext = null;
+        let negativeValueAmount = null;
+        let negativeValueToken = null;
+        let positiveValueAmount = null;
+        let positiveValueToken = null;
+
+        const rariToken = rariPool && RARI_TOKENS_DATA[rariPool].symbol;
+        const formattedAmount = formatAmount(
+          formatUnits(amount || claimed, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+
+        if (event.tag === RARI_DEPOSIT_TRANSACTION) {
+          label = t('label.deposit');
+          subtext = t('label.fromWalletToRari');
+          negativeValueAmount = formattedAmount;
+          negativeValueToken = symbol;
+          positiveValueAmount = formatAmount(formatUnits(rftMinted, 18));
+          positiveValueToken = rariToken;
+        } else if (event.tag === RARI_WITHDRAW_TRANSACTION) {
+          label = t('label.withdraw');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formatAmount(formatUnits(rftBurned, 18));
+          negativeValueToken = rariToken;
+          positiveValueAmount = formattedAmount;
+          positiveValueToken = symbol;
+        } else {
+          label = t('label.claim');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formattedAmount;
+          positiveValueAmount = formattedAmount;
+          negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+          positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+        }
+
+        data = {
+          ...data,
+          label,
+          subtext,
+          itemImageSource: rariLogo,
+          customAddon: (
+            <ListWrapper>
+              <BaseText big>
+                {t('negativeTokenValue', { value: negativeValueAmount, token: negativeValueToken })}
+              </BaseText>
+              <ItemValue>
+                {t('positiveTokenValue', { value: positiveValueAmount, token: positiveValueToken })}
+              </ItemValue>
+            </ListWrapper>
+          ),
+        };
+        break;
+      }
+      case RARI_TRANSFER_TRANSACTION: {
+        const { contactAddress, amount, rariPool } = event.extra;
+        const formattedAmount = formatAmount(formatUnits(amount, 18));
+        const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+        data = {
+          ...data,
+          label: usernameOrAddress,
+          profileImage: true,
+          itemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
+        };
         break;
       }
       default:

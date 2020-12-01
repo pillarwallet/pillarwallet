@@ -19,6 +19,7 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import type { RariPool } from 'models/RariPool';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -26,11 +27,11 @@ export type TxSettlementItem = {
   hash: string,
 };
 
-export type TxPoolTogetherExtra = {
+export type TxPoolTogetherExtra = {|
   symbol: string,
   decimals: number,
   amount: string,
-}
+|};
 
 type TxWithdrawalExtra = {
   paymentHash: string,
@@ -53,11 +54,11 @@ export type SyntheticTransactionExtra = {
   syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
-export type AaveExtra = {
+export type AaveExtra = {|
   symbol: string,
   decimals: number,
   amount: string,
-};
+|};
 
 export type TxSablierExtra = {
   assetAddress: string,
@@ -65,6 +66,36 @@ export type TxSablierExtra = {
   contactAddress: string,
   streamId: string,
 };
+export type RariDepositExtra = {|
+  symbol: string,
+  decimals: number,
+  amount: number,
+  rariPool: ?RariPool,
+  rftMinted: string,
+|};
+
+export type RariWithdrawExtra = {|
+  symbol: string,
+  decimals: number,
+  amount: number,
+  rariPool: ?RariPool,
+  rftBurned: string,
+|};
+
+export type RariTransferExtra = {|
+  amount: string,
+  rariPool: ?RariPool,
+  contactAddress: string,
+|};
+
+export type RariClaimExtra = {|
+  amount: string,
+|};
+
+export type RariExtra = RariDepositExtra
+  | RariWithdrawExtra
+  | RariTransferExtra
+  | RariClaimExtra;
 
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
@@ -72,7 +103,8 @@ export type TransactionExtra = TxSettlementItem[]
   | EnsTransactionExtra
   | AaveExtra
   | TxPoolTogetherExtra
-  | TxSablierExtra;
+  | TxSablierExtra
+  | RariExtra;
 
 export type GasToken = {
   address: string,
