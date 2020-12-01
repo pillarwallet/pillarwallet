@@ -27,12 +27,14 @@ import { PLR } from 'constants/assetsConstants';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { MixedBalance } from 'models/Asset';
 import type { LendingReducerState } from 'reducers/lendingReducer';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 // selectors
 import {
   balancesSelector,
   activeAccountIdSelector,
   lendingSelector,
+  poolTogetherStatsSelector,
 } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
@@ -82,7 +84,17 @@ const aaveBalanceListSelector = createSelector(
     lending.depositedAssets.map(({ currentBalance: balance, symbol }) => ({ symbol, balance })),
 );
 
+const poolTogetherBalanceListSelector = createSelector(
+  poolTogetherStatsSelector,
+  (poolTogetherStats: PoolPrizeInfo): MixedBalance[] => Object.keys(poolTogetherStats)
+    .map(symbol => ({
+      symbol,
+      balance: poolTogetherStats[symbol].userInfo?.ticketBalance ?? 0,
+    })),
+);
+
 export const servicesBalanceListSelector = createSelector(
   aaveBalanceListSelector,
+  poolTogetherBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );
