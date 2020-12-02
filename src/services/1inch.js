@@ -156,7 +156,7 @@ export const create1inchAllowanceTx =
     const exchangeAddress = await get1InchSpenderAddress();
     if (!exchangeAddress) {
       reportLog('create1inchAllowanceTx -> get1inchApproveAddress failed');
-      return false;
+      return null;
     }
     return createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
   };
