@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useEffect } from 'react';
+import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -30,25 +30,21 @@ import { BaseText, MediumText } from 'components/Typography';
 import Insight from 'components/Insight/Insight';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
-import Spinner from 'components/Spinner';
 
 import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { getDeviceWidth, formatFiat } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
-import { fetchRariFundBalanceAction } from 'actions/rariActions';
-
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
+import type { RootReducerState } from 'reducers/rootReducer';
 import type { Rates } from 'models/Asset';
+import type { RariPool } from 'models/RariPool';
 
 
 type Props = {
-  fetchRariFundBalance: () => void,
-  isFetchingFundBalance: boolean,
-  rariFundBalance: number,
+  rariFundBalance: {[RariPool]: number},
   baseFiatCurrency: ?string,
   rates: Rates,
 };
@@ -101,17 +97,13 @@ const RariLogo = styled(CachedImage)`
 `;
 
 const RariInfoScreen = ({
-  fetchRariFundBalance,
-  isFetchingFundBalance,
-  rariFundBalance,
   baseFiatCurrency,
   rates,
+  rariFundBalance,
 }: Props) => {
-  useEffect(() => {
-    fetchRariFundBalance();
-  }, []);
-
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const totalRariFundBalance = (Object.values(rariFundBalance): any).reduce((sum, balance) => sum + balance, 0);
+  const totalRariFundBalanceInFiat = convertUSDToFiat(totalRariFundBalance, rates, fiatCurrency);
 
   const renderParagraph = (subtitle, paragraph) => {
     return (
@@ -143,12 +135,9 @@ const RariInfoScreen = ({
         <Spacing h={6} />
         <Row>
           <Card>
-            {isFetchingFundBalance ?
-              <Spinner size={20} style={{ marginVertical: 5 }} /> :
-              <MediumText big>
-                {formatFiat(convertUSDToFiat(rariFundBalance, rates, fiatCurrency), fiatCurrency, { skipCents: true })}
-              </MediumText>
-            }
+            <MediumText big>
+              {formatFiat(totalRariFundBalanceInFiat, fiatCurrency, { skipCents: true })}
+            </MediumText>
             <BaseText secondary small>{t('rariContent.label.totalSupply')}</BaseText>
           </Card>
           <Spacing w={16} />
@@ -234,19 +223,13 @@ const RariInfoScreen = ({
 const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rari: {
-    isFetchingFundBalance,
     rariFundBalance,
   },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
-  isFetchingFundBalance,
-  rariFundBalance,
   rates,
+  rariFundBalance,
 });
 
-const mapDispatchToProps = (dispatch: Dispatch) => ({
-  fetchRariFundBalance: () => dispatch(fetchRariFundBalanceAction()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(RariInfoScreen);
+export default connect(mapStateToProps)(RariInfoScreen);

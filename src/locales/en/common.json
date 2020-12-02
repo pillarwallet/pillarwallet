@@ -1450,7 +1450,9 @@
       "addDepositScreen": "Add deposit",
       "addDepositReviewScreen": "Review",
       "withdrawScreen": "Withdraw",
-      "withdrawReviewScreen": "Review"
+      "withdrawReviewScreen": "Review",
+      "transferScreen": "Transfer",
+      "transferReviewScreen": "Review"
     },
     "label": {
       "currentAPY": "Current APY",
@@ -1467,7 +1469,9 @@
       "youAreWithdrawingFromYieldPool": "You are withdrawing from Yield pool",
       "youAreWithdrawingFromEthPool": "You are withdrawing from ETH pool",
       "withdrawDetails": "Withdraw details",
-      "rariWithdrawalFee": "Rari withdrawal fee"
+      "rariWithdrawalFee": "Rari withdrawal fee",
+      "youAreTransfering": "You are transfering",
+      "transferDetails": "Transfer details"
     },
     "button": {
       "withdraw": "Withdraw",

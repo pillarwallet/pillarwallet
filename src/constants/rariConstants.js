@@ -17,10 +17,10 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-export const SET_RARI_FUND_BALANCE = 'SET_RARI_FUND_BALANCE';
+import { getRariPoolsEnv } from 'configs/envConfig';
+
 export const SET_RARI_APY = 'SET_RARI_APY';
 export const SET_RARI_USER_DATA = 'SET_RARI_USER_DATA';
-export const SET_FETCHING_RARI_FUND_BALANCE = 'SET_FETCHING_RARI_FUND_BALANCE';
 export const SET_FETCHING_RARI_DATA = 'SET_FETCHING_RARI_DATA';
 export const SET_FETCHING_RARI_DATA_ERROR = 'SET_FETCHING_RARI_DATA_ERROR';
 
@@ -77,5 +77,31 @@ export const RARI_TOKENS = {
     address: '0xe2f2a5c287993345a840db3b0845fbc70f5935a5',
     name: 'mStable USD',
     decimals: 18,
+  },
+};
+
+const rariLogo = require('assets/images/rari_logo.png');
+
+export const RARI_TOKENS_DATA = {
+  [RARI_POOLS.STABLE_POOL]: {
+    symbol: 'RSPT',
+    name: 'Rari Stable Pool Token',
+    decimals: 18,
+    contractAddress: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_TOKEN_ADDRESS,
+    imageUrl: rariLogo,
+  },
+  [RARI_POOLS.YIELD_POOL]: {
+    symbol: 'RYPT',
+    name: 'Rari Yield Pool Token',
+    decimals: 18,
+    contractAddress: getRariPoolsEnv(RARI_POOLS.YIELD_POOL).RARI_FUND_TOKEN_ADDRESS,
+    imageUrl: rariLogo,
+  },
+  [RARI_POOLS.ETH_POOL]: {
+    symbol: 'REPT',
+    name: 'Rari ETH Pool Token',
+    decimals: 18,
+    contractAddress: getRariPoolsEnv(RARI_POOLS.ETH_POOL).RARI_FUND_TOKEN_ADDRESS,
+    imageUrl: rariLogo,
   },
 };

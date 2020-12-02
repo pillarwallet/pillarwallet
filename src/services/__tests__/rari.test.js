@@ -135,7 +135,7 @@ describe('Rari service', () => {
     }));
 
     const fundBalance = await rariServices.getRariFundBalanceInUSD(rates);
-    expect(fundBalance).toEqual(123.45 * (2 + ETH_USD));
+    expect(fundBalance).toEqual({ ETH_POOL: 617.25, STABLE_POOL: 123.45, YIELD_POOL: 123.45 });
 
     getContractMock.mockRestore();
   });

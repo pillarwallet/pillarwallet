@@ -18,10 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  SET_RARI_FUND_BALANCE,
   SET_RARI_APY,
   SET_RARI_USER_DATA,
-  SET_FETCHING_RARI_FUND_BALANCE,
   RARI_POOLS,
   SET_FETCHING_RARI_DATA,
   SET_FETCHING_RARI_DATA_ERROR,
@@ -30,11 +28,12 @@ import type { RariPool, Interests } from 'models/RariPool';
 
 
 export type RariReducerState = {
-  rariFundBalance: number,
   rariApy: {[RariPool]: number},
   userDepositInUSD: {[RariPool]: number},
+  userDepositInRariToken: {[RariPool]: number},
   userInterests: {[RariPool]: ?Interests},
-  isFetchingFundBalance: boolean,
+  rariFundBalance: {[RariPool]: number},
+  rariTotalSupply: {[RariPool]: number},
   isFetchingRariData: boolean,
   rariDataFetchFailed: boolean,
 }
@@ -45,13 +44,17 @@ export type RariReducerAction = {
 };
 
 const initialState = {
-  rariFundBalance: 0,
   rariApy: {
     [RARI_POOLS.STABLE_POOL]: 0,
     [RARI_POOLS.YIELD_POOL]: 0,
     [RARI_POOLS.ETH_POOL]: 0,
   },
   userDepositInUSD: {
+    [RARI_POOLS.STABLE_POOL]: 0,
+    [RARI_POOLS.YIELD_POOL]: 0,
+    [RARI_POOLS.ETH_POOL]: 0,
+  },
+  userDepositInRariToken: {
     [RARI_POOLS.STABLE_POOL]: 0,
     [RARI_POOLS.YIELD_POOL]: 0,
     [RARI_POOLS.ETH_POOL]: 0,
@@ -70,7 +73,16 @@ const initialState = {
       interestsPercentage: 0,
     },
   },
-  isFetchingFundBalance: false,
+  rariFundBalance: {
+    [RARI_POOLS.STABLE_POOL]: 0,
+    [RARI_POOLS.YIELD_POOL]: 0,
+    [RARI_POOLS.ETH_POOL]: 0,
+  },
+  rariTotalSupply: {
+    [RARI_POOLS.STABLE_POOL]: 0,
+    [RARI_POOLS.YIELD_POOL]: 0,
+    [RARI_POOLS.ETH_POOL]: 0,
+  },
   isFetchingRariAPY: false,
   isFetchingRariData: false,
   rariDataFetchFailed: false,
@@ -81,12 +93,6 @@ export default function rariReducer(
   action: RariReducerAction,
 ): RariReducerState {
   switch (action.type) {
-    case SET_RARI_FUND_BALANCE:
-      return {
-        ...state,
-        rariFundBalance: action.payload,
-        isFetchingFundBalance: false,
-      };
     case SET_RARI_APY:
       return {
         ...state,
@@ -96,11 +102,6 @@ export default function rariReducer(
       return {
         ...state,
         ...action.payload,
-      };
-    case SET_FETCHING_RARI_FUND_BALANCE:
-      return {
-        ...state,
-        isFetchingFundBalance: action.payload ?? true,
       };
     case SET_FETCHING_RARI_DATA:
       return {

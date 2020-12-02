@@ -35,8 +35,16 @@ import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
 import RARI_FUND_CONTROLLER_ETH_CONTRACT_ABI from 'abi/rariFundControllerEth.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
+import RARI_FUND_TOKEN_CONTRACT_ABI from 'abi/rariFundToken.json';
 import type { RariPool } from 'models/RariPool';
 import type { Rates } from 'models/Asset';
+
+const mapPools = (resultsArray: Object[]) => {
+  return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
+    result[pool] = resultsArray[i];
+    return result;
+  }, {});
+};
 
 export const getRariFundBalanceInUSD = async (rates: Rates) => {
   const balancePerPool = await Promise.all(RARI_POOLS_ARRAY.map(async rariPool => {
@@ -45,25 +53,34 @@ export const getRariFundBalanceInUSD = async (rates: Rates) => {
       RARI_FUND_MANAGER_CONTRACT_ABI,
     );
     if (!rariContract) return EthersBigNumber.from(0);
-    const balance = await rariContract.callStatic.getFundBalance()
+    let balance = await rariContract.callStatic.getFundBalance()
       .catch((error) => {
         reportErrorLog("Rari service failed: Can't get Rari fund balance", { error });
         return EthersBigNumber.from(0);
       });
     if (rariPool === RARI_POOLS.ETH_POOL) {
-      return EthersBigNumber.from(balance).mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
+      balance = EthersBigNumber.from(balance).mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
     }
-    return balance;
+    return parseFloat(utils.formatUnits(balance, 18));
   }));
-  const totalBalanceBN = balancePerPool.reduce((sum, balance) => sum.add(balance), EthersBigNumber.from(0));
-  return parseFloat(utils.formatUnits(totalBalanceBN, 18));
+  return mapPools(balancePerPool);
 };
 
-const mapPools = (resultsArray: Object[]) => {
-  return RARI_POOLS_ARRAY.reduce((result, pool, i) => {
-    result[pool] = resultsArray[i];
-    return result;
-  }, {});
+export const getRariTokenTotalSupply = async () => {
+  const supplyPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async rariPool => {
+    const rariContract = getContract(
+      getRariPoolsEnv(rariPool).RARI_FUND_TOKEN_ADDRESS,
+      RARI_FUND_TOKEN_CONTRACT_ABI,
+    );
+    if (!rariContract) return EthersBigNumber.from(0);
+    const supply = await rariContract.totalSupply()
+      .catch(error => {
+        reportErrorLog("Rari service failed: Can't get Rari token supply", { error });
+        return '0';
+      });
+    return parseFloat(utils.formatUnits(supply, 18));
+  }));
+  return mapPools(supplyPerPool);
 };
 
 export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddress: string) => {
