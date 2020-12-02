@@ -29,7 +29,7 @@ import {
 } from 'services/rariPoolsAPY';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { reportErrorLog } from 'utils/common';
-import { RARI_POOLS_ARRAY, RARI_POOLS } from 'constants/rariConstants';
+import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_TOKENS } from 'constants/rariConstants';
 import { ETH } from 'constants/assetsConstants';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
@@ -66,18 +66,23 @@ const mapPools = (resultsArray: Object[]) => {
   }, {});
 };
 
+export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddress: string) => {
+  const rariContract = getContract(
+    getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+    RARI_FUND_MANAGER_CONTRACT_ABI,
+  );
+  if (!rariContract) return EthersBigNumber.from(0);
+  const balanceBN = await rariContract.callStatic.balanceOf(accountAddress)
+    .catch((error) => {
+      reportErrorLog("Rari service failed: Can't get user account deposit in USD", { error });
+      return EthersBigNumber.from(0);
+    });
+  return balanceBN;
+};
+
 export const getAccountDepositInUSD = async (accountAddress: string) => {
   const depositPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
-    const rariContract = getContract(
-      getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
-      RARI_FUND_MANAGER_CONTRACT_ABI,
-    );
-    if (!rariContract) return 0;
-    const balanceBN = await rariContract.callStatic.balanceOf(accountAddress)
-      .catch((error) => {
-        reportErrorLog("Rari service failed: Can't get user account deposit in USD", { error });
-        return 0;
-      });
+    const balanceBN = await getAccountDepositInUSDBN(rariPool, accountAddress);
     return parseFloat(utils.formatUnits(balanceBN, 18));
   }));
   return mapPools(depositPerPool);
@@ -149,16 +154,6 @@ export const getUserInterests = async (accountAddress: string) => {
   return mapPools(interestsPerPool);
 };
 
-const tokens = {
-  DAI: { decimals: 18 },
-  USDC: { decimals: 6 },
-  USDT: { decimals: 6 },
-  TUSD: { decimals: 18 },
-  BUSD: { decimals: 18 },
-  sUSD: { decimals: 18 },
-  mUSD: { decimals: 18 },
-};
-
 // stable pool and yield pool are very similar
 const getStablecoinPoolAPY = async (rariPool: RariPool, servicesApys: Object[]) => {
   const [dydxApyBNs, compoundApyBNs, aaveApyBNs, mstableApyBNs] = servicesApys;
@@ -196,7 +191,7 @@ const getStablecoinPoolAPY = async (rariPool: RariPool, servicesApys: Object[]) 
     const currencyCode = currencyCodes[i];
     const priceInUsdBN = EthersBigNumber.from(pricesInUSD[i]);
     const contractBalanceBN = EthersBigNumber.from(fundControllerContractBalances[i]);
-    const scale = EthersBigNumber.from(10).pow(tokens[currencyCode].decimals);
+    const scale = EthersBigNumber.from(10).pow(RARI_TOKENS[currencyCode].decimals);
     const contractBalanceUsdBN = contractBalanceBN.mul(priceInUsdBN).div(scale);
     factors.push([contractBalanceUsdBN, EthersBigNumber.from(0)]);
     totalBalanceUsdBN = totalBalanceUsdBN.add(contractBalanceUsdBN);

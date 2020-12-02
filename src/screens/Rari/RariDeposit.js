@@ -40,7 +40,7 @@ import { formatFiat } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { RARI_INFO, RARI_ADD_DEPOSIT } from 'constants/navigationConstants';
+import { RARI_INFO, RARI_ADD_DEPOSIT, RARI_WITHDRAW } from 'constants/navigationConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
 
 import { fetchRariDataAction } from 'actions/rariActions';
@@ -166,7 +166,7 @@ const RariDepositScreen = ({
             label={t('rariContent.button.withdraw')}
             fontIcon="back"
             fontIconStyle={{ transform: [{ rotate: '90deg' }] }}
-            onPress={() => {}}
+            onPress={() => navigation.navigate(RARI_WITHDRAW, { rariPool: activeTab })}
           />
           <CircleButton
             label={t('rariContent.button.deposit')}

@@ -1379,7 +1379,8 @@
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
     "walletBackedUp": "Your wallet is backed up now.",
     "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
-    "rariFetchDataFailed": "Cannot fetch Rari data. Please try again"
+    "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
+    "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again."
   },
 
   "exchangeContent": {
@@ -1448,7 +1449,9 @@
       "depositScreen": "Your deposit",
       "infoScreen": "Rari Capital",
       "addDepositScreen": "Add deposit",
-      "addDepositReviewScreen": "Review"
+      "addDepositReviewScreen": "Review",
+      "withdrawScreen": "Withdraw",
+      "withdrawReviewScreen": "Review"
     },
     "label": {
       "currentAPY": "Current APY",
@@ -1460,7 +1463,12 @@
       "poolBalance": "Pool Balance",
       "youAreDepositingToStablePool": "You are depositing to Stable pool",
       "youAreDepositingToYieldPool": "You are depositing to Yield pool",
-      "youAreDepositingToEthPool": "You are depositing to ETH pool"
+      "youAreDepositingToEthPool": "You are depositing to ETH pool",
+      "youAreWithdrawingFromStablePool": "You are withdrawing from Stable pool",
+      "youAreWithdrawingFromYieldPool": "You are withdrawing from Yield pool",
+      "youAreWithdrawingFromEthPool": "You are withdrawing from ETH pool",
+      "withdrawDetails": "Withdraw details",
+      "rariWithdrawalFee": "Rari withdrawal fee"
     },
     "button": {
       "withdraw": "Withdraw",
@@ -1468,7 +1476,8 @@
       "transfer": "Transfer"
     },
     "tooltip": {
-      "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first"
+      "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first",
+      "rariWithdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools."
     },
     "infoContent": {
       "subtitle": {
