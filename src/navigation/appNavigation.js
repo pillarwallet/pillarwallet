@@ -744,6 +744,8 @@ const rariFlow = createStackNavigator({
   [RARI_TRANSFER_REVIEW]: RariTransferReviewScreen,
   [RARI_CLAIM_RGT]: RariClaimRgtScreen,
   [RARI_CLAIM_RGT_REVIEW]: RariClaimRgtReviewScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;

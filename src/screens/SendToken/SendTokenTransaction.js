@@ -205,6 +205,7 @@ class SendTokenTransaction extends React.Component<Props> {
           autoClose: true,
         });
       }
+      return;
     }
 
     navigation.dismiss();
