@@ -32,7 +32,6 @@ import {
 } from 'utils/common';
 import {
   EXCHANGE_URL,
-  EXCHANGE_ADDRESS,
   get1inchCommonUrlParams,
   getResponseData,
   parseAssets,
@@ -59,11 +58,29 @@ const ethProvider = () => {
   return getEthereumProvider(getEnv().NETWORK_PROVIDER);
 };
 
+export const get1InchSpenderAddress = async (): Promise<?string> => {
+  const response = await axios.get(`${EXCHANGE_URL}/approve/spender`).catch((error) => error);
+
+  const spenderAddress = response?.data?.address;
+
+  if (!spenderAddress) {
+    reportLog('get1inchApproveAddress API call failed', { response });
+    return null;
+  }
+
+  return spenderAddress;
+};
+
 const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, fromAsset: Asset) => {
   let allowanceSet = true;
   if (fromAsset.code !== ETH) {
     const assetContract = new ethers.Contract(safeFromAddress, ERC20_CONTRACT_ABI, ethProvider());
-    const allowance: BigNumber = await assetContract.allowance(clientAddress, EXCHANGE_ADDRESS);
+    const exchangeAddress = await get1InchSpenderAddress();
+    if (!exchangeAddress) {
+      reportLog('getAllowanceSet -> get1inchApproveAddress failed');
+      return false;
+    }
+    const allowance: BigNumber = await assetContract.allowance(clientAddress, exchangeAddress);
     allowanceSet = allowance.gt(0);
   }
   return allowanceSet;
@@ -85,16 +102,19 @@ export const get1inchOffer = async (
   const response = await getResponseData(url, 'Failed to fetch 1inch offer');
   if (!response) return null;
 
+  const toTokenAmount = convertToNominalUnits(
+    new BigNumber(toAssetParsed.decimals),
+    new BigNumber(response.toTokenAmount),
+  );
+
+  // rate from target amount to zero means no pair available
+  if (toTokenAmount.isZero()) return null;
+
   const allowanceSet = await getAllowanceSet(clientAddress, safeFromAddress, fromAssetParsed);
 
   const fromTokenAmount = convertToNominalUnits(
     new BigNumber(fromAssetParsed.decimals),
     new BigNumber(response.fromTokenAmount),
-  );
-
-  const toTokenAmount = convertToNominalUnits(
-    new BigNumber(toAssetParsed.decimals),
-    new BigNumber(response.toTokenAmount),
   );
 
   const askRate = toTokenAmount.dividedBy(fromTokenAmount);
@@ -136,20 +156,23 @@ export const create1inchOrder = async (
 
 export const create1inchAllowanceTx =
   async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
-    const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, EXCHANGE_ADDRESS);
-    return allowanceTx;
+    const exchangeAddress = await get1InchSpenderAddress();
+    if (!exchangeAddress) {
+      reportLog('create1inchAllowanceTx -> get1inchApproveAddress failed');
+      return null;
+    }
+    return createAllowanceTx(fromAssetAddress, clientAddress, exchangeAddress);
   };
 
 export const fetch1inchSupportedTokens = async (): Promise<string[]> => {
-  const response = await axios.get(`${EXCHANGE_URL}/tokens`);
+  const response = await axios.get(`${EXCHANGE_URL}/tokens`).catch((error) => error);
 
-  if (!response?.data?.tokens) {
-    reportLog('fetch1inchSupportedTokens API call failed', {
-      responseStatus: response?.status,
-      responseData: response?.data,
-    });
+  const supportedTokens = response?.data?.tokens;
+
+  if (!supportedTokens) {
+    reportLog('fetch1inchSupportedTokens API call failed', { response });
     return [];
   }
 
-  return (Object.values(response.data.tokens): any).map(({ symbol }) => symbol);
+  return (Object.values(supportedTokens): any).map(({ symbol }) => symbol);
 };
