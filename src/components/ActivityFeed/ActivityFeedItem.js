@@ -646,7 +646,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       case RARI_WITHDRAW_TRANSACTION:
       case RARI_CLAIM_TRANSACTION: {
         const {
-          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool,
+          symbol, decimals, amount, rftMinted, rftBurned, rariPool,
         } = event.extra;
         let label = null;
         let subtext = null;
@@ -656,20 +656,19 @@ export class ActivityFeedItem extends React.Component<Props> {
         let positiveValueToken = null;
 
         const rariToken = rariPool && RARI_TOKENS_DATA[rariPool].symbol;
-        const formattedAmount = formatAmount(
-          formatUnits(amount || claimed, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+        const formattedAmount = formatAmount(formatUnits(amount, decimals), symbol ? getDecimalPlaces(symbol) : 6);
 
         if (event.tag === RARI_DEPOSIT_TRANSACTION) {
           label = t('label.deposit');
           subtext = t('label.fromWalletToRari');
           negativeValueAmount = formattedAmount;
           negativeValueToken = symbol;
-          positiveValueAmount = formatAmount(formatUnits(rftMinted, 18));
+          positiveValueAmount = rftMinted && formatAmount(formatUnits(rftMinted, 18));
           positiveValueToken = rariToken;
         } else if (event.tag === RARI_WITHDRAW_TRANSACTION) {
           label = t('label.withdraw');
           subtext = t('label.fromRariToWallet');
-          negativeValueAmount = formatAmount(formatUnits(rftBurned, 18));
+          negativeValueAmount = rftBurned && formatAmount(formatUnits(rftBurned, 18));
           negativeValueToken = rariToken;
           positiveValueAmount = formattedAmount;
           positiveValueToken = symbol;
@@ -689,14 +688,23 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemImageSource: rariLogo,
           customAddon: (
             <ListWrapper>
-              <BaseText big>
-                {t('negativeTokenValue', { value: negativeValueAmount, token: negativeValueToken })}
-              </BaseText>
-              <ItemValue>
-                {t('positiveTokenValue', { value: positiveValueAmount, token: positiveValueToken })}
-              </ItemValue>
+              {negativeValueAmount && (
+                <BaseText big>
+                  {t('negativeTokenValue', { value: negativeValueAmount, token: negativeValueToken })}
+                </BaseText>
+              )}
+              {positiveValueAmount && (
+                <ItemValue>
+                  {t('positiveTokenValue', { value: positiveValueAmount, token: positiveValueToken })}
+                </ItemValue>
+              )}
             </ListWrapper>
           ),
+          customAddonAlignLeft: true,
+          rightColumnInnerStyle: {
+            flexDirection: 'row',
+            alignItems: 'center',
+          },
         };
         break;
       }

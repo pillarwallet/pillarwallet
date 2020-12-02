@@ -289,8 +289,10 @@ export const getRariDepositTransactionsAndExchangeFee = async (
     ...depositTransactions[0],
     tag: RARI_DEPOSIT_TRANSACTION,
     extra: {
-      amount,
-      token: token.symbol,
+      amount: amountBN,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      rariPool,
     },
   };
   return { depositTransactions, exchangeFeeBN, slippage };
@@ -645,8 +647,10 @@ export const getRariWithdrawTransaction = async (
     symbol: ETH,
     tag: RARI_WITHDRAW_TRANSACTION,
     extra: {
-      amount,
-      token: token.symbol,
+      amount: amountBN,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      rariPool,
     },
   };
 
@@ -834,6 +838,7 @@ export const getWithdrawalFeeRate = (rariPool: RariPool) => {
 };
 
 export const getRariClaimRgtTransaction = (senderAddress: string, amount: number, txFeeInWei?: BigNumber) => {
+  const amountBN = parseTokenBigNumberAmount(amount, 18);
   const transactionData = encodeContractMethod(RARI_RGT_DISTRIBUTOR_CONTRACT_ABI, 'claimRgt', [
     parseTokenBigNumberAmount(amount, 18),
   ]);
@@ -846,7 +851,7 @@ export const getRariClaimRgtTransaction = (senderAddress: string, amount: number
     symbol: ETH,
     txFeeInWei,
     extra: {
-      amount,
+      amount: amountBN,
     },
     tag: RARI_CLAIM_TRANSACTION,
   };
@@ -995,8 +1000,7 @@ export const mapTransactionsHistoryWithRari = async (
     transaction,
     transactionIndex,
   ) => {
-    const { to, tag } = transaction;
-    if (isRariTransactionTag(tag)) return transactions;
+    const { to } = transaction;
     if (rariContracts.find(contract => addressesEqual(contract, to))) {
       transactions[transactionIndex] = buildRariTransaction(
         accountAddress,

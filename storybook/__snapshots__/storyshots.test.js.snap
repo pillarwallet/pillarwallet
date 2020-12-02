@@ -7546,7 +7546,10 @@ exports[`Storyshots ActivityFeedItem Rari claim 1`] = `
               <View
                 style={
                   Array [
-                    undefined,
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
                     Object {
                       "flexWrap": "wrap",
                     },
@@ -7823,7 +7826,10 @@ exports[`Storyshots ActivityFeedItem Rari deposit 1`] = `
               <View
                 style={
                   Array [
-                    undefined,
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
                     Object {
                       "flexWrap": "wrap",
                     },
@@ -7879,6 +7885,299 @@ exports[`Storyshots ActivityFeedItem Rari deposit 1`] = `
                   >
                     positiveTokenValue
                   </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Rari pending transaction 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  label.deposit
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                label.fromWalletToRari
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+                <View
+                  horizontal={true}
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "row",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                      },
+                      Object {
+                        "alignItems": "center",
+                        "flexWrap": "wrap",
+                        "justifyContent": "flex-end",
+                      },
+                    ]
+                  }
+                >
+                  <View
+                    name="pending"
+                    style={
+                      Array [
+                        Object {
+                          "color": "#818EB3",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "marginLeft": 12,
+                        },
+                        undefined,
+                      ]
+                    }
+                  />
                 </View>
               </View>
             </View>
@@ -8409,7 +8708,10 @@ exports[`Storyshots ActivityFeedItem Rari withdrawal 1`] = `
               <View
                 style={
                   Array [
-                    undefined,
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
                     Object {
                       "flexWrap": "wrap",
                     },

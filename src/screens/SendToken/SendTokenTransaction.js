@@ -38,7 +38,7 @@ import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
 import { isSablierTransactionTag } from 'utils/sablier';
-import { formatUnits } from 'utils/common';
+import { formatUnits, formatAmount, getDecimalPlaces } from 'utils/common';
 import { isRariTransactionTag } from 'utils/rari';
 
 // actions
@@ -182,15 +182,20 @@ class SendTokenTransaction extends React.Component<Props> {
     if (isRariTransactionTag(txTag)) {
       navigation.navigate(RARI_DEPOSIT);
       let toastMessage = null;
-      const { extra: { amount, token, recipient } = {} } = transactionPayload;
+      const {
+        extra: {
+          symbol, decimals, amount, recipient,
+        } = {},
+      } = transactionPayload;
+      const formattedAmount = formatAmount(formatUnits(amount, decimals), symbol ? getDecimalPlaces(symbol) : 6);
       if (txTag === RARI_DEPOSIT_TRANSACTION) {
-        toastMessage = t('toast.rariDeposit', { amount, token });
+        toastMessage = t('toast.rariDeposit', { amount: formattedAmount, token: symbol });
       } else if (txTag === RARI_WITHDRAW_TRANSACTION) {
-        toastMessage = t('toast.rariWithdraw', { amount, token });
+        toastMessage = t('toast.rariWithdraw', { amount: formattedAmount, token: symbol });
       } else if (txTag === RARI_TRANSFER_TRANSACTION) {
-        toastMessage = t('toast.rariTransfer', { amount, token, recipient });
+        toastMessage = t('toast.rariTransfer', { amount: formattedAmount, token: symbol, recipient });
       } else if (txTag === RARI_CLAIM_TRANSACTION) {
-        toastMessage = t('toast.rariClaimRgt', { amount });
+        toastMessage = t('toast.rariClaimRgt', { amount: formattedAmount });
       }
 
       if (toastMessage) {

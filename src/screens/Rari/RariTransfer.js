@@ -34,7 +34,7 @@ import Modal from 'components/Modal';
 import SendContainer from 'containers/SendContainer';
 
 import { isEnoughBalanceForTransactionFee, convertUSDToFiat } from 'utils/assets';
-import { reportErrorLog, noop } from 'utils/common';
+import { reportErrorLog, noop, parseTokenBigNumberAmount } from 'utils/common';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
 
@@ -168,6 +168,8 @@ const RariTransferScreen = ({
 
     setSubmitPressed(true);
 
+    const amountBN = parseTokenBigNumberAmount(amount, rariTokenData.decimals);
+
     // $FlowFixMe
     const transactionPayload: TokenTransactionPayload = {
       to: selectedContact.ethAddress,
@@ -179,9 +181,11 @@ const RariTransferScreen = ({
       decimals: rariTokenData.decimals,
       tag: RARI_TRANSFER_TRANSACTION,
       extra: {
-        amount,
-        token: rariTokenData.symbol,
+        amount: amountBN,
+        symbol: rariTokenData.symbol,
+        contactAddress: selectedContact.ethAddress,
         recipient: selectedContact.ensName || selectedContact.ethAddress,
+        rariPool,
       },
     };
 

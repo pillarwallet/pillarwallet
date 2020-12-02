@@ -670,5 +670,21 @@ storiesOf('ActivityFeedItem', module)
         },
       }}
     />
+  ))
+  .add('Rari pending transaction', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: RARI_DEPOSIT_TRANSACTION,
+        extra: {
+          symbol: 'USDC',
+          decimals: 6,
+          amount: '1000000',
+          rariPool: RARI_POOLS.STABLE_POOL,
+        },
+        status: TX_PENDING_STATUS,
+      }}
+    />
   ));
 
