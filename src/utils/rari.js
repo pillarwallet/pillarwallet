@@ -900,7 +900,7 @@ const buildRariTransaction = (
       ...transaction,
       tag: RARI_TRANSFER_TRANSACTION,
       extra: {
-        contactAddress: from === accountAddress ? to : from,
+        contactAddress: addressesEqual(from, accountAddress) ? to : from,
         amount,
         rariPool: findRariPool(rariTransaction),
       },
@@ -933,6 +933,8 @@ export const mapTransactionsHistoryWithRari = async (
       id
       amount
       tokenAddress
+      from
+      to
     }
     transfersIn: transfers(where: {
       to: "${accountAddress}", 
@@ -940,6 +942,8 @@ export const mapTransactionsHistoryWithRari = async (
       id
       amount
       tokenAddress
+      from
+      to
     }
     deposits(where: {
       payee: "${accountAddress}",

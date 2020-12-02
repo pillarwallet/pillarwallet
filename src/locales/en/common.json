@@ -205,7 +205,8 @@
     "deposit": "Deposit",
     "claim": "Claim",
     "fromRariToWallet": "Rari Capital → Wallet",
-    "fromWalletToRari": "Wallet → Rari Capital"
+    "fromWalletToRari": "Wallet → Rari Capital",
+    "rewardsClaimed": "Rewards claimed"
   },
 
   "button": {
@@ -293,7 +294,9 @@
     "proceed": "Proceed",
     "readMore": "Read more",
     "activateSmartWallet": "Activate Smart Wallet",
-    "finish": "Finish"
+    "finish": "Finish",
+    "claimMore": "Claim more",
+    "transferMore": "Transfer more"
   },
 
   "paragraph": {

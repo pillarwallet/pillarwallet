@@ -709,6 +709,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: usernameOrAddress,
           profileImage: true,
           itemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
+          fullItemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
         };
         break;
       }
