@@ -97,13 +97,8 @@ export const fetchRariDataAction = () => {
 export const calculateRariDepositTransactionEstimateAction = (
   rariDepositNeededTransactions: Object[],
 ) => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
-    if (!smartWalletAccount) return;
-
+  return (dispatch: Dispatch) => {
     dispatch(setEstimatingTransactionAction(true));
-
     const sequentialTransactions = rariDepositNeededTransactions
       .slice(1)
       .map(({
@@ -118,6 +113,20 @@ export const calculateRariDepositTransactionEstimateAction = (
       rariDepositNeededTransactions[0].data,
       null,
       sequentialTransactions,
+    ));
+  };
+};
+
+export const calculateRariWithdrawTransactionEstimateAction = (
+  rariWithdrawTransaction: Object,
+) => {
+  return (dispatch: Dispatch) => {
+    dispatch(setEstimatingTransactionAction(true));
+
+    dispatch(estimateTransactionAction(
+      rariWithdrawTransaction.to,
+      rariWithdrawTransaction.amount,
+      rariWithdrawTransaction.data,
     ));
   };
 };

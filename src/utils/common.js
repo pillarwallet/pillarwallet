@@ -678,3 +678,5 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
 export const getEnsPrefix = () => isProdEnv
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
+
+export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
