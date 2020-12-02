@@ -21,16 +21,20 @@
 import { Contract } from 'ethers';
 
 import { WBTC, BTC } from 'constants/assetsConstants';
-import { WBTC_CURVE_MAIN, WBTC_CURVE_TEST } from 'constants/exchangeConstants';
+import {
+  WBTC_CURVE_MAIN, WBTC_CURVE_TEST, WBTC_FROM_ADDRESS_MAIN, WBTC_FROM_ADDRESS_TEST,
+} from 'constants/exchangeConstants';
 
 import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
 
-import type { WBTCFeesWithRate, WBTCFeesRaw } from 'models/WBTC';
+import type { WBTCFeesWithRate, WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
+import type { Transaction } from 'models/Transaction';
 import { getEnv } from 'configs/envConfig';
 
 /* eslint-disable i18next/no-literal-string */
 
+// much of this is copy-pasted from wbtc.cafe web app code
 export const gatherWBTCFeeData = async (
   amount: number,
   fees: WBTCFeesRaw,
@@ -80,3 +84,13 @@ export const gatherWBTCFeeData = async (
     return null;
   }
 };
+
+// TODO use this to get txs for wbtccafe service screen
+export const getWbtcCafeTransactions = (history: Transaction[]): Transaction[] => {
+  const isProdEnv = getEnv().NETWORK_PROVIDER === 'homestead';
+  const address = isProdEnv ? WBTC_FROM_ADDRESS_MAIN : WBTC_FROM_ADDRESS_TEST;
+  return history.filter(({ from }) => from === address);
+};
+
+export const getValidPendingTransactions = (txs: PendingWBTCTransaction[]): PendingWBTCTransaction[] =>
+  txs.filter(({ dateCreated }) => dateCreated && Date.now() - dateCreated < 12 * 3600000); // 12 hours

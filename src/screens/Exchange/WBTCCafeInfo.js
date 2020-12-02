@@ -20,6 +20,7 @@
 
 import React, { useState } from 'react';
 import { Clipboard } from 'react-native';
+import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
@@ -31,14 +32,16 @@ import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import Table, { TableRow, TableAmount } from 'components/Table';
 
-// utils
+// utils, actions
 import { themedColors } from 'utils/themes';
-import { fontStyles, spacing, baseColors } from 'utils/variables';
+import { fontStyles, baseColors } from 'utils/variables';
+import { addWbtcPendingTxAction } from 'actions/exchangeActions';
 
 // models, constants
-import type { WBTCFeesWithRate } from 'models/WBTC';
+import type { WBTCFeesWithRate, PendingWBTCTransaction } from 'models/WBTC';
 import { BTC, WBTC } from 'constants/assetsConstants';
 import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import type { Dispatch } from 'reducers/rootReducer';
 
 // partials
 import WBTCSlippageModal from './WBTCSlippageModal';
@@ -53,6 +56,7 @@ type Props = {
   amount?: string,
   address?: string,
   error?: boolean,
+  addWbtcPendingTx: (tx: PendingWBTCTransaction) => void,
 }
 
 const Row = styled.View`
@@ -97,7 +101,7 @@ const WBTCCafeInfo = (props: Props) => {
   ));
 
   const {
-    wbtcData, extendedInfo, navigation, amount, address, error,
+    wbtcData, extendedInfo, navigation, amount, address, error, addWbtcPendingTx,
   } = props;
 
   const handleNextPress = () => {
@@ -107,6 +111,9 @@ const WBTCCafeInfo = (props: Props) => {
         wbtcEstData: wbtcData,
       });
     }
+    // todo move this to "I've sent BTC" button when we have it
+    addWbtcPendingTx({ amount: wbtcData?.estimate || 0, dateCreated: Date.now() });
+
     Clipboard.setString(address || '');
     return Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
   };
@@ -187,4 +194,8 @@ const WBTCCafeInfo = (props: Props) => {
   );
 };
 
-export default withTheme(WBTCCafeInfo);
+const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
+  addWbtcPendingTx: (tx: PendingWBTCTransaction) => dispatch(addWbtcPendingTxAction(tx)),
+});
+
+export default withTheme(connect(null, mapDispatchToProps)(WBTCCafeInfo));

@@ -42,6 +42,8 @@ import {
   SET_WBTC_FEES,
   SET_UNISWAP_TOKENS_QUERY_STATUS,
   UNISWAP_TOKENS_QUERY_STATUS,
+  ADD_WBTC_PENDING_TRANSACTION,
+  SET_WBTC_PENDING_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -64,7 +66,7 @@ import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } f
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 import type { AllowanceTransaction } from 'models/Transaction';
-import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
+import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, PendingWBTCTransaction } from 'models/WBTC';
 import type SDKWrapper from 'services/api';
 
 // actions
@@ -401,7 +403,6 @@ export const getWbtcFeesAction = () => {
           type: SET_WBTC_FEES,
           payload: res.result,
         });
-        // dispatch(saveDbAction('wbtcFees', { wbtcFees: res.result }, true));
       })
       .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
   };
@@ -414,3 +415,20 @@ export const getWbtcGatewayAddressAction = (params: WBTCGatewayAddressParams) =>
     const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
     return gatewayAddressResponse;
   };
+
+export const addWbtcPendingTxAction = (tx: PendingWBTCTransaction) => (dispatch: Dispatch, getState: GetState) => {
+  dispatch({
+    type: ADD_WBTC_PENDING_TRANSACTION,
+    payload: tx,
+  });
+  const { exchange: { data: { pendingWbtcTransactions } } } = getState();
+  dispatch(saveDbAction('pendingWbtcTransactions', { pendingWbtcTransactions }, true));
+};
+
+export const setWbtcPendingTxsAction = (pendingWbtcTransactions: PendingWBTCTransaction[]) => (dispatch: Dispatch) => {
+  dispatch({
+    type: SET_WBTC_PENDING_TRANSACTIONS,
+    payload: pendingWbtcTransactions,
+  });
+  dispatch(saveDbAction('pendingWbtcTransactions', { pendingWbtcTransactions }, true));
+};

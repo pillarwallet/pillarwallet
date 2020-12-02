@@ -52,3 +52,8 @@ export type WBTCGatewayAddressResponse = {
   amount?: number,
   nonce?: string,
 } | typeof undefined;
+
+export type PendingWBTCTransaction = {
+  amount: number,
+  dateCreated: number,
+};
