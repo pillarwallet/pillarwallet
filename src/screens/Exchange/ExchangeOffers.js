@@ -324,6 +324,7 @@ class ExchangeOffers extends React.Component<Props, State> {
 
     this.setState({ pressedOfferId: _id }, () => {
       takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, order => {
+        this.props.resetEstimateTransaction();
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
         setExecutingTransaction();
