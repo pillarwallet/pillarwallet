@@ -363,14 +363,14 @@ class HomeScreen extends React.Component<Props> {
     const colors = getThemeColors(theme);
     const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
     let earnedPercentTranslation = t('percentValue', { value: formattedInterestsPercentage });
-    let earnedPercentColor = colors.text;
+    let earnedPercentColor = colors.basic10;
 
     if (interestsPercentage > 0) {
       earnedPercentTranslation = t('positivePercentValue', { value: formattedInterestsPercentage });
-      earnedPercentColor = colors.positive;
+      earnedPercentColor = colors.secondaryAccent140;
     } else if (interestsPercentage < 0) {
       earnedPercentTranslation = t('negativePercentValue', { value: formattedInterestsPercentage });
-      earnedPercentColor = colors.negative;
+      earnedPercentColor = colors.secondaryAccent240;
     }
 
     return (
