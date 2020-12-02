@@ -34,6 +34,12 @@ export type RariReducerState = {
   userInterests: {[RariPool]: ?Interests},
   rariFundBalance: {[RariPool]: number},
   rariTotalSupply: {[RariPool]: number},
+  userRgtBalance: number,
+  userUnclaimedRgt: number,
+  rtgPrice: {
+    [string]: number,
+  },
+  rtgSupply: number,
   isFetchingRariData: boolean,
   rariDataFetchFailed: boolean,
 }
@@ -83,6 +89,10 @@ const initialState = {
     [RARI_POOLS.YIELD_POOL]: 0,
     [RARI_POOLS.ETH_POOL]: 0,
   },
+  userRgtBalance: 0,
+  userUnclaimedRgt: 0,
+  rtgPrice: {},
+  rtgSupply: 0,
   isFetchingRariAPY: false,
   isFetchingRariData: false,
   rariDataFetchFailed: false,
