@@ -223,8 +223,8 @@ const ExchangeConfirmScreen = ({
 
   if (!isWbtcCafe && !executingExchangeTransaction) return null;
 
-  const fromAssetCode = isWbtcCafe ? BTC : fromAsset.code;
-  const toAssetCode = isWbtcCafe ? WBTC : toAsset.code;
+  const fromAssetCode = isWbtcCafe ? BTC : fromAsset.code || fromAsset.symbol;
+  const toAssetCode = isWbtcCafe ? WBTC : toAsset.code || toAsset.symbol;
 
   const feeSymbol = get(feeInfo?.gasToken, 'symbol', ETH);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -337,7 +337,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     value: number,
     data?: string,
     assetData?: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, null, assetData)),
+  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeConfirmScreen));

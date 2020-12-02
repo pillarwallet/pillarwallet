@@ -108,7 +108,9 @@ export const estimateTransactionAction = (
     const estimated = await smartWalletService
       .estimateAccountTransaction(transaction, assetData)
       .catch((error) => {
-        errorMessage = error?.message || t('toast.transactionFeeEstimationFailed');
+        errorMessage = error?.message
+          ? t('toast.failedToEstimateTransactionWithMessage', { message: error.message })
+          : t('toast.transactionFeeEstimationFailed');
         return null;
       });
 

@@ -42,9 +42,6 @@ export const SLOW = 'min';
 export const NORMAL = 'avg';
 export const FAST = 'max';
 
-// mainnet only
-export const UNISWAP_SUBGRAPH_NAME = 'uniswap/uniswap-v2';
-
 export const ALLOWED_SLIPPAGE = 3; // 3%
 export const WBTC_CURVE_MAIN = '0x93054188d876f558f4a66B2EF1d97d16eDf0895B';
 export const WBTC_CURVE_TEST = '0x62869F49ea8b6c3EEdEcA8b8b1c6731090aD7A3D';
@@ -54,3 +51,6 @@ export const UNISWAP_TOKENS_QUERY_STATUS = {
   SUCCESS: ('SUCCESS': 'SUCCESS'),
   ERROR: ('ERROR': 'ERROR'),
 };
+
+// bytes32
+export const SYNTHETIX_VP_CODE = '0x50494c4c415257414c4c45540000000000000000000000000000000000000000';

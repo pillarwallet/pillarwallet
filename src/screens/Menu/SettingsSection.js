@@ -28,11 +28,9 @@ import ShadowedCard from 'components/ShadowedCard';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 
 const SectionHeader = styled(MediumText)`
-  color: ${themedColors.accent};
-  ${fontStyles.regular};
+  ${fontStyles.big};
   margin-top: ${spacing.large}px;
   margin-bottom: 9px;
   margin-horizontal: ${spacing.layoutSides}px;
@@ -83,6 +81,7 @@ const Section = (props: Props) => {
               rightLabel={label}
               labelBadge={labelBadge}
               bulletedLabel={bulletedLabel}
+              disabled={disabled}
             />
           </ShadowedCard>
         );

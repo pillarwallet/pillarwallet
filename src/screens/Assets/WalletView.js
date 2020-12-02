@@ -65,7 +65,7 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getColorByTheme, getThemeColors } from 'utils/themes';
 
 // partials
 import AssetsList from './AssetsList';
@@ -108,11 +108,16 @@ const ListWrapper = styled.View`
   flexGrow: 1;
 `;
 
+const TopWrapper = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic070};
+  margin-bottom: 8px;
+`;
+
 const ActionsWrapper = styled(Wrapper)`
   margin: 30px 0;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${themedColors.border};
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
 `;
 
 
@@ -262,7 +267,7 @@ class WalletView extends React.Component<Props, State> {
           }
         </>
         {!blockAssetsView &&
-        <>
+        <TopWrapper>
           <TouchableOpacity
             onPress={() => this.props.navigation.navigate(ASSET_SEARCH)}
             disabled={activeTab === COLLECTIBLES}
@@ -288,11 +293,11 @@ class WalletView extends React.Component<Props, State> {
           {!isInSearchAndFocus &&
             <Tabs
               tabs={this.getAssetTabs()}
-              wrapperStyle={{ paddingTop: 22, paddingBottom: 8 }}
+              wrapperStyle={{ paddingTop: 22 }}
               activeTab={activeTab}
             />
           }
-        </>
+        </TopWrapper>
         }
         {!blockAssetsView &&
         <ListWrapper>

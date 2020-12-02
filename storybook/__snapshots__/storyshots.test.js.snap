@@ -653,14 +653,14 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -943,14 +943,14 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -1233,14 +1233,14 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -1523,14 +1523,14 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -1813,14 +1813,14 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -2103,14 +2103,14 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -2393,14 +2393,14 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -2683,14 +2683,14 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
           }
         >
           <View
-            backgroundColor="#FFFFFF"
+            backgroundColor="#FAFAFA"
             border={true}
             diameter={48}
             style={
               Array [
                 Object {
                   "alignItems": "center",
-                  "backgroundColor": "#FFFFFF",
+                  "backgroundColor": "#FAFAFA",
                   "borderColor": "#EBF0F6",
                   "borderRadius": 24,
                   "borderWidth": 1,
@@ -5740,7 +5740,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#FCFDFF",
+                            "color": "#FFFFFF",
                             "fontSize": 8,
                           },
                           Object {
@@ -8042,7 +8042,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#FCFDFF",
+                            "color": "#FFFFFF",
                             "fontSize": 8,
                           },
                           Object {
@@ -9924,7 +9924,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#6690eb",
                           "fontSize": 16,
                         },
                         undefined,
@@ -10234,7 +10234,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#6690eb",
                           "fontSize": 16,
                         },
                         undefined,
@@ -10544,7 +10544,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
                       },
                       Array [
                         Object {
-                          "color": "#007AFF",
+                          "color": "#6690eb",
                           "fontSize": 16,
                         },
                         undefined,
@@ -22565,16 +22565,16 @@ exports[`Storyshots DetailModal Layout L 1`] = `
               </Text>
             </View>
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 14,
                       "lineHeight": 22,
                       "marginBottom": 16,
@@ -22931,16 +22931,16 @@ exports[`Storyshots DetailModal Layout M 1`] = `
             }
           >
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 10,
                       "lineHeight": 14,
                       "marginBottom": 8,
@@ -22980,16 +22980,16 @@ exports[`Storyshots DetailModal Layout M 1`] = `
               Subject
             </Text>
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 14,
                       "lineHeight": 22,
                     },
@@ -23130,16 +23130,16 @@ exports[`Storyshots DetailModal Layout M 1`] = `
               </View>
             </View>
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 14,
                       "lineHeight": 22,
                       "marginBottom": 16,
@@ -23424,16 +23424,16 @@ exports[`Storyshots DetailModal Layout S 1`] = `
             }
           >
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 10,
                       "lineHeight": 14,
                       "marginBottom": 8,
@@ -23832,16 +23832,16 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
             }
           >
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 10,
                       "lineHeight": 14,
                       "marginBottom": 8,
@@ -23881,16 +23881,16 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
               Pillar Pay
             </Text>
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 14,
                       "lineHeight": 22,
                     },
@@ -24003,16 +24003,16 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
               </Text>
             </View>
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 14,
                       "lineHeight": 22,
                       "marginBottom": 16,
@@ -24225,16 +24225,16 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
             }
           >
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 10,
                       "lineHeight": 14,
                       "marginBottom": 8,
@@ -24768,16 +24768,16 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
             }
           >
             <Text
+              secondary={true}
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#8B939E",
                     "fontFamily": "EuclidCircularB-Regular",
                     "textAlignVertical": "center",
                   },
                   Array [
                     Object {
-                      "color": "#8B939E",
                       "fontSize": 10,
                       "lineHeight": 14,
                       "marginBottom": 8,
@@ -25143,13 +25143,13 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
               }
             />
             <View
-              backgroundColor="#FFFFFF"
+              backgroundColor="#EBF0F6"
               border={true}
               style={
                 Array [
                   Object {
                     "alignItems": "center",
-                    "backgroundColor": "#FFFFFF",
+                    "backgroundColor": "#EBF0F6",
                     "borderColor": "#EDEDED",
                     "borderRadius": 32,
                     "borderWidth": 1,
@@ -30762,7 +30762,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#2329d6",
+                          "color": "#2329D6",
                           "fontFamily": "EuclidCircularB-Regular",
                           "fontSize": 14,
                           "lineHeight": 22,
@@ -30880,7 +30880,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                     style={
                       Array [
                         Object {
-                          "color": "#2329d6",
+                          "color": "#2329D6",
                           "fontFamily": "EuclidCircularB-Regular",
                           "fontSize": 14,
                           "lineHeight": 22,
@@ -42908,7 +42908,7 @@ exports[`Storyshots ListCard with label 1`] = `
                               },
                               Array [
                                 Object {
-                                  "color": "#FCFDFF",
+                                  "color": "#FFFFFF",
                                   "fontSize": 8,
                                 },
                                 Object {
@@ -44244,7 +44244,7 @@ exports[`Storyshots ProfileImage custom diameter 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#007AFF",
+                      "color": "#6690eb",
                       "fontSize": 26,
                     },
                     undefined,
@@ -44422,7 +44422,7 @@ exports[`Storyshots ProfileImage just initials 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#007AFF",
+                      "color": "#6690eb",
                       "fontSize": 16,
                     },
                     undefined,
@@ -44665,7 +44665,7 @@ exports[`Storyshots RetryGraphQueryBox default 1`] = `
             Object {
               "alignItems": "center",
               "alignSelf": "auto",
-              "backgroundColor": "#007AFF",
+              "backgroundColor": "#BD573A",
               "borderRadius": 3,
               "flexBasis": 0,
               "flexDirection": "row",
@@ -44709,7 +44709,7 @@ exports[`Storyshots RetryGraphQueryBox default 1`] = `
                 ],
               ]
             }
-            variant="default"
+            variant="danger"
           >
             button.cancel
           </Text>
@@ -45519,7 +45519,7 @@ exports[`Storyshots Selector default 1`] = `
           style={
             Array [
               Object {
-                "color": "#007aff",
+                "color": "#007AFF",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 24,
@@ -45605,7 +45605,7 @@ exports[`Storyshots Selector no options 1`] = `
           style={
             Array [
               Object {
-                "color": "#007aff",
+                "color": "#007AFF",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 24,
@@ -45836,7 +45836,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
           style={
             Array [
               Object {
-                "color": "#007aff",
+                "color": "#007AFF",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 24,
@@ -45922,7 +45922,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
           style={
             Array [
               Object {
-                "color": "#007aff",
+                "color": "#007AFF",
                 "fontFamily": "EuclidCircularB-Regular",
                 "fontSize": 16,
                 "lineHeight": 24,
@@ -51386,7 +51386,6 @@ exports[`Storyshots Value Input default 1`] = `
                     },
                     Array [
                       Object {
-                        "color": "#0A1427",
                         "flexBasis": 0,
                         "flexGrow": 1,
                         "flexShrink": 1,
@@ -51424,7 +51423,7 @@ exports[`Storyshots Value Input default 1`] = `
                   },
                   Array [
                     Object {
-                      "color": "#007aff",
+                      "color": "#007AFF",
                       "fontSize": 14,
                       "lineHeight": 22,
                       "marginTop": 1,

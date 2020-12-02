@@ -32,9 +32,6 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 // actions
 import { toggleBalanceAction } from 'actions/appSettingsActions';
 
-// utils
-import { themedColors } from 'utils/themes';
-
 // models, types
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -55,8 +52,6 @@ type Props = {
 const Wrapper = styled.View`
   width: 100%;
   padding-top: 40px;
-  border-bottom-width: 1px;
-  border-bottom-color: ${themedColors.border};
 `;
 
 const WalletsPart = ({

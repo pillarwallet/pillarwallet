@@ -59,7 +59,6 @@ import {
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } from 'services/synthetix';
-import { GraphQueryError } from 'services/theGraph';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -350,26 +349,21 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
     });
 
     const oneInchAssetsSymbols = fetch1inchSupportedTokens();
-    const uniswapAssetsSymbols = fetchUniswapSupportedTokens(supportedAssets.map(({ symbol }) => symbol))
-      .then(result => {
-        dispatch({
-          type: SET_UNISWAP_TOKENS_QUERY_STATUS,
-          payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS },
-        });
-        return result;
-      })
-      .catch(error => {
-        if (error instanceof GraphQueryError) {
-          dispatch({
-            type: SET_UNISWAP_TOKENS_QUERY_STATUS,
-            payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
-          });
-        }
-
-        return [];
-      });
+    const uniswapAssetsSymbols = fetchUniswapSupportedTokens();
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
+
+    if (!assetsSymbols[1]) {
+      dispatch({
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
+      });
+    } else {
+      dispatch({
+        type: SET_UNISWAP_TOKENS_QUERY_STATUS,
+        payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS },
+      });
+    }
 
     const fetchSuccess: boolean = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
 
