@@ -102,16 +102,19 @@ export const get1inchOffer = async (
   const response = await getResponseData(url, 'Failed to fetch 1inch offer');
   if (!response) return null;
 
+  const toTokenAmount = convertToNominalUnits(
+    new BigNumber(toAssetParsed.decimals),
+    new BigNumber(response.toTokenAmount),
+  );
+
+  // rate from target amount to zero means no pair available
+  if (toTokenAmount.isZero()) return null;
+
   const allowanceSet = await getAllowanceSet(clientAddress, safeFromAddress, fromAssetParsed);
 
   const fromTokenAmount = convertToNominalUnits(
     new BigNumber(fromAssetParsed.decimals),
     new BigNumber(response.fromTokenAmount),
-  );
-
-  const toTokenAmount = convertToNominalUnits(
-    new BigNumber(toAssetParsed.decimals),
-    new BigNumber(response.toTokenAmount),
   );
 
   const askRate = toTokenAmount.dividedBy(fromTokenAmount);
