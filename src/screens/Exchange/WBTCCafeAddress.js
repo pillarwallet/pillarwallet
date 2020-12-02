@@ -17,8 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+/* eslint-disable i18next/no-literal-string */
 import React from 'react';
-import Emoji from 'react-native-emoji';
+import { Image, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 
 // components
@@ -27,8 +28,9 @@ import { BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
 // utils
-import { fontStyles, fontSizes } from 'utils/variables';
+import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { images } from 'utils/images';
 
 // models
 import type { Theme } from 'models/Theme';
@@ -44,6 +46,7 @@ const AddressWrapper = styled.View`
   width: 100%;
   flex-direction: row;
   padding: 5px;
+  margin-top: 25px;
 `;
 
 const TextWrapper = styled.View`
@@ -60,8 +63,9 @@ const Text = styled(BaseText)`
 const InfoWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  margin-top: 15px;
-  margin-bottom: 20px;
+  margin-top: 25px;
+  margin-bottom: 40px;
+  width: 100%;
 `;
 
 type Props = {
@@ -71,22 +75,29 @@ type Props = {
   error?: boolean;
 }
 
-const WBTCCafeAddress = ({ amount, address, error }: Props) => {
+const WBTCCafeAddress = ({
+  amount, address, error, theme,
+}: Props) => {
   if (!address && !error) return <Wrapper><Spinner size={30} /></Wrapper>;
+
+  const { infoIcon } = images(theme);
 
   return (
     <Wrapper>
       <AddressWrapper>
         <QRCodeWithTheme size={70} value={address} />
         <TextWrapper>
-          <Text color={themedColors.text}>
+          <Text color={themedColors.secondaryText}>
             {t('wbtcCafe.sendBtc', { amount })}
           </Text>
+          <Text color={themedColors.text}>{t('wbtcCafe.useOnce')}</Text>
         </TextWrapper>
       </AddressWrapper>
       <InfoWrapper>
-        <Emoji name="point_up" style={{ fontSize: fontSizes.regular, marginRight: 5 }} />
-        <Text color={themedColors.secondaryText}>{t('wbtcCafe.useOnce')}</Text>
+        <Image source={infoIcon} style={{ height: 27, width: 27, marginRight: 15 }} />
+        <View style={{ flex: 1 }}>
+          <Text color={themedColors.secondaryText}>{t('wbtcCafe.warning')}</Text>
+        </View>
       </InfoWrapper>
     </Wrapper>
   );

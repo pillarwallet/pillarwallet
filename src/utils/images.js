@@ -48,6 +48,9 @@ const personIconLight = require('assets/icons/iconRoundedPersonLight.png');
 const personIconDark = require('assets/icons/icon_rounded_person_dark.png');
 const highFeesLight = require('assets/icons/high_fees.png');
 const highFeesDark = require('assets/icons/high_fees_dark.png');
+const infoIconLight = require('assets/icons/icon_info_light.png');
+const infoIconDark = require('assets/icons/icon_info_light.png'); // TODO change
+
 
 // exchange providers
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
@@ -140,6 +143,10 @@ export const images = (theme: Theme) => {
     highFeesIcon: getImageByTheme(currentTheme, {
       lightTheme: highFeesLight,
       darkTheme: highFeesDark,
+    }),
+    infoIcon: getImageByTheme(currentTheme, {
+      lightTheme: infoIconLight,
+      darkTheme: infoIconDark,
     }),
   };
 };

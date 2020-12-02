@@ -888,7 +888,8 @@
     "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications.",
     "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
     "custom": "Custom",
-    "enterCustom": "Enter custom percent"
+    "enterCustom": "Enter custom percent",
+    "warning": "This is experimental, we take no responsibility for losses. In some cases total amount can be converted to renBTC."
   },
 
   "referralsContent": {

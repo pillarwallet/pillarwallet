@@ -66,7 +66,7 @@ const Label = styled(BaseText)`
 `;
 
 const ButtonWrapper = styled.View`
-  margin: 0px ${spacing.layoutSides}px 20px;
+  margin: 0px 0px 20px;
 `;
 
 const FeeRow = styled.View`
