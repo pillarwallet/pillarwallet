@@ -42470,37 +42470,48 @@ exports[`Storyshots ListCard default 1`] = `
                     ]
                   }
                 >
-                  <Text
+                  <View
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                         },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      style={
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "flexBasis": 0,
-                              "flexGrow": 1,
-                              "flexShrink": 1,
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                              },
+                              undefined,
+                            ],
                           ],
-                        ],
-                      ]
-                    }
-                  >
-                    List title
-                  </Text>
+                        ]
+                      }
+                    >
+                      List title
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -42655,37 +42666,48 @@ exports[`Storyshots ListCard with custom icon 1`] = `
                     ]
                   }
                 >
-                  <Text
+                  <View
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                         },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      style={
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "flexBasis": 0,
-                              "flexGrow": 1,
-                              "flexShrink": 1,
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                              },
+                              undefined,
+                            ],
                           ],
-                        ],
-                      ]
-                    }
-                  >
-                    Long list title to check layout on edge cases
-                  </Text>
+                        ]
+                      }
+                    >
+                      Long list title to check layout on edge cases
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -42830,37 +42852,48 @@ exports[`Storyshots ListCard with label 1`] = `
                     ]
                   }
                 >
-                  <Text
+                  <View
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                         },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      style={
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "flexBasis": 0,
-                              "flexGrow": 1,
-                              "flexShrink": 1,
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                              },
+                              undefined,
+                            ],
                           ],
-                        ],
-                      ]
-                    }
-                  >
-                    Long list title to check layout on edge cases
-                  </Text>
+                        ]
+                      }
+                    >
+                      Long list title to check layout on edge cases
+                    </Text>
+                  </View>
                   <View
                     style={
                       Array [
@@ -43067,37 +43100,48 @@ exports[`Storyshots ListCard with labelText 1`] = `
                     ]
                   }
                 >
-                  <Text
+                  <View
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                         },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      style={
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "flexBasis": 0,
-                              "flexGrow": 1,
-                              "flexShrink": 1,
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                              },
+                              undefined,
+                            ],
                           ],
-                        ],
-                      ]
-                    }
-                  >
-                    Long list title to check layout on edge cases
-                  </Text>
+                        ]
+                      }
+                    >
+                      Long list title to check layout on edge cases
+                    </Text>
+                  </View>
                   <View
                     style={
                       Array [
@@ -43276,37 +43320,48 @@ exports[`Storyshots ListCard with note 1`] = `
                     ]
                   }
                 >
-                  <Text
+                  <View
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                         },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      style={
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "flexBasis": 0,
-                              "flexGrow": 1,
-                              "flexShrink": 1,
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                              },
+                              undefined,
+                            ],
                           ],
-                        ],
-                      ]
-                    }
-                  >
-                    Long list title to check layout on edge cases
-                  </Text>
+                        ]
+                      }
+                    >
+                      Long list title to check layout on edge cases
+                    </Text>
+                  </View>
                 </View>
               </View>
             </View>
@@ -43517,37 +43572,48 @@ exports[`Storyshots ListCard with subtitle 1`] = `
                     ]
                   }
                 >
-                  <Text
+                  <View
                     style={
                       Array [
                         Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Regular",
-                          "textAlignVertical": "center",
+                          "flexBasis": 0,
+                          "flexDirection": "row",
+                          "flexGrow": 1,
+                          "flexShrink": 1,
                         },
+                        undefined,
+                      ]
+                    }
+                  >
+                    <Text
+                      style={
                         Array [
                           Object {
                             "color": "#0A1427",
-                            "fontFamily": "EuclidCircularB-Medium",
+                            "fontFamily": "EuclidCircularB-Regular",
                             "textAlignVertical": "center",
                           },
                           Array [
                             Object {
                               "color": "#0A1427",
-                              "flexBasis": 0,
-                              "flexGrow": 1,
-                              "flexShrink": 1,
-                              "fontSize": 18,
-                              "lineHeight": 28,
+                              "fontFamily": "EuclidCircularB-Medium",
+                              "textAlignVertical": "center",
                             },
-                            undefined,
+                            Array [
+                              Object {
+                                "color": "#0A1427",
+                                "fontSize": 18,
+                                "lineHeight": 28,
+                              },
+                              undefined,
+                            ],
                           ],
-                        ],
-                      ]
-                    }
-                  >
-                    Long list title to check layout on edge cases
-                  </Text>
+                        ]
+                      }
+                    >
+                      Long list title to check layout on edge cases
+                    </Text>
+                  </View>
                   <View
                     style={
                       Array [
