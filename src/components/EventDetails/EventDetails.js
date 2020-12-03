@@ -623,13 +623,8 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(SABLIER_WITHDRAW, { stream });
   }
 
-  goToRariDeposit = () => {
-    this.props.navigation.navigate(RARI_DEPOSIT);
-  }
-
-  goToRariClaim = () => {
-    this.props.navigation.navigate(RARI_CLAIM_RGT);
-  }
+  goToRariDeposit = () => this.props.navigation.navigate(RARI_DEPOSIT);
+  goToRariClaim = () => this.props.navigation.navigate(RARI_CLAIM_RGT);
 
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
