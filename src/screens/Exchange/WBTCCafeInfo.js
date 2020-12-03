@@ -52,7 +52,7 @@ import RenFeeIcon from './RenFeeIcon';
 type Props = {
   wbtcData: ?WBTCFeesWithRate,
   extendedInfo?: boolean,
-  navigation?: NavigationScreenProp<*>,
+  navigation: NavigationScreenProp<*>,
   amount?: string,
   address?: string,
   error?: boolean,
@@ -111,11 +111,13 @@ const WBTCCafeInfo = (props: Props) => {
         wbtcEstData: wbtcData,
       });
     }
-    // todo move this to "I've sent BTC" button when we have it
-    addWbtcPendingTx({ amount: wbtcData?.estimate || 0, dateCreated: Date.now() });
-
     Clipboard.setString(address || '');
     return Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+  };
+
+  const handleSent = () => {
+    addWbtcPendingTx({ amount: wbtcData?.estimate || 0, dateCreated: Date.now() });
+    navigation.goBack();
   };
 
   const getFeeNumber = () => {
@@ -189,6 +191,7 @@ const WBTCCafeInfo = (props: Props) => {
       )}
       <ButtonWrapper>
         <Button title={getButtonTitle()} onPress={handleNextPress} disabled={buttonDisabled} />
+        {extendedInfo && <Button secondary title={t('wbtcCafe.sent')} onPress={handleSent} style={{ marginTop: 8 }} />}
       </ButtonWrapper>
     </TableWrapper>
   );

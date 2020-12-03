@@ -22,8 +22,9 @@ import { Contract } from 'ethers';
 
 import { WBTC, BTC } from 'constants/assetsConstants';
 import {
-  WBTC_CURVE_MAIN, WBTC_CURVE_TEST, WBTC_FROM_ADDRESS_MAIN, WBTC_FROM_ADDRESS_TEST,
+  WBTC_CURVE_MAIN, WBTC_CURVE_TEST, WBTC_FROM_ADDRESS_MAIN, WBTC_FROM_ADDRESS_TEST, WBTC_PENDING_TRANSACTION,
 } from 'constants/exchangeConstants';
+import { TX_PENDING_STATUS } from 'constants/historyConstants';
 
 import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
@@ -34,7 +35,7 @@ import { getEnv } from 'configs/envConfig';
 
 /* eslint-disable i18next/no-literal-string */
 
-// much of this is copy-pasted from wbtc.cafe web app code
+// much of this function's body is copy-pasted from wbtc.cafe web app code
 export const gatherWBTCFeeData = async (
   amount: number,
   fees: WBTCFeesRaw,
@@ -85,7 +86,6 @@ export const gatherWBTCFeeData = async (
   }
 };
 
-// TODO use this to get txs for wbtccafe service screen
 export const getWbtcCafeTransactions = (history: Transaction[]): Transaction[] => {
   const isProdEnv = getEnv().NETWORK_PROVIDER === 'homestead';
   const address = isProdEnv ? WBTC_FROM_ADDRESS_MAIN : WBTC_FROM_ADDRESS_TEST;
@@ -93,4 +93,20 @@ export const getWbtcCafeTransactions = (history: Transaction[]): Transaction[] =
 };
 
 export const getValidPendingTransactions = (txs: PendingWBTCTransaction[]): PendingWBTCTransaction[] =>
-  txs.filter(({ dateCreated }) => dateCreated && Date.now() - dateCreated < 12 * 3600000); // 12 hours
+  txs.filter(({ dateCreated }) => dateCreated && Date.now() - dateCreated < 12 * 3600000); // 12 hours old or younger
+
+// map pending txs to Transaction objects so they can pretend to be valid History items
+export const mapPendingToTransactions = (pendingTxs: PendingWBTCTransaction[], to?: ?string): Transaction[] => {
+  return pendingTxs.map(tx => ({
+    _id: String(tx.dateCreated),
+    from: getEnv().NETWORK_PROVIDER === 'homestead' ? WBTC_FROM_ADDRESS_MAIN : WBTC_FROM_ADDRESS_TEST,
+    status: TX_PENDING_STATUS,
+    asset: WBTC,
+    value: String(tx.amount * 1000000000000000000),
+    createdAt: tx.dateCreated / 1000,
+    to: to || '',
+    hash: '',
+    type: 'transactionEvent',
+    tag: WBTC_PENDING_TRANSACTION,
+  }));
+};

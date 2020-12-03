@@ -72,7 +72,7 @@ import { getFormattedValue } from 'utils/strings';
 import smartWalletInstance from 'services/smartWallet';
 
 // constants
-import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -110,6 +110,7 @@ import {
   POOLTOGETHER_WITHDRAW,
   SABLIER_INCOMING_STREAM,
   SABLIER_OUTGOING_STREAM,
+  EXCHANGE,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -118,6 +119,7 @@ import {
   SABLIER_WITHDRAW,
   SABLIER_CANCEL_STREAM,
 } from 'constants/sablierConstants';
+import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 
 // selectors
 import {
@@ -603,6 +605,11 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
   }
 
+  goToWbtcCafeExchange = () => {
+    const { navigation } = this.props;
+    navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC });
+  }
+
   goToStreamWithdraw = (streamId: string) => {
     const { navigation, incomingStreams } = this.props;
     const stream = incomingStreams.find(({ id }) => id === streamId);
@@ -989,6 +996,15 @@ export class EventDetail extends React.Component<Props> {
       }
       case SABLIER_CANCEL_STREAM:
         return null;
+      case WBTC_PENDING_TRANSACTION:
+        eventData = {
+          buttons: [{
+            title: t('wbtcCafe.buyMore'),
+            onPress: this.goToWbtcCafeExchange,
+            secondary: true,
+          }],
+        };
+        break;
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);

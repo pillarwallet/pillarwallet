@@ -902,8 +902,10 @@
     "endInfo": "This is all done in one on-chain transaction and bundled up in our UI.",
     "put": "Put your Bitcoins in Pillar wallet.",
     "get": "Get WBTC",
-    "cafe": "WBTC Cafe",
-    "trade": "Trade Bitcoin for WBTC"
+    "cafe": "WBTC.Cafe",
+    "trade": "Trade Bitcoin for WBTC",
+    "sent": "I've sent BTC",
+    "buyMore": "Buy more WBTC"
   },
 
   "referralsContent": {

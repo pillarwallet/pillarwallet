@@ -271,6 +271,7 @@ const ExchangeConfirmScreen = ({
       amount={wbtcData.amount}
       address={gatewayAddress}
       error={wbtcError}
+      navigation={navigation}
     />
   );
 
