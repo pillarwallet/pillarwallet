@@ -90,7 +90,7 @@ const RariTransferReviewScreen = ({
         <TokenReviewSummary
           assetSymbol={RARI_TOKENS_DATA[rariPool].symbol}
           amount={amount}
-          text={t('rariContent.label.youAreTransfering')}
+          text={t('rariContent.label.youAreTransferring')}
           assetIcon={rariLogo}
           fiatAmount={formattedFiatAmount}
         />

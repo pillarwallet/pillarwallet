@@ -104,7 +104,7 @@ const RariTransferScreen = ({
   useGasToken,
   balances,
   resetEstimateTransaction,
-}) => {
+}: Props) => {
   const [amount, setAmount] = useState('');
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(null);
