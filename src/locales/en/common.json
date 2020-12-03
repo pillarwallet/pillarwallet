@@ -889,7 +889,21 @@
     "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
     "custom": "Custom",
     "enterCustom": "Enter custom percent",
-    "warning": "This is experimental, we take no responsibility for losses. In some cases total amount can be converted to renBTC."
+    "warning": "This is experimental, we take no responsibility for losses. In some cases total amount can be converted to renBTC.",
+    "intro": "WBTC.Cafe is a basic dApp that provides one of the easiest ways for average users to acquire WBTC with real BTC. The Cafe facilitates a native BTC user experience, so all you have to do is send in real BTC and you receive WBTC.",
+    "how": "How it works",
+    "info": "The Cafe is a shining example of DeFi composability and RenVM’s ability to bolster greater utility for all of DeFi. It is a collaborative effort of three DeFi Projects; RenVM, Curve Finance, and WBTC. A breakdown of how it works below:",
+    "ren": "RenVM",
+    "renInfo": "A user sends in BTC via UI and RenVM converts the BTC to renBTC.",
+    "curve": "Curve Liquidity Pool",
+    "curveInfo": "Receives renBTC and automatically swaps it for WBTC within a low-slippage liquidity pool.",
+    "wbtc": "WBTC",
+    "wbtcInfo": "Once the user has the WBTC, they can take it and use it in any DeFi application they choose.",
+    "endInfo": "This is all done in one on-chain transaction and bundled up in our UI.",
+    "put": "Put your Bitcoins in Pillar wallet.",
+    "get": "Get WBTC",
+    "cafe": "WBTC Cafe",
+    "trade": "Trade Bitcoin for WBTC"
   },
 
   "referralsContent": {

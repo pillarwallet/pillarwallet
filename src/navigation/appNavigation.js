@@ -120,6 +120,7 @@ import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
+import WBTCCafeScreen from 'screens/WBTCCafe';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -265,6 +266,7 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
+  WBTC_CAFE,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -349,6 +351,7 @@ const exchangeFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -357,6 +360,7 @@ exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
 const servicesFlow = createStackNavigator({
   [SERVICES]: ServicesScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
+  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;

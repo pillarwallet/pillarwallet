@@ -43,6 +43,7 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   SENDWYRE_INPUT,
+  WBTC_CAFE,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -85,6 +86,7 @@ let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
 let isAltalixEnabled = true;
+let isWBTCCafeEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -115,6 +117,7 @@ class ServicesScreen extends React.Component<Props> {
     isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
+    isWBTCCafeEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
@@ -179,6 +182,16 @@ class ServicesScreen extends React.Component<Props> {
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
         action: () => navigation.navigate(SABLIER_STREAMS),
+      });
+    }
+    if (isWBTCCafeEnabled) {
+      services.push({
+        key: 'wbtc',
+        title: t('wbtcCafe.cafe'),
+        body: t('wbtcCafe.trade'),
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(WBTC_CAFE),
       });
     }
     if (isPeerToPeerEnabled) {
