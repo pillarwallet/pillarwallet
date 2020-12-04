@@ -27,15 +27,17 @@ import {
   getAaveApyBNs,
   getMStableApyBN,
 } from 'services/rariPoolsAPY';
+import { getCoinGeckoTokenPrices } from 'services/coinGecko';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { reportErrorLog } from 'utils/common';
-import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_TOKENS } from 'constants/rariConstants';
+import { RARI_POOLS_ARRAY, RARI_POOLS, RARI_TOKENS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { ETH } from 'constants/assetsConstants';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
 import RARI_FUND_CONTROLLER_ETH_CONTRACT_ABI from 'abi/rariFundControllerEth.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import RARI_FUND_TOKEN_CONTRACT_ABI from 'abi/rariFundToken.json';
+import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
 import type { RariPool } from 'models/RariPool';
 import type { Rates } from 'models/Asset';
 
@@ -331,4 +333,54 @@ export const getRariAPY = async () => {
     return getStablecoinPoolAPY(rariPool, servicesApysArray);
   }));
   return mapPools(apys);
+};
+
+export const getUserRgtBalance = async (accountAddress: string) => {
+  const rariContract = getContract(
+    getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
+    ERC20_CONTRACT_ABI,
+  );
+  if (!rariContract) return null;
+  const balance = await rariContract.balanceOf(accountAddress)
+    .catch((error) => {
+      reportErrorLog("Rari service failed: Can't get user RGT balance", { error });
+      return null;
+    });
+  return parseFloat(utils.formatUnits(balance, 18));
+};
+
+export const getUnclaimedRgt = async (accountAddress: string) => {
+  const rariContract = getContract(
+    getEnv().RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS,
+    RARI_RGT_DISTRIBUTOR_CONTRACT_ABI,
+  );
+  if (!rariContract) return null;
+  const amount = await rariContract.getUnclaimedRgt(accountAddress)
+    .catch((error) => {
+      reportErrorLog("Rari service failed: Can't get user unclaimed RGT", { error });
+      return null;
+    });
+  return parseFloat(utils.formatUnits(amount, 18));
+};
+
+export const getRtgPrice = async () => {
+  const price = await getCoinGeckoTokenPrices({
+    [RARI_GOVERNANCE_TOKEN_DATA.symbol]: RARI_GOVERNANCE_TOKEN_DATA,
+  });
+  if (!price) return null;
+  return price[RARI_GOVERNANCE_TOKEN_DATA.symbol];
+};
+
+export const getRtgSupply = async () => {
+  const rariContract = getContract(
+    getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
+    ERC20_CONTRACT_ABI,
+  );
+  if (!rariContract) return null;
+  const balance = await rariContract.totalSupply()
+    .catch((error) => {
+      reportErrorLog("Rari service failed: Can't get RGT total supply", { error });
+      return null;
+    });
+  return parseFloat(utils.formatUnits(balance, 18));
 };

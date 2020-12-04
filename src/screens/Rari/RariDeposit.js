@@ -22,7 +22,7 @@ import React, { useEffect, useState } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import { CachedImage } from 'react-native-cached-image';
-import { RefreshControl } from 'react-native';
+import { RefreshControl, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -34,14 +34,21 @@ import BalanceView from 'components/PortfolioBalance/BalanceView';
 import Tabs from 'components/Tabs';
 import Table, { TableRow, TableLabel } from 'components/Table';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
+import Button from 'components/Button';
 
 import { getThemeColors, themedColors } from 'utils/themes';
-import { formatFiat } from 'utils/common';
+import { formatFiat, formatAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { RARI_INFO, RARI_ADD_DEPOSIT, RARI_WITHDRAW, RARI_TRANSFER } from 'constants/navigationConstants';
-import { RARI_POOLS } from 'constants/rariConstants';
+import {
+  RARI_INFO,
+  RARI_ADD_DEPOSIT,
+  RARI_WITHDRAW,
+  RARI_TRANSFER,
+  RARI_CLAIM_RGT,
+} from 'constants/navigationConstants';
+import { RARI_POOLS, RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 
 import { fetchRariDataAction } from 'actions/rariActions';
 
@@ -59,6 +66,8 @@ type Props = {
   rariApy: {[RariPool]: number},
   userDepositInUSD: {[RariPool]: number},
   userInterests: {[RariPool]: ?Interests},
+  userRgtBalance: number,
+  userUnclaimedRgt: number,
   isFetchingRariData: boolean,
   rariDataFetchFailed: boolean,
   rates: Rates,
@@ -86,13 +95,24 @@ const ButtonsContainer = styled.View`
 `;
 
 const RariLogo = styled(CachedImage)`
-  width: 64px;
-  height: 64px;
+  width: ${({ size }) => size}px;
+  height: ${({ size }) => size}px;
   align-self: center;
 `;
 
 const PoolContainer = styled.View`
 
+`;
+
+const GovernanceTokenCard = styled.View`
+  background-color: ${themedColors.card};
+  padding: 16px;
+  border-radius: 8px;
+
+`;
+
+const Row = styled.View`
+  flex-direction: row;
 `;
 
 const RariDepositScreen = ({
@@ -103,6 +123,8 @@ const RariDepositScreen = ({
   isFetchingRariData,
   rariDataFetchFailed,
   rates,
+  userRgtBalance,
+  userUnclaimedRgt,
 }: Props) => {
   const [activeTab, setActiveTab] = useState(RARI_POOLS.STABLE_POOL);
 
@@ -275,7 +297,7 @@ const RariDepositScreen = ({
       >
         <MainContainer>
           <Spacing h={32} />
-          <RariLogo source={rariLogo} />
+          <RariLogo source={rariLogo} size={64} />
           <Spacing h={32} />
           <BalanceView
             fiatCurrency={fiatCurrency}
@@ -283,11 +305,35 @@ const RariDepositScreen = ({
           />
           <Spacing h={58} />
           {summedUserDepositsInUSD > 0 && (
-            <EarnedCard>
-              <BaseText secondary regular>{t('rariContent.label.earned')}</BaseText>
-              {renderEarnedInterests(summedUserDepositsInUSD)}
-              {renderEarnedInterestsPercent(totalInterestsPercentage)}
-            </EarnedCard>
+            <>
+              <EarnedCard>
+                <BaseText secondary regular>{t('rariContent.label.earned')}</BaseText>
+                {renderEarnedInterests(summedUserDepositsInUSD)}
+                {renderEarnedInterestsPercent(totalInterestsPercentage)}
+              </EarnedCard>
+              <Spacing h={32} />
+              <GovernanceTokenCard>
+                <Row>
+                  <RariLogo source={rariLogo} size={48} />
+                  <Spacing w={8} />
+                  <View>
+                    <BaseText fontSize={20}>
+                      {formatAmount(userRgtBalance + userUnclaimedRgt)}{' '}
+                      <BaseText secondary regular>{RARI_GOVERNANCE_TOKEN_DATA.symbol}</BaseText>
+                    </BaseText>
+                    <BaseText secondary regular>
+                      {t('rariContent.label.claimedSoFar', { amount: formatAmount(userRgtBalance) })}
+                    </BaseText>
+                  </View>
+                </Row>
+                <Spacing h={16} />
+                <Button
+                  primarySecond
+                  title={t('rariContent.button.claimRewards')}
+                  onPress={() => navigation.navigate(RARI_CLAIM_RGT)}
+                />
+              </GovernanceTokenCard>
+            </>
           )}
           <Spacing h={60} />
           <Tabs
@@ -315,6 +361,8 @@ const mapStateToProps = ({
     userInterests,
     isFetchingRariData,
     rariDataFetchFailed,
+    userRgtBalance,
+    userUnclaimedRgt,
   },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
@@ -325,6 +373,8 @@ const mapStateToProps = ({
   isFetchingRariData,
   rariDataFetchFailed,
   rates,
+  userRgtBalance,
+  userUnclaimedRgt,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch) => ({

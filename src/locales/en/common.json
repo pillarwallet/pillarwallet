@@ -1453,7 +1453,9 @@
       "withdrawScreen": "Withdraw",
       "withdrawReviewScreen": "Review",
       "transferScreen": "Transfer",
-      "transferReviewScreen": "Review"
+      "transferReviewScreen": "Review",
+      "claimRgtScreen": "Claim rewards",
+      "claimRgtReviewScreen": "Review"
     },
     "label": {
       "currentAPY": "Current APY",
@@ -1472,12 +1474,17 @@
       "withdrawDetails": "Withdraw details",
       "rariWithdrawalFee": "Rari withdrawal fee",
       "youAreTransferring": "You are transferring",
-      "transferDetails": "Transfer details"
+      "transferDetails": "Transfer details",
+      "claimedSoFar": "{{amount}} RGT claimed so far",
+      "youAreClaiming": "You are claiming rewards",
+      "rgtPrice": "RGT price",
+      "rgtSupply": "RGT supply"
     },
     "button": {
       "withdraw": "Withdraw",
       "deposit": "Deposit",
-      "transfer": "Transfer"
+      "transfer": "Transfer",
+      "claimRewards": "Claim rewards"
     },
     "tooltip": {
       "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first",

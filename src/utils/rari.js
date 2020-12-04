@@ -19,6 +19,7 @@
 */
 /* eslint-disable no-continue, no-await-in-loop */
 import { BigNumber as EthersBigNumber, utils, constants as ethersConstants } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
 import { get0xSwapOrders } from 'services/0x.js';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
@@ -31,6 +32,7 @@ import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import MSTABLE_CONTRACT_ABI from 'abi/mAsset.json';
 import MSTABLE_VALIDATION_HELPER_CONTRACT_ABI from 'abi/mAssetValidationHelper.json';
+import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
 import type { Asset, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 
@@ -803,4 +805,19 @@ export const getWithdrawalFeeRate = (rariPool: RariPool) => {
       reportErrorLog("Rari service failed: Can't get withdrawal fee", { error });
       return null;
     });
+};
+
+export const getRariClaimRgtTransaction = (senderAddress: string, amount: number, txFeeInWei?: BigNumber) => {
+  const transactionData = encodeContractMethod(RARI_RGT_DISTRIBUTOR_CONTRACT_ABI, 'claimRgt', [
+    parseTokenBigNumberAmount(amount, 18),
+  ]);
+
+  return {
+    from: senderAddress,
+    to: getEnv().RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS,
+    data: transactionData,
+    amount: 0,
+    symbol: ETH,
+    txFeeInWei,
+  };
 };
