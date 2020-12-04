@@ -51,6 +51,7 @@ import {
 } from 'utils/assets';
 import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
 import { isProdEnv } from 'utils/environment';
+import { showWbtcErrorToast } from 'services/wbtcCafe';
 
 // types
 import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
@@ -170,10 +171,7 @@ const ExchangeConfirmScreen = ({
       setGatewayAddress(resp?.gatewayAddress || '');
     } else {
       setWbtcError(true);
-      Toast.show({
-        message: t('toast.walkthroughFailed'),
-        emoji: 'woman-shrugging',
-      });
+      showWbtcErrorToast();
     }
   };
 

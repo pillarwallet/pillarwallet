@@ -42,6 +42,7 @@ import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
 import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
@@ -103,8 +104,10 @@ export const getErrorMessage = (
   const isValid = isValidNumber(amount);
   if (!isValid) {
     return t('error.amount.invalidNumber');
-  } else if (Number(assetBalance) < Number(amount)) {
+  } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
+  } else if (assetSymbol === BTC && +amount && Number(amount) < MIN_WBTC_CAFE_AMOUNT) {
+    return t('wbtcCafe.higherAmount');
   }
   return '';
 };
@@ -247,7 +250,7 @@ export const ValueInputComponent = (props: Props) => {
     onFocus: onInputFocus,
   };
 
-  const errorMessage = disabled || assetData?.symbol === BTC ? null : getErrorMessage(value, maxValue, assetSymbol);
+  const errorMessage = disabled ? null : getErrorMessage(value, maxValue, assetSymbol);
 
   React.useEffect(() => {
     if (onFormValid) {

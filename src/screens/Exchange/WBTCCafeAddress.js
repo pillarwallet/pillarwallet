@@ -78,6 +78,7 @@ type Props = {
 const WBTCCafeAddress = ({
   amount, address, error, theme,
 }: Props) => {
+  if (error) return null;
   if (!address && !error) return <Wrapper><Spinner size={30} /></Wrapper>;
 
   const { infoIcon } = images(theme);

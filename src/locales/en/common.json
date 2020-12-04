@@ -905,7 +905,9 @@
     "cafe": "WBTC.Cafe",
     "trade": "Trade Bitcoin for WBTC",
     "sent": "I've sent BTC",
-    "buyMore": "Buy more WBTC"
+    "buyMore": "Buy more WBTC",
+    "error": "Something went wrong. Please choose a different value or try again.",
+    "higherAmount": "Please choose a higher amount"
   },
 
   "referralsContent": {

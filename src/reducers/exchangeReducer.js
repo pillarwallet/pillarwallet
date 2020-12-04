@@ -50,7 +50,7 @@ export type ExchangeReducerState = {
   },
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
-  wbtcFees: WBTCFeesRaw,
+  wbtcFees: ?WBTCFeesRaw,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
 }
@@ -75,13 +75,7 @@ export const initialState = {
   },
   exchangeSupportedAssets: [],
   fiatExchangeSupportedAssets: [],
-  wbtcFees: {
-    btc: {
-      ethereum: { mint: 0, burn: 0 },
-      lock: 0,
-      release: 0,
-    },
-  },
+  wbtcFees: null,
   isFetchingUniswapTokens: false,
   uniswapTokensGraphQueryFailed: false,
 };

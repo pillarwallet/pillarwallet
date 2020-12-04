@@ -118,22 +118,26 @@ class WBTCCafe extends React.Component<Props, State> {
     setWbtcPendingTxs(getValidPendingTransactions(pendingWbtcTransactions));
   };
 
-  renderContent = () => (
-    <ScrollWrapper refreshControl={<RefreshControl refreshing={false} onRefresh={this.handleRefresh} />}>
-      <Logo source={logo} />
-      <CircleButton
-        label={t('button.exchange')}
-        fontIcon="exchange"
-        onPress={() => this.props.navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC })}
-      />
-      <ActivityFeed
-        feedTitle={t('title.mainActivityFeed')}
-        navigation={this.props.navigation}
-        feedData={this.getFeedData()}
-        isAssetView
-      />
-    </ScrollWrapper>
-  );
+  renderContent = () => {
+    const feedData = this.getFeedData();
+    return (
+      <ScrollWrapper refreshControl={<RefreshControl refreshing={false} onRefresh={this.handleRefresh} />}>
+        <Logo source={logo} />
+        <CircleButton
+          label={t('button.exchange')}
+          fontIcon="exchange"
+          onPress={() => this.props.navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC })}
+        />
+        {!!feedData.length && <ActivityFeed
+          feedTitle={t('title.mainActivityFeed')}
+          navigation={this.props.navigation}
+          feedData={feedData}
+          isAssetView
+          card
+        />}
+      </ScrollWrapper>
+    );
+  }
 
   render() {
     const { theme, hasSeenWbtcCafeIntro } = this.props;

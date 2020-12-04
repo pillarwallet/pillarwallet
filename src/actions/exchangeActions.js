@@ -428,12 +428,11 @@ export const setWbtcPendingTxsAction = (pendingWbtcTransactions: PendingWBTCTran
   dispatch(saveDbAction('pendingWbtcTransactions', { pendingWbtcTransactions }, true));
 };
 
-// for each new WBTC.Cafe tx detected, remove 1 pending
+// for each new WBTC.Cafe tx detected, remove 1 pending - oldest to newest
 export const removeWbtcPendingTxsAction = (quantity: number) => (dispatch: Dispatch, getState: GetState) => {
   if (quantity < 1) return;
   const { exchange: { data: { pendingWbtcTransactions: pending } } } = getState();
   if (pending.length >= quantity) {
-    const updatedPendingTransactions = pending.slice(0, pending.length - quantity);
-    dispatch(setWbtcPendingTxsAction(updatedPendingTransactions));
+    dispatch(setWbtcPendingTxsAction(pending.slice(quantity)));
   }
 };

@@ -27,12 +27,14 @@ import { getEthereumProvider, reportLog } from 'utils/common';
 import type { WBTCFeesWithRate, WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
 import type { Transaction } from 'models/Transaction';
 import { getEnv } from 'configs/envConfig';
+import Toast from 'components/Toast';
+import t from 'translations/translate';
 /* eslint-disable i18next/no-literal-string */
 
 // much of this function's body is copy-pasted from wbtc.cafe web app code
 export const gatherWBTCFeeData = async (
   amount: number,
-  fees: WBTCFeesRaw,
+  fees: ?WBTCFeesRaw,
   fromAssetCode: string,
 ): Promise<?WBTCFeesWithRate> => {
   if (!fees || !fromAssetCode) return null;
@@ -102,4 +104,14 @@ export const mapPendingToTransactions = (pendingTxs: PendingWBTCTransaction[], t
     type: 'transactionEvent',
     tag: WBTC_PENDING_TRANSACTION,
   }));
+};
+
+export const showWbtcErrorToast = () => {
+  if (!Toast.isVisible()) {
+    Toast.show({
+      message: t('wbtcCafe.error'),
+      emoji: 'woman-shrugging',
+      autoClose: true,
+    });
+  }
 };

@@ -40,7 +40,7 @@ import { addWbtcPendingTxAction } from 'actions/exchangeActions';
 // models, constants
 import type { WBTCFeesWithRate, PendingWBTCTransaction } from 'models/WBTC';
 import { BTC, WBTC } from 'constants/assetsConstants';
-import { EXCHANGE_CONFIRM } from 'constants/navigationConstants';
+import { EXCHANGE_CONFIRM, WBTC_CAFE } from 'constants/navigationConstants';
 import type { Dispatch } from 'reducers/rootReducer';
 
 // partials
@@ -117,7 +117,7 @@ const WBTCCafeInfo = (props: Props) => {
 
   const handleSent = () => {
     addWbtcPendingTx({ amount: wbtcData?.estimate || 0, dateCreated: Date.now() });
-    navigation.goBack();
+    navigation.navigate(WBTC_CAFE);
   };
 
   const getFeeNumber = () => {
@@ -191,7 +191,13 @@ const WBTCCafeInfo = (props: Props) => {
       )}
       <ButtonWrapper>
         <Button title={getButtonTitle()} onPress={handleNextPress} disabled={buttonDisabled} />
-        {extendedInfo && <Button secondary title={t('wbtcCafe.sent')} onPress={handleSent} style={{ marginTop: 8 }} />}
+        {extendedInfo && <Button
+          secondary
+          title={t('wbtcCafe.sent')}
+          onPress={handleSent}
+          disabled={buttonDisabled}
+          style={{ marginTop: 8 }}
+        />}
       </ButtonWrapper>
     </TableWrapper>
   );

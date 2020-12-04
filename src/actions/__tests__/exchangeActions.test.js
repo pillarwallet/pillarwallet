@@ -187,7 +187,7 @@ describe('Exchange actions test', () => {
       store = mockStore(storeState);
     });
     it('removes correct number of pending transactions', () => {
-      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[0]] }];
+      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[1]] }];
       store.dispatch(removeWbtcPendingTxsAction(1));
       expect(store.getActions()).toEqual(expectedActions);
     });
@@ -204,7 +204,7 @@ describe('Exchange actions test', () => {
     it('handles new WBTC.Cafe transactions in history', () => {
       const mapped = mapPendingToTransactions([pending[1]])[0];
       const expectedActions = [
-        { type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[0]] },
+        { type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[1]] },
         { type: SET_HISTORY, payload: { [ACC_ID]: [mapped, someTx] } },
       ];
       syncAccountHistory([mapped, someTx], ACC_ID, store.dispatch, store.getState);

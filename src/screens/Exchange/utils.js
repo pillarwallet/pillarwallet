@@ -24,7 +24,7 @@ import maxBy from 'lodash.maxby';
 import Intercom from 'react-native-intercom';
 
 import { getRate, getBalance, sortAssets, generateAssetSelectorOption } from 'utils/assets';
-import { formatMoney, isValidNumber } from 'utils/common';
+import { formatMoney } from 'utils/common';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
@@ -200,20 +200,6 @@ export const getHeaderRightItems = (
 };
 
 const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number) => Number(assetBalance) >= Number(amount);
-
-export const getErrorMessage = (
-  amount: string,
-  asset: Option,
-): string => {
-  const { assetBalance: balance = '', symbol: token = '' } = asset;
-  const isValid = isValidNumber(amount);
-  if (!isValid) {
-    return t('error.amount.invalidNumber');
-  } else if (token !== BTC && !isEnoughAssetBalance(balance, amount)) {
-    return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance, token });
-  }
-  return '';
-};
 
 export const shouldTriggerSearch = (
   fromAsset: Option,

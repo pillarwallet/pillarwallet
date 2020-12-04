@@ -62,6 +62,7 @@ const SlippageModal = ({ onSubmit, activeValue }: Props) => {
 
   const handleCustomChange = (input: string) => {
     if (!input) input = '0';
+    input = input.replace(/,/g, '.');
     // 01 => 1, 00 => 0
     if (input[1] && input[0] === '0' && !['.', ','].includes(input[1])) input = input.substring(1);
     setCustomValue(input);
@@ -92,6 +93,7 @@ const SlippageModal = ({ onSubmit, activeValue }: Props) => {
           disabled={!isValidCustomValue()}
           onPress={handlePress}
           title={t('button.apply')}
+          style={{ zIndex: -1 }}
         />
       </Container>
     </Modal>

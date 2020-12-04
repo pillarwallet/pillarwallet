@@ -48,11 +48,12 @@ import { fetchBitcoinRateAction } from 'actions/ratesActions';
 // constants
 import { ETH, PLR, WBTC, BTC } from 'constants/assetsConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
+import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 
 // utils, services
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
-import { gatherWBTCFeeData } from 'services/wbtcCafe';
+import { gatherWBTCFeeData, showWbtcErrorToast } from 'services/wbtcCafe';
 
 import { noop } from 'utils/common';
 
@@ -109,7 +110,7 @@ type Props = {
   theme: Theme,
   isActiveAccountSmartWallet: boolean,
   offers: Offer[],
-  wbtcFees: WBTCFeesRaw,
+  wbtcFees: ?WBTCFeesRaw,
   getWbtcFees: () => void,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
@@ -260,6 +261,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     if (isWbtcCafe(fromAsset.symbol)) {
       const wbtcData = await gatherWBTCFeeData(Number(val), wbtcFees, symbol);
       if (wbtcData) this.setState({ wbtcData });
+      if (!wbtcData || (wbtcData && !wbtcData.estimate && +input >= MIN_WBTC_CAFE_AMOUNT)) showWbtcErrorToast();
     }
   };
 

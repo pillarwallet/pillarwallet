@@ -85,6 +85,11 @@ const BottomContainer = styled.View`
   align-items: center;
 `;
 
+const ImgWrapper = styled.View`
+  width: 100%;
+  align-items: center;
+`;
+
 const image = require('assets/images/exchangeProviders/wbtcBanner.png');
 const iconOne = require('assets/icons/icon_orange_one.png');
 const iconTwo = require('assets/icons/icon_orange_two.png');
@@ -111,7 +116,9 @@ const WBTCCafeIntro = ({ onButtonPress, backgroundColor }: Props) => {
 
   return (
     <Wrapper contentContainerStyle={{ paddingBottom: 50, paddingTop: 16 }} backgroundColor={backgroundColor}>
-      <Image source={image} style={{ marginBottom: 25 }} resizeMode="contain" />
+      <ImgWrapper>
+        <Image source={image} style={{ marginBottom: 25 }} resizeMode="contain" />
+      </ImgWrapper>
       <Text>{t('wbtcCafe.intro')}</Text>
       <Title>{t('wbtcCafe.how')}</Title>
       <Text>{t('wbtcCafe.info')}</Text>
