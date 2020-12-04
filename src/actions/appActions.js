@@ -67,6 +67,7 @@ import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransfe
 import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
+import { SET_RARI_USER_DATA } from 'constants/rariConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
@@ -209,6 +210,9 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
+
+      const rariData = get(storageData, 'rari');
+      if (rariData) dispatch({ type: SET_RARI_USER_DATA, payload: rariData });
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });

@@ -32,11 +32,11 @@ import {
 import { GraphQueryError } from 'services/theGraph';
 import t from 'translations/translate';
 import {
-  SET_RARI_APY,
   SET_RARI_USER_DATA,
   SET_FETCHING_RARI_DATA,
   SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
+import { saveDbAction } from 'actions/dbActions';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { getRariClaimRgtTransaction } from 'utils/rari';
@@ -58,7 +58,7 @@ export const fetchRariDataAction = () => {
     dispatch({ type: SET_FETCHING_RARI_DATA });
 
     const [
-      userDepositInUSD, userDepositInRariToken, userInterests, rariAPY, rariFundBalance, rariTotalSupply,
+      userDepositInUSD, userDepositInRariToken, userInterests, rariApy, rariFundBalance, rariTotalSupply,
       userRgtBalance, userUnclaimedRgt, rtgPrice, rtgSupply,
     ] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),
@@ -86,24 +86,23 @@ export const fetchRariDataAction = () => {
       return [];
     });
 
-    if (userDepositInUSD && userInterests && rariAPY && userDepositInRariToken && rariFundBalance &&
+    if (userDepositInUSD && userInterests && rariApy && userDepositInRariToken && rariFundBalance &&
         rariTotalSupply && userRgtBalance != null && userUnclaimedRgt != null && rtgPrice && rtgSupply) {
-      dispatch({
-        type: SET_RARI_USER_DATA,
-        payload: {
-          userDepositInUSD,
-          userDepositInRariToken,
-          userInterests,
-          rariFundBalance,
-          rariTotalSupply,
-          userRgtBalance,
-          userUnclaimedRgt,
-          rtgPrice,
-          rtgSupply,
-        },
-      });
-      dispatch({ type: SET_RARI_APY, payload: rariAPY });
+      const payload = {
+        userDepositInUSD,
+        userDepositInRariToken,
+        userInterests,
+        rariFundBalance,
+        rariTotalSupply,
+        userRgtBalance,
+        userUnclaimedRgt,
+        rtgPrice,
+        rtgSupply,
+        rariApy,
+      };
+      dispatch({ type: SET_RARI_USER_DATA, payload });
       dispatch({ type: SET_FETCHING_RARI_DATA_ERROR, payload: false });
+      dispatch(saveDbAction('rari', payload));
     }
     dispatch({ type: SET_FETCHING_RARI_DATA, payload: false });
   };

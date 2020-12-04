@@ -58,6 +58,9 @@ type Props = {
   userUnclaimedRgt: number,
   calculateRariClaimTransactionEstimate: (amount: number) => void,
   resetEstimateTransaction: () => void,
+  rtgPrice: {
+    [string]: number,
+  },
 };
 
 const FooterWrapper = styled.View`
@@ -73,7 +76,7 @@ const ValueInputWrapper = styled.View`
 
 const RariClaimRgtScreen = ({
   navigation, feeInfo, isEstimating, estimateErrorMessage, balances, userUnclaimedRgt,
-  calculateRariClaimTransactionEstimate, resetEstimateTransaction,
+  calculateRariClaimTransactionEstimate, resetEstimateTransaction, rtgPrice,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
@@ -122,6 +125,10 @@ const RariClaimRgtScreen = ({
       || !inputValid
       || !feeInfo;
 
+  const customRates = {
+    [RARI_GOVERNANCE_TOKEN_DATA.symbol]: rtgPrice,
+  };
+
   return (
     <ContainerWithHeader
       inset={{ bottom: 'never' }}
@@ -159,6 +166,7 @@ const RariClaimRgtScreen = ({
           onValueChange={setAssetValue}
           onFormValid={setInputValid}
           customBalances={customBalances}
+          customRates={customRates}
         />
       </ValueInputWrapper>
     </ContainerWithHeader>
@@ -167,12 +175,13 @@ const RariClaimRgtScreen = ({
 
 const mapStateToProps = ({
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
-  rari: { userUnclaimedRgt },
+  rari: { userUnclaimedRgt, rtgPrice },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   estimateErrorMessage,
   isEstimating,
   userUnclaimedRgt,
+  rtgPrice,
 });
 
 const structuredSelector = createStructuredSelector({

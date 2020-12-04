@@ -54,6 +54,7 @@ import {
 import { mapTransactionsHistoryWithAave } from 'utils/aave';
 import { mapTransactionsPoolTogether } from 'utils/poolTogether';
 import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
+import { mapTransactionsHistoryWithRari } from 'utils/rari';
 
 // services
 import smartWalletService from 'services/smartWallet';
@@ -153,7 +154,8 @@ export const fetchSmartWalletTransactionsAction = () => {
     );
     const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
     const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-    const history = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    const history = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
 
     if (!history.length) return;
 
