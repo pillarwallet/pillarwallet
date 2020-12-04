@@ -31,16 +31,18 @@ import Insight from 'components/Insight/Insight';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
 
-import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { getDeviceWidth, formatFiat, commify } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
+import { RARI_ADD_DEPOSIT } from 'constants/navigationConstants';
 
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
+import type { NavigationScreenProp } from 'react-navigation';
 
 
 type Props = {
@@ -51,6 +53,7 @@ type Props = {
     [string]: number,
   },
   rtgSupply: number,
+  navigation: NavigationScreenProp<*>,
 };
 
 const bannerImage = require('assets/images/rari_pattern.png');
@@ -60,16 +63,16 @@ const screenWidth = getDeviceWidth();
 const bannerWidth = screenWidth - 40;
 
 const HorizontalPadding = styled.View`
-  padding: 0 20px;
+  padding: 0 ${({ p }) => p || 20}px;
 `;
 
 const Subtitle = styled(MediumText)`
-  color: ${themedColors.text};
+  color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.big};
 `;
 
 const Paragraph = styled(BaseText)`
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.medium};
 `;
 
@@ -78,7 +81,7 @@ const Row = styled.View`
 `;
 
 const Card = styled.View`
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   padding: 8px 16px 16px;
   border-radius: 6px;
 `;
@@ -106,6 +109,7 @@ const RariInfoScreen = ({
   rariFundBalance,
   rtgPrice,
   rtgSupply,
+  navigation,
 }: Props) => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalRariFundBalance = (Object.values(rariFundBalance): any).reduce((sum, balance) => sum + balance, 0);
@@ -117,7 +121,7 @@ const RariInfoScreen = ({
         <Subtitle>{subtitle}</Subtitle>
         <Spacing h={14} />
         <Paragraph>{paragraph}</Paragraph>
-        <Spacing h={30} />
+        <Spacing h={28} />
       </>
     );
   };
@@ -141,33 +145,34 @@ const RariInfoScreen = ({
         <Subtitle>{t('rariContent.infoContent.subtitle.keyFacts')}</Subtitle>
         <Spacing h={6} />
       </HorizontalPadding>
-      <ScrollView horizontal>
-        <Row>
-          <Spacing w={16} />
-          <Card>
-            <MediumText big>
-              {formatFiat(rtgPrice[fiatCurrency], fiatCurrency)}
-            </MediumText>
-            <BaseText secondary small>{t('rariContent.label.rgtPrice')}</BaseText>
-          </Card>
-          <Spacing w={16} />
-          <Card>
-            <MediumText big>
-              {commify(rtgSupply, { skipCents: true })}
-            </MediumText>
-            <BaseText secondary small>{t('rariContent.label.rgtSupply')}</BaseText>
-          </Card>
-          <Spacing w={16} />
-          <Card>
-            <MediumText big>
-              {formatFiat(totalRariFundBalanceInFiat, fiatCurrency, { skipCents: true })}
-            </MediumText>
-            <BaseText secondary small>{t('rariContent.label.totalSupply')}</BaseText>
-          </Card>
-          <Spacing w={16} />
-        </Row>
-      </ScrollView>
-      <HorizontalPadding>
+      <HorizontalPadding p={4}>
+        <ScrollView horizontal>
+          <Row>
+            <Spacing w={16} />
+            <Card>
+              <MediumText big>
+                {formatFiat(rtgPrice[fiatCurrency], fiatCurrency)}
+              </MediumText>
+              <BaseText secondary small>{t('rariContent.label.rgtPrice')}</BaseText>
+            </Card>
+            <Spacing w={16} />
+            <Card>
+              <MediumText big>
+                {commify(rtgSupply, { skipCents: true })}
+              </MediumText>
+              <BaseText secondary small>{t('rariContent.label.rgtSupply')}</BaseText>
+            </Card>
+            <Spacing w={16} />
+            <Card>
+              <MediumText big>
+                {formatFiat(totalRariFundBalanceInFiat, fiatCurrency, { skipCents: true })}
+              </MediumText>
+              <BaseText secondary small>{t('rariContent.label.totalSupply')}</BaseText>
+            </Card>
+            <Spacing w={16} />
+          </Row>
+        </ScrollView>
+        <Spacing h={16} />
         <Insight
           isVisible
           insightNumberedList={[
@@ -180,7 +185,9 @@ const RariInfoScreen = ({
           ]}
           borderRadius={30}
         />
-        <Spacing h={5} />
+      </HorizontalPadding>
+      <Spacing h={44} />
+      <HorizontalPadding>
         {renderParagraph(
           t('rariContent.infoContent.subtitle.whatIsRari'),
           t('rariContent.infoContent.paragraph.whatIsRari'),
@@ -189,16 +196,18 @@ const RariInfoScreen = ({
           t('rariContent.infoContent.subtitle.howDoesRariEarn'),
           t('rariContent.infoContent.paragraph.howDoesRariEarn'),
         )}
+        <Spacing h={4} />
         <InsightWithButton
           title={t('rariContent.infoContent.maximizeYieldInsight.title')}
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
           buttonProps={{ small: false }}
+          onButtonPress={() => navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: RARI_POOLS.STABLE_POOL })}
         />
-        <Spacing h={26} />
-        {renderParagraph(
-          t('rariContent.infoContent.subtitle.rariPools'),
-          t('rariContent.infoContent.paragraph.rariPools'),
-        )}
+        <Spacing h={44} />
+        <Subtitle>{t('rariContent.infoContent.subtitle.rariPools')}</Subtitle>
+        <Spacing h={14} />
+        <Paragraph>{t('rariContent.infoContent.paragraph.rariPools')}</Paragraph>
+        <Spacing h={16} />
         <Insight
           isVisible
           insightChecklist={[
@@ -208,6 +217,7 @@ const RariInfoScreen = ({
           ]}
           borderRadius={30}
         />
+        <Spacing h={28} />
         {renderParagraph(
           t('rariContent.infoContent.subtitle.deposits'),
           t('rariContent.infoContent.paragraph.deposits'),
@@ -236,10 +246,12 @@ const RariInfoScreen = ({
           t('rariContent.infoContent.subtitle.rariFee'),
           t('rariContent.infoContent.paragraph.rariFee'),
           )}
+        <Spacing h={4} />
         <InsightWithButton
           title={t('rariContent.infoContent.maximizeYieldInsight.title')}
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
           buttonProps={{ small: false }}
+          onButtonPress={() => navigation.navigate(RARI_ADD_DEPOSIT, { rariPool: RARI_POOLS.STABLE_POOL })}
         />
       </HorizontalPadding>
       <Spacing h={16} />

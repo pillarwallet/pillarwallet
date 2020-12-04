@@ -20,13 +20,25 @@
 /* eslint-disable no-continue, no-await-in-loop */
 import { BigNumber as EthersBigNumber, utils, constants as ethersConstants } from 'ethers';
 import { BigNumber } from 'bignumber.js';
+import { keccak256 } from 'js-sha3';
+import { ZERO_ADDRESS } from '@netgum/utils';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
 import { get0xSwapOrders } from 'services/0x.js';
+import { callSubgraph } from 'services/theGraph';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
-import { RARI_POOLS, RARI_TOKENS } from 'constants/rariConstants';
+import {
+  RARI_POOLS,
+  RARI_TOKENS,
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+  RARI_POOLS_ARRAY,
+} from 'constants/rariConstants';
 import { getAccountDepositInUSDBN } from 'services/rari';
 import { reportErrorLog, parseTokenBigNumberAmount, scaleBN } from 'utils/common';
+import { addressesEqual } from 'utils/assets';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
@@ -35,6 +47,7 @@ import MSTABLE_VALIDATION_HELPER_CONTRACT_ABI from 'abi/mAssetValidationHelper.j
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
 import type { Asset, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
+import type { Transaction } from 'models/Transaction';
 
 
 const MSTABLE_TOKENS = ['DAI', 'USDC', 'USDT', 'TUSD'];
@@ -272,6 +285,16 @@ export const getRariDepositTransactionsAndExchangeFee = async (
       ];
     }
   }
+  depositTransactions[0] = {
+    ...depositTransactions[0],
+    tag: RARI_DEPOSIT_TRANSACTION,
+    extra: {
+      amount: amountBN,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      rariPool,
+    },
+  };
   return { depositTransactions, exchangeFeeBN, slippage };
 };
 
@@ -622,6 +645,13 @@ export const getRariWithdrawTransaction = async (
     data: withdrawTransactionData,
     amount: parseFloat(utils.formatEther(exchangeFeeBN)),
     symbol: ETH,
+    tag: RARI_WITHDRAW_TRANSACTION,
+    extra: {
+      amount: amountBN,
+      symbol: token.symbol,
+      decimals: token.decimals,
+      rariPool,
+    },
   };
 
   return { withdrawTransaction, exchangeFeeBN, slippage };
@@ -808,6 +838,7 @@ export const getWithdrawalFeeRate = (rariPool: RariPool) => {
 };
 
 export const getRariClaimRgtTransaction = (senderAddress: string, amount: number, txFeeInWei?: BigNumber) => {
+  const amountBN = parseTokenBigNumberAmount(amount, 18);
   const transactionData = encodeContractMethod(RARI_RGT_DISTRIBUTOR_CONTRACT_ABI, 'claimRgt', [
     parseTokenBigNumberAmount(amount, 18),
   ]);
@@ -819,5 +850,167 @@ export const getRariClaimRgtTransaction = (senderAddress: string, amount: number
     amount: 0,
     symbol: ETH,
     txFeeInWei,
+    extra: {
+      amount: amountBN,
+    },
+    tag: RARI_CLAIM_TRANSACTION,
   };
+};
+
+export const isRariTransactionTag = (txTag: ?string) => {
+  return [
+    RARI_DEPOSIT_TRANSACTION,
+    RARI_WITHDRAW_TRANSACTION,
+    RARI_CLAIM_TRANSACTION,
+    RARI_TRANSFER_TRANSACTION,
+  ].includes(txTag);
+};
+
+const buildRariTransaction = (
+  accountAddress,
+  transaction,
+  rariTransactions,
+  hashes,
+  supportedAssets,
+): Transaction => {
+  const {
+    transfersOut = [], transfersIn = [], deposits = [], withdrawals = [], claims = [],
+  } = rariTransactions;
+  const txHash = transaction.hash.toLowerCase();
+  const findRariPool = ({ tokenAddress }): ?RariPool =>
+    RARI_POOLS_ARRAY.find(pool => addressesEqual(getRariPoolsEnv(pool).RARI_FUND_TOKEN_ADDRESS, tokenAddress));
+
+  let rariTransaction = deposits.find(({ id }) => id === txHash) || withdrawals.find(({ id }) => id === txHash);
+
+  if (rariTransaction) {
+    const currencyCode = hashes.find(({ hash }) => hash === rariTransaction?.currencyCode);
+    return {
+      ...transaction,
+      tag: rariTransaction.rftMinted ? RARI_DEPOSIT_TRANSACTION : RARI_WITHDRAW_TRANSACTION,
+      extra: {
+        symbol: currencyCode?.symbol || '',
+        decimals: supportedAssets.find(({ symbol }) => symbol === currencyCode?.symbol)?.decimals || 18,
+        amount: rariTransaction.amount,
+        rariPool: findRariPool(rariTransaction),
+        rftMinted: rariTransaction.rftMinted || rariTransaction.rftBurned,
+      },
+    };
+  }
+  rariTransaction = transfersIn
+    .concat(transfersOut)
+    .find(({ id, from, to }) => id === txHash && from !== ZERO_ADDRESS && to !== ZERO_ADDRESS);
+  if (rariTransaction) {
+    const { to, from, amount } = rariTransaction;
+    return {
+      ...transaction,
+      tag: RARI_TRANSFER_TRANSACTION,
+      extra: {
+        contactAddress: addressesEqual(from, accountAddress) ? to : from,
+        amount,
+        rariPool: findRariPool(rariTransaction),
+      },
+    };
+  }
+  rariTransaction = claims.find(({ id }) => id === txHash);
+  if (rariTransaction) {
+    const { claimed } = rariTransaction;
+    return {
+      ...transaction,
+      tag: RARI_CLAIM_TRANSACTION,
+      extra: {
+        amount: claimed,
+      },
+    };
+  }
+  return transaction;
+};
+
+export const mapTransactionsHistoryWithRari = async (
+  accountAddress: string,
+  transactionHistory: Transaction[],
+  supportedAssets: Asset[],
+): Promise<Transaction[]> => {
+  /* eslint-disable i18next/no-literal-string */
+  const query = `{
+    transfersOut: transfers(where: {
+      from: "${accountAddress}",
+    }) {
+      id
+      amount
+      tokenAddress
+      from
+      to
+    }
+    transfersIn: transfers(where: {
+      to: "${accountAddress}", 
+    }) {
+      id
+      amount
+      tokenAddress
+      from
+      to
+    }
+    deposits(where: {
+      payee: "${accountAddress}",
+    }) {
+      id
+      amount
+      rftMinted
+      tokenAddress
+      currencyCode
+    }
+    withdrawals(where: {
+      payee: "${accountAddress}",
+    }) {
+      id
+      amount
+      rftBurned
+      tokenAddress
+      currencyCode
+    }
+    claims(where: {
+      holder: "${accountAddress}",
+    }) {
+      id
+      claimed
+    }
+  }
+  `;
+    /* eslint-enable i18next/no-literal-string */
+  const response = await callSubgraph(getEnv().RARI_SUBGRAPH_NAME, query) || {};
+
+  // currencyToken gotcha: currencyToken has an indexed string type in Rari abi
+  // that means according to solidity docs (https://docs.soliditylang.org/en/develop/abi-spec.html#encoding-of-indexed-event-parameters)
+  // "Indexed event parameters that are not value types, i.e. arrays and structs
+  // are not stored directly but instead a keccak256-hash of an encoding is stored."
+  // That applies also to indexed strings, so we have just a hash of a string :(
+  // But hey, we know it's a hash of a currency code and we have all supported currency codes
+  // So we calculate the hash out of every currency code and compare by hash
+  const hashes = supportedAssets.map(({ symbol }) => ({
+    hash: `0x${keccak256(symbol)}`, symbol, // eslint-disable-line i18next/no-literal-string
+  }));
+
+  const rariContracts = RARI_POOLS_ARRAY.reduce((contracts, pool) => {
+    return [...contracts, ...(Object.values(getRariPoolsEnv(pool)): any)];
+  }, []);
+  rariContracts.push(getEnv().RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS);
+
+  const mappedHistory = transactionHistory.reduce((
+    transactions,
+    transaction,
+    transactionIndex,
+  ) => {
+    const { to } = transaction;
+    if (rariContracts.find(contract => addressesEqual(contract, to))) {
+      transactions[transactionIndex] = buildRariTransaction(
+        accountAddress,
+        transaction,
+        response,
+        hashes,
+        supportedAssets,
+      );
+    }
+    return transactions;
+  }, transactionHistory);
+  return mappedHistory;
 };

@@ -38,7 +38,8 @@ import { fontSizes, spacing, fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
 import { isSablierTransactionTag } from 'utils/sablier';
-import { formatUnits } from 'utils/common';
+import { formatUnits, formatAmount, getDecimalPlaces } from 'utils/common';
+import { isRariTransactionTag } from 'utils/rari';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -50,12 +51,17 @@ import {
   SEND_COLLECTIBLE_CONFIRM,
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
+  RARI_DEPOSIT,
 } from 'constants/navigationConstants';
 import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
 import { ERROR_TYPE } from 'constants/transactionsConstants';
+import {
+  RARI_DEPOSIT_TRANSACTION, RARI_WITHDRAW_TRANSACTION, RARI_TRANSFER_TRANSACTION, RARI_CLAIM_TRANSACTION,
+} from 'constants/rariConstants';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -170,6 +176,35 @@ class SendTokenTransaction extends React.Component<Props> {
 
     if (isSablierTransactionTag(txTag)) {
       navigation.navigate(SABLIER_STREAMS);
+      return;
+    }
+
+    if (isRariTransactionTag(txTag)) {
+      navigation.navigate(RARI_DEPOSIT);
+      let toastMessage = null;
+      const {
+        extra: {
+          symbol, decimals, amount, recipient,
+        } = {},
+      } = transactionPayload;
+      const formattedAmount = formatAmount(formatUnits(amount, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+      if (txTag === RARI_DEPOSIT_TRANSACTION) {
+        toastMessage = t('toast.rariDeposit', { amount: formattedAmount, token: symbol });
+      } else if (txTag === RARI_WITHDRAW_TRANSACTION) {
+        toastMessage = t('toast.rariWithdraw', { amount: formattedAmount, token: symbol });
+      } else if (txTag === RARI_TRANSFER_TRANSACTION) {
+        toastMessage = t('toast.rariTransfer', { amount: formattedAmount, token: symbol, recipient });
+      } else if (txTag === RARI_CLAIM_TRANSACTION) {
+        toastMessage = t('toast.rariClaimRgt', { amount: formattedAmount });
+      }
+
+      if (toastMessage) {
+        Toast.show({
+          message: toastMessage,
+          emoji: 'ok_hand',
+          autoClose: true,
+        });
+      }
       return;
     }
 

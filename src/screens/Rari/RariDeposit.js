@@ -36,7 +36,7 @@ import Table, { TableRow, TableLabel } from 'components/Table';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Button from 'components/Button';
 
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { formatFiat, formatAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
@@ -80,7 +80,7 @@ const MainContainer = styled.View`
 `;
 
 const EarnedCard = styled.View`
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   padding: 20px;
   flex-direction: row;
   align-items: center;
@@ -105,7 +105,7 @@ const PoolContainer = styled.View`
 `;
 
 const GovernanceTokenCard = styled.View`
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   padding: 16px;
   border-radius: 8px;
 
@@ -225,14 +225,14 @@ const RariDepositScreen = ({
   const renderEarnedInterestsPercent = (interestsPercentage: number) => {
     const formattedInterestsPercentage = Math.abs(interestsPercentage).toFixed(2);
     let earnedPercentTranslation = t('percentValue', { value: formattedInterestsPercentage });
-    let earnedPercentColor = colors.text;
+    let earnedPercentColor = colors.basic10;
 
     if (interestsPercentage > 0) {
       earnedPercentTranslation = t('positivePercentValue', { value: formattedInterestsPercentage });
-      earnedPercentColor = colors.positive;
+      earnedPercentColor = colors.secondaryAccent140;
     } else if (interestsPercentage < 0) {
       earnedPercentTranslation = t('negativePercentValue', { value: formattedInterestsPercentage });
-      earnedPercentColor = colors.negative;
+      earnedPercentColor = colors.secondaryAccent240;
     }
 
     return (
@@ -281,7 +281,7 @@ const RariDepositScreen = ({
         rightItems: [
           {
             icon: 'info-circle-inverse',
-            color: colors.labelTertiary,
+            color: colors.basic020,
             onPress: () => navigation.navigate(RARI_INFO),
           },
         ],

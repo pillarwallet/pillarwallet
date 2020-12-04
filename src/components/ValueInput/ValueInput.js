@@ -72,6 +72,7 @@ export type ExternalProps = {
   leftSideSymbol?: string,
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
+  customRates?: Rates,
 };
 
 type InnerProps = {
@@ -132,11 +133,14 @@ export const ValueInputComponent = (props: Props) => {
     leftSideSymbol,
     getInputRef,
     onFormValid,
+    customRates,
   } = props;
 
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
   const [errorMessageState, setErrorMessageState] = useState<?string>(null);
+
+  const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
   const assetBalance = +formatAmount((customBalances || balances)[assetSymbol]?.balance);
@@ -144,8 +148,8 @@ export const ValueInputComponent = (props: Props) => {
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, rates, assetSymbol);
-  const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, rates, assetSymbol);
+  const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
+  const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
   const handleValueChange = (newValue: string) => {
     let errorMessage = null;
@@ -153,12 +157,13 @@ export const ValueInputComponent = (props: Props) => {
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
       setValueInFiat(newValue);
-      const convertedValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, rates, assetSymbol).toString();
+      const convertedValue =
+        getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
       onValueChange(convertedValue);
 
       errorMessage = getErrorMessage(convertedValue, maxValue, assetSymbol);
     } else {
-      setValueInFiat(getBalanceInFiat(fiatCurrency, newValue, rates, assetSymbol).toString());
+      setValueInFiat(getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString());
       onValueChange(newValue);
       errorMessage = getErrorMessage(newValue, maxValue, assetSymbol);
     }
@@ -178,7 +183,7 @@ export const ValueInputComponent = (props: Props) => {
       newTxFeeInfo?.fee,
       newTxFeeInfo?.gasToken,
     ));
-    const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, rates, assetSymbol);
+    const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
     onValueChange((parseFloat(newMaxValue) * (percent / 100)).toString());
     setValueInFiat((maxValueInFiat * (percent / 100)).toString());
   };

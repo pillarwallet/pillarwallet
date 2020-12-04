@@ -33,8 +33,8 @@ import Modal from 'components/Modal';
 
 import SendContainer from 'containers/SendContainer';
 
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { reportErrorLog, noop } from 'utils/common';
+import { isEnoughBalanceForTransactionFee, convertUSDToFiat } from 'utils/assets';
+import { reportErrorLog, noop, parseTokenBigNumberAmount } from 'utils/common';
 import { getContactWithEnsName } from 'utils/contacts';
 import { isEnsName } from 'utils/validators';
 
@@ -42,9 +42,9 @@ import { resetEstimateTransactionAction, estimateTransactionAction } from 'actio
 import { addContactAction } from 'actions/contactsActions';
 
 
-import { ETH } from 'constants/assetsConstants';
+import { ETH, supportedFiatCurrencies, USD } from 'constants/assetsConstants';
 import { RARI_TRANSFER_REVIEW } from 'constants/navigationConstants';
-import { RARI_TOKENS_DATA } from 'constants/rariConstants';
+import { RARI_TOKENS_DATA, RARI_TRANSFER_TRANSACTION } from 'constants/rariConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { contactsSelector } from 'selectors';
@@ -53,7 +53,7 @@ import { useGasTokenSelector } from 'selectors/smartWallet';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import type { Balances, AssetData } from 'models/Asset';
+import type { Balances, AssetData, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Contact } from 'models/Contact';
 import type { Option } from 'models/Selector';
@@ -71,6 +71,9 @@ type Props = {
   useGasToken: boolean,
   balances: Balances,
   resetEstimateTransaction: () => void,
+  rariFundBalance: {[RariPool]: number},
+  rariTotalSupply: {[RariPool]: number},
+  rates: Rates,
 };
 
 const renderFeeToggle = (
@@ -104,6 +107,9 @@ const RariTransferScreen = ({
   useGasToken,
   balances,
   resetEstimateTransaction,
+  rariFundBalance,
+  rariTotalSupply,
+  rates,
 }: Props) => {
   const [amount, setAmount] = useState('');
   const [inputIsValid, setInputIsValid] = useState(false);
@@ -162,6 +168,8 @@ const RariTransferScreen = ({
 
     setSubmitPressed(true);
 
+    const amountBN = parseTokenBigNumberAmount(amount, rariTokenData.decimals);
+
     // $FlowFixMe
     const transactionPayload: TokenTransactionPayload = {
       to: selectedContact.ethAddress,
@@ -171,6 +179,14 @@ const RariTransferScreen = ({
       symbol: rariTokenData.symbol,
       contractAddress: rariTokenData.contractAddress,
       decimals: rariTokenData.decimals,
+      tag: RARI_TRANSFER_TRANSACTION,
+      extra: {
+        amount: amountBN,
+        symbol: rariTokenData.symbol,
+        contactAddress: selectedContact.ethAddress,
+        recipient: selectedContact.ensName || selectedContact.ethAddress,
+        rariPool,
+      },
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
@@ -273,6 +289,20 @@ const RariTransferScreen = ({
   const hasAllFeeData = !isEstimating && !!selectedContact;
   const showFee = hasAllFeeData && inputIsValid;
 
+  const rftExchangeRateUsd = rariFundBalance[rariPool] / rariTotalSupply[rariPool];
+  const rariTokenSymbol = RARI_TOKENS_DATA[rariPool].symbol;
+  const customRates = {
+    [rariTokenSymbol]: {
+      USD: rftExchangeRateUsd,
+    },
+  };
+
+  supportedFiatCurrencies.forEach(currency => {
+    if (currency !== USD) {
+      customRates[rariTokenSymbol][currency] = convertUSDToFiat(rftExchangeRateUsd, rates, currency);
+    }
+  });
+
   return (
     <SendContainer
       customScreenTitle={t('rariContent.title.transferScreen')}
@@ -291,6 +321,7 @@ const RariTransferScreen = ({
         onValueChange: setAmount,
         customBalances,
         onFormValid: setInputIsValid,
+        customRates,
       }}
       footerProps={{
         isNextButtonVisible: showNextButton,
@@ -320,12 +351,18 @@ const mapStateToProps = ({
   },
   rari: {
     userDepositInRariToken,
+    rariFundBalance,
+    rariTotalSupply,
   },
+  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   feeInfo,
   isEstimating,
   estimateErrorMessage,
   userDepositInRariToken,
+  rariFundBalance,
+  rariTotalSupply,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({

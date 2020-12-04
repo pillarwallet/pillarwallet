@@ -26,7 +26,7 @@ import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, themedColors, getColorByTheme } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 
@@ -83,7 +83,7 @@ const CardTitle = styled(MediumText)`
 `;
 
 const InsightText = styled(BaseText)`
-  color: ${props => props.color};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.regular};
   flex: 1;
 `;
@@ -108,7 +108,7 @@ const TinyCircle = styled.View`
   height: 4px;
   width: 4px;
   border-radius: 4px;
-  background-color: ${themedColors.negative};
+  background-color: ${getColorByTheme({ lightKey: 'secondaryAccent240', darkKey: 'basic020' })};
 `;
 
 const CheckIcon = styled(Icon)`
@@ -148,7 +148,7 @@ const TextRow = styled.View`
 `;
 
 const ListNumber = styled(BaseText)`
-  color: ${themedColors.control};
+  color: ${({ theme }) => theme.colors.basic070};
   font-size: ${fontSizes.tiny}px;
   line-height: 16px;
 `;
@@ -219,7 +219,7 @@ const Insight = (props: Props) => {
                     <StatusIconWrapper>
                       <StatusIcon isDone={!!status} />
                     </StatusIconWrapper>
-                    <InsightText color={status ? colors.secondaryText : colors.text}>{listItem}</InsightText>
+                    <InsightText>{listItem}</InsightText>
                   </ListItem>
                 );
               }}
