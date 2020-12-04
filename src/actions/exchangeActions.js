@@ -385,24 +385,22 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
   };
 };
 
-export const getWbtcFeesAction = () => {
-  return (dispatch: Dispatch) => {
-    fetch('https://lightnode-mainnet.herokuapp.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        id: 67,
-        jsonrpc: '2.0',
-        method: 'ren_queryFees',
-        params: {},
-      }),
+export const getWbtcFeesAction = () => (dispatch: Dispatch) => {
+  fetch('https://lightnode-mainnet.herokuapp.com', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      id: 67,
+      jsonrpc: '2.0',
+      method: 'ren_queryFees',
+      params: {},
+    }),
+  })
+    .then(res => res.json())
+    .then(res => {
+      dispatch({ type: SET_WBTC_FEES, payload: res.result });
     })
-      .then(res => res.json())
-      .then(res => {
-        dispatch({ type: SET_WBTC_FEES, payload: res.result });
-      })
-      .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
-  };
+    .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
 };
 
 export const getWbtcGatewayAddressAction = (params: WBTCGatewayAddressParams) =>
