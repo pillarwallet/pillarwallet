@@ -24,6 +24,10 @@ import {
   getAccountDepositInUSD,
   getAccountDepositInPoolToken,
   getRariTokenTotalSupply,
+  getUserRgtBalance,
+  getUnclaimedRgt,
+  getRtgPrice,
+  getRtgSupply,
 } from 'services/rari';
 import { GraphQueryError } from 'services/theGraph';
 import t from 'translations/translate';
@@ -35,6 +39,7 @@ import {
 } from 'constants/rariConstants';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
+import { getRariClaimRgtTransaction } from 'utils/rari';
 import { estimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
 import Toast from 'components/Toast';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -54,6 +59,7 @@ export const fetchRariDataAction = () => {
 
     const [
       userDepositInUSD, userDepositInRariToken, userInterests, rariAPY, rariFundBalance, rariTotalSupply,
+      userRgtBalance, userUnclaimedRgt, rtgPrice, rtgSupply,
     ] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),
       getAccountDepositInPoolToken(smartWalletAddress),
@@ -61,6 +67,10 @@ export const fetchRariDataAction = () => {
       getRariAPY(),
       getRariFundBalanceInUSD(rates),
       getRariTokenTotalSupply(),
+      getUserRgtBalance(smartWalletAddress),
+      getUnclaimedRgt(smartWalletAddress),
+      getRtgPrice(),
+      getRtgSupply(),
     ]).catch(error => {
       if (error instanceof GraphQueryError) {
         dispatch({ type: SET_FETCHING_RARI_DATA_ERROR });
@@ -76,7 +86,8 @@ export const fetchRariDataAction = () => {
       return [];
     });
 
-    if (userDepositInUSD && userInterests && rariAPY && userDepositInRariToken && rariFundBalance && rariTotalSupply) {
+    if (userDepositInUSD && userInterests && rariAPY && userDepositInRariToken && rariFundBalance &&
+        rariTotalSupply && userRgtBalance != null && userUnclaimedRgt != null && rtgPrice && rtgSupply) {
       dispatch({
         type: SET_RARI_USER_DATA,
         payload: {
@@ -85,6 +96,10 @@ export const fetchRariDataAction = () => {
           userInterests,
           rariFundBalance,
           rariTotalSupply,
+          userRgtBalance,
+          userUnclaimedRgt,
+          rtgPrice,
+          rtgSupply,
         },
       });
       dispatch({ type: SET_RARI_APY, payload: rariAPY });
@@ -128,5 +143,24 @@ export const calculateRariWithdrawTransactionEstimateAction = (
       rariWithdrawTransaction.amount,
       rariWithdrawTransaction.data,
     ));
+  };
+};
+
+export const calculateRariClaimTransactionEstimateAction = (
+  claimedAmount: number,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch(setEstimatingTransactionAction(true));
+
+    const { to, amount, data } = await getRariClaimRgtTransaction(
+      getAccountAddress(smartWalletAccount),
+      claimedAmount,
+    );
+
+    dispatch(estimateTransactionAction(to, amount, data));
   };
 };

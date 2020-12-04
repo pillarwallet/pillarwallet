@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import { View } from 'react-native';
+import { View, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
@@ -33,7 +33,7 @@ import { Spacing } from 'components/Layout';
 
 import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
-import { getDeviceWidth, formatFiat } from 'utils/common';
+import { getDeviceWidth, formatFiat, commify } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -47,6 +47,10 @@ type Props = {
   rariFundBalance: {[RariPool]: number},
   baseFiatCurrency: ?string,
   rates: Rates,
+  rtgPrice: {
+    [string]: number,
+  },
+  rtgSupply: number,
 };
 
 const bannerImage = require('assets/images/rari_pattern.png');
@@ -55,8 +59,8 @@ const rariLogo = require('assets/images/rari_logo.png');
 const screenWidth = getDeviceWidth();
 const bannerWidth = screenWidth - 40;
 
-const MainContainer = styled.View`
-  padding: 16px 20px;
+const HorizontalPadding = styled.View`
+  padding: 0 20px;
 `;
 
 const Subtitle = styled(MediumText)`
@@ -100,6 +104,8 @@ const RariInfoScreen = ({
   baseFiatCurrency,
   rates,
   rariFundBalance,
+  rtgPrice,
+  rtgSupply,
 }: Props) => {
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const totalRariFundBalance = (Object.values(rariFundBalance): any).reduce((sum, balance) => sum + balance, 0);
@@ -123,7 +129,8 @@ const RariInfoScreen = ({
       }}
       putContentInScrollView
     >
-      <MainContainer>
+      <Spacing h={16} />
+      <HorizontalPadding>
         <View>
           <Banner source={bannerImage} />
           <RariLogoWrapper>
@@ -133,7 +140,24 @@ const RariInfoScreen = ({
         <Spacing h={28} />
         <Subtitle>{t('rariContent.infoContent.subtitle.keyFacts')}</Subtitle>
         <Spacing h={6} />
+      </HorizontalPadding>
+      <ScrollView horizontal>
         <Row>
+          <Spacing w={16} />
+          <Card>
+            <MediumText big>
+              {formatFiat(rtgPrice[fiatCurrency], fiatCurrency)}
+            </MediumText>
+            <BaseText secondary small>{t('rariContent.label.rgtPrice')}</BaseText>
+          </Card>
+          <Spacing w={16} />
+          <Card>
+            <MediumText big>
+              {commify(rtgSupply, { skipCents: true })}
+            </MediumText>
+            <BaseText secondary small>{t('rariContent.label.rgtSupply')}</BaseText>
+          </Card>
+          <Spacing w={16} />
           <Card>
             <MediumText big>
               {formatFiat(totalRariFundBalanceInFiat, fiatCurrency, { skipCents: true })}
@@ -142,6 +166,8 @@ const RariInfoScreen = ({
           </Card>
           <Spacing w={16} />
         </Row>
+      </ScrollView>
+      <HorizontalPadding>
         <Insight
           isVisible
           insightNumberedList={[
@@ -215,7 +241,8 @@ const RariInfoScreen = ({
           buttonTitle={t('rariContent.infoContent.maximizeYieldInsight.button')}
           buttonProps={{ small: false }}
         />
-      </MainContainer>
+      </HorizontalPadding>
+      <Spacing h={16} />
     </ContainerWithHeader>
   );
 };
@@ -224,12 +251,16 @@ const mapStateToProps = ({
   appSettings: { data: { baseFiatCurrency } },
   rari: {
     rariFundBalance,
+    rtgPrice,
+    rtgSupply,
   },
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
   baseFiatCurrency,
   rates,
   rariFundBalance,
+  rtgPrice,
+  rtgSupply,
 });
 
 export default connect(mapStateToProps)(RariInfoScreen);

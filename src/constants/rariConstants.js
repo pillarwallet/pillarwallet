@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { getRariPoolsEnv } from 'configs/envConfig';
+import { getRariPoolsEnv, getEnv } from 'configs/envConfig';
 
 export const SET_RARI_APY = 'SET_RARI_APY';
 export const SET_RARI_USER_DATA = 'SET_RARI_USER_DATA';
@@ -104,4 +104,17 @@ export const RARI_TOKENS_DATA = {
     contractAddress: getRariPoolsEnv(RARI_POOLS.ETH_POOL).RARI_FUND_TOKEN_ADDRESS,
     imageUrl: rariLogo,
   },
+};
+
+export const RARI_GOVERNANCE_TOKEN_DATA = {
+  symbol: 'RGT',
+  name: 'Rari Governance Token',
+  decimals: 18,
+  contractAddress: getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
+  address: getEnv().RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS,
+  imageUrl: rariLogo,
+  description: '',
+  iconMonoUrl: '',
+  iconUrl: rariLogo,
+  wallpaperUrl: '',
 };
