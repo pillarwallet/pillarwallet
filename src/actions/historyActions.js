@@ -85,7 +85,12 @@ export const afterHistoryUpdatedAction = () => {
   };
 };
 
-const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
+export const syncAccountHistory = (
+  apiHistory: Transaction[],
+  accountId: string,
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
   const { history: { data: currentHistory } } = getState();
   const accountHistory = currentHistory[accountId] || [];
 
