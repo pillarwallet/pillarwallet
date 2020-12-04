@@ -399,10 +399,7 @@ export const getWbtcFeesAction = () => {
     })
       .then(res => res.json())
       .then(res => {
-        dispatch({
-          type: SET_WBTC_FEES,
-          payload: res.result,
-        });
+        dispatch({ type: SET_WBTC_FEES, payload: res.result });
       })
       .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
   };
@@ -431,4 +428,14 @@ export const setWbtcPendingTxsAction = (pendingWbtcTransactions: PendingWBTCTran
     payload: pendingWbtcTransactions,
   });
   dispatch(saveDbAction('pendingWbtcTransactions', { pendingWbtcTransactions }, true));
+};
+
+// for each new WBTC.Cafe tx detected, remove 1 pending
+export const removeWbtcPendingTxsAction = (quantity: number) => (dispatch: Dispatch, getState: GetState) => {
+  if (quantity < 1) return;
+  const { exchange: { data: { pendingWbtcTransactions: pending } } } = getState();
+  if (pending.length >= quantity) {
+    const updatedPendingTransactions = pending.slice(0, pending.length - quantity);
+    dispatch(setWbtcPendingTxsAction(updatedPendingTransactions));
+  }
 };

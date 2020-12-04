@@ -19,20 +19,14 @@
 */
 
 import { Contract } from 'ethers';
-
 import { WBTC, BTC } from 'constants/assetsConstants';
-import {
-  WBTC_CURVE_MAIN, WBTC_CURVE_TEST, WBTC_FROM_ADDRESS_MAIN, WBTC_FROM_ADDRESS_TEST, WBTC_PENDING_TRANSACTION,
-} from 'constants/exchangeConstants';
+import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 import { TX_PENDING_STATUS } from 'constants/historyConstants';
-
 import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
-
 import type { WBTCFeesWithRate, WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
 import type { Transaction } from 'models/Transaction';
 import { getEnv } from 'configs/envConfig';
-
 /* eslint-disable i18next/no-literal-string */
 
 // much of this function's body is copy-pasted from wbtc.cafe web app code
@@ -57,7 +51,7 @@ export const gatherWBTCFeeData = async (
     let total;
 
     const curve = new Contract(
-      isProdEnv ? WBTC_CURVE_MAIN : WBTC_CURVE_TEST,
+      getEnv().WBTC_CURVE,
       CURVE_ABI,
       getEthereumProvider(isProdEnv ? 'homestead' : 'kovan'),
     );
@@ -87,8 +81,7 @@ export const gatherWBTCFeeData = async (
 };
 
 export const getWbtcCafeTransactions = (history: Transaction[]): Transaction[] => {
-  const isProdEnv = getEnv().NETWORK_PROVIDER === 'homestead';
-  const address = isProdEnv ? WBTC_FROM_ADDRESS_MAIN : WBTC_FROM_ADDRESS_TEST;
+  const address = getEnv().WBTC_FROM_ADDRESS;
   return history.filter(({ from }) => from === address);
 };
 
@@ -99,10 +92,10 @@ export const getValidPendingTransactions = (txs: PendingWBTCTransaction[]): Pend
 export const mapPendingToTransactions = (pendingTxs: PendingWBTCTransaction[], to?: ?string): Transaction[] => {
   return pendingTxs.map(tx => ({
     _id: String(tx.dateCreated),
-    from: getEnv().NETWORK_PROVIDER === 'homestead' ? WBTC_FROM_ADDRESS_MAIN : WBTC_FROM_ADDRESS_TEST,
+    from: getEnv().WBTC_FROM_ADDRESS,
     status: TX_PENDING_STATUS,
     asset: WBTC,
-    value: String(tx.amount * 1000000000000000000),
+    value: String(tx.amount * 1000000000000000000), // 18 decimals
     createdAt: tx.dateCreated / 1000,
     to: to || '',
     hash: '',
