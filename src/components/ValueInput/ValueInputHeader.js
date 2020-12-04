@@ -96,7 +96,7 @@ const ValueInputHeader = (props: Props) => {
         <Image
           key={id}
           source={optionImageSource}
-          fallbackSource={genericToken}
+          fallbackSource={!!optionImageSource.uri && genericToken}
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />

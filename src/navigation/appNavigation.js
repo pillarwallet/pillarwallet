@@ -126,6 +126,8 @@ import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
 import RariAddDepositReviewScreen from 'screens/Rari/RariAddDepositReview';
 import RariWithdrawScreen from 'screens/Rari/RariWithdraw';
 import RariWithdrawReviewScreen from 'screens/Rari/RariWithdrawReview';
+import RariTransferScreen from 'screens/Rari/RariTransfer';
+import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -278,6 +280,8 @@ import {
   RARI_ADD_DEPOSIT_REVIEW,
   RARI_WITHDRAW,
   RARI_WITHDRAW_REVIEW,
+  RARI_TRANSFER,
+  RARI_TRANSFER_REVIEW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -732,6 +736,8 @@ const rariFlow = createStackNavigator({
   [RARI_ADD_DEPOSIT_REVIEW]: RariAddDepositReviewScreen,
   [RARI_WITHDRAW]: RariWithdrawScreen,
   [RARI_WITHDRAW_REVIEW]: RariWithdrawReviewScreen,
+  [RARI_TRANSFER]: RariTransferScreen,
+  [RARI_TRANSFER_REVIEW]: RariTransferReviewScreen,
 }, StackNavigatorConfig);
 
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;
