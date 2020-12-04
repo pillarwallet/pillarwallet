@@ -64,6 +64,12 @@ export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
   payload: isEstimating,
 });
 
+export const setEstimatingErrorAction = (errorMessage: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
+  };
+};
+
 export const estimateTransactionAction = (
   recipientAddress: string,
   value: number,

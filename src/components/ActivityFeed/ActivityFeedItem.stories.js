@@ -653,6 +653,7 @@ storiesOf('ActivityFeedItem', module)
         tag: RARI_CLAIM_TRANSACTION,
         extra: {
           amount: '1000000000000000000',
+          rgtBurned: '300000000000000000',
         },
       }}
     />

@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
@@ -30,12 +30,13 @@ import Button from 'components/Button';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import TokenReviewSummary from 'components/ReviewSummary/TokenReviewSummary';
 import Toast from 'components/Toast';
+import { BaseText } from 'components/Typography';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
-import { getRariClaimRgtTransaction } from 'utils/rari';
+import { getRariClaimRgtTransaction, getClaimRtgFee } from 'utils/rari';
 import { formatFiat } from 'utils/common';
 
 import { activeAccountAddressSelector } from 'selectors';
@@ -65,10 +66,28 @@ const RariClaimRgtReview = ({
   navigation, feeInfo, accountAddress, baseFiatCurrency, rtgPrice,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isFetchingFee, setIsFetchingFee] = useState(false);
+  const [claimFee, setClaimFee] = useState(null);
+
+  useEffect(() => {
+    setIsFetchingFee(true);
+    getClaimRtgFee().then((fee) => {
+      if (fee === null) {
+        Toast.show({
+          message: t('toast.rariFetchDataFailed'),
+          emoji: 'hushed',
+          supportLink: true,
+          autoClose: false,
+        });
+      }
+      setClaimFee(fee);
+      setIsFetchingFee(false);
+    }).catch(() => null);
+  }, []);
 
   const { amount } = navigation.state.params;
 
-  const onNextButtonPress = () => {
+  const onNextButtonPress = async () => {
     if (isSubmitted) return;
     setIsSubmitted(true);
 
@@ -78,14 +97,25 @@ const RariClaimRgtReview = ({
         emoji: 'woman-shrugging',
         supportLink: true,
       });
+      setIsSubmitted(false);
       return;
     }
 
-    let transactionPayload = getRariClaimRgtTransaction(
+    let transactionPayload = await getRariClaimRgtTransaction(
       accountAddress,
       amount,
       feeInfo?.fee,
     );
+
+    if (!transactionPayload) {
+      Toast.show({
+        message: t('toast.cannotDepositAsset'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      setIsSubmitted(false);
+      return;
+    }
 
     if (feeInfo?.gasToken) transactionPayload = { ...transactionPayload, gasToken: feeInfo?.gasToken };
 
@@ -115,6 +145,19 @@ const RariClaimRgtReview = ({
           fiatAmount={formattedFiatAmount}
         />
         <Spacing h={34} />
+        {!!claimFee && (
+          <>
+            <Table title={t('rariContent.label.claimingDetails')}>
+              <TableRow>
+                <TableLabel tooltip={t('rariContent.tooltip.burnTakeback')}>
+                  {t('rariContent.label.burnTakeback')}
+                </TableLabel>
+                <BaseText>{t('percentValue', { value: (claimFee * 100).toFixed(2) })}</BaseText>
+              </TableRow>
+            </Table>
+            <Spacing h={20} />
+          </>
+        )}
         <Table title={t('transactions.label.fees')}>
           <TableRow>
             <TableLabel>{t('transactions.label.allowancePlusEthFee')}</TableLabel>
@@ -130,7 +173,7 @@ const RariClaimRgtReview = ({
           </TableRow>
         </Table>
         <Spacing h={48} />
-        <Button title={t('rariContent.button.claimRewards')} onPress={onNextButtonPress} />
+        <Button title={t('rariContent.button.claimRewards')} onPress={onNextButtonPress} isLoading={isFetchingFee} />
       </MainContainer>
     </ContainerWithHeader>
   );

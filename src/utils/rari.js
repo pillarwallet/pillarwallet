@@ -37,7 +37,7 @@ import {
   RARI_POOLS_ARRAY,
 } from 'constants/rariConstants';
 import { getAccountDepositInUSDBN } from 'services/rari';
-import { reportErrorLog, parseTokenBigNumberAmount, scaleBN } from 'utils/common';
+import { reportErrorLog, parseTokenBigNumberAmount, scaleBN, getEthereumProvider } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
 import RARI_FUND_PROXY_CONTRACT_ABI from 'abi/rariFundProxy.json';
@@ -837,11 +837,34 @@ export const getWithdrawalFeeRate = (rariPool: RariPool) => {
     });
 };
 
-export const getRariClaimRgtTransaction = (senderAddress: string, amount: number, txFeeInWei?: BigNumber) => {
+export const getClaimRtgFee = async () => {
+  const distributionStartBlock = 11094200;
+  const distributionPeriod = 390000;
+  const distributionEndBlock = distributionStartBlock + distributionPeriod;
+  const initialClaimFee = 0.33;
+
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+  const blockNumber = await provider.getBlockNumber()
+    .catch((error) => {
+      reportErrorLog("Rari service failed: Can't get block number", { error });
+      return null;
+    });
+
+  if (blockNumber >= distributionEndBlock) {
+    return 0;
+  }
+  return (initialClaimFee * (distributionEndBlock - blockNumber)) / distributionPeriod;
+};
+
+
+export const getRariClaimRgtTransaction = async (senderAddress: string, amount: number, txFeeInWei?: BigNumber) => {
   const amountBN = parseTokenBigNumberAmount(amount, 18);
   const transactionData = encodeContractMethod(RARI_RGT_DISTRIBUTOR_CONTRACT_ABI, 'claimRgt', [
     parseTokenBigNumberAmount(amount, 18),
   ]);
+
+  const claimFee = await getClaimRtgFee();
+  if (claimFee === null) return null;
 
   return {
     from: senderAddress,
@@ -852,6 +875,7 @@ export const getRariClaimRgtTransaction = (senderAddress: string, amount: number
     txFeeInWei,
     extra: {
       amount: amountBN,
+      rgtBurned: parseTokenBigNumberAmount((amount * (1 - claimFee)).toFixed(), 18),
     },
     tag: RARI_CLAIM_TRANSACTION,
   };
@@ -913,12 +937,13 @@ const buildRariTransaction = (
   }
   rariTransaction = claims.find(({ id }) => id === txHash);
   if (rariTransaction) {
-    const { claimed } = rariTransaction;
+    const { claimed, burned } = rariTransaction;
     return {
       ...transaction,
       tag: RARI_CLAIM_TRANSACTION,
       extra: {
         amount: claimed,
+        rgtBurned: burned,
       },
     };
   }
@@ -973,6 +998,7 @@ export const mapTransactionsHistoryWithRari = async (
     }) {
       id
       claimed
+      burned
     }
   }
   `;

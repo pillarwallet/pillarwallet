@@ -66,6 +66,7 @@ export type TxSablierExtra = {
   contactAddress: string,
   streamId: string,
 };
+
 export type RariDepositExtra = {|
   symbol: string,
   decimals: number,
@@ -90,6 +91,7 @@ export type RariTransferExtra = {|
 
 export type RariClaimExtra = {|
   amount: string,
+  rgtBurned: string,
 |};
 
 export type RariExtra = RariDepositExtra

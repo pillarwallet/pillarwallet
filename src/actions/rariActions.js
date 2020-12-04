@@ -40,7 +40,11 @@ import { saveDbAction } from 'actions/dbActions';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { getRariClaimRgtTransaction } from 'utils/rari';
-import { estimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+  setEstimatingErrorAction,
+} from 'actions/transactionEstimateActions';
 import Toast from 'components/Toast';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
@@ -155,10 +159,22 @@ export const calculateRariClaimTransactionEstimateAction = (
 
     dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = await getRariClaimRgtTransaction(
+    const transaction = await getRariClaimRgtTransaction(
       getAccountAddress(smartWalletAccount),
       claimedAmount,
     );
+
+    if (!transaction) {
+      dispatch(setEstimatingErrorAction(t('toast.transactionFeeEstimationFailed')));
+      Toast.show({
+        message: t('toast.transactionFeeEstimationFailed'),
+        emoji: 'woman-shrugging',
+        supportLink: true,
+      });
+      return;
+    }
+
+    const { to, amount, data } = transaction;
 
     dispatch(estimateTransactionAction(to, amount, data));
   };
