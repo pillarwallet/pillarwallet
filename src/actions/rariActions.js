@@ -22,14 +22,14 @@ import {
   getRariAPY,
   getUserInterests,
   getAccountDepositInUSD,
+  getAccountDepositInPoolToken,
+  getRariTokenTotalSupply,
 } from 'services/rari';
 import { GraphQueryError } from 'services/theGraph';
 import t from 'translations/translate';
 import {
-  SET_RARI_FUND_BALANCE,
   SET_RARI_APY,
   SET_RARI_USER_DATA,
-  SET_FETCHING_RARI_FUND_BALANCE,
   SET_FETCHING_RARI_DATA,
   SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
@@ -40,19 +40,11 @@ import Toast from 'components/Toast';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 
-export const fetchRariFundBalanceAction = () => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_FETCHING_RARI_FUND_BALANCE });
-    const { rates: { data: rates } } = getState();
-    const rariFundBalance = await getRariFundBalanceInUSD(rates);
-    dispatch({ type: SET_RARI_FUND_BALANCE, payload: rariFundBalance });
-  };
-};
-
 export const fetchRariDataAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
+      rates: { data: rates },
     } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;
@@ -60,10 +52,15 @@ export const fetchRariDataAction = () => {
 
     dispatch({ type: SET_FETCHING_RARI_DATA });
 
-    const [userDepositInUSD, userInterests, rariAPY] = await Promise.all([
+    const [
+      userDepositInUSD, userDepositInRariToken, userInterests, rariAPY, rariFundBalance, rariTotalSupply,
+    ] = await Promise.all([
       getAccountDepositInUSD(smartWalletAddress),
+      getAccountDepositInPoolToken(smartWalletAddress),
       getUserInterests(smartWalletAddress),
       getRariAPY(),
+      getRariFundBalanceInUSD(rates),
+      getRariTokenTotalSupply(),
     ]).catch(error => {
       if (error instanceof GraphQueryError) {
         dispatch({ type: SET_FETCHING_RARI_DATA_ERROR });
@@ -79,12 +76,15 @@ export const fetchRariDataAction = () => {
       return [];
     });
 
-    if (userDepositInUSD && userInterests && rariAPY) {
+    if (userDepositInUSD && userInterests && rariAPY && userDepositInRariToken && rariFundBalance && rariTotalSupply) {
       dispatch({
         type: SET_RARI_USER_DATA,
         payload: {
           userDepositInUSD,
+          userDepositInRariToken,
           userInterests,
+          rariFundBalance,
+          rariTotalSupply,
         },
       });
       dispatch({ type: SET_RARI_APY, payload: rariAPY });
