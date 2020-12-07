@@ -266,7 +266,11 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
+<<<<<<< HEAD
   WBTC_CAFE,
+=======
+  WALLETCONNECT_CALL_REQUEST_FLOW,
+>>>>>>> fb09fdb255da063d2676094f63d9dd2932787d8d
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -365,17 +369,29 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// WALLETCONNECT FLOW
+// WALLET CONNECT CALL REQUEST FLOW
+const walletConnectCallRequestFlow = createStackNavigator(
+  {
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
+    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
+
+walletConnectCallRequestFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// WALLET CONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectScreen,
+    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
-    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorConfig,
 );
+
 walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 
