@@ -17,41 +17,24 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
+
 import React from 'react';
+import { Image, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 
-// components
-import QRCodeWithTheme from 'components/QRCode/QRCodeWithTheme';
+import t from 'translations/translate';
 import { BaseText } from 'components/Typography';
-import Spinner from 'components/Spinner';
-
-// utils
 import { fontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
-
-// models
+import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 
-import t from 'translations/translate';
-import WBTCCafeWarning from './WBTCCafeWarning';
-
-const Wrapper = styled.View`
-  width: 100%;
-  align-items: center;
-`;
-
-const AddressWrapper = styled.View`
-  width: 100%;
+const InfoWrapper = styled.View`
   flex-direction: row;
-  padding: 5px;
+  align-items: center;
   margin-top: 25px;
-`;
-
-const TextWrapper = styled.View`
-  margin-left: 10px;
-  justify-content: space-between;
-  flex: 1;
+  margin-bottom: 40px;
+  width: 100%;
 `;
 
 const Text = styled(BaseText)`
@@ -59,33 +42,17 @@ const Text = styled(BaseText)`
   color: ${({ color }) => color};
 `;
 
-type Props = {
-  amount: string;
+interface Props {
   theme: Theme;
-  address?: string;
-  error?: boolean;
 }
 
-const WBTCCafeAddress = ({
-  amount, address, error,
-}: Props) => {
-  if (error) return null;
-  if (!address && !error) return <Wrapper><Spinner size={30} /></Wrapper>;
+const WBTCCafeWarning = ({ theme }: Props) => (
+  <InfoWrapper>
+    <Image source={images(theme).infoIcon} style={{ height: 27, width: 27, marginRight: 15 }} />
+    <View style={{ flex: 1 }}>
+      <Text color={themedColors.secondaryText}>{t('wbtcCafe.warning')}</Text>
+    </View>
+  </InfoWrapper>
+);
 
-  return (
-    <Wrapper>
-      <AddressWrapper>
-        <QRCodeWithTheme size={70} value={address} />
-        <TextWrapper>
-          <Text color={themedColors.secondaryText}>
-            {t('wbtcCafe.sendBtc', { amount })}
-          </Text>
-          <Text color={themedColors.text}>{t('wbtcCafe.useOnce')}</Text>
-        </TextWrapper>
-      </AddressWrapper>
-      <WBTCCafeWarning />
-    </Wrapper>
-  );
-};
-
-export default withTheme(WBTCCafeAddress);
+export default withTheme(WBTCCafeWarning);

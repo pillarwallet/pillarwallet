@@ -42,6 +42,7 @@ import type { WBTCFeesWithRate, PendingWBTCTransaction } from 'models/WBTC';
 import { BTC, WBTC } from 'constants/assetsConstants';
 import { EXCHANGE_CONFIRM, WBTC_CAFE } from 'constants/navigationConstants';
 import type { Dispatch } from 'reducers/rootReducer';
+import { LIGHT_THEME } from 'constants/appSettingsConstants';
 
 // partials
 import WBTCSlippageModal from './WBTCSlippageModal';
@@ -86,7 +87,8 @@ const FeeWrapper = styled.View`
   border-radius: 10px;
   padding: 2px 10px;
   margin-left: 10px;
-  background-color: ${({ theme }) => theme.colors.primaryAccent220};
+  background-color: ${({ theme }) =>
+    theme.current === LIGHT_THEME ? theme.colors.basic020 : theme.colors.primaryAccent220};
 `;
 
 const Fee = styled(BaseText)`
@@ -197,8 +199,11 @@ const WBTCCafeInfo = (props: Props) => {
   const rate = wbtcData?.exchangeRate;
   const rateString = rate ? `1 ${BTC} = ${rate.toFixed(4)} ${WBTC}` : '-';
   const buttonDisabled = error || !wbtcData?.estimate || (extendedInfo && !address);
+  const smallTableStyle = {
+    position: 'absolute', bottom: 25, left: 0, right: 0,
+  };
   return (
-    <TableWrapper>
+    <TableWrapper style={[!extendedInfo && smallTableStyle]}>
       {extendedInfo ? getExtendedTable(rateString) : getShortTable(rateString)}
       {extendedInfo
       ? <WBTCCafeAddress amount={amount} address={address} error={error} />

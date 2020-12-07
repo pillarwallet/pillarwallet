@@ -41,6 +41,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
+import WBTCCafeWarning from 'screens/Exchange/WBTCCafeWarning';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -1421,6 +1422,7 @@ export class EventDetail extends React.Component<Props> {
         {customActionTitle}
         {!!subtitle && <DetailParagraph>{subtitle}</DetailParagraph>}
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {event.tag === WBTC_PENDING_TRANSACTION && <WBTCCafeWarning />}
       </DetailModal>
     );
   };

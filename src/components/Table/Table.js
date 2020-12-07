@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { View } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { BigNumber } from 'bignumber.js';
 import t from 'translations/translate';
 import { themedColors } from 'utils/themes';
@@ -30,6 +30,7 @@ import { Spacing } from 'components/Layout';
 import ProfileImage from 'components/ProfileImage';
 import { ETH } from 'constants/assetsConstants';
 import type { GasToken } from 'models/Transaction';
+import type { Theme } from 'models/Theme';
 import TableAmount from './TableAmount';
 
 export { default as TableAmount } from './TableAmount';
@@ -38,6 +39,7 @@ export { default as TableAmount } from './TableAmount';
 type Props = {
   children?: React.Node,
   title?: string,
+  theme: Theme,
 };
 
 type TableUserProps = {
@@ -102,7 +104,7 @@ export const TableFee = ({ txFeeInWei, gasToken }: TableFeeProps) => {
 const Divider = styled.View`
   height: 1px;
   width: 100%;
-  background-color: ${themedColors.tertiary};
+  background-color: ${({ theme }) => theme.colors.basic080};
 `;
 
 const Table = ({ children, title }: Props) => {
@@ -126,4 +128,4 @@ const Table = ({ children, title }: Props) => {
   );
 };
 
-export default Table;
+export default withTheme(Table);

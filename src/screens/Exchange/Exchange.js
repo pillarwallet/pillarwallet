@@ -426,6 +426,7 @@ class ExchangeScreen extends React.Component<Props, State> {
           onScroll={() => Keyboard.dismiss()}
           keyboardShouldPersistTaps="handled"
           disableOnAndroid
+          contentContainerStyle={{ flex: 1 }}
         >
           {assetsLoaded &&
           <FormWrapper>
