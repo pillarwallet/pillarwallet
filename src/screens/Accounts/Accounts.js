@@ -39,7 +39,6 @@ import {
   isEthersportSmartWalletType,
 } from 'utils/accounts';
 import { formatFiat, formatMoney } from 'utils/common';
-import { userHasLegacySmartWallet } from 'utils/smartWallet';
 import { spacing } from 'utils/variables';
 import { calculateBalanceInFiat } from 'utils/assets';
 import { images } from 'utils/images';
@@ -216,9 +215,7 @@ const AccountsScreen = ({
       id: `NETWORK_${ppnNetwork.id}`,
       type: ITEM_TYPE.NETWORK,
       title: t('pillarNetwork'),
-      balance: userHasLegacySmartWallet(accounts)
-        ? `${availableStakeFormattedAmount} ${PPN_TOKEN}`
-        : t('label.notApplicable'),
+      balance: `${availableStakeFormattedAmount} ${PPN_TOKEN}`,
       mainAction: setPPNAsActiveBlockchainNetwork,
       isActive,
       iconSource: PPNIcon,

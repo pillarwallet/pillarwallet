@@ -29,8 +29,8 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import { fetchAccountDepositBalanceAction } from 'actions/etherspotActions';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -42,7 +42,7 @@ import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
@@ -50,7 +50,7 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
   SERVICES,
-  SEND_SYNTHETIC_AMOUNT,
+  PPN_SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -85,6 +85,7 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 
 type Props = {
@@ -93,11 +94,11 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   availableStake: number,
   assetsOnNetwork: Object,
-  fetchVirtualAccountBalance: () => void,
+  fetchAccountDepositBalance: () => void,
   accounts: Accounts,
   PPNTransactions: Transaction[],
   history: Object[],
-  fetchSmartWalletTransactions: () => void,
+  fetchTransactionsHistory: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
@@ -175,28 +176,32 @@ class PPNView extends React.Component<Props, State> {
 
     const etherspotAccountId = getAccountId(etherspotAccount);
     const accountBalances: Balances = balances[etherspotAccountId];
-    const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
+    const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PPN_TOKEN}].balance`, 0), 10) > 0;
 
     if (!availableStake) {
       const insightProps = {};
       if (!hasPLRInSmartWallet) {
-        insightProps.buttonTitle = t('button.notEnoughPLR');
+        insightProps.buttonTitle = t('button.notEnoughToken', { token: PPN_TOKEN });
         insightProps.buttonProps = { disabled: true, secondary: true };
         insightProps.footerChildren = (
           <Button
-            title={t('button.buyPLR')}
+            title={t('button.buyToken', { token: PPN_TOKEN })}
             small
             marginTop={12}
             onPress={this.navigateToBuyPillar}
           />);
       } else {
-        insightProps.buttonTitle = t('button.topUpPLRTank');
+        insightProps.buttonTitle = t('button.topUpTokenTank', { token: PPN_TOKEN });
         insightProps.onButtonPress = this.navigateToFundTank;
       }
       return (
         <InsightWithButton
           title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
-          description={t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit')}
+          description={
+            t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit', {
+              token: PPN_TOKEN,
+            })
+          }
           {...insightProps}
         />
       );
@@ -210,14 +215,14 @@ class PPNView extends React.Component<Props, State> {
     const {
       availableStake,
       assetsOnNetwork,
-      fetchVirtualAccountBalance,
+      fetchAccountDepositBalance,
       navigation,
       accounts,
       PPNTransactions,
       baseFiatCurrency,
       rates,
       history,
-      fetchSmartWalletTransactions,
+      fetchTransactionsHistory,
       theme,
       onScroll,
       activeAccountAddress,
@@ -317,8 +322,8 @@ class PPNView extends React.Component<Props, State> {
             <RefreshControl
               refreshing={false}
               onRefresh={() => {
-                fetchSmartWalletTransactions();
-                fetchVirtualAccountBalance();
+                fetchTransactionsHistory();
+                fetchAccountDepositBalance();
               }}
             />
           }
@@ -329,7 +334,7 @@ class PPNView extends React.Component<Props, State> {
           <TopPartWrapper>
             <TankBalanceWrapper>
               <TankBalance>
-                {t('tokenValue', { value: availableFormattedAmount, token: 'PLR' })}
+                {t('tokenValue', { value: availableFormattedAmount, token: PPN_TOKEN })}
               </TankBalance>
             </TankBalanceWrapper>
             <AssetButtonsWrapper>
@@ -349,7 +354,7 @@ class PPNView extends React.Component<Props, State> {
               <CircleButton
                 label={t('button.send')}
                 fontIcon="paperPlane"
-                onPress={() => navigation.navigate(SEND_SYNTHETIC_AMOUNT)}
+                onPress={() => navigation.navigate(PPN_SEND_TOKEN_AMOUNT)}
                 disabled={availableStake <= 0}
               />
             </AssetButtonsWrapper>
@@ -430,8 +435,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
-  fetchSmartWalletTransactions: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchAccountDepositBalance: () => dispatch(fetchAccountDepositBalanceAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));

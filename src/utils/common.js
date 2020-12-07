@@ -309,8 +309,7 @@ const DEFAULT_TRANSITION_SCREENS = [
   NAVSCREENS.MANAGE_USERS_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_TOKEN_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
   NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   NAVSCREENS.POOLTOGETHER_FLOW,
@@ -670,6 +669,6 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv
+export const getEnsPrefix = () => getEnv().NETWORK_PROVIDER === 'homestead'
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
-  : '.pillar.kovan';
+  : '.pillar'; // eslint-disable-line i18next/no-literal-string

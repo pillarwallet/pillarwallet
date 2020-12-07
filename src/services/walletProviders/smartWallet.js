@@ -115,13 +115,6 @@ export default class SmartWalletProvider {
       let paymentType;
       let reference;
 
-      const syntheticTransactionInfo: SyntheticTransaction = get(extra, 'syntheticTransaction');
-      if (!isEmpty(syntheticTransactionInfo)) {
-        const { transactionId } = syntheticTransactionInfo;
-        reference = transactionId;
-        paymentType = sdkConstants.AccountPaymentTypes.SyntheticsExchange;
-      }
-
       const sendValue = utils.parseUnits(amount.toString(), decimals);
       return smartWalletService
         .createAccountPayment(recipient, contractAddress, sendValue, paymentType, reference)

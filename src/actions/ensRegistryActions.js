@@ -19,16 +19,21 @@
 */
 
 import get from 'lodash.get';
-import { sdkConstants } from '@smartwallet/sdk';
 
 // constants
 import { ADD_ENS_REGISTRY_RECORD, SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 
-// models, types
-import type { Dispatch, GetState } from 'reducers/rootReducer';
+// selectors
+import { activeAccountAddressSelector } from 'selectors';
 
 // utils
 import { lookupAddress } from 'utils/common';
+
+// services
+import etherspot from 'services/etherspot';
+
+// models, types
+import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
 import { saveDbAction } from './dbActions';
@@ -37,12 +42,13 @@ import { setEtherspotEnsNameAction } from './etherspotActions';
 
 export const setUserEnsIfEmptyAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    const user = get(getState(), 'user.data', {});
-    const accountState = get(getState(), 'smartWallet.connectedAccount.state');
-    const ensName = get(getState(), 'smartWallet.connectedAccount.ensName');
+    const user = getState().user.data;
+    const activeAccountAddress = activeAccountAddressSelector(getState());
+
+    const ensName = await etherspot.getENSNameByAccountAddress(activeAccountAddress);
 
     // check if user needs to set the ens name
-    if (!ensName && user.username && accountState === sdkConstants.AccountStates.Deployed) {
+    if (!ensName && user.username) {
       dispatch(setEtherspotEnsNameAction(user.username));
     }
   };

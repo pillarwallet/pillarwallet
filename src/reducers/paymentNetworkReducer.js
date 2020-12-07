@@ -39,7 +39,7 @@ import type { TopUpFee, SettleTxFee } from 'models/PaymentNetwork';
 import type { Balances } from 'models/Asset';
 
 export type PaymentNetworkReducerState = {
-  availableStake: string,
+  availableStake: number,
   balances: Balances,
   topUpFee: TopUpFee,
   withdrawalFee: TopUpFee,
@@ -58,7 +58,7 @@ export type PaymentNetworkAction = {
 };
 
 export const initialState = {
-  availableStake: '0',
+  availableStake: 0,
   balances: {},
   topUpFee: {
     isFetched: false,

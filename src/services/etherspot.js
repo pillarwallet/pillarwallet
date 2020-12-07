@@ -26,10 +26,21 @@ import {
   Account as EtherspotAccount,
   Accounts as EtherspotAccounts,
   GatewayEstimatedBatch,
+  P2PPaymentDeposit,
+  ENSNode,
 } from 'etherspot';
+import BigNumber from 'bignumber.js';
+import type { UpdateP2PPaymentChannelDto } from 'etherspot/dist/sdk/dto';
 
 // utils
-import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import {
+  getEnsPrefix,
+  isCaseInsensitiveMatch,
+  parseTokenAmount,
+  reportErrorLog,
+} from 'utils/common';
+import { mapToEtherspotTransactionsBatch } from 'utils/etherspot';
+import { addressesEqual } from 'utils/assets';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
@@ -37,6 +48,7 @@ import { ETH } from 'constants/assetsConstants';
 // types
 import type { EtherspotTransaction } from 'models/Etherspot';
 import type { Asset, Balance } from 'models/Asset';
+import type { TransactionPayload } from 'models/Transaction';
 
 
 class EtherspotService {
@@ -80,9 +92,10 @@ class EtherspotService {
       });
   }
 
-  reserveENSName(name: string): ?EtherspotAccount[] {
-    return this.sdk.reserveENSName(name).catch((error) => {
-      reportErrorLog('EtherspotService reserveENSName failed', { error });
+  reserveENSName(username: string): ?EtherspotAccount[] {
+    const fullENSName = `${username}${getEnsPrefix()}`;
+    return this.sdk.reserveENSName({ name: fullENSName }).catch((error) => {
+      reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullENSName });
       return null;
     });
   }
@@ -153,7 +166,57 @@ class EtherspotService {
     await this.estimateTransactionsBatch();
 
     // submit current batch
-    return this.sdk.submitGatewayBatch();
+    return this.sdk.submitGatewayBatch().then(({ hash }) => ({ hash }));
+  }
+
+  async sendTransaction(transaction: TransactionPayload, fromAccountAddress: string) {
+    const ethersportTransactions = await mapToEtherspotTransactionsBatch(transaction, fromAccountAddress);
+    return this.setTransactionsBatchAndSend(ethersportTransactions);
+  }
+
+
+  sendP2PTransaction(transaction: TransactionPayload) {
+    const { to: recipient, amount, decimals } = transaction;
+
+    const paymentChannelUpdateRequest: UpdateP2PPaymentChannelDto = {
+      token: transaction.symbol === ETH ? null : transaction.contractAddress,
+      totalAmount: parseTokenAmount(amount.toString(), decimals),
+      recipient,
+    };
+
+    return this.sdk.updateP2PPaymentChannel(paymentChannelUpdateRequest).then(({ hash }) => ({ hash }));
+  }
+
+  async getAccountTokenDeposit(tokenAddress: string): Promise<?P2PPaymentDeposit> {
+    // returns all deposits: ETH and provided tokens
+    const deposits = await this.sdk.syncP2PPaymentDeposits({ tokens: [tokenAddress] })
+      .then(({ items }) => items)
+      .catch((error) => {
+        reportErrorLog('getAccountTokenDeposit -> syncP2PPaymentDeposits failed', { error, tokenAddress });
+        throw error;
+      });
+
+    // find our token deposit
+    return deposits.find(({ token }) => addressesEqual(token, tokenAddress));
+  }
+
+  async getAccountTokenDepositBalance(tokenAddress: string): BigNumber {
+    const tokenDeposit = await this.getAccountTokenDeposit(tokenAddress);
+    if (!tokenDeposit) {
+      reportErrorLog('getAccountTokenDepositBalance failed: cannot find token deposit', { tokenAddress });
+      return new BigNumber(0);
+    }
+
+    // BigNumber lib compatibility
+    return new BigNumber(tokenDeposit.availableAmount.toString());
+  }
+
+  async getENSNameByAccountAddress(accountAddress: string): Promise<?ENSNode> {
+    return this.sdk.getENSNode({ nameOrHashOrAddress: accountAddress })
+      .then((ensNode) => ensNode?.name)
+      .catch((error) => {
+        reportErrorLog('getENSNameByAccountAddress -> getENSNode failed', { accountAddress, error });
+      });
   }
 
   async logout() {

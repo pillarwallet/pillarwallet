@@ -136,7 +136,7 @@ export const getFormattedRate = (
 export const calculateMaxAmount = (
   token: string,
   balance: number | string,
-  txFeeInWei: BigNumber,
+  txFeeInWei: ?BigNumber,
   gasToken: ?GasToken = {},
 ): number => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);

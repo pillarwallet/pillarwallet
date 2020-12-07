@@ -61,7 +61,7 @@ export type ExternalProps = {
   customBalances?: Balances,
   selectorOptionsTitle?: string,
   assetData: Option,
-  onAssetDataChange: (Option) => void,
+  onAssetDataChange?: (Option) => void,
   value: string,
   onValueChange: (string) => void,
   horizontalOptions?: HorizontalOption[],
@@ -220,14 +220,16 @@ export const ValueInputComponent = (props: Props) => {
     ));
   };
 
+  const disableAssetSelection = assetsOptions.length <= 1;
+
   const getCustomLabel = () => {
     return (
       <ValueInputHeader
         asset={assetData}
-        onAssetPress={openAssetSelector}
+        onAssetPress={() => !disableAssetSelection && openAssetSelector()}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
-        disableAssetSelection={assetsOptions.length <= 1}
+        disableAssetSelection={disableAssetSelection}
       />
     );
   };
@@ -268,7 +270,7 @@ export const ValueInputComponent = (props: Props) => {
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
-          onRightAddonPress={openAssetSelector}
+          onRightAddonPress={() => !disableAssetSelection && openAssetSelector()}
           leftSideText={displayFiatAmount
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat

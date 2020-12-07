@@ -476,9 +476,6 @@
       "notEnoughToken": "በቂ {{token}} አይደለም",
       "shouldBeGreaterThan1Wei": "ሂሳቡ ከ 1 ዌይ መብለጥ አለበት (0.000000000000000001 ኢት)"
     },
-    "synthetics": {
-      "failedToCalculate": "የሲንቴቲክ መለውጫው ስሌት አልተሳካም"
-    },
     "exchange": {
       "incorrectNumber": "የተሳሳተ ቁጥር አስገብተዋል",
       "amountTooBig": "ሂሳቡ ካሎት ቀሪ በላይ መሆን አይችልም - {{assetBalance}} {{symbol}}."

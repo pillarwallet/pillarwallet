@@ -149,6 +149,7 @@ export const switchAccountAction = (accountId: string) => {
   };
 };
 
+// TODO: deprecate due Etherspot
 export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {

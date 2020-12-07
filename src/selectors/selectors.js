@@ -60,8 +60,6 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
-export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
-
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});

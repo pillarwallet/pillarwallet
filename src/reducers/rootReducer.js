@@ -51,7 +51,6 @@ import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
-import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
@@ -95,7 +94,6 @@ import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './b
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
-import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
@@ -139,7 +137,6 @@ export type RootReducerState = {|
   userSettings: UserSettingsReducerState,
   userEvents: UserEventsReducerState,
   walkthroughs: WalkthroughsReducerState,
-  synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
   referrals: ReferralsReducerState,
   insights: InsightsReducerState,
@@ -173,7 +170,6 @@ type RootReducerAction =
   | UserEventsReducerAction
   | WalkthroughsReducerAction
   | DbAction
-  | SyntheticsReducerAction
   | EnsRegistryReducerAction
   | InsightsReducerAction
   | ReferralsReducerAction
@@ -223,7 +219,6 @@ const appReducer = combineReducers({
   userSettings: userSettingsReducer,
   userEvents: userEventsReducer,
   walkthroughs: walkthroughsReducer,
-  synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
   insights: insightsReducer,
   referrals: referralsReducer,

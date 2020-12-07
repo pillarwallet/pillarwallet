@@ -97,7 +97,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
-  SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   LENDING_ENTER_WITHDRAW_AMOUNT,
@@ -108,6 +107,7 @@ import {
   POOLTOGETHER_WITHDRAW,
   SABLIER_INCOMING_STREAM,
   SABLIER_OUTGOING_STREAM,
+  PPN_SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -507,7 +507,7 @@ export class EventDetail extends React.Component<Props> {
     const contactFromAddress = relatedAddress
       && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
     const contact = contactFromAddress;
-    navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
+    navigation.navigate(PPN_SEND_TOKEN_AMOUNT, { contact });
   };
 
   settle = () => {

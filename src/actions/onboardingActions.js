@@ -81,7 +81,8 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import {
   importEtherspotAccountsAction,
-  setupPPNAction,
+  initEtherspotServiceAction,
+  initPPNAction,
 } from 'actions/etherspotActions';
 
 
@@ -248,10 +249,11 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(fetchBadgesAction(false));
       dispatch(fetchReferralRewardAction());
 
-      // create smart wallet account only for new wallets
+      await dispatch(initEtherspotServiceAction(privateKey));
       await dispatch(importEtherspotAccountsAction(privateKey));
+
       // await dispatch(fetchTransactionsHistoryAction()); TODO: etherspot
-      dispatch(setupPPNAction());
+      dispatch(initPPNAction());
 
       // add wallet created / imported events
       dispatch(getWalletsCreationEventsAction());

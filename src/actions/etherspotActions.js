@@ -18,33 +18,44 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+// constants
+import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { PPN_TOKEN } from 'configs/assetsConfig';
+import { MARK_PLR_TANK_INITIALISED, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
+import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+
+// actions
+import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
+import { saveDbAction } from 'actions/dbActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchCollectiblesAction } from 'actions/collectiblesActions';
+import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+
 // services
 import etherspot from 'services/etherspot';
 
+// utils
+import { normalizeWalletAddress } from 'utils/wallet';
+import { formatUnits, reportErrorLog } from 'utils/common';
+import {
+  addressesEqual,
+  getAssetData,
+  getAssetsAsList,
+  mapAssetToAssetData,
+} from 'utils/assets';
+import { findFirstEtherspotAccount } from 'utils/accounts';
+
+// selectors
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
+
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { reportErrorLog } from 'utils/common';
-import { saveDbAction } from 'actions/dbActions';
-import {
-  addAccountAction,
-  setActiveAccountAction,
-} from 'actions/accountsActions';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { normalizeWalletAddress } from 'utils/wallet';
-import {
-  SET_INITIAL_ASSETS,
-} from 'constants/assetsConstants';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type SDKWrapper from 'services/api';
-import { addressesEqual } from 'utils/assets';
-import {
-  SET_ETHERSPOT_ACCOUNTS,
-} from 'constants/etherspotConstants';
-import {
-  findFirstEtherspotAccount,
-} from 'utils/accounts';
-import { Account as EtherspotAccount } from 'etherspot';
+import type { Account as EtherspotAccount } from 'etherspot';
 
 
 export const initEtherspotServiceAction = (privateKey: string) => {
@@ -153,6 +164,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
     // set active
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
     dispatch(setActiveAccountAction(accountId));
+    dispatch(setUserEnsIfEmptyAction());
 
     // set default assets for active Etherspot wallet
     const initialAssets = await api.fetchInitialAssets(walletId);
@@ -190,18 +202,115 @@ export const setEtherspotEnsNameAction = (username: string) => {
   };
 };
 
-export const setupPPNAction = () => {
-  return () => {
-    // TODO: implement with etherspot
-    // const accountHistory = accountHistorySelector(getState());
-    // const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
-    // if (!hasPpnPayments) return;
-    // await dispatch(fetchVirtualAccountBalanceAction());
-    // const { paymentNetwork: { availableStake } } = getState();
+export const fetchAccountDepositBalanceAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      session: { data: { isOnline } },
+      assets: { supportedAssets },
+    } = getState();
 
-    // if (availableStake || hasPpnPayments) {
-    //   dispatch({ type: MARK_PLR_TANK_INITIALISED });
-    //   dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
-    // }
+    if (!isOnline) {
+      // nothing to do offline
+      return;
+    }
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+    if (!ppnTokenAsset) {
+      // TODO: show toast?
+      reportErrorLog('fetchAccountDepositBalanceAction failed: no ppnTokenAsset', { PPN_TOKEN });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    // process staked amount
+    const stakedAmount = await etherspot.getAccountTokenDepositBalance(ppnTokenAsset.address);
+    const stakedAmountFormatted = Number(formatUnits(stakedAmount, ppnTokenAsset.decimals));
+
+    dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
+    dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: stakedAmountFormatted });
+
+    // process pending balances
+    // const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
+    //   const symbol = get(tokenBalance, 'token.symbol', ETH);
+    //   const { decimals: assetDecimals = 18 } = accountAssets[symbol] || {};
+    //   const balance = get(tokenBalance, 'incoming', new BigNumber(0));
+    //
+    //   return {
+    //     ...memo,
+    //     [symbol]: {
+    //       balance: formatUnits(balance, assetDecimals),
+    //       symbol,
+    //     },
+    //   };
+    // }, {});
+
+    // const { paymentNetwork: { balances } } = getState();
+    // const accountId = getActiveAccountId(accounts);
+    // const updatedBalances = {
+    //   ...balances,
+    //   [accountId]: accountBalances,
+    // };
+    //
+    // dispatch(saveDbAction('paymentNetworkBalances', { paymentNetworkBalances: updatedBalances }, true));
+    // dispatch({ type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES, payload: { accountId, balances: accountBalances }});
+  };
+};
+
+export const initPPNAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (getState().paymentNetwork.isTankInitialised) {
+      // already initialized
+      return;
+    }
+
+    const accountHistory = accountHistorySelector(getState());
+    const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
+
+    await dispatch(fetchAccountDepositBalanceAction());
+    const { paymentNetwork: { availableStake } } = getState();
+
+    if (availableStake || hasPpnPayments) {
+      dispatch({ type: MARK_PLR_TANK_INITIALISED });
+      dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
+    }
+  };
+};
+
+export const estimateAccountDepositTokenTransactionAction = (depositAmount: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
+
+    // put into loading state at this point already
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+    if (!ppnTokenAsset) {
+      // TODO: show toast?
+      reportErrorLog('estimateAccountDepositTransactionAction failed: no ppnTokenAsset', { ppnTokenAsset });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    const tokenDeposit = await etherspot.getAccountTokenDeposit(ppnTokenAsset.address);
+    if (!tokenDeposit) {
+      // TODO: show toast?
+      reportErrorLog('estimateAccountDepositTransactionAction failed: no tokenDeposit', { ppnTokenAsset });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    dispatch(estimateTransactionAction({
+      to: tokenDeposit.address,
+      value: depositAmount,
+      assetData: mapAssetToAssetData(ppnTokenAsset),
+    }));
   };
 };

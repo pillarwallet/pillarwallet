@@ -288,7 +288,10 @@
     "proceed": "Proceed",
     "readMore": "Read more",
     "activateSmartWallet": "Activate Smart Wallet",
-    "finish": "Finish"
+    "finish": "Finish",
+    "notEnoughToken": "Not enough {{token}}",
+    "buyToken": "Buy {{token}}",
+    "topUpTokenTank": "Top up {{token}} Tank"
   },
 
   "paragraph": {
@@ -321,7 +324,7 @@
       "hasNoPPNBalance": {
         "title": "Activate Pillar Network",
         "description": {
-          "activationBenefit": "To send any token you need to top up Pillar Tank with PLR first"
+          "activationBenefit": "To send any token you need to top up Pillar Tank with {{token}} first"
         }
       },
       "smartWalletIsNotActivated": {
@@ -473,9 +476,6 @@
       "notEnoughToken": "Not enough {{token}}",
       "shouldBeGreaterThan1Wei": "Amount should be greater than 1 Wei (0.000000000000000001 ETH)"
     },
-    "synthetics": {
-      "failedToCalculate": "Failed to calculate synthetics exchange"
-    },
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
       "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
@@ -525,7 +525,8 @@
     },
     "title": {
       "settleTransactionsScreen": "Settle transactions",
-      "fundTankScreen": "Fund PLR tank",
+      "fundTokenTankScreen": "Fund {{token}} tank",
+      "fundTankConfirmScreen": "Fund tank review",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",
       "unsettledAssetsScreen": "Unsettled Assets",
       "withdrawFromTankScreen": "Withdraw from PLR tank"
@@ -541,7 +542,8 @@
     "label": {
       "availableBalance": "Available Balance",
       "paidByPillar": "No fees - paid by Pillar",
-      "transactionsAvailableToSettle": "Transactions available to settle"
+      "transactionsAvailableToSettle": "Transactions available to settle",
+      "youAreFundingTokenTank": "You are funding your {{token}} tank"
     },
     "paragraph": {
       "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
@@ -1370,7 +1372,8 @@
     "cannotDepositAsset": "Cannot deposit asset. Please try again.",
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
-    "walletBackedUp": "Your wallet is backed up now."
+    "walletBackedUp": "Your wallet is backed up now.",
+    "cannotFundTank": "Cannot funk tank. Please try again."
   },
 
   "exchangeContent": {

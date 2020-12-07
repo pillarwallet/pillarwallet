@@ -98,6 +98,7 @@ import {
   initEtherspotServiceAction,
 } from './etherspotActions';
 import { fetchTransactionsHistoryAction } from './historyActions';
+import { setUserEnsIfEmptyAction } from './ensRegistryActions';
 
 
 const storage = Storage.getInstance('db');
@@ -251,6 +252,8 @@ export const loginAction = (
           // this will import and set Smart Wallet as current active account
           await dispatch(importEtherspotAccountsAction(decryptedPrivateKey));
         }
+
+        dispatch(setUserEnsIfEmptyAction());
 
         // TODO: check archanova smart wallet balance for migration
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());

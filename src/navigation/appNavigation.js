@@ -45,7 +45,7 @@ import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScre
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
-import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
+import PPNSendTokenAmountScreen from 'screens/Tank/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -58,7 +58,7 @@ import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
 import FundTankScreen from 'screens/Tank/FundTank';
-import FundConfirmScreen from 'screens/Tank/FundConfirm';
+import FundTankConfirmScreen from 'screens/Tank/FundTankConfirm';
 import SettleBalanceScreen from 'screens/Tank/SettleBalance';
 import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
 import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
@@ -67,8 +67,6 @@ import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
-import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
-import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
@@ -189,14 +187,11 @@ import {
   ADD_EDIT_USER,
   MENU,
   PPN_SEND_TOKEN_AMOUNT,
-  PPN_SEND_TOKEN_FROM_ASSET_FLOW,
-  PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  PPN_SEND_TOKEN_FLOW,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
   TANK_WITHDRAWAL_CONFIRM,
-  SEND_SYNTHETIC_AMOUNT,
-  SEND_SYNTHETIC_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
@@ -545,20 +540,6 @@ const backupWalletFlow = createStackNavigator({
 const ppnSendTokenFromAssetFlow = createStackNavigator(
   {
     [PPN_SEND_TOKEN_AMOUNT]: PPNSendTokenAmountScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// PPN SEND SYNTHETIC ASSET FULL FLOW
-const ppnSendSyntheticAssetFlow = createStackNavigator(
-  {
-    // synthetic
-    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
-    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    // other
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -569,7 +550,7 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
+  [FUND_CONFIRM]: FundTankConfirmScreen,
 }, StackNavigatorConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -600,7 +581,9 @@ unsettledAssetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
+  [FUND_CONFIRM]: FundTankConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -608,6 +591,8 @@ tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 const tankWithdrawalFlow = createStackNavigator({
   [TANK_WITHDRAWAL]: TankWithdrawalScreen,
   [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -708,8 +693,7 @@ const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
-    [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
-    [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
+    [PPN_SEND_TOKEN_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,

@@ -21,7 +21,6 @@ import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { toChecksumAddress } from '@netgum/utils';
 import t from 'translations/translate';
-import BigNumber from 'bignumber.js';
 
 // constants
 import {
@@ -41,7 +40,6 @@ import {
   PLR,
   BTC,
 } from 'constants/assetsConstants';
-import { UPDATE_TX_COUNT } from 'constants/txCountConstants';
 import { ADD_TRANSACTION, TX_CONFIRMED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
 import { ADD_COLLECTIBLE_TRANSACTION, COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS } from 'constants/paymentNetworkConstants';
@@ -59,11 +57,9 @@ import {
   getActiveAccountId,
   getAccountAddress,
   getAccountId,
-  checkIfLegacySmartWalletAccount,
   isEthersportSmartWalletType,
 } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
-import { mapToEtherspotTransactionsBatch } from 'utils/etherspot';
 
 // services
 import etherspot from 'services/etherspot';
@@ -87,7 +83,7 @@ import { showAssetAction } from './userSettingsActions';
 import { fetchAccountAssetsRatesAction, fetchAllAccountsAssetsRatesAction } from './ratesActions';
 import { addEnsRegistryRecordAction } from './ensRegistryActions';
 import { logEventAction } from './analyticsActions';
-import { commitSyntheticsTransaction } from './syntheticsActions';
+import { fetchAccountDepositBalanceAction } from './etherspotActions';
 
 
 type TransactionStatus = {
@@ -101,10 +97,6 @@ type TransactionStatus = {
 type TransactionResult = {
   error?: string,
   hash?: string,
-  to?: string,
-  value?: BigNumber | number | string,
-  transactionCount?: number,
-  nonce?: number,
   noRetry?: boolean,
 };
 
@@ -176,12 +168,15 @@ export const sendAssetAction = (
       ? parseFeeWithGasToken(gasToken, txFeeInWei)
       : null;
 
-    const etherspotTransactions = await mapToEtherspotTransactionsBatch(transaction, accountAddress);
-
-    const transactionResult: TransactionResult = await etherspot
-      .setTransactionsBatchAndSend(etherspotTransactions)
-      .then(({ hash, value }) => ({ hash, to, value }))
-      .catch((error) => catchTransactionError(error, logTransactionType, transaction));
+    const transactionResult: TransactionResult = usePPN
+      ? await etherspot
+        .sendP2PTransaction(transaction)
+        .then(({ hash }) => ({ hash }))
+        .catch((error) => catchTransactionError(error, logTransactionType, transaction))
+      : await etherspot
+        .sendTransaction(transaction, accountAddress)
+        .then(({ hash }) => ({ hash }))
+        .catch((error) => catchTransactionError(error, logTransactionType, transaction));
 
     const transactionHash = transactionResult?.hash;
     if (!transactionHash) {
@@ -196,6 +191,10 @@ export const sendAssetAction = (
 
     let historyTx;
 
+    const transactionValue = !isCollectibleTransaction && transaction.amount
+      ? parseTokenAmount(transaction.amount, transaction.decimals)
+      : 0;
+
     if (transactionHash) {
       historyTx = buildHistoryTransaction({
         ...transactionResult,
@@ -207,6 +206,7 @@ export const sendAssetAction = (
         gasLimit: transaction.gasLimit,
         isPPNTransaction: !!usePPN,
         status: usePPN ? TX_CONFIRMED_STATUS : TX_PENDING_STATUS,
+        value: transactionValue,
         feeWithGasToken,
       });
 
@@ -231,19 +231,13 @@ export const sendAssetAction = (
           icon: collectibleInfo?.icon,
           assetData: collectibleInfo,
         };
-      } else if (transaction.amount) {
-        historyTx = {
-          ...historyTx,
-          value: parseTokenAmount(transaction.amount, transaction.decimals),
-        };
       }
     }
 
-    if (checkIfLegacySmartWalletAccount(activeAccount) && !usePPN) {
-      dispatch({
-        type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
-        payload: transactionHash,
-      });
+    if (usePPN && transactionHash) {
+      dispatch(fetchAccountDepositBalanceAction()); // refresh
+    } else if (!usePPN) {
+      dispatch({ type: PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS, payload: transactionHash });
     }
 
     // update transaction history
@@ -268,19 +262,6 @@ export const sendAssetAction = (
       };
       dispatch(saveDbAction('collectibles', { collectibles: updatedCollectibles }, true));
     } else {
-      // check if there's a need to commit synthetic asset transaction
-      const syntheticTransactionExtra: SyntheticTransaction = get(historyTx, 'extra.syntheticTransaction');
-      if (!isEmpty(syntheticTransactionExtra)) {
-        const { transactionId, toAddress } = syntheticTransactionExtra;
-        if (transactionId) {
-          dispatch(commitSyntheticsTransaction(transactionId, transactionHash));
-          // change history receiver address to actual receiver address rather than synthetics service address
-          historyTx = { ...historyTx, to: toAddress };
-        } else {
-          reportLog('Failed to get transactionId during synthetics exchange.', { hash: transactionHash });
-        }
-      }
-
       dispatch({ type: ADD_TRANSACTION, payload: { accountId, historyTx } });
 
       const { history: { data: currentHistory } } = getState();
@@ -292,16 +273,6 @@ export const sendAssetAction = (
 
     if (receiverEnsName) {
       dispatch(addEnsRegistryRecordAction(to, receiverEnsName));
-    }
-
-    // update transaction count
-    if (transactionResult.transactionCount) {
-      const txCountNew = { lastCount: transactionResult.transactionCount, lastNonce: transactionResult.nonce };
-      dispatch({
-        type: UPDATE_TX_COUNT,
-        payload: txCountNew,
-      });
-      dispatch(saveDbAction('txCount', { txCount: txCountNew }, true));
     }
 
     const allowancePayload = transactionExtra?.allowance;
@@ -370,12 +341,9 @@ export const fetchAssetsBalancesAction = () => {
     if (!activeAccount) return;
 
     await dispatch(fetchAccountAssetsBalancesAction(activeAccount));
-    dispatch(fetchAccountAssetsRatesAction());
 
-    // TODO: etherspot implementation
-    // if (checkIfLegacySmartWalletAccount(activeAccount)) {
-    //   dispatch(fetchVirtualAccountBalanceAction());
-    // }
+    dispatch(fetchAccountAssetsRatesAction());
+    dispatch(fetchAccountDepositBalanceAction());
   };
 };
 
@@ -418,11 +386,7 @@ export const fetchAllAccountsBalancesAction = () => {
       .forEach((account) => dispatch(resetAccountBalancesAction(getAccountId(account))));
 
     dispatch(fetchAllAccountsAssetsRatesAction());
-
-    // TODO: etherspot implementation
-    // if (checkIfLegacySmartWalletAccount(activeAccount)) {
-    //   dispatch(fetchVirtualAccountBalanceAction());
-    // }
+    dispatch(fetchAccountDepositBalanceAction());
   };
 };
 
@@ -621,14 +585,7 @@ export const loadSupportedAssetsAction = () => {
       return;
     }
 
-    let supportedAssets = await api.fetchSupportedAssets(walletId);
-
-    // TODO: remove once etherspot testnet available
-    // map EDG (0 decimals) into etherspot Wrapped token
-    supportedAssets = supportedAssets.map((asset) => ({
-      ...asset,
-      address: asset.symbol === 'EDG' ? '0xA80a6FaBFF18a478deC3a833843eF9577F3553ca' : asset.address,
-    }));
+    const supportedAssets = await api.fetchSupportedAssets(walletId);
 
     // nothing to do if returned empty
     if (isEmpty(supportedAssets)) return;

@@ -46,8 +46,6 @@ const envVars = {
     SDK_PROVIDER: 'https://api-qa-core.pillarproject.io',
     NOTIFICATIONS_URL: 'https://api-qa-notifications.pillarproject.io',
     INVESTMENTS_URL: 'https://api-qa-investments.pillarproject.io',
-    SYNTHETICS_URL: 'https://10lskb6zud.execute-api.us-east-2.amazonaws.com/qa',
-    SYNTHETICS_CONTRACT_ADDRESS: '0x47230564236C772Eaf98F82d9e5A1fAD2380aDf9',
     OPEN_SEA_API: 'https://rinkeby-api.opensea.io/api/v1',
     SOCKET_NOTIFICATIONS: 'wss://platform-websockets-qa.nonprod.pillarproject.io?walletId=',
     RAMPNETWORK_WIDGET_URL: 'https://ri-widget-staging-kovan.firebaseapp.com/',

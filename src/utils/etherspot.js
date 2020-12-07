@@ -58,7 +58,6 @@ export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: b
   };
 };
 
-
 export const mapToEtherspotTransactionsBatch = async (
   transaction: TransactionPayload,
   fromAddress: string,
