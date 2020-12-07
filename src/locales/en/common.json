@@ -1490,7 +1490,9 @@
       "youAreClaiming": "You are claiming rewards",
       "rgtPrice": "RGT price",
       "rgtSupply": "RGT supply",
-      "currentAPYWithPercentage": "Current APY: {{percentage}}%"
+      "currentAPYWithPercentage": "Current APY: {{percentage}}%",
+      "claimingDetails": "Claiming details",
+      "burnTakeback": "Burn/Takeback"
     },
     "button": {
       "withdraw": "Withdraw",
@@ -1500,7 +1502,8 @@
     },
     "tooltip": {
       "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first",
-      "rariWithdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools."
+      "rariWithdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools.",
+      "burnTakeback": "Claiming your RGT before December 19th, 2020 will result in fraction of it being burned and sent back to the protocol. 70% of the amount taken will be burned and 30% taken back into the protocol. This amount decreases from 33% linearly until the 19th when it will reach 0%."
     },
     "infoContent": {
       "subtitle": {

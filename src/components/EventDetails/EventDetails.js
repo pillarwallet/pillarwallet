@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -1010,7 +1010,7 @@ export class EventDetail extends React.Component<Props> {
       case RARI_CLAIM_TRANSACTION:
       case RARI_WITHDRAW_TRANSACTION: {
         const {
-          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool,
+          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool, rgtBurned,
         } = event.extra;
         let label = null;
         let subtext = null;
@@ -1052,7 +1052,7 @@ export class EventDetail extends React.Component<Props> {
           label = t('label.rewardsClaimed');
           subtext = t('label.fromRariToWallet');
           negativeValueAmount = formattedAmount;
-          positiveValueAmount = formattedAmount;
+          positiveValueAmount = formatAmount(formatUnits(EthersBigNumber.from(amount).sub(rgtBurned), 18));
           negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
           positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
           buttons.push({

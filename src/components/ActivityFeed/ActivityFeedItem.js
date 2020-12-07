@@ -26,6 +26,7 @@ import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import { BigNumber as EthersBigNumber } from 'ethers';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -646,7 +647,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       case RARI_WITHDRAW_TRANSACTION:
       case RARI_CLAIM_TRANSACTION: {
         const {
-          symbol, decimals, amount, rftMinted, rftBurned, rariPool,
+          symbol, decimals, amount, rftMinted, rftBurned, rariPool, rgtBurned,
         } = event.extra;
         let label = null;
         let subtext = null;
@@ -676,7 +677,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           label = t('label.claim');
           subtext = t('label.fromRariToWallet');
           negativeValueAmount = formattedAmount;
-          positiveValueAmount = formattedAmount;
+          positiveValueAmount = formatAmount(formatUnits(EthersBigNumber.from(amount).sub(rgtBurned), 18));
           negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
           positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
         }
