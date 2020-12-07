@@ -61,6 +61,7 @@ import {
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } from 'services/synthetix';
+import { getEnv } from 'configs/envConfig';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -386,7 +387,7 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 };
 
 export const getWbtcFeesAction = () => (dispatch: Dispatch) => {
-  fetch('https://lightnode-mainnet.herokuapp.com', {
+  fetch(getEnv().WBTC_FEES_API, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({

@@ -147,7 +147,7 @@ const WBTCCafeInfo = (props: Props) => {
     </TableRow>
   );
 
-  const getExtendedTable = (rateString?: string) => (
+  const getExtendedTable = (rateString: string) => (
     <Table>
       <Header>{t('exchangeContent.label.exchangeDetails')}</Header>
       {getRateRow(rateString)}
