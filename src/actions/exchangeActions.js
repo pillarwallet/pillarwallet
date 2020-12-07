@@ -21,6 +21,7 @@
 import { toChecksumAddress } from '@netgum/utils';
 import uniq from 'lodash.uniq';
 import t from 'translations/translate';
+import axios from 'axios';
 
 // components
 import Toast from 'components/Toast';
@@ -61,6 +62,7 @@ import {
 } from 'services/uniswap';
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } from 'services/synthetix';
+import { API_REQUEST_TIMEOUT } from 'services/api';
 import { getEnv } from 'configs/envConfig';
 
 // types
@@ -387,27 +389,28 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 };
 
 export const getWbtcFeesAction = () => (dispatch: Dispatch) => {
-  fetch(getEnv().WBTC_FEES_API, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
+  axios.post(
+    getEnv().WBTC_FEES_API,
+    JSON.stringify({
       id: 67,
       jsonrpc: '2.0',
       method: 'ren_queryFees',
       params: {},
     }),
-  })
-    .then(res => res.json())
-    .then(res => {
-      dispatch({ type: SET_WBTC_FEES, payload: res.result });
-    })
-    .catch(e => reportErrorLog('Failed to fetch WBTC fees', e));
+    {
+      timeout: API_REQUEST_TIMEOUT,
+      headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
+    },
+  )
+    .then(res => { dispatch({ type: SET_WBTC_FEES, payload: res.data.result }); })
+    .catch(e => { reportErrorLog('Failed to fetch WBTC fees', e); });
 };
 
 export const getWbtcGatewayAddressAction = (params: WBTCGatewayAddressParams) =>
   async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
     const { user: { data: user } } = getState();
-    const walletId = user?.walletId || '';
+    const walletId = user?.walletId;
+    if (!walletId) return null;
     const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
     return gatewayAddressResponse;
   };

@@ -31,13 +31,28 @@ import Toast from 'components/Toast';
 import t from 'translations/translate';
 /* eslint-disable i18next/no-literal-string */
 
+export const showWbtcErrorToast = () => {
+  if (!Toast.isVisible()) {
+    Toast.show({
+      message: t('wbtcCafe.error'),
+      emoji: 'woman-shrugging',
+      autoClose: true,
+    });
+  }
+};
+
+
 // much of this function's body is copy-pasted from wbtc.cafe web app code
 export const gatherWBTCFeeData = async (
   amount: number,
   fees: ?WBTCFeesRaw,
   fromAssetCode: string,
 ): Promise<?WBTCFeesWithRate> => {
-  if (!fees || !fromAssetCode) return null;
+  if (!fees || !fromAssetCode) {
+    showWbtcErrorToast();
+    reportLog('Failed to estimate WBTC fees and exchange rate - missing asset code or fees object');
+    return null;
+  }
   const isSellingWbtc = fromAssetCode === WBTC;
   const fixedFeeKey = isSellingWbtc ? 'release' : 'lock';
   const dynamicFeeKey = isSellingWbtc ? 'burn' : 'mint';
@@ -48,20 +63,17 @@ export const gatherWBTCFeeData = async (
   );
 
   try {
-    const isProdEnv = getEnv().NETWORK_PROVIDER === 'homestead';
     let exchangeRate;
     let total;
 
     const curve = new Contract(
       getEnv().WBTC_CURVE,
       CURVE_ABI,
-      getEthereumProvider(isProdEnv ? 'homestead' : 'kovan'),
+      getEthereumProvider(getEnv().NETWORK_PROVIDER),
     );
     const renVMFee = Number(amount) * dynamicFeeRate;
-    const amountAfterMint =
-        Number(amount - renVMFee - fixedFee) > 0
-          ? Number(amount - renVMFee - fixedFee)
-          : 0;
+    const amountAfterFees = Number(amount - renVMFee - fixedFee);
+    const amountAfterMint = amountAfterFees > 0 ? amountAfterFees : 0;
     const amountAfterMintInSats = Math.round(amountAfterMint * 100000000);
 
     if (amountAfterMintInSats) {
@@ -77,6 +89,7 @@ export const gatherWBTCFeeData = async (
       exchangeRate, renVMFee, networkFee: fixedFee, estimate: total,
     };
   } catch (e) {
+    showWbtcErrorToast();
     reportLog('Failed to estimate WBTC fees and exchange rate', e);
     return null;
   }
@@ -104,14 +117,4 @@ export const mapPendingToTransactions = (pendingTxs: PendingWBTCTransaction[], t
     type: 'transactionEvent',
     tag: WBTC_PENDING_TRANSACTION,
   }));
-};
-
-export const showWbtcErrorToast = () => {
-  if (!Toast.isVisible()) {
-    Toast.show({
-      message: t('wbtcCafe.error'),
-      emoji: 'woman-shrugging',
-      autoClose: true,
-    });
-  }
 };

@@ -24,7 +24,7 @@ import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 import { getFormattedRate } from 'utils/assets';
-import { formatAmount, hitslop10 } from 'utils/common';
+import { formatAmount, hitSlop10 } from 'utils/common';
 import { images } from 'utils/images';
 import { BaseText } from 'components/Typography';
 import Tooltip from 'components/Tooltip';
@@ -72,7 +72,7 @@ const TableAmount = ({
     <Tooltip body={tooltipText} isVisible={showTokenAmount} positionOnBottom={false}>
       <Row>
         {!!highFees && <HighFeesIcon source={highFeesIcon} />}
-        <TouchableOpacity hitSlop={hitslop10} activeOpacity={1} onPress={() => setShowTokenAmount(!showTokenAmount)}>
+        <TouchableOpacity hitSlop={hitSlop10} activeOpacity={1} onPress={() => setShowTokenAmount(!showTokenAmount)}>
           <BaseText regular>{fiatAmount}</BaseText>
         </TouchableOpacity>
       </Row>

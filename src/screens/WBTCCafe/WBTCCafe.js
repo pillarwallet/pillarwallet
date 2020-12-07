@@ -58,21 +58,17 @@ import { EXCHANGE } from 'constants/exchangeConstants';
 
 import WBTCCafeIntro from './WBTCCafeIntro';
 
-interface Props {
-  navigation: NavigationScreenProp;
-  hasSeenWbtcCafeIntro: boolean;
-  updateHasSeenIntro: () => void;
-  theme: Theme;
-  history: Transaction[];
-  pendingWbtcTransactions: PendingWBTCTransaction[];
-  accounts: Accounts;
-  fetchSmartWalletTransactions: () => void;
-  setWbtcPendingTxs: (txs: PendingWBTCTransaction[]) => void;
-}
-
-interface State {
-  showIntro: boolean;
-}
+type Props = {
+  navigation: NavigationScreenProp,
+  hasSeenWbtcCafeIntro: boolean,
+  updateHasSeenIntro: () => void,
+  theme: Theme,
+  history: Transaction[],
+  pendingWbtcTransactions: PendingWBTCTransaction[],
+  accounts: Accounts,
+  fetchSmartWalletTransactions: () => void,
+  setWbtcPendingTxs: (txs: PendingWBTCTransaction[]) => void,
+};
 
 const Logo = styled.Image`
   width: 64px;
@@ -81,26 +77,41 @@ const Logo = styled.Image`
   align-self: center;
 `;
 
+const FeedWrapper = styled.View`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+`;
+
 const logo = require('assets/images/exchangeProviders/wbtcLogo.png');
 
 const getBackgroundColor = (theme: Theme) => theme.colors.basic070;
 
-class WBTCCafe extends React.Component<Props, State> {
-  state: State = { showIntro: !this.props.hasSeenWbtcCafeIntro };
+const WBTCCafe = ({
+  theme,
+  hasSeenWbtcCafeIntro,
+  updateHasSeenIntro,
+  history,
+  accounts,
+  pendingWbtcTransactions,
+  setWbtcPendingTxs,
+  fetchSmartWalletTransactions,
+  navigation,
+}: Props) => {
+  const [showIntro, setShowIntro] = React.useState<boolean>(!hasSeenWbtcCafeIntro);
 
-  handleButtonPress = () => {
-    const { updateHasSeenIntro, hasSeenWbtcCafeIntro } = this.props;
-    if (!hasSeenWbtcCafeIntro) updateHasSeenIntro();
-    this.toggleIntro();
-  };
-
-  toggleIntro = () => {
+  const toggleIntro = () => {
     LayoutAnimation.easeInEaseOut();
-    this.setState({ showIntro: !this.state.showIntro });
+    setShowIntro(!showIntro);
   };
 
-  getFeedData = () => {
-    const { history, accounts, pendingWbtcTransactions } = this.props;
+  const handleButtonPress = () => {
+    if (!hasSeenWbtcCafeIntro) updateHasSeenIntro();
+    toggleIntro();
+  };
+
+  const getFeedData = () => {
     const mappedTxs = getTransactionsFromHistory(history, accounts);
     const wbtcCafeTxs = getWbtcCafeTransactions(mappedTxs);
     const pendingTxs =
@@ -108,53 +119,56 @@ class WBTCCafe extends React.Component<Props, State> {
     return [...pendingTxs, ...wbtcCafeTxs];
   };
 
-  handleRefresh = () => {
-    const { setWbtcPendingTxs, fetchSmartWalletTransactions, pendingWbtcTransactions } = this.props;
+  const handleRefresh = () => {
     fetchSmartWalletTransactions();
     setWbtcPendingTxs(getValidPendingTransactions(pendingWbtcTransactions));
   };
 
-  renderContent = () => {
-    const feedData = this.getFeedData();
+  const renderContent = () => {
+    const feedData = getFeedData();
     return (
-      <ScrollWrapper refreshControl={<RefreshControl refreshing={false} onRefresh={this.handleRefresh} />}>
+      <ScrollWrapper
+        refreshControl={<RefreshControl refreshing={false} onRefresh={handleRefresh} />}
+        contentContainerStyle={{ flex: 1 }}
+      >
         <Logo source={logo} />
         <CircleButton
           label={t('button.exchange')}
           fontIcon="exchange"
-          onPress={() => this.props.navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC })}
+          onPress={() => navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC })}
         />
-        {!!feedData.length && <ActivityFeed
-          feedTitle={t('title.mainActivityFeed')}
-          navigation={this.props.navigation}
-          feedData={feedData}
-          isAssetView
-          card
-        />}
+        {!!feedData.length && (
+          <FeedWrapper>
+            <ActivityFeed
+              feedTitle={t('title.mainActivityFeed')}
+              navigation={navigation}
+              feedData={feedData}
+              isAssetView
+              card
+            />
+          </FeedWrapper>
+        )}
       </ScrollWrapper>
     );
-  }
+  };
 
-  render() {
-    const { theme, hasSeenWbtcCafeIntro } = this.props;
-    const { showIntro } = this.state;
-    const backgroundColor = getBackgroundColor(theme);
+  const backgroundColor = getBackgroundColor(theme);
 
-    return (
-      <ContainerWithHeader headerProps={{
+  return (
+    <ContainerWithHeader
+      headerProps={{
         noBottomBorder: true,
         centerItems: [{ title: t('wbtcCafe.cafe') }],
         wrapperStyle: { backgroundColor, width: '100%' },
-        rightItems: [hasSeenWbtcCafeIntro && { icon: 'info-circle-inverse', onPress: this.toggleIntro }],
+        rightItems: [hasSeenWbtcCafeIntro && { icon: 'info-circle-inverse', onPress: toggleIntro }],
       }}
-      >
-        {showIntro
-          ? <WBTCCafeIntro onButtonPress={this.handleButtonPress} backgroundColor={backgroundColor} />
-          : this.renderContent()}
-      </ContainerWithHeader>
-    );
-  }
-}
+    >
+      {showIntro
+        ? <WBTCCafeIntro onButtonPress={handleButtonPress} backgroundColor={backgroundColor} />
+        : renderContent()}
+    </ContainerWithHeader>
+  );
+};
 
 const structuredSelector = createStructuredSelector({
   history: combinedHistorySelector,

@@ -50,6 +50,7 @@ import WBTCCafeAddress from './WBTCCafeAddress';
 import { ExchangeIcon, TableWrapper } from './ConfirmationTable';
 import RenFeeIcon from './RenFeeIcon';
 
+
 type Props = {
   wbtcData: ?WBTCFeesWithRate,
   extendedInfo?: boolean,
@@ -58,7 +59,7 @@ type Props = {
   address?: string,
   error?: boolean,
   addWbtcPendingTx: (tx: PendingWBTCTransaction) => void,
-}
+};
 
 const Row = styled.View`
   flex-direction: row;
@@ -115,13 +116,14 @@ const WBTCCafeInfo = (props: Props) => {
 
   const handleNextPress = () => {
     if (!extendedInfo && !!navigation) {
-      return navigation.navigate(EXCHANGE_CONFIRM, {
+      navigation.navigate(EXCHANGE_CONFIRM, {
         wbtcTxData: { maxSlippage: maxSlippage / 100, amount: Number(amount) },
         wbtcEstData: wbtcData,
       });
+      return;
     }
     Clipboard.setString(address || '');
-    return Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
+    Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
   };
 
   const handleSent = () => {
@@ -135,7 +137,7 @@ const WBTCCafeInfo = (props: Props) => {
     return (Number(renVMFee.toFixed(5) || 0) + Number(networkFee.toFixed(5) || 0)).toFixed(5);
   };
 
-  const getFeeInfo = () => `${wbtcData?.estimate ? getFeeNumber() : '0'} ${BTC}`;
+  const getFeeInfo = () => `${wbtcData?.estimate ? getFeeNumber() : '-'} ${BTC}`;
 
   const getButtonTitle = () => t(`${extendedInfo ? 'wbtcCafe.copy' : 'title.confirm'}`);
 
@@ -206,7 +208,7 @@ const WBTCCafeInfo = (props: Props) => {
     <TableWrapper style={[!extendedInfo && smallTableStyle]}>
       {extendedInfo ? getExtendedTable(rateString) : getShortTable(rateString)}
       {extendedInfo
-      ? <WBTCCafeAddress amount={amount} address={address} error={error} />
+      ? <WBTCCafeAddress amount={amount} address={address} error={error || buttonDisabled} />
       : (
         <FeeRow>
           <Label>{t('transactions.label.transactionFee')}</Label>

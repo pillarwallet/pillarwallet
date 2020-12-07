@@ -28,11 +28,11 @@ import { themedColors } from 'utils/themes';
 import t from 'translations/translate';
 import Button from 'components/Button';
 
-interface Props {
-  theme: Theme;
-  onButtonPress: () => void;
-  backgroundColor: string;
-}
+type Props = {
+  theme: Theme,
+  onButtonPress: () => void,
+  backgroundColor: string,
+};
 
 const Wrapper = styled.ScrollView`
   padding: 0 20px;

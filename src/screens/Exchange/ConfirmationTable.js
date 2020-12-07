@@ -32,7 +32,7 @@ import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 import type { Theme } from 'models/Theme';
 
 type Props = {
-  errorMessage: string,
+  errorMessage: ?string,
   isOnline: boolean,
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,

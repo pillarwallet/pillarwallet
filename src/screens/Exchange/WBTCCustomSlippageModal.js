@@ -43,10 +43,10 @@ const CustomTitle = styled(MediumText)`
   margin-bottom: 20px;
 `;
 
-interface Props {
-  theme: Theme;
-  onSubmit: (val: number) => void;
-  activeValue: number;
+type Props = {
+  theme: Theme,
+  onSubmit: (val: number) => void,
+  activeValue: number,
 }
 
 const SlippageModal = ({ onSubmit, activeValue }: Props) => {

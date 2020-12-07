@@ -23,7 +23,7 @@ import { View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import Tooltip from 'components/Tooltip';
 import t from 'translations/translate';
-import { hitslop10 } from 'utils/common';
+import { hitSlop10 } from 'utils/common';
 import { themedColors } from 'utils/themes';
 import { BaseText } from 'components/Typography';
 
@@ -54,7 +54,7 @@ const RenFeeIcon = () => {
         <Icon
           onPress={() => setShowTooltip(!showTooltip)}
           activeOpacity={1}
-          hitSlop={hitslop10}
+          hitSlop={hitSlop10}
         >
           <RenFeeIconText>?</RenFeeIconText>
         </Icon>

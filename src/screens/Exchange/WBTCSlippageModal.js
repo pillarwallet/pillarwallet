@@ -108,9 +108,9 @@ const Label = styled.View`
 // 0 is for custom
 const PRESET_VALUES = [0.5, 1, 3, 0];
 
-interface Props {
-  theme: Theme;
-  onModalWillHide: (val: number) => void;
+type Props = {
+  theme: Theme,
+  onModalWillHide: (val: number) => void,
 }
 
 const img = require('assets/icons/change.png');

@@ -42,9 +42,9 @@ const Text = styled(BaseText)`
   color: ${({ color }) => color};
 `;
 
-interface Props {
-  theme: Theme;
-}
+type Props = {
+  theme: Theme,
+};
 
 const WBTCCafeWarning = ({ theme }: Props) => (
   <InfoWrapper>

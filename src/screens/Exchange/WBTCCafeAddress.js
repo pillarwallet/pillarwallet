@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-/* eslint-disable i18next/no-literal-string */
+
 import React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 
@@ -35,6 +35,7 @@ import type { Theme } from 'models/Theme';
 
 import t from 'translations/translate';
 import WBTCCafeWarning from './WBTCCafeWarning';
+
 
 const Wrapper = styled.View`
   width: 100%;
@@ -60,11 +61,11 @@ const Text = styled(BaseText)`
 `;
 
 type Props = {
-  amount: string;
-  theme: Theme;
-  address?: string;
-  error?: boolean;
-}
+  amount: string,
+  theme: Theme,
+  address?: string,
+  error?: boolean,
+};
 
 const WBTCCafeAddress = ({
   amount, address, error,
