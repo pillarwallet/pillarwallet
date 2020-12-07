@@ -37,7 +37,7 @@ import { RARI_GOVERNANCE_TOKEN_DATA } from 'constants/rariConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 
 import { getRariClaimRgtTransaction, getClaimRtgFee } from 'utils/rari';
-import { formatFiat } from 'utils/common';
+import { formatFiat, reportErrorLog } from 'utils/common';
 
 import { activeAccountAddressSelector } from 'selectors';
 
@@ -82,7 +82,16 @@ const RariClaimRgtReview = ({
       }
       setClaimFee(fee);
       setIsFetchingFee(false);
-    }).catch(() => null);
+    }).catch((error) => {
+      reportErrorLog("Rari service failed: can't fetch claim rtg fee", error);
+      Toast.show({
+        message: t('toast.rariFetchDataFailed'),
+        emoji: 'hushed',
+        supportLink: true,
+        autoClose: false,
+      });
+      setIsFetchingFee(false);
+    });
   }, []);
 
   const { amount } = navigation.state.params;
