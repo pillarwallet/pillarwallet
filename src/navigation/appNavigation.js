@@ -266,11 +266,8 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
-<<<<<<< HEAD
   WBTC_CAFE,
-=======
   WALLETCONNECT_CALL_REQUEST_FLOW,
->>>>>>> fb09fdb255da063d2676094f63d9dd2932787d8d
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
