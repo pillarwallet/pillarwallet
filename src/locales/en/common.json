@@ -884,7 +884,7 @@
     "slippage": "Max. price slippage",
     "sendBtc": "To receive WBTC in Pillar, send {{amount}} BTC to this address.",
     "copy": "Copy address",
-    "useOnce": "Address can be used only once.",
+    "useOnce": "Address will be valid for the next 15 minutes and can be used only once.",
     "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications.",
     "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
     "custom": "Custom",
@@ -907,7 +907,10 @@
     "sent": "I've sent BTC",
     "buyMore": "Buy more WBTC",
     "error": "Something went wrong. Please choose a different value or try again.",
-    "higherAmount": "Please choose a higher amount"
+    "higherAmount": "Please choose a higher amount",
+    "time": "Transaction time",
+    "timeHrs": "1 - 3 hrs",
+    "confirmBTC": "Please confirm that you have sent bitcoins by clicking on this button."
   },
 
   "referralsContent": {

@@ -39,7 +39,9 @@ const Container = styled.View`
   border-top-right-radius: 32px;
   position: absolute;
   bottom: 0;
-  background-color: ${themedColors.card};
+  left: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
 const Row = styled.View`
@@ -50,12 +52,12 @@ const Row = styled.View`
 
 const Title = styled(MediumText)`
   ${fontStyles.regular};
-  color: ${themedColors.labelTertiary};
 `;
 
 const Text = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.labelTertiary};
+  color: ${themedColors.secondaryText};
+  margin-bottom: 15px;
 `;
 
 const ExchangeIcon = styled.Image`
@@ -70,7 +72,7 @@ const Option = styled.TouchableOpacity`
   justify-content: space-between;
   align-items: center;
   border-radius: 4px;
-  background-color: ${({ isActive }) => isActive ? themedColors.tertiary : baseColors.white};
+  background-color: ${({ isActive, theme }) => isActive ? theme.colors.basic080 : theme.colors.basic050};
 `;
 
 const OptionText = styled(BaseText)`
@@ -93,7 +95,7 @@ const InnerCircle = styled.View`
   width: 12px;
   height: 12px;
   border-radius: 6px;
-  background-color: ${themedColors.primary};
+  background-color: ${({ theme }) => theme.colors.primaryAccent130};
 `;
 
 const Label = styled.View`

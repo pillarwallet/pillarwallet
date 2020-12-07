@@ -38,8 +38,6 @@ import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
 import { setWbtcPendingTxsAction } from 'actions/exchangeActions';
 
 // utils, services
-import { baseColors } from 'utils/variables';
-import { themedColors } from 'utils/themes';
 import { getValidPendingTransactions, getWbtcCafeTransactions, mapPendingToTransactions } from 'services/wbtcCafe';
 import { getTransactionsFromHistory } from 'utils/history';
 import { getSmartWalletAddress } from 'utils/accounts';
@@ -55,7 +53,6 @@ import type { Accounts } from 'models/Account';
 import { combinedHistorySelector } from 'selectors/history';
 
 // constants
-import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import { WBTC, BTC } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 
@@ -86,8 +83,7 @@ const Logo = styled.Image`
 
 const logo = require('assets/images/exchangeProviders/wbtcLogo.png');
 
-const getBackgroundColor = (theme: Theme) =>
-  theme.current === LIGHT_THEME ? baseColors.snowWhite : themedColors.iconBackground;
+const getBackgroundColor = (theme: Theme) => theme.colors.basic070;
 
 class WBTCCafe extends React.Component<Props, State> {
   state: State = { showIntro: !this.props.hasSeenWbtcCafeIntro };
@@ -148,7 +144,7 @@ class WBTCCafe extends React.Component<Props, State> {
       <ContainerWithHeader headerProps={{
         noBottomBorder: true,
         centerItems: [{ title: t('wbtcCafe.cafe') }],
-        wrapperStyle: { backgroundColor },
+        wrapperStyle: { backgroundColor, width: '100%' },
         rightItems: [hasSeenWbtcCafeIntro && { icon: 'info-circle-inverse', onPress: this.toggleIntro }],
       }}
       >

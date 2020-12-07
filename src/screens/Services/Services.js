@@ -131,7 +131,8 @@ class ServicesScreen extends React.Component<Props> {
     } = this.props;
     const colors = getThemeColors(theme);
     const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
-      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length }),
+      // +1 for WBTC.Cafe
+      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length + 1 }),
       color: colors.primary,
     } : null;
 

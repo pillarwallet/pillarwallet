@@ -62,7 +62,7 @@ const SmallTitle = styled(BaseText)`
 `;
 
 const InnerBox = styled.View`
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   margin-vertical: 24px;
   padding: 20px 49px 16px 30px;
   border-radius: 30px;
@@ -81,7 +81,7 @@ const BottomContainer = styled.View`
   margin-top: 32px;
   padding: 20px 30px 32px;
   border-radius: 30px;
-  background-color: ${themedColors.card};
+  background-color: ${({ theme }) => theme.colors.basic050};
   align-items: center;
 `;
 

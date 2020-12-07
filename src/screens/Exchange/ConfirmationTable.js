@@ -26,7 +26,6 @@ import t from 'translations/translate';
 import Button from 'components/Button';
 import Icon from 'components/Icon';
 import { BaseText } from 'components/Typography';
-import { themedColors } from 'utils/themes';
 import { Spacing } from 'components/Layout';
 import type { OfferOrder } from 'models/Offer';
 import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
@@ -47,7 +46,7 @@ export const TableWrapper = styled.View`
 `;
 
 export const ExchangeIcon = styled(Icon)`
-  color: ${themedColors.primary};
+  color: ${({ theme }) => theme.colors.primaryAccent130};
   font-size: 16px;
   margin-right: 4px;
 `;
