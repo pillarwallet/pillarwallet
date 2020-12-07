@@ -131,6 +131,7 @@ import RariTransferScreen from 'screens/Rari/RariTransfer';
 import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
 import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
 import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
+import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -289,6 +290,8 @@ import {
   RARI_CLAIM_RGT,
   RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
+  LIQUIDITY_POOLS_FLOW,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -767,6 +770,12 @@ const rariFlow = createStackNavigator({
 
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const liquidityPoolsFlow = createStackNavigator({
+  [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
+}, StackNavigatorConfig);
+
+liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -812,6 +821,7 @@ const AppFlowNavigation = createStackNavigator(
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
     [RARI_FLOW]: rariFlow,
+    [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
   },
   modalTransition,
 );

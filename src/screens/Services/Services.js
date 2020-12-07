@@ -45,6 +45,7 @@ import {
   SENDWYRE_INPUT,
   WBTC_CAFE,
   RARI_DEPOSIT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -89,6 +90,7 @@ let isSablierEnabled = true;
 let isAltalixEnabled = true;
 let isWBTCCafeEnabled = true;
 let isRariEnabled = true;
+let areLiquidityPoolsEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -121,6 +123,7 @@ class ServicesScreen extends React.Component<Props> {
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
     isWBTCCafeEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
     isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
+    areLiquidityPoolsEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_LIQUIDITY_POOLS);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
@@ -158,6 +161,16 @@ class ServicesScreen extends React.Component<Props> {
       });
     }
     services.push(...this.getBuyCryptoServices());
+    if (areLiquidityPoolsEnabled) {
+      services.push({
+        key: 'liquidityPools',
+        title: t('servicesContent.liquidityPools.title'),
+        body: t('servicesContent.liquidityPools.description'),
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => isActiveAccountSmartWallet && navigation.navigate(LIQUIDITY_POOL_DASHBOARD),
+      });
+    }
     if (isAaveEnabled) {
       services.push({
         key: 'depositPool',

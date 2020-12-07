@@ -1243,6 +1243,10 @@
       "title": "Rari Capital",
       "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
     },
+    "liquidityPools": {
+      "title": "Liquidity Pools",
+      "description": "Stake your PLR Liquidity tokens and receive your rewards." 
+    },
     "label": {
       "requiresActivation": "Requires activation",
       "forSmartWallet": "For Smart Wallet",
@@ -1686,6 +1690,25 @@
       "halfYear": "6 M",
       "year": "1 Y",
       "all": "ALL "
+    }
+  },
+  
+  "liquidityPoolsContent": {
+    "title": {
+    },
+    "button": {
+      "addLiquidity": "Add liquidity",
+      "withdraw": "Withdraw",
+      "stake": "Stake",
+      "unstake": "Unstake",
+      "claimRewards": "Claim rewards"
+    },
+    "label": {
+      "staked": "Staked",
+      "rewards": "Rewards",
+      "claimedSoFar": "{{value}} {{token}} claimed so far",
+      "addLiquidityToStartEarning": "Add liquidity to start earning from staking",
+      "stakeLiquidityToGetRewards": "Stake liquidity tokens to get rewards"
     }
   }
 }
