@@ -51,11 +51,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type {
-  Asset,
-  Assets,
-  Balances,
-} from 'models/Asset';
+import type { Assets, Balances } from 'models/Asset';
 import type { Contact } from 'models/Contact';
 import type { Option } from 'models/Selector';
 import type { TokenTransactionPayload } from 'models/Transaction';

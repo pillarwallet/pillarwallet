@@ -1,5 +1,4 @@
 // @flow
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
@@ -21,7 +20,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
 import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
 
 
 const {
@@ -105,7 +104,6 @@ export default class SmartWalletProvider {
       contractAddress,
       decimals = 18,
       usePPN,
-      extra,
       gasToken,
     } = transaction;
     let { data, to: recipient } = transaction;

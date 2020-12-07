@@ -50,7 +50,7 @@ import Toast from 'components/Toast';
 
 // utils
 import { getAssetsAsList, transformBalancesToObject } from 'utils/assets';
-import { parseTokenAmount, reportErrorLog, reportLog, uniqBy } from 'utils/common';
+import { parseTokenAmount, reportErrorLog, uniqBy } from 'utils/common';
 import { buildHistoryTransaction, parseFeeWithGasToken, updateAccountHistory } from 'utils/history';
 import {
   getActiveAccount,
@@ -69,7 +69,7 @@ import { balancesSelector } from 'selectors';
 import { accountAssetsSelector, makeAccountEnabledAssetsSelector } from 'selectors/assets';
 
 // types
-import type { TransactionPayload, SyntheticTransaction } from 'models/Transaction';
+import type { TransactionPayload } from 'models/Transaction';
 import type { Asset, AssetsByAccount, Balances } from 'models/Asset';
 import type { Account } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
