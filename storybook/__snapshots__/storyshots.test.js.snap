@@ -42446,10 +42446,7 @@ exports[`Storyshots ListCard default 1`] = `
                 style={
                   Array [
                     Object {
-                      "flexBasis": 0,
                       "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
                       "flexWrap": "wrap",
                       "width": "100%",
                     },
@@ -42642,10 +42639,7 @@ exports[`Storyshots ListCard with custom icon 1`] = `
                 style={
                   Array [
                     Object {
-                      "flexBasis": 0,
                       "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
                       "flexWrap": "wrap",
                       "width": "100%",
                     },
@@ -42828,10 +42822,7 @@ exports[`Storyshots ListCard with label 1`] = `
                 style={
                   Array [
                     Object {
-                      "flexBasis": 0,
                       "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
                       "flexWrap": "wrap",
                       "width": "100%",
                     },
@@ -43076,10 +43067,7 @@ exports[`Storyshots ListCard with labelText 1`] = `
                 style={
                   Array [
                     Object {
-                      "flexBasis": 0,
                       "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
                       "flexWrap": "wrap",
                       "width": "100%",
                     },
@@ -43296,10 +43284,7 @@ exports[`Storyshots ListCard with note 1`] = `
                 style={
                   Array [
                     Object {
-                      "flexBasis": 0,
                       "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
                       "flexWrap": "wrap",
                       "width": "100%",
                     },
@@ -43548,10 +43533,7 @@ exports[`Storyshots ListCard with subtitle 1`] = `
                 style={
                   Array [
                     Object {
-                      "flexBasis": 0,
                       "flexDirection": "column",
-                      "flexGrow": 1,
-                      "flexShrink": 1,
                       "flexWrap": "wrap",
                       "width": "100%",
                     },
