@@ -145,6 +145,7 @@ const LockScreenTextLink = styled(TextLink)`
 
 const IconWrapper = styled.View`
   margin-right: 10px;
+  width: 20px;
 `;
 
 const ItemIcon = styled(Icon)`
@@ -282,7 +283,6 @@ const Menu = ({
         title={title}
         action={action}
         labelBadge={labelBadge}
-        contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
         customIcon={<CustomIcon {...item} />}
       />
     );
