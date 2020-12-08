@@ -283,7 +283,6 @@ const Menu = ({
         title={title}
         action={action}
         labelBadge={labelBadge}
-        contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
         customIcon={<CustomIcon {...item} />}
       />
     );
