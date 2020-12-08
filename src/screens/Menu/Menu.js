@@ -145,6 +145,7 @@ const LockScreenTextLink = styled(TextLink)`
 
 const IconWrapper = styled.View`
   margin-right: 10px;
+  width: 20px;
 `;
 
 const ItemIcon = styled(Icon)`
