@@ -34,7 +34,7 @@ import {
   fetchVirtualAccountBalanceAction,
 } from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // utils
 import {
@@ -180,7 +180,7 @@ export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
     // following code should not be done if user is not registered on back-end
     if (!user?.walletId) return;
 
-    dispatch(setUserEnsIfEmptyAction());
+    dispatch(checkUserENSNameAction());
     dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
   };
 };

@@ -23,11 +23,12 @@ import get from 'lodash.get';
 // constants
 import { ADD_ENS_REGISTRY_RECORD, SET_ENS_REGISTRY_RECORDS } from 'constants/ensRegistryConstants';
 
-// selectors
-import { activeAccountAddressSelector } from 'selectors';
-
 // utils
-import { lookupAddress } from 'utils/common';
+import {
+  getFullENSName,
+  lookupAddress,
+  reportErrorLog,
+} from 'utils/common';
 
 // services
 import etherspot from 'services/etherspot';
@@ -37,19 +38,25 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
 import { saveDbAction } from './dbActions';
-import { setEtherspotEnsNameAction } from './etherspotActions';
+import { reserveEtherspotENSNameAction } from './etherspotActions';
 
 
-export const setUserEnsIfEmptyAction = () => {
+export const checkUserENSNameAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const user = getState().user.data;
-    const activeAccountAddress = activeAccountAddressSelector(getState());
+    const { username } = user;
 
-    const ensName = await etherspot.getENSNameByAccountAddress(activeAccountAddress);
+    if (!username) {
+      reportErrorLog('checkUserENSNameAction failed: no username', { user });
+      return;
+    }
 
-    // check if user needs to set the ens name
-    if (!ensName && user.username) {
-      dispatch(setEtherspotEnsNameAction(user.username));
+    const fullEnsName = getFullENSName(username);
+    const ensNode = await etherspot.getENSNode(fullEnsName);
+
+    // if node has name then it's either already claimed or reserved
+    if (!ensNode?.name) {
+      dispatch(reserveEtherspotENSNameAction(username));
     }
   };
 };

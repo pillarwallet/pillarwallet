@@ -34,7 +34,7 @@ import type { UpdateP2PPaymentChannelDto } from 'etherspot/dist/sdk/dto';
 
 // utils
 import {
-  getEnsPrefix,
+  getFullENSName,
   isCaseInsensitiveMatch,
   parseTokenAmount,
   reportErrorLog,
@@ -93,7 +93,7 @@ class EtherspotService {
   }
 
   reserveENSName(username: string): ?EtherspotAccount[] {
-    const fullENSName = `${username}${getEnsPrefix()}`;
+    const fullENSName = getFullENSName(username);
     return this.sdk.reserveENSName({ name: fullENSName }).catch((error) => {
       reportErrorLog('EtherspotService reserveENSName failed', { error, username, fullENSName });
       return null;
@@ -211,12 +211,11 @@ class EtherspotService {
     return new BigNumber(tokenDeposit.availableAmount.toString());
   }
 
-  async getENSNameByAccountAddress(accountAddress: string): Promise<?ENSNode> {
-    return this.sdk.getENSNode({ nameOrHashOrAddress: accountAddress })
-      .then((ensNode) => ensNode?.name)
-      .catch((error) => {
-        reportErrorLog('getENSNameByAccountAddress -> getENSNode failed', { accountAddress, error });
-      });
+  async getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
+    return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
+      reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
+      return null;
+    });
   }
 
   async logout() {

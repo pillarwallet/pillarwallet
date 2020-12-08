@@ -669,6 +669,9 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => getEnv().NETWORK_PROVIDER === 'homestead'
+export const getENSPrefix = () => getEnv().NETWORK_PROVIDER === 'homestead'
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar'; // eslint-disable-line i18next/no-literal-string
+
+
+export const getFullENSName = (username: string) => `${username}${getENSPrefix()}`;

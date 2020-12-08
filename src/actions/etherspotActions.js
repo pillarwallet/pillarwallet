@@ -32,7 +32,7 @@ import { saveDbAction } from 'actions/dbActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
-import { setUserEnsIfEmptyAction } from 'actions/ensRegistryActions';
+import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // services
 import etherspot from 'services/etherspot';
@@ -164,7 +164,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
     // set active
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
     dispatch(setActiveAccountAction(accountId));
-    dispatch(setUserEnsIfEmptyAction());
+    dispatch(checkUserENSNameAction());
 
     // set default assets for active Etherspot wallet
     const initialAssets = await api.fetchInitialAssets(walletId);
@@ -180,7 +180,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
   };
 };
 
-export const setEtherspotEnsNameAction = (username: string) => {
+export const reserveEtherspotENSNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -191,13 +191,13 @@ export const setEtherspotEnsNameAction = (username: string) => {
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportErrorLog('setEtherspotEnsNameAction failed: no Etherspot account found');
+      reportErrorLog('reserveEtherspotENSNameAction failed: no Etherspot account found');
       return;
     }
 
     const reserved = await etherspot.reserveENSName(username);
     if (!reserved) {
-      reportErrorLog('setEtherspotEnsNameAction reserveENSName failed', { username });
+      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
     }
   };
 };
