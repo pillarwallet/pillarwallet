@@ -64,7 +64,6 @@ const CardContent = styled.View`
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
-  flex: 1;
 `;
 
 const MainTitleWrapper = styled.View`
