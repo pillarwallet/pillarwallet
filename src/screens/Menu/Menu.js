@@ -37,7 +37,7 @@ import { images } from 'utils/images';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import SettingsListItem from 'components/ListItem/SettingsItem';
-import { ListCard } from 'components/ListItem/ListCard';
+import ShadowedCard from 'components/ShadowedCard';
 import { TextLink } from 'components/Typography';
 import Icon from 'components/Icon';
 import HTMLContentModal, { ENDPOINTS } from 'components/Modals/HTMLContentModal';
@@ -169,28 +169,24 @@ const Menu = ({
       key: 'appSettings',
       title: t('settingsContent.settingsItem.appSettings.title'),
       emoji: 'gear',
-      card: true,
       action: () => navigation.navigate(APP_SETTINGS),
     },
     {
       key: 'userProfile',
       title: t('settingsContent.settingsItem.userProfile.title'),
       emoji: 'male-singer',
-      card: true,
       action: () => navigation.navigate(ADD_EDIT_USER),
     },
     {
       key: 'addressBook',
       title: t('settingsContent.settingsItem.addressBook.title'),
       emoji: 'book',
-      card: true,
       action: () => navigation.navigate(CONTACTS_FLOW),
     },
     {
       key: 'walletSettings',
       title: t('settingsContent.settingsItem.walletSettings.title'),
       emoji: 'moneybag',
-      card: true,
       action: () => navigation.navigate(WALLET_SETTINGS),
       labelBadge: !isBackedUp && {
         label: t('settingsContent.settingsItem.recoverySettings.label.notFinished'),
@@ -254,7 +250,6 @@ const Menu = ({
       title,
       action,
       labelBadge,
-      card,
       emoji,
       icon,
       iconColor,
@@ -265,26 +260,17 @@ const Menu = ({
       return null;
     }
 
-    if (card) {
-      return (
-        <ListCard
-          title={title}
-          action={action}
-          labelBadge={labelBadge}
-          contentWrapperStyle={{ paddingHorizontal: 20, paddingVertical: 24 }}
-          customIcon={<View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
-        />
-      );
-    }
-
     return (
-      <SettingsListItem
-        label={title}
-        onPress={action}
-        labelBadge={labelBadge}
-        icon={icon}
-        iconColor={iconColor}
-      />
+      <ShadowedCard wrapperStyle={{ marginBottom: 10, width: '100%' }}>
+        <SettingsListItem
+          label={title}
+          onPress={action}
+          labelBadge={labelBadge}
+          icon={icon}
+          iconColor={iconColor}
+          customIcon={!!emoji && <View style={{ marginRight: 10 }}><Emoji name={emoji} /></View>}
+        />
+      </ShadowedCard>
     );
   };
 
