@@ -29,6 +29,8 @@ import type { Transaction } from 'models/Transaction';
 import { getEnv } from 'configs/envConfig';
 import Toast from 'components/Toast';
 import t from 'translations/translate';
+import { firebaseRemoteConfig } from 'services/firebase';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 /* eslint-disable i18next/no-literal-string */
 
 export const showWbtcErrorToast = () => {
@@ -118,3 +120,5 @@ export const mapPendingToTransactions = (pendingTxs: PendingWBTCTransaction[], t
     tag: WBTC_PENDING_TRANSACTION,
   }));
 };
+
+export const isWbtcCafeActive = (): boolean => firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);

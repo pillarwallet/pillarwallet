@@ -154,6 +154,7 @@ export const provideOptions = (
   balances: Balances,
   rates: Rates,
   baseFiatCurrency: ?string,
+  isWbtcCafeActive?: boolean,
 ): ExchangeOptions => {
   const assetsOptionsBuying = generateSupportedAssetsOptions(
     exchangeSupportedAssets,
@@ -169,7 +170,7 @@ export const provideOptions = (
     rates,
   );
   return {
-    fromOptions: assetsOptionsFrom.concat([getBtcOption()]),
+    fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
     toOptions: assetsOptionsBuying,
     horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
   };

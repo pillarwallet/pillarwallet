@@ -53,7 +53,7 @@ import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 // utils, services
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import { isWbtcCafe, type ExchangeOptions } from 'utils/exchange';
-import { gatherWBTCFeeData, showWbtcErrorToast } from 'services/wbtcCafe';
+import { gatherWBTCFeeData, showWbtcErrorToast, isWbtcCafeActive } from 'services/wbtcCafe';
 
 import { noop } from 'utils/common';
 
@@ -356,7 +356,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     const {
       assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency,
     } = this.props;
-    return provideOptions(assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency);
+    return provideOptions(assets, exchangeSupportedAssets, balances, rates, baseFiatCurrency, isWbtcCafeActive());
   };
 
   triggerSearch = () => {
