@@ -53,6 +53,7 @@ type Props = {
     label: string,
     color: string,
   },
+  customIcon?: React.Node,
 };
 
 const MainWrapper = styled.View`
@@ -164,6 +165,7 @@ class SettingsListItem extends React.Component<Props> {
       rightLabel,
       description,
       bulletedLabel,
+      customIcon,
     } = this.props;
 
     if (!toggle) {
@@ -171,6 +173,7 @@ class SettingsListItem extends React.Component<Props> {
         <MainWrapper>
           <ItemLabelHolder bordered={bordered}>
             {!!icon && <LeftIcon name={icon} color={iconColor} />}
+            {customIcon}
             <ListItemInnerWrapper>
               <ItemLabel primary={isSelected}>{label}</ItemLabel>
               {!!label && <RightLabel>{rightLabel}</RightLabel>}
