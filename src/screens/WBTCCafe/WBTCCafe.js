@@ -41,6 +41,7 @@ import { setWbtcPendingTxsAction } from 'actions/exchangeActions';
 import { getValidPendingTransactions, getWbtcCafeTransactions, mapPendingToTransactions } from 'services/wbtcCafe';
 import { getTransactionsFromHistory } from 'utils/history';
 import { getSmartWalletAddress } from 'utils/accounts';
+import { getDeviceHeight } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -77,11 +78,12 @@ const Logo = styled.Image`
   align-self: center;
 `;
 
-const FeedWrapper = styled.View`
+const FeedWrapper = styled.ScrollView`
   position: absolute;
   bottom: 0;
   left: 0;
   right: 0;
+  max-height: ${getDeviceHeight() / 2.5};
 `;
 
 const logo = require('assets/images/exchangeProviders/wbtcLogo.png');
@@ -140,7 +142,7 @@ const WBTCCafe = ({
         {!!feedData.length && (
           <FeedWrapper>
             <ActivityFeed
-              feedTitle={t('title.mainActivityFeed')}
+              cardHeaderTitle={t('title.mainActivityFeed')}
               navigation={navigation}
               feedData={feedData}
               isAssetView
@@ -162,6 +164,7 @@ const WBTCCafe = ({
         wrapperStyle: { backgroundColor, width: '100%' },
         rightItems: [hasSeenWbtcCafeIntro && { icon: 'info-circle-inverse', onPress: toggleIntro }],
       }}
+      inset={{ bottom: 0 }}
     >
       {showIntro
         ? <WBTCCafeIntro onButtonPress={handleButtonPress} backgroundColor={backgroundColor} />
