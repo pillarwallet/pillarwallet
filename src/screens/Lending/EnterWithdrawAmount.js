@@ -96,13 +96,13 @@ const EnterWithdrawAmount = ({
 
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
-  const [depositAmount, setDepositAmount] = useState('');
+  const [depositAmount, setDepositAmount] = useState(null);
   const [inputValid, setInputValid] = useState(false);
 
   const depositedAsset = depositedAssets.find(({ symbol }) => symbol === selectedAssetSymbol);
 
   useEffect(() => {
-    if (!depositAmount || !depositedAsset || !inputValid) return;
+    if (!depositAmount || !inputValid || !depositedAsset || Number(depositAmount) === 0) return;
     calculateLendingWithdrawTransactionEstimate(depositAmount, depositedAsset);
   }, [depositAmount, depositedAsset, inputValid]);
 
@@ -174,7 +174,7 @@ const EnterWithdrawAmount = ({
     >
       <InputWrapper>
         <ValueInput
-          value={depositAmount}
+          value={depositAmount || ''}
           onValueChange={setDepositAmount}
           assetData={depositedAsset}
           onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
