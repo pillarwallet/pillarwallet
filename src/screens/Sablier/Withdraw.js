@@ -62,7 +62,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 
 
 type Props = {
-  calculateSablierWithdrawTransactionEstimate: (stream: Stream, amount: number, asset: Asset) => void,
+  calculateSablierWithdrawTransactionEstimate: (stream: Stream, amount: EthersBigNumber, asset: Asset) => void,
   assets: Assets,
   supportedAssets: Asset[],
   navigation: NavigationScreenProp<*>,
@@ -118,6 +118,10 @@ const Withdraw = (props: Props) => {
   }
 
   useEffect(() => {
+    if (withdrawAmountInWei === 0
+      || !EthersBigNumber.isBigNumber(withdrawAmountInWei)
+      || withdrawAmountInWei.eq(0)) return;
+
     calculateSablierWithdrawTransactionEstimate(stream, withdrawAmountInWei, assetData);
   }, [withdrawAmount, inputValid]);
 
@@ -232,7 +236,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateSablierWithdrawTransactionEstimate: debounce((
     stream: Stream,
-    amount: number,
+    amount: EthersBigNumber,
     asset: Asset,
   ) => dispatch(calculateSablierWithdrawTransactionEstimateAction(stream, amount, asset)), 500),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
