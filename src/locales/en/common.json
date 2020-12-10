@@ -1432,7 +1432,9 @@
     "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
     "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
-    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH."
+    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
+    "poolDataFetchFailed": "Can't fetch pool data. Please try again or contact support.",
+    "cannotAddLiquidity": "Cannot add liquidity. Please try again."
   },
 
   "exchangeContent": {
@@ -1695,6 +1697,8 @@
   
   "liquidityPoolsContent": {
     "title": {
+      "addLiquidity": "Add liquidity",
+      "addLiquidityReview": "Review"
     },
     "button": {
       "addLiquidity": "Add liquidity",
@@ -1708,7 +1712,10 @@
       "rewards": "Rewards",
       "claimedSoFar": "{{value}} {{token}} claimed so far",
       "addLiquidityToStartEarning": "Add liquidity to start earning from staking",
-      "stakeLiquidityToGetRewards": "Stake liquidity tokens to get rewards"
+      "stakeLiquidityToGetRewards": "Stake liquidity tokens to get rewards",
+      "shareOfPool": "Share of pool",
+      "youAreAddingLiquidity": "You are adding liquidity",
+      "tokenAllocation": "Token allocation"
     }
   }
 }

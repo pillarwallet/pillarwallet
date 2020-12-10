@@ -18,7 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber as EthersBigNumber } from 'ethers';
-import { SET_FETCHING_UNIPOOL_DATA, SET_UNIPOOL_DATA } from 'constants/liquidityPoolsConstants';
+import {
+  SET_FETCHING_UNIPOOL_DATA,
+  SET_UNIPOOL_DATA,
+  SET_FETCHING_UNISWAP_POOL_DATA,
+  SET_UNISWAP_POOL_DATA,
+  SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
+} from 'constants/liquidityPoolsConstants';
 
 
 export type LiquidityPoolsReducerState = {
@@ -26,7 +32,12 @@ export type LiquidityPoolsReducerState = {
   unipool: {
     stakedAmount: EthersBigNumber,
     earnedAmount: EthersBigNumber,
-  }
+  },
+  isFetchingUniswapPoolData: boolean,
+  poolsData: {
+    [string]: Object,
+  },
+  poolDataGraphQueryFailed: boolean,
 };
 
 export type LiquidityPoolsReducerAction = {
@@ -40,6 +51,9 @@ export const initialState = {
     stakedAmount: EthersBigNumber.from(0),
     earnedAmount: EthersBigNumber.from(0),
   },
+  isFetchingUniswapPoolData: false,
+  poolDataGraphQueryFailed: false,
+  poolsData: {},
 };
 
 export default function lendingReducer(
@@ -51,6 +65,16 @@ export default function lendingReducer(
       return { ...state, isFetchingUnipoolData: action.payload };
     case SET_UNIPOOL_DATA:
       return { ...state, unipool: action.payload };
+    case SET_FETCHING_UNISWAP_POOL_DATA:
+      return { ...state, isFetchingUniswapPoolData: action.payload };
+    case SET_UNISWAP_POOL_DATA:
+      return {
+        ...state,
+        poolsData: { ...state.poolsData, [action.payload.poolAddress]: action.payload.data },
+        poolDataGraphQueryFailed: false,
+      };
+    case SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR:
+      return { ...state, poolDataGraphQueryFailed: true };
     default:
       return state;
   }

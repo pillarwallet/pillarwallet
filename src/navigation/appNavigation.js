@@ -132,6 +132,8 @@ import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
 import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
 import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
 import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
+import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
+import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -292,6 +294,8 @@ import {
   WALLETCONNECT_CALL_REQUEST_FLOW,
   LIQUIDITY_POOLS_FLOW,
   LIQUIDITY_POOL_DASHBOARD,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -772,6 +776,8 @@ rariFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const liquidityPoolsFlow = createStackNavigator({
   [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
 }, StackNavigatorConfig);
 
 liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -29,19 +29,20 @@ import t from 'translations/translate';
 import { BigNumber as EthersBigNumber } from 'ethers';
 
 // actions
-import { fetchUnipoolUserDataAction } from 'actions/liquidityPoolsActions';
+import { fetchUnipoolUserDataAction, fetchUniswapPoolDataAction } from 'actions/liquidityPoolsActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-
 import { ScrollWrapper, Spacing } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import AssetPattern from 'components/AssetPattern';
 import Button from 'components/Button';
+import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
+import { LIQUIDITY_POOLS_ADD_LIQUIDITY } from 'constants/navigationConstants';
 
 // utils
 import { formatMoney, formatAmount, formatUnits } from 'utils/common';
@@ -63,6 +64,10 @@ type Props = {
   isFetchingUnipoolData: boolean,
   unipoolStakedAmount: EthersBigNumber,
   unipoolEarnedAmount: EthersBigNumber,
+  isFetchingUniswapPoolData: boolean,
+  poolDataGraphQueryFailed: boolean,
+  poolsData: { [string]: Object },
+  fetchUniswapPoolData: (poolAddress: string) => void,
 };
 
 const MainContainter = styled.View`
@@ -123,8 +128,12 @@ const LiquidityPoolDashboard = ({
   rates,
   fetchUnipoolUserData,
   isFetchingUnipoolData,
+  isFetchingUniswapPoolData,
   unipoolStakedAmount,
   unipoolEarnedAmount,
+  fetchUniswapPoolData,
+  poolDataGraphQueryFailed,
+  poolsData,
 }: Props) => {
   // a temporary hardcode, we'll get this from navigation
   /* eslint-disable i18next/no-literal-string */
@@ -141,16 +150,23 @@ const LiquidityPoolDashboard = ({
     iconUrl: 'asset/images/tokens/icons/plrColor.png',
     decimals: 18,
   };
+
+  const poolAddress = '0xae2d4004241254aed3f93873604d39883c8259f0';
   /* eslint-enable i18next/no-literal-string */
 
   useEffect(() => {
     fetchUnipoolUserData();
+    fetchUniswapPoolData(poolAddress);
   }, []);
 
   const balance = getBalance(balances, assetData.token);
   const formattedBalance = formatMoney(balance, 4);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = getFormattedRate(rates, balance, assetData.token, fiatCurrency);
+
+  const onAddLiquidity = () => {
+    navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY, { poolAddress });
+  };
 
   return (
     <ContainerWithHeader
@@ -161,7 +177,7 @@ const LiquidityPoolDashboard = ({
       <ScrollWrapper
         refreshControl={
           <RefreshControl
-            refreshing={isFetchingUnipoolData}
+            refreshing={isFetchingUnipoolData || isFetchingUniswapPoolData}
             onRefresh={() => fetchUnipoolUserData()}
           />
         }
@@ -183,14 +199,21 @@ const LiquidityPoolDashboard = ({
                 <CircleButton
                   label={t('liquidityPoolsContent.button.addLiquidity')}
                   fontIcon="plus"
+                  onPress={onAddLiquidity}
+                  disabled={!poolsData[poolAddress]}
                 />
                 <CircleButton
                   label={t('liquidityPoolsContent.button.withdraw')}
                   fontIcon="up-arrow"
+                  disabled={!poolsData[poolAddress]}
                 />
               </ButtonsRow>
             ) : (
-              <Button title={t('liquidityPoolsContent.button.addLiquidity')} />
+              <Button
+                title={t('liquidityPoolsContent.button.addLiquidity')}
+                onPress={onAddLiquidity}
+                disabled={!poolsData[poolAddress]}
+              />
             )}
             <Spacing h={32} />
             <MediumText big >{t('liquidityPoolsContent.label.staked')}</MediumText>
@@ -260,6 +283,12 @@ const LiquidityPoolDashboard = ({
           </HorizontalPadding>
         </MainContainter>
       </ScrollWrapper>
+      <RetryGraphQueryBox
+        message={t('error.theGraphQueryFailed.liquidityPools')}
+        hasFailed={poolDataGraphQueryFailed}
+        isFetching={isFetchingUniswapPoolData}
+        onRetry={() => fetchUniswapPoolData(poolAddress)}
+      />
     </ContainerWithHeader>
   );
 };
@@ -267,15 +296,21 @@ const LiquidityPoolDashboard = ({
 const mapStateToProps = ({
   liquidityPools: {
     isFetchingUnipoolData,
+    isFetchingUniswapPoolData,
     unipool: {
       stakedAmount,
       earnedAmount,
     },
+    poolDataGraphQueryFailed,
+    poolsData,
   },
 }: RootReducerState): $Shape<Props> => ({
   isFetchingUnipoolData,
+  isFetchingUniswapPoolData,
   unipoolStakedAmount: stakedAmount,
   unipoolEarnedAmount: earnedAmount,
+  poolDataGraphQueryFailed,
+  poolsData,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -289,6 +324,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchUnipoolUserData: () => dispatch(fetchUnipoolUserDataAction()),
+  fetchUniswapPoolData: (poolAddress: string) => dispatch(fetchUniswapPoolDataAction(poolAddress)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard);
