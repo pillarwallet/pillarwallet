@@ -408,10 +408,11 @@ export const getWbtcFeesAction = () => (dispatch: Dispatch) => {
 
 export const getWbtcGatewayAddressAction = (params: WBTCGatewayAddressParams) =>
   async (dispatch: Dispatch, getState: GetState, api: SDKWrapper): Promise<WBTCGatewayAddressResponse | null> => {
-    const { user: { data: user } } = getState();
+    const { user: { data: user }, accounts: { data: accounts } } = getState();
+    const address = getSmartWalletAddress(accounts);
     const walletId = user?.walletId;
-    if (!walletId) return null;
-    const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId });
+    if (!walletId || !address) return null;
+    const gatewayAddressResponse = await api.getWbtcCafeGatewayAddress({ ...params, walletId, address });
     return gatewayAddressResponse;
   };
 
