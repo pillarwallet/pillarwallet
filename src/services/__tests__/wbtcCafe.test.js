@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { mapPendingToTransactions, getValidPendingTransactions, getWbtcCafeTransactions } from 'services/wbtcCafe';
+import { mapPendingToTransactions, getValidPendingTransactions } from 'services/wbtcCafe';
 import { WBTC } from 'constants/assetsConstants';
 import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 import { getEnv } from 'configs/envConfig';
@@ -48,13 +48,5 @@ describe('WBTC.Cafe service tests', () => {
   it('gets valid pending txs', () => {
     const valid = getValidPendingTransactions([pendingTxOne, pendingTxThree]);
     expect(valid).toEqual([pendingTxOne]);
-  });
-  it('filters WBTC.Cafe transactions', () => {
-    const someTxObject = {
-      ...mapPendingToTransactions([pendingTxOne])[0],
-      from: '1234', // non-WBTC.Cafe address
-    };
-    const mappedPending = mapPendingToTransactions([pendingTxOne, pendingTxTwo, pendingTxThree]);
-    expect(getWbtcCafeTransactions([...mappedPending, someTxObject])).toEqual(mappedPending);
   });
 });

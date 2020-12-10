@@ -27,7 +27,6 @@ import SplashScreen from 'react-native-splash-screen';
 import Storage from 'services/storage';
 import { navigate } from 'services/navigation';
 import { migrate } from 'services/dataMigration';
-import { getValidPendingTransactions } from 'services/wbtcCafe';
 
 // constants
 import { AUTH_FLOW, ONBOARDING_FLOW, PIN_CODE_UNLOCK } from 'constants/navigationConstants';
@@ -44,6 +43,7 @@ import {
   SET_EXCHANGE_ALLOWANCES,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  SET_WBTC_SETTLED_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -160,8 +160,10 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
       const { pendingWbtcTransactions = [] } = get(storageData, 'pendingWbtcTransactions', []);
-      // only use valid ones (younger than 12hrs), then remove invalid ones from db
-      dispatch(setWbtcPendingTxsAction(getValidPendingTransactions(pendingWbtcTransactions)));
+      dispatch(setWbtcPendingTxsAction(pendingWbtcTransactions));
+
+      const { settledWbtcTransactions = [] } = get(storageData, 'settledWbtcTransactions', []);
+      dispatch({ type: SET_WBTC_SETTLED_TRANSACTIONS, payload: settledWbtcTransactions });
 
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });

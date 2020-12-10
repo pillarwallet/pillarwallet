@@ -19,18 +19,20 @@
 */
 
 import { Contract } from 'ethers';
+import axios from 'axios';
 import { WBTC, BTC } from 'constants/assetsConstants';
 import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
-import { TX_PENDING_STATUS } from 'constants/historyConstants';
+import { TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
-import type { WBTCFeesWithRate, WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
+import type { WBTCFeesWithRate, WBTCFeesRaw, PendingWBTCTransaction, FetchedWBTCTx } from 'models/WBTC';
 import type { Transaction } from 'models/Transaction';
 import { getEnv } from 'configs/envConfig';
 import Toast from 'components/Toast';
 import t from 'translations/translate';
 import { firebaseRemoteConfig } from 'services/firebase';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { API_REQUEST_TIMEOUT } from './api';
 /* eslint-disable i18next/no-literal-string */
 
 export const showWbtcErrorToast = () => {
@@ -97,11 +99,6 @@ export const gatherWBTCFeeData = async (
   }
 };
 
-export const getWbtcCafeTransactions = (history: Transaction[]): Transaction[] => {
-  const address = getEnv().WBTC_FROM_ADDRESS;
-  return history.filter(({ from }) => from === address);
-};
-
 export const getValidPendingTransactions = (txs: PendingWBTCTransaction[]): PendingWBTCTransaction[] =>
   txs.filter(({ dateCreated }) => dateCreated && Date.now() - dateCreated < 12 * 3600000); // 12 hours old or younger
 
@@ -122,3 +119,33 @@ export const mapPendingToTransactions = (pendingTxs: PendingWBTCTransaction[], t
 };
 
 export const isWbtcCafeActive = (): boolean => firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
+
+export const fetchWBTCCafeTransactions = async (address: string) => {
+  const { ETHPLORER_API_KEY, ETHPLORER_API_URL, WBTC_FROM_ADDRESS } = getEnv();
+  try {
+    const response = await axios.get(
+      `${ETHPLORER_API_URL}/getAddressHistory/${address}?apiKey=${ETHPLORER_API_KEY}&type=transfer`,
+      { timeout: API_REQUEST_TIMEOUT },
+    );
+    if (!response?.data?.operations) {
+      reportLog('Failed to fetch WBTC transactions from Ethplorer');
+      return null;
+    }
+    return response.data.operations.filter(tx => tx.from === WBTC_FROM_ADDRESS.toLowerCase());
+  } catch (e) {
+    reportLog('Failed to fetch WBTC transactions from Ethplorer', e);
+    return null;
+  }
+};
+
+export const mapFetchedWbtcTransactionToTransaction = (tx: FetchedWBTCTx): Transaction => ({
+  _id: String(tx.timestamp),
+  from: tx.from,
+  status: TX_CONFIRMED_STATUS,
+  hash: tx.transactionHash,
+  asset: tx.tokenInfo.symbol,
+  value: String(tx.value),
+  type: 'transactionEvent',
+  to: tx.to,
+  createdAt: tx.timestamp,
+});

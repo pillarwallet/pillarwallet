@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import type { TokenOperation } from 'models/EthplorerSdkTypes';
+
 export type WBTCFeesWithRate = {
   exchangeRate: number,
   renVMFee: number,
@@ -57,3 +59,5 @@ export type PendingWBTCTransaction = {
   amount: number,
   dateCreated: number,
 };
+
+export type FetchedWBTCTx = TokenOperation;

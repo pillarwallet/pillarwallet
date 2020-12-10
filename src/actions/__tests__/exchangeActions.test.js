@@ -28,9 +28,9 @@ import {
   searchOffersAction,
   takeOfferAction,
   getExchangeSupportedAssetsAction,
-  removeWbtcPendingTxsAction,
   addWbtcPendingTxAction,
   setWbtcPendingTxsAction,
+  // addWbtcSettledTransactionAction,
 } from 'actions/exchangeActions';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
@@ -43,6 +43,7 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   ADD_WBTC_PENDING_TRANSACTION,
   SET_WBTC_PENDING_TRANSACTIONS,
+  // ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
 import { fetchUniswapSupportedTokens } from 'services/uniswap';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
@@ -186,16 +187,19 @@ describe('Exchange actions test', () => {
     beforeEach(() => {
       store = mockStore(storeState);
     });
-    it('removes correct number of pending transactions', () => {
-      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[1]] }];
-      store.dispatch(removeWbtcPendingTxsAction(1));
-      expect(store.getActions()).toEqual(expectedActions);
-    });
     it('adds pending WBTC txs', () => {
       const expectedActions = [{ type: ADD_WBTC_PENDING_TRANSACTION, payload: pending[2] }];
       store.dispatch(addWbtcPendingTxAction(pending[2]));
       expect(store.getActions()).toEqual(expectedActions);
     });
+    // it('adds settled WBTC tx', () => {
+    //   const expectedActions = [
+    //     { type: ADD_WBTC_SETTLED_TRANSACTION, payload: wbtcMappedTx },
+    //     { type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[1]] },
+    //   ];
+    //   store.dispatch(addWbtcSettledTransactionAction(wbtcMappedTx));
+    //   expect(store.getActions()).toEqual(expectedActions);
+    // });
     it('sets pending txs', () => {
       const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[2]] }];
       store.dispatch(setWbtcPendingTxsAction([pending[2]]));

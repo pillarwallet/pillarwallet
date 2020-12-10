@@ -45,6 +45,7 @@ import {
   UNISWAP_TOKENS_QUERY_STATUS,
   ADD_WBTC_PENDING_TRANSACTION,
   SET_WBTC_PENDING_TRANSACTIONS,
+  ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
 import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
@@ -63,13 +64,18 @@ import {
 import { get1inchOffer, create1inchOrder, create1inchAllowanceTx, fetch1inchSupportedTokens } from 'services/1inch';
 import { getSynthetixOffer, createSynthetixAllowanceTx, createSynthetixOrder } from 'services/synthetix';
 import { API_REQUEST_TIMEOUT } from 'services/api';
+import {
+  mapFetchedWbtcTransactionToTransaction, fetchWBTCCafeTransactions, getValidPendingTransactions,
+} from 'services/wbtcCafe';
 import { getEnv } from 'configs/envConfig';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 import type { AllowanceTransaction } from 'models/Transaction';
-import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse, PendingWBTCTransaction } from 'models/WBTC';
+import type {
+  WBTCGatewayAddressParams, WBTCGatewayAddressResponse, PendingWBTCTransaction, FetchedWBTCTx,
+} from 'models/WBTC';
 import type SDKWrapper from 'services/api';
 
 // actions
@@ -433,11 +439,49 @@ export const setWbtcPendingTxsAction = (pendingWbtcTransactions: PendingWBTCTran
   dispatch(saveDbAction('pendingWbtcTransactions', { pendingWbtcTransactions }, true));
 };
 
-// for each new WBTC.Cafe tx detected, remove 1 pending - oldest to newest
-export const removeWbtcPendingTxsAction = (quantity: number) => (dispatch: Dispatch, getState: GetState) => {
-  if (quantity < 1) return;
-  const { exchange: { data: { pendingWbtcTransactions: pending } } } = getState();
-  if (pending.length >= quantity) {
-    dispatch(setWbtcPendingTxsAction(pending.slice(quantity)));
+export const addWbtcSettledTransactionAction = (transaction: FetchedWBTCTx) => (
+  dispatch: Dispatch, getState: GetState,
+) => {
+  const mappedTx = mapFetchedWbtcTransactionToTransaction(transaction);
+
+  dispatch({
+    type: ADD_WBTC_SETTLED_TRANSACTION,
+    payload: mappedTx,
+  });
+  const { exchange: { data: { settledWbtcTransactions, pendingWbtcTransactions } } } = getState();
+  dispatch(saveDbAction('settledWbtcTransactions', { settledWbtcTransactions }, true));
+
+  // find relevant pending tx by amount (get closest) and remove it
+  const amount = transaction.value / 100000000; // 8 decimals
+  const searchedPendingAmount = pendingWbtcTransactions
+    .map(p => p.amount)
+    .reduce((a, b) => Math.abs(b - amount) < Math.abs(a - amount) ? b : a);
+  const searchedPendingTx = pendingWbtcTransactions.find(pend => pend.amount === searchedPendingAmount);
+  if (!searchedPendingTx) return;
+  const filteredPending = pendingWbtcTransactions.filter(trx => trx.dateCreated !== searchedPendingTx.dateCreated);
+  dispatch(setWbtcPendingTxsAction(filteredPending));
+};
+
+const updatePendingWbtcTransactionsAction = () => (dispatch: Dispatch, getState: GetState) => {
+  const { exchange: { data: { pendingWbtcTransactions } } } = getState();
+  const validPending = getValidPendingTransactions(pendingWbtcTransactions);
+  dispatch(setWbtcPendingTxsAction(validPending));
+};
+
+export const updateWBTCCafeTransactionsAction = () => async (dispatch: Dispatch, getState: GetState) => {
+  const {
+    accounts: { data: accounts },
+    exchange: { data: { settledWbtcTransactions } },
+  } = getState();
+  const address = getSmartWalletAddress(accounts);
+  if (!address) return;
+  const fetchedWbtcTxs = await fetchWBTCCafeTransactions(address);
+
+  if (fetchedWbtcTxs && fetchedWbtcTxs?.length) { // no need to do anything if no WBTC.Cafe txs were fetched
+    const filteredWbtcTxs = // filter out those already in storage - only get new ones
+      fetchedWbtcTxs.filter(fetched => !(settledWbtcTransactions.map(s => s.hash).includes(fetched.transactionHash)));
+    filteredWbtcTxs.forEach(transaction => { dispatch(addWbtcSettledTransactionAction(transaction)); });
   }
+  // at the end, kill old pending txs
+  dispatch(updatePendingWbtcTransactionsAction());
 };

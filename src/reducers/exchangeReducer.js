@@ -34,9 +34,12 @@ import {
   UNISWAP_TOKENS_QUERY_STATUS,
   SET_WBTC_PENDING_TRANSACTIONS,
   ADD_WBTC_PENDING_TRANSACTION,
+  SET_WBTC_SETTLED_TRANSACTIONS,
+  ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset } from 'models/Asset';
+import type { Transaction } from 'models/Transaction';
 import type { WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
 
 export type ExchangeReducerState = {
@@ -47,6 +50,7 @@ export type ExchangeReducerState = {
     allowances: Allowance[],
     hasNotification: boolean,
     pendingWbtcTransactions: PendingWBTCTransaction[],
+    settledWbtcTransactions: Transaction[],
   },
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
@@ -72,6 +76,7 @@ export const initialState = {
     allowances: [],
     hasNotification: false,
     pendingWbtcTransactions: [],
+    settledWbtcTransactions: [],
   },
   exchangeSupportedAssets: [],
   fiatExchangeSupportedAssets: [],
@@ -205,6 +210,25 @@ export default function exchangeReducer(
         data: {
           ...state.data,
           pendingWbtcTransactions: action.payload,
+        },
+      };
+    case ADD_WBTC_SETTLED_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          settledWbtcTransactions: [
+            ...state.data.settledWbtcTransactions,
+            action.payload,
+          ],
+        },
+      };
+    case SET_WBTC_SETTLED_TRANSACTIONS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          settledWbtcTransactions: action.payload,
         },
       };
     case SET_UNISWAP_TOKENS_QUERY_STATUS:

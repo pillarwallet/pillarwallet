@@ -57,7 +57,6 @@ import { mapTransactionsHistoryWithSablier } from 'utils/sablier';
 
 // services
 import smartWalletService from 'services/smartWallet';
-import { getWbtcCafeTransactions } from 'services/wbtcCafe';
 
 // selectors
 import { smartAccountAssetsSelector } from 'selectors/assets';
@@ -73,7 +72,7 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
-import { checkEnableExchangeAllowanceTransactionsAction, removeWbtcPendingTxsAction } from './exchangeActions';
+import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
@@ -99,14 +98,6 @@ export const syncAccountHistory = (
 
   const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
   const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
-
-  // if new transaction(s) detected, handle WBTC mocked txs
-  const newTransactionsNumber = (pendingTransactions.length + minedTransactions.length) - accountHistory.length;
-  if (newTransactionsNumber > 0) {
-    const newTransactions = updatedHistory[accountId].slice(0, newTransactionsNumber);
-    const newWBTCCafeTransactions = getWbtcCafeTransactions(newTransactions);
-    dispatch(removeWbtcPendingTxsAction(newWBTCCafeTransactions.length));
-  }
 
   dispatch(saveDbAction('history', { history: updatedHistory }, true));
 

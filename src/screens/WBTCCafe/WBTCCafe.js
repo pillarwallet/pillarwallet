@@ -18,9 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { createStructuredSelector } from 'reselect';
 import { LayoutAnimation, RefreshControl } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -34,12 +33,10 @@ import { ScrollWrapper } from 'components/Layout';
 
 // actions
 import { hasSeenWbtcCafeIntroAction } from 'actions/appSettingsActions';
-import { fetchSmartWalletTransactionsAction } from 'actions/historyActions';
-import { setWbtcPendingTxsAction } from 'actions/exchangeActions';
+import { updateWBTCCafeTransactionsAction } from 'actions/exchangeActions';
 
 // utils, services
-import { getValidPendingTransactions, getWbtcCafeTransactions, mapPendingToTransactions } from 'services/wbtcCafe';
-import { getTransactionsFromHistory } from 'utils/history';
+import { getValidPendingTransactions, mapPendingToTransactions } from 'services/wbtcCafe';
 import { getSmartWalletAddress } from 'utils/accounts';
 import { getDeviceHeight } from 'utils/common';
 
@@ -49,9 +46,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Transaction } from 'models/Transaction';
 import type { PendingWBTCTransaction } from 'models/WBTC';
 import type { Accounts } from 'models/Account';
-
-// selectors
-import { combinedHistorySelector } from 'selectors/history';
 
 // constants
 import { WBTC, BTC } from 'constants/assetsConstants';
@@ -67,8 +61,8 @@ type Props = {
   history: Transaction[],
   pendingWbtcTransactions: PendingWBTCTransaction[],
   accounts: Accounts,
-  fetchSmartWalletTransactions: () => void,
-  setWbtcPendingTxs: (txs: PendingWBTCTransaction[]) => void,
+  updateWBTCCafeTransactions: () => void,
+  settledWbtcTransactions: Transaction[]
 };
 
 const Logo = styled.Image`
@@ -94,14 +88,15 @@ const WBTCCafe = ({
   theme,
   hasSeenWbtcCafeIntro,
   updateHasSeenIntro,
-  history,
   accounts,
   pendingWbtcTransactions,
-  setWbtcPendingTxs,
-  fetchSmartWalletTransactions,
   navigation,
+  updateWBTCCafeTransactions,
+  settledWbtcTransactions,
 }: Props) => {
   const [showIntro, setShowIntro] = React.useState<boolean>(!hasSeenWbtcCafeIntro);
+
+  useEffect(() => { updateWBTCCafeTransactions(); });
 
   const toggleIntro = () => {
     LayoutAnimation.easeInEaseOut();
@@ -114,23 +109,16 @@ const WBTCCafe = ({
   };
 
   const getFeedData = () => {
-    const mappedTxs = getTransactionsFromHistory(history, accounts);
-    const wbtcCafeTxs = getWbtcCafeTransactions(mappedTxs);
     const pendingTxs =
       mapPendingToTransactions(getValidPendingTransactions(pendingWbtcTransactions), getSmartWalletAddress(accounts));
-    return [...pendingTxs, ...wbtcCafeTxs];
-  };
-
-  const handleRefresh = () => {
-    fetchSmartWalletTransactions();
-    setWbtcPendingTxs(getValidPendingTransactions(pendingWbtcTransactions));
+    return [...pendingTxs, ...settledWbtcTransactions];
   };
 
   const renderContent = () => {
     const feedData = getFeedData();
     return (
       <ScrollWrapper
-        refreshControl={<RefreshControl refreshing={false} onRefresh={handleRefresh} />}
+        refreshControl={<RefreshControl refreshing={false} onRefresh={updateWBTCCafeTransactions} />}
         contentContainerStyle={{ flex: 1 }}
       >
         <Logo source={logo} />
@@ -173,30 +161,21 @@ const WBTCCafe = ({
   );
 };
 
-const structuredSelector = createStructuredSelector({
-  history: combinedHistorySelector,
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   updateHasSeenIntro: () => dispatch(hasSeenWbtcCafeIntroAction()),
-  fetchSmartWalletTransactions: () => dispatch(fetchSmartWalletTransactionsAction()),
-  setWbtcPendingTxs: (txs: PendingWBTCTransaction[]) => dispatch(setWbtcPendingTxsAction(txs)),
+  updateWBTCCafeTransactions: () => dispatch(updateWBTCCafeTransactionsAction()),
 });
 
 const mapStateToProps = ({
   appSettings: { data: { hasSeenWbtcCafeIntro } },
-  exchange: { data: { pendingWbtcTransactions } },
+  exchange: { data: { pendingWbtcTransactions, settledWbtcTransactions } },
   accounts: { data: accounts },
 }: RootReducerState): $Shape<Props> => ({
   hasSeenWbtcCafeIntro,
   pendingWbtcTransactions,
   accounts,
+  settledWbtcTransactions,
 });
 
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(WBTCCafe));
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(WBTCCafe));
 
