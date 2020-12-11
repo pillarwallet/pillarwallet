@@ -44,6 +44,7 @@ import {
   SABLIER_STREAMS,
   SENDWYRE_INPUT,
   WBTC_CAFE,
+  RARI_DEPOSIT,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -81,12 +82,13 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 let isOffersEngineEnabled = true;
 let isAaveEnabled = true;
 let isPoolTogetherEnabled = true;
-let isPeerToPeerEnabled = true;
+let isPeerToPeerEnabled = false;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
 let isAltalixEnabled = true;
 let isWBTCCafeEnabled = true;
+let isRariEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -118,6 +120,7 @@ class ServicesScreen extends React.Component<Props> {
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
     isWBTCCafeEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
+    isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
@@ -193,6 +196,16 @@ class ServicesScreen extends React.Component<Props> {
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
         action: () => navigation.navigate(WBTC_CAFE),
+      });
+    }
+    if (isRariEnabled) {
+      services.push({
+        key: 'rari',
+        title: t('servicesContent.rari.title'),
+        body: t('servicesContent.rari.description'),
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(RARI_DEPOSIT),
       });
     }
     if (isPeerToPeerEnabled) {

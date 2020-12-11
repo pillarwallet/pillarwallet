@@ -7336,6 +7336,1448 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
 </View>
 `;
 
+exports[`Storyshots ActivityFeedItem Rari claim 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  label.claim
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                label.fromRariToWallet
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Rari deposit 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  label.deposit
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                label.fromWalletToRari
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Rari pending transaction 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  label.deposit
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                label.fromWalletToRari
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+                <View
+                  horizontal={true}
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "row",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                      },
+                      Object {
+                        "alignItems": "center",
+                        "flexWrap": "wrap",
+                        "justifyContent": "flex-end",
+                      },
+                    ]
+                  }
+                >
+                  <View
+                    name="pending"
+                    style={
+                      Array [
+                        Object {
+                          "color": "#818EB3",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "marginLeft": 12,
+                        },
+                        undefined,
+                      ]
+                    }
+                  />
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Rari transfer 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={false}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#e0eeff",
+                "borderColor": "#e0eeff",
+                "borderRadius": 24,
+                "borderStyle": "solid",
+                "borderWidth": 0,
+                "display": "flex",
+                "height": 48,
+                "justifyContent": "center",
+                "opacity": 1,
+                "position": "relative",
+                "width": 48,
+              }
+            }
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "height": "100%",
+                    "justifyContent": "center",
+                    "position": "absolute",
+                    "width": "100%",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <Text
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Medium",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#6690eb",
+                          "fontSize": 16,
+                        },
+                        undefined,
+                      ],
+                    ],
+                  ]
+                }
+              >
+                0
+              </Text>
+            </View>
+          </View>
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="DEFAULT"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="DEFAULT"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="DEFAULT"
+                >
+                  0x000000
+                </Text>
+              </View>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="DEFAULT"
+            >
+              <View
+                style={
+                  Array [
+                    undefined,
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  horizontal={true}
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "row",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                      },
+                      Object {
+                        "alignItems": "center",
+                        "flexWrap": "wrap",
+                        "justifyContent": "flex-end",
+                      },
+                    ]
+                  }
+                >
+                  <Text
+                    color={null}
+                    ellipsizeMode="tail"
+                    numberOfLines={2}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Rari withdrawal 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  label.withdraw
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                label.fromRariToWallet
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                    },
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots ActivityFeedItem SW activated 1`] = `
 <View
   style={
@@ -47832,27 +49274,36 @@ exports[`Storyshots Table default 1`] = `
             ]
           }
         >
-          <Text
+          <View
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
+                  "alignItems": "center",
+                  "flexDirection": "row",
                 },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                  },
-                  undefined,
-                ],
+                undefined,
               ]
             }
           >
-            One
-          </Text>
+            <Text
+              regular={true}
+              secondary={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              One
+            </Text>
+          </View>
           <View
             onLayout={[Function]}
           >
@@ -47941,27 +49392,36 @@ exports[`Storyshots Table default 1`] = `
             ]
           }
         >
-          <Text
+          <View
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
+                  "alignItems": "center",
+                  "flexDirection": "row",
                 },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                  },
-                  undefined,
-                ],
+                undefined,
               ]
             }
           >
-            Two
-          </Text>
+            <Text
+              regular={true}
+              secondary={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              Two
+            </Text>
+          </View>
           <Text
             big={true}
             positive={true}
@@ -48039,27 +49499,36 @@ exports[`Storyshots Table default 1`] = `
             ]
           }
         >
-          <Text
+          <View
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
+                  "alignItems": "center",
+                  "flexDirection": "row",
                 },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                  },
-                  undefined,
-                ],
+                undefined,
               ]
             }
           >
-            Free
-          </Text>
+            <Text
+              regular={true}
+              secondary={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              Free
+            </Text>
+          </View>
           <Text
             positive={true}
             regular={true}
@@ -48107,27 +49576,36 @@ exports[`Storyshots Table default 1`] = `
             ]
           }
         >
-          <Text
+          <View
             style={
               Array [
                 Object {
-                  "color": "#0A1427",
-                  "fontFamily": "EuclidCircularB-Regular",
-                  "textAlignVertical": "center",
+                  "alignItems": "center",
+                  "flexDirection": "row",
                 },
-                Array [
-                  Object {
-                    "color": "#8B939E",
-                    "fontSize": 14,
-                    "lineHeight": 22,
-                  },
-                  undefined,
-                ],
+                undefined,
               ]
             }
           >
-            High fees
-          </Text>
+            <Text
+              regular={true}
+              secondary={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 14,
+                    "lineHeight": 22,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              High fees
+            </Text>
+          </View>
           <View
             onLayout={[Function]}
           >

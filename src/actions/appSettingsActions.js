@@ -272,6 +272,18 @@ export const toggleSablierAction = () => {
   };
 };
 
+export const toggleRariAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideRari } },
+    } = getState();
+    const newRariState = !hideRari;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideRari: newRariState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideRari: newRariState } });
+  };
+};
+
 export const setAppLanguageAction = (language: string) => {
   return (dispatch: Dispatch) => {
     const localisationSettings = { localisation: { activeLngCode: language } };

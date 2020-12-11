@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS, SNX, defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -364,4 +364,12 @@ export const generateAssetSelectorOption = (
       rightColumnInnerStyle: { alignItems: 'flex-end' },
     },
   });
+};
+
+export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {
+  const ethRates = rates[ETH];
+  if (!ethRates) {
+    return 0;
+  }
+  return value * (ethRates[fiatCurrency] / ethRates[USD]);
 };

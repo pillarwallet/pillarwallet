@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -112,6 +112,8 @@ import {
   SABLIER_INCOMING_STREAM,
   SABLIER_OUTGOING_STREAM,
   EXCHANGE,
+  RARI_DEPOSIT,
+  RARI_CLAIM_RGT,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -121,6 +123,14 @@ import {
   SABLIER_CANCEL_STREAM,
 } from 'constants/sablierConstants';
 import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
+import {
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_TOKENS_DATA,
+  RARI_GOVERNANCE_TOKEN_DATA,
+} from 'constants/rariConstants';
 
 // selectors
 import {
@@ -331,6 +341,10 @@ const CornerIcon = styled(CachedImage)`
   position: absolute;
   top: 0;
   right: 0;
+`;
+
+const ListWrapper = styled.View`
+  align-items: center;
 `;
 
 export class EventDetail extends React.Component<Props> {
@@ -616,6 +630,9 @@ export class EventDetail extends React.Component<Props> {
     const stream = incomingStreams.find(({ id }) => id === streamId);
     navigation.navigate(SABLIER_WITHDRAW, { stream });
   }
+
+  goToRariDeposit = () => this.props.navigation.navigate(RARI_DEPOSIT);
+  goToRariClaim = () => this.props.navigation.navigate(RARI_CLAIM_RGT);
 
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
@@ -1006,6 +1023,91 @@ export class EventDetail extends React.Component<Props> {
           }],
         };
         break;
+      case RARI_DEPOSIT_TRANSACTION:
+      case RARI_CLAIM_TRANSACTION:
+      case RARI_WITHDRAW_TRANSACTION: {
+        const {
+          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool, rgtBurned,
+        } = event.extra;
+        let label = null;
+        let subtext = null;
+        let negativeValueAmount = null;
+        let negativeValueToken = null;
+        let positiveValueAmount = null;
+        let positiveValueToken = null;
+        const buttons = [];
+
+        const rariToken = rariPool && RARI_TOKENS_DATA[rariPool].symbol;
+        const formattedAmount = formatAmount(
+          formatUnits(amount || claimed, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+
+        if (event.tag === RARI_DEPOSIT_TRANSACTION) {
+          label = t('label.deposit');
+          subtext = t('label.fromWalletToRari');
+          negativeValueAmount = formattedAmount;
+          negativeValueToken = symbol;
+          positiveValueAmount = formatAmount(formatUnits(rftMinted, 18));
+          positiveValueToken = rariToken;
+          buttons.push({
+            secondary: true,
+            title: t('button.depositMore'),
+            onPress: () => this.goToRariDeposit(),
+          });
+        } else if (event.tag === RARI_WITHDRAW_TRANSACTION) {
+          label = t('label.withdrawal');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formatAmount(formatUnits(rftBurned, 18));
+          negativeValueToken = rariToken;
+          positiveValueAmount = formattedAmount;
+          positiveValueToken = symbol;
+          buttons.push({
+            secondary: true,
+            title: t('button.withdrawMore'),
+            onPress: () => this.goToRariDeposit(),
+          });
+        } else {
+          label = t('label.rewardsClaimed');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formattedAmount;
+          positiveValueAmount = formatAmount(formatUnits(EthersBigNumber.from(amount).sub(rgtBurned), 18));
+          negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+          positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+          buttons.push({
+            secondary: true,
+            title: t('button.claimMore'),
+            onPress: () => this.goToRariClaim(),
+          });
+        }
+
+        eventData = {
+          name: label,
+          sublabel: subtext,
+          buttons,
+          fee: this.getFeeLabel(event),
+          customActionTitle: (
+            <ListWrapper>
+              <MediumText large lineHeight={24}>
+                {t('negativeTokenValue', { value: negativeValueAmount, token: negativeValueToken })}
+              </MediumText>
+              <MediumText large positive lineHeight={38}>
+                {t('positiveTokenValue', { value: positiveValueAmount, token: positiveValueToken })}
+              </MediumText>
+            </ListWrapper>
+          ),
+        };
+        break;
+      }
+      case RARI_TRANSFER_TRANSACTION: {
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.transferMore'),
+            onPress: () => this.goToRariDeposit(),
+          }],
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
