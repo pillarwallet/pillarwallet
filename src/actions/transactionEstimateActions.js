@@ -59,6 +59,16 @@ export const resetEstimateTransactionAction = () => {
   };
 };
 
+export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
+  type: SET_ESTIMATING_TRANSACTION,
+  payload: isEstimating,
+});
+
+export const setEstimatingErrorAction = (errorMessage: string) => ({
+  type: SET_TRANSACTION_ESTIMATE_ERROR,
+  payload: errorMessage,
+});
+
 export const estimateTransactionAction = (
   recipientAddress: string,
   value: number,

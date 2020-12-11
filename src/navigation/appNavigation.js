@@ -120,6 +120,16 @@ import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
+import RariDepositScreen from 'screens/Rari/RariDeposit';
+import RariInfoScreen from 'screens/Rari/RariInfo';
+import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
+import RariAddDepositReviewScreen from 'screens/Rari/RariAddDepositReview';
+import RariWithdrawScreen from 'screens/Rari/RariWithdraw';
+import RariWithdrawReviewScreen from 'screens/Rari/RariWithdrawReview';
+import RariTransferScreen from 'screens/Rari/RariTransfer';
+import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
+import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
+import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -265,6 +275,17 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
+  RARI_FLOW,
+  RARI_DEPOSIT,
+  RARI_INFO,
+  RARI_ADD_DEPOSIT,
+  RARI_ADD_DEPOSIT_REVIEW,
+  RARI_WITHDRAW,
+  RARI_WITHDRAW_REVIEW,
+  RARI_TRANSFER,
+  RARI_TRANSFER_REVIEW,
+  RARI_CLAIM_RGT,
+  RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
@@ -725,6 +746,23 @@ const sablierFlow = createStackNavigator({
 
 sablierFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const rariFlow = createStackNavigator({
+  [RARI_DEPOSIT]: RariDepositScreen,
+  [RARI_INFO]: RariInfoScreen,
+  [RARI_ADD_DEPOSIT]: RariAddDepositScreen,
+  [RARI_ADD_DEPOSIT_REVIEW]: RariAddDepositReviewScreen,
+  [RARI_WITHDRAW]: RariWithdrawScreen,
+  [RARI_WITHDRAW_REVIEW]: RariWithdrawReviewScreen,
+  [RARI_TRANSFER]: RariTransferScreen,
+  [RARI_TRANSFER_REVIEW]: RariTransferReviewScreen,
+  [RARI_CLAIM_RGT]: RariClaimRgtScreen,
+  [RARI_CLAIM_RGT_REVIEW]: RariClaimRgtReviewScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+rariFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -769,6 +807,7 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACTS_FLOW]: contactsFlow,
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
+    [RARI_FLOW]: rariFlow,
   },
   modalTransition,
 );
