@@ -36,13 +36,14 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber } from 'utils/common';
+import { formatAmount, isValidNumber, noop } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
-import { calculateMaxAmount } from 'utils/assets';
+import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
-import { COLLECTIBLES, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
-import { getBalanceInFiat, getFormattedBalanceInFiat, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
+import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
+import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
@@ -72,6 +73,7 @@ export type ExternalProps = {
   leftSideSymbol?: string,
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
+  disableAssetChange?: boolean,
   customRates?: Rates,
 };
 
@@ -103,8 +105,10 @@ export const getErrorMessage = (
   const isValid = isValidNumber(amount);
   if (!isValid) {
     return t('error.amount.invalidNumber');
-  } else if (Number(assetBalance) < Number(amount)) {
+  } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
+  } else if (assetSymbol === BTC && +amount && Number(amount) < MIN_WBTC_CAFE_AMOUNT) {
+    return t('wbtcCafe.higherAmount');
   }
   return '';
 };
@@ -133,6 +137,7 @@ export const ValueInputComponent = (props: Props) => {
     leftSideSymbol,
     getInputRef,
     onFormValid,
+    disableAssetChange,
     customRates,
   } = props;
 
@@ -232,7 +237,7 @@ export const ValueInputComponent = (props: Props) => {
         onAssetPress={openAssetSelector}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
-        disableAssetSelection={assetsOptions.length <= 1}
+        disableAssetSelection={disableAssetChange || assetsOptions.length <= 1}
       />
     );
   };
@@ -273,7 +278,7 @@ export const ValueInputComponent = (props: Props) => {
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
-          onRightAddonPress={openAssetSelector}
+          onRightAddonPress={disableAssetChange ? noop : openAssetSelector}
           leftSideText={displayFiatAmount
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat
@@ -288,7 +293,7 @@ export const ValueInputComponent = (props: Props) => {
       )}
       {tokenType === COLLECTIBLES && (
         <CollectibleWrapper>
-          <MediumText medium onPress={openAssetSelector}>{assetData.name}
+          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>{assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
           <Spacing h={16} />

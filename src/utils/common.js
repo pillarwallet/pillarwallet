@@ -686,4 +686,11 @@ export const getEnsPrefix = () => isProdEnv
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
 
+export const hitSlop10 = {
+  top: 10,
+  bottom: 10,
+  left: 10,
+  right: 10,
+};
+
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);

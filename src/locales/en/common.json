@@ -216,6 +216,7 @@
     "addContacts": "Add contacts",
     "addDetails": "Add details",
     "addFunds": "Add funds",
+    "apply": "Apply",
     "approve": "Approve",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
@@ -883,6 +884,41 @@
         }
       }
     }
+  },
+
+  "wbtcCafe": {
+    "rate": "Exchange rate",
+    "renFee": "RenVM fee",
+    "btcFee": "Bitcoin fee",
+    "slippage": "Max. price slippage",
+    "sendBtc": "To receive WBTC in Pillar, send {{amount}} BTC to this address.",
+    "copy": "Copy address",
+    "useOnce": "Address will be valid for the next 15 minutes and can be used only once.",
+    "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications.",
+    "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
+    "custom": "Custom",
+    "enterCustom": "Enter custom percent",
+    "warning": "This is experimental, we take no responsibility for losses. In some cases total amount can be converted to renBTC.",
+    "intro": "WBTC.Cafe provides one of the easiest ways for users to acquire Wrapped Bitcoin (WBTC) with real Bitcoin (BTC). The Cafe facilitates a native Bitcoin user experience, allowing users to put their BTC to use in the Ethereum DeFi ecosystem.",
+    "how": "How it works",
+    "info": "The Cafe is a shining example of DeFi composability and RenVM’s ability to bolster greater utility for all of DeFi. It is a collaborative effort of three DeFi Projects; RenVM, Curve Finance, and WBTC - all offered in an intuitive mobile experience with Pillar Wallet.",
+    "ren": "RenVM",
+    "renInfo": "A user sends BTC and RenVM converts the BTC to renBTC.",
+    "curve": "Curve Liquidity Pool",
+    "curveInfo": "The platform receives renBTC and automatically swaps it for WBTC within a low-slippage liquidity pool.",
+    "wbtc": "WBTC",
+    "wbtcInfo": "The user receives WBTC and is now able to use it on any supported DeFi platform or protocol.",
+    "put": "Put your Bitcoin to work!",
+    "get": "Get WBTC",
+    "cafe": "WBTC.Cafe",
+    "trade": "Trade Bitcoin for WBTC",
+    "sent": "I've sent BTC",
+    "buyMore": "Buy more WBTC",
+    "error": "Something went wrong. Please choose a different value or try again.",
+    "higherAmount": "Please choose a higher amount",
+    "time": "Transaction time",
+    "timeHrs": "1 - 3 hrs",
+    "confirmBTC": "Please confirm that you have sent bitcoins by clicking on this button."
   },
 
   "referralsContent": {

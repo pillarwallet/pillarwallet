@@ -43,6 +43,7 @@ import {
   SET_EXCHANGE_ALLOWANCES,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  SET_WBTC_SETTLED_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -74,6 +75,7 @@ import { getWalletFromStorage } from 'utils/wallet';
 
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
+import { setWbtcPendingTxsAction } from './exchangeActions';
 
 
 const storage = Storage.getInstance('db');
@@ -157,6 +159,12 @@ export const initAppAndRedirectAction = () => {
 
       const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
+
+      const { pendingWbtcTransactions = [] } = get(storageData, 'pendingWbtcTransactions', []);
+      dispatch(setWbtcPendingTxsAction(pendingWbtcTransactions));
+
+      const { settledWbtcTransactions = [] } = get(storageData, 'settledWbtcTransactions', []);
+      dispatch({ type: SET_WBTC_SETTLED_TRANSACTIONS, payload: settledWbtcTransactions });
 
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });

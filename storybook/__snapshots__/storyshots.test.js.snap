@@ -49318,24 +49318,49 @@ exports[`Storyshots Table default 1`] = `
                 ]
               }
             >
-              <Text
-                onPress={[Function]}
-                regular={true}
+              <View
+                accessible={true}
+                focusable={true}
+                hitSlop={
+                  Object {
+                    "bottom": 10,
+                    "left": 10,
+                    "right": 10,
+                    "top": 10,
+                  }
+                }
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "opacity": 1,
+                  }
                 }
               >
-                £ 0
-              </Text>
+                <Text
+                  regular={true}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  £ 0
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -49343,7 +49368,7 @@ exports[`Storyshots Table default 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#EBF0F6",
+                "backgroundColor": "#EDEDED",
                 "height": 1,
                 "width": "100%",
               },
@@ -49420,7 +49445,7 @@ exports[`Storyshots Table default 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#EBF0F6",
+                "backgroundColor": "#EDEDED",
                 "height": 1,
                 "width": "100%",
               },
@@ -49450,7 +49475,7 @@ exports[`Storyshots Table default 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#EBF0F6",
+                "backgroundColor": "#EDEDED",
                 "height": 1,
                 "width": "100%",
               },
@@ -49527,7 +49552,7 @@ exports[`Storyshots Table default 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#EBF0F6",
+                "backgroundColor": "#EDEDED",
                 "height": 1,
                 "width": "100%",
               },
@@ -49595,24 +49620,49 @@ exports[`Storyshots Table default 1`] = `
                 ]
               }
             >
-              <Text
-                onPress={[Function]}
-                regular={true}
+              <View
+                accessible={true}
+                focusable={true}
+                hitSlop={
+                  Object {
+                    "bottom": 10,
+                    "left": 10,
+                    "right": 10,
+                    "top": 10,
+                  }
+                }
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "opacity": 1,
+                  }
                 }
               >
-                £ 0
-              </Text>
+                <Text
+                  regular={true}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  £ 0
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -49620,7 +49670,7 @@ exports[`Storyshots Table default 1`] = `
           style={
             Array [
               Object {
-                "backgroundColor": "#EBF0F6",
+                "backgroundColor": "#EDEDED",
                 "height": 1,
                 "width": "100%",
               },
@@ -49685,24 +49735,49 @@ exports[`Storyshots Table default 1`] = `
                 ]
               }
             >
-              <Text
-                onPress={[Function]}
-                regular={true}
+              <View
+                accessible={true}
+                focusable={true}
+                hitSlop={
+                  Object {
+                    "bottom": 10,
+                    "left": 10,
+                    "right": 10,
+                    "top": 10,
+                  }
+                }
+                isTVSelectable={true}
+                onClick={[Function]}
+                onResponderGrant={[Function]}
+                onResponderMove={[Function]}
+                onResponderRelease={[Function]}
+                onResponderTerminate={[Function]}
+                onResponderTerminationRequest={[Function]}
+                onStartShouldSetResponder={[Function]}
                 style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 14,
-                      "lineHeight": 22,
-                      "textAlignVertical": "center",
-                    },
-                    undefined,
-                  ]
+                  Object {
+                    "opacity": 1,
+                  }
                 }
               >
-                £ 0
-              </Text>
+                <Text
+                  regular={true}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "fontSize": 14,
+                        "lineHeight": 22,
+                        "textAlignVertical": "center",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  £ 0
+                </Text>
+              </View>
             </View>
           </View>
         </View>
@@ -52954,61 +53029,6 @@ exports[`Storyshots Value Input default 1`] = `
                 }
               }
             >
-              <View
-                accessible={true}
-                focusable={true}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Array [
-                    Object {
-                      "alignItems": "center",
-                      "flexDirection": "row",
-                      "paddingLeft": 14,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <View
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 16,
-                        "marginRight": 9,
-                      },
-                      undefined,
-                    ]
-                  }
-                />
-                <Text
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#8B939E",
-                          "flexWrap": "wrap",
-                          "maxWidth": 80,
-                        },
-                        undefined,
-                      ],
-                    ]
-                  }
-                >
-                  £ 0
-                </Text>
-              </View>
               <View
                 accessible={true}
                 focusable={true}

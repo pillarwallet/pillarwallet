@@ -171,6 +171,11 @@ export const hasSeenExchangeIntroAction = () => {
   };
 };
 
+export const hasSeenWbtcCafeIntroAction = () => (dispatch: Dispatch) => {
+  dispatch(saveDbAction('app_settings', { appSettings: { hasSeenWbtcCafeIntro: true } }));
+  dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenWbtcCafeIntro: true } });
+};
+
 export const toggleBalanceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {

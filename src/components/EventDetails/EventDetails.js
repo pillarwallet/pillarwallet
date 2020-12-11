@@ -41,6 +41,7 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
+import WBTCCafeWarning from 'screens/Exchange/WBTCCafeWarning';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -72,7 +73,7 @@ import { getFormattedValue } from 'utils/strings';
 import smartWalletInstance from 'services/smartWallet';
 
 // constants
-import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -110,6 +111,7 @@ import {
   POOLTOGETHER_WITHDRAW,
   SABLIER_INCOMING_STREAM,
   SABLIER_OUTGOING_STREAM,
+  EXCHANGE,
   RARI_DEPOSIT,
   RARI_CLAIM_RGT,
 } from 'constants/navigationConstants';
@@ -120,6 +122,7 @@ import {
   SABLIER_WITHDRAW,
   SABLIER_CANCEL_STREAM,
 } from 'constants/sablierConstants';
+import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 import {
   RARI_DEPOSIT_TRANSACTION,
   RARI_WITHDRAW_TRANSACTION,
@@ -617,6 +620,11 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
   }
 
+  goToWbtcCafeExchange = () => {
+    const { navigation } = this.props;
+    navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC });
+  }
+
   goToStreamWithdraw = (streamId: string) => {
     const { navigation, incomingStreams } = this.props;
     const stream = incomingStreams.find(({ id }) => id === streamId);
@@ -1006,6 +1014,15 @@ export class EventDetail extends React.Component<Props> {
       }
       case SABLIER_CANCEL_STREAM:
         return null;
+      case WBTC_PENDING_TRANSACTION:
+        eventData = {
+          buttons: [{
+            title: t('wbtcCafe.buyMore'),
+            onPress: this.goToWbtcCafeExchange,
+            secondary: true,
+          }],
+        };
+        break;
       case RARI_DEPOSIT_TRANSACTION:
       case RARI_CLAIM_TRANSACTION:
       case RARI_WITHDRAW_TRANSACTION: {
@@ -1507,6 +1524,7 @@ export class EventDetail extends React.Component<Props> {
         {customActionTitle}
         {!!subtitle && <DetailParagraph>{subtitle}</DetailParagraph>}
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {event.tag === WBTC_PENDING_TRANSACTION && <WBTCCafeWarning />}
       </DetailModal>
     );
   };

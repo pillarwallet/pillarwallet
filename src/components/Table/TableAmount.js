@@ -18,12 +18,13 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React, { useState } from 'react';
+import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 import { getFormattedRate } from 'utils/assets';
-import { formatAmount } from 'utils/common';
+import { formatAmount, hitSlop10 } from 'utils/common';
 import { images } from 'utils/images';
 import { BaseText } from 'components/Typography';
 import Tooltip from 'components/Tooltip';
@@ -31,7 +32,6 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import type { Rates } from 'models/Asset';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState } from 'reducers/rootReducer';
-
 
 type Props = {
   amount: number,
@@ -72,7 +72,9 @@ const TableAmount = ({
     <Tooltip body={tooltipText} isVisible={showTokenAmount} positionOnBottom={false}>
       <Row>
         {!!highFees && <HighFeesIcon source={highFeesIcon} />}
-        <BaseText regular onPress={() => setShowTokenAmount(!showTokenAmount)}>{fiatAmount}</BaseText>
+        <TouchableOpacity hitSlop={hitSlop10} activeOpacity={1} onPress={() => setShowTokenAmount(!showTokenAmount)}>
+          <BaseText regular>{fiatAmount}</BaseText>
+        </TouchableOpacity>
       </Row>
     </Tooltip>
   );

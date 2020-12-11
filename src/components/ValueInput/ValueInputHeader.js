@@ -96,7 +96,7 @@ const ValueInputHeader = (props: Props) => {
 
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection}>
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress} >
         <Image
           key={id}
           source={optionImageSource}
@@ -108,7 +108,7 @@ const ValueInputHeader = (props: Props) => {
           <SelectorChevron name="selector" />
         </ChevronWrapper>
       </SideWrapper>
-      <AssetName onPress={onAssetPress} numberOfLines={1}>{name}</AssetName>
+      <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />
       <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>

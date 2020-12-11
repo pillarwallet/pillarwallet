@@ -120,6 +120,7 @@ import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
+import WBTCCafeScreen from 'screens/WBTCCafe';
 import RariDepositScreen from 'screens/Rari/RariDeposit';
 import RariInfoScreen from 'screens/Rari/RariInfo';
 import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
@@ -275,6 +276,7 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
+  WBTC_CAFE,
   RARI_FLOW,
   RARI_DEPOSIT,
   RARI_INFO,
@@ -371,6 +373,7 @@ const exchangeFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -379,6 +382,7 @@ exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
 const servicesFlow = createStackNavigator({
   [SERVICES]: ServicesScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
+  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;

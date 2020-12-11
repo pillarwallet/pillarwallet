@@ -17,40 +17,42 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
 import React from 'react';
-import { TouchableOpacity } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
+import { Image, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
+
+import t from 'translations/translate';
+import { BaseText } from 'components/Typography';
+import { fontStyles } from 'utils/variables';
+import { themedColors } from 'utils/themes';
 import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 
-const Wrapper = styled.View`
-  width: 100%;
-  margin: 10px 0 20px;
+const InfoWrapper = styled.View`
+  flex-direction: row;
   align-items: center;
+  margin-top: 25px;
+  margin-bottom: 40px;
+  width: 100%;
+`;
+
+const Text = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${({ color }) => color};
 `;
 
 type Props = {
-  onPress: () => void,
   theme: Theme,
-  disabled?: boolean,
 };
 
-const ExchangeSwapIcon = ({
-  onPress, theme, disabled,
-}: Props) => {
-  const { exchangeIcon } = images(theme);
-  return (
-    <Wrapper>
-      <TouchableOpacity onPress={onPress} disabled={disabled} >
-        <CachedImage
-          style={{ width: 18, height: 20 }}
-          source={exchangeIcon}
-          resizeMode="contain"
-        />
-      </TouchableOpacity>
-    </Wrapper>
-  );
-};
+const WBTCCafeWarning = ({ theme }: Props) => (
+  <InfoWrapper>
+    <Image source={images(theme).infoIcon} style={{ height: 27, width: 27, marginRight: 15 }} />
+    <View style={{ flex: 1 }}>
+      <Text color={themedColors.secondaryText}>{t('wbtcCafe.warning')}</Text>
+    </View>
+  </InfoWrapper>
+);
 
-export default withTheme(ExchangeSwapIcon);
+export default withTheme(WBTCCafeWarning);

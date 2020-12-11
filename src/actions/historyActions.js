@@ -85,7 +85,12 @@ export const afterHistoryUpdatedAction = () => {
   };
 };
 
-const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
+export const syncAccountHistory = (
+  apiHistory: Transaction[],
+  accountId: string,
+  dispatch: Dispatch,
+  getState: GetState,
+) => {
   const { history: { data: currentHistory } } = getState();
   const accountHistory = currentHistory[accountId] || [];
 
@@ -94,6 +99,7 @@ const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
 
   const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
   const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+
   dispatch(saveDbAction('history', { history: updatedHistory }, true));
 
   dispatch({
@@ -158,7 +164,7 @@ export const fetchSmartWalletTransactionsAction = () => {
     const history = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
 
     if (!history.length) return;
-
+    // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
     if (smartWalletTransactions.length) {
       const newLastSyncedId = smartWalletTransactions[0].id;
       dispatch({
