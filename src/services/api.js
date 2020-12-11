@@ -44,6 +44,7 @@ import type { ApiNotification } from 'models/Notification';
 import type { OAuthTokens } from 'utils/oAuth';
 import type { ClaimTokenAction } from 'actions/referralsActions';
 import type { AltalixTrxParams, SendwyreRates, SendwyreTrxParams } from 'models/FiatToCryptoProviders';
+import type { WBTCGatewayAddressParams, WBTCGatewayAddressResponse } from 'models/WBTC';
 
 // services
 import {
@@ -842,6 +843,17 @@ class SDKWrapper {
         );
         return null;
       });
+  }
+
+  getWbtcCafeGatewayAddress(data: WBTCGatewayAddressParams
+    & { walletId: string }): Promise<WBTCGatewayAddressResponse | null> {
+    return this.makeDirectSdkRequest({
+      path: '/partners/ren/generate-gateway-address',
+      method: 'POST',
+      data,
+    })
+      .then(res => res.data)
+      .catch(e => reportErrorLog('Failed to generate WBTC gateway address', e));
   }
 }
 

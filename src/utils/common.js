@@ -249,10 +249,22 @@ export const getCurrencySymbol = (currency: string): string => {
   return CURRENCY_SYMBOLS[currency] || '';
 };
 
-export const formatFiat = (src: number | string, baseFiatCurrency?: ?string): string => {
+export const commify = (
+  src: number | string, options?: { skipCents?: boolean },
+): string => {
   const REGEX = '\\d(?=(\\d{3})+\\D)';
   const num = new BigNumber(src).toFixed(2);
-  const formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
+  let formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
+  if (options?.skipCents) {
+    formatedValue = formatedValue.substring(0, formatedValue.length - 3);
+  }
+  return formatedValue;
+};
+
+export const formatFiat = (
+  src: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
+): string => {
+  const formatedValue = commify(src, options);
   const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -673,3 +685,12 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
 export const getEnsPrefix = () => isProdEnv
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
+
+export const hitSlop10 = {
+  top: 10,
+  bottom: 10,
+  left: 10,
+  right: 10,
+};
+
+export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);

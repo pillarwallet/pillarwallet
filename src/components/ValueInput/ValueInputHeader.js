@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
+import { getEnv } from 'configs/envConfig';
 import type { Option } from 'models/Selector';
 import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
@@ -87,16 +88,19 @@ const ValueInputHeader = (props: Props) => {
   const {
     asset, labelText, onLabelPress, onAssetPress, theme, disableAssetSelection,
   } = props;
-  const { id, name, imageUrl } = asset;
+  const { id, name, iconUrl } = asset;
+  let imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  imageUrl = asset.imageUrl || imageUrl;
   const optionImageSource = resolveAssetSource(imageUrl);
   const { genericToken } = images(theme);
+
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection}>
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress} >
         <Image
           key={id}
           source={optionImageSource}
-          fallbackSource={genericToken}
+          fallbackSource={!!optionImageSource.uri && genericToken}
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />
@@ -104,7 +108,7 @@ const ValueInputHeader = (props: Props) => {
           <SelectorChevron name="selector" />
         </ChevronWrapper>
       </SideWrapper>
-      <AssetName onPress={onAssetPress} numberOfLines={1}>{name}</AssetName>
+      <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />
       <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>

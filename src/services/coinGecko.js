@@ -24,7 +24,7 @@ import { getAssetsAsList } from 'utils/assets';
 import { isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
 
 // constants
-import { ETH, supportedFiatCurrencies } from 'constants/assetsConstants';
+import { ETH, supportedFiatCurrencies, BTC, WBTC } from 'constants/assetsConstants';
 
 // types
 import type { Asset, Assets } from 'models/Asset';
@@ -38,6 +38,10 @@ type CoinGeckoAssetsPrices = {
 
 // does not change between envs
 const COINGECKO_API_URL = 'https://api.coingecko.com/api/v3';
+
+const ETH_ID = 'ethereum';
+const BTC_ID = 'bitcoin';
+const WBTC_ID = 'wrapped-bitcoin';
 
 const requestConfig = {
   timeout: 5000,
@@ -119,12 +123,11 @@ export const getCoinGeckoTokenPrices = async (assets: Assets): Promise<?Object> 
 };
 
 export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
-  const coinGeckoEtherAssetId = 'ethereum'; // eslint-disable-line i18next/no-literal-string
   const walletCurrencies = supportedFiatCurrencies.concat(ETH); // for consistency, price returned is 1:1
   const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
   return axios.get(
     `${COINGECKO_API_URL}/simple/price`
-    + `?ids=${coinGeckoEtherAssetId}`
+    + `?ids=${ETH_ID}`
     + `&vs_currencies=${vsCurrenciesQuery}`,
     requestConfig,
   )
@@ -134,10 +137,33 @@ export const getCoinGeckoEtherPrice = async (): Promise<?Object> => {
         return null;
       }
 
-      return mapWalletAndCoinGeckoCurrencies(responseData[coinGeckoEtherAssetId], walletCurrencies);
+      return mapWalletAndCoinGeckoCurrencies(responseData[ETH_ID], walletCurrencies);
     })
     .catch((error) => {
       reportErrorLog('getCoinGeckoEtherPrice failed: API request error', { error });
+      return null;
+    });
+};
+
+export const getCoinGeckoBitcoinAndWBTCPrices = async (): Promise<?Object> => {
+  const walletCurrencies = supportedFiatCurrencies.concat(ETH);
+  const vsCurrenciesQuery = walletCurrencies.map((currency) => currency.toLowerCase()).join(',');
+  return axios.get(
+    `${COINGECKO_API_URL}/simple/price?ids=${BTC_ID},${WBTC_ID}&vs_currencies=${vsCurrenciesQuery}`,
+    requestConfig,
+  )
+    .then(({ data: responseData }: AxiosResponse) => {
+      if (!responseData) {
+        reportErrorLog('getCoinGeckoBitcoinAndWBTCPrices failed: unexpected response', { response: responseData });
+        return null;
+      }
+      return {
+        [BTC]: mapWalletAndCoinGeckoCurrencies(responseData[BTC_ID], walletCurrencies),
+        [WBTC]: mapWalletAndCoinGeckoCurrencies(responseData[WBTC_ID], walletCurrencies),
+      };
+    })
+    .catch((error) => {
+      reportErrorLog('getCoinGeckoBitcoinAndWBTCPrices failed: API request error', { error });
       return null;
     });
 };

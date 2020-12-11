@@ -48,6 +48,9 @@ const personIconLight = require('assets/icons/iconRoundedPersonLight.png');
 const personIconDark = require('assets/icons/icon_rounded_person_dark.png');
 const highFeesLight = require('assets/icons/high_fees.png');
 const highFeesDark = require('assets/icons/high_fees_dark.png');
+const infoIconLight = require('assets/icons/icon_info_light.png');
+const infoIconDark = require('assets/icons/icon_info_dark.png');
+
 
 // exchange providers
 const uniswapLightVertical = require('assets/images/exchangeProviders/uniswapLightVertical.png');
@@ -68,6 +71,8 @@ const synthetixLightMonochrome = require('assets/images/exchangeProviders/synthe
 const synthetixDarkVertical = require('assets/images/exchangeProviders/synthetixDarkVertical.png');
 const synthetixDarkHorizontal = require('assets/images/exchangeProviders/synthetixDarkHorizontal.png');
 const synthetixDarkMonochrome = require('assets/images/exchangeProviders/synthetixDarkMonochrome.png');
+const exchangeDefaultLogoDark = require('assets/icons/exchange_default_dark.png');
+const exchangeDefaultLogoLight = require('assets/icons/exchange_default_light.png');
 
 // patterns
 const landingPattern = require('assets/images/patterns/onboarding_pattern_top.png');
@@ -139,6 +144,10 @@ export const images = (theme: Theme) => {
       lightTheme: highFeesLight,
       darkTheme: highFeesDark,
     }),
+    infoIcon: getImageByTheme(currentTheme, {
+      lightTheme: infoIconLight,
+      darkTheme: infoIconDark,
+    }),
   };
 };
 
@@ -161,6 +170,8 @@ export const staticImages = {
   synthetixDarkVertical,
   synthetixDarkHorizontal,
   synthetixDarkMonochrome,
+  exchangeDefaultLogoDark,
+  exchangeDefaultLogoLight,
 };
 
 export const isSvgImage = (uri: ?string) => {

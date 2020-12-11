@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { STAGING } from 'constants/envConstants';
+import type { RariPool } from 'models/RariPool';
 
 // Simplified envConfig mock with minimal dependencies for tests
 // the following vars are CI/BUILD/DEVELOPER related
@@ -63,8 +64,32 @@ const envVars = {
     POOLTOGETHER_SUBGRAPH_NAME: 'alazarevski/pool-together-transactions-kovan',
     SABLIER_CONTRACT_ADDRESS: '0xc04Ad234E01327b24a831e3718DBFcbE245904CC',
     SABLIER_SUBGRAPH_NAME: 'sablierhq/sablier-kovan',
+    RARI_SUBGRAPH_NAME: 'graszka22/rari-transactions',
+    MSTABLE_SUBGRAPH_NAME: 'mstable/mstable-protocol',
+    MSTABLE_CONTRACT_ADDRESS: '0xe2f2a5C287993345a840Db3B0845fbC70f5935a5',
     ...buildEnvironment,
     ...devOptions,
+  },
+};
+
+const rariPoolsEnv = {
+  staging: {
+    STABLE_POOL: {
+      RARI_FUND_MANAGER_CONTRACT_ADDRESS: '0xC6BF8C8A55f77686720E0a88e2Fd1fEEF58ddf4a',
+      RARI_FUND_PROXY_CONTRACT_ADDRESS: '0xD4be7E211680e12c08bbE9054F0dA0D646c45228',
+      RARI_FUND_TOKEN_ADDRESS: '0x016bf078ABcaCB987f0589a6d3BEAdD4316922B0',
+    },
+    YIELD_POOL: {
+      RARI_FUND_MANAGER_CONTRACT_ADDRESS: '0x59FA438cD0731EBF5F4cDCaf72D4960EFd13FCe6',
+      RARI_FUND_PROXY_CONTRACT_ADDRESS: '0x6dd8e1Df9F366e6494c2601e515813e0f9219A88',
+      RARI_FUND_TOKEN_ADDRESS: '0x3baa6B7Af0D72006d3ea770ca29100Eb848559ae',
+    },
+    ETH_POOL: {
+      RARI_FUND_MANAGER_CONTRACT_ADDRESS: '0xD6e194aF3d9674b62D1b30Ec676030C23961275e',
+      RARI_FUND_PROXY_CONTRACT_ADDRESS: '0xa3cc9e4B9784c80a05B3Af215C32ff223C3ebE5c',
+      RARI_FUND_TOKEN_ADDRESS: '0xCda4770d65B4211364Cb870aD6bE19E7Ef1D65f4',
+      RARI_FUND_CONTROLLER_CONTRACT_ADDRESS: '0xD9F223A36C2e398B0886F945a7e556B41EF91A3C',
+    },
   },
 };
 
@@ -76,8 +101,12 @@ const switchEnvironments = () => ({});
 
 const getEnv = () => envVars[storedEnv];
 
+const getRariPoolsEnv = (rariPool: RariPool) => rariPoolsEnv[storedEnv][rariPool];
+
+
 export default {
   getEnv,
   setupEnv,
   switchEnvironments,
+  getRariPoolsEnv,
 };

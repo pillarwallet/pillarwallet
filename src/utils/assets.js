@@ -24,7 +24,7 @@ import get from 'lodash.get';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { COLLECTIBLES, ETH, TOKENS, SNX } from 'constants/assetsConstants';
+import { COLLECTIBLES, ETH, TOKENS, SNX, USD, defaultFiatCurrency } from 'constants/assetsConstants';
 
 // utils
 import { formatFiat, formatAmount, isCaseInsensitiveMatch, reportOrWarn } from 'utils/common';
@@ -40,6 +40,7 @@ import type {
 } from 'models/Asset';
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
+import type { Option } from 'models/Selector';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -315,3 +316,60 @@ const isSynthetixAsset = (asset: Asset): boolean => !!asset.isSynthetixAsset && 
 
 export const isSynthetixTx = (fromAsset: Asset, toAsset: Asset): boolean =>
   isSynthetixAsset(fromAsset) && isSynthetixAsset(toAsset);
+
+export const getBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): number => {
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  const assetBalanceInFiat = assetBalance ?
+    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
+  return assetBalanceInFiat;
+};
+
+export const getFormattedBalanceInFiat = (
+  baseFiatCurrency: ?string,
+  assetBalance: ?string | ?number,
+  rates: Rates,
+  symbol: string,
+): string => {
+  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
+  if (!assetBalanceInFiat) return '';
+  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+  return assetBalanceInFiat ? formatFiat(assetBalanceInFiat, fiatCurrency) : '';
+};
+
+export const generateAssetSelectorOption = (
+  asset: Asset, balances: ?Balances, rates: ?Rates, baseFiatCurrency: ?string,
+): Option => {
+  const { symbol, iconUrl, ...rest } = asset;
+  const rawAssetBalance = balances ? getBalance(balances, symbol) : 0;
+  const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
+  const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
+  const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+
+  return ({
+    key: symbol,
+    value: symbol,
+    imageUrl,
+    icon: iconUrl,
+    iconUrl,
+    symbol,
+    ...rest,
+    assetBalance,
+    formattedBalanceInFiat,
+    customProps: {
+      rightColumnInnerStyle: { alignItems: 'flex-end' },
+    },
+  });
+};
+
+export const convertUSDToFiat = (value: number, rates: Rates = {}, fiatCurrency: string) => {
+  const ethRates = rates[ETH];
+  if (!ethRates) {
+    return 0;
+  }
+  return value * (ethRates[fiatCurrency] / ethRates[USD]);
+};

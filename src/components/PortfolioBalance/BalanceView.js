@@ -30,7 +30,9 @@ type Props = {
   balance: number,
   fiatCurrency: string,
   label?: string,
-  style: Object,
+  style?: Object,
+  currencyTextStyle?: Object,
+  balanceTextStyle?: Object,
 };
 
 
@@ -55,7 +57,9 @@ const BalanceWrapper = styled.View`
 
 class BalanceView extends React.PureComponent<Props> {
   render() {
-    const { style, fiatCurrency, balance } = this.props;
+    const {
+      style, fiatCurrency, balance, currencyTextStyle, balanceTextStyle,
+    } = this.props;
 
     const portfolioBalance = formatMoney(balance, 2, 3, ',', '.', false);
     const currency = fiatCurrency || defaultFiatCurrency;
@@ -63,8 +67,8 @@ class BalanceView extends React.PureComponent<Props> {
 
     return (
       <BalanceWrapper style={style}>
-        <CurrencyText>{currencySymbol}</CurrencyText>
-        <BalanceText>{portfolioBalance}</BalanceText>
+        <CurrencyText style={currencyTextStyle}>{currencySymbol}</CurrencyText>
+        <BalanceText style={balanceTextStyle}>{portfolioBalance}</BalanceText>
       </BalanceWrapper>
     );
   }
