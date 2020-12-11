@@ -94,6 +94,7 @@ import {
   SABLIER_EVENT,
 } from 'constants/sablierConstants';
 import { DAI } from 'constants/assetsConstants';
+import { WBTC_SETTLED_TRANSACTION, WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -167,6 +168,7 @@ const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
 const sablierLogo = require('assets/icons/sablier.png');
+const wbtcLogo = require('assets/images/exchangeProviders/wbtcLogo.png');
 
 const ListWrapper = styled.View`
   align-items: flex-end;
@@ -540,6 +542,18 @@ export class ActivityFeedItem extends React.Component<Props> {
           actionLabel: this.STATUSES().ADDED,
         };
         break;
+      case WBTC_SETTLED_TRANSACTION:
+        const wbtcValue = `+ ${getFormattedValue(String(event.value / 100000000), event.asset)}`;
+        const wbtcValueFixed = `+ ${getFormattedValue(String((event.value / 100000000).toFixed(5)), event.asset)}`;
+        data = {
+          label: elipsizeAddress(relevantAddress),
+          fullItemValue: wbtcValue,
+          itemValue: wbtcValueFixed,
+          valueColor: 'secondaryAccent140',
+          isReceived,
+          itemImageSource: wbtcLogo,
+        };
+        break;
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         data = {
           label: this.NAMES().SMART_WALLET,
@@ -737,7 +751,9 @@ export class ActivityFeedItem extends React.Component<Props> {
               isPositive: isReceived,
               noSymbol: !formattedFullValue,
             }),
-            itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
+            itemValue: event.tag === WBTC_PENDING_TRANSACTION
+              ? `+ ${getFormattedValue((event.value / 1000000000000000000).toFixed(5), event.asset)}`
+              : getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
             valueColor: isReceived && !this.isZeroValue(value) ? 'secondaryAccent140' : 'basic010',
             ...additionalInfo,
             isReceived,

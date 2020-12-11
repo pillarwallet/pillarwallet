@@ -30,7 +30,7 @@ import {
   getExchangeSupportedAssetsAction,
   addWbtcPendingTxAction,
   setWbtcPendingTxsAction,
-  // addWbtcSettledTransactionAction,
+  updatePendingWbtcTransactionsAction,
 } from 'actions/exchangeActions';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
@@ -43,23 +43,19 @@ import {
   SET_EXCHANGE_SUPPORTED_ASSETS,
   ADD_WBTC_PENDING_TRANSACTION,
   SET_WBTC_PENDING_TRANSACTIONS,
-  // ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
 import { fetchUniswapSupportedTokens } from 'services/uniswap';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
-import { syncAccountHistory } from 'actions/historyActions';
-import { mapPendingToTransactions } from 'services/wbtcCafe';
-import { SET_HISTORY } from 'constants/historyConstants';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
-const pending = [{ amount: 1, dateCreated: 2 }, { amount: 3, dateCreated: 4 }, { amount: 5, dateCreated: 6 }];
+const hour = 3600000;
+const pending = [
+  { amount: 1, dateCreated: Date.now() - hour },
+  { amount: 3, dateCreated: Date.now() - (hour * 13) },
+  { amount: 5, dateCreated: 6 },
+];
 const ACC_ID = 'id';
-const someTx = {
-  ...mapPendingToTransactions([pending[0]])[0],
-  from: '1234', // non-WBTC.Cafe tx
-  hash: 'abc', // distinguish by hash from pending[0]
-};
 
 const storeState = {
   exchange: {
@@ -192,31 +188,14 @@ describe('Exchange actions test', () => {
       store.dispatch(addWbtcPendingTxAction(pending[2]));
       expect(store.getActions()).toEqual(expectedActions);
     });
-    // it('adds settled WBTC tx', () => {
-    //   const expectedActions = [
-    //     { type: ADD_WBTC_SETTLED_TRANSACTION, payload: wbtcMappedTx },
-    //     { type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[1]] },
-    //   ];
-    //   store.dispatch(addWbtcSettledTransactionAction(wbtcMappedTx));
-    //   expect(store.getActions()).toEqual(expectedActions);
-    // });
     it('sets pending txs', () => {
       const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[2]] }];
       store.dispatch(setWbtcPendingTxsAction([pending[2]]));
       expect(store.getActions()).toEqual(expectedActions);
     });
-    it('handles new WBTC.Cafe transactions in history', () => {
-      const mapped = mapPendingToTransactions([pending[1]])[0];
-      const expectedActions = [
-        { type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[1]] },
-        { type: SET_HISTORY, payload: { [ACC_ID]: [mapped, someTx] } },
-      ];
-      syncAccountHistory([mapped, someTx], ACC_ID, store.dispatch, store.getState);
-      expect(store.getActions()).toEqual(expectedActions);
-    });
-    it("doesn't change pending txs if no WBTC.Cafe transactions were detected", () => {
-      const expectedActions = [{ type: SET_HISTORY, payload: { [ACC_ID]: [someTx] } }];
-      syncAccountHistory([someTx], ACC_ID, store.dispatch, store.getState);
+    it('correctly updates pending transactions', () => {
+      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[0]] }];
+      store.dispatch(updatePendingWbtcTransactionsAction());
       expect(store.getActions()).toEqual(expectedActions);
     });
   });

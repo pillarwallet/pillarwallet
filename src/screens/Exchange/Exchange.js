@@ -164,11 +164,12 @@ class ExchangeScreen extends React.Component<Props, State> {
 
   componentDidMount() {
     const {
-      navigation, getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees,
+      navigation, getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
     } = this.props;
     const { fromAsset, toAsset } = this.state;
     this._isMounted = true;
     getWbtcFees();
+    getBtcRate();
     getExchangeSupportedAssets(() => {
       // handle edgecase for new/reimported wallets in case their assets haven't loaded yet
       if (!fromAsset || !toAsset) this.setState(this.getInitialAssets());

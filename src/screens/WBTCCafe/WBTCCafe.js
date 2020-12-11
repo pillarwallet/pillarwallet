@@ -96,7 +96,7 @@ const WBTCCafe = ({
 }: Props) => {
   const [showIntro, setShowIntro] = React.useState<boolean>(!hasSeenWbtcCafeIntro);
 
-  useEffect(() => { updateWBTCCafeTransactions(); });
+  useEffect(() => { updateWBTCCafeTransactions(); }, []);
 
   const toggleIntro = () => {
     LayoutAnimation.easeInEaseOut();

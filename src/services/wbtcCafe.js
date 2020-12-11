@@ -21,7 +21,7 @@
 import { Contract } from 'ethers';
 import axios from 'axios';
 import { WBTC, BTC } from 'constants/assetsConstants';
-import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
+import { WBTC_PENDING_TRANSACTION, WBTC_SETTLED_TRANSACTION } from 'constants/exchangeConstants';
 import { TX_PENDING_STATUS, TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import CURVE_ABI from 'abi/WBTCCurve.json';
 import { getEthereumProvider, reportLog } from 'utils/common';
@@ -148,4 +148,5 @@ export const mapFetchedWbtcTransactionToTransaction = (tx: FetchedWBTCTx): Trans
   type: 'transactionEvent',
   to: tx.to,
   createdAt: tx.timestamp,
+  tag: WBTC_SETTLED_TRANSACTION,
 });

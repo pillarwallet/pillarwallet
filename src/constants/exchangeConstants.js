@@ -49,6 +49,7 @@ export const FAST = 'max';
 // WBTC.Cafe
 export const ALLOWED_SLIPPAGE = 3; // 3%
 export const WBTC_PENDING_TRANSACTION = 'WBTC_PENDING_TRANSACTION';
+export const WBTC_SETTLED_TRANSACTION = 'WBTC_SETTLED_TRANSACTION';
 export const MIN_WBTC_CAFE_AMOUNT = 0.0011; // WBTC.Cafe won't work for lower amounts
 
 export const UNISWAP_TOKENS_QUERY_STATUS = {

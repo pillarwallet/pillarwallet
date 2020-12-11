@@ -452,6 +452,7 @@ export const addWbtcSettledTransactionAction = (transaction: FetchedWBTCTx) => (
   dispatch(saveDbAction('settledWbtcTransactions', { settledWbtcTransactions }, true));
 
   // find relevant pending tx by amount (get closest) and remove it
+  if (!pendingWbtcTransactions.length) return;
   const amount = transaction.value / 100000000; // 8 decimals
   const searchedPendingAmount = pendingWbtcTransactions
     .map(p => p.amount)
@@ -462,7 +463,7 @@ export const addWbtcSettledTransactionAction = (transaction: FetchedWBTCTx) => (
   dispatch(setWbtcPendingTxsAction(filteredPending));
 };
 
-const updatePendingWbtcTransactionsAction = () => (dispatch: Dispatch, getState: GetState) => {
+export const updatePendingWbtcTransactionsAction = () => (dispatch: Dispatch, getState: GetState) => {
   const { exchange: { data: { pendingWbtcTransactions } } } = getState();
   const validPending = getValidPendingTransactions(pendingWbtcTransactions);
   dispatch(setWbtcPendingTxsAction(validPending));
