@@ -1434,7 +1434,9 @@
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
     "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
     "poolDataFetchFailed": "Can't fetch pool data. Please try again or contact support.",
-    "cannotAddLiquidity": "Cannot add liquidity. Please try again."
+    "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
+    "cannotStakeTokens": "Cannot stake tokens. Please try again.",
+    "cannotUnstakeTokens": "Cannot unstake tokens. Please try again."
   },
 
   "exchangeContent": {
@@ -1698,7 +1700,11 @@
   "liquidityPoolsContent": {
     "title": {
       "addLiquidity": "Add liquidity",
-      "addLiquidityReview": "Review"
+      "addLiquidityReview": "Review",
+      "stakeTokens": "Stake tokens",
+      "stakeTokensReview": "Review",
+      "unstakeTokens": "Unstake tokens",
+      "unstakeTokensReview": "Review"
     },
     "button": {
       "addLiquidity": "Add liquidity",
@@ -1715,7 +1721,9 @@
       "stakeLiquidityToGetRewards": "Stake liquidity tokens to get rewards",
       "shareOfPool": "Share of pool",
       "youAreAddingLiquidity": "You are adding liquidity",
-      "tokenAllocation": "Token allocation"
+      "tokenAllocation": "Token allocation",
+      "youAreStaking": "You are staking",
+      "youAreUnstaking": "You are unstaking"
     }
   }
 }

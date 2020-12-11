@@ -134,6 +134,10 @@ import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
 import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
 import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
 import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
+import LiquidityPoolsStakeTokensScreen from 'screens/LiquidityPools/StakeTokens';
+import LiquidityPoolsStakeTokensReviewScreen from 'screens/LiquidityPools/StakeTokensReview';
+import LiquidityPoolsUnstakeTokensScreen from 'screens/LiquidityPools/UnstakeTokens';
+import LiquidityPoolsUnstakeTokensReviewScreen from 'screens/LiquidityPools/UnstakeTokensReview';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -296,6 +300,10 @@ import {
   LIQUIDITY_POOL_DASHBOARD,
   LIQUIDITY_POOLS_ADD_LIQUIDITY,
   LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_STAKE,
+  LIQUIDITY_POOLS_STAKE_REVIEW,
+  LIQUIDITY_POOLS_UNSTAKE,
+  LIQUIDITY_POOLS_UNSTAKE_REVIEW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -778,6 +786,12 @@ const liquidityPoolsFlow = createStackNavigator({
   [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
   [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
   [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
+  [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
+  [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;

@@ -25,7 +25,7 @@ import {
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
-import { getStakedAmount, getEarnedAmount } from 'utils/unipool';
+import { getStakedAmount, getEarnedAmount, getStakeTransactions, getUnstakeTransaction } from 'utils/unipool';
 import { getAddLiquidityEthTransactions, fetchPoolData } from 'utils/liquidityPools';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
@@ -133,5 +133,59 @@ export const calculateAddLiquidityTransactionEthEstimateAction = (
       null,
       sequentialTransactions,
     ));
+  };
+};
+
+export const calculateStakeTransactionEstimateAction = (
+  tokenAmount: number,
+  tokenAsset: Asset,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const stakeTransactions = await getStakeTransactions(
+      getAccountAddress(smartWalletAccount),
+      tokenAmount,
+      tokenAsset,
+    );
+
+    const sequentialTransactions = stakeTransactions
+      .slice(1)
+      .map(({
+        to: recipient,
+        amount: value,
+        data,
+      }) => ({ recipient, value, data }));
+
+    dispatch(estimateTransactionAction(
+      stakeTransactions[0].to,
+      stakeTransactions[0].amount,
+      stakeTransactions[0].data,
+      null,
+      sequentialTransactions,
+    ));
+  };
+};
+
+export const calculateUnstakeTransactionEstimateAction = (
+  tokenAmount: number,
+) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const { to, amount, data } = getUnstakeTransaction(
+      getAccountAddress(smartWalletAccount),
+      tokenAmount,
+    );
+
+    dispatch(estimateTransactionAction(to, amount, data));
   };
 };

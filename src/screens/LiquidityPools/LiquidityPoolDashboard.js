@@ -42,7 +42,11 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { LIQUIDITY_POOLS_ADD_LIQUIDITY } from 'constants/navigationConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY,
+  LIQUIDITY_POOLS_STAKE,
+  LIQUIDITY_POOLS_UNSTAKE,
+} from 'constants/navigationConstants';
 
 // utils
 import { formatMoney, formatAmount, formatUnits } from 'utils/common';
@@ -231,6 +235,7 @@ const LiquidityPoolDashboard = ({
                 <ButtonWrapper>
                   <Button
                     title={t('liquidityPoolsContent.button.stake')}
+                    onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE)}
                   />
                 </ButtonWrapper>
                 <Spacing w={7} />
@@ -238,6 +243,7 @@ const LiquidityPoolDashboard = ({
                   <Button
                     title={t('liquidityPoolsContent.button.unstake')}
                     secondary
+                    onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE)}
                   />
                 </ButtonWrapper>
               </Row>
