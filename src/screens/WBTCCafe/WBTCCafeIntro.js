@@ -123,7 +123,6 @@ const WBTCCafeIntro = ({ onButtonPress, backgroundColor }: Props) => {
       <Title>{t('wbtcCafe.how')}</Title>
       <Text>{t('wbtcCafe.info')}</Text>
       {getInnerBox()}
-      <Text>{t('wbtcCafe.endInfo')}</Text>
       <BottomContainer>
         <Title>{t('wbtcCafe.put')}</Title>
         <Button title={t('wbtcCafe.get')} onPress={onButtonPress} />
