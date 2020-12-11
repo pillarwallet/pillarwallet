@@ -81,7 +81,7 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 let isOffersEngineEnabled = true;
 let isAaveEnabled = true;
 let isPoolTogetherEnabled = true;
-let isPeerToPeerEnabled = true;
+let isPeerToPeerEnabled = false;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
