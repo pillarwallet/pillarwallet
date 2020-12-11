@@ -286,6 +286,7 @@ import {
   RARI_TRANSFER_REVIEW,
   RARI_CLAIM_RGT,
   RARI_CLAIM_RGT_REVIEW,
+  WALLETCONNECT_CALL_REQUEST_FLOW,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -382,17 +383,29 @@ const servicesFlow = createStackNavigator({
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// WALLETCONNECT FLOW
+// WALLET CONNECT CALL REQUEST FLOW
+const walletConnectCallRequestFlow = createStackNavigator(
+  {
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
+    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
+
+walletConnectCallRequestFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// WALLET CONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectScreen,
+    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
-    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorConfig,
 );
+
 walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 
