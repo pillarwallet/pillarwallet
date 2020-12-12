@@ -100,6 +100,7 @@ const ConfirmationTable = (props: Props) => {
         </TableRow>
       </Table>
       <Spacing h={48} />
+      {!!errorMessage && <BaseText style={{ marginBottom: 15 }} center secondary>{errorMessage}</BaseText>}
       <Button
         disabled={!isOnline || !!errorMessage || !feeInfo || isEstimating}
         onPress={onPress}
