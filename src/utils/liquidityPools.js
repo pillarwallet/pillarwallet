@@ -115,3 +115,57 @@ export const getAddLiquidityEthTransactions = async (
 
   return addLiquidityTransactions;
 };
+
+export const getRemoveLiquidityEthTransactions = async (
+  sender: string,
+  poolTokenAmount: number,
+  poolToken: Asset,
+  erc20Token: Asset,
+  txFeeInWei?: BigNumber,
+): Promise<Object[]> => {
+  const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
+  const deadline = getDeadline();
+
+  const removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidityETH', [
+    erc20Token.address,
+    tokenAmountBN,
+    0,
+    0,
+    sender,
+    deadline,
+  ]);
+
+  let removeLiquidityTransactions = [{
+    from: sender,
+    to: ADDRESSES.router,
+    data: removeLiquidityTransactionData,
+    amount: 0,
+    symbol: ETH,
+  }];
+
+  const erc20Contract = getContract(poolToken.address, ERC20_CONTRACT_ABI);
+  const approvedAmountBN = erc20Contract
+    ? await erc20Contract.allowance(sender, ADDRESSES.router)
+    : null;
+
+  if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
+    const approveTransactionData = buildERC20ApproveTransactionData(
+      ADDRESSES.router, poolTokenAmount, poolToken.decimals);
+    removeLiquidityTransactions = [
+      {
+        from: sender,
+        to: poolToken.address,
+        data: approveTransactionData,
+        amount: 0,
+        symbol: ETH,
+      },
+      ...removeLiquidityTransactions,
+    ];
+  }
+  removeLiquidityTransactions[0] = {
+    ...removeLiquidityTransactions[0],
+    txFeeInWei,
+  };
+
+  return removeLiquidityTransactions;
+};

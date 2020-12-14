@@ -52,26 +52,6 @@ export const getEarnedAmount = async (address: string): Promise<EthersBigNumber>
 };
 
 /*
-export const getWithdrawFeeAndTransaction = async (
-  sender: string,
-  amount: EthersBigNumber,
-  useGasToken: boolean,
-) => {
-  const withdrawTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'withdraw', [
-    amount,
-  ]);
-
-  const withdrawTransaction = {
-    from: sender,
-    to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
-    data: withdrawTransactionData,
-    amount: 0,
-    symbol: ETH,
-  };
-
-  return getTxFeeAndTransactionPayload(withdrawTransaction, useGasToken);
-};
-
 export const getGetRewardFeeAndTransaction = async (
   sender: string,
   useGasToken: boolean,

@@ -1436,7 +1436,8 @@
     "poolDataFetchFailed": "Can't fetch pool data. Please try again or contact support.",
     "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
     "cannotStakeTokens": "Cannot stake tokens. Please try again.",
-    "cannotUnstakeTokens": "Cannot unstake tokens. Please try again."
+    "cannotUnstakeTokens": "Cannot unstake tokens. Please try again.",
+    "cannotRemoveLiquidity": "Cannot remove liquidity. Please try again."
   },
 
   "exchangeContent": {
@@ -1704,11 +1705,13 @@
       "stakeTokens": "Stake tokens",
       "stakeTokensReview": "Review",
       "unstakeTokens": "Unstake tokens",
-      "unstakeTokensReview": "Review"
+      "unstakeTokensReview": "Review",
+      "removeLiquidity": "Remove liquidity",
+      "removeLiquidityReview": "Review"
     },
     "button": {
       "addLiquidity": "Add liquidity",
-      "withdraw": "Withdraw",
+      "removeLiquidity": "Remove liquidity",
       "stake": "Stake",
       "unstake": "Unstake",
       "claimRewards": "Claim rewards"
@@ -1723,7 +1726,9 @@
       "youAreAddingLiquidity": "You are adding liquidity",
       "tokenAllocation": "Token allocation",
       "youAreStaking": "You are staking",
-      "youAreUnstaking": "You are unstaking"
+      "youAreUnstaking": "You are unstaking",
+      "youAreRemovingLiquidity": "You are removing liquidity",
+      "youWillReceive": "You will receive"
     }
   }
 }

@@ -26,7 +26,11 @@ import {
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { getStakedAmount, getEarnedAmount, getStakeTransactions, getUnstakeTransaction } from 'utils/unipool';
-import { getAddLiquidityEthTransactions, fetchPoolData } from 'utils/liquidityPools';
+import {
+  getAddLiquidityEthTransactions,
+  fetchPoolData,
+  getRemoveLiquidityEthTransactions,
+} from 'utils/liquidityPools';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -187,5 +191,42 @@ export const calculateUnstakeTransactionEstimateAction = (
     );
 
     dispatch(estimateTransactionAction(to, amount, data));
+  };
+};
+
+export const calculateRemoveLiquidityTransactionEstimateAction = (
+  tokenAmount: number,
+  poolToken: Asset,
+  erc20Token: Asset,
+) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const removeLiquidityTransactions = await getRemoveLiquidityEthTransactions(
+      getAccountAddress(smartWalletAccount),
+      tokenAmount,
+      poolToken,
+      erc20Token,
+    );
+
+    const sequentialTransactions = removeLiquidityTransactions
+      .slice(1)
+      .map(({
+        to: recipient,
+        amount: value,
+        data,
+      }) => ({ recipient, value, data }));
+
+    dispatch(estimateTransactionAction(
+      removeLiquidityTransactions[0].to,
+      removeLiquidityTransactions[0].amount,
+      removeLiquidityTransactions[0].data,
+      null,
+      sequentialTransactions,
+    ));
   };
 };

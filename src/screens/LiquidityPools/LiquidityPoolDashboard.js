@@ -46,6 +46,7 @@ import {
   LIQUIDITY_POOLS_ADD_LIQUIDITY,
   LIQUIDITY_POOLS_STAKE,
   LIQUIDITY_POOLS_UNSTAKE,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
 } from 'constants/navigationConstants';
 
 // utils
@@ -172,6 +173,10 @@ const LiquidityPoolDashboard = ({
     navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY, { poolAddress });
   };
 
+  const onRemoveLiquidity = () => {
+    navigation.navigate(LIQUIDITY_POOLS_REMOVE_LIQUIDITY, { poolAddress });
+  };
+
   return (
     <ContainerWithHeader
       navigation={navigation}
@@ -207,9 +212,10 @@ const LiquidityPoolDashboard = ({
                   disabled={!poolsData[poolAddress]}
                 />
                 <CircleButton
-                  label={t('liquidityPoolsContent.button.withdraw')}
+                  label={t('liquidityPoolsContent.button.removeLiquidity')}
                   fontIcon="up-arrow"
                   disabled={!poolsData[poolAddress]}
+                  onPress={onRemoveLiquidity}
                 />
               </ButtonsRow>
             ) : (
