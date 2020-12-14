@@ -218,4 +218,4 @@ export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accou
 };
 
 export const getToOption =
-  (symbol: string, options: ExchangeOptions): ?Option => options.toOptions.find(a => a.value === symbol);
+  (symbol: string, options: ExchangeOptions): Option => options.toOptions.find(a => a.value === symbol) || {};
