@@ -138,16 +138,11 @@ class ExchangeScreen extends React.Component<Props, State> {
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
   options: ExchangeOptions;
-  wbtcCafeOptions: (Option | typeof undefined)[]
 
   constructor(props: Props) {
     super(props);
     this.listeners = [];
     this.options = this.provideOptions();
-    this.wbtcCafeOptions = [
-      this.options.fromOptions.find(a => a.value === BTC),
-      this.options.toOptions.find(a => a.value === WBTC),
-    ];
     const { fromAsset, toAsset } = this.getInitialAssets();
 
     this.state = {
@@ -235,12 +230,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
   }
 
-  getInitialAssets = (): Object => {
+  getInitialAssets = (): { fromAsset: Option, toAsset: Option } => {
     const { navigation, exchangeSearchRequest } = this.props;
     const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest?.fromAssetCode || ETH;
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
     return {
-      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode),
+      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode) || {},
       toAsset: getToOption(toAssetCode, this.options),
     };
   }
@@ -275,7 +270,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <ValueInput
           assetData={fromAsset}
           onAssetDataChange={(assetData) => this.setState({
-            fromAsset: assetData, toAsset: assetData.symbol === BTC ? this.wbtcCafeOptions[1] : toAsset,
+            fromAsset: assetData, toAsset: assetData.symbol === BTC ? getToOption(WBTC, this.options) : toAsset,
           })}
           value={fromAmount}
           onValueChange={this.handleFromInputChange}
