@@ -19,7 +19,7 @@
 */
 
 import React, { useState } from 'react';
-import { Clipboard } from 'react-native';
+import { Clipboard, ScrollView } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -201,13 +201,12 @@ const WBTCCafeInfo = (props: Props) => {
   const rate = wbtcData?.exchangeRate;
   const rateString = rate ? `1 ${BTC} = ${rate.toFixed(4)} ${WBTC}` : '-';
   const buttonDisabled = error || !wbtcData?.estimate || (extendedInfo && !address);
-  const smallTableStyle = {
-    position: 'absolute', bottom: 25, left: 0, right: 0,
-  };
+
   return (
-    <TableWrapper style={[!extendedInfo && smallTableStyle]}>
-      {extendedInfo ? getExtendedTable(rateString) : getShortTable(rateString)}
-      {extendedInfo
+    <ScrollView>
+      <TableWrapper>
+        {extendedInfo ? getExtendedTable(rateString) : getShortTable(rateString)}
+        {extendedInfo
       ? <WBTCCafeAddress amount={amount} address={address} error={error || buttonDisabled} />
       : (
         <FeeRow>
@@ -215,18 +214,19 @@ const WBTCCafeInfo = (props: Props) => {
           <FeeWrapper><Fee>{getFeeInfo()}</Fee></FeeWrapper>
         </FeeRow>
       )}
-      <ButtonWrapper>
-        <Button title={getButtonTitle()} onPress={handleNextPress} disabled={buttonDisabled} />
-        {extendedInfo && <Button
-          secondary
-          title={t('wbtcCafe.sent')}
-          onPress={handleSent}
-          disabled={buttonDisabled}
-          style={{ marginTop: 8 }}
-        />}
-      </ButtonWrapper>
-      {extendedInfo && (<Label>{t('wbtcCafe.confirmBTC')}</Label>)}
-    </TableWrapper>
+        <ButtonWrapper>
+          <Button title={getButtonTitle()} onPress={handleNextPress} disabled={buttonDisabled} />
+          {extendedInfo && <Button
+            secondary
+            title={t('wbtcCafe.sent')}
+            onPress={handleSent}
+            disabled={buttonDisabled}
+            style={{ marginTop: 8 }}
+          />}
+        </ButtonWrapper>
+        {extendedInfo && (<Label>{t('wbtcCafe.confirmBTC')}</Label>)}
+      </TableWrapper>
+    </ScrollView>
   );
 };
 
