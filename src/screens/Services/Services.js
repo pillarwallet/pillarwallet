@@ -42,6 +42,8 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   SENDWYRE_INPUT,
+  WBTC_CAFE,
+  RARI_DEPOSIT,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -75,11 +77,13 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 let isOffersEngineEnabled = true;
 let isAaveEnabled = true;
 let isPoolTogetherEnabled = true;
-let isPeerToPeerEnabled = true;
+let isPeerToPeerEnabled = false;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
 let isAltalixEnabled = true;
+let isWBTCCafeEnabled = true;
+let isRariEnabled = true;
 
 type Props = {
   theme: Theme,
@@ -107,6 +111,8 @@ class ServicesScreen extends React.Component<Props> {
     isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
+    isWBTCCafeEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
+    isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
@@ -118,7 +124,8 @@ class ServicesScreen extends React.Component<Props> {
     } = this.props;
     const colors = getThemeColors(theme);
     const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
-      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length }),
+      // +1 for WBTC.Cafe
+      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length + 1 }),
       color: colors.primary,
     } : null;
 
@@ -155,6 +162,26 @@ class ServicesScreen extends React.Component<Props> {
         title: t('servicesContent.sablier.title'),
         body: t('servicesContent.sablier.description'),
         action: () => navigation.navigate(SABLIER_STREAMS),
+      });
+    }
+    if (isWBTCCafeEnabled) {
+      services.push({
+        key: 'wbtc',
+        title: t('wbtcCafe.cafe'),
+        body: t('wbtcCafe.trade'),
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(WBTC_CAFE),
+      });
+    }
+    if (isRariEnabled) {
+      services.push({
+        key: 'rari',
+        title: t('servicesContent.rari.title'),
+        body: t('servicesContent.rari.description'),
+        disabled: SWServiceDisabled,
+        label: SWServiceLabel,
+        action: () => navigation.navigate(RARI_DEPOSIT),
       });
     }
     if (isPeerToPeerEnabled) {

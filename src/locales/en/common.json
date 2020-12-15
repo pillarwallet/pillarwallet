@@ -25,6 +25,7 @@
   "positiveTokenValue": "+ {{value}} {{token}}",
   "negativeTokenValue": "- {{value}} {{token}}",
   "positivePercentValue": "+ {{value}} %",
+  "negativePercentValue": "- {{value}} %",
   "tokenValue": "{{value}} {{token}}",
   "totalValue": "Total {{value}}",
   "percentValue": "{{value}} %",
@@ -200,7 +201,12 @@
     "notAvailableInYourCountry": "Not available in Your country",
     "cannotProceedOffline": "Cannot proceed offline",
     "payWithPLR": "Pay with PLR",
-    "notSet": "Not set"
+    "notSet": "Not set",
+    "deposit": "Deposit",
+    "claim": "Claim",
+    "fromRariToWallet": "Rari Capital → Wallet",
+    "fromWalletToRari": "Wallet → Rari Capital",
+    "rewardsClaimed": "Rewards claimed"
   },
 
   "button": {
@@ -210,6 +216,7 @@
     "addContacts": "Add contacts",
     "addDetails": "Add details",
     "addFunds": "Add funds",
+    "apply": "Apply",
     "approve": "Approve",
     "buyPLR": "Buy PLR",
     "buyTokensWithCreditCard": "Buy tokens with credit card",
@@ -291,7 +298,9 @@
     "finish": "Finish",
     "notEnoughToken": "Not enough {{token}}",
     "buyToken": "Buy {{token}}",
-    "topUpTokenTank": "Top up {{token}} Tank"
+    "topUpTokenTank": "Top up {{token}} Tank",
+    "claimMore": "Claim more",
+    "transferMore": "Transfer more"
   },
 
   "paragraph": {
@@ -494,7 +503,8 @@
       "poolTogetherStats": "Can't connect to Pool Together",
       "sablierStreams": "Can't connect to Sablier",
       "isTokenSupportedByUniswap": "Can't connect to exchange service",
-      "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete."
+      "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
+      "rari": "Can't connect to Rari service."
     }
   },
 
@@ -878,6 +888,41 @@
     }
   },
 
+  "wbtcCafe": {
+    "rate": "Exchange rate",
+    "renFee": "RenVM fee",
+    "btcFee": "Bitcoin fee",
+    "slippage": "Max. price slippage",
+    "sendBtc": "To receive WBTC in Pillar, send {{amount}} BTC to this address.",
+    "copy": "Copy address",
+    "useOnce": "Address will be valid for the next 15 minutes and can be used only once.",
+    "renDescription": "Exchange is powered by RenVm, which provides access to inter-blockchain liquidity for all decentralized applications.",
+    "slippageDesc": "Proceed with swap if BTC → WBTC rate is changed less than…",
+    "custom": "Custom",
+    "enterCustom": "Enter custom percent",
+    "warning": "This is experimental, we take no responsibility for losses. In some cases total amount can be converted to renBTC.",
+    "intro": "WBTC.Cafe provides one of the easiest ways for users to acquire Wrapped Bitcoin (WBTC) with real Bitcoin (BTC). The Cafe facilitates a native Bitcoin user experience, allowing users to put their BTC to use in the Ethereum DeFi ecosystem.",
+    "how": "How it works",
+    "info": "The Cafe is a shining example of DeFi composability and RenVM’s ability to bolster greater utility for all of DeFi. It is a collaborative effort of three DeFi Projects; RenVM, Curve Finance, and WBTC - all offered in an intuitive mobile experience with Pillar Wallet.",
+    "ren": "RenVM",
+    "renInfo": "A user sends BTC and RenVM converts the BTC to renBTC.",
+    "curve": "Curve Liquidity Pool",
+    "curveInfo": "The platform receives renBTC and automatically swaps it for WBTC within a low-slippage liquidity pool.",
+    "wbtc": "WBTC",
+    "wbtcInfo": "The user receives WBTC and is now able to use it on any supported DeFi platform or protocol.",
+    "put": "Put your Bitcoin to work!",
+    "get": "Get WBTC",
+    "cafe": "WBTC.Cafe",
+    "trade": "Trade Bitcoin for WBTC",
+    "sent": "I've sent BTC",
+    "buyMore": "Buy more WBTC",
+    "error": "Something went wrong. Please choose a different value or try again.",
+    "higherAmount": "Please choose a higher amount",
+    "time": "Transaction time",
+    "timeHrs": "1 - 3 hrs",
+    "confirmBTC": "Please confirm that you have sent bitcoins by clicking on this button."
+  },
+
   "referralsContent": {
     "banner": {
       "inviteBanner": {
@@ -1196,6 +1241,10 @@
       "title": "Buy with Altalix",
       "description": "Buy Now"
     },
+    "rari": {
+      "title": "Rari Capital",
+      "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
+    },
     "label": {
       "requiresActivation": "Requires activation",
       "forSmartWallet": "For Smart Wallet",
@@ -1251,7 +1300,8 @@
       "pillarFee": "Pillar fee",
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
-      "fees": "Fees"
+      "fees": "Fees",
+      "allowancePlusEthFee": "Allowance + Ethereum fee"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
@@ -1373,7 +1423,14 @@
     "cannotWithdrawAsset": "Cannot withdraw asset. Please try again.",
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
     "walletBackedUp": "Your wallet is backed up now.",
-    "cannotFundTank": "Cannot funk tank. Please try again."
+    "cannotFundTank": "Cannot funk tank. Please try again.",
+    "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
+    "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
+    "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",
+    "rariDeposit": "{{amount}} {{token}} deposited to Rari Capital.",
+    "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
+    "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
+    "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital."
   },
 
   "exchangeContent": {
@@ -1434,6 +1491,113 @@
         "title": "No live offers",
         "paragraph": "Currently no matching offers from exchange services are provided.\nNew offers may appear at any time — don’t miss it."
       }
+    }
+  },
+
+  "rariContent": {
+    "title": {
+      "depositScreen": "Your deposit",
+      "infoScreen": "Rari Capital",
+      "addDepositScreen": "Add deposit",
+      "addDepositReviewScreen": "Review",
+      "withdrawScreen": "Withdraw",
+      "withdrawReviewScreen": "Review",
+      "transferScreen": "Transfer",
+      "transferReviewScreen": "Review",
+      "claimRgtScreen": "Claim rewards",
+      "claimRgtReviewScreen": "Review"
+    },
+    "label": {
+      "currentAPY": "Current APY",
+      "earned": "Earned",
+      "totalSupply": "Total supply",
+      "rariExchangeFee": "Rari fee",
+      "depositDetails": "Deposit details",
+      "maxSlippage": "Max. slippage",
+      "poolBalance": "Pool Balance",
+      "youAreDepositingToStablePool": "You are depositing to Stable pool",
+      "youAreDepositingToYieldPool": "You are depositing to Yield pool",
+      "youAreDepositingToEthPool": "You are depositing to ETH pool",
+      "youAreWithdrawingFromStablePool": "You are withdrawing from Stable pool",
+      "youAreWithdrawingFromYieldPool": "You are withdrawing from Yield pool",
+      "youAreWithdrawingFromEthPool": "You are withdrawing from ETH pool",
+      "withdrawDetails": "Withdraw details",
+      "rariWithdrawalFee": "Rari withdrawal fee",
+      "youAreTransferring": "You are transferring",
+      "transferDetails": "Transfer details",
+      "claimedSoFar": "{{amount}} RGT claimed so far",
+      "youAreClaiming": "You are claiming rewards",
+      "rgtPrice": "RGT price",
+      "rgtSupply": "RGT supply",
+      "currentAPYWithPercentage": "Current APY: {{percentage}}%",
+      "claimingDetails": "Claiming details",
+      "burnTakeback": "Burn/Takeback"
+    },
+    "button": {
+      "withdraw": "Withdraw",
+      "deposit": "Deposit",
+      "transfer": "Transfer",
+      "claimRewards": "Claim rewards"
+    },
+    "tooltip": {
+      "rariExchangeFee": "You are depositing ETH which is not supported by the Rari Stable Pool, so your funds must be exchanged first",
+      "rariWithdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools.",
+      "burnTakeback": "Claiming your RGT before December 19th, 2020 will result in fraction of it being burned and sent back to the protocol. 70% of the amount taken will be burned and 30% taken back into the protocol. This amount decreases from 33% linearly until the 19th when it will reach 0%."
+    },
+    "infoContent": {
+      "subtitle": {
+        "keyFacts": "Key facts",
+        "whatIsRari": "What is Rari?",
+        "howDoesRariEarn": "How does Rari Earn Yield?",
+        "rariPools":"Rari Pools",
+        "deposits": "Deposits",
+        "withdrawals": "Withdrawals",
+        "RGT": "$RGT (Rari Governance Token)",
+        "performanceFee": "Performance Fee",
+        "withdrawalFee": "Withdrawal fee",
+        "RGTFee": "RGT Claim Fee",
+        "rariFee": "Rari fee"
+      },
+      "paragraph": {
+        "whatIsRari": "Rari Capital is an easy interface to earn yield within DeFi.\n\nRari Capital began by delivering on this mission in a safe way that enables individuals to autonomously and easily earn yield on their stable assets in a lossless manner. From there, it transformed into a solution that leveraged yield farming strategies to increase the returns offered to users.",
+        "howDoesRariEarn": "Currently, the product optimizes for yield across a series of stable-assets (swapping via 0x) in the stable and yield pools and Ethereum in the ETH pool. It earns yield by lending and farming across various DeFi protocols like Compound, dYdX, KeeperDAO, mStable, yEarn, and Aave. We are actively expanding our strategy set to focus on more sustainable yields off of the chain. We expect lending to compose the minority of the pool's allocation once mass protocol expansion has begun.",
+        "rariPools": "The first pool is the stable pool ($RSPT) which interacts safely with exclusively audited contracts. The next pool is the yield pool ($RYPT) that will maximize for yield at all costs, whether it is leverage or unaudited contracts--the yield pool will always have the highest returns. Lastly, the ETH ($REPT) fund will work to deliver safe and stable returns with ETH as the base asset. ",
+        "deposits": "Only certain stablecoins are accepted for direct deposits (direct meaning without exchange to an accepted currency). To deposit another currency, you must exchange your funds before depositing. Fortunately, Rari can exchange and deposit your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to deposit via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
+        "withdrawals": "Only the stablecoins currently held by the Rari Stable Pool are available for direct withdrawals. To withdraw another currency, you must exchange your funds after withdrawing. Fortunately, Rari can withdraw and exchange your funds in the same transaction via 0x and/or mStable (please be aware that exchanges via 0x are subject to slippage due to price spread as well as an ETH protocol fee, and exchanges via mStable are subject to a small denominational percentage fee, but can avoid slippage and even get you a bonus).\n\nSee USAGE.md for more information on how to withdraw via the smart contracts and API.md for a detailed reference on the smart contract methods involved. See the Rari SDK for easy implementation and the web client for easy usage.",
+        "RGT": "The $RGT is the Rari Governance Token. It can be used to propose and vote proposals made by the Rari Team or fellow token-holding community members. Users can also delegate their voting power to another address to pool voting power.\n\n$RGT enables transaction discounts for users, a unique feature of $RGT and the Rari Protocol. By staking held $RGT tokens in Rari, users can gain discounts on Rari Protocol fees. Rari normally charges a 9.5% fee on all gains, however, staking $RGT can reduce these fees over certain intervals. Fees accumulate through time and discounts are determined by the ratio between deposited funds to staked $RGT. ",
+        "performanceFee": "There is a 9.5% fee on all profits accrued through the Rari Protocol. ",
+        "withdrawalFee": "There is a 0.5% withdrawal fee on all withdrawals made from the yield and stable pools. This 0.5% figure is inspired by yEarn, as they have the same standard for their yVaults.",
+        "RGTFee": "The RGT Claim Fee is a slight fee that takes place when a user attempts to claim their token within the first sixty days of the mining of it.\n\nAttempting to claim the token right after earning it will result in a 33% fee. From there, it decreases linearly across the subsequent sixty days. This is highlighted in the chart below. If you wait sixty days, you will not have any claim fee. You can view day-by-day data here. ",
+        "rariFee": "When you are depositing tokens, which is not supported by the Rari Stable Pool,  your funds must be exchanged first."
+      },
+      "tableOfContents": {
+        "whatIsRari": "What is Rari?",
+        "howDoesRariEarn": "How does Rari Earn Yield?",
+        "rariPools": "Rari Pools",
+        "howToDeposit": "How to Deposit and Withdraw",
+        "RGT": "$RGT",
+        "fees": "Fees"
+      },
+      "maximizeYieldInsight": {
+        "title": "Maximize yield in DeFi",
+        "button": "Deposit now"
+      },
+      "poolsInsight": {
+        "stablePool": "The Rari Stable Pool allows users to deposit ETH or any ERC20 token to mint the native token, $RSPT.",
+        "yieldPool": "The Rari Yield Pool provides users with the opportunity to earn a high yield by depositing ETH or any ERC20 token to mint the native token, $RYPT.",
+        "ethPool": "The Rari ETH Pool allows Rari users to deposit ETH or any ERC20 tokens to immediately start earning interest through the $REPT."
+      }
+    },
+    "tabs": {
+      "stablePool": "Stable Pool",
+      "yieldPool": "Yield Pool",
+      "ethPool": "ETH Pool"
+    },
+    "depositsList": {
+      "title": "Rari Capital",
+      "stablePool": "Stable pool",
+      "yieldPool": "Yield pool",
+      "ethPool": "ETH pool"
     }
   },
 

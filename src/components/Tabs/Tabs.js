@@ -77,7 +77,7 @@ const TabComponent = ({ name, onPress, active }: TabProps) => {
 const Tabs = ({ tabs, activeTab, wrapperStyle }: Props) => {
   return (
     <TabsContainer style={wrapperStyle}>
-      {tabs.map(tab => <TabComponent {...tab} active={activeTab === tab.id} />)}
+      {tabs.map(tab => <TabComponent {...tab} active={activeTab === tab.id} key={tab.id} />)}
     </TabsContainer>
   );
 };

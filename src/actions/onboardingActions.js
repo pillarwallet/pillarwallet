@@ -72,6 +72,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -289,6 +290,8 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
 
     await dispatch(setupAppServicesAction(walletData?.privateKey));
+
+    dispatch(getExchangeSupportedAssetsAction());
 
     const { errorMessage, usernameRegistrationFailed } = getState().onboarding;
 

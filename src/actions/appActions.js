@@ -43,6 +43,7 @@ import {
   SET_EXCHANGE_ALLOWANCES,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  SET_WBTC_SETTLED_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
@@ -67,12 +68,14 @@ import { SET_KEY_BASED_ASSETS_TO_TRANSFER } from 'constants/keyBasedAssetTransfe
 import { SET_STREAMS } from 'constants/sablierConstants';
 import { SET_CONTACTS } from 'constants/contactsConstants';
 import { SET_CACHED_URLS } from 'constants/cacheConstants';
+import { SET_RARI_USER_DATA } from 'constants/rariConstants';
 
 // utils
 import { getWalletFromStorage } from 'utils/wallet';
 
 // actions
 import { getTranslationsResourcesAndSetLanguageOnAppOpenAction } from 'actions/localisationActions';
+import { setWbtcPendingTxsAction } from './exchangeActions';
 
 
 const storage = Storage.getInstance('db');
@@ -157,6 +160,12 @@ export const initAppAndRedirectAction = () => {
       const { allowances = [] } = get(storageData, 'exchangeAllowances', {});
       dispatch({ type: SET_EXCHANGE_ALLOWANCES, payload: allowances });
 
+      const { pendingWbtcTransactions = [] } = get(storageData, 'pendingWbtcTransactions', []);
+      dispatch(setWbtcPendingTxsAction(pendingWbtcTransactions));
+
+      const { settledWbtcTransactions = [] } = get(storageData, 'settledWbtcTransactions', []);
+      dispatch({ type: SET_WBTC_SETTLED_TRANSACTIONS, payload: settledWbtcTransactions });
+
       const { userSettings = {} } = get(storageData, 'userSettings', {});
       dispatch({ type: SET_USER_SETTINGS, payload: userSettings });
 
@@ -209,6 +218,9 @@ export const initAppAndRedirectAction = () => {
       dispatch({ type: SET_ENS_REGISTRY_RECORDS, payload: ensRegistry });
 
       if (wallet.backupStatus) dispatch({ type: UPDATE_WALLET_BACKUP_STATUS, payload: wallet.backupStatus });
+
+      const rariData = get(storageData, 'rari');
+      if (rariData) dispatch({ type: SET_RARI_USER_DATA, payload: rariData });
     }
 
     dispatch({ type: UPDATE_APP_SETTINGS, payload: appSettings });

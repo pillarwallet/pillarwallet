@@ -62,7 +62,12 @@ export const afterHistoryUpdatedAction = () => {
 };
 
 // TODO: remove in favor of Etherspot?
-// const syncAccountHistory = (apiHistory, accountId, dispatch, getState) => {
+// export const syncAccountHistory = (
+//   apiHistory: Transaction[],
+//   accountId: string,
+//   dispatch: Dispatch,
+//   getState: GetState,
+// ) => {
 //   const { history: { data: currentHistory } } = getState();
 //   const accountHistory = currentHistory[accountId] || [];
 //
@@ -71,6 +76,7 @@ export const afterHistoryUpdatedAction = () => {
 //
 //   const updatedAccountHistory = uniqBy([...minedTransactions, ...accountHistory, ...pendingTransactions], 'hash');
 //   const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+//
 //   dispatch(saveDbAction('history', { history: updatedHistory }, true));
 //
 //   dispatch({
@@ -116,13 +122,12 @@ export const fetchTransactionsHistoryAction = () => {
 
     // TODO: implement etherspot
     // await dispatch(syncVirtualAccountTransactionsAction());
-
+    //
     // const accountId = getAccountId(smartWalletAccount);
     // const accountAddress = getAccountAddress(smartWalletAccount);
     //
     // const smartWalletTransactions = await smartWalletService.getAccountTransactions(lastSyncedTransactionId);
     // const accountAssets = smartAccountAssetsSelector(getState());
-    //
     // const relayerExtensionDevice = devices.find(deviceHasGasTokenSupport);
     // const assetsList = getAssetsAsList(accountAssets);
     // const smartWalletTransactionHistory = parseSmartWalletTransactions(
@@ -133,10 +138,11 @@ export const fetchTransactionsHistoryAction = () => {
     // );
     // const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
     // const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
-    // const history = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    // const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    // const history = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
     //
     // if (!history.length) return;
-    //
+    // // jd: are these new txs? if so, map over them and for every WBTC tx, clear last pending tx
     // if (smartWalletTransactions.length) {
     //   const newLastSyncedId = smartWalletTransactions[0].id;
     //   dispatch({

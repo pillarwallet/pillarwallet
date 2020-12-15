@@ -33,15 +33,16 @@ const Wrapper = styled.View`
 type Props = {
   onPress: () => void,
   theme: Theme,
+  disabled?: boolean,
 };
 
 const ExchangeSwapIcon = ({
-  onPress, theme,
+  onPress, theme, disabled,
 }: Props) => {
   const { exchangeIcon } = images(theme);
   return (
     <Wrapper>
-      <TouchableOpacity onPress={onPress} >
+      <TouchableOpacity onPress={onPress} disabled={disabled} >
         <CachedImage
           style={{ width: 18, height: 20 }}
           source={exchangeIcon}

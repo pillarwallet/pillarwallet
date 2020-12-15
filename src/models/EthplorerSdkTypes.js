@@ -74,7 +74,7 @@ export type GetAddressTransactionsParams = {
   showZeroValues?: 0 | 1,   // show transactions with zero ETH value, default = 0
 };
 
-type TokenOperation = {
+export type TokenOperation = {
   timestamp: number,        // operation timestamp
   transactionHash: string,  // transaction hash
   tokenInfo: TokenInfo,     // token data,

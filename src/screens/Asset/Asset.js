@@ -50,20 +50,16 @@ import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActi
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import {
-  PAYMENT_NETWORK_TX_SETTLEMENT,
-  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
-} from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
 import { formatMoney, formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { isSWAddress, mapTransactionsHistory } from 'utils/feedData';
+import { isSWAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
+import { getTokenTransactionsFromHistory } from 'utils/history';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -256,15 +252,7 @@ class AssetScreen extends React.Component<Props> {
       disclaimer,
     } = assetsConfig[token] || {};
 
-    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const mappedTransactions = mapTransactionsHistory(
-      tokenTxHistory,
-      accounts,
-      TRANSACTION_EVENT,
-    );
-    const tokenTransactions = mappedTransactions
-      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
-        || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+    const tokenTransactions = getTokenTransactionsFromHistory(history, accounts, token);
 
     const mainnetTransactions = tokenTransactions
       .filter(({

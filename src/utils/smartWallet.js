@@ -46,6 +46,7 @@ import {
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
 import { ETH } from 'constants/assetsConstants';
+import { RARI_TOKENS_DATA } from 'constants/rariConstants';
 
 // services
 import { parseEstimatePayload } from 'services/smartWallet';
@@ -236,7 +237,14 @@ export const parseSmartWalletTransactions = (
       if (symbol) {
         transaction.asset = symbol;
       } else {
-        return mapped; // skip non-supported assets
+        // Rari tokens are not supported yet but we want events with rari tokens
+        const rariToken = (Object.values(RARI_TOKENS_DATA): any)
+          .find(token => token.contractAddress === tokenAddress)?.symbol;
+        if (rariToken) {
+          transaction.asset = rariToken;
+        } else {
+          return mapped; // skip non-supported assets
+        }
       }
     }
 

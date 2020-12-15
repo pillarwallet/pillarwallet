@@ -29,11 +29,18 @@ import {
   MARK_NOTIFICATION_SEEN,
   SET_EXCHANGE_SUPPORTED_ASSETS,
   SET_FIAT_EXCHANGE_SUPPORTED_ASSETS,
+  SET_WBTC_FEES,
   SET_UNISWAP_TOKENS_QUERY_STATUS,
   UNISWAP_TOKENS_QUERY_STATUS,
+  SET_WBTC_PENDING_TRANSACTIONS,
+  ADD_WBTC_PENDING_TRANSACTION,
+  SET_WBTC_SETTLED_TRANSACTIONS,
+  ADD_WBTC_SETTLED_TRANSACTION,
 } from 'constants/exchangeConstants';
 import type { Offer, ExchangeSearchRequest, Allowance } from 'models/Offer';
 import type { Asset } from 'models/Asset';
+import type { Transaction } from 'models/Transaction';
+import type { WBTCFeesRaw, PendingWBTCTransaction } from 'models/WBTC';
 
 export type ExchangeReducerState = {
   data: {
@@ -42,9 +49,12 @@ export type ExchangeReducerState = {
     executingTransaction: boolean,
     allowances: Allowance[],
     hasNotification: boolean,
+    pendingWbtcTransactions: PendingWBTCTransaction[],
+    settledWbtcTransactions: Transaction[],
   },
   exchangeSupportedAssets: Asset[],
   fiatExchangeSupportedAssets: Asset[],
+  wbtcFees: ?WBTCFeesRaw,
   isFetchingUniswapTokens: boolean,
   uniswapTokensGraphQueryFailed: boolean,
 }
@@ -65,9 +75,12 @@ export const initialState = {
     executingTransaction: false,
     allowances: [],
     hasNotification: false,
+    pendingWbtcTransactions: [],
+    settledWbtcTransactions: [],
   },
   exchangeSupportedAssets: [],
   fiatExchangeSupportedAssets: [],
+  wbtcFees: null,
   isFetchingUniswapTokens: false,
   uniswapTokensGraphQueryFailed: false,
 };
@@ -174,6 +187,49 @@ export default function exchangeReducer(
       return {
         ...state,
         fiatExchangeSupportedAssets: action.payload,
+      };
+    case SET_WBTC_FEES:
+      return {
+        ...state,
+        wbtcFees: action.payload,
+      };
+    case ADD_WBTC_PENDING_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          pendingWbtcTransactions: [
+            ...state.data.pendingWbtcTransactions,
+            action.payload,
+          ],
+        },
+      };
+    case SET_WBTC_PENDING_TRANSACTIONS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          pendingWbtcTransactions: action.payload,
+        },
+      };
+    case ADD_WBTC_SETTLED_TRANSACTION:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          settledWbtcTransactions: [
+            ...state.data.settledWbtcTransactions,
+            action.payload,
+          ],
+        },
+      };
+    case SET_WBTC_SETTLED_TRANSACTIONS:
+      return {
+        ...state,
+        data: {
+          ...state.data,
+          settledWbtcTransactions: action.payload,
+        },
       };
     case SET_UNISWAP_TOKENS_QUERY_STATUS:
       return (action.payload.status === UNISWAP_TOKENS_QUERY_STATUS.FETCHING)

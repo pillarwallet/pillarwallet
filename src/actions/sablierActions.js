@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import { BigNumber as EthersBigNumber } from 'ethers';
 
 // actions
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -73,7 +74,7 @@ export const fetchUserStreamsAction = () => {
 
 export const calculateSablierWithdrawTransactionEstimateAction = (
   stream: Stream,
-  amount: number,
+  amount: EthersBigNumber,
   asset: Asset,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {

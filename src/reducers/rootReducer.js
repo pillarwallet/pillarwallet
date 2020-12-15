@@ -65,6 +65,7 @@ import fiatToCryptoReducer from './fiatToCryptoReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
+import rariReducer from './rariReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -111,6 +112,7 @@ import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiat
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
+import type { RariReducerAction, RariReducerState } from './rariReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -151,6 +153,7 @@ export type RootReducerState = {|
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
   transactionEstimate: TransactionEstimateReducerState,
+  rari: RariReducerState,
 |};
 
 type RootReducerAction =
@@ -182,7 +185,8 @@ type RootReducerAction =
   | FiatToCryptoReducerAction
   | OnboardingReducerAction
   | CacheAction
-  | TransactionEstimateReducerAction;
+  | TransactionEstimateReducerAction
+  | RariReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -233,6 +237,7 @@ const appReducer = combineReducers({
   onboarding: onboardingReducer,
   cache: cacheReducer,
   transactionEstimate: transactionEstimateReducer,
+  rari: rariReducer,
 });
 
 export const initialState = appReducer(undefined, {});
