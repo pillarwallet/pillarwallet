@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import isEmpty from 'lodash.isempty';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -138,16 +139,11 @@ class ExchangeScreen extends React.Component<Props, State> {
   _isMounted: boolean;
   emptyMessageTimeout: ?TimeoutID;
   options: ExchangeOptions;
-  wbtcCafeOptions: (Option | typeof undefined)[]
 
   constructor(props: Props) {
     super(props);
     this.listeners = [];
     this.options = this.provideOptions();
-    this.wbtcCafeOptions = [
-      this.options.fromOptions.find(a => a.value === BTC),
-      this.options.toOptions.find(a => a.value === WBTC),
-    ];
     const { fromAsset, toAsset } = this.getInitialAssets();
 
     this.state = {
@@ -235,12 +231,12 @@ class ExchangeScreen extends React.Component<Props, State> {
     }
   }
 
-  getInitialAssets = (): Object => {
+  getInitialAssets = (): { fromAsset: Option, toAsset: Option } => {
     const { navigation, exchangeSearchRequest } = this.props;
     const fromAssetCode = navigation.getParam('fromAssetCode') || exchangeSearchRequest?.fromAssetCode || ETH;
     const toAssetCode = navigation.getParam('toAssetCode') || exchangeSearchRequest?.toAssetCode || PLR;
     return {
-      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode),
+      fromAsset: this.options.fromOptions.find(a => a.value === fromAssetCode) || {},
       toAsset: getToOption(toAssetCode, this.options),
     };
   }
@@ -275,7 +271,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         <ValueInput
           assetData={fromAsset}
           onAssetDataChange={(assetData) => this.setState({
-            fromAsset: assetData, toAsset: assetData.symbol === BTC ? this.wbtcCafeOptions[1] : toAsset,
+            fromAsset: assetData, toAsset: assetData.symbol === BTC ? getToOption(WBTC, this.options) : toAsset,
           })}
           value={fromAmount}
           onValueChange={this.handleFromInputChange}
@@ -400,12 +396,13 @@ class ExchangeScreen extends React.Component<Props, State> {
       showEmptyMessage,
       isFormValid,
       fromAsset,
+      toAsset,
       wbtcData,
     } = this.state;
 
     const displayWbtcCafe = isWbtcCafe(fromAsset?.symbol);
     const { fromOptions, toOptions } = this.options;
-    const assetsLoaded = !!fromOptions.length && !!toOptions.length;
+    const assetsLoaded = !!fromOptions.length && !!toOptions.length && !isEmpty(fromAsset) && !isEmpty(toAsset);
     const rightItems = getHeaderRightItems(
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
     );
