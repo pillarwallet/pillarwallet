@@ -7167,10 +7167,10 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@^1.0.0-alpha.62:
-  version "1.0.0-alpha.62"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.0.0-alpha.62.tgz#7d5ab202fe29ac48905ccb179e306226d1031556"
-  integrity sha512-ZWvLe1HJXYfKtGI7Qh9EWO+7NqbQ813+SQO9B6KcB1+fmvtZ6q9jydkLfiO4BIMjiWWsiAFLHJfD8Jf/e9oMBw==
+etherspot@^1.0.0-beta.1:
+  version "1.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.0.0-beta.1.tgz#b954454085f5aabf7ae2457c520cca3f7ebd2540"
+  integrity sha512-+cSR5d5zZahLCJ5vIO/KiE9+lZj8V3MxEJwndNIUnQvWSJ18iBf9vx7k1gxkXxUTEITZfBZCuhkjX89Go96pWA==
   dependencies:
     "@apollo/client" "3.1.3"
     "@etherspot/contracts" "1.0.0-alpha.31"

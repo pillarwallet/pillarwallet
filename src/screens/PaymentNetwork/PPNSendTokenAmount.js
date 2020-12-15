@@ -39,7 +39,7 @@ import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 
 // utils
 import {
-  getAssetDataByAddress,
+  getAssetData,
   getAssetsAsList,
 } from 'utils/assets';
 import { isEnsName } from 'utils/validators';
@@ -50,11 +50,12 @@ import { contactsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // types
-import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { Dispatch } from 'reducers/rootReducer';
 import type { Assets, Balances } from 'models/Asset';
 import type { Contact } from 'models/Contact';
 import type { Option } from 'models/Selector';
 import type { TokenTransactionPayload } from 'models/Transaction';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 
 type Props = {
@@ -77,7 +78,7 @@ const PPNSendTokenAmount = ({
   const [selectedContact, setSelectedContact] = useState<?Contact>(null);
   const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
 
-  const PPNAsset = getAssetDataByAddress(getAssetsAsList(accountAssets), [], PPN_TOKEN);
+  const PPNAsset = getAssetData(getAssetsAsList(accountAssets), [], PPN_TOKEN);
 
   const { symbol, address: contractAddress, decimals } = PPNAsset;
 
@@ -208,25 +209,15 @@ const PPNSendTokenAmount = ({
   );
 };
 
-const mapStateToProps = ({
-  paymentNetwork: { availableStake },
-}: RootReducerState): $Shape<Props> => ({
-  availableStake,
-});
-
 const structuredSelector = createStructuredSelector({
   contacts: contactsSelector,
   accountAssets: accountAssetsSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
+  availableStake: availableStakeSelector,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(PPNSendTokenAmount);
+export default connect(structuredSelector, mapDispatchToProps)(PPNSendTokenAmount);
 

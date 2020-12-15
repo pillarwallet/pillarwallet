@@ -45,7 +45,7 @@ import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScre
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
-import PPNSendTokenAmountScreen from 'screens/Tank/PPNSendTokenAmount';
+import PPNSendTokenAmountScreen from 'screens/PaymentNetwork/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -57,12 +57,12 @@ import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfi
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
-import FundTankScreen from 'screens/Tank/FundTank';
-import FundTankConfirmScreen from 'screens/Tank/FundTankConfirm';
-import SettleBalanceScreen from 'screens/Tank/SettleBalance';
-import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
-import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
-import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
+import FundTankScreen from 'screens/PaymentNetwork/FundTank';
+import FundTankConfirmScreen from 'screens/PaymentNetwork/FundTankConfirm';
+import SettleBalanceScreen from 'screens/PaymentNetwork/SettleBalance';
+import SettleBalanceConfirmScreen from 'screens/PaymentNetwork/SettleBalanceConfirm';
+import TankWithdrawalScreen from 'screens/PaymentNetwork/TankWithdrawal';
+import TankWithdrawalConfirmScreen from 'screens/PaymentNetwork/TankWithdrawalConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';

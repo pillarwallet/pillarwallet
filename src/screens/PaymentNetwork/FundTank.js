@@ -24,6 +24,7 @@ import styled from 'styled-components/native';
 import debounce from 'lodash.debounce';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
+import isEmpty from 'lodash.isempty';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -57,6 +58,11 @@ import {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import {
+  fetchAccountAssetsBalancesAction,
+  fetchAssetsBalancesAction,
+} from 'actions/assetsActions';
+import { fetchERC20Balance } from 'services/assets';
 
 
 type Props = {
@@ -68,6 +74,7 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   accountAssets: Assets,
+  fetchAssetsBalances: () => void,
 };
 
 const FeeInfo = styled.View`
@@ -96,9 +103,11 @@ const FundTank = ({
   estimateErrorMessage,
   resetEstimateTransaction,
   accountAssets,
+  fetchAssetsBalances,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
+    fetchAssetsBalances();
   }, []);
 
   const [fundAmount, setFundAmount] = useState(null);
@@ -107,7 +116,7 @@ const FundTank = ({
   const PPNAsset = getAssetData(getAssetsAsList(accountAssets), [], PPN_TOKEN);
 
   useEffect(() => {
-    if (!fundAmount || !PPNAsset || !inputValid) return;
+    if (!fundAmount || isEmpty(PPNAsset) || !inputValid) return;
     estimateAccountDepositTokenTransaction(fundAmount);
   }, [fundAmount, PPNAsset, inputValid]);
 
@@ -208,6 +217,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     200,
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
+  fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(FundTank);

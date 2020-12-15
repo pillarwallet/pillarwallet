@@ -51,6 +51,7 @@ import { loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
 import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
+import { fetchAccountPaymentChannelsAction } from 'actions/etherspotActions';
 
 
 export const afterHistoryUpdatedAction = () => {

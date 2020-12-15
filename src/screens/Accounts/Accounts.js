@@ -134,7 +134,7 @@ const AccountsScreen = ({
   };
 
   const setAccountActive = async (wallet: Account) => {
-    await switchAccount(wallet.id);
+    switchAccount(wallet.id);
     navigation.navigate(ASSETS);
   };
 

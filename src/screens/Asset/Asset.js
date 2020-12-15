@@ -72,7 +72,6 @@ import assetsConfig from 'configs/assetsConfig';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
@@ -91,10 +90,8 @@ type Props = {
   resetHideRemoval?: Function,
   accounts: Accounts,
   activeAccount: ?Account,
-  paymentNetworkBalances: Balances,
   history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
-  availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
@@ -231,13 +228,11 @@ class AssetScreen extends React.Component<Props> {
     const {
       rates,
       balances,
-      paymentNetworkBalances,
       fetchAssetsBalances,
       baseFiatCurrency,
       navigation,
       accounts,
       history,
-      availableStake,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
       isFetchingUniswapTokens,
@@ -245,17 +240,14 @@ class AssetScreen extends React.Component<Props> {
       getExchangeSupportedAssets,
     } = this.props;
     const { assetData } = this.props.navigation.state.params;
-    const { token, isSynthetic = false } = assetData;
+    const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const tokenRate = getRate(rates, token, fiatCurrency);
     const balance = getBalance(balances, token);
-    const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-    const isWalletEmpty = !isSynthetic
-      ? balance <= 0
-      : (paymentNetworkBalance <= 0 && availableStake < 0);
+    const isWalletEmpty = balance <= 0;
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-    const displayAmount = !isSynthetic ? formatMoney(balance, 4) : formatMoney(paymentNetworkBalance, 4);
-    const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
+    const displayAmount = formatMoney(balance, 4);
+    const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);
 
     const {
       listed: isListed = true,
@@ -395,9 +387,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
-  availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
 });

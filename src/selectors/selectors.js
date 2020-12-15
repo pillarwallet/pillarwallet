@@ -36,9 +36,6 @@ export const collectiblesHistorySelector =
   ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
 export const historySelector = ({ history }: RootReducerState) => history.data;
 
-export const paymentNetworkBalancesSelector =
-  ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
-
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
 
 export const activeAccountSelector =

@@ -29,8 +29,7 @@ import {
   P2PPaymentDeposit,
   ENSNode,
 } from 'etherspot';
-import BigNumber from 'bignumber.js';
-import type { UpdateP2PPaymentChannelDto } from 'etherspot/dist/sdk/dto';
+import { BigNumber } from 'bignumber.js';
 
 // utils
 import {
@@ -49,6 +48,8 @@ import { ETH } from 'constants/assetsConstants';
 import type { EtherspotTransaction } from 'models/Etherspot';
 import type { Asset, Balance } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
+import type { P2PPaymentChannel } from 'etherspot';
+import { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
 
 
 class EtherspotService {
@@ -119,6 +120,16 @@ class EtherspotService {
       .map(({ address }) => address);
 
     // gets balances by provided token (asset) address and ETH balance regardless
+    this.sdk
+      .getAccountBalances({
+        account: accountAddress,
+        tokens: assetAddresses,
+      })
+      .catch((error) => {
+        reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
+        return null;
+      });
+
     const accountBalances = await this.sdk
       .getAccountBalances({
         account: accountAddress,
@@ -128,6 +139,10 @@ class EtherspotService {
         reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
         return null;
       });
+
+    if (!accountBalances) {
+      return []; // logged above, no balances
+    }
 
     // map to our Balance type
     return accountBalances.items.reduce((balances, { balance, token }) => {
@@ -175,16 +190,20 @@ class EtherspotService {
   }
 
 
-  sendP2PTransaction(transaction: TransactionPayload) {
+  async sendP2PTransaction(transaction: TransactionPayload) {
     const { to: recipient, amount, decimals } = transaction;
 
-    const paymentChannelUpdateRequest: UpdateP2PPaymentChannelDto = {
+    console.log('amount: ', amount)
+    console.log('value: ', parseTokenAmount(amount.toString(), decimals))
+    console.log('transaction: ', transaction)
+
+    const increaseRequest: IncreaseP2PPaymentChannelAmountDto = {
       token: transaction.symbol === ETH ? null : transaction.contractAddress,
-      totalAmount: parseTokenAmount(amount.toString(), decimals),
+      value: parseTokenAmount(amount.toString(), decimals),
       recipient,
     };
 
-    return this.sdk.updateP2PPaymentChannel(paymentChannelUpdateRequest).then(({ hash }) => ({ hash }));
+    return this.sdk.increaseP2PPaymentChannelAmount(increaseRequest).then(({ hash }) => ({ hash }));
   }
 
   async getAccountTokenDeposit(tokenAddress: string): Promise<?P2PPaymentDeposit> {
@@ -209,6 +228,23 @@ class EtherspotService {
 
     // BigNumber lib compatibility
     return new BigNumber(tokenDeposit.availableAmount.toString());
+  }
+
+  // TODO: pagination
+  async getPaymentChannelsByAddress(senderOrRecipient: string): Promise<P2PPaymentChannel[]> {
+    const paymentChannels = await this.sdk.getP2PPaymentChannels({ senderOrRecipient })
+      .then(({ items }) => items)
+      .catch((error) => {
+        reportErrorLog('getPaymentChannelsByReceiverAddress -> getP2PPaymentChannels failed', {
+          senderOrRecipient,
+          error,
+        });
+        return [];
+      });
+
+    console.log('paymentChannels: ', paymentChannels)
+
+    return paymentChannels;
   }
 
   async getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {

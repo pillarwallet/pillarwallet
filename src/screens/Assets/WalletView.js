@@ -215,7 +215,7 @@ class WalletView extends React.Component<Props, State> {
             onClose={() => { hideInsight(); }}
             wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
           />
-          {!isInSearchAndFocus && !!SWInsightDismissed && (
+          {!isInSearchAndFocus && !SWInsightDismissed && (
             <InsightWithButton
               title={t('insight.smartWalletIntro.title')}
               description={t('insight.smartWalletIntro.description.intro')}

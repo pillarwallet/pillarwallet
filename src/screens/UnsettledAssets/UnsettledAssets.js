@@ -35,13 +35,9 @@ import { formatMoney, formatFiat } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import {
-  paymentNetworkAccountBalancesSelector,
-  paymentNetworkNonZeroBalancesSelector,
-} from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
-import type { Assets, Balances } from 'models/Asset';
+import type { Assets } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import Button from 'components/Button';
 import { SETTLE_BALANCE } from 'constants/navigationConstants';
@@ -50,9 +46,7 @@ type Props = {
   baseFiatCurrency: string,
   assets: Assets,
   rates: Object,
-  paymentNetworkBalances: Balances,
   navigation: NavigationScreenProp<*>,
-  assetsOnNetwork: Object,
 }
 
 const FloatingButtonView = styled.View`
@@ -95,8 +89,7 @@ class UnsettledAssets extends React.Component<Props> {
   };
 
   render() {
-    const { assetsOnNetwork, navigation } = this.props;
-    const assetsOnNetworkArray = Object.keys(assetsOnNetwork).map((asset) => assetsOnNetwork[asset]);
+    const { navigation } = this.props;
 
     return (
       <ContainerWithHeader
@@ -104,7 +97,7 @@ class UnsettledAssets extends React.Component<Props> {
         inset={{ bottom: 0 }}
       >
         <FlatList
-          data={assetsOnNetworkArray}
+          data={[]}
           keyExtractor={({ symbol }) => symbol}
           renderItem={this.renderAsset}
           initialNumToRender={5}
@@ -135,8 +128,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
-  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   assets: accountAssetsSelector,
 });
 

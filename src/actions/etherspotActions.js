@@ -17,13 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
 
 // constants
 import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
 import { PPN_TOKEN } from 'configs/assetsConfig';
-import { MARK_PLR_TANK_INITIALISED, UPDATE_PAYMENT_NETWORK_STAKED } from 'constants/paymentNetworkConstants';
+import {
+  MARK_PLR_TANK_INITIALISED,
+  SET_PAYMENT_CHANNELS,
+  UPDATE_PAYMENT_NETWORK_STAKED,
+} from 'constants/paymentNetworkConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 
 // actions
@@ -39,10 +44,15 @@ import etherspot from 'services/etherspot';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
-import { formatUnits, reportErrorLog } from 'utils/common';
+import {
+  formatUnits,
+  isCaseInsensitiveMatch,
+  reportErrorLog,
+} from 'utils/common';
 import {
   addressesEqual,
   getAssetData,
+  getAssetDataByAddress,
   getAssetsAsList,
   mapAssetToAssetData,
 } from 'utils/assets';
@@ -55,7 +65,23 @@ import { accountHistorySelector } from 'selectors/history';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import type { Account as EtherspotAccount } from 'etherspot';
+import type {
+  Account as EtherspotAccount,
+  P2PPaymentChannel,
+} from 'etherspot';
+import {
+  activeAccountAddressSelector,
+  activeAccountIdSelector,
+} from 'selectors';
+import {
+  buildHistoryTransaction,
+  updateAccountHistory,
+} from 'utils/history';
+import {
+  SET_HISTORY,
+  TX_CONFIRMED_STATUS,
+} from 'constants/historyConstants';
+import type { Transaction } from 'models/Transaction';
 
 
 export const initEtherspotServiceAction = (privateKey: string) => {
@@ -205,7 +231,6 @@ export const reserveEtherspotENSNameAction = (username: string) => {
 export const fetchAccountDepositBalanceAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
-      accounts: { data: accounts },
       session: { data: { isOnline } },
       assets: { supportedAssets },
     } = getState();
@@ -217,7 +242,7 @@ export const fetchAccountDepositBalanceAction = () => {
 
     const accountAssets = accountAssetsSelector(getState());
     const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
-    if (!ppnTokenAsset) {
+    if (isEmpty(ppnTokenAsset)) {
       // TODO: show toast?
       reportErrorLog('fetchAccountDepositBalanceAction failed: no ppnTokenAsset', { PPN_TOKEN });
       dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
@@ -230,31 +255,85 @@ export const fetchAccountDepositBalanceAction = () => {
 
     dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
     dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: stakedAmountFormatted });
+  };
+};
 
-    // process pending balances
-    // const accountBalances = pendingBalances.reduce((memo, tokenBalance) => {
-    //   const symbol = get(tokenBalance, 'token.symbol', ETH);
-    //   const { decimals: assetDecimals = 18 } = accountAssets[symbol] || {};
-    //   const balance = get(tokenBalance, 'incoming', new BigNumber(0));
-    //
-    //   return {
-    //     ...memo,
-    //     [symbol]: {
-    //       balance: formatUnits(balance, assetDecimals),
-    //       symbol,
-    //     },
-    //   };
-    // }, {});
+const shouldPaymentChannelTransactionBeUpdated = (
+  paymentChannel: P2PPaymentChannel,
+  accountHistory: Transaction[],
+): boolean => true || !accountHistory.some(({
+  hash: transactionHash,
+  stateInPPN: prevStateInPPN,
+}) => isCaseInsensitiveMatch(transactionHash, paymentChannel.hash) && paymentChannel.state === prevStateInPPN);
 
-    // const { paymentNetwork: { balances } } = getState();
-    // const accountId = getActiveAccountId(accounts);
-    // const updatedBalances = {
-    //   ...balances,
-    //   [accountId]: accountBalances,
-    // };
+export const fetchAccountPaymentChannelsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: { data: { isOnline } },
+      assets: { supportedAssets },
+    } = getState();
+
+    if (!isOnline) {
+      // nothing to do offline
+      return;
+    }
+
+    const accountAddress = activeAccountAddressSelector(getState());
+    const accountAssets = accountAssetsSelector(getState());
+    const paymentChannels = await etherspot.getPaymentChannelsByAddress(accountAddress);
+
+    dispatch({ type: SET_PAYMENT_CHANNELS, payload: paymentChannels });
+
+    const accountId = activeAccountIdSelector(getState());
+    const { history: { data: currentHistory } } = getState();
+    const accountHistory = currentHistory[accountId] || [];
+
+    // map payments to history as sent/received transactions
+    const paymentChannelsTransactions = paymentChannels
+      .filter((paymentChannel) => shouldPaymentChannelTransactionBeUpdated(paymentChannel, accountHistory))
+      .reduce((transactions, paymentChannel) => {
+        const {
+          hash,
+          committedAmount,
+          updatedAt,
+          recipient: to,
+          sender: from,
+          token: tokenAddress,
+          state: stateInPPN,
+        } = paymentChannel;
+
+        const assetData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, tokenAddress);
+        if (!assetData) {
+          reportErrorLog('fetchAccountPaymentChannelsAction paymntChannel failed: no assetData found', {
+            paymentChannel,
+          });
+          return transactions;
+        }
+
+        const { symbol: tokenSymbol } = assetData;
+        console.log('assetData: ', assetData)
+        const transaction = buildHistoryTransaction({
+          from,
+          to,
+          hash,
+          stateInPPN,
+          value: committedAmount.toString(),
+          asset: tokenSymbol,
+          isPPNTransaction: true,
+          createdAt: +new Date(updatedAt) / 1000,
+          status: TX_CONFIRMED_STATUS,
+        });
+
+        return transactions.concat(transaction);
+      }, []);
+
+    // TODO: finish mapping to history
+    console.log('paymentChannelsTransactions: ', paymentChannelsTransactions)
     //
-    // dispatch(saveDbAction('paymentNetworkBalances', { paymentNetworkBalances: updatedBalances }, true));
-    // dispatch({ type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES, payload: { accountId, balances: accountBalances }});
+    // const updatedAccountHistory = [...paymentChannelsTransactions, ...accountHistory];
+    // const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    // dispatch({ type: SET_HISTORY, payload: updatedHistory });
+    // dispatch(saveDbAction('history', { history: updatedHistory }, true));
   };
 };
 
@@ -292,7 +371,7 @@ export const estimateAccountDepositTokenTransactionAction = (depositAmount: numb
 
     const accountAssets = accountAssetsSelector(getState());
     const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
-    if (!ppnTokenAsset) {
+    if (isEmpty(ppnTokenAsset)) {
       // TODO: show toast?
       reportErrorLog('estimateAccountDepositTransactionAction failed: no ppnTokenAsset', { ppnTokenAsset });
       dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });

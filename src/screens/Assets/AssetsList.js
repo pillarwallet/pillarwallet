@@ -63,7 +63,6 @@ import type { Theme } from 'models/Theme';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector } from 'selectors';
-import { paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 
@@ -80,7 +79,6 @@ type Props = {
   baseFiatCurrency: ?string,
   assetsLayout: string,
   activeAccount: ?Account,
-  paymentNetworkBalances: Balances,
   hideAsset: Function,
   scrollViewRef?: Object,
   theme: Theme,
@@ -194,8 +192,6 @@ class AssetsList extends React.Component<Props, State> {
       decimals,
       iconUrl,
       patternUrl,
-      paymentNetworkBalance,
-      paymentNetworkBalanceInFiat,
     } = asset;
 
     const colors = getThemeColors(theme);
@@ -227,9 +223,6 @@ class AssetsList extends React.Component<Props, State> {
       iconColor: fullIconUrl,
       isListed,
       disclaimer,
-      paymentNetworkBalance,
-      paymentNetworkBalanceFormatted: formatMoney(paymentNetworkBalance, 4),
-      paymentNetworkBalanceInFiat: formatFiat(paymentNetworkBalanceInFiat, baseFiatCurrency),
       patternIcon,
       description: asset.description,
       decimals,
@@ -300,7 +293,6 @@ class AssetsList extends React.Component<Props, State> {
       baseFiatCurrency,
       rates,
       balances,
-      paymentNetworkBalances,
     } = this.props;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -309,15 +301,12 @@ class AssetsList extends React.Component<Props, State> {
       .map(({ symbol, ...rest }) => ({
         symbol,
         balance: getBalance(balances, symbol),
-        paymentNetworkBalance: getBalance(paymentNetworkBalances, symbol),
         ...rest,
       }))
-      .map(({ balance, symbol, paymentNetworkBalance, ...rest }) => ({ // eslint-disable-line
+      .map(({ balance, symbol, ...rest }) => ({ // eslint-disable-line
         balance,
         symbol,
         balanceInFiat: balance * getRate(rates, symbol, fiatCurrency),
-        paymentNetworkBalance,
-        paymentNetworkBalanceInFiat: paymentNetworkBalance * getRate(rates, symbol, fiatCurrency),
         ...rest,
       }))
       .sort((a, b) => b.balanceInFiat - a.balanceInFiat);
@@ -352,7 +341,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   activeAccount: activeAccountSelector,
   assets: accountAssetsSelector,
 });
