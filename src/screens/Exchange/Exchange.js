@@ -21,6 +21,7 @@
 import * as React from 'react';
 import { TextInput as RNTextInput, ScrollView, Keyboard } from 'react-native';
 import type { NavigationEventSubscription, NavigationScreenProp } from 'react-navigation';
+import isEmpty from 'lodash.isempty';
 import styled, { withTheme } from 'styled-components/native';
 import { connect } from 'react-redux';
 import debounce from 'lodash.debounce';
@@ -395,12 +396,13 @@ class ExchangeScreen extends React.Component<Props, State> {
       showEmptyMessage,
       isFormValid,
       fromAsset,
+      toAsset,
       wbtcData,
     } = this.state;
 
     const displayWbtcCafe = isWbtcCafe(fromAsset?.symbol);
     const { fromOptions, toOptions } = this.options;
-    const assetsLoaded = !!fromOptions.length && !!toOptions.length;
+    const assetsLoaded = !!fromOptions.length && !!toOptions.length && !isEmpty(fromAsset) && !isEmpty(toAsset);
     const rightItems = getHeaderRightItems(
       exchangeAllowances, hasUnreadExchangeNotification, navigation, markNotificationAsSeen,
     );
