@@ -1707,7 +1707,8 @@
       "unstakeTokens": "Unstake tokens",
       "unstakeTokensReview": "Review",
       "removeLiquidity": "Remove liquidity",
-      "removeLiquidityReview": "Review"
+      "removeLiquidityReview": "Review",
+      "claimRewardsReview": "Review"
     },
     "button": {
       "addLiquidity": "Add liquidity",
@@ -1728,7 +1729,8 @@
       "youAreStaking": "You are staking",
       "youAreUnstaking": "You are unstaking",
       "youAreRemovingLiquidity": "You are removing liquidity",
-      "youWillReceive": "You will receive"
+      "youWillReceive": "You will receive",
+      "youAreClaiming": "You are claiming"
     }
   }
 }

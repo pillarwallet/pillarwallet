@@ -25,7 +25,13 @@ import {
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
-import { getStakedAmount, getEarnedAmount, getStakeTransactions, getUnstakeTransaction } from 'utils/unipool';
+import {
+  getStakedAmount,
+  getEarnedAmount,
+  getStakeTransactions,
+  getUnstakeTransaction,
+  getClaimRewardsTransaction,
+} from 'utils/unipool';
 import {
   getAddLiquidityEthTransactions,
   fetchPoolData,
@@ -228,5 +234,21 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
       null,
       sequentialTransactions,
     ));
+  };
+};
+
+export const calculateClaimRewardsTransactionEstimateAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const { accounts: { data: accounts } } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const { to, amount, data } = getClaimRewardsTransaction(
+      getAccountAddress(smartWalletAccount),
+    );
+
+    dispatch(estimateTransactionAction(to, amount, data));
   };
 };

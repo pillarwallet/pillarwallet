@@ -51,25 +51,6 @@ export const getEarnedAmount = async (address: string): Promise<EthersBigNumber>
   });
 };
 
-/*
-export const getGetRewardFeeAndTransaction = async (
-  sender: string,
-  useGasToken: boolean,
-) => {
-  const getRewardTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'getReward', []);
-
-  const getRewardTransaction = {
-    from: sender,
-    to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
-    data: getRewardTransactionData,
-    amount: 0,
-    symbol: ETH,
-  };
-
-  return getTxFeeAndTransactionPayload(getRewardTransaction, useGasToken);
-};
-*/
-
 export const getStakeTransactions = async (
   sender: string,
   amount: number,
@@ -131,6 +112,22 @@ export const getUnstakeTransaction = (
     from: sender,
     to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
     data: unstakeTransactionData,
+    amount: 0,
+    symbol: ETH,
+    txFeeInWei,
+  };
+};
+
+export const getClaimRewardsTransaction = (
+  sender: string,
+  txFeeInWei?: BigNumber,
+) => {
+  const getRewardTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'getReward', []);
+
+  return {
+    from: sender,
+    to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
+    data: getRewardTransactionData,
     amount: 0,
     symbol: ETH,
     txFeeInWei,

@@ -47,6 +47,7 @@ import {
   LIQUIDITY_POOLS_STAKE,
   LIQUIDITY_POOLS_UNSTAKE,
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
+  LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
 
 // utils
@@ -154,6 +155,8 @@ const LiquidityPoolDashboard = ({
     token: 'PLR',
     iconUrl: 'asset/images/tokens/icons/plrColor.png',
     decimals: 18,
+    symbol: 'PLR',
+    address: '0xe3818504c1b32bf1557b16c238b2e01fd3149c17',
   };
 
   const poolAddress = '0xae2d4004241254aed3f93873604d39883c8259f0';
@@ -175,6 +178,10 @@ const LiquidityPoolDashboard = ({
 
   const onRemoveLiquidity = () => {
     navigation.navigate(LIQUIDITY_POOLS_REMOVE_LIQUIDITY, { poolAddress });
+  };
+
+  const onClaimReward = () => {
+    navigation.navigate(LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW, { rewardToken: rewardAssetData });
   };
 
   return (
@@ -270,11 +277,12 @@ const LiquidityPoolDashboard = ({
                 <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3` }} />
                 <Spacing w={12} />
                 <View>
-                  <BaseText fontSize={20}>{formatAmount(formatUnits(unipoolEarnedAmount, assetData.decimals))}{' '}
-                    <BaseText secondary regular>{assetData.token}</BaseText>
+                  <BaseText fontSize={20}>
+                    {formatAmount(formatUnits(unipoolEarnedAmount, rewardAssetData.decimals))}{' '}
+                    <BaseText secondary regular>{rewardAssetData.token}</BaseText>
                   </BaseText>
                   <BaseText regular secondary>
-                    {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: 'PLR' })}
+                    {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.token })}
                   </BaseText>
                 </View>
               </Row>
@@ -282,6 +290,7 @@ const LiquidityPoolDashboard = ({
               <Button
                 title={t('liquidityPoolsContent.button.claimRewards')}
                 primarySecond
+                onPress={onClaimReward}
               />
               {unipoolStakedAmount.isZero() && (
                 <>
