@@ -35,7 +35,7 @@ import Toast from 'components/Toast';
 
 import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, formatUnits } from 'utils/common';
 
 import { calculateRariDepositTransactionEstimateAction } from 'actions/rariActions';
 import { resetEstimateTransactionAction, setEstimatingTransactionAction } from 'actions/transactionEstimateActions';
@@ -130,9 +130,18 @@ const RariAddDepositScreen = ({
           message: t('toast.rariServiceFailed'),
           emoji: 'hushed',
         });
+        setEstimatingTransaction(false);
         return;
       }
       const { depositTransactions, exchangeFeeBN: _exchangeFeeBN, slippage: _slippage } = txsAndExchangeFee;
+      if (selectedAsset.symbol === ETH && parseFloat(formatUnits(_exchangeFeeBN, 18)) > parseFloat(assetValue)) {
+        Toast.show({
+          message: t('toast.rariNotEnoughEthForExchange'),
+          emoji: 'hushed',
+        });
+        setEstimatingTransaction(false);
+        return;
+      }
       let _transactionPayload = depositTransactions[0];
 
       // check if there's approve transaction
@@ -152,6 +161,7 @@ const RariAddDepositScreen = ({
         message: t('toast.rariServiceFailed'),
         emoji: 'hushed',
       });
+      setEstimatingTransaction(false);
     });
   }, [assetValue, selectedAsset]);
 

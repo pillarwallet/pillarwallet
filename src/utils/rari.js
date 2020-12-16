@@ -249,9 +249,20 @@ const getRariDepositTransactionData = async (
 export const getRariDepositTransactionsAndExchangeFee = async (
   rariPool: RariPool, senderAddress: string, amount: number, token: Asset, supportedAssets: Asset[], rates: Rates,
 ) => {
-  const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
-  const data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
+  let amountBN = parseTokenBigNumberAmount(amount, token.decimals);
+  let data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
   if (!data) return null;
+
+  if (token.symbol === ETH) {
+    // if we're depositing ETH, subtract 0x protocol fee from deposited amount
+    // this will prevent tx revert when depositing max available ETH
+    if (amountBN < data.exchangeFeeBN) {
+      return { exchangeFeeBN: data.exchangeFeeBN, depositTransactions: [], slippage: 0 };
+    }
+    amountBN = amountBN.sub(data.exchangeFeeBN);
+    data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
+    if (!data) return null;
+  }
 
   const {
     depositTransactionData, txValue, exchangeFeeBN, slippage, rariContractAddress,
