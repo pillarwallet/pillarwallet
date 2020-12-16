@@ -241,7 +241,7 @@ describe('Rari utils', () => {
       expect(data).toEqual({
         depositTransactions: [
           {
-            amount: 0.000100000000123456,
+            amount: 0.0001,
             data: 'exchangeAndDeposit(address,uint256,string,(address,address,address,' +
               'address,uint256,uint256,uint256,uint256,uint256,uint256,bytes,bytes,bytes,bytes)[],bytes[],uint256)',
             from: '0x0000',
