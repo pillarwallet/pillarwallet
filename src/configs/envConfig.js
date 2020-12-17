@@ -44,6 +44,7 @@ type CurrentEnvironment = {
 // switchable environments constants
 const envVars = {
   production: {
+    ENVIRONMENT: PRODUCTION,
     TX_DETAILS_URL: 'https://etherscan.io/tx/',
     NETWORK_PROVIDER: 'homestead',
     COLLECTIBLES_NETWORK: 'homestead',
@@ -84,6 +85,7 @@ const envVars = {
     ...devOptions,
   },
   staging: {
+    ENVIRONMENT: STAGING,
     TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
