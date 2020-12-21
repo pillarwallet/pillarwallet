@@ -169,7 +169,8 @@ export const ValueInputComponent = (props: Props) => {
         onValueChange(convertedValue);
       }
     } else {
-      setValueInFiat(getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString());
+      const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
       onValueChange(newValue);
     }
   };
@@ -187,7 +188,8 @@ export const ValueInputComponent = (props: Props) => {
     ));
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
     onValueChange((parseFloat(newMaxValue) * (percent / 100)).toString());
-    setValueInFiat((maxValueInFiat * (percent / 100)).toString());
+    const fiatValue = maxValueInFiat * (percent / 100);
+    setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
   };
 
   const onInputBlur = () => {
@@ -267,6 +269,15 @@ export const ValueInputComponent = (props: Props) => {
 
   const { tokenType = TOKENS } = assetData;
 
+  const toggleDisplayFiat = () => {
+    // when switching at error state, reset value to avoid new errors
+    if (errorMessage) {
+      setValueInFiat('0');
+      handleValueChange('0');
+    }
+    setDisplayFiatAmount(!displayFiatAmount);
+  };
+
   return (
     <>
       {tokenType === TOKENS && (
@@ -282,7 +293,7 @@ export const ValueInputComponent = (props: Props) => {
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat
           }
-          onLeftSideTextPress={() => setDisplayFiatAmount(!displayFiatAmount)}
+          onLeftSideTextPress={toggleDisplayFiat}
           rightPlaceholder={displayFiatAmount ? fiatCurrency : assetSymbol}
           leftSideSymbol={leftSideSymbol}
           getInputRef={getInputRef}
