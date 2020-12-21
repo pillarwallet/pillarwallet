@@ -101,9 +101,10 @@ export const getErrorMessage = (
   amount: string,
   assetBalance: string,
   assetSymbol: string,
+  fiatValue?: ?string,
 ): string => {
   const isValid = isValidNumber(amount);
-  if (!isValid) {
+  if (!isValid || (!!fiatValue && !isValidNumber(fiatValue))) {
     return t('error.amount.invalidNumber');
   } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
@@ -143,7 +144,6 @@ export const ValueInputComponent = (props: Props) => {
 
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
-  const [errorMessageState, setErrorMessageState] = useState<?string>(null);
 
   const ratesWithCustomRates = { ...rates, ...customRates };
 
@@ -157,23 +157,20 @@ export const ValueInputComponent = (props: Props) => {
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
   const handleValueChange = (newValue: string) => {
-    let errorMessage = null;
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
-      setValueInFiat(newValue);
-      const convertedValue =
+      const split = newValue.split('.');
+      // only allow 2 decimals in fiat mode
+      if (split.length <= 2 && split[1] ? split[1].length <= 2 : true) {
+        setValueInFiat(newValue);
+        const convertedValue =
         getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
-      onValueChange(convertedValue);
-
-      errorMessage = getErrorMessage(convertedValue, maxValue, assetSymbol);
+        onValueChange(convertedValue);
+      }
     } else {
       setValueInFiat(getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString());
       onValueChange(newValue);
-      errorMessage = getErrorMessage(newValue, maxValue, assetSymbol);
-    }
-    if (errorMessage) {
-      setErrorMessageState(errorMessage);
     }
   };
 
@@ -255,7 +252,9 @@ export const ValueInputComponent = (props: Props) => {
     onFocus: onInputFocus,
   };
 
-  const errorMessage = disabled ? null : getErrorMessage(value, maxValue, assetSymbol);
+  const errorMessage = disabled ? null : getErrorMessage(
+    value, maxValue, assetSymbol, displayFiatAmount ? valueInFiat : null,
+  );
 
   React.useEffect(() => {
     if (onFormValid) {
@@ -274,7 +273,7 @@ export const ValueInputComponent = (props: Props) => {
         <TextInput
           style={{ width: '100%' }}
           hasError={!!errorMessage}
-          errorMessage={errorMessage || errorMessageState}
+          errorMessage={errorMessage}
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
