@@ -156,6 +156,13 @@ export const ValueInputComponent = (props: Props) => {
   const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
+  React.useEffect(() => {
+    if (disabled) { // handle fiat updates when disabled, e.g. on Exchange screen
+      const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+      setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
+    }
+  }, [value]);
+
   const handleValueChange = (newValue: string) => {
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
@@ -270,7 +277,7 @@ export const ValueInputComponent = (props: Props) => {
   const { tokenType = TOKENS } = assetData;
 
   const toggleDisplayFiat = () => {
-    // when switching at error state, reset value to avoid new errors
+    // when switching at error state, reset values to avoid new errors
     if (errorMessage) {
       setValueInFiat('0');
       handleValueChange('0');
