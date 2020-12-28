@@ -36,24 +36,27 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import Table, { TableRow, TableLabel } from 'components/Table';
 
 // constants
-import { ETH, WETH } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW } from 'constants/navigationConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { getPoolStats, calculateProportionalAssetValues, getShareOfPool } from 'utils/liquidityPools';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-import { calculateAddLiquidityTransactionEthEstimateAction } from 'actions/liquidityPoolsActions';
+import { calculateAddLiquidityTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
 // types
 import type { Asset, Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 
 type Props = {
@@ -62,14 +65,14 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-  poolsData: {[string]: Object},
   resetEstimateTransaction: () => void,
-  calculateAddLiquidityTransactionEthEstimate: (
-    tokenAmount: number,
-    tokenAsset: Asset,
-    ethAmount: number,
+  calculateAddLiquidityTransactionEstimate: (
+    pool: LiquidityPool,
+    tokenAmounts: number[],
+    tokensAssets: Asset[],
   ) => void,
   balances: Balances,
+  liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
 
 const MainContainer = styled.View`
@@ -112,8 +115,8 @@ const AddLiquidityScreen = ({
   estimateErrorMessage,
   resetEstimateTransaction,
   balances,
-  calculateAddLiquidityTransactionEthEstimate,
-  poolsData,
+  calculateAddLiquidityTransactionEstimate,
+  liquidityPoolsReducer,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
@@ -122,52 +125,31 @@ const AddLiquidityScreen = ({
   const [poolTokenAmount, setPoolTokenAmount] = useState('0');
   const [fieldsValid, setFieldsValid] = useState([true, true]);
 
-  const { poolAddress } = navigation.state.params;
-  const poolData = poolsData[poolAddress];
+  const { pool } = navigation.state.params;
+  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
-  const handleWETH = (symbol: string) => symbol === WETH ? ETH : symbol;
-
-  const tokensData = [
-    supportedAssets.find(asset => asset.symbol === handleWETH(poolData.token0.symbol)),
-    supportedAssets.find(asset => asset.symbol === handleWETH(poolData.token1.symbol)),
-  ];
-
-  // TODO: change it once we have kovan uniswap subgraph
-  const poolTokenData = supportedAssets.find(asset => asset.symbol === 'UNI-V2');
+  const tokensData = pool.tokensProportions.map(({ symbol }) => supportedAssets.find(asset => asset.symbol === symbol));
+  const poolTokenData = supportedAssets.find(asset => asset.symbol === pool.symbol);
 
   useEffect(() => {
     if (!assetsValues.every(f => !!parseFloat(f)) || !fieldsValid.every(f => f)) return;
     const erc20Token = tokensData[1];
     if (!erc20Token) return;
-    calculateAddLiquidityTransactionEthEstimate(
-      parseFloat(assetsValues[1]),
-      erc20Token,
-      parseFloat(assetsValues[0]),
+    calculateAddLiquidityTransactionEstimate(
+      pool,
+      assetsValues.map(f => parseFloat(f) || 0),
+      tokensData,
     );
   }, [assetsValues, fieldsValid]);
 
   const onAssetValueChange = (newValue: string, tokenIndex: number) => {
-    if (!poolData) return;
-    const totalAmount = parseFloat(poolData.totalSupply);
-    const token0Pool = parseFloat(poolData.reserve0);
-    const token1Pool = parseFloat(poolData.reserve1);
-    let token0Deposited;
-    let token0DepositedFormatted;
-    let token1DepositedFormatted;
-    if (tokenIndex === 1) {
-      const token1Deposited = parseFloat(newValue) || 0;
-      token1DepositedFormatted = newValue;
-      token0Deposited = (token1Deposited * token0Pool) / token1Pool;
-      token0DepositedFormatted = formatAmount(token0Deposited);
-    } else {
-      token0DepositedFormatted = newValue;
-      token0Deposited = parseFloat(newValue) || 0;
-      const token1Deposited = (token0Deposited * token1Pool) / token0Pool;
-      token1DepositedFormatted = formatAmount(token1Deposited);
-    }
-    const amountMinted = (totalAmount * token0Deposited) / token0Pool;
-    setPoolTokenAmount(formatAmount(amountMinted));
-    setAssetsValues([token0DepositedFormatted, token1DepositedFormatted]);
+    const assetsAmounts = calculateProportionalAssetValues(
+      pool, parseFloat(newValue) || 0, tokenIndex, liquidityPoolsReducer,
+    );
+    setPoolTokenAmount(formatAmount(assetsAmounts.pop()));
+    const formattedAssetsValues = assetsAmounts
+      .map((amount, i) => i === tokenIndex ? newValue : formatAmount(amount));
+    setAssetsValues(formattedAssetsValues);
   };
 
   const renderTokenInput = (tokenIndex: number) => {
@@ -209,7 +191,7 @@ const AddLiquidityScreen = ({
     || !fieldsValid.every(f => f)
     || !feeInfo;
 
-  const shareOfPool = (parseFloat(assetsValues[0] || 0) / parseFloat(poolData?.reserve0)) * 100;
+  const shareOfPool = getShareOfPool(pool, assetsValues.map(f => parseFloat(f) || 0), liquidityPoolsReducer);
 
   const onNextButtonPress = () => navigation.navigate(
     LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
@@ -219,6 +201,7 @@ const AddLiquidityScreen = ({
       tokensValues: assetsValues,
       poolTokenValue: poolTokenAmount,
       shareOfPool,
+      pool,
     },
   );
 
@@ -272,7 +255,7 @@ const AddLiquidityScreen = ({
               <Spacing w={4} />
               <BaseText>
                 {t('exchangeContent.label.exchangeRateLayout', {
-                  rate: (parseFloat(poolData?.token1Price)).toFixed(2),
+                  rate: (parseFloat(poolStats.tokensPrices[tokensData[1]?.symbol])).toFixed(2),
                   toAssetCode: tokensData[1]?.symbol,
                   fromAssetCode: tokensData[0]?.symbol,
                 })}
@@ -294,13 +277,13 @@ const AddLiquidityScreen = ({
 const mapStateToProps = ({
   assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
-  liquidityPools: { poolsData },
+  liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
-  poolsData,
+  liquidityPoolsReducer,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -314,11 +297,11 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateAddLiquidityTransactionEthEstimate: debounce((
-    tokenAmount: number,
-    tokenAsset: Asset,
-    ethAmount: number,
-  ) => dispatch(calculateAddLiquidityTransactionEthEstimateAction(tokenAmount, tokenAsset, ethAmount)), 500),
+  calculateAddLiquidityTransactionEstimate: debounce((
+    pool: LiquidityPool,
+    tokenAmounts: number[],
+    tokensAssets: Asset[],
+  ) => dispatch(calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, tokensAssets)), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);

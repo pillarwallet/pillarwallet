@@ -18,40 +18,43 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import { BigNumber } from 'bignumber.js';
-import { BigNumber as EthersBigNumber } from 'ethers';
 import * as Sentry from '@sentry/react-native';
-import { getEnv } from 'configs/envConfig';
 import { ETH } from 'constants/assetsConstants';
-import { reportLog, parseTokenBigNumberAmount } from 'utils/common';
+import { reportLog, parseTokenBigNumberAmount, formatUnits } from 'utils/common';
 import { getContract, buildERC20ApproveTransactionData, encodeContractMethod } from 'services/assets';
 import UNIPOOL_CONTRACT from 'abi/unipoolPool.json';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import type { Asset } from 'models/Asset';
 
 
-export const getStakedAmount = async (address: string): Promise<EthersBigNumber> => {
-  const contract = getContract(getEnv().UNIPOOL_CONTRACT_ADDRESS, UNIPOOL_CONTRACT);
+export const getStakedAmount = async (unipoolAddress: string, userAddress: string): Promise<?number> => {
+  const contract = getContract(unipoolAddress, UNIPOOL_CONTRACT);
   if (!contract) return null;
-  return contract.balanceOf(address).catch((e) => {
-    reportLog('Error getting unipool balance', {
-      message: e.message,
-    }, Sentry.Severity.Error);
-    return null;
-  });
+  return contract.balanceOf(userAddress)
+    .then(balance => formatUnits(balance, 18))
+    .catch((e) => {
+      reportLog('Error getting unipool balance', {
+        message: e.message,
+      }, Sentry.Severity.Error);
+      return null;
+    });
 };
 
-export const getEarnedAmount = async (address: string): Promise<EthersBigNumber> => {
-  const contract = getContract(getEnv().UNIPOOL_CONTRACT_ADDRESS, UNIPOOL_CONTRACT);
+export const getEarnedAmount = async (unipoolAddress: string, userAddress: string): Promise<?number> => {
+  const contract = getContract(unipoolAddress, UNIPOOL_CONTRACT);
   if (!contract) return null;
-  return contract.earned(address).catch((e) => {
-    reportLog('Error getting unipool earned amount', {
-      message: e.message,
-    }, Sentry.Severity.Error);
-    return null;
-  });
+  return contract.earned(userAddress)
+    .then(balance => formatUnits(balance, 18))
+    .catch((e) => {
+      reportLog('Error getting unipool earned amount', {
+        message: e.message,
+      }, Sentry.Severity.Error);
+      return null;
+    });
 };
 
 export const getStakeTransactions = async (
+  unipoolAddress: string,
   sender: string,
   amount: number,
   token: Asset,
@@ -65,7 +68,7 @@ export const getStakeTransactions = async (
 
   let stakeTransactions = [{
     from: sender,
-    to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
+    to: unipoolAddress,
     data: stakeTransactionData,
     amount: 0,
     symbol: ETH,
@@ -73,12 +76,12 @@ export const getStakeTransactions = async (
 
   const erc20Contract = getContract(token.address, ERC20_CONTRACT_ABI);
   const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(sender, getEnv().UNIPOOL_CONTRACT_ADDRESS)
+    ? await erc20Contract.allowance(sender, unipoolAddress)
     : null;
 
   if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData =
-      buildERC20ApproveTransactionData(getEnv().UNIPOOL_CONTRACT_ADDRESS, amount, token.decimals);
+      buildERC20ApproveTransactionData(unipoolAddress, amount, token.decimals);
     stakeTransactions = [
       {
         from: sender,
@@ -99,6 +102,7 @@ export const getStakeTransactions = async (
 };
 
 export const getUnstakeTransaction = (
+  unipoolAddress: string,
   sender: string,
   amount: number,
   txFeeInWei?: BigNumber,
@@ -110,7 +114,7 @@ export const getUnstakeTransaction = (
 
   return {
     from: sender,
-    to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
+    to: unipoolAddress,
     data: unstakeTransactionData,
     amount: 0,
     symbol: ETH,
@@ -119,6 +123,7 @@ export const getUnstakeTransaction = (
 };
 
 export const getClaimRewardsTransaction = (
+  unipoolAddress: string,
   sender: string,
   txFeeInWei?: BigNumber,
 ) => {
@@ -126,7 +131,7 @@ export const getClaimRewardsTransaction = (
 
   return {
     from: sender,
-    to: getEnv().UNIPOOL_CONTRACT_ADDRESS,
+    to: unipoolAddress,
     data: getRewardTransactionData,
     amount: 0,
     symbol: ETH,

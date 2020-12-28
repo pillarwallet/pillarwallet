@@ -34,7 +34,7 @@ import Toast from 'components/Toast';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { getFormattedRate, getRate } from 'utils/assets';
-import { getRemoveLiquidityEthTransactions } from 'utils/liquidityPools';
+import { getRemoveLiquidityTransactions } from 'utils/liquidityPools';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -94,11 +94,11 @@ const RemoveLiquidityReviewScreen = ({
       return;
     }
 
-    const removeLiquidityTransactions = await getRemoveLiquidityEthTransactions(
+    const removeLiquidityTransactions = await getRemoveLiquidityTransactions(
       accountAddress,
       poolTokenValue,
       poolToken,
-      obtainedTokensData[1],
+      obtainedTokensData,
       feeInfo?.fee,
     );
 

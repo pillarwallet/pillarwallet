@@ -206,7 +206,8 @@
     "claim": "Claim",
     "fromRariToWallet": "Rari Capital → Wallet",
     "fromWalletToRari": "Wallet → Rari Capital",
-    "rewardsClaimed": "Rewards claimed"
+    "rewardsClaimed": "Rewards claimed",
+    "keyFacts": "Key facts"
   },
 
   "button": {
@@ -504,7 +505,8 @@
       "sablierStreams": "Can't connect to Sablier",
       "isTokenSupportedByUniswap": "Can't connect to exchange service",
       "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
-      "rari": "Can't connect to Rari service."
+      "rari": "Can't connect to Rari service.",
+      "liquidityPools": "Can't connect to Liquidity Pools service"
     }
   },
 
@@ -1553,7 +1555,6 @@
     },
     "infoContent": {
       "subtitle": {
-        "keyFacts": "Key facts",
         "whatIsRari": "What is Rari?",
         "howDoesRariEarn": "How does Rari Earn Yield?",
         "rariPools":"Rari Pools",
@@ -1708,7 +1709,8 @@
       "unstakeTokensReview": "Review",
       "removeLiquidity": "Remove liquidity",
       "removeLiquidityReview": "Review",
-      "claimRewardsReview": "Review"
+      "claimRewardsReview": "Review",
+      "liquidityPools": "Liquidity Pools"
     },
     "button": {
       "addLiquidity": "Add liquidity",
@@ -1730,7 +1732,26 @@
       "youAreUnstaking": "You are unstaking",
       "youAreRemovingLiquidity": "You are removing liquidity",
       "youWillReceive": "You will receive",
-      "youAreClaiming": "You are claiming"
+      "youAreClaiming": "You are claiming",
+      "price": "Price",
+      "volume": "Volume",
+      "weeklyRewards": "Weekly rewards",
+      "24h": "24 h",
+      "1w": "1 w",
+      "1m": "1 m",
+      "tokenPercent": "{{value}}% {{token}}",
+      "availableRewards": "Available rewards",
+      "totalLiquidity": "Total liquidity",
+      "24hVolume": "24h volume",
+      "tokenLiquidity": "{{tokenName}} liquidity",
+      "yourPoolShareAllocation": "Your pool share token allocation",
+      "tokenPrice": "Token price",
+      "quantity": "Quantity"
+    },
+    "tabs": {
+      "active": "Active",
+      "purchased": "Purchased",
+      "staked": "Staked"
     }
   }
 }

@@ -45,7 +45,7 @@ import {
   SENDWYRE_INPUT,
   WBTC_CAFE,
   RARI_DEPOSIT,
-  LIQUIDITY_POOL_DASHBOARD,
+  LIQUIDITY_POOLS,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
@@ -168,7 +168,7 @@ class ServicesScreen extends React.Component<Props> {
         body: t('servicesContent.liquidityPools.description'),
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
-        action: () => isActiveAccountSmartWallet && navigation.navigate(LIQUIDITY_POOL_DASHBOARD),
+        action: () => isActiveAccountSmartWallet && navigation.navigate(LIQUIDITY_POOLS),
       });
     }
     if (isAaveEnabled) {

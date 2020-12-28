@@ -34,7 +34,7 @@ import Toast from 'components/Toast';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { getFormattedRate, getRate } from 'utils/assets';
-import { getAddLiquidityEthTransactions } from 'utils/liquidityPools';
+import { getAddLiquidityTransactions } from 'utils/liquidityPools';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -68,7 +68,7 @@ const AddLiquidityReviewScreen = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
-    tokensData, poolToken, tokensValues, poolTokenValue, shareOfPool,
+    tokensData, poolToken, tokensValues, poolTokenValue, shareOfPool, pool,
   } = navigation.state.params;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -94,11 +94,11 @@ const AddLiquidityReviewScreen = ({
       return;
     }
 
-    const addLiquidityTransactions = await getAddLiquidityEthTransactions(
+    const addLiquidityTransactions = await getAddLiquidityTransactions(
       accountAddress,
-      tokensValues[1],
-      tokensData[1],
-      tokensValues[0],
+      pool,
+      tokensValues,
+      tokensData,
       feeInfo?.fee,
     );
 

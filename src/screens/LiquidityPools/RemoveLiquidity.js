@@ -35,12 +35,13 @@ import Icon from 'components/Icon';
 import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
-import { ETH, WETH } from 'constants/assetsConstants';
+import { ETH } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationConstants';
 
 // utils
 import { formatAmount } from 'utils/common';
 import { isEnoughBalanceForTransactionFee, getBalance } from 'utils/assets';
+import { getPoolStats, calculateProportionalRemoveLiquidityAssetValues } from 'utils/liquidityPools';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -53,6 +54,7 @@ import { calculateRemoveLiquidityTransactionEstimateAction } from 'actions/liqui
 import type { Asset, Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 
 type Props = {
@@ -61,7 +63,6 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
-  poolsData: {[string]: Object},
   resetEstimateTransaction: () => void,
   calculateRemoveLiquidityTransactionEstimate: (
     tokenAmount: number,
@@ -69,6 +70,7 @@ type Props = {
     erc20Token: Asset,
   ) => void,
   balances: Balances,
+  liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
 
 const MainContainer = styled.View`
@@ -102,7 +104,7 @@ const AddLiquidityScreen = ({
   resetEstimateTransaction,
   balances,
   calculateRemoveLiquidityTransactionEstimate,
-  poolsData,
+  liquidityPoolsReducer,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
@@ -112,17 +114,13 @@ const AddLiquidityScreen = ({
   const [obtainedTokenFieldsValid, setObtainedTokenFieldsValid] = useState([true, true]);
   const [poolTokenFieldValid, setPoolTokenFieldValid] = useState(true);
 
-  const { poolAddress } = navigation.state.params;
-  const poolData = poolsData[poolAddress];
+  const { pool } = navigation.state.params;
+  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
-  const handleWETH = (symbol: string) => symbol === WETH ? ETH : symbol;
+  const tokensData = pool.tokensProportions
+    .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
 
-  const tokensData = [
-    supportedAssets.find(asset => asset.symbol === handleWETH(poolData.token0.symbol)),
-    supportedAssets.find(asset => asset.symbol === handleWETH(poolData.token1.symbol)),
-  ];
-
-  const poolTokenData = supportedAssets.find(asset => asset.symbol === 'UNI-V2');
+  const poolTokenData = supportedAssets.find(asset => asset.symbol === pool.symbol);
 
   useEffect(() => {
     if (
@@ -139,46 +137,33 @@ const AddLiquidityScreen = ({
     calculateRemoveLiquidityTransactionEstimate(
       parseFloat(poolTokenAmount),
       poolTokenData,
-      erc20Token,
+      tokensData,
     );
   }, [poolTokenAmount, obtainedTokenFieldsValid, poolTokenFieldValid]);
 
   const onObtainedAssetValueChange = (newValue: string, tokenIndex: number) => {
-    const totalAmount = parseFloat(poolData.totalSupply);
-    const token0Pool = parseFloat(poolData.reserve0);
-    const token1Pool = parseFloat(poolData.reserve1);
-    let token0WithdrawnFormatted;
-    let token1WithdrawnFormatted;
-    let amountBurnedFormatted;
+    const assetsAmounts = calculateProportionalRemoveLiquidityAssetValues(
+      pool,
+      parseFloat(newValue) || 0,
+      tokenIndex,
+      liquidityPoolsReducer,
+    );
 
-    if (tokenIndex === 0) {
-      const token0Withdrawn = parseFloat(newValue) || 0;
-      const amountBurned = (token0Withdrawn * totalAmount) / token0Pool;
-      amountBurnedFormatted = formatAmount(amountBurned);
-      token0WithdrawnFormatted = newValue;
-      token1WithdrawnFormatted = formatAmount((token1Pool * amountBurned) / totalAmount);
-    } else {
-      const token1Withdrawn = parseFloat(newValue) || 0;
-      const amountBurned = (token1Withdrawn * totalAmount) / token1Pool;
-      amountBurnedFormatted = formatAmount(amountBurned);
-      token1WithdrawnFormatted = newValue;
-      token0WithdrawnFormatted = formatAmount((token0Pool * amountBurned) / totalAmount);
-    }
+    setPoolTokenAmount(formatAmount(assetsAmounts.pop()));
 
-    setObtainedAssetsValues([token0WithdrawnFormatted, token1WithdrawnFormatted]);
-    setPoolTokenAmount(amountBurnedFormatted);
+    const formattedAssetsValues = assetsAmounts
+      .map((amount, i) => i === tokenIndex ? newValue : formatAmount(amount));
+    setObtainedAssetsValues(formattedAssetsValues);
   };
 
   const onPoolTokenAmountChange = (newValue: string) => {
-    const amountBurned = parseFloat(newValue) || 0;
-    const totalAmount = parseFloat(poolData.totalSupply);
-    const token0Pool = parseFloat(poolData.reserve0);
-    const token1Pool = parseFloat(poolData.reserve1);
-
-    const token0Withdrawn = formatAmount((token0Pool * amountBurned) / totalAmount);
-    const token1Withdrawn = formatAmount((token1Pool * amountBurned) / totalAmount);
-
-    setObtainedAssetsValues([token0Withdrawn, token1Withdrawn]);
+    const assetsAmounts = calculateProportionalRemoveLiquidityAssetValues(
+      pool,
+      parseFloat(newValue) || 0,
+      pool.tokensProportions.length,
+      liquidityPoolsReducer,
+    );
+    setObtainedAssetsValues(assetsAmounts.map(formatAmount));
     setPoolTokenAmount(newValue);
   };
 
@@ -186,8 +171,8 @@ const AddLiquidityScreen = ({
     const poolTokenSymbol = poolTokenData?.symbol;
     if (!poolTokenSymbol) return null;
     const maxAmountBurned = getBalance(balances, poolTokenSymbol);
-    const totalAmount = parseFloat(poolData.totalSupply);
-    const tokenPool = parseFloat(tokenIndex === 0 ? poolData.reserve0 : poolData.reserve1);
+    const totalAmount = parseFloat(poolStats.totalSupply);
+    const tokenPool = parseFloat(poolStats.tokensLiquidity[pool.tokensProportions[tokenIndex].symbol]);
 
     const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
 
@@ -232,10 +217,10 @@ const AddLiquidityScreen = ({
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const isNextButtonDisabled = !!isEstimating
-    || !obtainedAssetsValues.every(f => !!parseFloat(f))
     || !!errorMessage
     || !obtainedTokenFieldsValid.every(f => f)
     || !poolTokenFieldValid
+    || !parseFloat(poolTokenAmount)
     || !feeInfo;
 
   const onNextButtonPress = () => navigation.navigate(
@@ -299,13 +284,13 @@ const AddLiquidityScreen = ({
 const mapStateToProps = ({
   assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
-  liquidityPools: { poolsData },
+  liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
-  poolsData,
+  liquidityPoolsReducer,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -322,8 +307,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateRemoveLiquidityTransactionEstimate: debounce((
     tokenAmount: number,
     poolAsset: Asset,
-    erc20Token: Asset,
-  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(tokenAmount, poolAsset, erc20Token)), 500),
+    tokensAssets: Asset[],
+  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(tokenAmount, poolAsset, tokensAssets)), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);

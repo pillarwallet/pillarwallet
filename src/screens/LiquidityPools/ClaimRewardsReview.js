@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
-import { BigNumber as EthersBigNumber } from 'ethers';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -33,9 +32,8 @@ import Button from 'components/Button';
 import Toast from 'components/Toast';
 import { BaseText } from 'components/Typography';
 
-import { getClaimRewardsTransaction } from 'utils/unipool';
-import { formatUnits } from 'utils/common';
 import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { getPoolStats, getClaimRewardsTransaction } from 'utils/liquidityPools';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
@@ -49,6 +47,8 @@ import { calculateClaimRewardsTransactionEstimateAction } from 'actions/liquidit
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Balances } from 'models/Asset';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 
 type Props = {
@@ -57,10 +57,10 @@ type Props = {
   accountAddress: string,
   balances: Balances,
   resetEstimateTransaction: () => void,
-  calculateClaimRewardsTransactionEstimate: () => void,
-  earnedAmount: EthersBigNumber,
+  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool) => void,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
+  liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
 
 const MainWrapper = styled.View`
@@ -73,19 +73,20 @@ const ClaimRewardReviewScreen = ({
   accountAddress,
   resetEstimateTransaction,
   calculateClaimRewardsTransactionEstimate,
-  earnedAmount,
   isEstimating,
   estimateErrorMessage,
   balances,
+  liquidityPoolsReducer,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { rewardToken } = navigation.state.params;
+  const { pool } = navigation.state.params;
+  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
-  const formattedAmount = formatUnits(earnedAmount, rewardToken.decimals);
+  const formattedAmount = poolStats.rewardsToClaim;
 
   useEffect(() => {
     resetEstimateTransaction();
-    calculateClaimRewardsTransactionEstimate();
+    calculateClaimRewardsTransactionEstimate(pool);
   }, []);
 
   const onNextButtonPress = async () => {
@@ -101,7 +102,7 @@ const ClaimRewardReviewScreen = ({
       return;
     }
 
-    let transactionPayload = getClaimRewardsTransaction(accountAddress, feeInfo?.fee);
+    let transactionPayload = getClaimRewardsTransaction(pool, accountAddress, feeInfo?.fee);
 
     if (feeInfo?.gasToken) transactionPayload = { ...transactionPayload, gasToken: feeInfo?.gasToken };
 
@@ -135,7 +136,7 @@ const ClaimRewardReviewScreen = ({
     >
       <MainWrapper>
         <TokenReviewSummary
-          assetSymbol={rewardToken.symbol}
+          assetSymbol={pool.rewards[0].symbol}
           text={t('liquidityPoolsContent.label.youAreClaiming')}
           amount={formattedAmount}
         />
@@ -175,16 +176,12 @@ const ClaimRewardReviewScreen = ({
 
 const mapStateToProps = ({
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
-  liquidityPools: {
-    unipool: {
-      earnedAmount,
-    },
-  },
+  liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
   isEstimating,
   feeInfo,
   estimateErrorMessage,
-  earnedAmount,
+  liquidityPoolsReducer,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -199,7 +196,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateClaimRewardsTransactionEstimate: () => dispatch(calculateClaimRewardsTransactionEstimateAction()),
+  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool) =>
+    dispatch(calculateClaimRewardsTransactionEstimateAction(pool)),
 });
 
 

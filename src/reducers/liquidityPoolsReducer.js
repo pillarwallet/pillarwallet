@@ -19,25 +19,27 @@
 */
 import { BigNumber as EthersBigNumber } from 'ethers';
 import {
-  SET_FETCHING_UNIPOOL_DATA,
   SET_UNIPOOL_DATA,
-  SET_FETCHING_UNISWAP_POOL_DATA,
   SET_UNISWAP_POOL_DATA,
+  SET_FETCHING_LIQUIDITY_POOLS_DATA,
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
+  SET_LIQUIDITY_POOLS_DATA_FETCHED,
 } from 'constants/liquidityPoolsConstants';
 
 
 export type LiquidityPoolsReducerState = {
-  isFetchingUnipoolData: boolean,
-  unipool: {
-    stakedAmount: EthersBigNumber,
-    earnedAmount: EthersBigNumber,
+  unipoolData: {
+    [string]: {
+      stakedAmount: EthersBigNumber,
+      earnedAmount: EthersBigNumber,
+    }
   },
-  isFetchingUniswapPoolData: boolean,
   poolsData: {
     [string]: Object,
   },
+  isFetchingLiquidityPoolsData: boolean,
   poolDataGraphQueryFailed: boolean,
+  liquidityPoolsDataFetched: boolean,
 };
 
 export type LiquidityPoolsReducerAction = {
@@ -46,13 +48,10 @@ export type LiquidityPoolsReducerAction = {
 };
 
 export const initialState = {
-  isFetchingUnipoolData: false,
-  unipool: {
-    stakedAmount: EthersBigNumber.from(0),
-    earnedAmount: EthersBigNumber.from(0),
-  },
-  isFetchingUniswapPoolData: false,
+  unipoolData: {},
   poolDataGraphQueryFailed: false,
+  liquidityPoolsDataFetched: false,
+  isFetchingLiquidityPoolsData: false,
   poolsData: {},
 };
 
@@ -61,12 +60,16 @@ export default function lendingReducer(
   action: LiquidityPoolsReducerAction,
 ): LiquidityPoolsReducerState {
   switch (action.type) {
-    case SET_FETCHING_UNIPOOL_DATA:
-      return { ...state, isFetchingUnipoolData: action.payload };
+    case SET_FETCHING_LIQUIDITY_POOLS_DATA:
+      return { ...state, isFetchingLiquidityPoolsData: action.payload };
     case SET_UNIPOOL_DATA:
-      return { ...state, unipool: action.payload };
-    case SET_FETCHING_UNISWAP_POOL_DATA:
-      return { ...state, isFetchingUniswapPoolData: action.payload };
+      return {
+        ...state,
+        unipoolData: {
+          ...state.unipoolData,
+          [action.payload.unipoolAddress]: action.payload.data,
+        },
+      };
     case SET_UNISWAP_POOL_DATA:
       return {
         ...state,
@@ -75,6 +78,8 @@ export default function lendingReducer(
       };
     case SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR:
       return { ...state, poolDataGraphQueryFailed: true };
+    case SET_LIQUIDITY_POOLS_DATA_FETCHED:
+      return { ...state, liquidityPoolsDataFetched: true };
     default:
       return state;
   }

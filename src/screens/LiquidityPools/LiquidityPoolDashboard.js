@@ -17,19 +17,18 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
-import { BigNumber as EthersBigNumber } from 'ethers';
 
 // actions
-import { fetchUnipoolUserDataAction, fetchUniswapPoolDataAction } from 'actions/liquidityPoolsActions';
+import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -39,6 +38,8 @@ import CircleButton from 'components/CircleButton';
 import AssetPattern from 'components/AssetPattern';
 import Button from 'components/Button';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
+import Stats from 'components/Stats';
+import Progress from 'components/Progress';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -51,33 +52,36 @@ import {
 } from 'constants/navigationConstants';
 
 // utils
-import { formatMoney, formatAmount, formatUnits } from 'utils/common';
-import { getFormattedRate, getBalance } from 'utils/assets';
+import { formatMoney, formatAmount, formatFiat } from 'utils/common';
+import { getBalance, convertUSDToFiat } from 'utils/assets';
+import { getPoolStats } from 'utils/liquidityPools';
+import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { Balances, Rates } from 'models/Asset';
+import type { Balances, Rates, Asset } from 'models/Asset';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
+import type { LiquidityPool } from 'models/LiquidityPools';
+import type { Theme } from 'models/Theme';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
   balances: Balances,
   baseFiatCurrency: ?string,
   rates: Rates,
-  fetchUnipoolUserData: () => void,
-  isFetchingUnipoolData: boolean,
-  unipoolStakedAmount: EthersBigNumber,
-  unipoolEarnedAmount: EthersBigNumber,
-  isFetchingUniswapPoolData: boolean,
   poolDataGraphQueryFailed: boolean,
-  poolsData: { [string]: Object },
-  fetchUniswapPoolData: (poolAddress: string) => void,
+  isFetchingLiquidityPoolsData: boolean,
+  fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
+  supportedAssets: Asset[],
+  liquidityPoolsReducer: LiquidityPoolsReducerState,
+  theme: Theme,
 };
 
 const MainContainter = styled.View`
-  align-items: center;
   padding: 0 0 40px;
 `;
 
@@ -98,9 +102,18 @@ const Row = styled.View`
   align-items: center;
 `;
 
+const StretchedRow = styled(Row)`
+  justify-content: space-between;
+`;
+
 const CardIcon = styled(CachedImage)`
   width: 48px;
   height: 48px;
+`;
+
+const AllocationIcon = styled(CachedImage)`
+  width: 24px;
+  height: 24px;
 `;
 
 const HorizontalPadding = styled.View`
@@ -131,83 +144,92 @@ const LiquidityPoolDashboard = ({
   navigation,
   balances,
   baseFiatCurrency,
-  rates,
-  fetchUnipoolUserData,
-  isFetchingUnipoolData,
-  isFetchingUniswapPoolData,
-  unipoolStakedAmount,
-  unipoolEarnedAmount,
-  fetchUniswapPoolData,
+  isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
-  poolsData,
+  fetchLiquidityPoolsData,
+  supportedAssets,
+  liquidityPoolsReducer,
+  rates,
+  theme,
 }: Props) => {
-  // a temporary hardcode, we'll get this from navigation
-  /* eslint-disable i18next/no-literal-string */
-  const assetData = {
-    name: 'ETH-PLR Uniswap v.2 LP',
-    token: 'UNI-V2',
-    iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
-    decimals: 18,
-  };
+  const { pool } = navigation.state.params;
 
-  const rewardAssetData = {
-    name: 'Pillar',
-    token: 'PLR',
-    iconUrl: 'asset/images/tokens/icons/plrColor.png',
-    decimals: 18,
-    symbol: 'PLR',
-    address: '0xe3818504c1b32bf1557b16c238b2e01fd3149c17',
-  };
+  const rewardAssetData = supportedAssets.find(({ symbol }) => symbol === pool.rewards[0].symbol);
+  if (!rewardAssetData) {
+    return null;
+  }
+  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
-  const poolAddress = '0xae2d4004241254aed3f93873604d39883c8259f0';
-  /* eslint-enable i18next/no-literal-string */
-
-  useEffect(() => {
-    fetchUnipoolUserData();
-    fetchUniswapPoolData(poolAddress);
-  }, []);
-
-  const balance = getBalance(balances, assetData.token);
+  const balance = getBalance(balances, pool.symbol);
   const formattedBalance = formatMoney(balance, 4);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const fiatBalance = getFormattedRate(rates, balance, assetData.token, fiatCurrency);
+  const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
+  const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
+  const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
 
   const onAddLiquidity = () => {
-    navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY, { poolAddress });
+    navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY, { pool });
   };
 
   const onRemoveLiquidity = () => {
-    navigation.navigate(LIQUIDITY_POOLS_REMOVE_LIQUIDITY, { poolAddress });
+    navigation.navigate(LIQUIDITY_POOLS_REMOVE_LIQUIDITY, { pool });
   };
 
   const onClaimReward = () => {
     navigation.navigate(LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW, { rewardToken: rewardAssetData });
   };
 
+  const stats = [
+    {
+      title: t('liquidityPoolsContent.label.totalLiquidity'),
+      value: formatFiat(convertUSDToFiat(poolStats.totalLiquidity, rates, fiatCurrency), fiatCurrency),
+    },
+    {
+      title: t('liquidityPoolsContent.label.24hVolume'),
+      value: formatFiat(convertUSDToFiat(poolStats.dailyVolume, rates, fiatCurrency), fiatCurrency),
+    },
+  ];
+
+  pool.tokensProportions.forEach(({ symbol: tokenSymbol }) => {
+    const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+    if (!tokenData) return;
+    stats.push({
+      title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),
+      value: t('tokenValue', { value: formatMoney(poolStats.tokensLiquidity[tokenSymbol], 0), token: tokenSymbol }),
+      iconUrl: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3`,
+    });
+  });
+
+  stats.push({
+    title: t('liquidityPoolsContent.label.weeklyRewards'),
+    value: t('tokenValue', { value: formatMoney(pool.rewards[0].amount, 0), token: rewardAssetData.symbol }),
+    iconUrl: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3`,
+  });
+
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: assetData.name }] }}
+      headerProps={{ centerItems: [{ title: pool.name }] }}
       inset={{ bottom: 0 }}
     >
       <ScrollWrapper
         refreshControl={
           <RefreshControl
-            refreshing={isFetchingUnipoolData || isFetchingUniswapPoolData}
-            onRefresh={() => fetchUnipoolUserData()}
+            refreshing={isFetchingLiquidityPoolsData}
+            onRefresh={() => fetchLiquidityPoolsData([pool])}
           />
         }
       >
         <MainContainter>
           <AssetPattern
             token="PLR"
-            icon={`${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3`}
+            icon={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
             isListed
           />
-          <MediumText giant>{formattedBalance}{' '}
-            <MediumText secondary fontSize={20}>{assetData.token}</MediumText>
+          <MediumText giant center>{formattedBalance}{' '}
+            <MediumText secondary fontSize={20}>{pool.symbol}</MediumText>
           </MediumText>
-          <BaseText regular secondary>{fiatBalance}</BaseText>
+          <BaseText regular secondary center>{fiatBalance}</BaseText>
           <HorizontalPadding>
             <Spacing h={16} />
             {balance > 0 ? (
@@ -216,12 +238,10 @@ const LiquidityPoolDashboard = ({
                   label={t('liquidityPoolsContent.button.addLiquidity')}
                   fontIcon="plus"
                   onPress={onAddLiquidity}
-                  disabled={!poolsData[poolAddress]}
                 />
                 <CircleButton
                   label={t('liquidityPoolsContent.button.removeLiquidity')}
                   fontIcon="up-arrow"
-                  disabled={!poolsData[poolAddress]}
                   onPress={onRemoveLiquidity}
                 />
               </ButtonsRow>
@@ -229,26 +249,34 @@ const LiquidityPoolDashboard = ({
               <Button
                 title={t('liquidityPoolsContent.button.addLiquidity')}
                 onPress={onAddLiquidity}
-                disabled={!poolsData[poolAddress]}
               />
             )}
-            <Spacing h={32} />
-            <MediumText big >{t('liquidityPoolsContent.label.staked')}</MediumText>
+            <Spacing h={36} />
+            <MediumText big>{t('label.keyFacts')}</MediumText>
+          </HorizontalPadding>
+          <Spacing h={6} />
+          <Stats stats={stats} />
+          <Spacing h={32} />
+          <HorizontalPadding>
+            <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
             <Spacing h={6} />
             <Card>
-              <Row>
-                <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${assetData.iconUrl}?size=3` }} />
-                <Spacing w={12} />
-                <MediumText fontSize={20}>{formatAmount(formatUnits(unipoolStakedAmount, assetData.decimals))}{' '}
-                  <MediumText secondary regular>{assetData.token}</MediumText>
-                </MediumText>
-              </Row>
+              <StretchedRow>
+                <Row>
+                  <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
+                  <Spacing w={12} />
+                  <MediumText fontSize={20}>{formatAmount(poolStats.stakedAmount)}{' '}
+                    <MediumText secondary regular>{pool.symbol}</MediumText>
+                  </MediumText>
+                </Row>
+                <MediumText big>{formattedStakedAmountInFiat}</MediumText>
+              </StretchedRow>
               <Spacing h={20} />
               <Row>
                 <ButtonWrapper>
                   <Button
                     title={t('liquidityPoolsContent.button.stake')}
-                    onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE)}
+                    onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
                   />
                 </ButtonWrapper>
                 <Spacing w={7} />
@@ -256,7 +284,7 @@ const LiquidityPoolDashboard = ({
                   <Button
                     title={t('liquidityPoolsContent.button.unstake')}
                     secondary
-                    onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE)}
+                    onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE, { pool })}
                   />
                 </ButtonWrapper>
               </Row>
@@ -278,11 +306,11 @@ const LiquidityPoolDashboard = ({
                 <Spacing w={12} />
                 <View>
                   <BaseText fontSize={20}>
-                    {formatAmount(formatUnits(unipoolEarnedAmount, rewardAssetData.decimals))}{' '}
-                    <BaseText secondary regular>{rewardAssetData.token}</BaseText>
+                    {formatAmount(poolStats.rewardsToClaim)}{' '}
+                    <BaseText secondary regular>{rewardAssetData.symbol}</BaseText>
                   </BaseText>
                   <BaseText regular secondary>
-                    {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.token })}
+                    {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.symbol })}
                   </BaseText>
                 </View>
               </Row>
@@ -292,7 +320,7 @@ const LiquidityPoolDashboard = ({
                 primarySecond
                 onPress={onClaimReward}
               />
-              {unipoolStakedAmount.isZero() && (
+              {poolStats.stakedAmount > 0 && (
                 <>
                   <Overlay />
                   <AbsolutePositioning>
@@ -301,14 +329,67 @@ const LiquidityPoolDashboard = ({
                 </>
               )}
             </Card>
+            <Spacing h={28} />
+            <MediumText big>{t('liquidityPoolsContent.label.yourPoolShareAllocation')}</MediumText>
+            <Spacing h={22} />
+            {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
+              const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
+              if (!tokenData) return null;
+              const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
+              const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
+              const quantity = poolStats.tokensPerLiquidityToken[tokenSymbol] * (balance || 1);
+              const formattedQuantity = formatAmount(quantity);
+
+              return (
+                <View>
+                  <StretchedRow>
+                    <Row>
+                      <AllocationIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }} />
+                      <Spacing w={8} />
+                      <MediumText big>{tokenData.name}</MediumText>
+                      <Spacing w={8} />
+                      <BaseText regular secondary>{t('percentValue', { value: proportion })}</BaseText>
+                    </Row>
+                    <MediumText big>{formatFiat(quantity * tokenPriceInFiat, fiatCurrency)}</MediumText>
+                  </StretchedRow>
+                  <Spacing h={12} />
+                  <Progress
+                    fullStatusValue={1}
+                    currentStatusValue={proportion}
+                    height={6}
+                    colorStart={progressBarColor}
+                    colorEnd={progressBarColor}
+                    emptyBarBackgroundColor={
+                      getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic080', darkKey: 'basic070' })
+                    }
+                    barPadding={0}
+                  />
+                  <Spacing h={24} />
+                  <StretchedRow>
+                    <BaseText secondary medium>{t('liquidityPoolsContent.label.tokenPrice')}</BaseText>
+                    <BaseText medium>
+                      {formattedTokenPrice}
+                    </BaseText>
+                  </StretchedRow>
+                  <Spacing h={25} />
+                  <StretchedRow>
+                    <BaseText secondary medium>{t('liquidityPoolsContent.label.quantity')}</BaseText>
+                    <BaseText medium>
+                      {t('tokenValue', { value: formattedQuantity, token: tokenSymbol })}
+                    </BaseText>
+                  </StretchedRow>
+                  <Spacing h={34} />
+                </View>
+              );
+          })}
           </HorizontalPadding>
         </MainContainter>
       </ScrollWrapper>
       <RetryGraphQueryBox
         message={t('error.theGraphQueryFailed.liquidityPools')}
         hasFailed={poolDataGraphQueryFailed}
-        isFetching={isFetchingUniswapPoolData}
-        onRetry={() => fetchUniswapPoolData(poolAddress)}
+        isFetching={isFetchingLiquidityPoolsData}
+        onRetry={() => fetchLiquidityPoolsData([pool])}
       />
     </ContainerWithHeader>
   );
@@ -316,22 +397,18 @@ const LiquidityPoolDashboard = ({
 
 const mapStateToProps = ({
   liquidityPools: {
-    isFetchingUnipoolData,
-    isFetchingUniswapPoolData,
-    unipool: {
-      stakedAmount,
-      earnedAmount,
-    },
+    isFetchingLiquidityPoolsData,
     poolDataGraphQueryFailed,
-    poolsData,
   },
+  assets: { supportedAssets },
+  liquidityPools: liquidityPoolsReducer,
+  rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
-  isFetchingUnipoolData,
-  isFetchingUniswapPoolData,
-  unipoolStakedAmount: stakedAmount,
-  unipoolEarnedAmount: earnedAmount,
+  isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
-  poolsData,
+  supportedAssets,
+  liquidityPoolsReducer,
+  rates,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -344,8 +421,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchUnipoolUserData: () => dispatch(fetchUnipoolUserDataAction()),
-  fetchUniswapPoolData: (poolAddress: string) => dispatch(fetchUniswapPoolDataAction(poolAddress)),
+  fetchLiquidityPoolsData: (pools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(pools)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard));

@@ -141,6 +141,7 @@ import LiquidityPoolsUnstakeTokensReviewScreen from 'screens/LiquidityPools/Unst
 import LiquidityPoolsRemoveLiquidityScreen from 'screens/LiquidityPools/RemoveLiquidity';
 import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/RemoveLiquidityReview';
 import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
+import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -300,6 +301,7 @@ import {
   RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
   LIQUIDITY_POOLS_FLOW,
+  LIQUIDITY_POOLS,
   LIQUIDITY_POOL_DASHBOARD,
   LIQUIDITY_POOLS_ADD_LIQUIDITY,
   LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
@@ -789,6 +791,7 @@ const rariFlow = createStackNavigator({
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const liquidityPoolsFlow = createStackNavigator({
+  [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
   [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
   [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
   [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,

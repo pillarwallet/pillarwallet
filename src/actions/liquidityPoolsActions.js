@@ -18,24 +18,24 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import {
-  SET_FETCHING_UNIPOOL_DATA,
+  SET_FETCHING_LIQUIDITY_POOLS_DATA,
   SET_UNIPOOL_DATA,
-  SET_FETCHING_UNISWAP_POOL_DATA,
   SET_UNISWAP_POOL_DATA,
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
+  SET_LIQUIDITY_POOLS_DATA_FETCHED,
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import {
   getStakedAmount,
   getEarnedAmount,
+} from 'utils/unipool';
+import {
+  getAddLiquidityTransactions,
+  fetchPoolData,
+  getRemoveLiquidityTransactions,
   getStakeTransactions,
   getUnstakeTransaction,
   getClaimRewardsTransaction,
-} from 'utils/unipool';
-import {
-  getAddLiquidityEthTransactions,
-  fetchPoolData,
-  getRemoveLiquidityEthTransactions,
 } from 'utils/liquidityPools';
 import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
@@ -45,9 +45,10 @@ import Toast from 'components/Toast';
 import t from 'translations/translate';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 
-export const fetchUnipoolUserDataAction = () => {
+const fetchUnipoolUserDataAction = (unipoolAddress: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -55,10 +56,9 @@ export const fetchUnipoolUserDataAction = () => {
     const smartWalletAccount = findFirstSmartAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_FETCHING_UNIPOOL_DATA, payload: true });
     const [stakedAmount, earnedAmount] = await Promise.all([
-      getStakedAmount(getAccountAddress(smartWalletAccount)),
-      getEarnedAmount(getAccountAddress(smartWalletAccount)),
+      getStakedAmount(unipoolAddress, getAccountAddress(smartWalletAccount)),
+      getEarnedAmount(unipoolAddress, getAccountAddress(smartWalletAccount)),
     ]).catch(error => {
       reportErrorLog('Unipool service failed', { error });
       return [];
@@ -68,18 +68,19 @@ export const fetchUnipoolUserDataAction = () => {
       dispatch({
         type: SET_UNIPOOL_DATA,
         payload: {
-          stakedAmount,
-          earnedAmount,
+          unipoolAddress,
+          data: {
+            stakedAmount,
+            earnedAmount,
+          },
         },
       });
     }
-    dispatch({ type: SET_FETCHING_UNIPOOL_DATA, payload: false });
   };
 };
 
-export const fetchUniswapPoolDataAction = (poolAddress: string) => {
+const fetchUniswapPoolDataAction = (poolAddress: string) => {
   return async (dispatch: Dispatch) => {
-    dispatch({ type: SET_FETCHING_UNISWAP_POOL_DATA, payload: true });
     const poolData = await fetchPoolData(poolAddress)
       .catch(error => {
         if (error instanceof GraphQueryError) {
@@ -96,23 +97,34 @@ export const fetchUniswapPoolDataAction = (poolAddress: string) => {
         }
         return null;
       });
-    if (poolData && poolData.pair) {
+    if (poolData) {
       dispatch({
         type: SET_UNISWAP_POOL_DATA,
         payload: {
           poolAddress,
-          data: poolData.pair,
+          data: poolData,
         },
       });
     }
-    dispatch({ type: SET_FETCHING_UNISWAP_POOL_DATA, payload: false });
   };
 };
 
-export const calculateAddLiquidityTransactionEthEstimateAction = (
-  tokenAmount: number,
-  tokenAsset: Asset,
-  ethAmount: number,
+export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
+  return async (dispatch: Dispatch) => {
+    dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: true });
+    await Promise.all(pools.map(async pool => {
+      await dispatch(fetchUnipoolUserDataAction(pool.unipoolAddress));
+      await dispatch(fetchUniswapPoolDataAction(pool.uniswapPairAddress));
+    }));
+    dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: false });
+    dispatch({ type: SET_LIQUIDITY_POOLS_DATA_FETCHED });
+  };
+};
+
+export const calculateAddLiquidityTransactionEstimateAction = (
+  pool: LiquidityPool,
+  tokenAmounts: number[],
+  tokensAssets: Asset[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -121,11 +133,11 @@ export const calculateAddLiquidityTransactionEthEstimateAction = (
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
-    const addLiquidityTransactions = await getAddLiquidityEthTransactions(
+    const addLiquidityTransactions = await getAddLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
-      tokenAmount,
-      tokenAsset,
-      ethAmount,
+      pool,
+      tokenAmounts,
+      tokensAssets,
     );
 
     const sequentialTransactions = addLiquidityTransactions
@@ -147,6 +159,7 @@ export const calculateAddLiquidityTransactionEthEstimateAction = (
 };
 
 export const calculateStakeTransactionEstimateAction = (
+  pool: LiquidityPool,
   tokenAmount: number,
   tokenAsset: Asset,
 ) => {
@@ -158,6 +171,7 @@ export const calculateStakeTransactionEstimateAction = (
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
     const stakeTransactions = await getStakeTransactions(
+      pool,
       getAccountAddress(smartWalletAccount),
       tokenAmount,
       tokenAsset,
@@ -182,6 +196,7 @@ export const calculateStakeTransactionEstimateAction = (
 };
 
 export const calculateUnstakeTransactionEstimateAction = (
+  pool: LiquidityPool,
   tokenAmount: number,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -192,6 +207,7 @@ export const calculateUnstakeTransactionEstimateAction = (
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
     const { to, amount, data } = getUnstakeTransaction(
+      pool,
       getAccountAddress(smartWalletAccount),
       tokenAmount,
     );
@@ -203,7 +219,7 @@ export const calculateUnstakeTransactionEstimateAction = (
 export const calculateRemoveLiquidityTransactionEstimateAction = (
   tokenAmount: number,
   poolToken: Asset,
-  erc20Token: Asset,
+  tokensAssets: Asset[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -212,11 +228,11 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
-    const removeLiquidityTransactions = await getRemoveLiquidityEthTransactions(
+    const removeLiquidityTransactions = await getRemoveLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
       tokenAmount,
       poolToken,
-      erc20Token,
+      tokensAssets,
     );
 
     const sequentialTransactions = removeLiquidityTransactions
@@ -237,7 +253,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
   };
 };
 
-export const calculateClaimRewardsTransactionEstimateAction = () => {
+export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPool) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
@@ -246,6 +262,7 @@ export const calculateClaimRewardsTransactionEstimateAction = () => {
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
     const { to, amount, data } = getClaimRewardsTransaction(
+      pool,
       getAccountAddress(smartWalletAccount),
     );
 

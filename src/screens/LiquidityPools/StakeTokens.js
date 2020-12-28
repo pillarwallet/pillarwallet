@@ -43,6 +43,7 @@ import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsA
 import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 
 type Props = {
@@ -53,6 +54,7 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   calculateStakeTransactionEstimate: (
+    pool: LiquidityPool,
     tokenAmount: number,
     tokenAsset: Asset,
   ) => void,
@@ -86,13 +88,15 @@ const StakeTokensScreen = ({
     resetEstimateTransaction();
   }, []);
 
-  const assetData = supportedAssets.find(asset => asset.symbol === 'UNI-V2');
+  const { pool } = navigation.state.params;
+  const assetData = supportedAssets.find(asset => asset.symbol === pool.symbol);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 
   useEffect(() => {
     if (!parseFloat(assetValue) || !isValid || !assetData) return;
     calculateStakeTransactionEstimate(
+      pool,
       parseFloat(assetValue),
       assetData,
     );
@@ -107,7 +111,7 @@ const StakeTokensScreen = ({
 
   const onNextButtonPress = () => navigation.navigate(
     LIQUIDITY_POOLS_STAKE_REVIEW,
-    { amount: assetValue, poolToken: assetData },
+    { amount: assetValue, poolToken: assetData, pool },
   );
 
   return (
@@ -167,9 +171,10 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateStakeTransactionEstimate: debounce((
+    pool: LiquidityPool,
     tokenAmount: number,
     tokenAsset: Asset,
-  ) => dispatch(calculateStakeTransactionEstimateAction(tokenAmount, tokenAsset)), 500),
+  ) => dispatch(calculateStakeTransactionEstimateAction(pool, tokenAmount, tokenAsset)), 500),
 });
 
 

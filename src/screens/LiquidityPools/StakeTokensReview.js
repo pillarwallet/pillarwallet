@@ -31,7 +31,7 @@ import { Spacing } from 'components/Layout';
 import Button from 'components/Button';
 import Toast from 'components/Toast';
 
-import { getStakeTransactions } from 'utils/unipool';
+import { getStakeTransactions } from 'utils/liquidityPools';
 
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 
@@ -58,7 +58,7 @@ const StakeTokensReviewScreen = ({
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const {
-    poolToken, amount,
+    poolToken, amount, pool,
   } = navigation.state.params;
 
   const onNextButtonPress = async () => {
@@ -75,6 +75,7 @@ const StakeTokensReviewScreen = ({
     }
 
     const stakeTransactions = await getStakeTransactions(
+      pool,
       accountAddress,
       amount,
       poolToken,
