@@ -241,7 +241,7 @@ const AddLiquidityScreen = ({
         {renderTokenInput(1)}
         <StyledIcon name="plus" />
         {renderTokenInput(0)}
-        {/* TODO: render = */}
+        <StyledIcon name="equal" />
         <ValueInput
           assetData={poolTokenData}
           value={poolTokenAmount}
