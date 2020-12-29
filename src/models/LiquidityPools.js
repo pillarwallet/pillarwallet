@@ -27,6 +27,7 @@ export type LiquidityPoolType = $Values<typeof LIQUIDITY_POOLS_TYPES>;
 export type LiquidityPoolBase = {
   type: LiquidityPoolType,
   name: string,
+  symbol: string,
   tokensProportions: {
     symbol: string,
     proportion: number

@@ -268,7 +268,6 @@ const LiquidityPoolsScreen = ({
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
               <BaseText big>{balanceInFiat}</BaseText>
-              {/* <BaseText regular positive>+ 3.32%</BaseText> */}
             </View>
            )}
           padding="14px 0"
@@ -294,18 +293,37 @@ const LiquidityPoolsScreen = ({
     );
   };
 
+  const isAvailablePool = (pool: LiquidityPool, index: number) => {
+    const poolStats = poolsStats[index];
+    return getBalance(balances, pool.symbol) === 0 && poolStats.stakedAmount === 0;
+  };
+
+  const isPurchasedPool = (pool: LiquidityPool, index: number) => {
+    const poolStats = poolsStats[index];
+    return getBalance(balances, pool.symbol) > 0 && poolStats.stakedAmount === 0;
+  };
+
+  const isStakedPool = (pool: LiquidityPool, index: number) => {
+    const poolStats = poolsStats[index];
+    return poolStats.stakedAmount > 0;
+  };
+
+  const areThereNotAvailablePools = () => {
+    return !LIQUIDITY_POOLS.every(isAvailablePool);
+  };
+
   const renderTab = () => {
     let renderFunction;
     let items;
     if (activeTab === TABS.AVAILABLE) {
       renderFunction = renderAvailablePool;
-      items = LIQUIDITY_POOLS;
+      items = LIQUIDITY_POOLS.filter(isAvailablePool);
     } else if (activeTab === TABS.PURCHASED) {
       renderFunction = renderPurchasedPool;
-      items = LIQUIDITY_POOLS;
+      items = LIQUIDITY_POOLS.filter(isPurchasedPool);
     } else {
       renderFunction = renderStakedPool;
-      items = LIQUIDITY_POOLS;
+      items = LIQUIDITY_POOLS.filter(isStakedPool);
     }
     return (
       <FlatList
@@ -329,10 +347,12 @@ const LiquidityPoolsScreen = ({
         }
       >
         <MainContainer>
-          <Tabs
-            activeTab={activeTab}
-            tabs={tabs}
-          />
+          {areThereNotAvailablePools() && (
+            <Tabs
+              activeTab={activeTab}
+              tabs={tabs}
+            />
+          )}
           <Spacing h={26} />
           {renderTab()}
         </MainContainer>
