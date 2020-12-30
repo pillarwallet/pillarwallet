@@ -42,6 +42,7 @@ import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
 import WBTCCafeWarning from 'screens/Exchange/WBTCCafeWarning';
+import { Spacing } from 'components/Layout';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -114,6 +115,7 @@ import {
   EXCHANGE,
   RARI_DEPOSIT,
   RARI_CLAIM_RGT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -131,6 +133,13 @@ import {
   RARI_TOKENS_DATA,
   RARI_GOVERNANCE_TOKEN_DATA,
 } from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 
 // selectors
 import {
@@ -167,6 +176,7 @@ import type { Stream } from 'models/Sablier';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 
 type StateProps = {|
@@ -321,7 +331,6 @@ const Divider = styled.View`
   width: 100%;
   height: 1px;
   background-color: ${({ theme }) => theme.colors.basic060};
-  margin: 8px 0px 18px;
 `;
 
 const ErrorMessage = styled(BaseText)`
@@ -634,6 +643,10 @@ export class EventDetail extends React.Component<Props> {
   goToRariDeposit = () => this.props.navigation.navigate(RARI_DEPOSIT);
   goToRariClaim = () => this.props.navigation.navigate(RARI_CLAIM_RGT);
 
+  goToLiquidityPool = (pool: LiquidityPool) => {
+    this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
+  }
+
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return t('button.referFriends');
@@ -775,6 +788,7 @@ export class EventDetail extends React.Component<Props> {
       isSmartAccount,
       keyBasedWalletAddress,
       ensRegistry,
+      supportedAssets,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -983,7 +997,7 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case SABLIER_WITHDRAW: {
-        const { incomingStreams, supportedAssets } = this.props;
+        const { incomingStreams } = this.props;
         const { contactAddress, assetAddress, streamId } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
         const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
@@ -1103,6 +1117,116 @@ export class EventDetail extends React.Component<Props> {
             secondary: true,
             title: t('button.transferMore'),
             onPress: () => this.goToRariDeposit(),
+          }],
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION: {
+        const {
+          amount, pool, tokenAmounts,
+        } = event.extra;
+        const tokensData = pool.tokensProportions.map(
+          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+        );
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.addMoreLiquidity'),
+            onPress: () => this.goToLiquidityPool(pool),
+          }],
+          fee: this.getFeeLabel(event),
+          customActionTitle: (
+            <View style={{ width: '100%' }}>
+              {tokensData.map((token, index) => (
+                <Row>
+                  <BaseText regular secondary>{token.name}</BaseText>
+                  <BaseText regular>
+                    {getFormattedValue(formatAmount(tokenAmounts[index]), token.symbol, { isPositive: false })}
+                  </BaseText>
+                </Row>
+              ))}
+              <Spacing h={16} />
+              <Divider />
+              <Spacing h={16} />
+              <Row>
+                <BaseText regular>{pool.name}</BaseText>
+                <BaseText fontSize={20} positive>
+                  {getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true })}
+                </BaseText>
+              </Row>
+            </View>
+          ),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
+        const { amount, pool, tokenAmounts } = event.extra;
+        const tokensData = pool.tokensProportions.map(
+          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+        );
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.removeMoreLiquidity'),
+            onPress: () => this.goToLiquidityPool(pool),
+          }],
+          fee: this.getFeeLabel(event),
+          customActionTitle: (
+            <View style={{ width: '100%' }}>
+              <Row>
+                <BaseText regular>{pool.name}</BaseText>
+                <BaseText regular>
+                  {getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false })}
+                </BaseText>
+              </Row>
+              <Spacing h={16} />
+              <Divider />
+              <Spacing h={16} />
+              {tokensData.map((token, index) => (
+                <Row>
+                  <BaseText regular secondary>{token.name}</BaseText>
+                  <BaseText fontSize={20} positive>
+                    {getFormattedValue(formatAmount(tokenAmounts[index]), token.symbol, { isPositive: true })}
+                  </BaseText>
+                </Row>
+              ))}
+            </View>
+          ),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.stakeMoreLiquidity'),
+            onPress: () => this.goToLiquidityPool(pool),
+          }],
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.unstakeMoreLiquidity'),
+            onPress: () => this.goToLiquidityPool(pool),
+          }],
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.claimMoreRewards'),
+            onPress: () => this.goToLiquidityPool(pool),
           }],
           fee: this.getFeeLabel(event),
         };
@@ -1441,7 +1565,9 @@ export class EventDetail extends React.Component<Props> {
         })}
         {!isFailed &&
         <>
+          <Spacing h={8} />
           <Divider />
+          <Spacing h={18} />
           <Row>
             <BaseText regular positive>{t('label.toSmartWallet')}</BaseText>
             <View>

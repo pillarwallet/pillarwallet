@@ -104,6 +104,13 @@ import {
   RARI_TOKENS_DATA,
   RARI_GOVERNANCE_TOKEN_DATA,
 } from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
@@ -733,6 +740,84 @@ export class ActivityFeedItem extends React.Component<Props> {
           profileImage: true,
           itemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
           fullItemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.liquidityAdded'),
+          subtext: t('liquidityPoolsContent.label.fromWalletToPool', { poolName: pool.name }),
+          customAddon: (
+            <ListWrapper>
+              <BaseText big>
+                {t('negativeTokenValue', { value: t('label.multiple') })}
+              </BaseText>
+              <ItemValue>
+                {t('positiveTokenValue', { value: formatAmount(amount), token: pool.symbol })}
+              </ItemValue>
+            </ListWrapper>
+          ),
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.liquidityRemoved'),
+          subtext: t('liquidityPoolsContent.label.fromPoolToWallet', { poolName: pool.name }),
+          customAddon: (
+            <ListWrapper>
+              <BaseText big>
+                {t('negativeTokenValue', { value: formatAmount(amount), token: pool.symbol })}
+              </BaseText>
+              <ItemValue>
+                {t('positiveTokenValue', { value: t('label.multiple') })}
+              </ItemValue>
+            </ListWrapper>
+          ),
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.staked'),
+          subtext: pool.name,
+          itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
+          fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.unstaked'),
+          subtext: pool.name,
+          itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
+          fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
+          valueColor: 'secondaryAccent140',
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.rewardsClaimed'),
+          subtext: t('liquidityPoolsContent.label.fromPoolToWallet', { poolName: pool.name }),
+          itemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
+          fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
+          valueColor: 'secondaryAccent140',
+          itemImageUrl: pool.iconUrl,
         };
         break;
       }

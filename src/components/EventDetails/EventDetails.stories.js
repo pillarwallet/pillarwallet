@@ -37,6 +37,14 @@ import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
 } from 'constants/poolTogetherConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+  LIQUIDITY_POOLS,
+} from 'constants/liquidityPoolsConstants';
 
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
@@ -72,7 +80,10 @@ const reduxData = {
   rates: {},
   baseFiatCurrency: '',
   user: {},
-  supportedAssets: [],
+  supportedAssets: [
+    { symbol: 'PLR', name: 'Pillar' },
+    { symbol: 'ETH', name: 'Ethereum' },
+  ],
   PPNTransactions: [],
   mergedPPNTransactions: [
     {
@@ -821,4 +832,115 @@ storiesOf('EventDetail', module)
         itemImageRoundedSquare: true,
       }}
     />
+  ))
+  .add('Liquidity added', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+        hash: '0xHash',
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS[0],
+          tokenAmounts: [1, 2],
+         },
+      }}
+      itemData={{
+        label: 'Liquidity added',
+        subtext: 'Wallet → Uniswap v2 ETH/PLR',
+      }}
+    />
+  ))
+  .add('Liquidity removed', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+        hash: '0xHash',
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS[0],
+          tokenAmounts: [1, 2],
+         },
+      }}
+      itemData={{
+        label: 'Liquidity removed',
+        subtext: 'Uniswap v2 ETH/PLR → Wallet',
+      }}
+    />
+  ))
+  .add('Liquidity staked', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_STAKE_TRANSACTION,
+        hash: '0xHash',
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS[0],
+         },
+      }}
+      itemData={{
+        label: 'Staked',
+        subtext: 'Uniswap v2 ETH/PLR',
+        itemValue: '- 70 UNI-V2',
+        fullItemValue: '- 70 UNI-V2',
+      }}
+    />
+  ))
+  .add('Liquidity unstaked', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+        hash: '0xHash',
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS[0],
+         },
+      }}
+      itemData={{
+        label: 'Unstaked',
+        subtext: 'Uniswap v2 ETH/PLR',
+        itemValue: '+ 70 UNI-V2',
+        fullItemValue: '+ 70 UNI-V2',
+        valueColor: 'secondaryAccent140',
+      }}
+    />
+  ))
+  .add('Liquidity reward claimed', () => (
+    <EventDetailsStoryItem
+      {...reduxData}
+      {...actions}
+      {...commonProps}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+        hash: '0xHash',
+        extra: {
+          amount: 1000,
+          pool: LIQUIDITY_POOLS[0],
+         },
+      }}
+      itemData={{
+        label: 'Rewards claimed',
+        subtext: 'Uniswap v2 ETH/PLR',
+        itemValue: '+ 1,000 PLR',
+        fullItemValue: '+ 1,000 PLR',
+        valueColor: 'secondaryAccent140',
+      }}
+    />
   ));
+

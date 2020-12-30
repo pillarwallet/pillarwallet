@@ -69,6 +69,7 @@ type Props = {
   calculateAddLiquidityTransactionEstimate: (
     pool: LiquidityPool,
     tokenAmounts: number[],
+    poolTokenAmount: number,
     tokensAssets: Asset[],
   ) => void,
   balances: Balances,
@@ -138,6 +139,7 @@ const AddLiquidityScreen = ({
     calculateAddLiquidityTransactionEstimate(
       pool,
       assetsValues.map(f => parseFloat(f) || 0),
+      parseFloat(poolTokenAmount) || 0,
       tokensData,
     );
   }, [assetsValues, fieldsValid]);
@@ -300,8 +302,11 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateAddLiquidityTransactionEstimate: debounce((
     pool: LiquidityPool,
     tokenAmounts: number[],
+    poolTokenAmount: number,
     tokensAssets: Asset[],
-  ) => dispatch(calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, tokensAssets)), 500),
+  ) => dispatch(
+    calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, poolTokenAmount, tokensAssets),
+  ), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);

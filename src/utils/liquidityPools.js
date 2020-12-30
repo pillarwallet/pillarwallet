@@ -20,9 +20,18 @@
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 import { ETH, WETH } from 'constants/assetsConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+  LIQUIDITY_POOLS,
+} from 'constants/liquidityPoolsConstants';
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
-import { parseTokenBigNumberAmount } from 'utils/common';
+import { parseTokenBigNumberAmount, formatUnits } from 'utils/common';
+import { addressesEqual } from 'utils/assets';
 import {
   getStakeTransactions as getUnipoolStakeTransactions,
   getUnstakeTransaction as getUnipoolUnstakeTransaction,
@@ -36,6 +45,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import UNISWAP_ROUTER_ABI from 'abi/uniswapRouter.json';
 import type { Asset } from 'models/Asset';
 import type { LiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
+import type { Transaction } from 'models/Transaction';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
@@ -43,7 +53,7 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
   const query = `
     {
       pair(
-        id: "${poolAddress}"
+        id: "${poolAddress.toLowerCase()}"
       ) {
         id 
         token0 {
@@ -68,7 +78,7 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
         volumeUSD
       }
       pairDayDatas(
-        where: { pairAddress: "${poolAddress}" },
+        where: { pairAddress: "${poolAddress.toLowerCase()}" },
         orderBy: date,
         orderDirection: desc,
       ) {
@@ -87,6 +97,7 @@ export const getAddLiquidityTransactions = async (
   sender: string,
   pool: LiquidityPool,
   tokenAmounts: number[],
+  poolTokenAmount: number,
   tokensAssets: Asset[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
@@ -165,6 +176,11 @@ export const getAddLiquidityTransactions = async (
 
   addLiquidityTransactions[0] = {
     ...addLiquidityTransactions[0],
+    tag: LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+    extra: {
+      amount: poolTokenAmount,
+      pool,
+    },
     txFeeInWei,
   };
 
@@ -173,6 +189,7 @@ export const getAddLiquidityTransactions = async (
 
 export const getRemoveLiquidityTransactions = async (
   sender: string,
+  pool: LiquidityPool,
   poolTokenAmount: number,
   poolToken: Asset,
   tokensAssets: Asset[],
@@ -235,20 +252,35 @@ export const getRemoveLiquidityTransactions = async (
   }
   removeLiquidityTransactions[0] = {
     ...removeLiquidityTransactions[0],
+    tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+    extra: {
+      amoun: poolTokenAmount,
+      pool,
+    },
     txFeeInWei,
   };
 
   return removeLiquidityTransactions;
 };
 
-export const getStakeTransactions = (
+export const getStakeTransactions = async (
   pool: LiquidityPool,
   sender: string,
   amount: number,
   token: Asset,
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
-  return getUnipoolStakeTransactions(pool.unipoolAddress, sender, amount, token, txFeeInWei);
+  const stakeTransactions = await getUnipoolStakeTransactions(pool.unipoolAddress, sender, amount, token);
+  stakeTransactions[0] = {
+    ...stakeTransactions[0],
+    tag: LIQUIDITY_POOLS_STAKE_TRANSACTION,
+    extra: {
+      amount,
+      pool,
+    },
+    txFeeInWei,
+  };
+  return stakeTransactions;
 };
 
 export const getUnstakeTransaction = (
@@ -257,15 +289,36 @@ export const getUnstakeTransaction = (
   amount: number,
   txFeeInWei?: BigNumber,
 ) => {
-  return getUnipoolUnstakeTransaction(pool.unipoolAddress, sender, amount, txFeeInWei);
+  let unstakeTransaction = getUnipoolUnstakeTransaction(pool.unipoolAddress, sender, amount);
+  unstakeTransaction = {
+    ...unstakeTransaction,
+    tag: LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+    extra: {
+      amount,
+      pool,
+    },
+    txFeeInWei,
+  };
+  return unstakeTransaction;
 };
 
 export const getClaimRewardsTransaction = (
   pool: LiquidityPool,
   sender: string,
+  amountToClaim: number,
   txFeeInWei?: BigNumber,
 ) => {
-  return getUnipoolClaimRewardsTransaction(pool.unipoolAddress, sender, txFeeInWei);
+  let claimRewardsTransaction = getUnipoolClaimRewardsTransaction(pool.unipoolAddress, sender);
+  claimRewardsTransaction = {
+    ...claimRewardsTransaction,
+    tag: LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+    extra: {
+      pool,
+      amount: amountToClaim,
+    },
+    txFeeInWei,
+  };
+  return claimRewardsTransaction;
 };
 
 export const getPoolStats = (
@@ -278,12 +331,12 @@ export const getPoolStats = (
   const historyData = poolData.pairDayDatas;
 
   const currentPrice = pairData.reserveUSD / pairData.totalSupply;
-  const dayAgoPrice = historyData[1].reserveUSD / historyData[1].totalSupply;
-  const dayPriceChange = ((currentPrice - dayAgoPrice) * 100) / dayAgoPrice;
-  const weekAgoPrice = historyData[7].reserveUSD / historyData[7].totalSupply;
-  const weekPriceChange = ((currentPrice - weekAgoPrice) * 100) / weekAgoPrice;
-  const monthAgoPrice = historyData[30].reserveUSD / historyData[30].totalSupply;
-  const monthPriceChange = ((currentPrice - monthAgoPrice) * 100) / monthAgoPrice;
+  const dayAgoPrice = historyData[1] && historyData[1].reserveUSD / historyData[1].totalSupply;
+  const dayPriceChange = dayAgoPrice && ((currentPrice - dayAgoPrice) * 100) / dayAgoPrice;
+  const weekAgoPrice = historyData[7] && historyData[7].reserveUSD / historyData[7].totalSupply;
+  const weekPriceChange = weekAgoPrice && ((currentPrice - weekAgoPrice) * 100) / weekAgoPrice;
+  const monthAgoPrice = historyData[30] && historyData[30].reserveUSD / historyData[30].totalSupply;
+  const monthPriceChange = monthAgoPrice && ((currentPrice - monthAgoPrice) * 100) / monthAgoPrice;
 
   const tokenSymbols = [pairData.token0.symbol, pairData.token1.symbol]
     .map(symbol => symbol === WETH ? ETH : symbol);
@@ -397,4 +450,211 @@ export const calculateProportionalRemoveLiquidityAssetValues = (
     token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
   }
   return [token0Withdrawn, token1Withdrawn, poolTokenBurned];
+};
+
+export const isLiquidityPoolsTransactionTag = (txTag: ?string) => {
+  return [
+    LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+    LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+    LIQUIDITY_POOLS_STAKE_TRANSACTION,
+    LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+    LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+  ].includes(txTag);
+};
+
+const buildUnipoolTransaction = (
+  accountAddress,
+  transaction,
+  unipoolTransactions,
+  liquidityPool,
+) => {
+  const { rewardClaims = [], stakes = [], unstakes = [] } = unipoolTransactions;
+  const txHash = transaction.hash.toLowerCase();
+
+  const rewardClaimTransaction = rewardClaims.find(({ id }) => id === txHash);
+  if (rewardClaimTransaction) {
+    return {
+      ...transaction,
+      tag: LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+      extra: {
+        amount: formatUnits(rewardClaimTransaction.reward, 18),
+        pool: liquidityPool,
+      },
+    };
+  }
+  const stakeTransaction = stakes.find(({ id }) => id === txHash);
+  if (stakeTransaction) {
+    return {
+      ...transaction,
+      tag: LIQUIDITY_POOLS_STAKE_TRANSACTION,
+      extra: {
+        amount: formatUnits(stakeTransaction.amount, 18),
+        pool: liquidityPool,
+      },
+    };
+  }
+  const unstakeTransaction = unstakes.find(({ id }) => id === txHash);
+  if (unstakeTransaction) {
+    return {
+      ...transaction,
+      tag: LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+      extra: {
+        amount: formatUnits(unstakeTransaction.amount, 18),
+        pool: liquidityPool,
+      },
+    };
+  }
+  return transaction;
+};
+
+const mapTransactionsHistoryWithUnipool = async (
+  accountAddress: string,
+  transactionHistory: Transaction[],
+) => {
+  /* eslint-disable i18next/no-literal-string */
+  const query = `{
+    rewardClaims(where: {
+      user: "${accountAddress}"
+    }) {
+      id
+      reward
+    }
+    stakes(where: {
+      user: "${accountAddress}"
+    }) {
+      id
+      amount
+    }
+    unstakes(where: {
+      user: "${accountAddress}"
+    }) {
+      id
+      amount
+    }
+  }`;
+  /* eslint-enable i18next/no-literal-string */
+
+  const responses = await Promise.all(LIQUIDITY_POOLS.map(pool => callSubgraph(pool.unipoolSubgraphName, query)));
+  const mappedHistory = transactionHistory.reduce((
+    transactions,
+    transaction,
+    transactionIndex,
+  ) => {
+    const { to } = transaction;
+    const liquidityPoolIndex = LIQUIDITY_POOLS.findIndex(pool => addressesEqual(pool.unipoolAddress, to));
+    if (liquidityPoolIndex !== -1) {
+      transactions[transactionIndex] = buildUnipoolTransaction(
+        accountAddress,
+        transaction,
+        responses[liquidityPoolIndex],
+        LIQUIDITY_POOLS[liquidityPoolIndex],
+      );
+    }
+    return transactions;
+  }, transactionHistory);
+  return mappedHistory;
+};
+
+const buildUniswapTransaction = (
+  accountAddress,
+  transaction,
+  uniswapTransactions,
+) => {
+  const { mints = [], burns = [] } = uniswapTransactions;
+  const txHash = transaction.hash.toLowerCase();
+
+  const mintTransaction = mints.find(({ id }) => id.startsWith(txHash));
+  if (mintTransaction) {
+    const liquidityPool = LIQUIDITY_POOLS
+      .find(pool => addressesEqual(pool.uniswapPairAddress, mintTransaction.pair.id));
+    if (!liquidityPool) return transaction;
+    const { amount0, amount1, liquidity } = mintTransaction;
+    return {
+      ...transaction,
+      tag: LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+      extra: {
+        amount: liquidity,
+        pool: liquidityPool,
+        tokenAmounts: [amount0, amount1],
+      },
+    };
+  }
+
+  const burnTransaction = burns.find(({ id }) => id.startsWith(txHash));
+  if (burnTransaction) {
+    const liquidityPool = LIQUIDITY_POOLS
+      .find(pool => addressesEqual(pool.uniswapPairAddress, burnTransaction.pair.id));
+    if (!liquidityPool) return transaction;
+    const { amount0, amount1, liquidity } = burnTransaction;
+    return {
+      ...transaction,
+      tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+      extra: {
+        amount: liquidity,
+        pool: liquidityPool,
+        tokenAmounts: [amount0, amount1],
+      },
+    };
+  }
+
+  return transaction;
+};
+
+const mapTransactionsHistoryWithUniswap = async (
+  accountAddress: string,
+  transactionHistory: Transaction[],
+) => {
+  /* eslint-disable i18next/no-literal-string */
+  const query = `{
+    mints(where: {
+      to: "${accountAddress}"
+    }) {
+      id
+      amount0
+      amount1
+      liquidity
+      pair {
+        id
+      }
+    }
+    burns(where: {
+      sender: "${accountAddress}"
+    }) {
+      id
+      amount0
+      amount1
+      liquidity
+      pair {
+        id
+      }
+    }
+  }`;
+  /* eslint-enable i18next/no-literal-string */
+
+  const response = await callSubgraph(getEnv().UNISWAP_SUBGRAPH_NAME, query) || {};
+  const mappedHistory = transactionHistory.reduce((
+    transactions,
+    transaction,
+    transactionIndex,
+  ) => {
+    const { to } = transaction;
+    if (addressesEqual(ADDRESSES.router, to)) {
+      transactions[transactionIndex] = buildUniswapTransaction(
+        accountAddress,
+        transaction,
+        response,
+      );
+    }
+    return transactions;
+  }, transactionHistory);
+  return mappedHistory;
+};
+
+export const mapTransactionsHistoryWithLiquidityPools = async (
+  accountAddress: string,
+  transactionHistory: Transaction[],
+) => {
+  transactionHistory = await mapTransactionsHistoryWithUnipool(accountAddress, transactionHistory);
+  transactionHistory = await mapTransactionsHistoryWithUniswap(accountAddress, transactionHistory);
+  return transactionHistory;
 };

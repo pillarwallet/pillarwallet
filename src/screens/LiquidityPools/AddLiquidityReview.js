@@ -98,6 +98,7 @@ const AddLiquidityReviewScreen = ({
       accountAddress,
       pool,
       tokensValues,
+      poolTokenValue,
       tokensData,
       feeInfo?.fee,
     );

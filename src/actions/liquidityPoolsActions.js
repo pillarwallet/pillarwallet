@@ -124,6 +124,7 @@ export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
 export const calculateAddLiquidityTransactionEstimateAction = (
   pool: LiquidityPool,
   tokenAmounts: number[],
+  poolTokenAmount: number,
   tokensAssets: Asset[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -137,6 +138,7 @@ export const calculateAddLiquidityTransactionEstimateAction = (
       getAccountAddress(smartWalletAccount),
       pool,
       tokenAmounts,
+      poolTokenAmount,
       tokensAssets,
     );
 
@@ -217,6 +219,7 @@ export const calculateUnstakeTransactionEstimateAction = (
 };
 
 export const calculateRemoveLiquidityTransactionEstimateAction = (
+  pool: LiquidityPool,
   tokenAmount: number,
   poolToken: Asset,
   tokensAssets: Asset[],
@@ -230,6 +233,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
 
     const removeLiquidityTransactions = await getRemoveLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
+      pool,
       tokenAmount,
       poolToken,
       tokensAssets,
@@ -253,7 +257,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
   };
 };
 
-export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPool) => {
+export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPool, amountToClaim: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
     const smartWalletAccount = findFirstSmartAccount(accounts);
@@ -264,6 +268,7 @@ export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPo
     const { to, amount, data } = getClaimRewardsTransaction(
       pool,
       getAccountAddress(smartWalletAccount),
+      amountToClaim,
     );
 
     dispatch(estimateTransactionAction(to, amount, data));

@@ -68,7 +68,7 @@ const RemoveLiquidityReviewScreen = ({
   const [isSubmitted, setIsSubmitted] = useState(false);
 
   const {
-    obtainedTokensData, poolToken, obtainedTokensValues, poolTokenValue,
+    obtainedTokensData, poolToken, obtainedTokensValues, poolTokenValue, pool,
   } = navigation.state.params;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -96,6 +96,7 @@ const RemoveLiquidityReviewScreen = ({
 
     const removeLiquidityTransactions = await getRemoveLiquidityTransactions(
       accountAddress,
+      pool,
       poolTokenValue,
       poolToken,
       obtainedTokensData,

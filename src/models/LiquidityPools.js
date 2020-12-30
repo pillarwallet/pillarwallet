@@ -43,6 +43,7 @@ export type UnipoolLiquidityPool = LiquidityPoolBase & {
   type: typeof LIQUIDITY_POOLS_TYPES.UNIPOOL,
   uniswapPairAddress: string,
   unipoolAddress: string,
+  unipoolSubgraphName: string,
 };
 
 export type LiquidityPool = UnipoolLiquidityPool;

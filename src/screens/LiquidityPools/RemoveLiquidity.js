@@ -53,6 +53,7 @@ import { calculateRemoveLiquidityTransactionEstimateAction } from 'actions/liqui
 // types
 import type { Asset, Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
+import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
@@ -65,6 +66,7 @@ type Props = {
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   calculateRemoveLiquidityTransactionEstimate: (
+    pool: LiquidityPool,
     tokenAmount: number,
     poolAsset: Asset,
     erc20Token: Asset,
@@ -135,6 +137,7 @@ const AddLiquidityScreen = ({
     if (!erc20Token) return;
 
     calculateRemoveLiquidityTransactionEstimate(
+      pool,
       parseFloat(poolTokenAmount),
       poolTokenData,
       tokensData,
@@ -230,6 +233,7 @@ const AddLiquidityScreen = ({
       poolToken: poolTokenData,
       obtainedTokensValues: obtainedAssetsValues,
       poolTokenValue: poolTokenAmount,
+      pool,
     },
   );
 
@@ -305,10 +309,11 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateRemoveLiquidityTransactionEstimate: debounce((
+    pool: LiquidityPool,
     tokenAmount: number,
     poolAsset: Asset,
     tokensAssets: Asset[],
-  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(tokenAmount, poolAsset, tokensAssets)), 500),
+  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(pool, tokenAmount, poolAsset, tokensAssets)), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);

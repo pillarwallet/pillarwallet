@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React from 'react';
+import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
@@ -40,6 +40,7 @@ import Button from 'components/Button';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';
 import Progress from 'components/Progress';
+import Loader from 'components/Loader';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -50,6 +51,7 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
 import { formatMoney, formatAmount, formatFiat } from 'utils/common';
@@ -79,6 +81,7 @@ type Props = {
   supportedAssets: Asset[],
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   theme: Theme,
+  liquidityPoolsDataFetched: boolean,
 };
 
 const MainContainter = styled.View`
@@ -151,8 +154,14 @@ const LiquidityPoolDashboard = ({
   liquidityPoolsReducer,
   rates,
   theme,
+  liquidityPoolsDataFetched,
 }: Props) => {
   const { pool } = navigation.state.params;
+
+  useEffect(() => {
+    if (!liquidityPoolsDataFetched) { fetchLiquidityPoolsData(LIQUIDITY_POOLS); }
+  }, []);
+  if (!liquidityPoolsDataFetched) return <Loader />;
 
   const rewardAssetData = supportedAssets.find(({ symbol }) => symbol === pool.rewards[0].symbol);
   if (!rewardAssetData) {
@@ -399,6 +408,7 @@ const mapStateToProps = ({
   liquidityPools: {
     isFetchingLiquidityPoolsData,
     poolDataGraphQueryFailed,
+    liquidityPoolsDataFetched,
   },
   assets: { supportedAssets },
   liquidityPools: liquidityPoolsReducer,
@@ -409,6 +419,7 @@ const mapStateToProps = ({
   supportedAssets,
   liquidityPoolsReducer,
   rates,
+  liquidityPoolsDataFetched,
 });
 
 const structuredSelector = createStructuredSelector({

@@ -207,7 +207,8 @@
     "fromRariToWallet": "Rari Capital → Wallet",
     "fromWalletToRari": "Wallet → Rari Capital",
     "rewardsClaimed": "Rewards claimed",
-    "keyFacts": "Key facts"
+    "keyFacts": "Key facts",
+    "multiple": "Multiple"
   },
 
   "button": {
@@ -298,7 +299,12 @@
     "activateSmartWallet": "Activate Smart Wallet",
     "finish": "Finish",
     "claimMore": "Claim more",
-    "transferMore": "Transfer more"
+    "transferMore": "Transfer more",
+    "addMoreLiquidity": "Add more liquidity",
+    "removeMoreLiquidity": "Remove more liquidity",
+    "stakeMoreLiquidity": "Stake more",
+    "unstakeMoreLiquidity": "Unstake more",
+    "claimMoreRewards": "Claim more"
   },
 
   "paragraph": {
@@ -1439,7 +1445,12 @@
     "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
     "cannotStakeTokens": "Cannot stake tokens. Please try again.",
     "cannotUnstakeTokens": "Cannot unstake tokens. Please try again.",
-    "cannotRemoveLiquidity": "Cannot remove liquidity. Please try again."
+    "cannotRemoveLiquidity": "Cannot remove liquidity. Please try again.",
+    "liquidityPoolsAddLiquidity": "{{value}} {{token}} received.",
+    "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} removed from liquidity.",
+    "liquidityPoolsStake": "{{value}} {{token}} staked.",
+    "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed."
   },
 
   "exchangeContent": {
@@ -1746,7 +1757,13 @@
       "tokenLiquidity": "{{tokenName}} liquidity",
       "yourPoolShareAllocation": "Your pool share token allocation",
       "tokenPrice": "Token price",
-      "quantity": "Quantity"
+      "quantity": "Quantity",
+      "liquidityAdded": "Liquidity added",
+      "unstaked": "Unstaked",
+      "rewardsClaimed": "Rewards claimed",
+      "liquidityRemoved": "Liquidity removed",
+      "fromWalletToPool": "Wallet → {{poolName}}",
+      "fromPoolToWallet": "{{poolName}} → Wallet"
     },
     "tabs": {
       "active": "Active",

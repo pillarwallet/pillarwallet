@@ -57,7 +57,7 @@ type Props = {
   accountAddress: string,
   balances: Balances,
   resetEstimateTransaction: () => void,
-  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool) => void,
+  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool, amountToClaim: number) => void,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
@@ -86,7 +86,7 @@ const ClaimRewardReviewScreen = ({
 
   useEffect(() => {
     resetEstimateTransaction();
-    calculateClaimRewardsTransactionEstimate(pool);
+    calculateClaimRewardsTransactionEstimate(pool, poolStats.rewardsToClaim);
   }, []);
 
   const onNextButtonPress = async () => {
@@ -102,7 +102,7 @@ const ClaimRewardReviewScreen = ({
       return;
     }
 
-    let transactionPayload = getClaimRewardsTransaction(pool, accountAddress, feeInfo?.fee);
+    let transactionPayload = getClaimRewardsTransaction(pool, accountAddress, poolStats.rewardsToClaim, feeInfo?.fee);
 
     if (feeInfo?.gasToken) transactionPayload = { ...transactionPayload, gasToken: feeInfo?.gasToken };
 
@@ -196,8 +196,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool) =>
-    dispatch(calculateClaimRewardsTransactionEstimateAction(pool)),
+  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool, amountToClaim: number) =>
+    dispatch(calculateClaimRewardsTransactionEstimateAction(pool, amountToClaim)),
 });
 
 

@@ -17,7 +17,6 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { BigNumber } from 'bignumber.js';
 import * as Sentry from '@sentry/react-native';
 import { ETH } from 'constants/assetsConstants';
 import { reportLog, parseTokenBigNumberAmount, formatUnits } from 'utils/common';
@@ -58,7 +57,6 @@ export const getStakeTransactions = async (
   sender: string,
   amount: number,
   token: Asset,
-  txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
   const tokenAmountBN = parseTokenBigNumberAmount(amount, token.decimals);
 
@@ -93,11 +91,6 @@ export const getStakeTransactions = async (
       ...stakeTransactions,
     ];
   }
-  stakeTransactions[0] = {
-    ...stakeTransactions[0],
-    txFeeInWei,
-  };
-
   return stakeTransactions;
 };
 
@@ -105,7 +98,6 @@ export const getUnstakeTransaction = (
   unipoolAddress: string,
   sender: string,
   amount: number,
-  txFeeInWei?: BigNumber,
 ) => {
   const tokenAmountBN = parseTokenBigNumberAmount(amount, 18);
   const unstakeTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'withdraw', [
@@ -118,14 +110,12 @@ export const getUnstakeTransaction = (
     data: unstakeTransactionData,
     amount: 0,
     symbol: ETH,
-    txFeeInWei,
   };
 };
 
 export const getClaimRewardsTransaction = (
   unipoolAddress: string,
   sender: string,
-  txFeeInWei?: BigNumber,
 ) => {
   const getRewardTransactionData = encodeContractMethod(UNIPOOL_CONTRACT, 'getReward', []);
 
@@ -135,6 +125,5 @@ export const getClaimRewardsTransaction = (
     data: getRewardTransactionData,
     amount: 0,
     symbol: ETH,
-    txFeeInWei,
   };
 };
