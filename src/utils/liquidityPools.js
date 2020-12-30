@@ -342,16 +342,16 @@ export const getPoolStats = (
     .map(symbol => symbol === WETH ? ETH : symbol);
 
   const tokensLiquidity = {
-    [tokenSymbols[0]]: pairData.reserve0,
-    [tokenSymbols[1]]: pairData.reserve1,
+    [tokenSymbols[0]]: parseFloat(pairData.reserve0),
+    [tokenSymbols[1]]: parseFloat(pairData.reserve1),
   };
   const tokensPricesUSD = {
     [tokenSymbols[0]]: pairData.reserveUSD / (2 * pairData.reserve0),
     [tokenSymbols[1]]: pairData.reserveUSD / (2 * pairData.reserve1),
   };
   const tokensPrices = {
-    [tokenSymbols[0]]: pairData.token0Price,
-    [tokenSymbols[1]]: pairData.token1Price,
+    [tokenSymbols[0]]: parseFloat(pairData.token0Price),
+    [tokenSymbols[1]]: parseFloat(pairData.token1Price),
   };
   const tokensPerLiquidityToken = {
     [tokenSymbols[0]]: pairData.reserve0 / pairData.totalSupply,
@@ -366,16 +366,16 @@ export const getPoolStats = (
     dayPriceChange,
     weekPriceChange,
     monthPriceChange,
-    volume: pairData.volumeUSD,
-    totalLiquidity: pairData.reserveUSD,
-    dailyVolume: historyData[0].dailyVolumeUSD,
+    volume: parseFloat(pairData.volumeUSD),
+    totalLiquidity: parseFloat(pairData.reserveUSD),
+    dailyVolume: parseFloat(historyData[0].dailyVolumeUSD),
     tokensLiquidity,
     stakedAmount: unipoolData.stakedAmount,
     rewardsToClaim: unipoolData.earnedAmount,
     tokensPricesUSD,
     tokensPrices,
     tokensPerLiquidityToken,
-    totalSupply: pairData.totalSupply,
+    totalSupply: parseFloat(pairData.totalSupply),
   };
 };
 

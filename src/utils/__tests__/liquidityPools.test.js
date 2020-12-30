@@ -1,0 +1,157 @@
+// @flow
+/*
+    Pillar Wallet: the personal data locker
+    Copyright (C) 2019 Stiftung Pillar Project
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License along
+    with this program; if not, write to the Free Software Foundation, Inc.,
+    51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+*/
+import {
+  getPoolStats,
+  getShareOfPool,
+  calculateProportionalAssetValues,
+  calculateProportionalRemoveLiquidityAssetValues,
+} from 'utils/liquidityPools';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+
+const unipoolPool = LIQUIDITY_POOLS[0];
+
+const liquidityPoolsReducerMock = {
+  unipoolData: {
+    [unipoolPool.unipoolAddress]: {
+      stakedAmount: 10,
+      earnedAmount: 1000,
+    },
+  },
+  poolsData: {
+    [unipoolPool.uniswapPairAddress]: {
+      pair: {
+        id: [unipoolPool.uniswapPairAddress],
+        token0: {
+          id: '0x000',
+          name: 'Ethereum',
+          symbol: 'ETH',
+        },
+        token1: {
+          id: '0x111',
+          name: 'Pillar',
+          symbol: 'PLR',
+        },
+        reserve0: '10000',
+        reserve1: '20000',
+        totalSupply: '1000',
+        reserveETH: '300',
+        reserveUSD: '4000',
+        token0Price: '0.1',
+        token1Price: '10',
+        volumeToken0: '100',
+        volumeToken1: '200',
+        volumeUSD: '500',
+      },
+      pairDayDatas: [
+        {
+          date: 1609367442,
+          reserveUSD: '3200',
+          totalSupply: '1000',
+          dailyVolumeUSD: '10',
+        },
+        {
+          date: 1509367442,
+          reserveUSD: '1600',
+          totalSupply: '800',
+          dailyVolumeUSD: '10',
+        },
+      ],
+    },
+  },
+  isFetchingLiquidityPoolsData: false,
+  poolDataGraphQueryFailed: false,
+  liquidityPoolsDataFetched: true,
+};
+
+describe('Liquidity pools utils', () => {
+  describe('getPoolStats', () => {
+    it('should calculate unipool pool stats correctly', () => {
+      const stats = getPoolStats(unipoolPool, liquidityPoolsReducerMock);
+      expect(stats).toEqual({
+        currentPrice: 4,
+        dailyVolume: 10,
+        dayPriceChange: 100,
+        monthPriceChange: undefined,
+        weekPriceChange: undefined,
+        rewardsToClaim: 1000,
+        stakedAmount: 10,
+        tokensLiquidity: {
+          ETH: 10000,
+          PLR: 20000,
+        },
+        tokensPerLiquidityToken: {
+          ETH: 10,
+          PLR: 20,
+        },
+        tokensPrices: {
+          ETH: 0.1,
+          PLR: 10,
+        },
+        tokensPricesUSD: {
+          ETH: 0.2,
+          PLR: 0.1,
+        },
+        totalLiquidity: 4000,
+        totalSupply: 1000,
+        volume: 500,
+      });
+    });
+  });
+
+  describe('getShareOfPool', () => {
+    it('should calculate share of unipool pool correctly', () => {
+      const share = getShareOfPool(unipoolPool, [5000, 10000], liquidityPoolsReducerMock);
+      expect(share).toEqual(50);
+    });
+  });
+
+  describe('calculateProportionalAssetValues', () => {
+    it('should calculate assets proportions in unipool pool', () => {
+      const assetsValues = calculateProportionalAssetValues(
+        unipoolPool,
+        1000,
+        0,
+        liquidityPoolsReducerMock,
+      );
+      expect(assetsValues).toEqual([1000, 2000, 100]);
+    });
+  });
+
+  describe('calculateProportionalRemoveLiquidityAssetValues', () => {
+    it('should calculate assets proportions in unipool pool (output token)', () => {
+      const assetsValues = calculateProportionalRemoveLiquidityAssetValues(
+        unipoolPool,
+        1000,
+        0,
+        liquidityPoolsReducerMock,
+      );
+      expect(assetsValues).toEqual([1000, 2000, 100]);
+    });
+    it('should calculate assets proportions in unipool pool (pool token)', () => {
+      const assetsValues = calculateProportionalRemoveLiquidityAssetValues(
+        unipoolPool,
+        100,
+        2,
+        liquidityPoolsReducerMock,
+      );
+      expect(assetsValues).toEqual([1000, 2000, 100]);
+    });
+  });
+});
