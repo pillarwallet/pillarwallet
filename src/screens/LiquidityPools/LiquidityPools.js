@@ -371,7 +371,6 @@ const LiquidityPoolsScreen = ({
               <Spacing h={26} />
             </>
           )}
-
           {renderTab()}
         </MainContainer>
       </ScrollWrapper>

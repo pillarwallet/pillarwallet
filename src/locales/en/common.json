@@ -1784,6 +1784,9 @@
         "title": "Add liquidity to start earning from staking",
         "button": "Explore pools"
       }
+    },
+    "depositsList": {
+      "title": "Liquidity Pools"
     }
   }
 }
