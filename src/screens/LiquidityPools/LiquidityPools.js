@@ -343,7 +343,7 @@ const LiquidityPoolsScreen = ({
   return (
     <ContainerWithHeader
       headerProps={{
-        centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidityReview') }],
+        centerItems: [{ title: t('liquidityPoolsContent.title.liquidityPools') }],
         rightItems: [
           {
             icon: 'info-circle-inverse',
@@ -363,12 +363,15 @@ const LiquidityPoolsScreen = ({
       >
         <MainContainer>
           {areThereNotAvailablePools() && (
-            <Tabs
-              activeTab={activeTab}
-              tabs={tabs}
-            />
+            <>
+              <Tabs
+                activeTab={activeTab}
+                tabs={tabs}
+              />
+              <Spacing h={26} />
+            </>
           )}
-          <Spacing h={26} />
+
           {renderTab()}
         </MainContainer>
       </ScrollWrapper>

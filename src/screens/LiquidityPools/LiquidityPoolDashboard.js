@@ -329,7 +329,7 @@ const LiquidityPoolDashboard = ({
                 primarySecond
                 onPress={onClaimReward}
               />
-              {poolStats.stakedAmount > 0 && (
+              {poolStats.stakedAmount === 0 && (
                 <>
                   <Overlay />
                   <AbsolutePositioning>
@@ -357,7 +357,7 @@ const LiquidityPoolDashboard = ({
                       <Spacing w={8} />
                       <MediumText big>{tokenData.name}</MediumText>
                       <Spacing w={8} />
-                      <BaseText regular secondary>{t('percentValue', { value: proportion })}</BaseText>
+                      <BaseText regular secondary>{t('percentValue', { value: proportion * 100 })}</BaseText>
                     </Row>
                     <MediumText big>{formatFiat(quantity * tokenPriceInFiat, fiatCurrency)}</MediumText>
                   </StretchedRow>
