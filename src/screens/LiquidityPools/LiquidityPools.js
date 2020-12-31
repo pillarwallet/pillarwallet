@@ -20,7 +20,7 @@
 import React, { useState, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
@@ -39,9 +39,10 @@ import Loader from 'components/Loader';
 import { formatAmount, formatFiat } from 'utils/common';
 import { getBalance, convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
+import { getThemeColors } from 'utils/themes';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { LIQUIDITY_POOL_DASHBOARD } from 'constants/navigationConstants';
+import { LIQUIDITY_POOL_DASHBOARD, LIQUIDITY_POOLS_INFO } from 'constants/navigationConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 import { accountBalancesSelector } from 'selectors/balances';
@@ -52,6 +53,7 @@ import type { Rates, Asset, Balances } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
+import type { Theme } from 'models/Theme';
 
 
 type Props = {
@@ -65,6 +67,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   rates: Rates,
   poolDataGraphQueryFailed: boolean,
+  theme: Theme,
 };
 
 const TABS = {
@@ -134,6 +137,7 @@ const LiquidityPoolsScreen = ({
   navigation,
   rates,
   poolDataGraphQueryFailed,
+  theme,
 }) => {
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 
@@ -334,9 +338,20 @@ const LiquidityPoolsScreen = ({
     );
   };
 
+  const colors = getThemeColors(theme);
+
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidityReview') }] }}
+      headerProps={{
+        centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidityReview') }],
+        rightItems: [
+          {
+            icon: 'info-circle-inverse',
+            color: colors.basic020,
+            onPress: () => navigation.navigate(LIQUIDITY_POOLS_INFO),
+          },
+        ],
+     }}
     >
       <ScrollWrapper
         refreshControl={
@@ -401,4 +416,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(pools)),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolsScreen);
+export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolsScreen));

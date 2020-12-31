@@ -1721,7 +1721,8 @@
       "removeLiquidity": "Remove liquidity",
       "removeLiquidityReview": "Review",
       "claimRewardsReview": "Review",
-      "liquidityPools": "Liquidity Pools"
+      "liquidityPools": "Liquidity Pools",
+      "infoScreen": "Liquidity Pools"
     },
     "button": {
       "addLiquidity": "Add liquidity",
@@ -1769,6 +1770,20 @@
       "active": "Active",
       "purchased": "Purchased",
       "staked": "Staked"
+    },
+    "infoContent": {
+      "subtitle": {
+        "whatAreLiquidityPools": "What are Liquidity Pools?",
+        "howDoLiquidityPoolsWork": "How Do Liquidity Pools Work?"
+      },
+      "paragraph": {
+        "whatAreLiqudityPools": "Liquidity pools, in essence, are pools of tokens that are locked in a smart contract. They are used to facilitate trading by providing liquidity and are extensively used by some of the decentralized exchanges a.k.a DEXes.",
+        "howDoLiquidityPoolsWork": "In its basic form, a single liquidity pool holds 2 tokens and each pool creates a new market for that particular pair of tokens. DAI/ETH can be a good example of a popular liquidity pool on Uniswap.\n\nWhen a new pool is created, the first liquidity provider is the one that sets the initial price of the assets in the pool. The liquidity provider is incentivised to supply an equal value of both tokens to the pool. If the initial price of the tokens in the pool diverges from the current global market price, it creates an instant arbitrage opportunity that can result in lost capital for the liquidity provider. This concept of supplying tokens in a correct ratio remains the same for all the other liquidity providers that are willing to add more funds to the pool later.\n\nWhen liquidity is supplied to a pool, the liquidity provider (LP) receives special tokens called LP tokens in proportion to how much liquidity they supplied to the pool. When a trade is facilitated by the pool a 0.3% fee is proportionally distributed amongst all the LP token holders. If the liquidity provider wants to get their underlying liquidity back, plus any accrued fees, they must burn their LP tokens.\n\nEach token swap that a liquidity pool facilitates results in a price adjustment according to a deterministic pricing algorithm. This mechanism is also called an automated market maker (AMM) and liquidity pools across different protocols may use a slightly different algorithm."
+      },
+      "insight": {
+        "title": "Add liquidity to start earning from staking",
+        "button": "Explore pools"
+      }
     }
   }
 }

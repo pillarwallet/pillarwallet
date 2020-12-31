@@ -142,6 +142,7 @@ import LiquidityPoolsRemoveLiquidityScreen from 'screens/LiquidityPools/RemoveLi
 import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/RemoveLiquidityReview';
 import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
 import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
+import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -312,6 +313,7 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
+  LIQUIDITY_POOLS_INFO,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -802,6 +804,7 @@ const liquidityPoolsFlow = createStackNavigator({
   [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
   [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
   [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
+  [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
