@@ -25,7 +25,7 @@ import {
 } from 'utils/liquidityPools';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
-const unipoolPool = LIQUIDITY_POOLS[0];
+const unipoolPool = LIQUIDITY_POOLS()[0];
 
 const liquidityPoolsReducerMock = {
   unipoolData: {

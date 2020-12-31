@@ -159,7 +159,7 @@ const LiquidityPoolDashboard = ({
   const { pool } = navigation.state.params;
 
   useEffect(() => {
-    if (!liquidityPoolsDataFetched) { fetchLiquidityPoolsData(LIQUIDITY_POOLS); }
+    if (!liquidityPoolsDataFetched) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
   }, []);
   if (!liquidityPoolsDataFetched) return <Loader />;
 

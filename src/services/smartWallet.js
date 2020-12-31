@@ -510,14 +510,16 @@ class SmartWallet {
       data,
     ];
 
-    // supporting 2, can be added up to 5
+    // can be added up to 5
     if (sequentialTransactions.length) {
-      estimateMethodParams = [
-        ...estimateMethodParams,
-        sequentialTransactions[0].recipient,
-        ethToWei(sequentialTransactions[0].value || 0),
-        sequentialTransactions[0].data,
-      ];
+      sequentialTransactions.forEach(tx => {
+        estimateMethodParams = [
+          ...estimateMethodParams,
+          tx.recipient,
+          ethToWei(tx[0].value || 0),
+          tx.data,
+        ];
+      });
     }
 
     estimateMethodParams = [...estimateMethodParams, transactionSpeed];

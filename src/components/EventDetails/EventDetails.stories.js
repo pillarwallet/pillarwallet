@@ -844,7 +844,7 @@ storiesOf('EventDetail', module)
         hash: '0xHash',
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
           tokenAmounts: [1, 2],
          },
       }}
@@ -865,7 +865,7 @@ storiesOf('EventDetail', module)
         hash: '0xHash',
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
           tokenAmounts: [1, 2],
          },
       }}
@@ -886,7 +886,7 @@ storiesOf('EventDetail', module)
         hash: '0xHash',
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
          },
       }}
       itemData={{
@@ -908,7 +908,7 @@ storiesOf('EventDetail', module)
         hash: '0xHash',
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
          },
       }}
       itemData={{
@@ -931,7 +931,7 @@ storiesOf('EventDetail', module)
         hash: '0xHash',
         extra: {
           amount: 1000,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
          },
       }}
       itemData={{

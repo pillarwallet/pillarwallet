@@ -138,7 +138,7 @@ const LiquidityPoolsScreen = ({
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 
   useEffect(() => {
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS);
+    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   }, []);
   if (!liquidityPoolsDataFetched) return <Loader />;
 
@@ -162,7 +162,7 @@ const LiquidityPoolsScreen = ({
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const poolsStats = LIQUIDITY_POOLS.map(pool => getPoolStats(pool, liquidityPoolsReducer));
+  const poolsStats = LIQUIDITY_POOLS().map(pool => getPoolStats(pool, liquidityPoolsReducer));
 
   const goToPoolDashboard = (pool: LiquidityPool) => {
     navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
@@ -309,7 +309,7 @@ const LiquidityPoolsScreen = ({
   };
 
   const areThereNotAvailablePools = () => {
-    return !LIQUIDITY_POOLS.every(isAvailablePool);
+    return !LIQUIDITY_POOLS().every(isAvailablePool);
   };
 
   const renderTab = () => {
@@ -317,13 +317,13 @@ const LiquidityPoolsScreen = ({
     let items;
     if (activeTab === TABS.AVAILABLE) {
       renderFunction = renderAvailablePool;
-      items = LIQUIDITY_POOLS.filter(isAvailablePool);
+      items = LIQUIDITY_POOLS().filter(isAvailablePool);
     } else if (activeTab === TABS.PURCHASED) {
       renderFunction = renderPurchasedPool;
-      items = LIQUIDITY_POOLS.filter(isPurchasedPool);
+      items = LIQUIDITY_POOLS().filter(isPurchasedPool);
     } else {
       renderFunction = renderStakedPool;
-      items = LIQUIDITY_POOLS.filter(isStakedPool);
+      items = LIQUIDITY_POOLS().filter(isStakedPool);
     }
     return (
       <FlatList
@@ -342,7 +342,7 @@ const LiquidityPoolsScreen = ({
         refreshControl={
           <RefreshControl
             refreshing={isFetchingLiquidityPoolsData}
-            onRefresh={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS)}
+            onRefresh={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS())}
           />
         }
       >
@@ -361,7 +361,7 @@ const LiquidityPoolsScreen = ({
         message={t('error.theGraphQueryFailed.liquidityPools')}
         hasFailed={poolDataGraphQueryFailed}
         isFetching={isFetchingLiquidityPoolsData}
-        onRetry={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS)}
+        onRetry={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS())}
       />
     </ContainerWithHeader>
   );

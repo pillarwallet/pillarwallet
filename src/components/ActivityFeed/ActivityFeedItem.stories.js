@@ -704,7 +704,7 @@ storiesOf('ActivityFeedItem', module)
         tag: LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
         },
       }}
     />
@@ -717,7 +717,7 @@ storiesOf('ActivityFeedItem', module)
         tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
         },
       }}
     />
@@ -730,7 +730,7 @@ storiesOf('ActivityFeedItem', module)
         tag: LIQUIDITY_POOLS_STAKE_TRANSACTION,
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
         },
       }}
     />
@@ -743,7 +743,7 @@ storiesOf('ActivityFeedItem', module)
         tag: LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
         },
       }}
     />
@@ -756,7 +756,7 @@ storiesOf('ActivityFeedItem', module)
         tag: LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
         extra: {
           amount: 12.3,
-          pool: LIQUIDITY_POOLS[0],
+          pool: LIQUIDITY_POOLS()[0],
         },
       }}
     />

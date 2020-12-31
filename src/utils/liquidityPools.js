@@ -370,8 +370,8 @@ export const getPoolStats = (
     totalLiquidity: parseFloat(pairData.reserveUSD),
     dailyVolume: parseFloat(historyData[0].dailyVolumeUSD),
     tokensLiquidity,
-    stakedAmount: unipoolData.stakedAmount,
-    rewardsToClaim: unipoolData.earnedAmount,
+    stakedAmount: parseFloat(unipoolData.stakedAmount),
+    rewardsToClaim: parseFloat(unipoolData.earnedAmount),
     tokensPricesUSD,
     tokensPrices,
     tokensPerLiquidityToken,
@@ -534,20 +534,20 @@ const mapTransactionsHistoryWithUnipool = async (
   }`;
   /* eslint-enable i18next/no-literal-string */
 
-  const responses = await Promise.all(LIQUIDITY_POOLS.map(pool => callSubgraph(pool.unipoolSubgraphName, query)));
+  const responses = await Promise.all(LIQUIDITY_POOLS().map(pool => callSubgraph(pool.unipoolSubgraphName, query)));
   const mappedHistory = transactionHistory.reduce((
     transactions,
     transaction,
     transactionIndex,
   ) => {
     const { to } = transaction;
-    const liquidityPoolIndex = LIQUIDITY_POOLS.findIndex(pool => addressesEqual(pool.unipoolAddress, to));
+    const liquidityPoolIndex = LIQUIDITY_POOLS().findIndex(pool => addressesEqual(pool.unipoolAddress, to));
     if (liquidityPoolIndex !== -1) {
       transactions[transactionIndex] = buildUnipoolTransaction(
         accountAddress,
         transaction,
         responses[liquidityPoolIndex],
-        LIQUIDITY_POOLS[liquidityPoolIndex],
+        LIQUIDITY_POOLS()[liquidityPoolIndex],
       );
     }
     return transactions;
@@ -565,7 +565,7 @@ const buildUniswapTransaction = (
 
   const mintTransaction = mints.find(({ id }) => id.startsWith(txHash));
   if (mintTransaction) {
-    const liquidityPool = LIQUIDITY_POOLS
+    const liquidityPool = LIQUIDITY_POOLS()
       .find(pool => addressesEqual(pool.uniswapPairAddress, mintTransaction.pair.id));
     if (!liquidityPool) return transaction;
     const { amount0, amount1, liquidity } = mintTransaction;
@@ -582,7 +582,7 @@ const buildUniswapTransaction = (
 
   const burnTransaction = burns.find(({ id }) => id.startsWith(txHash));
   if (burnTransaction) {
-    const liquidityPool = LIQUIDITY_POOLS
+    const liquidityPool = LIQUIDITY_POOLS()
       .find(pool => addressesEqual(pool.uniswapPairAddress, burnTransaction.pair.id));
     if (!liquidityPool) return transaction;
     const { amount0, amount1, liquidity } = burnTransaction;
