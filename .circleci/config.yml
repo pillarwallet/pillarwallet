@@ -745,10 +745,6 @@ workflows:
     jobs:
       - build-and-test:
           context: docker-hub-creds
-          filters:
-            branches:
-              ignore:
-                - feature/liquidity-pools-2
       - appcenter_ios:
           requires:
             - build-and-test
