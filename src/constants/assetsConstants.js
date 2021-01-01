@@ -42,12 +42,14 @@ export const HOLO = 'HOLO';
 export const WBTC = 'WBTC';
 export const sBTC = 'sBTC';
 export const SNX = 'SNX';
+export const RSPT = 'RSPT';
+export const WETH = 'WETH';
 
 const LINK = 'LINK';
 const BAT = 'BAT';
 const AE = 'AE';
 const MKR = 'MKR';
-const USDT = 'USDT';
+export const USDT = 'USDT';
 export const USDC = 'USDC';
 const PPT = 'PPT';
 export const DAI = 'DAI';
@@ -58,6 +60,8 @@ const OMG = 'OMG';
 const WAX = 'WAX';
 const ZIL = 'ZIL';
 const ZRX = 'ZRX';
+export const TUSD = 'TUSD';
+export const mUSD = 'mUSD';
 
 export const POPULAR_EXCHANGE_TOKENS = [
   ETH, PLR, LINK, BAT, PPT, AE, DAI, KNC, MKR, USDT, VERI, BNT, OMG, WAX, ZIL, ZRX,

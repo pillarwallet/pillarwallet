@@ -28,6 +28,9 @@ import {
   searchOffersAction,
   takeOfferAction,
   getExchangeSupportedAssetsAction,
+  addWbtcPendingTxAction,
+  setWbtcPendingTxsAction,
+  updatePendingWbtcTransactionsAction,
 } from 'actions/exchangeActions';
 import {
   SET_EXCHANGE_SEARCH_REQUEST,
@@ -38,21 +41,32 @@ import {
   SET_UNISWAP_TOKENS_QUERY_STATUS,
   UNISWAP_TOKENS_QUERY_STATUS,
   SET_EXCHANGE_SUPPORTED_ASSETS,
+  ADD_WBTC_PENDING_TRANSACTION,
+  SET_WBTC_PENDING_TRANSACTIONS,
 } from 'constants/exchangeConstants';
 import { fetchUniswapSupportedTokens } from 'services/uniswap';
 import { mockSupportedAssets } from 'testUtils/jestSetup';
 
 const mockStore = configureMockStore([thunk, ReduxAsyncQueue]);
 
+const hour = 3600000;
+const pending = [
+  { amount: 1, dateCreated: Date.now() - hour },
+  { amount: 3, dateCreated: Date.now() - (hour * 13) },
+  { amount: 5, dateCreated: 6 },
+];
+const ACC_ID = 'id';
+
 const storeState = {
   exchange: {
-    data: { offers: [] },
+    data: { offers: [], pendingWbtcTransactions: [pending[0], pending[1]] },
     exchangeSupportedAssets: [
       { symbol: 'ETH', isSynthetixAsset: false },
       { symbol: 'sUSD', isSynthetixAsset: true },
       { symbol: 'sETH', isSynthetixAsset: true },
     ],
   },
+  history: { data: { [ACC_ID]: [] } },
   accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.SMART_WALLET }] },
 };
 
@@ -161,6 +175,27 @@ describe('Exchange actions test', () => {
       }];
 
       await store.dispatch(getExchangeSupportedAssetsAction());
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+  });
+
+  describe('WBTC.Cafe tests', () => {
+    beforeEach(() => {
+      store = mockStore(storeState);
+    });
+    it('adds pending WBTC txs', () => {
+      const expectedActions = [{ type: ADD_WBTC_PENDING_TRANSACTION, payload: pending[2] }];
+      store.dispatch(addWbtcPendingTxAction(pending[2]));
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+    it('sets pending txs', () => {
+      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[2]] }];
+      store.dispatch(setWbtcPendingTxsAction([pending[2]]));
+      expect(store.getActions()).toEqual(expectedActions);
+    });
+    it('correctly updates pending transactions', () => {
+      const expectedActions = [{ type: SET_WBTC_PENDING_TRANSACTIONS, payload: [pending[0]] }];
+      store.dispatch(updatePendingWbtcTransactionsAction());
       expect(store.getActions()).toEqual(expectedActions);
     });
   });

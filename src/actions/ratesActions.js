@@ -25,6 +25,7 @@ import { UPDATE_RATES } from 'constants/ratesConstants';
 
 // services
 import { getExchangeRates } from 'services/assets';
+import { getCoinGeckoBitcoinAndWBTCPrices } from 'services/coinGecko';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -39,7 +40,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 
 // actions
 import { saveDbAction } from './dbActions';
-
 
 export const setRatesAction = (newRates: Rates) => {
   return (dispatch: Dispatch, getState: GetState) => {
@@ -99,5 +99,16 @@ export const fetchSingleAssetRatesAction = (assetCode: string) => {
     const { rates: { data: currentRates } } = getState();
     const updatedRates = { ...currentRates, ...rates };
     dispatch(setRatesAction(updatedRates));
+  };
+};
+
+export const fetchBitcoinRateAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const btcRates = await getCoinGeckoBitcoinAndWBTCPrices();
+    if (btcRates && !isEmpty(btcRates)) {
+      const { rates: { data: currentRates } } = getState();
+      const updatedRates = { ...currentRates, ...btcRates };
+      dispatch(setRatesAction(updatedRates));
+    }
   };
 };
