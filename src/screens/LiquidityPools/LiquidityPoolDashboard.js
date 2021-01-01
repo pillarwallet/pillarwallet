@@ -55,7 +55,7 @@ import {
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
-import { formatMoney, formatAmount, formatFiat } from 'utils/common';
+import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { getBalance, convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
@@ -214,11 +214,11 @@ const LiquidityPoolDashboard = ({
   const stats = [
     {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
-      value: formatFiat(convertUSDToFiat(poolStats.totalLiquidity, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(convertUSDToFiat(poolStats.totalLiquidity, rates, fiatCurrency), fiatCurrency),
     },
     {
       title: t('liquidityPoolsContent.label.24hVolume'),
-      value: formatFiat(convertUSDToFiat(poolStats.dailyVolume, rates, fiatCurrency), fiatCurrency),
+      value: formatBigFiatAmount(convertUSDToFiat(poolStats.dailyVolume, rates, fiatCurrency), fiatCurrency),
     },
   ];
 
@@ -227,14 +227,14 @@ const LiquidityPoolDashboard = ({
     if (!tokenData) return;
     stats.push({
       title: t('liquidityPoolsContent.label.tokenLiquidity', { tokenName: tokenData.name }),
-      value: t('tokenValue', { value: formatMoney(poolStats.tokensLiquidity[tokenSymbol], 0), token: tokenSymbol }),
+      value: t('tokenValue', { value: formatBigAmount(poolStats.tokensLiquidity[tokenSymbol]), token: tokenSymbol }),
       iconUrl: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3`,
     });
   });
 
   stats.push({
     title: t('liquidityPoolsContent.label.weeklyRewards'),
-    value: t('tokenValue', { value: formatMoney(pool.rewards[0].amount, 0), token: rewardAssetData.symbol }),
+    value: t('tokenValue', { value: formatBigAmount(pool.rewards[0].amount), token: rewardAssetData.symbol }),
     iconUrl: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3`,
   });
 

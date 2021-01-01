@@ -35,7 +35,7 @@ import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { getBalance, convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
@@ -221,7 +221,7 @@ const LiquidityPoolsScreen = ({
             <VerticalDivider />
             <CardColumn>
               <BaseText big>
-                {formatFiat(convertUSDToFiat(poolStats.volume, rates, fiatCurrency), fiatCurrency)}
+                {formatBigFiatAmount(convertUSDToFiat(poolStats.volume, rates, fiatCurrency), fiatCurrency)}
               </BaseText>
               <BaseText small secondary>{t('liquidityPoolsContent.label.volume')}</BaseText>
             </CardColumn>
@@ -238,7 +238,9 @@ const LiquidityPoolsScreen = ({
                   <Reward>
                     <RewardIcon source={{ uri: iconUri }} />
                     <Spacing w={6} />
-                    <BaseText regular>{t('tokenValue', { value: reward.amount, token: reward.symbol })}</BaseText>
+                    <BaseText regular>
+                      {t('tokenValue', { value: formatBigAmount(reward.amount), token: reward.symbol })}
+                    </BaseText>
                   </Reward>
                 );
               })}
