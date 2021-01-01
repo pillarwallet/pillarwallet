@@ -208,7 +208,7 @@ const LiquidityPoolDashboard = ({
   };
 
   const onClaimReward = () => {
-    navigation.navigate(LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW, { rewardToken: rewardAssetData });
+    navigation.navigate(LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW, { rewardToken: rewardAssetData, pool });
   };
 
   const stats = [
