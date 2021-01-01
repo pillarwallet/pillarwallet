@@ -53,6 +53,7 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   RARI_DEPOSIT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import {
   LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
@@ -223,6 +224,7 @@ class SendTokenTransaction extends React.Component<Props> {
           amount, pool,
         } = {},
       } = transactionPayload;
+      navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
       if (txTag === LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION) {
         toastMessage = t('toast.liquidityPoolsAddLiquidity', { value: amount, token: pool.symbol });
       } else if (txTag === LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION) {
