@@ -362,6 +362,18 @@ export const getPoolStats = (
   const { unipoolAddress } = pool;
   const unipoolData = liquidityPoolsReducer.unipoolData[unipoolAddress];
 
+  const history = historyData.map(dataPoint => ({
+    date: new Date(dataPoint.date * 1000),
+    value: dataPoint.totalSupply === 0 ? 0 : dataPoint.reserveUSD / dataPoint.totalSupply,
+  }));
+
+  history.reverse();
+
+  history.push({
+    date: new Date(),
+    value: currentPrice,
+  });
+
   return {
     currentPrice,
     dayPriceChange,
@@ -377,6 +389,7 @@ export const getPoolStats = (
     tokensPrices,
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
+    history,
   };
 };
 

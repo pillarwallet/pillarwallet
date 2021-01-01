@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
@@ -42,6 +42,7 @@ import Stats from 'components/Stats';
 import Progress from 'components/Progress';
 import Loader from 'components/Loader';
 import Modal from 'components/Modal';
+import ValueOverTimeGraph from 'components/Graph/ValueOverTimeGraph';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -164,6 +165,8 @@ const LiquidityPoolDashboard = ({
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
+  const [scrollEnabled, setScrollEnabled] = useState(true);
+
   useEffect(() => {
     if (!poolStats) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
   });
@@ -251,6 +254,7 @@ const LiquidityPoolDashboard = ({
             onRefresh={() => fetchLiquidityPoolsData([pool])}
           />
         }
+        scrollEnabled={scrollEnabled}
       >
         <MainContainter>
           <AssetPattern
@@ -262,6 +266,12 @@ const LiquidityPoolDashboard = ({
             <MediumText secondary fontSize={20}>{pool.symbol}</MediumText>
           </MediumText>
           <BaseText regular secondary center>{fiatBalance}</BaseText>
+          <ValueOverTimeGraph
+            data={poolStats.history}
+            fiatCurrency={fiatCurrency}
+            onGestureStart={() => setScrollEnabled(false)}
+            onGestureEnd={() => setScrollEnabled(true)}
+          />
           <HorizontalPadding>
             <Spacing h={16} />
             {balance > 0 ? (

@@ -44,6 +44,8 @@ type Props = {
   data: DataPoints,
   theme: Theme,
   fiatCurrency: string,
+  onGestureStart: () => void,
+  onGestureEnd: () => void,
 };
 
 const DateButton = styled.TouchableOpacity`
@@ -69,7 +71,7 @@ const YEAR = 'YEAR';
 const ALL = 'ALL';
 
 const ValueOverTimeGraph = ({
-  data, fiatCurrency, theme,
+  data, fiatCurrency, theme, onGestureStart, onGestureEnd,
 }: Props) => {
   const [activeTimeRange, setActiveTimeRange] = useState(WEEK);
 
@@ -127,8 +129,9 @@ const ValueOverTimeGraph = ({
     .filter(({ date }) => !isBefore(date, timeRangeStart));
 
   const values = filteredData.map(p => p.value);
-  const maxY = Math.max(...values);
+  let maxY = Math.max(...values);
   const minY = Math.min(...values);
+  if (maxY === minY) maxY = minY + 1;
   const maxX = timeRangeEnd;
   const minX = timeRangeStart.getTime();
 
@@ -173,6 +176,8 @@ const ValueOverTimeGraph = ({
         getXAxisValue={getXAxisValue}
         xAxisValuesCount={timeRanges[activeTimeRange].xAxisValuesCount}
         extra={activeTimeRange}
+        onGestureStart={onGestureStart}
+        onGestureEnd={onGestureEnd}
       />
       <Spacing h={24} />
       <ButtonsContainer>

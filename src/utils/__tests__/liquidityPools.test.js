@@ -111,6 +111,20 @@ describe('Liquidity pools utils', () => {
         totalLiquidity: 4000,
         totalSupply: 1000,
         volume: 500,
+        history: [
+          {
+            date: new Date(1509367442 * 1000),
+            value: 2,
+          },
+          {
+            date: new Date(1609367442 * 1000),
+            value: 3.2,
+          },
+          {
+            date: new Date(),
+            value: 4,
+          },
+        ],
       });
     });
   });
