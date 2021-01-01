@@ -83,7 +83,18 @@ const liquidityPoolsReducerMock = {
 describe('Liquidity pools utils', () => {
   describe('getPoolStats', () => {
     it('should calculate unipool pool stats correctly', () => {
+      const historyDates = {};
+      historyDates[1509367442000] = new Date(1509367442 * 1000);
+      historyDates[1609367442000] = new Date(1609367442 * 1000);
+      const now = new Date();
+
+
+      const spy = jest
+        .spyOn(global, 'Date')
+        .mockImplementation((date) => historyDates[date] || now);
       const stats = getPoolStats(unipoolPool, liquidityPoolsReducerMock);
+      spy.mockRestore();
+
       expect(stats).toEqual({
         currentPrice: 4,
         dailyVolume: 10,
@@ -121,7 +132,7 @@ describe('Liquidity pools utils', () => {
             value: 3.2,
           },
           {
-            date: new Date(),
+            date: now,
             value: 4,
           },
         ],
