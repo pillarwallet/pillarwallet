@@ -1787,6 +1787,15 @@
     },
     "depositsList": {
       "title": "Liquidity Pools"
+    },
+    "modal": {
+      "stakingEnabled": {
+        "stakingUnlocked": "Staking unlocked",
+        "liquidityAdded": "Liquidity added",
+        "stakeYourTokens": "Stake your tokens to get more interest and extra rewards.",
+        "stakeTokensButton": "Stake tokens",
+        "laterButton": "Later"
+      }
     }
   }
 }

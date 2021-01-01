@@ -28,7 +28,7 @@ import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 // actions
-import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
+import { fetchLiquidityPoolsDataAction, setShownStakingEnabledModalAction } from 'actions/liquidityPoolsActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -41,6 +41,7 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';
 import Progress from 'components/Progress';
 import Loader from 'components/Loader';
+import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -69,6 +70,8 @@ import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer'
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Theme } from 'models/Theme';
 
+import StakingEnabledModal from './StakingEnabledModal';
+
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -82,6 +85,8 @@ type Props = {
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   theme: Theme,
   liquidityPoolsDataFetched: boolean,
+  shownStakingEnabledModal: {[string]: boolean},
+  setShownStakingEnabledModal: string => void,
 };
 
 const MainContainter = styled.View`
@@ -155,19 +160,34 @@ const LiquidityPoolDashboard = ({
   rates,
   theme,
   liquidityPoolsDataFetched,
+  shownStakingEnabledModal,
+  setShownStakingEnabledModal,
 }: Props) => {
   const { pool } = navigation.state.params;
 
   useEffect(() => {
     if (!liquidityPoolsDataFetched) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
-  }, []);
+  });
+  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
+
+  useEffect(() => {
+    if (getBalance(balances, pool.symbol) > 0 && poolStats.stakedAmount === 0 && !shownStakingEnabledModal[pool.name]) {
+      Modal.open(() => (
+        <StakingEnabledModal
+          pool={pool}
+          stakeTokens={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
+        />
+      ));
+      setShownStakingEnabledModal(pool.name);
+    }
+  }, [balances, poolStats]);
+
   if (!liquidityPoolsDataFetched) return <Loader />;
 
   const rewardAssetData = supportedAssets.find(({ symbol }) => symbol === pool.rewards[0].symbol);
   if (!rewardAssetData) {
     return null;
   }
-  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   const balance = getBalance(balances, pool.symbol);
   const formattedBalance = formatMoney(balance, 4);
@@ -409,6 +429,7 @@ const mapStateToProps = ({
     isFetchingLiquidityPoolsData,
     poolDataGraphQueryFailed,
     liquidityPoolsDataFetched,
+    shownStakingEnabledModal,
   },
   assets: { supportedAssets },
   liquidityPools: liquidityPoolsReducer,
@@ -420,6 +441,7 @@ const mapStateToProps = ({
   liquidityPoolsReducer,
   rates,
   liquidityPoolsDataFetched,
+  shownStakingEnabledModal,
 });
 
 const structuredSelector = createStructuredSelector({
@@ -433,6 +455,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(pools)),
+  setShownStakingEnabledModal: (poolName: string) => dispatch(setShownStakingEnabledModalAction(poolName)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard));

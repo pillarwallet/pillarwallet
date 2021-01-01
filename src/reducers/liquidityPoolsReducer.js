@@ -24,6 +24,7 @@ import {
   SET_FETCHING_LIQUIDITY_POOLS_DATA,
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
   SET_LIQUIDITY_POOLS_DATA_FETCHED,
+  SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
 
 
@@ -40,6 +41,7 @@ export type LiquidityPoolsReducerState = {
   isFetchingLiquidityPoolsData: boolean,
   poolDataGraphQueryFailed: boolean,
   liquidityPoolsDataFetched: boolean,
+  shownStakingEnabledModal: {[string]: boolean}
 };
 
 export type LiquidityPoolsReducerAction = {
@@ -53,6 +55,7 @@ export const initialState = {
   liquidityPoolsDataFetched: false,
   isFetchingLiquidityPoolsData: false,
   poolsData: {},
+  shownStakingEnabledModal: {},
 };
 
 export default function lendingReducer(
@@ -80,6 +83,11 @@ export default function lendingReducer(
       return { ...state, poolDataGraphQueryFailed: true };
     case SET_LIQUIDITY_POOLS_DATA_FETCHED:
       return { ...state, liquidityPoolsDataFetched: true };
+    case SET_SHOWN_STAKING_ENABLED_MODAL:
+      return {
+        ...state,
+        shownStakingEnabledModal: { ...state.shownStakingEnabledModal, [action.payload]: true },
+      };
     default:
       return state;
   }

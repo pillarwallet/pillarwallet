@@ -23,6 +23,7 @@ import {
   SET_UNISWAP_POOL_DATA,
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
   SET_LIQUIDITY_POOLS_DATA_FETCHED,
+  SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import {
@@ -272,5 +273,11 @@ export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPo
     );
 
     dispatch(estimateTransactionAction(to, amount, data));
+  };
+};
+
+export const setShownStakingEnabledModalAction = (poolName: string) => {
+  return (dispatch: Dispatch) => {
+    dispatch({ type: SET_SHOWN_STAKING_ENABLED_MODAL, payload: poolName });
   };
 };
