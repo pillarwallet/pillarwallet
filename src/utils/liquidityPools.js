@@ -324,12 +324,13 @@ export const getClaimRewardsTransaction = (
 export const getPoolStats = (
   pool: LiquidityPool,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
-): LiquidityPoolStats => {
+): ?LiquidityPoolStats => {
   const poolAddress = pool.uniswapPairAddress;
   const poolData = liquidityPoolsReducer.poolsData[poolAddress];
+  if (!poolData) return null;
   const pairData = poolData.pair;
   const historyData = poolData.pairDayDatas;
-
+  if (!pairData || !historyData) return null;
   const currentPrice = pairData.reserveUSD / pairData.totalSupply;
   const dayAgoPrice = historyData[1] && historyData[1].reserveUSD / historyData[1].totalSupply;
   const dayPriceChange = dayAgoPrice && ((currentPrice - dayAgoPrice) * 100) / dayAgoPrice;

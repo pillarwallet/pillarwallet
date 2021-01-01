@@ -84,7 +84,6 @@ type Props = {
   supportedAssets: Asset[],
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   theme: Theme,
-  liquidityPoolsDataFetched: boolean,
   shownStakingEnabledModal: {[string]: boolean},
   setShownStakingEnabledModal: string => void,
 };
@@ -159,19 +158,23 @@ const LiquidityPoolDashboard = ({
   liquidityPoolsReducer,
   rates,
   theme,
-  liquidityPoolsDataFetched,
   shownStakingEnabledModal,
   setShownStakingEnabledModal,
 }: Props) => {
   const { pool } = navigation.state.params;
-
-  useEffect(() => {
-    if (!liquidityPoolsDataFetched) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
-  });
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   useEffect(() => {
-    if (getBalance(balances, pool.symbol) > 0 && poolStats.stakedAmount === 0 && !shownStakingEnabledModal[pool.name]) {
+    if (!poolStats) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
+  });
+
+  useEffect(() => {
+    if (
+      getBalance(balances, pool.symbol) > 0 &&
+      poolStats &&
+      poolStats.stakedAmount === 0 &&
+      !shownStakingEnabledModal[pool.name]
+    ) {
       Modal.open(() => (
         <StakingEnabledModal
           pool={pool}
@@ -182,7 +185,7 @@ const LiquidityPoolDashboard = ({
     }
   }, [balances, poolStats]);
 
-  if (!liquidityPoolsDataFetched) return <Loader />;
+  if (!poolStats) return <Loader />;
 
   const rewardAssetData = supportedAssets.find(({ symbol }) => symbol === pool.rewards[0].symbol);
   if (!rewardAssetData) {
@@ -428,7 +431,6 @@ const mapStateToProps = ({
   liquidityPools: {
     isFetchingLiquidityPoolsData,
     poolDataGraphQueryFailed,
-    liquidityPoolsDataFetched,
     shownStakingEnabledModal,
   },
   assets: { supportedAssets },
@@ -440,7 +442,6 @@ const mapStateToProps = ({
   supportedAssets,
   liquidityPoolsReducer,
   rates,
-  liquidityPoolsDataFetched,
   shownStakingEnabledModal,
 });
 

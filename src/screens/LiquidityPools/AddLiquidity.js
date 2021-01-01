@@ -257,7 +257,7 @@ const AddLiquidityScreen = ({
               <Spacing w={4} />
               <BaseText>
                 {t('exchangeContent.label.exchangeRateLayout', {
-                  rate: (parseFloat(poolStats.tokensPrices[tokensData[1]?.symbol])).toFixed(2),
+                  rate: poolStats && (parseFloat(poolStats.tokensPrices[tokensData[1]?.symbol])).toFixed(2),
                   toAssetCode: tokensData[1]?.symbol,
                   fromAssetCode: tokensData[0]?.symbol,
                 })}

@@ -77,7 +77,6 @@ const liquidityPoolsReducerMock = {
   },
   isFetchingLiquidityPoolsData: false,
   poolDataGraphQueryFailed: false,
-  liquidityPoolsDataFetched: true,
   shownStakingEnabledModal: {},
 };
 

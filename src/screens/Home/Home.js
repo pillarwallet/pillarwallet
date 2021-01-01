@@ -183,7 +183,6 @@ type Props = {
   toggleLiquidityPools: () => void,
   isFetchingLiquidityPoolsData: boolean,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
-  liquidityPoolsDataFetched: boolean,
   rates: Rates,
   hideLiquidityPools: boolean,
   balances: Balances,
@@ -502,7 +501,6 @@ class HomeScreen extends React.Component<Props> {
       isFetchingLiquidityPoolsData,
       toggleLiquidityPools,
       liquidityPoolsReducer,
-      liquidityPoolsDataFetched,
       balances,
     } = this.props;
 
@@ -563,7 +561,7 @@ class HomeScreen extends React.Component<Props> {
     const purchasedLiquidityPools = LIQUIDITY_POOLS()
       .map(pool => ({
         pool,
-        poolStats: liquidityPoolsDataFetched && getPoolStats(pool, liquidityPoolsReducer),
+        poolStats: getPoolStats(pool, liquidityPoolsReducer),
       }))
       .filter(({ pool, poolStats }) =>
         poolStats && (getBalance(balances, pool.symbol) > 0 || poolStats.stakedAmount > 0));
@@ -799,7 +797,6 @@ const mapStateToProps = ({
   },
   liquidityPools: {
     isFetchingLiquidityPoolsData,
-    liquidityPoolsDataFetched,
   },
   liquidityPools: liquidityPoolsReducer,
   rates: { data: rates },
@@ -832,7 +829,6 @@ const mapStateToProps = ({
   rariUserInterests,
   isFetchingLiquidityPoolsData,
   liquidityPoolsReducer,
-  liquidityPoolsDataFetched,
   rates,
 });
 

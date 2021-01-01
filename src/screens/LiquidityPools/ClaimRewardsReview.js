@@ -82,11 +82,11 @@ const ClaimRewardReviewScreen = ({
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
-  const formattedAmount = poolStats.rewardsToClaim;
+  const rewardsToClaim = poolStats?.rewardsToClaim || 0;
 
   useEffect(() => {
     resetEstimateTransaction();
-    calculateClaimRewardsTransactionEstimate(pool, poolStats.rewardsToClaim);
+    calculateClaimRewardsTransactionEstimate(pool, rewardsToClaim);
   }, []);
 
   const onNextButtonPress = async () => {
@@ -102,7 +102,7 @@ const ClaimRewardReviewScreen = ({
       return;
     }
 
-    let transactionPayload = getClaimRewardsTransaction(pool, accountAddress, poolStats.rewardsToClaim, feeInfo?.fee);
+    let transactionPayload = getClaimRewardsTransaction(pool, accountAddress, rewardsToClaim, feeInfo?.fee);
 
     if (feeInfo?.gasToken) transactionPayload = { ...transactionPayload, gasToken: feeInfo?.gasToken };
 
@@ -138,7 +138,7 @@ const ClaimRewardReviewScreen = ({
         <TokenReviewSummary
           assetSymbol={pool.rewards[0].symbol}
           text={t('liquidityPoolsContent.label.youAreClaiming')}
-          amount={formattedAmount}
+          amount={rewardsToClaim}
         />
         <Spacing h={26} />
         <Table>

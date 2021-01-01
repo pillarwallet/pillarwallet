@@ -115,7 +115,7 @@ const UnstakeTokensScreen = ({
 
   const customBalances = assetData && {
     [assetData.symbol]: {
-      balance: poolStats.stakedAmount,
+      balance: poolStats?.stakedAmount,
       symbol: assetData.symbol,
     },
   };

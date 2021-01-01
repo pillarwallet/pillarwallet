@@ -34,7 +34,6 @@ import { BaseText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
-import Loader from 'components/Loader';
 
 import { formatAmount, formatFiat } from 'utils/common';
 import { getBalance, convertUSDToFiat } from 'utils/assets';
@@ -62,7 +61,6 @@ type Props = {
   supportedAssets: Asset[],
   balances: Balances,
   isFetchingLiquidityPoolsData: boolean,
-  liquidityPoolsDataFetched: boolean,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   navigation: NavigationScreenProp<*>,
   rates: Rates,
@@ -132,7 +130,6 @@ const LiquidityPoolsScreen = ({
   supportedAssets,
   balances,
   isFetchingLiquidityPoolsData,
-  liquidityPoolsDataFetched,
   liquidityPoolsReducer,
   navigation,
   rates,
@@ -144,7 +141,8 @@ const LiquidityPoolsScreen = ({
   useEffect(() => {
     fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   }, []);
-  if (!liquidityPoolsDataFetched) return <Loader />;
+
+  const poolsStats = LIQUIDITY_POOLS().map(pool => getPoolStats(pool, liquidityPoolsReducer));
 
   const tabs = [
     {
@@ -165,8 +163,6 @@ const LiquidityPoolsScreen = ({
   ];
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-
-  const poolsStats = LIQUIDITY_POOLS().map(pool => getPoolStats(pool, liquidityPoolsReducer));
 
   const goToPoolDashboard = (pool: LiquidityPool) => {
     navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
@@ -299,21 +295,21 @@ const LiquidityPoolsScreen = ({
 
   const isAvailablePool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return getBalance(balances, pool.symbol) === 0 && poolStats.stakedAmount === 0;
+    return poolStats && getBalance(balances, pool.symbol) === 0 && poolStats.stakedAmount === 0;
   };
 
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return getBalance(balances, pool.symbol) > 0 && poolStats.stakedAmount === 0;
+    return poolStats && getBalance(balances, pool.symbol) > 0 && poolStats.stakedAmount === 0;
   };
 
   const isStakedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats.stakedAmount > 0;
+    return poolStats && poolStats.stakedAmount > 0;
   };
 
   const areThereNotAvailablePools = () => {
-    return !LIQUIDITY_POOLS().every(isAvailablePool);
+    return LIQUIDITY_POOLS().some(isPurchasedPool) || LIQUIDITY_POOLS().some(isStakedPool);
   };
 
   const renderTab = () => {
@@ -388,7 +384,6 @@ const mapStateToProps = ({
   liquidityPools: {
     isFetchingLiquidityPoolsData,
     poolDataGraphQueryFailed,
-    liquidityPoolsDataFetched,
   },
   liquidityPools: liquidityPoolsReducer,
   appSettings: { data: { baseFiatCurrency } },
@@ -400,7 +395,6 @@ const mapStateToProps = ({
   baseFiatCurrency,
   supportedAssets,
   liquidityPoolsReducer,
-  liquidityPoolsDataFetched,
   rates,
 });
 

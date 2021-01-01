@@ -22,7 +22,6 @@ import {
   SET_UNIPOOL_DATA,
   SET_UNISWAP_POOL_DATA,
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
-  SET_LIQUIDITY_POOLS_DATA_FETCHED,
   SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
@@ -118,7 +117,6 @@ export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
       await dispatch(fetchUniswapPoolDataAction(pool.uniswapPairAddress));
     }));
     dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: false });
-    dispatch({ type: SET_LIQUIDITY_POOLS_DATA_FETCHED });
   };
 };
 
