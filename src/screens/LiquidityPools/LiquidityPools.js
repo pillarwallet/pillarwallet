@@ -226,26 +226,30 @@ const LiquidityPoolsScreen = ({
               <BaseText small secondary>{t('liquidityPoolsContent.label.volume')}</BaseText>
             </CardColumn>
           </Row>
-          <HorizontalDivider />
-          <Row>
-            <BaseText small secondary>{t('liquidityPoolsContent.label.weeklyRewards')}</BaseText>
-            <Spacing w={16} />
-            <Rewards>
-              {pool.rewards.map(reward => {
-                const asset = supportedAssets.find(({ symbol }) => symbol === reward.symbol);
-                const iconUri = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
-                return (
-                  <Reward>
-                    <RewardIcon source={{ uri: iconUri }} />
-                    <Spacing w={6} />
-                    <BaseText regular>
-                      {t('tokenValue', { value: formatBigAmount(reward.amount), token: reward.symbol })}
-                    </BaseText>
-                  </Reward>
-                );
-              })}
-            </Rewards>
-          </Row>
+          {pool.rewardsEnabled && (
+            <>
+              <HorizontalDivider />
+              <Row>
+                <BaseText small secondary>{t('liquidityPoolsContent.label.weeklyRewards')}</BaseText>
+                <Spacing w={16} />
+                <Rewards>
+                  {pool.rewards.map(reward => {
+                    const asset = supportedAssets.find(({ symbol }) => symbol === reward.symbol);
+                    const iconUri = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
+                    return (
+                      <Reward>
+                        <RewardIcon source={{ uri: iconUri }} />
+                        <Spacing w={6} />
+                        <BaseText regular>
+                          {t('tokenValue', { value: formatBigAmount(reward.amount), token: reward.symbol })}
+                        </BaseText>
+                      </Reward>
+                    );
+                  })}
+                </Rewards>
+              </Row>
+            </>
+          )}
         </Card>
         <Spacing h={38} />
       </TouchableOpacity>

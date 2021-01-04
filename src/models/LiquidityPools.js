@@ -37,6 +37,7 @@ export type LiquidityPoolBase = {
     amount: number,
   }[],
   iconUrl: string,
+  rewardsEnabled: boolean,
 };
 
 export type UnipoolLiquidityPool = LiquidityPoolBase & {

@@ -51,6 +51,7 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       unipoolAddress: '0xFfD8C07309d3A3ce473Feb1d98ebF1F3171A83d9',
       unipoolSubgraphName: 'graszka22/unipool-plr-eth-kovan',
       iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
+      rewardsEnabled: false,
     },
   ] : [
     {
@@ -68,6 +69,7 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       unipoolAddress: '0x32105017918Cb9CD9A5f21fd6984Ee7DC82B9E7E',
       unipoolSubgraphName: 'graszka22/unipool-plr-eth',
       iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
+      rewardsEnabled: false,
     },
     {
       name: 'Uniswap v2 DAI/PLR',
@@ -84,5 +86,6 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       unipoolAddress: '0x71B4A17E4254F85420B06bC55f431A5EEb97E7fB',
       unipoolSubgraphName: 'graszka22/unipool-plr-dai',
       iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
+      rewardsEnabled: false,
     },
   ];
