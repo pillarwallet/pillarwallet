@@ -176,7 +176,8 @@ const LiquidityPoolDashboard = ({
       getBalance(balances, pool.symbol) > 0 &&
       poolStats &&
       poolStats.stakedAmount === 0 &&
-      !shownStakingEnabledModal[pool.name]
+      !shownStakingEnabledModal[pool.name] &&
+      pool.rewardsEnabled
     ) {
       Modal.open(() => (
         <StakingEnabledModal
