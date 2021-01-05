@@ -169,7 +169,7 @@ export const ValueInputComponent = (props: Props) => {
     if (displayFiatAmount) {
       const split = newValue.split('.');
       // only allow 2 decimals in fiat mode
-      if (split.length <= 2 && split[1] ? split[1].length <= 2 : true) {
+      if (split.length <= 2 && !(split[1] && split[1].length > 2)) {
         setValueInFiat(newValue);
         const convertedValue =
         getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
