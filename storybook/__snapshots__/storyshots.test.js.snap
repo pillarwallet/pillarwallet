@@ -53104,6 +53104,7 @@ exports[`Storyshots Value Input default 1`] = `
                     placeholder="0"
                     placeholderTextColor="#8B939E"
                     rejectResponderTermination={true}
+                    selection={null}
                     smallPadding={true}
                     style={
                       Array [
