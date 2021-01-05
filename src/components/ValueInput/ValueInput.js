@@ -253,6 +253,7 @@ export const ValueInputComponent = (props: Props) => {
     inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
     onBlur: onInputBlur,
     onFocus: onInputFocus,
+    selection: disabled ? { start: 0, end: 0 } : null,
   };
 
   const errorMessage = disabled ? null : getErrorMessage(value, maxValue, assetSymbol);
