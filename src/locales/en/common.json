@@ -1764,7 +1764,8 @@
       "rewardsClaimed": "Rewards claimed",
       "liquidityRemoved": "Liquidity removed",
       "fromWalletToPool": "Wallet → {{poolName}}",
-      "fromPoolToWallet": "{{poolName}} → Wallet"
+      "fromPoolToWallet": "{{poolName}} → Wallet",
+      "24hFees": "24h fees"
     },
     "tabs": {
       "active": "Active",

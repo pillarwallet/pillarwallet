@@ -27,6 +27,7 @@ import {
   LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
+  UNISWAP_FEE_RATE,
 } from 'constants/liquidityPoolsConstants';
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
@@ -86,6 +87,14 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
         reserveUSD
         totalSupply
         dailyVolumeUSD
+      }
+      pairHourDatas(
+        where: {
+          hourStartUnix_gt: ${Math.floor(Date.now() / 1000) - (24 * 60 * 60)}, 
+          pair: "${poolAddress.toLowerCase()}",
+        }
+      ) {
+        hourlyVolumeUSD
       }
     }
   `;
@@ -330,7 +339,8 @@ export const getPoolStats = (
   if (!poolData) return null;
   const pairData = poolData.pair;
   const historyData = poolData.pairDayDatas;
-  if (!pairData || !historyData) return null;
+  const hourlyData = poolData.pairHourDatas;
+  if (!pairData || !historyData || !hourlyData) return null;
   const currentPrice = pairData.reserveUSD / pairData.totalSupply;
   const dayAgoPrice = historyData[1] && historyData[1].reserveUSD / historyData[1].totalSupply;
   const dayPriceChange = dayAgoPrice && ((currentPrice - dayAgoPrice) * 100) / dayAgoPrice;
@@ -374,6 +384,8 @@ export const getPoolStats = (
     value: currentPrice,
   });
 
+  const dailyVolume = hourlyData.reduce((sum, { hourlyVolumeUSD }) => sum + parseFloat(hourlyVolumeUSD), 0);
+
   return {
     currentPrice,
     dayPriceChange,
@@ -381,7 +393,8 @@ export const getPoolStats = (
     monthPriceChange,
     volume: parseFloat(pairData.volumeUSD),
     totalLiquidity: parseFloat(pairData.reserveUSD),
-    dailyVolume: parseFloat(historyData[0].dailyVolumeUSD),
+    dailyVolume,
+    dailyFees: dailyVolume * UNISWAP_FEE_RATE,
     tokensLiquidity,
     stakedAmount: parseFloat(unipoolData.stakedAmount),
     rewardsToClaim: parseFloat(unipoolData.earnedAmount),

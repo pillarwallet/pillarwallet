@@ -73,6 +73,14 @@ const liquidityPoolsReducerMock = {
           dailyVolumeUSD: '10',
         },
       ],
+      pairHourDatas: [
+        {
+          hourlyVolumeUSD: '5',
+        },
+        {
+          hourlyVolumeUSD: '5',
+        },
+      ],
     },
   },
   isFetchingLiquidityPoolsData: false,
@@ -98,6 +106,7 @@ describe('Liquidity pools utils', () => {
       expect(stats).toEqual({
         currentPrice: 4,
         dailyVolume: 10,
+        dailyFees: 0.03,
         dayPriceChange: 100,
         monthPriceChange: undefined,
         weekPriceChange: undefined,

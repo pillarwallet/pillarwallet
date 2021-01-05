@@ -217,6 +217,10 @@ const LiquidityPoolDashboard = ({
 
   const stats = [
     {
+      title: t('liquidityPoolsContent.label.24hFees'),
+      value: formatBigFiatAmount(convertUSDToFiat(poolStats.dailyFees, rates, fiatCurrency), fiatCurrency),
+    },
+    {
       title: t('liquidityPoolsContent.label.totalLiquidity'),
       value: formatBigFiatAmount(convertUSDToFiat(poolStats.totalLiquidity, rates, fiatCurrency), fiatCurrency),
     },

@@ -89,3 +89,5 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       rewardsEnabled: false,
     },
   ];
+
+export const UNISWAP_FEE_RATE = 0.003;

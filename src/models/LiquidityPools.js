@@ -57,6 +57,7 @@ export type LiquidityPoolStats = {
   volume: number,
   totalLiquidity: number,
   dailyVolume: number,
+  dailyFees: number,
   tokensLiquidity: {[string]: number },
   stakedAmount: number,
   rewardsToClaim: number,
