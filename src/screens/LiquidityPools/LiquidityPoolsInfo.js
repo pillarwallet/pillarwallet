@@ -21,12 +21,15 @@
 import React from 'react';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
+import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
+
+import { getDeviceWidth } from 'utils/common';
 
 import { LIQUIDITY_POOLS } from 'constants/navigationConstants';
 
@@ -35,8 +38,18 @@ type Props = {
   navigation: NavigationScreenProp<*>,
 };
 
+const bannerImage = require('assets/images/banners-liquidity-pools.png');
+
+const screenWidth = getDeviceWidth();
+const bannerWidth = screenWidth - 40;
+
 const MainContainer = styled.View`
   padding: 16px 20px;
+`;
+
+const BannerImage = styled(CachedImage)`
+  width: ${bannerWidth}px;
+  height: ${bannerWidth * (114 / 335)}px;
 `;
 
 const LiquidityPoolsInfoScreen = ({
@@ -51,7 +64,8 @@ const LiquidityPoolsInfoScreen = ({
       putContentInScrollView
     >
       <MainContainer>
-        <Spacing h={28} />
+        <BannerImage source={bannerImage} />
+        <Spacing h={35} />
         <MediumText big>{t('liquidityPoolsContent.infoContent.subtitle.whatAreLiquidityPools')}</MediumText>
         <Spacing h={14} />
         <BaseText medium secondary>{t('liquidityPoolsContent.infoContent.paragraph.whatAreLiqudityPools')}</BaseText>
