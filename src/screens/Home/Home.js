@@ -56,6 +56,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import { DAI, defaultFiatCurrency } from 'constants/assetsConstants';
 import { RARI_POOLS } from 'constants/rariConstants';
+import { STAGING } from 'constants/envConstants';
 
 // actions
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
@@ -195,6 +196,7 @@ class HomeScreen extends React.Component<Props> {
   forceRender = false;
 
   componentDidMount() {
+    const isStaging = getEnv().ENVIRONMENT === STAGING;
     const {
       logScreenView,
       fetchBadges,
@@ -221,7 +223,9 @@ class HomeScreen extends React.Component<Props> {
     fetchReferralRewardsIssuerAddresses();
     fetchDepositedAssets();
     fetchUserStreams();
-    fetchRariData();
+    if (!isStaging) {
+      fetchRariData();
+    }
   }
 
   componentWillUnmount() {
@@ -246,6 +250,7 @@ class HomeScreen extends React.Component<Props> {
   }
 
   refreshScreenData = () => {
+    const isStaging = getEnv().ENVIRONMENT === STAGING;
     const {
       checkForMissedAssets,
       fetchAllCollectiblesData,
@@ -272,7 +277,9 @@ class HomeScreen extends React.Component<Props> {
     fetchDepositedAssets();
     fetchPoolStats();
     fetchUserStreams();
-    fetchRariData();
+    if (!isStaging) {
+      fetchRariData();
+    }
   };
 
   renderBadge = ({ item }) => {

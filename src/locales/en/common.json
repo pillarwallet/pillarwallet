@@ -1430,7 +1430,8 @@
     "rariDeposit": "{{amount}} {{token}} deposited to Rari Capital.",
     "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
     "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
-    "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital."
+    "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
+    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH."
   },
 
   "exchangeContent": {
