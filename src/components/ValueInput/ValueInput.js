@@ -101,9 +101,10 @@ export const getErrorMessage = (
   amount: string,
   assetBalance: string,
   assetSymbol: string,
+  fiatValue?: ?string,
 ): string => {
   const isValid = isValidNumber(amount);
-  if (!isValid) {
+  if (!isValid || (!!fiatValue && !isValidNumber(fiatValue))) {
     return t('error.amount.invalidNumber');
   } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
@@ -143,7 +144,6 @@ export const ValueInputComponent = (props: Props) => {
 
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
-  const [errorMessageState, setErrorMessageState] = useState<?string>(null);
 
   const ratesWithCustomRates = { ...rates, ...customRates };
 
@@ -156,24 +156,29 @@ export const ValueInputComponent = (props: Props) => {
   const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
   const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
 
+  React.useEffect(() => {
+    if (disabled) { // handle fiat updates when disabled, e.g. on Exchange screen
+      const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+      setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
+    }
+  }, [value]);
+
   const handleValueChange = (newValue: string) => {
-    let errorMessage = null;
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
-      setValueInFiat(newValue);
-      const convertedValue =
+      const split = newValue.split('.');
+      // only allow 2 decimals in fiat mode
+      if (split.length <= 2 && !(split[1] && split[1].length > 2)) {
+        setValueInFiat(newValue);
+        const convertedValue =
         getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
-      onValueChange(convertedValue);
-
-      errorMessage = getErrorMessage(convertedValue, maxValue, assetSymbol);
+        onValueChange(convertedValue);
+      }
     } else {
-      setValueInFiat(getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString());
+      const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
       onValueChange(newValue);
-      errorMessage = getErrorMessage(newValue, maxValue, assetSymbol);
-    }
-    if (errorMessage) {
-      setErrorMessageState(errorMessage);
     }
   };
 
@@ -190,7 +195,8 @@ export const ValueInputComponent = (props: Props) => {
     ));
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
     onValueChange((parseFloat(newMaxValue) * (percent / 100)).toString());
-    setValueInFiat((maxValueInFiat * (percent / 100)).toString());
+    const fiatValue = maxValueInFiat * (percent / 100);
+    setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
   };
 
   const onInputBlur = () => {
@@ -253,9 +259,12 @@ export const ValueInputComponent = (props: Props) => {
     inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
     onBlur: onInputBlur,
     onFocus: onInputFocus,
+    selection: disabled ? { start: 0, end: 0 } : null,
   };
 
-  const errorMessage = disabled ? null : getErrorMessage(value, maxValue, assetSymbol);
+  const errorMessage = disabled ? null : getErrorMessage(
+    value, maxValue, assetSymbol, displayFiatAmount ? valueInFiat : null,
+  );
 
   React.useEffect(() => {
     if (onFormValid) {
@@ -268,13 +277,22 @@ export const ValueInputComponent = (props: Props) => {
 
   const { tokenType = TOKENS } = assetData;
 
+  const toggleDisplayFiat = () => {
+    // when switching at error state, reset values to avoid new errors
+    if (errorMessage) {
+      setValueInFiat('0');
+      handleValueChange('0');
+    }
+    setDisplayFiatAmount(!displayFiatAmount);
+  };
+
   return (
     <>
       {tokenType === TOKENS && (
         <TextInput
           style={{ width: '100%' }}
           hasError={!!errorMessage}
-          errorMessage={errorMessage || errorMessageState}
+          errorMessage={errorMessage}
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
@@ -283,7 +301,7 @@ export const ValueInputComponent = (props: Props) => {
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat
           }
-          onLeftSideTextPress={() => setDisplayFiatAmount(!displayFiatAmount)}
+          onLeftSideTextPress={toggleDisplayFiat}
           rightPlaceholder={displayFiatAmount ? fiatCurrency : assetSymbol}
           leftSideSymbol={leftSideSymbol}
           getInputRef={getInputRef}
