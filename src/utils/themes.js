@@ -65,6 +65,7 @@ export const lightThemeColorsOld = {
   progressBarEnd: '#f04cfa',
   poolTogetherPink: '#e51fff',
   toastCloseIcon: '#ededed',
+  graphPrimaryColor: '#a945ff',
 };
 
 // will be removed after transition
@@ -107,6 +108,7 @@ export const darkThemeColorsOld = {
   progressBarEnd: '#f04cfa',
   poolTogetherPink: '#e51fff',
   toastCloseIcon: '#ebf0f5',
+  graphPrimaryColor: '#a945ff',
 };
 
 export const themedColors = {
@@ -249,6 +251,10 @@ export const themedColors = {
   toastCloseIcon: theme('current', {
     lightTheme: lightThemeColorsOld.toastCloseIcon,
     darkTheme: darkThemeColorsOld.toastCloseIcon,
+  }),
+  graphPrimaryColor: theme('current', {
+    lightTheme: lightThemeColorsOld.graphPrimaryColor,
+    darkTheme: darkThemeColorsOld.graphPrimaryColor,
   }),
 };
 
