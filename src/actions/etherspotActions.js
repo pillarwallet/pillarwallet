@@ -18,6 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
+import { type Account as EtherspotAccount, type P2PPaymentChannel } from 'etherspot';
 
 // constants
 import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
@@ -30,6 +31,7 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // actions
 import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -57,30 +59,16 @@ import {
   mapAssetToAssetData,
 } from 'utils/assets';
 import { findFirstEtherspotAccount } from 'utils/accounts';
+import { buildHistoryTransaction } from 'utils/history';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
+import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
-import type {
-  Account as EtherspotAccount,
-  P2PPaymentChannel,
-} from 'etherspot';
-import {
-  activeAccountAddressSelector,
-  activeAccountIdSelector,
-} from 'selectors';
-import {
-  buildHistoryTransaction,
-  updateAccountHistory,
-} from 'utils/history';
-import {
-  SET_HISTORY,
-  TX_CONFIRMED_STATUS,
-} from 'constants/historyConstants';
 import type { Transaction } from 'models/Transaction';
 
 
@@ -311,7 +299,6 @@ export const fetchAccountPaymentChannelsAction = () => {
         }
 
         const { symbol: tokenSymbol } = assetData;
-        console.log('assetData: ', assetData)
         const transaction = buildHistoryTransaction({
           from,
           to,
@@ -328,7 +315,6 @@ export const fetchAccountPaymentChannelsAction = () => {
       }, []);
 
     // TODO: finish mapping to history
-    console.log('paymentChannelsTransactions: ', paymentChannelsTransactions)
     //
     // const updatedAccountHistory = [...paymentChannelsTransactions, ...accountHistory];
     // const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);

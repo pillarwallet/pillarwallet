@@ -168,15 +168,10 @@ export const sendAssetAction = (
       ? parseFeeWithGasToken(gasToken, txFeeInWei)
       : null;
 
-    const transactionResult: TransactionResult = usePPN
-      ? await etherspot
-        .sendP2PTransaction(transaction)
-        .then(({ hash }) => ({ hash }))
-        .catch((error) => catchTransactionError(error, logTransactionType, transaction))
-      : await etherspot
-        .sendTransaction(transaction, accountAddress)
-        .then(({ hash }) => ({ hash }))
-        .catch((error) => catchTransactionError(error, logTransactionType, transaction));
+    const transactionResult: TransactionResult = await etherspot
+      .sendTransaction(transaction, accountAddress, usePPN)
+      .then(({ hash }) => ({ hash }))
+      .catch((error) => catchTransactionError(error, logTransactionType, transaction));
 
     const transactionHash = transactionResult?.hash;
     if (!transactionHash) {

@@ -19,39 +19,22 @@
 */
 
 // constants
-import { UPDATE_ACCOUNTS, ACCOUNT_TYPES, CHANGING_ACCOUNT } from 'constants/accountsConstants';
-import { BLOCKCHAIN_NETWORK_TYPES, SET_ACTIVE_NETWORK } from 'constants/blockchainNetworkConstants';
+import { UPDATE_ACCOUNTS, CHANGING_ACCOUNT } from 'constants/accountsConstants';
+import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 
 // actions
 import { checkForMissedAssetsAction, fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import { saveDbAction } from 'actions/dbActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
-import {
-  checkIfSmartWalletWasRegisteredAction,
-  connectSmartWalletAccountAction,
-  initSmartWalletSdkAction,
-  fetchVirtualAccountBalanceAction,
-} from 'actions/smartWalletActions';
 import { setActiveBlockchainNetworkAction } from 'actions/blockchainNetworkActions';
-import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // utils
-import {
-  findFirstLegacySmartAccount,
-  getAccountId,
-  getActiveAccountType,
-  isSupportedAccountType,
-} from 'utils/accounts';
-import { isSupportedBlockchain } from 'utils/blockchainNetworks';
-
-// selectors
-import { activeAccountSelector } from 'selectors';
+import { reportErrorLog } from 'utils/common';
 
 // types
 import type { AccountExtra, AccountTypes } from 'models/Account';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { reportErrorLog } from 'utils/common';
 
 
 export const addAccountAction = (
@@ -146,53 +129,5 @@ export const switchAccountAction = (accountId: string) => {
     dispatch(checkForMissedAssetsAction());
 
     dispatch({ type: CHANGING_ACCOUNT, payload: false });
-  };
-};
-
-// TODO: deprecate due Etherspot
-export const initOnLoginSmartWalletAccountAction = (privateKey: string) => {
-  return async (dispatch: Dispatch, getState: GetState) => {
-    const {
-      appSettings: { data: { blockchainNetwork } },
-      accounts: { data: accounts },
-      user: { data: user },
-    } = getState();
-
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
-    if (!smartWalletAccount) return;
-
-    const smartWalletAccountId = getAccountId(smartWalletAccount);
-    await dispatch(initSmartWalletSdkAction(privateKey));
-
-    const activeAccountType = getActiveAccountType(accounts);
-    const setAccountActive = activeAccountType !== ACCOUNT_TYPES.LEGACY_SMART_WALLET; // set to active routine
-    await dispatch(connectSmartWalletAccountAction(smartWalletAccountId, setAccountActive));
-    dispatch(fetchVirtualAccountBalanceAction());
-
-    if (setAccountActive && blockchainNetwork) {
-      const shouldChangeNetwork = !isSupportedBlockchain(blockchainNetwork);
-      dispatch({
-        type: SET_ACTIVE_NETWORK,
-        payload: shouldChangeNetwork ? BLOCKCHAIN_NETWORK_TYPES.ETHEREUM : blockchainNetwork,
-      });
-    }
-
-    // following code should not be done if user is not registered on back-end
-    if (!user?.walletId) return;
-
-    dispatch(checkUserENSNameAction());
-    dispatch(checkIfSmartWalletWasRegisteredAction(privateKey, smartWalletAccountId));
-  };
-};
-
-export const fallbackToSmartAccountAction = () => {
-  return (dispatch: Dispatch, getState: GetState) => {
-    const activeAccount = activeAccountSelector(getState());
-    const { accounts: { data: accounts } } = getState();
-    if (activeAccount && !isSupportedAccountType(activeAccount.type)) {
-      const switchToAccount = accounts.find(({ type }) => type === ACCOUNT_TYPES.LEGACY_SMART_WALLET)
-     || accounts.find(({ type }) => type === ACCOUNT_TYPES.KEY_BASED);
-      if (switchToAccount) dispatch(switchAccountAction(switchToAccount.id));
-    }
   };
 };

@@ -26,7 +26,6 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // components
@@ -50,7 +49,7 @@ import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActi
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
@@ -144,16 +143,6 @@ const Description = styled(Paragraph)`
 const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
-
-const SyntheticAssetIcon = styled(CachedImage)`
-  width: 12px;
-  height: 24px;
-  margin-right: 4px;
-  margin-top: 1px;
-  tint-color: ${({ theme }) => theme.colors.basic000};
-`;
-
-const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props> {
   forceRender = false;
@@ -254,7 +243,7 @@ class AssetScreen extends React.Component<Props> {
 
     const tokenTransactions = getTokenTransactionsFromHistory(history, accounts, token);
 
-    const mainnetTransactions = tokenTransactions
+    const relatedTransactions = tokenTransactions
       .filter(({
         isPPNTransaction = false,
         from,
@@ -266,10 +255,6 @@ class AssetScreen extends React.Component<Props> {
         && !isAaveTransactionTag(tag);
       });
 
-    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-    });
-    const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
     return (
@@ -305,10 +290,7 @@ class AssetScreen extends React.Component<Props> {
           />
           <DataWrapper>
             <ValueWrapper>
-              {!!isSynthetic &&
-                <SyntheticAssetIcon source={lightningIcon} />
-              }
-              <TokenValue isSynthetic={isSynthetic}>
+              <TokenValue>
                 {t('tokenValue', { value: displayAmount, token })}
               </TokenValue>
             </ValueWrapper>
@@ -333,7 +315,6 @@ class AssetScreen extends React.Component<Props> {
               noBalance={isWalletEmpty}
               isSendDisabled={!isAssetConfigSendActive}
               isReceiveDisabled={!isReceiveActive}
-              showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
             />
           </AssetCardWrapper>
           {!!relatedTransactions.length &&

@@ -169,8 +169,6 @@ class ServicesScreen extends React.Component<Props> {
         key: 'wbtc',
         title: t('wbtcCafe.cafe'),
         body: t('wbtcCafe.trade'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
         action: () => navigation.navigate(WBTC_CAFE),
       });
     }
@@ -179,8 +177,6 @@ class ServicesScreen extends React.Component<Props> {
         key: 'rari',
         title: t('servicesContent.rari.title'),
         body: t('servicesContent.rari.description'),
-        disabled: SWServiceDisabled,
-        label: SWServiceLabel,
         action: () => navigation.navigate(RARI_DEPOSIT),
       });
     }

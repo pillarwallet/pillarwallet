@@ -414,7 +414,6 @@ class ExchangeScreen extends React.Component<Props, State> {
           {!!isSubmitted && isFormValid && (
             <ExchangeOffers
               fromAmount={fromAmount}
-              disableNonFiatExchange={disableNonFiatExchange}
               isExchangeActive={isSubmitted}
               showEmptyMessage={showEmptyMessage}
               setFromAmount={val => this.setState({ fromAmount: val })}

@@ -22,7 +22,6 @@ import { constants, utils } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
-  Env,
   Account as EtherspotAccount,
   Accounts as EtherspotAccounts,
   GatewayEstimatedBatch,
@@ -44,33 +43,27 @@ import { addressesEqual } from 'utils/assets';
 // constants
 import { ETH } from 'constants/assetsConstants';
 
+// config
+import { getEnv } from 'configs/envConfig';
+
 // types
 import type { EtherspotTransaction } from 'models/Etherspot';
 import type { Asset, Balance } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
 import type { P2PPaymentChannel } from 'etherspot';
-import { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
+import type { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
 
 
 class EtherspotService {
   sdk: EtherspotSdk;
 
   async init(privateKey: string) {
-    // TODO: replace with testnet/mainnet instead of local
-    this.sdk = new EtherspotSdk({
-      privateKey,
-      networkName: NetworkNames.LocalA,
-    }, {
-      env: new Env({
-        apiOptions: {
-          host: '192.168.1.111', // dev: enter your machine's local IP
-          port: '4000',
-        },
-        networkOptions: {
-          supportedNetworkNames: [NetworkNames.LocalA],
-        },
-      }),
-    });
+    const networkName = getEnv().NETWORK_PROVIDER === 'homestead'
+      ? NetworkNames.Mainnet
+      : NetworkNames.Kovan;
+
+    this.sdk = new EtherspotSdk(privateKey, { networkName });
+
     await this.sdk.computeContractAccount({ sync: true }).catch((error) => {
       reportErrorLog('EtherspotService init computeContractAccount failed', { error });
     });
@@ -120,16 +113,6 @@ class EtherspotService {
       .map(({ address }) => address);
 
     // gets balances by provided token (asset) address and ETH balance regardless
-    this.sdk
-      .getAccountBalances({
-        account: accountAddress,
-        tokens: assetAddresses,
-      })
-      .catch((error) => {
-        reportErrorLog('EtherspotService getBalances -> getAccountBalances failed', { error, accountAddress });
-        return null;
-      });
-
     const accountBalances = await this.sdk
       .getAccountBalances({
         account: accountAddress,
@@ -184,22 +167,29 @@ class EtherspotService {
     return this.sdk.submitGatewayBatch().then(({ hash }) => ({ hash }));
   }
 
-  async sendTransaction(transaction: TransactionPayload, fromAccountAddress: string) {
-    const ethersportTransactions = await mapToEtherspotTransactionsBatch(transaction, fromAccountAddress);
-    return this.setTransactionsBatchAndSend(ethersportTransactions);
+  async sendTransaction(
+    transaction: TransactionPayload,
+    fromAccountAddress: string,
+    isP2P?: boolean,
+  ) {
+    if (isP2P) {
+      return this.sendP2PTransaction(transaction);
+    }
+
+    // TODO: pass GasToken to etherspot
+    // const { gasToken } = transaction;
+
+    const etherspotTransactions = await mapToEtherspotTransactionsBatch(transaction, fromAccountAddress);
+    return this.setTransactionsBatchAndSend(etherspotTransactions);
   }
 
 
   async sendP2PTransaction(transaction: TransactionPayload) {
     const { to: recipient, amount, decimals } = transaction;
 
-    console.log('amount: ', amount)
-    console.log('value: ', parseTokenAmount(amount.toString(), decimals))
-    console.log('transaction: ', transaction)
-
     const increaseRequest: IncreaseP2PPaymentChannelAmountDto = {
       token: transaction.symbol === ETH ? null : transaction.contractAddress,
-      value: parseTokenAmount(amount.toString(), decimals),
+      value: parseTokenAmount(amount.toString(), decimals).toString(),
       recipient,
     };
 
@@ -241,8 +231,6 @@ class EtherspotService {
         });
         return [];
       });
-
-    console.log('paymentChannels: ', paymentChannels)
 
     return paymentChannels;
   }

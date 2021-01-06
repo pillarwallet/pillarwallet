@@ -77,7 +77,7 @@ export const mapToEtherspotTransactionsBatch = async (
   if (transaction.tokenType !== COLLECTIBLES) {
     value = parseTokenAmount(amount.toString(), decimals);
     if (symbol !== ETH && !data) {
-      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value]);
+      data = encodeContractMethod(ERC20_CONTRACT_ABI, 'transfer', [to, value.toString()]);
       to = contractAddress;
       value = 0; // value is in encoded transfer method as data
     }

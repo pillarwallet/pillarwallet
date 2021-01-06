@@ -44,7 +44,6 @@ import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
 
 // constants
-import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
@@ -72,10 +71,7 @@ import type { Theme } from 'models/Theme';
 import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
-import {
-  addressesEqual,
-  getRate,
-} from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { isHiddenUnsettledTransaction } from 'utils/smartWallet';
@@ -84,10 +80,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstEtherspotAccount, getAccountId } from 'utils/accounts';
 
 // selectors
-import {
-  availableStakeSelector,
-  PPNTransactionsSelector,
-} from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
 
@@ -150,7 +143,6 @@ const PPNView = ({
   availableStake,
   accounts,
   balances,
-  rates,
   fetchAccountDepositBalance,
   PPNTransactions,
   baseFiatCurrency,
@@ -263,7 +255,7 @@ const PPNView = ({
     // const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
     // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     // const tokenRate = getRate(rates, tokenSymbol, fiatCurrency);
-    return totalInFiat + 1; //(tokenBalance * tokenRate);
+    return totalInFiat + 1; // (tokenBalance * tokenRate);
   }, 0);
 
   const historyTabs = [

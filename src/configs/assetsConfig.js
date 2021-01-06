@@ -34,5 +34,4 @@ export default {
   },
 };
 
-// TODO: change back to PLR once testnet available
-export const PPN_TOKEN = 'WWEI';
+export const PPN_TOKEN = 'PLR';

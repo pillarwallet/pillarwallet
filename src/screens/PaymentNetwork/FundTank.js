@@ -29,6 +29,7 @@ import isEmpty from 'lodash.isempty';
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { estimateAccountDepositTokenTransactionAction } from 'actions/etherspotActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -58,11 +59,6 @@ import {
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Assets, Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
-import {
-  fetchAccountAssetsBalancesAction,
-  fetchAssetsBalancesAction,
-} from 'actions/assetsActions';
-import { fetchERC20Balance } from 'services/assets';
 
 
 type Props = {
