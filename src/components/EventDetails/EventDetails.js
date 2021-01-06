@@ -647,6 +647,45 @@ export class EventDetail extends React.Component<Props> {
     this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
   }
 
+  getLiquidityEventButtons = (buttonTitle: string, pool: LiquidityPool) => {
+    return [{
+      secondary: true,
+      title: buttonTitle,
+      onPress: () => this.goToLiquidityPool(pool),
+    }];
+  }
+
+  renderLiquidityPoolsExchange = (
+    topTokens: {name: string, symbol: string}[],
+    topTokensAmounts: number[],
+    bottomTokens: {name: string, symbol: string }[],
+    bottomTokensAmounts: number[],
+  ) => {
+    return (
+      <View style={{ width: '100%' }}>
+        {topTokens.map((token, index) => (
+          <Row>
+            <BaseText regular secondary>{token.name}</BaseText>
+            <BaseText regular>
+              {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
+            </BaseText>
+          </Row>
+              ))}
+        <Spacing h={16} />
+        <Divider />
+        <Spacing h={16} />
+        {bottomTokens.map((token, index) => (
+          <Row>
+            <BaseText regular secondary>{token.name}</BaseText>
+            <BaseText fontSize={20} positive>
+              {getFormattedValue(formatAmount(bottomTokensAmounts[index]), token.symbol, { isPositive: true })}
+            </BaseText>
+          </Row>
+        ))}
+      </View>
+    );
+  }
+
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return t('button.referFriends');
@@ -1130,33 +1169,9 @@ export class EventDetail extends React.Component<Props> {
           ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
         );
         eventData = {
-          buttons: [{
-            secondary: true,
-            title: t('button.addMoreLiquidity'),
-            onPress: () => this.goToLiquidityPool(pool),
-          }],
+          buttons: this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
-          customActionTitle: (
-            <View style={{ width: '100%' }}>
-              {tokensData.map((token, index) => (
-                <Row>
-                  <BaseText regular secondary>{token.name}</BaseText>
-                  <BaseText regular>
-                    {getFormattedValue(formatAmount(tokenAmounts[index]), token.symbol, { isPositive: false })}
-                  </BaseText>
-                </Row>
-              ))}
-              <Spacing h={16} />
-              <Divider />
-              <Spacing h={16} />
-              <Row>
-                <BaseText regular>{pool.name}</BaseText>
-                <BaseText fontSize={20} positive>
-                  {getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true })}
-                </BaseText>
-              </Row>
-            </View>
-          ),
+          customActionTitle: this.renderLiquidityPoolsExchange(tokensData, tokenAmounts, [pool], [amount]),
         };
         break;
       }
@@ -1166,44 +1181,16 @@ export class EventDetail extends React.Component<Props> {
           ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
         );
         eventData = {
-          buttons: [{
-            secondary: true,
-            title: t('button.removeMoreLiquidity'),
-            onPress: () => this.goToLiquidityPool(pool),
-          }],
+          buttons: this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
-          customActionTitle: (
-            <View style={{ width: '100%' }}>
-              <Row>
-                <BaseText regular>{pool.name}</BaseText>
-                <BaseText regular>
-                  {getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false })}
-                </BaseText>
-              </Row>
-              <Spacing h={16} />
-              <Divider />
-              <Spacing h={16} />
-              {tokensData.map((token, index) => (
-                <Row>
-                  <BaseText regular secondary>{token.name}</BaseText>
-                  <BaseText fontSize={20} positive>
-                    {getFormattedValue(formatAmount(tokenAmounts[index]), token.symbol, { isPositive: true })}
-                  </BaseText>
-                </Row>
-              ))}
-            </View>
-          ),
+          customActionTitle: this.renderLiquidityPoolsExchange([pool], [amount], tokensData, tokenAmounts),
         };
         break;
       }
       case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
         const { pool } = event.extra;
         eventData = {
-          buttons: [{
-            secondary: true,
-            title: t('button.stakeMoreLiquidity'),
-            onPress: () => this.goToLiquidityPool(pool),
-          }],
+          buttons: this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
         };
         break;
@@ -1211,11 +1198,7 @@ export class EventDetail extends React.Component<Props> {
       case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
         const { pool } = event.extra;
         eventData = {
-          buttons: [{
-            secondary: true,
-            title: t('button.unstakeMoreLiquidity'),
-            onPress: () => this.goToLiquidityPool(pool),
-          }],
+          buttons: this.getLiquidityEventButtons(t('button.unstakeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
         };
         break;
@@ -1223,11 +1206,7 @@ export class EventDetail extends React.Component<Props> {
       case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
         const { pool } = event.extra;
         eventData = {
-          buttons: [{
-            secondary: true,
-            title: t('button.claimMoreRewards'),
-            onPress: () => this.goToLiquidityPool(pool),
-          }],
+          buttons: this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool),
           fee: this.getFeeLabel(event),
         };
         break;

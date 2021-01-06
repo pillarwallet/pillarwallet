@@ -398,7 +398,7 @@ const LiquidityPoolDashboard = ({
               const formattedQuantity = formatAmount(quantity);
 
               return (
-                <View>
+                <View key={tokenSymbol}>
                   <StretchedRow>
                     <Row>
                       <AllocationIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }} />

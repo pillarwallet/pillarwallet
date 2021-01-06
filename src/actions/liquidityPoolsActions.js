@@ -139,7 +139,18 @@ export const calculateAddLiquidityTransactionEstimateAction = (
       tokenAmounts,
       poolTokenAmount,
       tokensAssets,
-    );
+    ).catch(error => {
+      reportErrorLog("Liquidity pools service failed: can't create add liquidity transaction", { error });
+      return null;
+    });
+
+    if (!addLiquidityTransactions) {
+      Toast.show({
+        message: t('toast.cannotAddLiquidity'),
+        emoji: 'hushed',
+        supportLink: true,
+      });
+    }
 
     const sequentialTransactions = addLiquidityTransactions
       .slice(1)
@@ -176,7 +187,18 @@ export const calculateStakeTransactionEstimateAction = (
       getAccountAddress(smartWalletAccount),
       tokenAmount,
       tokenAsset,
-    );
+    ).catch(error => {
+      reportErrorLog("Liquidity pools service failed: can't create stake transaction", { error });
+      return null;
+    });
+
+    if (!stakeTransactions) {
+      Toast.show({
+        message: t('toast.cannotStakeTokens'),
+        emoji: 'hushed',
+        supportLink: true,
+      });
+    }
 
     const sequentialTransactions = stakeTransactions
       .slice(1)
@@ -236,7 +258,18 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
       tokenAmount,
       poolToken,
       tokensAssets,
-    );
+    ).catch(error => {
+      reportErrorLog("Liquidity pools service failed: can't create remove liquidity transaction", { error });
+      return null;
+    });
+
+    if (!removeLiquidityTransactions) {
+      Toast.show({
+        message: t('toast.cannotRemoveLiquidity'),
+        emoji: 'hushed',
+        supportLink: true,
+      });
+    }
 
     const sequentialTransactions = removeLiquidityTransactions
       .slice(1)
@@ -274,8 +307,6 @@ export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPo
   };
 };
 
-export const setShownStakingEnabledModalAction = (poolName: string) => {
-  return (dispatch: Dispatch) => {
-    dispatch({ type: SET_SHOWN_STAKING_ENABLED_MODAL, payload: poolName });
-  };
+export const setShownStakingEnabledModalAction = (poolName: string) => (dispatch: Dispatch) => {
+  dispatch({ type: SET_SHOWN_STAKING_ENABLED_MODAL, payload: poolName });
 };

@@ -56,7 +56,7 @@ const Stats = ({ stats }: Props) => {
       <Row>
         <Spacing w={4} />
         {stats.map(({ title, value, iconUrl }) => (
-          <>
+          <Row key={title}>
             <Spacing w={16} />
             <Card>
               <Row>
@@ -72,7 +72,7 @@ const Stats = ({ stats }: Props) => {
               </Row>
               <BaseText secondary small>{title}</BaseText>
             </Card>
-          </>
+          </Row>
         ))}
       </Row>
     </ScrollView>
