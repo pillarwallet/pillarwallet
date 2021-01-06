@@ -44,6 +44,7 @@ type CurrentEnvironment = {
 // switchable environments constants
 const envVars = {
   production: {
+    ENVIRONMENT: PRODUCTION,
     TX_DETAILS_URL: 'https://etherscan.io/tx/',
     NETWORK_PROVIDER: 'homestead',
     COLLECTIBLES_NETWORK: 'homestead',
@@ -71,7 +72,7 @@ const envVars = {
     SYNTHETIX_RATES_ADDRESS: '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80',
     UNISWAP_CACHED_SUBGRAPH_ASSETS_URL: 'https://pillar-prod-token-cacher-files.s3.eu-west-2.amazonaws.com/uniswap.csv',
     WBTC_CURVE: '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
-    WBTC_FROM_ADDRESS: '0xaB669FA91ADDAF30a5AeBEe71d663acbA12b7001',
+    WBTC_FROM_ADDRESS: '0x73ab2bd10ad10f7174a1ad5afae3ce3d991c5047',
     WBTC_FEES_API: 'https://lightnode-mainnet.herokuapp.com',
     ETHPLORER_API_URL: 'https://api.ethplorer.io',
     RARI_SUBGRAPH_NAME: 'graszka22/rari-transactions',
@@ -84,6 +85,7 @@ const envVars = {
     ...devOptions,
   },
   staging: {
+    ENVIRONMENT: STAGING,
     TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
