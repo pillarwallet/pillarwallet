@@ -133,6 +133,7 @@ const ClaimRewardReviewScreen = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.claimRewardsReview') }] }}
+      putContentInScrollView
     >
       <MainWrapper>
         <TokenReviewSummary

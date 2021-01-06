@@ -241,6 +241,7 @@ const AddLiquidityScreen = ({
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidity') }] }}
       inset={{ bottom: 0 }}
+      putContentInScrollView
       footer={(
         <FooterInner>
           <FeeInfo>

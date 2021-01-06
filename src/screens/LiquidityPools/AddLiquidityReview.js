@@ -122,6 +122,7 @@ const AddLiquidityReviewScreen = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.addLiquidityReview') }] }}
+      putContentInScrollView
     >
       <MainWrapper>
         <TokenReviewSummary

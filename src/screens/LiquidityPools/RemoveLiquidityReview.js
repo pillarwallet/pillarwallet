@@ -122,6 +122,7 @@ const RemoveLiquidityReviewScreen = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidityReview') }] }}
+      putContentInScrollView
     >
       <MainWrapper>
         <TokenReviewSummary

@@ -101,6 +101,7 @@ const StakeTokensReviewScreen = ({
     <ContainerWithHeader
       navigation={navigation}
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.stakeTokensReview') }] }}
+      putContentInScrollView
     >
       <MainWrapper>
         <TokenReviewSummary
