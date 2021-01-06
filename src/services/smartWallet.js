@@ -516,7 +516,7 @@ class SmartWallet {
         estimateMethodParams = [
           ...estimateMethodParams,
           tx.recipient,
-          ethToWei(tx[0].value || 0),
+          ethToWei(tx.value || 0),
           tx.data,
         ];
       });

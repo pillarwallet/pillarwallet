@@ -660,12 +660,16 @@ export class EventDetail extends React.Component<Props> {
     topTokensAmounts: number[],
     bottomTokens: {name: string, symbol: string }[],
     bottomTokensAmounts: number[],
+    options: {
+      topTokensSecondary?: boolean,
+      bottomTokensSecondary?: boolean
+    },
   ) => {
     return (
       <View style={{ width: '100%' }}>
         {topTokens.map((token, index) => (
           <Row>
-            <BaseText regular secondary>{token.name}</BaseText>
+            <BaseText regular secondary={options.topTokensSecondary}>{token.name}</BaseText>
             <BaseText regular>
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
             </BaseText>
@@ -676,7 +680,7 @@ export class EventDetail extends React.Component<Props> {
         <Spacing h={16} />
         {bottomTokens.map((token, index) => (
           <Row>
-            <BaseText regular secondary>{token.name}</BaseText>
+            <BaseText regular secondary={options.bottomTokensSecondary}>{token.name}</BaseText>
             <BaseText fontSize={20} positive>
               {getFormattedValue(formatAmount(bottomTokensAmounts[index]), token.symbol, { isPositive: true })}
             </BaseText>
@@ -1171,7 +1175,9 @@ export class EventDetail extends React.Component<Props> {
         eventData = {
           buttons: this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
-          customActionTitle: this.renderLiquidityPoolsExchange(tokensData, tokenAmounts, [pool], [amount]),
+          customActionTitle: this.renderLiquidityPoolsExchange(
+            tokensData, tokenAmounts, [pool], [amount], { topTokensSecondary: true },
+          ),
         };
         break;
       }
@@ -1183,7 +1189,9 @@ export class EventDetail extends React.Component<Props> {
         eventData = {
           buttons: this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool),
           fee: this.getFeeLabel(event),
-          customActionTitle: this.renderLiquidityPoolsExchange([pool], [amount], tokensData, tokenAmounts),
+          customActionTitle: this.renderLiquidityPoolsExchange(
+            [pool], [amount], tokensData, tokenAmounts, { bottomTokensSecondary: true },
+          ),
         };
         break;
       }
