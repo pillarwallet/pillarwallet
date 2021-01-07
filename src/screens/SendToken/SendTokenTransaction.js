@@ -40,6 +40,7 @@ import { isPoolTogetherTag } from 'utils/poolTogether';
 import { isSablierTransactionTag } from 'utils/sablier';
 import { formatUnits, formatAmount, getDecimalPlaces } from 'utils/common';
 import { isRariTransactionTag } from 'utils/rari';
+import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
@@ -52,7 +53,15 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   RARI_DEPOSIT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 import { COLLECTIBLES, DAI } from 'constants/assetsConstants';
 import { EXCHANGE } from 'constants/exchangeConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -198,6 +207,38 @@ class SendTokenTransaction extends React.Component<Props> {
         toastMessage = t('toast.rariClaimRgt', { amount: formattedAmount });
       }
 
+      if (toastMessage) {
+        Toast.show({
+          message: toastMessage,
+          emoji: 'ok_hand',
+          autoClose: true,
+        });
+      }
+      return;
+    }
+
+    if (isLiquidityPoolsTransactionTag(txTag)) {
+      let toastMessage = null;
+      const {
+        extra: {
+          amount, pool,
+        } = {},
+      } = transactionPayload;
+      navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
+      if (txTag === LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsAddLiquidity', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsRemoveLiquidity', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_STAKE_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsStake', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_UNSTAKE_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsUnstake', { value: amount, token: pool.symbol });
+      } else if (txTag === LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION) {
+        toastMessage = t('toast.liquidityPoolsClaimRewards', {
+          value: amount,
+          token: pool.rewards[0].symbol,
+        });
+      }
       if (toastMessage) {
         Toast.show({
           message: toastMessage,

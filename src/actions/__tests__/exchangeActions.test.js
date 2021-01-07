@@ -169,9 +169,6 @@ describe('Exchange actions test', () => {
       }, {
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
         payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
-      }, {
-        type: SET_EXCHANGE_SUPPORTED_ASSETS,
-        payload: [],
       }];
 
       await store.dispatch(getExchangeSupportedAssetsAction());
