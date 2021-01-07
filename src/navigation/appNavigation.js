@@ -125,6 +125,7 @@ import RariTransferScreen from 'screens/Rari/RariTransfer';
 import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
 import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
 import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
+import EtherspotUpgradeScreen from 'screens/EtherspotUpgrade';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -276,6 +277,7 @@ import {
   RARI_CLAIM_RGT,
   RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
+  ARCHANOVA_TO_ETHERSPOT_UPGRADE,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -784,6 +786,7 @@ const AppFlowNavigation = createStackNavigator(
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
     [RARI_FLOW]: rariFlow,
+    [ARCHANOVA_TO_ETHERSPOT_UPGRADE]: EtherspotUpgradeScreen,
   },
   modalTransition,
 );

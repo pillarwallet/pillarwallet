@@ -154,6 +154,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
     await Promise.all(etherspotAccounts.map((account) => {
       const accountExists = backendAccounts.some(({ ethAddress }) => addressesEqual(ethAddress, account.address));
       if (!accountExists) {
+        // TODO: change registerSmartWallet to Etherspot once available in SDK
         return api.registerSmartWallet({
           walletId,
           privateKey,
@@ -378,4 +379,10 @@ export const estimateAccountDepositTokenTransactionAction = (depositAmount: numb
       assetData: mapAssetToAssetData(ppnTokenAsset),
     }));
   };
+};
+
+export const upgradeToEtherspotAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // TODO: create etherspot account similar to importEtherspotAccountsAction and implement onchain migration method when it's developer
+  }
 };

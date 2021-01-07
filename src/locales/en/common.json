@@ -1602,6 +1602,23 @@
     }
   },
 
+  "etherspotContent": {
+    "upgradeContent": {
+      "button": {
+        "upgrade": "Upgrade"
+      },
+      "title": {
+        "enhanceCryptoExperience": "Time to enhance your\ncrypto experience",
+        "whatIsUpgrade": "What is this upgrade?"
+      },
+      "paragraph": {
+        "yourAccountIsBeingUpgraded": "Your account is being upgraded to a\n{MARKETING TERM} Smart Wallet.",
+        "whatIsUpgrade": "In a few words: Pillar is making Ethereum more accessible and laying a foundation for further improvements of Pillar platform.",
+        "upgrade": "This upgrade requires a record on the blockchain. This means, a small Ethereum network fee will be added to the first transaction made with your new {MARKETING TERM} Smart Wallet. \nThe fee will be extremely small thanks to Pillar Etherspot technology. "
+      }
+    }
+  },
+
   "alert": {
     "deleteContact": {
       "title": "Delete {{contactName}}",

@@ -42,6 +42,7 @@ import {
   HOME,
   PIN_CODE_UNLOCK,
   LOGOUT_PENDING,
+  ARCHANOVA_TO_ETHERSPOT_UPGRADE,
 } from 'constants/navigationConstants';
 import { SET_USER, UPDATE_USER } from 'constants/userConstants';
 import { RESET_APP_STATE } from 'constants/authConstants';
@@ -63,6 +64,7 @@ import {
   findFirstEtherspotAccount,
 } from 'utils/accounts';
 import { isTest } from 'utils/environment';
+import { userHasLegacySmartWallet } from 'utils/smartWallet';
 
 // services
 import Storage from 'services/storage';
@@ -243,19 +245,24 @@ export const loginAction = (
         // Dispatch action to try and get the latest remote config values...
         dispatch(loadRemoteConfigAction());
 
+        // offline onboarded or very old user that doesn't have etherspot account,
+        if (!etherspotAccount) {
+          if (userHasLegacySmartWallet(accounts)) {
+            // user has Archanova Smart Wallet, navigate to upgrade screen
+            navigate(NavigationActions.navigate({ routeName: ARCHANOVA_TO_ETHERSPOT_UPGRADE }));
+            return;
+          }
+
+          // no upgrade screen needed, execute soft migration from key based
+          await dispatch(importEtherspotAccountsAction(decryptedPrivateKey));
+        }
+
         // to get exchange supported assets in order to show only supported assets on exchange selectors
         // and show exchange button on supported asset screen only
         dispatch(getExchangeSupportedAssetsAction());
 
-        // offline onboarded or very old user that doesn't have etherspot account, let's create one and migrate safe
-        if (!etherspotAccount) {
-          // this will import and set Smart Wallet as current active account
-          await dispatch(importEtherspotAccountsAction(decryptedPrivateKey));
-        }
-
         dispatch(checkUserENSNameAction());
 
-        // TODO: check archanova smart wallet balance for migration
         dispatch(checkIfKeyBasedWalletHasPositiveBalanceAction());
         dispatch(checkKeyBasedAssetTransferTransactionsAction());
       }
