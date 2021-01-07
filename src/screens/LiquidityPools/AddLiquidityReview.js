@@ -139,7 +139,7 @@ const AddLiquidityReviewScreen = ({
         <Spacing h={28} />
         <Table title={t('liquidityPoolsContent.label.tokenAllocation')}>
           {tokensData.map((token, i) => (
-            <TableRow>
+            <TableRow key={token.symbol}>
               <TableLabel>{token.name}</TableLabel>
               <BaseText regular>
                 {t('tokenValue', { value: formatAmount(tokensValues[i]), token: token.symbol })}{' '}
