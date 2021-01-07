@@ -20879,9 +20879,6 @@ exports[`Storyshots CircleButton all cases 1`] = `
                       "top": -6,
                     },
                     Object {
-                      "opacity": 1,
-                    },
-                    Object {
                       "flex": 0,
                       "height": 148,
                       "width": 148,
@@ -20890,47 +20887,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                 }
                 width={148}
               >
-                <RNSVGGroup
-                  fill={
-                    Array [
-                      0,
-                      4278190080,
-                    ]
-                  }
-                  fillOpacity={1}
-                  fillRule={1}
-                  font={Object {}}
-                  matrix={
-                    Array [
-                      1,
-                      0,
-                      0,
-                      1,
-                      0,
-                      0,
-                    ]
-                  }
-                  opacity={1}
-                  originX={0}
-                  originY={0}
-                  propList={Array []}
-                  rotation={0}
-                  scaleX={1}
-                  scaleY={1}
-                  skewX={0}
-                  skewY={0}
-                  stroke={null}
-                  strokeDasharray={null}
-                  strokeDashoffset={null}
-                  strokeLinecap={0}
-                  strokeLinejoin={0}
-                  strokeMiterlimit={4}
-                  strokeOpacity={1}
-                  strokeWidth={1}
-                  vectorEffect={0}
-                  x={0}
-                  y={0}
-                >
+                <RNSVGGroup>
                   <RNSVGDefs>
                     <RNSVGLinearGradient
                       gradient={
@@ -20941,16 +20898,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="top"
                       x1="0%"
@@ -20967,16 +20915,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="bottom"
                       x1="0%"
@@ -20993,16 +20932,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="left"
                       x1="100%"
@@ -21019,16 +20949,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="right"
                       x1="0%"
@@ -21051,16 +20972,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-left-top"
                       rx="100%"
@@ -21081,16 +20993,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-left-bottom"
                       rx="100%"
@@ -21111,16 +21014,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-right-top"
                       rx="100%"
@@ -21141,16 +21035,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-right-bottom"
                       rx="100%"
@@ -21165,42 +21050,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-left-top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
@@ -21210,42 +21064,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-right-top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
@@ -21255,42 +21078,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-right-bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
@@ -21300,42 +21092,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-left-bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGRect
                     fill={
@@ -21344,41 +21105,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={10}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={0}
                     x={42}
                     y="0"
@@ -21390,41 +21122,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "left",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={0}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={10}
                     x="0"
                     y={42}
@@ -21436,41 +21139,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "right",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={0}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={10}
                     x={74}
                     y={42}
@@ -21482,89 +21156,24 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={10}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={0}
                     x={42}
                     y={74}
                   />
                   <RNSVGPath
                     d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                    fill={
-                      Array [
-                        0,
-                        218562682,
-                      ]
-                    }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
+                    fill={218562682}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -21608,9 +21217,6 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         undefined,
                       ],
                       Object {
-                        "opacity": 1,
-                      },
-                      Object {
                         "flex": 0,
                         "height": 64,
                         "width": 64,
@@ -21621,47 +21227,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                   vbWidth={64}
                   width={64}
                 >
-                  <RNSVGGroup
-                    fill={
-                      Array [
-                        0,
-                        4278190080,
-                      ]
-                    }
-                    fillOpacity={1}
-                    fillRule={1}
-                    font={Object {}}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
-                    propList={Array []}
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
-                  >
+                  <RNSVGGroup>
                     <RNSVGDefs>
                       <RNSVGLinearGradient
                         gradient={
@@ -21672,16 +21238,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                             -854791,
                           ]
                         }
-                        gradientTransform={
-                          Array [
-                            1,
-                            0,
-                            0,
-                            1,
-                            0,
-                            0,
-                          ]
-                        }
+                        gradientTransform={null}
                         gradientUnits={0}
                         name="grad"
                         x1="0"
@@ -21699,43 +21256,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           "grad",
                         ]
                       }
-                      fillOpacity={1}
-                      fillRule={1}
-                      matrix={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
-                      opacity={1}
-                      originX={0}
-                      originY={0}
                       propList={
                         Array [
                           "fill",
                         ]
                       }
                       r={32}
-                      rotation={0}
-                      scaleX={1}
-                      scaleY={1}
-                      skewX={0}
-                      skewY={0}
-                      stroke={null}
-                      strokeDasharray={null}
-                      strokeDashoffset={null}
-                      strokeLinecap={0}
-                      strokeLinejoin={0}
-                      strokeMiterlimit={4}
-                      strokeOpacity={1}
-                      strokeWidth={1}
-                      vectorEffect={0}
-                      x={0}
-                      y={0}
                     />
                   </RNSVGGroup>
                 </RNSVGSvgView>
@@ -21874,9 +21400,6 @@ exports[`Storyshots CircleButton all cases 1`] = `
                       "top": -6,
                     },
                     Object {
-                      "opacity": 1,
-                    },
-                    Object {
                       "flex": 0,
                       "height": 148,
                       "width": 148,
@@ -21885,47 +21408,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                 }
                 width={148}
               >
-                <RNSVGGroup
-                  fill={
-                    Array [
-                      0,
-                      4278190080,
-                    ]
-                  }
-                  fillOpacity={1}
-                  fillRule={1}
-                  font={Object {}}
-                  matrix={
-                    Array [
-                      1,
-                      0,
-                      0,
-                      1,
-                      0,
-                      0,
-                    ]
-                  }
-                  opacity={1}
-                  originX={0}
-                  originY={0}
-                  propList={Array []}
-                  rotation={0}
-                  scaleX={1}
-                  scaleY={1}
-                  skewX={0}
-                  skewY={0}
-                  stroke={null}
-                  strokeDasharray={null}
-                  strokeDashoffset={null}
-                  strokeLinecap={0}
-                  strokeLinejoin={0}
-                  strokeMiterlimit={4}
-                  strokeOpacity={1}
-                  strokeWidth={1}
-                  vectorEffect={0}
-                  x={0}
-                  y={0}
-                >
+                <RNSVGGroup>
                   <RNSVGDefs>
                     <RNSVGLinearGradient
                       gradient={
@@ -21936,16 +21419,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="top"
                       x1="0%"
@@ -21962,16 +21436,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="bottom"
                       x1="0%"
@@ -21988,16 +21453,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="left"
                       x1="100%"
@@ -22014,16 +21470,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="right"
                       x1="0%"
@@ -22046,16 +21493,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-left-top"
                       rx="100%"
@@ -22076,16 +21514,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-left-bottom"
                       rx="100%"
@@ -22106,16 +21535,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-right-top"
                       rx="100%"
@@ -22136,16 +21556,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-right-bottom"
                       rx="100%"
@@ -22160,42 +21571,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-left-top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
@@ -22205,42 +21585,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-right-top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
@@ -22250,42 +21599,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-right-bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
@@ -22295,42 +21613,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-left-bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGRect
                     fill={
@@ -22339,41 +21626,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={10}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={0}
                     x={42}
                     y="0"
@@ -22385,41 +21643,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "left",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={0}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={10}
                     x="0"
                     y={42}
@@ -22431,41 +21660,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "right",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={0}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={10}
                     x={74}
                     y={42}
@@ -22477,89 +21677,24 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={10}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={0}
                     x={42}
                     y={74}
                   />
                   <RNSVGPath
                     d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                    fill={
-                      Array [
-                        0,
-                        458874,
-                      ]
-                    }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
+                    fill={458874}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -22603,9 +21738,6 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         undefined,
                       ],
                       Object {
-                        "opacity": 1,
-                      },
-                      Object {
                         "flex": 0,
                         "height": 64,
                         "width": 64,
@@ -22616,47 +21748,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                   vbWidth={64}
                   width={64}
                 >
-                  <RNSVGGroup
-                    fill={
-                      Array [
-                        0,
-                        4278190080,
-                      ]
-                    }
-                    fillOpacity={1}
-                    fillRule={1}
-                    font={Object {}}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
-                    propList={Array []}
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
-                  >
+                  <RNSVGGroup>
                     <RNSVGDefs>
                       <RNSVGLinearGradient
                         gradient={
@@ -22667,16 +21759,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                             -854791,
                           ]
                         }
-                        gradientTransform={
-                          Array [
-                            1,
-                            0,
-                            0,
-                            1,
-                            0,
-                            0,
-                          ]
-                        }
+                        gradientTransform={null}
                         gradientUnits={0}
                         name="grad"
                         x1="0"
@@ -22694,43 +21777,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           "grad",
                         ]
                       }
-                      fillOpacity={1}
-                      fillRule={1}
-                      matrix={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
-                      opacity={1}
-                      originX={0}
-                      originY={0}
                       propList={
                         Array [
                           "fill",
                         ]
                       }
                       r={32}
-                      rotation={0}
-                      scaleX={1}
-                      scaleY={1}
-                      skewX={0}
-                      skewY={0}
-                      stroke={null}
-                      strokeDasharray={null}
-                      strokeDashoffset={null}
-                      strokeLinecap={0}
-                      strokeLinejoin={0}
-                      strokeMiterlimit={4}
-                      strokeOpacity={1}
-                      strokeWidth={1}
-                      vectorEffect={0}
-                      x={0}
-                      y={0}
                     />
                   </RNSVGGroup>
                 </RNSVGSvgView>
@@ -22870,9 +21922,6 @@ exports[`Storyshots CircleButton all cases 1`] = `
                       "top": -6,
                     },
                     Object {
-                      "opacity": 1,
-                    },
-                    Object {
                       "flex": 0,
                       "height": 148,
                       "width": 148,
@@ -22881,47 +21930,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                 }
                 width={148}
               >
-                <RNSVGGroup
-                  fill={
-                    Array [
-                      0,
-                      4278190080,
-                    ]
-                  }
-                  fillOpacity={1}
-                  fillRule={1}
-                  font={Object {}}
-                  matrix={
-                    Array [
-                      1,
-                      0,
-                      0,
-                      1,
-                      0,
-                      0,
-                    ]
-                  }
-                  opacity={1}
-                  originX={0}
-                  originY={0}
-                  propList={Array []}
-                  rotation={0}
-                  scaleX={1}
-                  scaleY={1}
-                  skewX={0}
-                  skewY={0}
-                  stroke={null}
-                  strokeDasharray={null}
-                  strokeDashoffset={null}
-                  strokeLinecap={0}
-                  strokeLinejoin={0}
-                  strokeMiterlimit={4}
-                  strokeOpacity={1}
-                  strokeWidth={1}
-                  vectorEffect={0}
-                  x={0}
-                  y={0}
-                >
+                <RNSVGGroup>
                   <RNSVGDefs>
                     <RNSVGLinearGradient
                       gradient={
@@ -22932,16 +21941,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="top"
                       x1="0%"
@@ -22958,16 +21958,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="bottom"
                       x1="0%"
@@ -22984,16 +21975,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="left"
                       x1="100%"
@@ -23010,16 +21992,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="right"
                       x1="0%"
@@ -23042,16 +22015,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-left-top"
                       rx="100%"
@@ -23072,16 +22036,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-left-bottom"
                       rx="100%"
@@ -23102,16 +22057,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-right-top"
                       rx="100%"
@@ -23132,16 +22078,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           458874,
                         ]
                       }
-                      gradientTransform={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
+                      gradientTransform={null}
                       gradientUnits={0}
                       name="border-right-bottom"
                       rx="100%"
@@ -23156,42 +22093,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-left-top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 42 0,q 42 0 42 42,h -10,q 0 -32 -32 -32,v -10,z"
@@ -23201,42 +22107,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-right-top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 74 42,h 10,q 0 42 -42 42,v -10,q 32 0 32 -32,z"
@@ -23246,42 +22121,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-right-bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGPath
                     d="M 0 42,q 0 42 42 42,v -10,q -32 0 -32 -32,h -10,z"
@@ -23291,42 +22135,11 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "border-left-bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                   <RNSVGRect
                     fill={
@@ -23335,41 +22148,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "top",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={10}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={0}
                     x={42}
                     y="0"
@@ -23381,41 +22165,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "left",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={0}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={10}
                     x="0"
                     y={42}
@@ -23427,41 +22182,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "right",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={0}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={10}
                     x={74}
                     y={42}
@@ -23473,89 +22199,24 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         "bottom",
                       ]
                     }
-                    fillOpacity={1}
-                    fillRule={1}
                     height={10}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
                     width={0}
                     x={42}
                     y={74}
                   />
                   <RNSVGPath
                     d="M 42 10,h 0,q 32 0 32 32,v 0,q 0 32 -32 32,h -0,q -32 0 -32 -32,v -0,q 0 -32 32 -32"
-                    fill={
-                      Array [
-                        0,
-                        218562682,
-                      ]
-                    }
-                    fillOpacity={1}
-                    fillRule={1}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
+                    fill={218562682}
                     propList={
                       Array [
                         "fill",
                       ]
                     }
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
                   />
                 </RNSVGGroup>
               </RNSVGSvgView>
@@ -23599,9 +22260,6 @@ exports[`Storyshots CircleButton all cases 1`] = `
                         undefined,
                       ],
                       Object {
-                        "opacity": 1,
-                      },
-                      Object {
                         "flex": 0,
                         "height": 64,
                         "width": 64,
@@ -23612,47 +22270,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                   vbWidth={64}
                   width={64}
                 >
-                  <RNSVGGroup
-                    fill={
-                      Array [
-                        0,
-                        4278190080,
-                      ]
-                    }
-                    fillOpacity={1}
-                    fillRule={1}
-                    font={Object {}}
-                    matrix={
-                      Array [
-                        1,
-                        0,
-                        0,
-                        1,
-                        0,
-                        0,
-                      ]
-                    }
-                    opacity={1}
-                    originX={0}
-                    originY={0}
-                    propList={Array []}
-                    rotation={0}
-                    scaleX={1}
-                    scaleY={1}
-                    skewX={0}
-                    skewY={0}
-                    stroke={null}
-                    strokeDasharray={null}
-                    strokeDashoffset={null}
-                    strokeLinecap={0}
-                    strokeLinejoin={0}
-                    strokeMiterlimit={4}
-                    strokeOpacity={1}
-                    strokeWidth={1}
-                    vectorEffect={0}
-                    x={0}
-                    y={0}
-                  >
+                  <RNSVGGroup>
                     <RNSVGDefs>
                       <RNSVGLinearGradient
                         gradient={
@@ -23663,16 +22281,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
                             -854791,
                           ]
                         }
-                        gradientTransform={
-                          Array [
-                            1,
-                            0,
-                            0,
-                            1,
-                            0,
-                            0,
-                          ]
-                        }
+                        gradientTransform={null}
                         gradientUnits={0}
                         name="grad"
                         x1="0"
@@ -23690,43 +22299,12 @@ exports[`Storyshots CircleButton all cases 1`] = `
                           "grad",
                         ]
                       }
-                      fillOpacity={1}
-                      fillRule={1}
-                      matrix={
-                        Array [
-                          1,
-                          0,
-                          0,
-                          1,
-                          0,
-                          0,
-                        ]
-                      }
-                      opacity={1}
-                      originX={0}
-                      originY={0}
                       propList={
                         Array [
                           "fill",
                         ]
                       }
                       r={32}
-                      rotation={0}
-                      scaleX={1}
-                      scaleY={1}
-                      skewX={0}
-                      skewY={0}
-                      stroke={null}
-                      strokeDasharray={null}
-                      strokeDashoffset={null}
-                      strokeLinecap={0}
-                      strokeLinejoin={0}
-                      strokeMiterlimit={4}
-                      strokeOpacity={1}
-                      strokeWidth={1}
-                      vectorEffect={0}
-                      x={0}
-                      y={0}
                     />
                   </RNSVGGroup>
                 </RNSVGSvgView>
@@ -53212,6 +51790,743 @@ exports[`Storyshots Value Input default 1`] = `
               }
               underlineColorAndroid="transparent"
             />
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ValueOverTimeGraph default 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "alignItems": "center",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View>
+        <View
+          onMoveShouldSetResponder={[Function]}
+          onMoveShouldSetResponderCapture={[Function]}
+          onResponderEnd={[Function]}
+          onResponderGrant={[Function]}
+          onResponderMove={[Function]}
+          onResponderReject={[Function]}
+          onResponderRelease={[Function]}
+          onResponderStart={[Function]}
+          onResponderTerminate={[Function]}
+          onResponderTerminationRequest={[Function]}
+          onStartShouldSetResponder={[Function]}
+          onStartShouldSetResponderCapture={[Function]}
+        >
+          <RNSVGSvgView
+            align="none"
+            bbHeight={200}
+            bbWidth={750}
+            focusable={false}
+            height={200}
+            meetOrSlice={0}
+            minX={0}
+            minY={0}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "transparent",
+                  "borderWidth": 0,
+                },
+                Object {
+                  "flex": 0,
+                  "height": 200,
+                  "width": 750,
+                },
+              ]
+            }
+            vbHeight={200}
+            vbWidth={750}
+            width={750}
+          >
+            <RNSVGGroup>
+              <RNSVGForeignObject
+                height={200}
+                width={750}
+                x={20}
+                y={0}
+              >
+                <View
+                  style={
+                    Object {
+                      "backgroundColor": "transparent",
+                      "flex": 1,
+                    }
+                  }
+                >
+                  <Text
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 4,
+                          "position": "absolute",
+                          "top": 140,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    1200.00
+                  </Text>
+                  <Text
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 4,
+                          "position": "absolute",
+                          "top": 100,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    1300.00
+                  </Text>
+                  <Text
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 4,
+                          "position": "absolute",
+                          "top": 60,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    1500.00
+                  </Text>
+                </View>
+              </RNSVGForeignObject>
+              <RNSVGForeignObject
+                height="100%"
+                width="100%"
+                x="0%"
+                y={188}
+              >
+                <View
+                  style={
+                    Object {
+                      "backgroundColor": "transparent",
+                      "flexDirection": "row",
+                      "width": 750,
+                    }
+                  }
+                >
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": -7.5,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Wed
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 93.92857142857143,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Thu
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 195.35714285714286,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Fri
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 296.7857142857143,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Sat
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 398.2142857142857,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Sun
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 499.64285714285717,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Mon
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 601.0714285714286,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Tue
+                  </Text>
+                  <Text
+                    center={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 10,
+                          "lineHeight": 14,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        Object {
+                          "left": 702.5,
+                          "position": "absolute",
+                          "width": 55,
+                        },
+                      ]
+                    }
+                    tiny={true}
+                  >
+                    Wed
+                  </Text>
+                </View>
+              </RNSVGForeignObject>
+              <RNSVGPath
+                d="M43.59524404761905 147.91003719355618 136.72204773478836 109.81519083279409 175.2036626818783 60 254.56589312169314 68.17268486403736 364.42262943121693 96.24970048953406 396.2521900462963 130.0912602392989 480.8482615575397 180 581.1158115906085 152.18736014537052 687.1744728670635 120.06576007668741 730 179.79930373305535"
+                fill={null}
+                propList={
+                  Array [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                    "strokeLinecap",
+                    "strokeLinejoin",
+                  ]
+                }
+                stroke={4289283583}
+                strokeLinecap={1}
+                strokeLinejoin={1}
+                strokeWidth="2.5"
+              />
+              <RNSVGCircle
+                cx={730}
+                cy={179.79930373305535}
+                fill={4289283583}
+                propList={
+                  Array [
+                    "fill",
+                    "stroke",
+                    "strokeWidth",
+                  ]
+                }
+                r="3.5"
+                stroke={4294638330}
+                strokeWidth="2"
+              />
+              <RNSVGPath
+                d="
+            M 730, 169.79930373305535
+            l 5, -7
+            h 31
+            a 4, 4, 0, 0, 0, 4 -4
+            v -32
+            a 4, 4, 0, 0, 0, -4, -4
+            h -72
+            a 4, 4, 0, 0, 0, -4, 4
+            v 32
+            a 4, 4, 0, 0, 0, 4, 4
+            h 31
+            l 5, 7
+            z
+        "
+                fill={4289283583}
+                propList={
+                  Array [
+                    "fill",
+                  ]
+                }
+              />
+              <RNSVGForeignObject
+                height="100%"
+                width={80}
+                x={690}
+                y={122.79930373305535}
+              >
+                <View
+                  style={
+                    Object {
+                      "height": 40,
+                      "justifyContent": "center",
+                      "width": 80,
+                    }
+                  }
+                >
+                  <Text
+                    center={true}
+                    color="#FCFDFF"
+                    small={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#FCFDFF",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlign": "center",
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    2 Sep
+$ 1,066.86
+                  </Text>
+                </View>
+              </RNSVGForeignObject>
+            </RNSVGGroup>
+          </RNSVGSvgView>
+        </View>
+        <View
+          h={24}
+          style={
+            Array [
+              Object {
+                "height": 24,
+                "width": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          style={
+            Array [
+              Object {
+                "flexDirection": "row",
+                "justifyContent": "space-between",
+                "paddingBottom": 0,
+                "paddingLeft": 20,
+                "paddingRight": 20,
+                "paddingTop": 0,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "height": 32,
+                "justifyContent": "center",
+                "opacity": 1,
+                "width": 32,
+              }
+            }
+          >
+            <Text
+              color="#8B939E"
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              graph.timeRangeButtons.day
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "height": 32,
+                "justifyContent": "center",
+                "opacity": 1,
+                "width": 32,
+              }
+            }
+          >
+            <Text
+              color="#a945ff"
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#a945ff",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              graph.timeRangeButtons.week
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "height": 32,
+                "justifyContent": "center",
+                "opacity": 1,
+                "width": 32,
+              }
+            }
+          >
+            <Text
+              color="#8B939E"
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              graph.timeRangeButtons.month
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "height": 32,
+                "justifyContent": "center",
+                "opacity": 1,
+                "width": 32,
+              }
+            }
+          >
+            <Text
+              color="#8B939E"
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              graph.timeRangeButtons.halfYear
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "height": 32,
+                "justifyContent": "center",
+                "opacity": 1,
+                "width": 32,
+              }
+            }
+          >
+            <Text
+              color="#8B939E"
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              graph.timeRangeButtons.year
+            </Text>
+          </View>
+          <View
+            accessible={true}
+            focusable={true}
+            isTVSelectable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "height": 32,
+                "justifyContent": "center",
+                "opacity": 1,
+                "width": 32,
+              }
+            }
+          >
+            <Text
+              color="#8B939E"
+              small={true}
+              style={
+                Array [
+                  Object {
+                    "color": "#8B939E",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlignVertical": "center",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              graph.timeRangeButtons.all
+            </Text>
           </View>
         </View>
       </View>
