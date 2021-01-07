@@ -38,6 +38,7 @@ import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
@@ -155,6 +156,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
       data,
     } = this.transactionDetails;
 
+    if (!to) return;
+
     const value = Number(amount || 0);
 
     const { symbol, decimals } = getAssetDataByAddress(
@@ -233,8 +236,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
           symbol,
           decimals,
         } = transactionPayload;
-
-        if (this.unsupportedTransaction) {
+        if (!to) {
+          Toast.show({ message: t('toast.walkthroughFailed'), emoji: 'hushed' });
+          errorMessage = t('error.transactionFailed.cantCalculateFee');
+        } else if (this.unsupportedTransaction) {
           errorMessage = t('error.walletConnect.assetNotSupported');
         } else if (feeInfo && !isEnoughBalanceForTransactionFee(balances, {
           amount,
