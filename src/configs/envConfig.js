@@ -44,6 +44,7 @@ type CurrentEnvironment = {
 // switchable environments constants
 const envVars = {
   production: {
+    ENVIRONMENT: PRODUCTION,
     TX_DETAILS_URL: 'https://etherscan.io/tx/',
     NETWORK_PROVIDER: 'homestead',
     COLLECTIBLES_NETWORK: 'homestead',
@@ -71,7 +72,7 @@ const envVars = {
     SYNTHETIX_RATES_ADDRESS: '0xda80E6024bC82C9fe9e4e6760a9769CF0D231E80',
     UNISWAP_CACHED_SUBGRAPH_ASSETS_URL: 'https://pillar-prod-token-cacher-files.s3.eu-west-2.amazonaws.com/uniswap.csv',
     WBTC_CURVE: '0x93054188d876f558f4a66B2EF1d97d16eDf0895B',
-    WBTC_FROM_ADDRESS: '0xaB669FA91ADDAF30a5AeBEe71d663acbA12b7001',
+    WBTC_FROM_ADDRESS: '0x73ab2bd10ad10f7174a1ad5afae3ce3d991c5047',
     WBTC_FEES_API: 'https://lightnode-mainnet.herokuapp.com',
     ETHPLORER_API_URL: 'https://api.ethplorer.io',
     RARI_SUBGRAPH_NAME: 'graszka22/rari-transactions',
@@ -80,10 +81,13 @@ const envVars = {
     MSTABLE_VALIDATION_HELPER_CONTRACT_ADDRESS: '0xabcc93c3be238884cc3309c19afd128fafc16911',
     RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS: '0xD291E7a03283640FDc51b121aC401383A46cC623',
     RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS: '0x9C0CaEb986c003417D21A7Daaf30221d61FC1043',
+    UNIPOOL_CONTRACT_ADDRESS: '0x32105017918Cb9CD9A5f21fd6984Ee7DC82B9E7E',
+    UNISWAP_SUBGRAPH_NAME: 'uniswap/uniswap-v2',
     ...buildEnvironment,
     ...devOptions,
   },
   staging: {
+    ENVIRONMENT: STAGING,
     TX_DETAILS_URL: 'https://kovan.etherscan.io/tx/',
     NETWORK_PROVIDER: 'kovan',
     COLLECTIBLES_NETWORK: 'rinkeby',
@@ -120,6 +124,8 @@ const envVars = {
     MSTABLE_VALIDATION_HELPER_CONTRACT_ADDRESS: '0xabcc93c3be238884cc3309c19afd128fafc16911',
     RARI_GOVERNANCE_TOKEN_CONTRACT_ADDRESS: '0xD291E7a03283640FDc51b121aC401383A46cC623',
     RARI_RGT_DISTRIBUTOR_CONTRACT_ADDRESS: '0x9C0CaEb986c003417D21A7Daaf30221d61FC1043',
+    UNIPOOL_CONTRACT_ADDRESS: '0xFfD8C07309d3A3ce473Feb1d98ebF1F3171A83d9',
+    UNISWAP_SUBGRAPH_NAME: 'graszka22/uniswapv2-kovan',
     ...buildEnvironment,
     ...devOptions,
   },

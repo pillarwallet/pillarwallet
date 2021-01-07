@@ -49,6 +49,7 @@ export type AppSettingsReducerState = {
     hideLendingDeposits?: boolean,
     omitPinOnLogin: boolean,
     localisation: ?LocalisationOptions,
+    hideLiquidityPools?: boolean,
   },
   isFetched: boolean,
 };
@@ -84,6 +85,7 @@ export const initialState: AppSettingsReducerState = {
     hideLendingDeposits: false,
     omitPinOnLogin: false,
     localisation: null,
+    hideLiquidityPools: false,
   },
   isFetched: false,
 };

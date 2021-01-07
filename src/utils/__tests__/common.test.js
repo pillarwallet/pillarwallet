@@ -34,6 +34,7 @@ import {
   extractJwtPayload,
   parseTokenAmount,
   getFormattedTransactionFeeValue,
+  formatBigFiatAmount,
 } from '../common';
 
 const gasToken = {
@@ -299,6 +300,21 @@ describe('Common utils', () => {
       const formattedGasToken = getFormattedTransactionFeeValue(txFeeInWei, gasToken);
       expect(formattedEth).toBe('1.2345');
       expect(formattedGasToken).toBe('1.23'); // method has 2 decimals precision for gasToken
+    });
+  });
+
+  describe('formatBigFiatAmount', () => {
+    it('should format 1000 to 1K', () => {
+      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1K');
+    });
+    it('should format 1000000 to 1KK', () => {
+      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1KK');
+    });
+    it('should format 12345.67 to 12K', () => {
+      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12K');
+    });
+    it('should format 123.45 to 123', () => {
+      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123');
     });
   });
 });
