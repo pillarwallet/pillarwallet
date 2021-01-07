@@ -385,12 +385,18 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
         isSynthetixAsset || fetchedAssetsSymbols.includes(symbol))
       : [];
 
-    dispatch({
-      type: SET_EXCHANGE_SUPPORTED_ASSETS,
-      payload: exchangeSupportedAssets,
-    });
+    // there's no point in overwriting if results are empty
+    if (exchangeSupportedAssets?.length) {
+      dispatch({
+        type: SET_EXCHANGE_SUPPORTED_ASSETS,
+        payload: exchangeSupportedAssets,
+      });
+      dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
+    } else {
+      reportErrorLog('Failed to fetch exchange supported assets', null);
+    }
+
     if (callback) callback();
-    dispatch(saveDbAction('exchangeSupportedAssets', { exchangeSupportedAssets }, true));
   };
 };
 
