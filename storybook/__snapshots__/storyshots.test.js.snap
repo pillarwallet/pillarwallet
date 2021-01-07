@@ -5534,6 +5534,1476 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
 </View>
 `;
 
+exports[`Storyshots ActivityFeedItem Liquidity added 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            backgroundColor={null}
+            diameter={48}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
+                  "borderRadius": 24,
+                  "borderWidth": 0,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                  "textAlign": "center",
+                  "width": 48,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  liquidityPoolsContent.label.liquidityAdded
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                liquidityPoolsContent.label.fromWalletToPool
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    undefined,
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Liquidity removed 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            backgroundColor={null}
+            diameter={48}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
+                  "borderRadius": 24,
+                  "borderWidth": 0,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                  "textAlign": "center",
+                  "width": 48,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  liquidityPoolsContent.label.liquidityRemoved
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                liquidityPoolsContent.label.fromPoolToWallet
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    undefined,
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "flex-end",
+                        "paddingLeft": 16,
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    big={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 18,
+                          "lineHeight": 28,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Liquidity rewards claimed 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            backgroundColor={null}
+            diameter={48}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
+                  "borderRadius": 24,
+                  "borderWidth": 0,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                  "textAlign": "center",
+                  "width": 48,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  liquidityPoolsContent.label.rewardsClaimed
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                liquidityPoolsContent.label.fromPoolToWallet
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    undefined,
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  horizontal={true}
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "row",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                      },
+                      Object {
+                        "alignItems": "center",
+                        "flexWrap": "wrap",
+                        "justifyContent": "flex-end",
+                      },
+                    ]
+                  }
+                >
+                  <Text
+                    color="#2AA057"
+                    ellipsizeMode="tail"
+                    numberOfLines={2}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Liquidity staked 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            backgroundColor={null}
+            diameter={48}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
+                  "borderRadius": 24,
+                  "borderWidth": 0,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                  "textAlign": "center",
+                  "width": 48,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  liquidityPoolsContent.label.staked
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Uniswap v2 ETH/PLR
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    undefined,
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  horizontal={true}
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "row",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                      },
+                      Object {
+                        "alignItems": "center",
+                        "flexWrap": "wrap",
+                        "justifyContent": "flex-end",
+                      },
+                    ]
+                  }
+                >
+                  <Text
+                    color={null}
+                    ellipsizeMode="tail"
+                    numberOfLines={2}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots ActivityFeedItem Liquidity unstaked 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "flexDirection": "column",
+            "width": "100%",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        accessible={true}
+        focusable={true}
+        isTVSelectable={true}
+        onClick={[Function]}
+        onResponderGrant={[Function]}
+        onResponderMove={[Function]}
+        onResponderRelease={[Function]}
+        onResponderTerminate={[Function]}
+        onResponderTerminationRequest={[Function]}
+        onStartShouldSetResponder={[Function]}
+        style={
+          Object {
+            "alignItems": "center",
+            "flexDirection": "row",
+            "justifyContent": "center",
+            "opacity": 1,
+            "paddingBottom": 14,
+            "paddingLeft": 20,
+            "paddingRight": 20,
+            "paddingTop": 14,
+            "width": "100%",
+          }
+        }
+      >
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "justifyContent": "center",
+                "paddingRight": 12,
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            backgroundColor={null}
+            diameter={48}
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "backgroundColor": "#EBF0F6",
+                  "borderColor": "#EBF0F6",
+                  "borderRadius": 24,
+                  "borderWidth": 0,
+                  "height": 48,
+                  "justifyContent": "center",
+                  "overflow": "hidden",
+                  "textAlign": "center",
+                  "width": 48,
+                },
+                undefined,
+              ]
+            }
+          />
+        </View>
+        <View
+          style={
+            Object {
+              "flex": 1,
+            }
+          }
+        >
+          <View
+            style={
+              Array [
+                Object {
+                  "alignItems": "center",
+                  "flexDirection": "row",
+                  "justifyContent": "space-between",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+            type="ACTION"
+          >
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-start",
+                    "flexBasis": 0,
+                    "flexDirection": "column",
+                    "flexGrow": 1,
+                    "flexShrink": 1,
+                    "justifyContent": "center",
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "flexGrow": 1,
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "center",
+                      "flexDirection": "row",
+                      "justifyContent": "space-between",
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  ellipsizeMode="tail"
+                  numberOfLines={2}
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "width": "100%",
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                  type="ACTION"
+                >
+                  liquidityPoolsContent.label.unstaked
+                </Text>
+              </View>
+              <View
+                h={2}
+                style={
+                  Array [
+                    Object {
+                      "height": 2,
+                      "width": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              />
+              <Text
+                numberOfLines={2}
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 14,
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Uniswap v2 ETH/PLR
+              </Text>
+            </View>
+            <View
+              rightColumn={true}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "flex-end",
+                    "flexDirection": "column",
+                    "justifyContent": "center",
+                    "marginLeft": 10,
+                    "minHeight": 54,
+                  },
+                  Object {
+                    "maxWidth": "50%",
+                  },
+                ]
+              }
+              type="ACTION"
+            >
+              <View
+                style={
+                  Array [
+                    undefined,
+                    Object {
+                      "flexWrap": "wrap",
+                    },
+                  ]
+                }
+              >
+                <View
+                  horizontal={true}
+                  style={
+                    Array [
+                      Object {
+                        "flexDirection": "row",
+                        "marginBottom": 0,
+                        "marginLeft": 0,
+                        "marginRight": 0,
+                        "marginTop": 0,
+                      },
+                      Object {
+                        "alignItems": "center",
+                        "flexWrap": "wrap",
+                        "justifyContent": "flex-end",
+                      },
+                    ]
+                  }
+                >
+                  <Text
+                    color="#2AA057"
+                    ellipsizeMode="tail"
+                    numberOfLines={2}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 18,
+                            "lineHeight": 28,
+                            "textAlign": "right",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots ActivityFeedItem PPN created 1`] = `
 <View
   style={
@@ -28831,6 +30301,2251 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
 </View>
 `;
 
+exports[`Storyshots EventDetail Liquidity added 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "rgba(0,0,0,0.7)",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "margin": 0,
+            "position": "relative",
+            "zIndex": 10,
+          }
+        }
+      >
+        <View
+          bgColor="#FAFAFA"
+          style={
+            Array [
+              Object {
+                "height": "100%",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": "100%",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            customTheme={
+              Object {
+                "borderRadius": "30px",
+                "padding": 0,
+              }
+            }
+            onLayout={[Function]}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderTopLeftRadius": 30,
+                  "borderTopRightRadius": 30,
+                  "elevation": 1,
+                  "marginHorizontal": 0,
+                  "marginTop": "auto",
+                  "overflow": "hidden",
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Liquidity added
+            </Text>
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              bottomSpacingCut={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": "stretch",
+                    "marginBottom": 32,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                style={
+                  Object {
+                    "width": "100%",
+                  }
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    regular={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    Ethereum
+                  </Text>
+                  <Text
+                    regular={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    regular={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    Pillar
+                  </Text>
+                  <Text
+                    regular={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+                <View
+                  h={16}
+                  style={
+                    Array [
+                      Object {
+                        "height": 16,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "backgroundColor": "#EBF0F6",
+                        "height": 1,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  h={16}
+                  style={
+                    Array [
+                      Object {
+                        "height": 16,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    regular={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    Uniswap v2 ETH/PLR
+                  </Text>
+                  <Text
+                    fontSize={20}
+                    positive={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 20,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "stretch",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                last={false}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                      "width": "100%",
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="secondary"
+                  >
+                    button.addMoreLiquidity
+                  </Text>
+                </View>
+              </View>
+              <View
+                last={true}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "transparent",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="transparent"
+                  >
+                    button.viewOnBlockchain
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots EventDetail Liquidity removed 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "rgba(0,0,0,0.7)",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "margin": 0,
+            "position": "relative",
+            "zIndex": 10,
+          }
+        }
+      >
+        <View
+          bgColor="#FAFAFA"
+          style={
+            Array [
+              Object {
+                "height": "100%",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": "100%",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            customTheme={
+              Object {
+                "borderRadius": "30px",
+                "padding": 0,
+              }
+            }
+            onLayout={[Function]}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderTopLeftRadius": 30,
+                  "borderTopRightRadius": 30,
+                  "elevation": 1,
+                  "marginHorizontal": 0,
+                  "marginTop": "auto",
+                  "overflow": "hidden",
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Liquidity removed
+            </Text>
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              bottomSpacingCut={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": "stretch",
+                    "marginBottom": 32,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                style={
+                  Object {
+                    "width": "100%",
+                  }
+                }
+              >
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    regular={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    Uniswap v2 ETH/PLR
+                  </Text>
+                  <Text
+                    regular={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    negativeTokenValue
+                  </Text>
+                </View>
+                <View
+                  h={16}
+                  style={
+                    Array [
+                      Object {
+                        "height": 16,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "backgroundColor": "#EBF0F6",
+                        "height": 1,
+                        "width": "100%",
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  h={16}
+                  style={
+                    Array [
+                      Object {
+                        "height": 16,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    regular={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    Ethereum
+                  </Text>
+                  <Text
+                    fontSize={20}
+                    positive={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 20,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+                <View
+                  style={
+                    Array [
+                      Object {
+                        "alignItems": "center",
+                        "flexDirection": "row",
+                        "justifyContent": "space-between",
+                      },
+                      undefined,
+                    ]
+                  }
+                >
+                  <Text
+                    regular={true}
+                    secondary={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#8B939E",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 14,
+                          "lineHeight": 22,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    Pillar
+                  </Text>
+                  <Text
+                    fontSize={20}
+                    positive={true}
+                    style={
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 20,
+                          "textAlignVertical": "center",
+                        },
+                        undefined,
+                      ]
+                    }
+                  >
+                    positiveTokenValue
+                  </Text>
+                </View>
+              </View>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "stretch",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                last={false}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                      "width": "100%",
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="secondary"
+                  >
+                    button.removeMoreLiquidity
+                  </Text>
+                </View>
+              </View>
+              <View
+                last={true}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "transparent",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="transparent"
+                  >
+                    button.viewOnBlockchain
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "rgba(0,0,0,0.7)",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "margin": 0,
+            "position": "relative",
+            "zIndex": 10,
+          }
+        }
+      >
+        <View
+          bgColor="#FAFAFA"
+          style={
+            Array [
+              Object {
+                "height": "100%",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": "100%",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            customTheme={
+              Object {
+                "borderRadius": "30px",
+                "padding": 0,
+              }
+            }
+            onLayout={[Function]}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderTopLeftRadius": 30,
+                  "borderTopRightRadius": 30,
+                  "elevation": 1,
+                  "marginHorizontal": 0,
+                  "marginTop": "auto",
+                  "overflow": "hidden",
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Rewards claimed
+            </Text>
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              bottomSpacingCut={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": "stretch",
+                    "marginBottom": 32,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-start",
+                      "flexDirection": "row",
+                      "marginBottom": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  color="#2AA057"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#2AA057",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 24,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                >
+                  + 1,000 PLR
+                </Text>
+              </View>
+              <Text
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                        "textAlign": "center",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Uniswap v2 ETH/PLR
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "stretch",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                last={false}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                      "width": "100%",
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="secondary"
+                  >
+                    button.claimMoreRewards
+                  </Text>
+                </View>
+              </View>
+              <View
+                last={true}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "transparent",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="transparent"
+                  >
+                    button.viewOnBlockchain
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots EventDetail Liquidity staked 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "rgba(0,0,0,0.7)",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "margin": 0,
+            "position": "relative",
+            "zIndex": 10,
+          }
+        }
+      >
+        <View
+          bgColor="#FAFAFA"
+          style={
+            Array [
+              Object {
+                "height": "100%",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": "100%",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            customTheme={
+              Object {
+                "borderRadius": "30px",
+                "padding": 0,
+              }
+            }
+            onLayout={[Function]}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderTopLeftRadius": 30,
+                  "borderTopRightRadius": 30,
+                  "elevation": 1,
+                  "marginHorizontal": 0,
+                  "marginTop": "auto",
+                  "overflow": "hidden",
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Staked
+            </Text>
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              bottomSpacingCut={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": "stretch",
+                    "marginBottom": 32,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-start",
+                      "flexDirection": "row",
+                      "marginBottom": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  style={
+                    Array [
+                      Object {
+                        "color": "#0A1427",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#0A1427",
+                            "fontSize": 24,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                >
+                  - 70 UNI-V2
+                </Text>
+              </View>
+              <Text
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                        "textAlign": "center",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Uniswap v2 ETH/PLR
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "stretch",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                last={false}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                      "width": "100%",
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="secondary"
+                  >
+                    button.stakeMoreLiquidity
+                  </Text>
+                </View>
+              </View>
+              <View
+                last={true}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "transparent",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="transparent"
+                  >
+                    button.viewOnBlockchain
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
+exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
+<View
+  style={
+    Object {
+      "height": "100%",
+    }
+  }
+>
+  <View
+    style={
+      Array [
+        Object {
+          "alignItems": "stretch",
+          "height": "100%",
+          "justifyContent": "flex-start",
+        },
+        undefined,
+      ]
+    }
+  >
+    <View
+      style={
+        Array [
+          Object {
+            "backgroundColor": "rgba(0,0,0,0.7)",
+            "flexBasis": 0,
+            "flexGrow": 1,
+            "flexShrink": 1,
+            "justifyContent": "center",
+          },
+          undefined,
+        ]
+      }
+    >
+      <View
+        style={
+          Object {
+            "margin": 0,
+            "position": "relative",
+            "zIndex": 10,
+          }
+        }
+      >
+        <View
+          bgColor="#FAFAFA"
+          style={
+            Array [
+              Object {
+                "height": "100%",
+                "width": "100%",
+              },
+              undefined,
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Array [
+                Object {
+                  "height": "100%",
+                  "width": "100%",
+                },
+                undefined,
+              ]
+            }
+          />
+          <View
+            customTheme={
+              Object {
+                "borderRadius": "30px",
+                "padding": 0,
+              }
+            }
+            onLayout={[Function]}
+            style={
+              Array [
+                Object {
+                  "backgroundColor": "#FFFFFF",
+                  "borderTopLeftRadius": 30,
+                  "borderTopRightRadius": 30,
+                  "elevation": 1,
+                  "marginHorizontal": 0,
+                  "marginTop": "auto",
+                  "overflow": "hidden",
+                  "paddingBottom": 0,
+                  "paddingLeft": 0,
+                  "paddingRight": 0,
+                  "paddingTop": 0,
+                  "shadowColor": "rgba(0,0,0,.1)",
+                  "shadowOffset": Object {
+                    "height": 2,
+                    "width": 0,
+                  },
+                  "shadowOpacity": 1,
+                  "shadowRadius": 7,
+                },
+                undefined,
+              ]
+            }
+          >
+            <Text
+              style={
+                Array [
+                  Object {
+                    "color": "#0A1427",
+                    "fontFamily": "EuclidCircularB-Regular",
+                    "textAlignVertical": "center",
+                  },
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Medium",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                      },
+                      undefined,
+                    ],
+                  ],
+                ]
+              }
+            >
+              Unstaked
+            </Text>
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              h={20}
+              style={
+                Array [
+                  Object {
+                    "height": 20,
+                    "width": 0,
+                  },
+                  undefined,
+                ]
+              }
+            />
+            <View
+              bottomSpacingCut={0}
+              style={
+                Array [
+                  Object {
+                    "alignItems": "center",
+                    "alignSelf": "stretch",
+                    "marginBottom": 32,
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                style={
+                  Array [
+                    Object {
+                      "alignItems": "flex-start",
+                      "flexDirection": "row",
+                      "marginBottom": 4,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <Text
+                  color="#2AA057"
+                  style={
+                    Array [
+                      Object {
+                        "color": "#2AA057",
+                        "fontFamily": "EuclidCircularB-Regular",
+                        "textAlignVertical": "center",
+                      },
+                      Array [
+                        Object {
+                          "color": "#2AA057",
+                          "fontFamily": "EuclidCircularB-Medium",
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#2AA057",
+                            "fontSize": 24,
+                            "lineHeight": 24,
+                          },
+                          undefined,
+                        ],
+                      ],
+                    ]
+                  }
+                >
+                  + 70 UNI-V2
+                </Text>
+              </View>
+              <Text
+                style={
+                  Array [
+                    Object {
+                      "color": "#0A1427",
+                      "fontFamily": "EuclidCircularB-Regular",
+                      "textAlignVertical": "center",
+                    },
+                    Array [
+                      Object {
+                        "color": "#8B939E",
+                        "fontSize": 16,
+                        "lineHeight": 24,
+                        "textAlign": "center",
+                      },
+                      undefined,
+                    ],
+                  ]
+                }
+              >
+                Uniswap v2 ETH/PLR
+              </Text>
+            </View>
+            <View
+              style={
+                Array [
+                  Object {
+                    "alignSelf": "stretch",
+                  },
+                  undefined,
+                ]
+              }
+            >
+              <View
+                last={false}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 8,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "#EBF0F6",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                      "width": "100%",
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="secondary"
+                  >
+                    button.unstakeMoreLiquidity
+                  </Text>
+                </View>
+              </View>
+              <View
+                last={true}
+                style={
+                  Array [
+                    Object {
+                      "marginBottom": 0,
+                    },
+                    undefined,
+                  ]
+                }
+              >
+                <View
+                  accessible={true}
+                  focusable={true}
+                  isTVSelectable={true}
+                  onClick={[Function]}
+                  onResponderGrant={[Function]}
+                  onResponderMove={[Function]}
+                  onResponderRelease={[Function]}
+                  onResponderTerminate={[Function]}
+                  onResponderTerminationRequest={[Function]}
+                  onStartShouldSetResponder={[Function]}
+                  style={
+                    Object {
+                      "alignItems": "center",
+                      "alignSelf": "auto",
+                      "backgroundColor": "transparent",
+                      "borderRadius": 6,
+                      "flexDirection": "row",
+                      "height": 52,
+                      "justifyContent": "center",
+                      "marginBottom": 0,
+                      "marginLeft": 0,
+                      "marginRight": 0,
+                      "marginTop": 0,
+                      "opacity": 1,
+                      "paddingBottom": 0,
+                      "paddingLeft": 20,
+                      "paddingRight": 20,
+                      "paddingTop": 0,
+                    }
+                  }
+                >
+                  <Text
+                    style={
+                      Array [
+                        Object {
+                          "color": "#0A1427",
+                          "fontFamily": "EuclidCircularB-Regular",
+                          "fontSize": 12,
+                          "lineHeight": 18,
+                          "textAlignVertical": "center",
+                        },
+                        Array [
+                          Object {
+                            "color": "#007AFF",
+                            "fontSize": 16,
+                            "lineHeight": 16,
+                            "marginTop": 2.88,
+                            "textAlign": "center",
+                          },
+                          undefined,
+                        ],
+                      ]
+                    }
+                    variant="transparent"
+                  >
+                    button.viewOnBlockchain
+                  </Text>
+                </View>
+              </View>
+            </View>
+          </View>
+        </View>
+      </View>
+    </View>
+  </View>
+</View>
+`;
+
 exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
 <View
   style={
@@ -31001,16 +34716,36 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                   </Text>
                 </View>
                 <View
+                  h={8}
+                  style={
+                    Array [
+                      Object {
+                        "height": 8,
+                        "width": 0,
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
                   style={
                     Array [
                       Object {
                         "backgroundColor": "#EBF0F6",
                         "height": 1,
-                        "marginBottom": 18,
-                        "marginLeft": 0,
-                        "marginRight": 0,
-                        "marginTop": 8,
                         "width": "100%",
+                      },
+                      undefined,
+                    ]
+                  }
+                />
+                <View
+                  h={18}
+                  style={
+                    Array [
+                      Object {
+                        "height": 18,
+                        "width": 0,
                       },
                       undefined,
                     ]

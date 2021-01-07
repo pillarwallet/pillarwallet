@@ -48,6 +48,8 @@ type Props = {
   extra: string,
   xAxisValuesCount: number,
   theme: Theme,
+  onGestureStart: () => void,
+  onGestureEnd: () => void,
 };
 
 const range = (end: number): number[] => {
@@ -55,7 +57,8 @@ const range = (end: number): number[] => {
 };
 
 const Graph = ({
-  data, width, height, getTooltipContents, getYAxisValue, getXAxisValue, xAxisValuesCount, extra, theme,
+  data, width, height, getTooltipContents, getYAxisValue, getXAxisValue,
+  xAxisValuesCount, extra, theme, onGestureStart, onGestureEnd,
 }: Props) => {
   const [activeDataPoint, setActiveDataPoint] = useState(data.length - 1);
   const safeActiveDataPoint = activeDataPoint >= data.length ? data.length - 1 : activeDataPoint;
@@ -195,13 +198,17 @@ const Graph = ({
     onMoveShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponderCapture: () => true,
     onPanResponderGrant: (evt, gestureState) => {
+      onGestureStart();
       updateActivePoint(gestureState.x0);
     },
     onPanResponderMove: (evt, gestureState) => {
       updateActivePoint(gestureState.moveX);
     },
     onPanResponderTerminationRequest: () => true,
-    onPanResponderRelease: () => true,
+    onPanResponderRelease: () => {
+      onGestureEnd();
+      return true;
+    },
     onPanResponderTerminate: () => true,
     onShouldBlockNativeResponder: () => true,
   });
