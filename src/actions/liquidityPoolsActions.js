@@ -85,8 +85,14 @@ const fetchUnipoolUserDataAction = (unipoolAddress: string) => {
 };
 
 const fetchUniswapPoolDataAction = (poolAddress: string) => {
-  return async (dispatch: Dispatch) => {
-    const poolData = await fetchPoolData(poolAddress)
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    const poolData = await fetchPoolData(poolAddress, getAccountAddress(smartWalletAccount))
       .catch(error => {
         if (error instanceof GraphQueryError) {
           dispatch({

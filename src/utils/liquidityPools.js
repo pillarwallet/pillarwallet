@@ -49,7 +49,7 @@ import type { LiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
 import type { Transaction } from 'models/Transaction';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
-export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
+export const fetchPoolData = async (poolAddress: string, userAddress: string): Promise<Object> => {
   /* eslint-disable i18next/no-literal-string */
   const query = `
     {
@@ -95,6 +95,9 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
         }
       ) {
         hourlyVolumeUSD
+      }
+      liquidityPosition(id: "${poolAddress.toLowerCase()}-${userAddress.toLowerCase()}") {
+        liquidityTokenBalance
       }
     }
   `;
@@ -403,6 +406,7 @@ export const getPoolStats = (
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
     history,
+    userLiquidityTokenBalance: parseFloat(poolData.liquidityPosition?.liquidityTokenBalance) || 0,
   };
 };
 

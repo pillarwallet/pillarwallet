@@ -40,7 +40,7 @@ import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationCon
 
 // utils
 import { formatAmount } from 'utils/common';
-import { isEnoughBalanceForTransactionFee, getBalance } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalRemoveLiquidityAssetValues } from 'utils/liquidityPools';
 
 // selectors
@@ -173,7 +173,7 @@ const AddLiquidityScreen = ({
   const renderTokenInput = (tokenIndex: number) => {
     const poolTokenSymbol = poolTokenData?.symbol;
     if (!poolTokenSymbol) return null;
-    const maxAmountBurned = getBalance(balances, poolTokenSymbol);
+    const maxAmountBurned = poolStats?.userLiquidityTokenBalance || 0;
     const totalAmount = parseFloat(poolStats?.totalSupply);
     const tokenPool = parseFloat(poolStats?.tokensLiquidity[pool.tokensProportions[tokenIndex].symbol]);
 
@@ -237,6 +237,13 @@ const AddLiquidityScreen = ({
     },
   );
 
+  const poolTokenCustomBalances = poolTokenData && {
+    [poolTokenData.symbol]: {
+      balance: poolStats?.userLiquidityTokenBalance,
+      symbol: poolTokenData.symbol,
+    },
+  };
+
   return (
     <ContainerWithHeader
       headerProps={{ centerItems: [{ title: t('liquidityPoolsContent.title.removeLiquidity') }] }}
@@ -276,6 +283,7 @@ const AddLiquidityScreen = ({
           value={poolTokenAmount}
           onValueChange={onPoolTokenAmountChange}
           onFormValid={setPoolTokenFieldValid}
+          customBalances={poolTokenCustomBalances}
         />
         <StyledIcon name="direct" />
         {renderTokenInput(1)}

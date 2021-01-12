@@ -94,7 +94,6 @@ import { combinedCollectiblesHistorySelector } from 'selectors/collectibles';
 import { poolTogetherUserStatsSelector } from 'selectors/poolTogether';
 import { isActiveAccountSmartWalletSelector } from 'selectors/smartWallet';
 import { sablierEventsSelector } from 'selectors/sablier';
-import { accountBalancesSelector } from 'selectors/balances';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -103,7 +102,7 @@ import { mapTransactionsHistory, mapOpenSeaAndBCXTransactionsHistory } from 'uti
 import { resetAppNotificationsBadgeNumber } from 'utils/notifications';
 import { formatAmountDisplay, formatFiat } from 'utils/common';
 import { getPoolStats } from 'utils/liquidityPools';
-import { getBalance, convertUSDToFiat } from 'utils/assets';
+import { convertUSDToFiat } from 'utils/assets';
 
 // models, types
 import type { Account, Accounts } from 'models/Account';
@@ -113,7 +112,7 @@ import type { UserEvent } from 'models/userEvent';
 import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { User } from 'models/User';
-import type { DepositedAsset, Rates, Balances } from 'models/Asset';
+import type { DepositedAsset, Rates } from 'models/Asset';
 import type { Stream } from 'models/Sablier';
 import type { RariPool, Interests } from 'models/RariPool';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
@@ -185,7 +184,6 @@ type Props = {
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   rates: Rates,
   hideLiquidityPools: boolean,
-  balances: Balances,
 };
 
 const RequestsWrapper = styled.View`
@@ -442,8 +440,8 @@ class HomeScreen extends React.Component<Props> {
   }
 
   renderLiquidityPool = ({ item: { pool, poolStats } }) => {
-    const { balances, rates, baseFiatCurrency } = this.props;
-    const tokenBalance = getBalance(balances, pool.symbol);
+    const { rates, baseFiatCurrency } = this.props;
+    const tokenBalance = poolStats.userLiquidityTokenBalance;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return (
       <ListItemWithImage
@@ -501,7 +499,6 @@ class HomeScreen extends React.Component<Props> {
       isFetchingLiquidityPoolsData,
       toggleLiquidityPools,
       liquidityPoolsReducer,
-      balances,
     } = this.props;
 
     const tokenTxHistory = history
@@ -563,8 +560,7 @@ class HomeScreen extends React.Component<Props> {
         pool,
         poolStats: getPoolStats(pool, liquidityPoolsReducer),
       }))
-      .filter(({ pool, poolStats }) =>
-        poolStats && (getBalance(balances, pool.symbol) > 0 || poolStats.stakedAmount > 0));
+      .filter(({ poolStats }) => poolStats && (poolStats.userLiquidityTokenBalance > 0 || poolStats.stakedAmount > 0));
 
     return (
       <React.Fragment>
@@ -838,7 +834,6 @@ const structuredSelector = createStructuredSelector({
   poolTogetherUserStats: poolTogetherUserStatsSelector,
   isSmartWalletActive: isActiveAccountSmartWalletSelector,
   sablierEvents: sablierEventsSelector,
-  balances: accountBalancesSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
