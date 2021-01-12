@@ -23,11 +23,16 @@ import isEmpty from 'lodash.isempty';
 // constants
 import { PLR } from 'constants/assetsConstants';
 
+// utils
+import { getStreamBalance } from 'utils/sablier';
+import { formatUnits } from 'utils/common';
+
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { MixedBalance } from 'models/Asset';
 import type { LendingReducerState } from 'reducers/lendingReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { SablierReducerState } from 'reducers/sablierReducer';
 
 // selectors
 import {
@@ -35,6 +40,7 @@ import {
   activeAccountIdSelector,
   lendingSelector,
   poolTogetherStatsSelector,
+  sablierSelector,
 } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
@@ -93,8 +99,24 @@ const poolTogetherBalanceListSelector = createSelector(
     })),
 );
 
+const sablierBalanceListSelector = createSelector(
+  sablierSelector,
+  ({ incomingStreams }: SablierReducerState): MixedBalance[] => incomingStreams
+    .map<?MixedBalance>(stream => {
+      const { symbol, decimals } = stream.token;
+      if (!symbol || !decimals) return null;
+
+      return {
+        symbol,
+        balance: formatUnits(getStreamBalance(stream), parseInt(decimals, 10)),
+      };
+    })
+    .filter(Boolean),
+);
+
 export const servicesBalanceListSelector = createSelector(
   aaveBalanceListSelector,
   poolTogetherBalanceListSelector,
+  sablierBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );

@@ -83,3 +83,5 @@ export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
 export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
 
 export const lendingSelector = ({ lending }: RootReducerState) => lending;
+
+export const sablierSelector = ({ sablier }: RootReducerState) => sablier;
