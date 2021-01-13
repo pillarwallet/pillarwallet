@@ -273,7 +273,7 @@ export async function getPurchaseTicketTransactions(
   const valueToDeposit = utils.parseUnits(depositAmount.toString(), decimals);
   const data = encodeContractMethod(poolAbi, 'depositPool', [valueToDeposit]);
 
-  let purcharseTicketTransactions = [{
+  let purchaseTicketTransactions = [{
     amount: 0,
     to: poolContractAddress,
     symbol,
@@ -288,7 +288,7 @@ export async function getPurchaseTicketTransactions(
 
   if (!approvedAmountBN || valueToDeposit.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(poolContractAddress, depositAmount, decimals);
-    purcharseTicketTransactions = [
+    purchaseTicketTransactions = [
       {
         from: senderAddress,
         to: tokenContractAddress,
@@ -296,12 +296,12 @@ export async function getPurchaseTicketTransactions(
         amount: 0,
         symbol: ETH,
       },
-      ...purcharseTicketTransactions,
+      ...purchaseTicketTransactions,
     ];
   }
 
-  purcharseTicketTransactions[0] = {
-    ...purcharseTicketTransactions[0],
+  purchaseTicketTransactions[0] = {
+    ...purchaseTicketTransactions[0],
     extra: {
       symbol,
       amount: valueToDeposit,
@@ -310,7 +310,7 @@ export async function getPurchaseTicketTransactions(
     tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
   };
 
-  return purcharseTicketTransactions;
+  return purchaseTicketTransactions;
 }
 
 export function getWithdrawTicketTransaction(withdrawAmount: number, symbol: string) {
