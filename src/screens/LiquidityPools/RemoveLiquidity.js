@@ -325,7 +325,10 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     poolAsset: Asset,
     tokensAssets: Asset[],
     obtainedAssetsValues: number[],
-  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(pool, tokenAmount, poolAsset, tokensAssets, obtainedAssetsValues)), 500),
+  ) => dispatch(
+    calculateRemoveLiquidityTransactionEstimateAction(
+      pool, tokenAmount, poolAsset, tokensAssets, obtainedAssetsValues,
+    )), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);
