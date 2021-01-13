@@ -334,7 +334,7 @@ const LiquidityPoolDashboard = ({
                     />
                   </ButtonWrapper>
                 </Row>
-                {balance === 0 && (
+                {balance === 0 && poolStats.stakedAmount === 0 && (
                   <>
                     <Overlay />
                     <AbsolutePositioning>
