@@ -264,7 +264,7 @@ const LiquidityPoolsScreen = ({
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
         <ListItemWithImage
           label={pool.name}
-          subtext={t('tokenValue', { token: poolToken.symbol, value: balance })}
+          subtext={t('tokenValue', { token: poolToken.symbol, value: formatAmount(balance) })}
           itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
