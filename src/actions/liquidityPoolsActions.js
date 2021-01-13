@@ -61,6 +61,11 @@ const fetchUnipoolUserDataAction = (unipoolAddress: string) => {
       getEarnedAmount(unipoolAddress, getAccountAddress(smartWalletAccount)),
     ]).catch(error => {
       reportErrorLog('Unipool service failed', { error });
+      Toast.show({
+        message: t('toast.poolDataFetchFailed'),
+        emoji: 'hushed',
+        supportLink: true,
+      });
       return [];
     });
 
@@ -113,7 +118,9 @@ export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
   return async (dispatch: Dispatch) => {
     dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: true });
     await Promise.all(pools.map(async pool => {
-      await dispatch(fetchUnipoolUserDataAction(pool.unipoolAddress));
+      if (pool.rewardsEnabled) {
+        await dispatch(fetchUnipoolUserDataAction(pool.unipoolAddress));
+      }
       await dispatch(fetchUniswapPoolDataAction(pool.uniswapPairAddress));
     }));
     dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: false });
