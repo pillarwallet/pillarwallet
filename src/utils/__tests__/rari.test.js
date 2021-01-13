@@ -297,6 +297,9 @@ describe('Rari utils', () => {
           EthersBigNumber.from('1230000000000000000'),
         ]),
       );
+
+      jest.spyOn(rariService, 'getAccountDepositInUSDBN')
+        .mockImplementation(() => EthersBigNumber.from('10000000000000000000'));
     });
 
     afterAll(() => {
