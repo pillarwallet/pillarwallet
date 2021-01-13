@@ -24,7 +24,7 @@ import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 
 // constants
-import { DAI } from 'constants/assetsConstants';
+import { DAI, ETH } from 'constants/assetsConstants';
 import { POOLTOGETHER_WITHDRAW_TRANSACTION, POOLTOGETHER_DEPOSIT_TRANSACTION } from 'constants/poolTogetherConstants';
 
 // utils
@@ -40,7 +40,7 @@ import USDC_ABI from 'abi/USDC.json';
 import type { PoolInfo } from 'models/PoolTogether';
 
 // services
-import { encodeContractMethod } from './assets';
+import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from './assets';
 import { callSubgraph } from './theGraph';
 
 
@@ -260,73 +260,48 @@ export async function getPoolTogetherInfo(symbol: string, address: string): Prom
   };
 }
 
-export function getApproveTransaction(symbol: string) {
-  const {
-    tokenContractAddress: contractAddress,
-    poolContractAddress,
-    unitType: decimals,
-    tokenABI,
-  } = getPoolTogetherTokenContract(symbol);
-  const rawValue = 1000000000;
-  const valueToApprove = utils.parseUnits(rawValue.toString(), decimals);
-  const data = encodeContractMethod(tokenABI, 'approve', [poolContractAddress, valueToApprove]);
-
-  return {
-    amount: 0,
-    to: contractAddress,
-    symbol,
-    contractAddress,
-    decimals,
-    data,
-    extra: {
-      poolTogetherApproval: {
-        symbol,
-      },
-    },
-  };
-}
-
-export const checkPoolAllowance = async (symbol: string, address: string): Promise<?boolean> => {
-  const {
-    poolContractAddress,
-    tokenContractAddress: contractAddress,
-    tokenContract: contract,
-  } = getPoolTogetherTokenContract(symbol);
-  let hasAllowance = false;
-  try {
-    const allowanceResult = await contract.allowance(address, poolContractAddress);
-    if (allowanceResult) {
-      hasAllowance = allowanceResult.toString() !== '0';
-    }
-  } catch (e) {
-    reportErrorLog('Error checking PoolTogether Allowance', {
-      address,
-      poolContractAddress,
-      contractAddress,
-      symbol,
-      message: e.message,
-    });
-    return null;
-  }
-  return hasAllowance;
-};
-
-export function getPurchaseTicketTransaction(depositAmount: number, symbol: string) {
+export async function getPurchaseTicketTransactions(
+  senderAddress: string, depositAmount: number, symbol: string,
+): Promise<Object[]> {
   const {
     poolAbi,
     unitType: decimals,
     poolContractAddress,
+    tokenContractAddress,
+    tokenABI,
   } = getPoolTogetherTokenContract(symbol);
   const valueToDeposit = utils.parseUnits(depositAmount.toString(), decimals);
   const data = encodeContractMethod(poolAbi, 'depositPool', [valueToDeposit]);
 
-  return {
+  let purcharseTicketTransactions = [{
     amount: 0,
     to: poolContractAddress,
     symbol,
-    poolContractAddress,
     decimals,
     data,
+  }];
+
+  const erc20Contract = getContract(tokenContractAddress, tokenABI);
+  const approvedAmountBN = erc20Contract
+    ? await erc20Contract.allowance(senderAddress, poolContractAddress)
+    : null;
+
+  if (!approvedAmountBN || valueToDeposit.gt(approvedAmountBN)) {
+    const approveTransactionData = buildERC20ApproveTransactionData(poolContractAddress, depositAmount, decimals);
+    purcharseTicketTransactions = [
+      {
+        from: senderAddress,
+        to: tokenContractAddress,
+        data: approveTransactionData,
+        amount: 0,
+        symbol: ETH,
+      },
+      ...purcharseTicketTransactions,
+    ];
+  }
+
+  purcharseTicketTransactions[0] = {
+    ...purcharseTicketTransactions[0],
     extra: {
       symbol,
       amount: valueToDeposit,
@@ -334,6 +309,8 @@ export function getPurchaseTicketTransaction(depositAmount: number, symbol: stri
     },
     tag: POOLTOGETHER_DEPOSIT_TRANSACTION,
   };
+
+  return purcharseTicketTransactions;
 }
 
 export function getWithdrawTicketTransaction(withdrawAmount: number, symbol: string) {
@@ -349,7 +326,6 @@ export function getWithdrawTicketTransaction(withdrawAmount: number, symbol: str
     amount: 0,
     to: poolContractAddress,
     symbol,
-    poolContractAddress,
     decimals,
     data,
     extra: {

@@ -44,7 +44,6 @@ import { isLiquidityPoolsTransactionTag } from 'utils/liquidityPools';
 
 // actions
 import { setDismissTransactionAction } from 'actions/exchangeActions';
-import { setDismissApproveAction, setExecutingApproveAction } from 'actions/poolTogetherActions';
 
 // constants
 import {
@@ -76,9 +75,6 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   executingExchangeTransaction: boolean,
   setDismissExchangeTransaction: Function,
-  setDismissPoolTogetherApprove: Function,
-  setExecutingPoolTogetherApprove: Function,
-  poolApproveExecuting: { [string]: boolean | string },
 };
 
 const animationSuccess = require('assets/animations/transactionSentConfirmationAnimation.json');
@@ -149,24 +145,12 @@ class SendTokenTransaction extends React.Component<Props> {
       navigation,
       executingExchangeTransaction,
       setDismissExchangeTransaction,
-      setDismissPoolTogetherApprove,
-      setExecutingPoolTogetherApprove,
-      poolApproveExecuting,
     } = this.props;
     if (executingExchangeTransaction) {
       setDismissExchangeTransaction();
     }
 
-    const { isSuccess, transactionPayload, txHash = null } = navigation.state.params;
-
-    const poolToken = transactionPayload?.extra?.poolTogetherApproval?.symbol;
-    if (poolToken && !poolApproveExecuting[poolToken]) {
-      if (isSuccess && txHash) {
-        setExecutingPoolTogetherApprove(poolToken, txHash);
-      } else {
-        setDismissPoolTogetherApprove(poolToken);
-      }
-    }
+    const { isSuccess, transactionPayload } = navigation.state.params;
 
     const txTag = transactionPayload?.tag || '';
     if (isSuccess && isPoolTogetherTag(txTag)) {
@@ -348,17 +332,12 @@ class SendTokenTransaction extends React.Component<Props> {
 
 const mapStateToProps = ({
   exchange: { data: { executingTransaction: executingExchangeTransaction } },
-  poolTogether: { poolApproveExecuting },
 }: RootReducerState): $Shape<Props> => ({
   executingExchangeTransaction,
-  poolApproveExecuting,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setDismissExchangeTransaction: () => dispatch(setDismissTransactionAction()),
-  setDismissPoolTogetherApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
-  setExecutingPoolTogetherApprove:
-    (symbol: string, txHash: string) => dispatch(setExecutingApproveAction(symbol, txHash)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(SendTokenTransaction);
