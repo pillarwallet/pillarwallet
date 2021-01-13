@@ -100,6 +100,7 @@ const RemoveLiquidityReviewScreen = ({
       poolTokenValue,
       poolToken,
       obtainedTokensData,
+      obtainedTokensValues,
       feeInfo?.fee,
     );
 

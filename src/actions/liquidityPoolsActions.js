@@ -85,8 +85,14 @@ const fetchUnipoolUserDataAction = (unipoolAddress: string) => {
 };
 
 const fetchUniswapPoolDataAction = (poolAddress: string) => {
-  return async (dispatch: Dispatch) => {
-    const poolData = await fetchPoolData(poolAddress)
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+    } = getState();
+    const smartWalletAccount = findFirstSmartAccount(accounts);
+    if (!smartWalletAccount) return;
+
+    const poolData = await fetchPoolData(poolAddress, getAccountAddress(smartWalletAccount))
       .catch(error => {
         if (error instanceof GraphQueryError) {
           dispatch({
@@ -251,6 +257,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
   tokenAmount: number,
   poolToken: Asset,
   tokensAssets: Asset[],
+  obtainedTokensAmounts: number[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -265,6 +272,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
       tokenAmount,
       poolToken,
       tokensAssets,
+      obtainedTokensAmounts,
     ).catch(error => {
       reportErrorLog("Liquidity pools service failed: can't create remove liquidity transaction", { error });
       return null;
