@@ -192,6 +192,7 @@ export const getAddLiquidityTransactions = async (
     extra: {
       amount: poolTokenAmount,
       pool,
+      tokenAmounts,
     },
     txFeeInWei,
   };
@@ -205,6 +206,7 @@ export const getRemoveLiquidityTransactions = async (
   poolTokenAmount: number,
   poolToken: Asset,
   tokensAssets: Asset[],
+  obtainedTokensAmounts: number[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
   const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
@@ -266,8 +268,9 @@ export const getRemoveLiquidityTransactions = async (
     ...removeLiquidityTransactions[0],
     tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
     extra: {
-      amoun: poolTokenAmount,
+      amount: poolTokenAmount,
       pool,
+      tokenAmounts: obtainedTokensAmounts,
     },
     txFeeInWei,
   };

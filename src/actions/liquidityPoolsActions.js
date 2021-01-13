@@ -257,6 +257,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
   tokenAmount: number,
   poolToken: Asset,
   tokensAssets: Asset[],
+  obtainedTokensAmounts: number[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -271,6 +272,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
       tokenAmount,
       poolToken,
       tokensAssets,
+      obtainedTokensAmounts,
     ).catch(error => {
       reportErrorLog("Liquidity pools service failed: can't create remove liquidity transaction", { error });
       return null;

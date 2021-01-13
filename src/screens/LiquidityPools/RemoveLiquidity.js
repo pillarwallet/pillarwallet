@@ -69,7 +69,8 @@ type Props = {
     pool: LiquidityPool,
     tokenAmount: number,
     poolAsset: Asset,
-    erc20Token: Asset,
+    tokensAssets: Asset[],
+    obtainedAssetsValues: number[],
   ) => void,
   balances: Balances,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
@@ -141,6 +142,7 @@ const AddLiquidityScreen = ({
       parseFloat(poolTokenAmount),
       poolTokenData,
       tokensData,
+      obtainedAssetsValues.map(v => parseFloat(v)),
     );
   }, [poolTokenAmount, obtainedTokenFieldsValid, poolTokenFieldValid]);
 
@@ -322,7 +324,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
     tokenAmount: number,
     poolAsset: Asset,
     tokensAssets: Asset[],
-  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(pool, tokenAmount, poolAsset, tokensAssets)), 500),
+    obtainedAssetsValues: number[],
+  ) => dispatch(calculateRemoveLiquidityTransactionEstimateAction(pool, tokenAmount, poolAsset, tokensAssets, obtainedAssetsValues)), 500),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);
