@@ -39,11 +39,15 @@ import { LIQUIDITY_POOLS_STAKE_REVIEW } from 'constants/navigationConstants';
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
+// utils
+import { getPoolStats } from 'utils/liquidityPools';
+
 // types
 import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 
 type Props = {
@@ -58,6 +62,7 @@ type Props = {
     tokenAmount: number,
     tokenAsset: Asset,
   ) => void,
+  liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
 
 const MainContainer = styled.View`
@@ -83,12 +88,14 @@ const StakeTokensScreen = ({
   estimateErrorMessage,
   resetEstimateTransaction,
   calculateStakeTransactionEstimate,
+  liquidityPoolsReducer,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
   }, []);
 
   const { pool } = navigation.state.params;
+  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
   const assetData = supportedAssets.find(asset => asset.symbol === pool.symbol);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
@@ -113,6 +120,13 @@ const StakeTokensScreen = ({
     LIQUIDITY_POOLS_STAKE_REVIEW,
     { amount: assetValue, poolToken: assetData, pool },
   );
+
+  const poolTokenCustomBalances = {
+    [pool.symbol]: {
+      balance: poolStats?.userLiquidityTokenBalance,
+      symbol: pool?.symbol,
+    },
+  };
 
   return (
     <ContainerWithHeader
@@ -152,6 +166,7 @@ const StakeTokensScreen = ({
           value={assetValue}
           onValueChange={setAssetValue}
           onFormValid={setIsValid}
+          customBalances={poolTokenCustomBalances}
         />
       </MainContainer>
     </ContainerWithHeader>
@@ -161,11 +176,13 @@ const StakeTokensScreen = ({
 const mapStateToProps = ({
   assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
+  liquidityPools: liquidityPoolsReducer,
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
+  liquidityPoolsReducer,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
