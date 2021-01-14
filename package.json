@@ -1,6 +1,6 @@
 {
   "name": "pillarwallet",
-  "version": "0.1.1",
+  "version": "2.30.2",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -120,7 +120,7 @@
     "react-native-indicators": "^0.17.0",
     "react-native-intercom": "^13.1.0",
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
-    "react-native-keychain": "^6.0.0",
+    "react-native-keychain": "^6.2.0",
     "react-native-level-fs": "^3.0.0",
     "react-native-linear-gradient": "2.5.4",
     "react-native-localize": "^1.4.0",
