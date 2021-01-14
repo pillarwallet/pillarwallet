@@ -52,7 +52,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
 import { calculateAmountToBuy } from 'utils/exchange';
 
@@ -122,7 +122,7 @@ export const takeOfferAction = (
       const orderAmountBN = new BigNumber(order.expectedOutput);
       // round both values and stop swap if order < offer
       if (offerAmountBN.toFixed(8) > orderAmountBN.toFixed(8)) {
-        reportErrorLog('Offer output amount and order output amount diverged');
+        reportLog('Offer output amount and order output amount diverged');
         Toast.show({
           message: t('error.exchange.exchangeFailed'),
           emoji: 'hushed',
@@ -131,7 +131,6 @@ export const takeOfferAction = (
         return;
       }
     }
-
 
     const { address: fromAssetAddress } = fromAsset;
     const { decimals: fromAssetDecimals } = fromAsset;
