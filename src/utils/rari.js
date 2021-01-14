@@ -36,7 +36,7 @@ import {
   RARI_TRANSFER_TRANSACTION,
   RARI_POOLS_ARRAY,
 } from 'constants/rariConstants';
-import { getAccountDepositInUSDBN } from 'services/rari';
+import { getAccountDepositBN } from 'services/rari';
 import { reportErrorLog, parseTokenBigNumberAmount, scaleBN, getEthereumProvider } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
@@ -367,7 +367,7 @@ export const getRariWithdrawTransactionData = async (
 ) => {
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
   if (!balancesAndPrices) return null;
-  const senderUsdBalance = await getAccountDepositInUSDBN(rariPool, senderAddress);
+  const senderUsdBalance = await getAccountDepositBN(rariPool, senderAddress);
   if (!senderUsdBalance) return null;
 
   const [currencies, , , , prices] = balancesAndPrices;
@@ -708,7 +708,7 @@ We take user's deposit in USD and:
 And there can be several exchanges too like in withdraw transaction logic.
 */
 export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, senderAddress: string) => {
-  const senderUsdBalance = await getAccountDepositInUSDBN(rariPool, senderAddress);
+  const senderUsdBalance = await getAccountDepositBN(rariPool, senderAddress);
   if (!senderUsdBalance) return null;
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
   if (!balancesAndPrices) return null;
