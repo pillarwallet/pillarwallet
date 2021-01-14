@@ -21,7 +21,7 @@ import { createSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { PLR } from 'constants/assetsConstants';
+import { PLR, USD } from 'constants/assetsConstants';
 
 // utils
 import { getStreamBalance } from 'utils/sablier';
@@ -33,6 +33,7 @@ import type { MixedBalance } from 'models/Asset';
 import type { LendingReducerState } from 'reducers/lendingReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { SablierReducerState } from 'reducers/sablierReducer';
+import type { RariReducerState } from 'reducers/rariReducer';
 
 // selectors
 import {
@@ -41,6 +42,7 @@ import {
   lendingSelector,
   poolTogetherStatsSelector,
   sablierSelector,
+  rariSelector,
 } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
@@ -114,9 +116,16 @@ const sablierBalanceListSelector = createSelector(
     .filter(Boolean),
 );
 
+const rariBalanceListSelector = createSelector(
+  rariSelector,
+  ({ userDepositInUSD }: RariReducerState): MixedBalance[] => Object.keys(userDepositInUSD)
+    .map(pool => ({ balance: userDepositInUSD[pool], symbol: USD })),
+);
+
 export const servicesBalanceListSelector = createSelector(
   aaveBalanceListSelector,
   poolTogetherBalanceListSelector,
   sablierBalanceListSelector,
+  rariBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );

@@ -85,3 +85,5 @@ export const contactsSelector = ({ contacts }: RootReducerState) => contacts.dat
 export const lendingSelector = ({ lending }: RootReducerState) => lending;
 
 export const sablierSelector = ({ sablier }: RootReducerState) => sablier;
+
+export const rariSelector = ({ rari }: RootReducerState) => rari;
