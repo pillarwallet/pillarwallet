@@ -1,6 +1,6 @@
 {
   "name": "pillarwallet",
-  "version": "0.1.1",
+  "version": "2.30.2",
   "private": true,
   "scripts": {
     "start": "react-native start",
