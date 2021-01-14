@@ -494,7 +494,8 @@
     },
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
-      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}.",
+      "exchangeFailed": "This transaction could not be completed. Please try again."
     },
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",

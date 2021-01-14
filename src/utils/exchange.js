@@ -22,6 +22,7 @@ import { Platform } from 'react-native';
 import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
 import { constants } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 
 // models
@@ -151,3 +152,6 @@ export const createAllowanceTx = async (
 };
 
 export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode === BTC;
+
+export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string): string =>
+  new BigNumber(askRate).multipliedBy(amountToSell).toFixed();

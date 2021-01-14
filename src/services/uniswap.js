@@ -164,7 +164,7 @@ const getUniswapOrderData = async (
   toAsset: Asset,
   fromAssetQuantityBaseUnits: string,
   toAssetDecimals: string,
-): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber } | null> => {
+): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber, expectedOutputRaw: string } | null> => {
   let route = await getRoute(fromAsset, toAsset);
   if (!route && (
     fromAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
@@ -189,6 +189,7 @@ const getUniswapOrderData = async (
 
   return {
     path: mappedPath,
+    expectedOutputRaw: expectedOutput.toString(), // no slippage applied
     expectedOutputBaseUnits: expectedOutputWithSlippageBaseUnits,
   };
 };
@@ -210,6 +211,7 @@ export const createUniswapOrder = async (
 
   let txData = '';
   let txValue = '0';
+  let expectedOutput;
   if (fromAsset.code !== ETH && toAsset.code !== ETH) {
     const orderData = await getUniswapOrderData(
       fromAsset,
@@ -218,7 +220,8 @@ export const createUniswapOrder = async (
       toAsset.decimals.toString(),
     );
     if (!orderData) return null;
-    const { path, expectedOutputBaseUnits } = orderData;
+    const { path, expectedOutputBaseUnits, expectedOutputRaw } = orderData;
+    expectedOutput = expectedOutputRaw;
 
     const deadline = getDeadline();
 
@@ -238,7 +241,8 @@ export const createUniswapOrder = async (
       toAsset.decimals.toString(),
     );
     if (!orderData) return null;
-    const { path, expectedOutputBaseUnits } = orderData;
+    const { path, expectedOutputBaseUnits, expectedOutputRaw } = orderData;
+    expectedOutput = expectedOutputRaw;
 
     const deadline = getDeadline();
 
@@ -256,7 +260,8 @@ export const createUniswapOrder = async (
       toAsset.decimals.toString(),
     );
     if (!orderData) return null;
-    const { path, expectedOutputBaseUnits } = orderData;
+    const { path, expectedOutputBaseUnits, expectedOutputRaw } = orderData;
+    expectedOutput = expectedOutputRaw;
 
     const deadline = getDeadline();
 
@@ -269,7 +274,7 @@ export const createUniswapOrder = async (
     );
   }
 
-  if (!txData) {
+  if (!txData || !expectedOutput) {
     reportOrWarn('Unable to create order', null, 'error');
     return null;
   }
@@ -279,11 +284,11 @@ export const createUniswapOrder = async (
     txValue,
     txData,
   );
-
   return {
     orderId: '-',
     sendToAddress: txObject.to,
     transactionObj: txObject,
+    expectedOutput,
   };
 };
 
