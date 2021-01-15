@@ -22,10 +22,12 @@ import isEmpty from 'lodash.isempty';
 
 // constants
 import { PLR, USD } from 'constants/assetsConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
 import { getStreamBalance } from 'utils/sablier';
 import { formatUnits } from 'utils/common';
+import { getPoolStats } from 'utils/liquidityPools';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
@@ -34,6 +36,7 @@ import type { LendingReducerState } from 'reducers/lendingReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
 import type { SablierReducerState } from 'reducers/sablierReducer';
 import type { RariReducerState } from 'reducers/rariReducer';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 // selectors
 import {
@@ -43,6 +46,7 @@ import {
   poolTogetherStatsSelector,
   sablierSelector,
   rariSelector,
+  liquidityPoolsSelector,
 } from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
@@ -122,10 +126,28 @@ const rariBalanceListSelector = createSelector(
     .map(pool => ({ balance: userDepositInUSD[pool], symbol: USD })),
 );
 
+const liquidityPoolsBalanceListSelector = createSelector(
+  liquidityPoolsSelector,
+  (liquidityPoolsState: LiquidityPoolsReducerState): MixedBalance[] => LIQUIDITY_POOLS().map(pool => {
+    const {
+      currentPrice,
+      userLiquidityTokenBalance,
+      stakedAmount,
+    } = getPoolStats(pool, liquidityPoolsState) ?? {};
+
+    if ([currentPrice, userLiquidityTokenBalance, stakedAmount].includes(undefined)) return null;
+    return {
+      balance: (userLiquidityTokenBalance + stakedAmount) * currentPrice,
+      symbol: USD,
+    };
+  }).filter(Boolean),
+);
+
 export const servicesBalanceListSelector = createSelector(
   aaveBalanceListSelector,
   poolTogetherBalanceListSelector,
   sablierBalanceListSelector,
   rariBalanceListSelector,
+  liquidityPoolsBalanceListSelector,
   (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );
