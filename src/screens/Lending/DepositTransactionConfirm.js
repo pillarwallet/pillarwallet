@@ -64,7 +64,7 @@ const DepositTransactionConfirm = ({
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const depositAmount: number = navigation.getParam('amount');
+  const depositAmount: string = navigation.getParam('amount');
   const depositAsset: AssetToDeposit = navigation.getParam('asset');
   const { symbol: depositAssetSymbol } = depositAsset;
 
