@@ -45,6 +45,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import MSTABLE_CONTRACT_ABI from 'abi/mAsset.json';
 import MSTABLE_VALIDATION_HELPER_CONTRACT_ABI from 'abi/mAssetValidationHelper.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
+import RARI_FUND_MANAGER_CONTRACT_ABI_ETH from 'abi/rariFundManagerEth.json';
 import type { Asset, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
@@ -365,6 +366,17 @@ tokens have different exchange rates (mStable always exchanges 1:(1-fee)), so we
 export const getRariWithdrawTransactionData = async (
   senderAddress: string, rariPool: RariPool, amountBN: EthersBigNumber, token: Asset,
 ) => {
+  if (rariPool === RARI_POOLS.ETH_POOL) {
+    return {
+      withdrawTransactionData: encodeContractMethod(RARI_FUND_MANAGER_CONTRACT_ABI_ETH, 'withdraw', [
+        amountBN,
+      ]),
+      rariContractAddress: getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+      exchangeFeeBN: EthersBigNumber.from(0),
+      slippage: 0,
+    };
+  }
+
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
   if (!balancesAndPrices) return null;
   const senderUsdBalance = await getAccountDepositBN(rariPool, senderAddress);
@@ -708,6 +720,12 @@ We take user's deposit in USD and:
 And there can be several exchanges too like in withdraw transaction logic.
 */
 export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, senderAddress: string) => {
+  if (rariPool === RARI_POOLS.ETH_POOL) {
+    const senderEthBalance = await getAccountDepositBN(rariPool, senderAddress);
+    if (!senderEthBalance) return null;
+
+    return senderEthBalance;
+  }
   const senderUsdBalance = await getAccountDepositBN(rariPool, senderAddress);
   if (!senderUsdBalance) return null;
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
@@ -867,6 +885,8 @@ export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, sen
 };
 
 export const getWithdrawalFeeRate = (rariPool: RariPool) => {
+  // The Withdrawal Fee is not present on the ETH Pool. (https://www.notion.so/Fees-e4689d7b800f485098548dd9e9d0a69f)
+  if (rariPool === RARI_POOLS.ETH_POOL) return Promise.resolve(EthersBigNumber.from(0));
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,
