@@ -709,3 +709,12 @@ export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   return `${currencySymbol} ${formatBigAmount(amount)}`;
 };
+
+export const removeTrailingZeros = (amount: string) => {
+  if (!amount.includes('.')) return amount;
+  return amount.replace(/0+$/, '').replace(/\.$/, '');
+};
+
+export const toFixedString = (amount: number) => {
+  return removeTrailingZeros(amount.toFixed(18));
+};

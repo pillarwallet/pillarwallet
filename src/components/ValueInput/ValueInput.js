@@ -36,7 +36,7 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber, noop } from 'utils/common';
+import { formatAmount, isValidNumber, noop, toFixedString } from 'utils/common';
 import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
@@ -148,7 +148,7 @@ export const ValueInputComponent = (props: Props) => {
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
-  const assetBalance = +formatAmount((customBalances || balances)[assetSymbol]?.balance);
+  const assetBalance = parseFloat((customBalances || balances)[assetSymbol]?.balance).toFixed(18);
   const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken).toString();
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -187,14 +187,14 @@ export const ValueInputComponent = (props: Props) => {
     if (updateTxFee) {
       newTxFeeInfo = await updateTxFee(assetSymbol, percent / 100);
     }
-    const newMaxValue = formatAmount(calculateMaxAmount(
+    const newMaxValue = calculateMaxAmount(
       assetSymbol,
       assetBalance,
       newTxFeeInfo?.fee,
       newTxFeeInfo?.gasToken,
-    ));
+    );
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
-    onValueChange((parseFloat(newMaxValue) * (percent / 100)).toString());
+    onValueChange(toFixedString(newMaxValue * (percent / 100)));
     const fiatValue = maxValueInFiat * (percent / 100);
     setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
   };
