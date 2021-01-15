@@ -442,5 +442,5 @@ jest.setMock('services/1inch', {
     provider: PROVIDER_1INCH,
   }),
   create1inchOrder: () => Promise.resolve({}),
-  fetch1inchSupportedTokens: () => Promise.resolve([]),
+  fetch1inchSupportedTokens: jest.fn(() => Promise.resolve([])),
 });
