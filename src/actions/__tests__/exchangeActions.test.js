@@ -164,8 +164,8 @@ describe('Exchange actions test', () => {
     });
 
     it('updates exchange supported assets even if Uniswap call fails', async () => {
-      (fetch1inchSupportedTokens: () => Promise<?string[]>).mockImplementationOnce(() => Promise.resolve(['PLR']));
-      (fetchUniswapSupportedTokens: () => Promise<?string[]>).mockImplementationOnce(() => Promise.resolve(null));
+      (fetch1inchSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(['PLR']));
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
 
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
@@ -183,7 +183,7 @@ describe('Exchange actions test', () => {
     });
 
     it('updates exchange supported assets even if 1inch call fails', async () => {
-      (fetch1inchSupportedTokens: () => Promise<?string[]>).mockImplementationOnce(() => Promise.resolve(null));
+      (fetch1inchSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
 
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
@@ -205,7 +205,7 @@ describe('Exchange actions test', () => {
         exchange: { exchangeSupportedAssets: [{ symbol: 'DAI' }] },
         assets: { supportedAssets: [{ symbol: 'ETH' }, { symbol: 'PLR' }] },
       });
-      (fetchUniswapSupportedTokens: () => Promise<?string[]>).mockImplementationOnce(() => Promise.resolve(null));
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
         payload: { status: FETCHING },
@@ -218,7 +218,7 @@ describe('Exchange actions test', () => {
     });
 
     it('updates query status in case of an error', async () => {
-      (fetchUniswapSupportedTokens: () => Promise<?string[]>).mockImplementationOnce(() => Promise.resolve(null));
+      (fetchUniswapSupportedTokens: any).mockImplementationOnce(() => Promise.resolve(null));
 
       const expectedActions = [{
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
