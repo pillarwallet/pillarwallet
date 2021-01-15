@@ -434,29 +434,29 @@ jobs:
   bump-push-git-tag:
     executor: python3-alpine-executor
     steps:
-      - checkout
       - run:
           name: Install dependencies
           command: |
-            apk add --update curl git
+            apk add --update curl git openssh bash
+      - checkout
       - run:
           name: Fetch semget and bump tag
           command: |
             curl -o semtag https://raw.githubusercontent.com/pnikosis/semtag/v0.0.9/semtag
             chmod +x semtag
             SEMVER_TAG=$(git log -1  --pretty='%s' | awk 'NF>1{print $NF}' | cut -d'#' -f2 | tr '[:upper:]' '[:lower:]')
-            semtag final -s $SEMVER_TAG
+            bash semtag final -s $SEMVER_TAG
 
   get-latest-tag:
     executor: python3-alpine-executor
     steps:
-      - checkout
-      - attach_workspace: &attach_workspace
-          at: /tmp/workspace
       - run:
           name: Install dependencies
           command: |
-            apk add --update git
+            apk add --update curl git openssh bash
+      - checkout
+      - attach_workspace: &attach_workspace
+          at: /tmp/workspace
       - run:
           name: Fetch and set the latest GitHub tag
           command: |
