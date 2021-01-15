@@ -47,6 +47,15 @@ executors:
       NODE_OPTIONS: "--max-old-space-size=4096"
     shell: /bin/bash --login -o pipefail
 
+  python3-alpine-executor:
+    working_directory: ~/pillarwallet
+    docker:
+    - image: python:3.7-alpine
+      auth:
+        username: $DOCKERHUB_USER
+        password: $DOCKERHUB_PASSWORD
+    resource_class: small
+
 aliases:
   - &restore_pod_cache
     restore_cache:
@@ -218,6 +227,7 @@ aliases:
         - homebrew-packages-v1
 
 jobs:
+
   build-and-test:
     executor: node10-executor
     steps:
@@ -421,12 +431,32 @@ jobs:
           failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
+  bump-push-git-tag:
+    executor: python3-alpine-executor
+    steps:
+      - checkout
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl git
+      - run:
+          name: Fetch semget and bump tag
+          command: |
+            curl -o semtag https://raw.githubusercontent.com/pnikosis/semtag/v0.0.9/semtag
+            chmod +x semtag
+            SEMVER_TAG=$(git log -1  --pretty='%s' | awk 'NF>1{print $NF}' | cut -d'#' -f2 | tr '[:upper:]' '[:lower:]')
+            semtag final -s $SEMVER_TAG
+
   get-latest-tag:
-    executor: node10-executor
+    executor: python3-alpine-executor
     steps:
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update git
       - run:
           name: Fetch and set the latest GitHub tag
           command: |
@@ -741,10 +771,25 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_deploy:
+
+  build_and_test:
     jobs:
       - build-and-test:
           context: docker-hub-creds
+          filters:
+            branches:
+              ignore:
+                - develop
+                - master
+                
+  build_and_deploy_appcenter:
+    jobs:
+      - build-and-test:
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - develop 
       - appcenter_ios:
           requires:
             - build-and-test
@@ -760,6 +805,23 @@ workflows:
             branches:
               only:
                 - develop
+
+  build_and_deploy_production:
+    jobs:
+      - bump-push-git-tag:
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - master
+      - build-and-test:
+          requires:
+            - bump-push-git-tag
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - master
       - get-latest-tag:
           context: docker-hub-creds
           requires:
