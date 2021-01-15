@@ -297,6 +297,9 @@ describe('Rari utils', () => {
           EthersBigNumber.from('1230000000000000000'),
         ]),
       );
+
+      jest.spyOn(rariService, 'getAccountDepositBN')
+        .mockImplementation(() => EthersBigNumber.from('10000000000000000000'));
     });
 
     afterAll(() => {
@@ -426,7 +429,7 @@ describe('Rari utils', () => {
       jest.spyOn(assetsServices, 'encodeContractMethod')
         .mockImplementation((contract, method, params) => ({ method, params }));
 
-      jest.spyOn(rariService, 'getAccountDepositInUSDBN')
+      jest.spyOn(rariService, 'getAccountDepositBN')
         .mockImplementation(() => EthersBigNumber.from('10000000000000000000'));
 
       jest.spyOn(_0xService, 'get0xSwapOrders').mockImplementation(() => Promise.resolve(

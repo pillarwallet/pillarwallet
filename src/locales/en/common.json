@@ -1442,7 +1442,7 @@
     "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
     "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
-    "poolDataFetchFailed": "Can't fetch pool data. Please try again or contact support.",
+    "poolDataFetchFailed": "Can't fetch liquidity pools data. Please try again or contact support.",
     "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
     "cannotStakeTokens": "Cannot stake tokens. Please try again.",
     "cannotUnstakeTokens": "Cannot unstake tokens. Please try again.",
@@ -1770,7 +1770,7 @@
     },
     "tabs": {
       "active": "Available",
-      "purchased": "Purchased",
+      "purchased": "Liquidity added",
       "staked": "Staked"
     },
     "infoContent": {
