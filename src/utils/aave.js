@@ -50,7 +50,7 @@ export const parseReserveAssetAddress = (asset: Asset) => asset.symbol === ETH ?
 
 export const buildAaveDepositTransactionData = (
   assetAddress: string,
-  amount: number,
+  amount: string,
   decimals: number,
 ): string => {
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);
@@ -62,7 +62,7 @@ export const buildAaveDepositTransactionData = (
 };
 
 export const buildAaveWithdrawTransactionData = (
-  amount: number,
+  amount: string,
   balance: number,
   decimals: number,
 ): string => {
@@ -77,7 +77,7 @@ export const buildAaveWithdrawTransactionData = (
 
 export const getAaveDepositTransactions = async (
   senderAddress: string,
-  amount: number,
+  amount: string,
   asset: AssetToDeposit,
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
@@ -91,7 +91,7 @@ export const getAaveDepositTransactions = async (
     from: senderAddress,
     to: lendingPoolContractAddress,
     data: depositTransactionData,
-    amount: assetSymbol === ETH ? amount : 0,
+    amount: assetSymbol === ETH ? parseFloat(amount) : 0,
     symbol: ETH,
   }];
 
@@ -132,7 +132,7 @@ export const getAaveDepositTransactions = async (
 
 export const getAaveWithdrawTransaction = async (
   senderAddress: string,
-  amount: number,
+  amount: string,
   depositedAsset: DepositedAsset,
   txFeeInWei?: BigNumber,
 ): Promise<Object> => {
