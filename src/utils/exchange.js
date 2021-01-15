@@ -155,3 +155,19 @@ export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode ===
 
 export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string): string =>
   new BigNumber(askRate).multipliedBy(amountToSell).toFixed();
+
+// check if the re-calculated order amount doesn't diverge from offer amount
+export const isOrderAmountTooLow = (
+  askRate: string | number,
+  fromAmount: number,
+  order: { expectedOutput?: string },
+): boolean => {
+  // no need to do anything if expectedOutput isn't provided - e.g. for Synthetix
+  if (!order.expectedOutput) return false;
+  // askRate is provided by offer
+  const offerAmount = calculateAmountToBuy(askRate, fromAmount);
+  const offerAmountBN = new BigNumber(offerAmount);
+  const orderAmountBN = new BigNumber(order.expectedOutput);
+  // round both values and stop swap if order < offer
+  return offerAmountBN.toFixed(8) > orderAmountBN.toFixed(8);
+};

@@ -22,7 +22,6 @@ import { toChecksumAddress } from '@netgum/utils';
 import uniq from 'lodash.uniq';
 import t from 'translations/translate';
 import axios from 'axios';
-import { BigNumber } from 'bignumber.js';
 
 // components
 import Toast from 'components/Toast';
@@ -54,7 +53,7 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 import { getSmartWalletAddress } from 'utils/accounts';
 import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
-import { calculateAmountToBuy } from 'utils/exchange';
+import { isOrderAmountTooLow } from 'utils/exchange';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -90,7 +89,7 @@ export const takeOfferAction = (
   provider: string,
   trackId: string,
   askRate: string | number,
-  callback: Function,
+  callback: Object => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -114,22 +113,11 @@ export const takeOfferAction = (
       return;
     }
 
-    // check if the re-calculated order amount doesn't diverge from offer amount
-    if (order.expectedOutput) {
-      // askRate is provided by offer
-      const offerAmount = calculateAmountToBuy(askRate, fromAmount);
-      const offerAmountBN = new BigNumber(offerAmount);
-      const orderAmountBN = new BigNumber(order.expectedOutput);
-      // round both values and stop swap if order < offer
-      if (offerAmountBN.toFixed(8) > orderAmountBN.toFixed(8)) {
-        reportLog('Offer output amount and order output amount diverged');
-        Toast.show({
-          message: t('error.exchange.exchangeFailed'),
-          emoji: 'hushed',
-        });
-        callback({});
-        return;
-      }
+    if (isOrderAmountTooLow(askRate, fromAmount, order)) {
+      reportLog('Offer output amount and order output amount diverged');
+      Toast.show({ message: t('error.exchange.exchangeFailed'), emoji: 'hushed' });
+      callback({});
+      return;
     }
 
     const { address: fromAssetAddress } = fromAsset;

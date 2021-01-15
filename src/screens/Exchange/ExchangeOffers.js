@@ -85,7 +85,7 @@ type AllowanceResponse = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
-  takeOffer: (Asset, Asset, number, string, string, string | number, () => void) => void,
+  takeOffer: (Asset, Asset, number, string, string, string | number, Object => void) => void,
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
