@@ -41,7 +41,7 @@ import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
-import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency, VISIBLE_NUMBER_DECIMALS } from 'constants/assetsConstants';
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
@@ -148,7 +148,7 @@ export const ValueInputComponent = (props: Props) => {
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
-  const assetBalance = parseFloat((customBalances || balances)[assetSymbol]?.balance).toFixed(18);
+  const assetBalance = parseFloat((customBalances || balances)[assetSymbol]?.balance).toFixed(VISIBLE_NUMBER_DECIMALS);
   const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken).toString();
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

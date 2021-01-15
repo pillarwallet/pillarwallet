@@ -49,6 +49,7 @@ import {
   ETH,
   WBTC,
   sBTC,
+  VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
@@ -716,5 +717,5 @@ export const removeTrailingZeros = (amount: string) => {
 };
 
 export const toFixedString = (amount: number) => {
-  return removeTrailingZeros(amount.toFixed(18));
+  return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
