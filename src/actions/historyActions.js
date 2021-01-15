@@ -138,6 +138,7 @@ export const fetchTransactionsHistoryAction = () => {
     // const aaveHistory = await mapTransactionsHistoryWithAave(accountAddress, smartWalletTransactionHistory);
     // const poolTogetherHistory = await mapTransactionsPoolTogether(accountAddress, aaveHistory);
     // const sablierHistory = await mapTransactionsHistoryWithSablier(accountAddress, poolTogetherHistory);
+    // const rariHistory = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
     // const history = await mapTransactionsHistoryWithRari(accountAddress, sablierHistory, supportedAssets);
     //
     // if (!history.length) return;

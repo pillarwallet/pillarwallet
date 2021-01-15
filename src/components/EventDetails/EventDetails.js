@@ -41,6 +41,7 @@ import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
 import WBTCCafeWarning from 'screens/Exchange/WBTCCafeWarning';
+import { Spacing } from 'components/Layout';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
@@ -112,6 +113,7 @@ import {
   EXCHANGE,
   RARI_DEPOSIT,
   RARI_CLAIM_RGT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -129,6 +131,13 @@ import {
   RARI_TOKENS_DATA,
   RARI_GOVERNANCE_TOKEN_DATA,
 } from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 
 // selectors
 import {
@@ -162,6 +171,7 @@ import type { Stream } from 'models/Sablier';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 
 
@@ -313,7 +323,6 @@ const Divider = styled.View`
   width: 100%;
   height: 1px;
   background-color: ${({ theme }) => theme.colors.basic060};
-  margin: 8px 0px 18px;
 `;
 
 const ErrorMessage = styled(BaseText)`
@@ -597,6 +606,53 @@ export class EventDetail extends React.Component<Props> {
   goToRariDeposit = () => this.props.navigation.navigate(RARI_DEPOSIT);
   goToRariClaim = () => this.props.navigation.navigate(RARI_CLAIM_RGT);
 
+  goToLiquidityPool = (pool: LiquidityPool) => {
+    this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
+  }
+
+  getLiquidityEventButtons = (buttonTitle: string, pool: LiquidityPool) => {
+    return [{
+      secondary: true,
+      title: buttonTitle,
+      onPress: () => this.goToLiquidityPool(pool),
+    }];
+  }
+
+  renderLiquidityPoolsExchange = (
+    topTokens: {name: string, symbol: string}[],
+    topTokensAmounts: number[],
+    bottomTokens: {name: string, symbol: string }[],
+    bottomTokensAmounts: number[],
+    options: {
+      topTokensSecondary?: boolean,
+      bottomTokensSecondary?: boolean
+    },
+  ) => {
+    return (
+      <View style={{ width: '100%' }}>
+        {topTokens.map((token, index) => (
+          <Row>
+            <BaseText regular secondary={options.topTokensSecondary}>{token.name}</BaseText>
+            <BaseText regular>
+              {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
+            </BaseText>
+          </Row>
+              ))}
+        <Spacing h={16} />
+        <Divider />
+        <Spacing h={16} />
+        {bottomTokens.map((token, index) => (
+          <Row>
+            <BaseText regular secondary={options.bottomTokensSecondary}>{token.name}</BaseText>
+            <BaseText fontSize={20} positive>
+              {getFormattedValue(formatAmount(bottomTokensAmounts[index]), token.symbol, { isPositive: true })}
+            </BaseText>
+          </Row>
+        ))}
+      </View>
+    );
+  }
+
   getReferButtonTitle = () => {
     const { isPillarRewardCampaignActive } = this.props;
     if (isPillarRewardCampaignActive) return t('button.referFriends');
@@ -720,6 +776,7 @@ export class EventDetail extends React.Component<Props> {
       depositedAssets,
       keyBasedWalletAddress,
       ensRegistry,
+      supportedAssets,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -926,7 +983,7 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case SABLIER_WITHDRAW: {
-        const { incomingStreams, supportedAssets } = this.props;
+        const { incomingStreams } = this.props;
         const { contactAddress, assetAddress, streamId } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
         const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
@@ -1047,6 +1104,60 @@ export class EventDetail extends React.Component<Props> {
             title: t('button.transferMore'),
             onPress: () => this.goToRariDeposit(),
           }],
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION: {
+        const {
+          amount, pool, tokenAmounts,
+        } = event.extra;
+        const tokensData = pool.tokensProportions.map(
+          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+        );
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+          customActionTitle: this.renderLiquidityPoolsExchange(
+            tokensData, tokenAmounts, [pool], [amount], { topTokensSecondary: true },
+          ),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
+        const { amount, pool, tokenAmounts } = event.extra;
+        const tokensData = pool.tokensProportions.map(
+          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+        );
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+          customActionTitle: this.renderLiquidityPoolsExchange(
+            [pool], [amount], tokensData, tokenAmounts, { bottomTokensSecondary: true },
+          ),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.unstakeMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool),
           fee: this.getFeeLabel(event),
         };
         break;
@@ -1384,7 +1495,9 @@ export class EventDetail extends React.Component<Props> {
         })}
         {!isFailed &&
         <>
+          <Spacing h={8} />
           <Divider />
+          <Spacing h={18} />
           <Row>
             <BaseText regular positive>{t('label.toSmartWallet')}</BaseText>
             <View>

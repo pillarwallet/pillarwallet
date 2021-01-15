@@ -284,6 +284,18 @@ export const toggleRariAction = () => {
   };
 };
 
+export const toggleLiquidityPoolsAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideLiquidityPools } },
+    } = getState();
+    const newLiquidityPoolsState = !hideLiquidityPools;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideLiquidityPools: newLiquidityPoolsState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideLiquidityPools: newLiquidityPoolsState } });
+  };
+};
+
 export const setAppLanguageAction = (language: string) => {
   return (dispatch: Dispatch) => {
     const localisationSettings = { localisation: { activeLngCode: language } };

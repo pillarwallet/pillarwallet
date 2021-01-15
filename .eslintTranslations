@@ -176,6 +176,11 @@
         "underlineColorAndroid",
         "url",
         "viewBox",
+        "d",
+        "preserveAspectRatio",
+        "strokeLinejoin",
+        "strokeLinecap",
+        "strokeDasharray",
       ],
       "ignoreProperty": [
         "_id",

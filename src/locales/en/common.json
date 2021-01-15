@@ -206,7 +206,9 @@
     "claim": "Claim",
     "fromRariToWallet": "Rari Capital → Wallet",
     "fromWalletToRari": "Wallet → Rari Capital",
-    "rewardsClaimed": "Rewards claimed"
+    "rewardsClaimed": "Rewards claimed",
+    "keyFacts": "Key facts",
+    "multiple": "Multiple"
   },
 
   "button": {
@@ -300,7 +302,12 @@
     "buyToken": "Buy {{token}}",
     "topUpTokenTank": "Top up {{token}} Tank",
     "claimMore": "Claim more",
-    "transferMore": "Transfer more"
+    "transferMore": "Transfer more",
+    "addMoreLiquidity": "Add more liquidity",
+    "removeMoreLiquidity": "Remove more liquidity",
+    "stakeMoreLiquidity": "Stake more",
+    "unstakeMoreLiquidity": "Unstake more",
+    "claimMoreRewards": "Claim more"
   },
 
   "paragraph": {
@@ -504,7 +511,8 @@
       "sablierStreams": "Can't connect to Sablier",
       "isTokenSupportedByUniswap": "Can't connect to exchange service",
       "uniswapSupportedTokenList": "Can't connect to exchange service. The token list may be incomplete.",
-      "rari": "Can't connect to Rari service."
+      "rari": "Can't connect to Rari service.",
+      "liquidityPools": "Can't connect to Liquidity Pools service"
     }
   },
 
@@ -1245,6 +1253,10 @@
       "title": "Rari Capital",
       "description": "Deposit to earn on DeFi, while being optimized for the highest returns."
     },
+    "liquidityPools": {
+      "title": "Liquidity Pools",
+      "description": "Stake your PLR Liquidity tokens and receive your rewards." 
+    },
     "label": {
       "requiresActivation": "Requires activation",
       "forSmartWallet": "For Smart Wallet",
@@ -1431,7 +1443,17 @@
     "rariWithdraw":"{{amount}} {{token}} withdrawn from Rari Capital.",
     "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
-    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH."
+    "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
+    "poolDataFetchFailed": "Can't fetch liquidity pools data. Please try again or contact support.",
+    "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
+    "cannotStakeTokens": "Cannot stake tokens. Please try again.",
+    "cannotUnstakeTokens": "Cannot unstake tokens. Please try again.",
+    "cannotRemoveLiquidity": "Cannot remove liquidity. Please try again.",
+    "liquidityPoolsAddLiquidity": "{{value}} {{token}} received.",
+    "liquidityPoolsRemoveLiquidity": "{{value}} {{token}} removed from liquidity.",
+    "liquidityPoolsStake": "{{value}} {{token}} staked.",
+    "liquidityPoolsUnstake": "{{value}} {{token}} removed from liquidity.",
+    "liquidityPoolsClaimRewards": "{{value}} {{token}} claimed."
   },
 
   "exchangeContent": {
@@ -1547,7 +1569,6 @@
     },
     "infoContent": {
       "subtitle": {
-        "keyFacts": "Key facts",
         "whatIsRari": "What is Rari?",
         "howDoesRariEarn": "How does Rari Earn Yield?",
         "rariPools":"Rari Pools",
@@ -1679,5 +1700,106 @@
     "transactionSentConfirmed": "{{tokenValue}} sent.",
     "receivedCollectible": "You received a collectible.",
     "collectibleSentAndReceived": "Your collectible has been received."
+  },
+
+  "graph": {
+    "timeRangeButtons": {
+      "day": "1 D",
+      "week": "7 D",
+      "month": "30 D",
+      "halfYear": "6 M",
+      "year": "1 Y",
+      "all": "ALL "
+    }
+  },
+  
+  "liquidityPoolsContent": {
+    "title": {
+      "addLiquidity": "Add liquidity",
+      "addLiquidityReview": "Review",
+      "stakeTokens": "Stake tokens",
+      "stakeTokensReview": "Review",
+      "unstakeTokens": "Unstake tokens",
+      "unstakeTokensReview": "Review",
+      "removeLiquidity": "Remove liquidity",
+      "removeLiquidityReview": "Review",
+      "claimRewardsReview": "Review",
+      "liquidityPools": "Liquidity Pools",
+      "infoScreen": "Liquidity Pools"
+    },
+    "button": {
+      "addLiquidity": "Add liquidity",
+      "removeLiquidity": "Remove liquidity",
+      "stake": "Stake",
+      "unstake": "Unstake",
+      "claimRewards": "Claim rewards"
+    },
+    "label": {
+      "staked": "Staked",
+      "rewards": "Rewards",
+      "claimedSoFar": "{{value}} {{token}} claimed so far",
+      "addLiquidityToStartEarning": "Add liquidity to start earning from staking",
+      "stakeLiquidityToGetRewards": "Stake liquidity tokens to get rewards",
+      "shareOfPool": "Share of pool",
+      "youAreAddingLiquidity": "You are adding liquidity",
+      "tokenAllocation": "Token allocation",
+      "youAreStaking": "You are staking",
+      "youAreUnstaking": "You are unstaking",
+      "youAreRemovingLiquidity": "You are removing liquidity",
+      "youWillReceive": "You will receive",
+      "youAreClaiming": "You are claiming",
+      "price": "Price",
+      "volume": "Volume",
+      "weeklyRewards": "Weekly rewards",
+      "24h": "24 h",
+      "1w": "1 w",
+      "1m": "1 m",
+      "tokenPercent": "{{value}}% {{token}}",
+      "availableRewards": "Available rewards",
+      "totalLiquidity": "Total liquidity",
+      "24hVolume": "24h volume",
+      "tokenLiquidity": "{{tokenName}} liquidity",
+      "yourPoolShareAllocation": "Your pool share token allocation",
+      "tokenPrice": "Token price",
+      "quantity": "Quantity",
+      "liquidityAdded": "Liquidity added",
+      "unstaked": "Unstaked",
+      "rewardsClaimed": "Rewards claimed",
+      "liquidityRemoved": "Liquidity removed",
+      "fromWalletToPool": "Wallet → {{poolName}}",
+      "fromPoolToWallet": "{{poolName}} → Wallet",
+      "24hFees": "24h fees"
+    },
+    "tabs": {
+      "active": "Available",
+      "purchased": "Purchased",
+      "staked": "Staked"
+    },
+    "infoContent": {
+      "subtitle": {
+        "whatAreLiquidityPools": "What are Liquidity Pools?",
+        "howDoLiquidityPoolsWork": "How Do Liquidity Pools Work?"
+      },
+      "paragraph": {
+        "whatAreLiqudityPools": "Liquidity pools, in essence, are pools of tokens that are locked in a smart contract. They are used to facilitate trading by providing liquidity and are extensively used by some of the decentralized exchanges a.k.a DEXes.",
+        "howDoLiquidityPoolsWork": "In its basic form, a single liquidity pool holds 2 tokens and each pool creates a new market for that particular pair of tokens. DAI/ETH can be a good example of a popular liquidity pool on Uniswap.\n\nWhen a new pool is created, the first liquidity provider is the one that sets the initial price of the assets in the pool. The liquidity provider is incentivised to supply an equal value of both tokens to the pool. If the initial price of the tokens in the pool diverges from the current global market price, it creates an instant arbitrage opportunity that can result in lost capital for the liquidity provider. This concept of supplying tokens in a correct ratio remains the same for all the other liquidity providers that are willing to add more funds to the pool later.\n\nWhen liquidity is supplied to a pool, the liquidity provider (LP) receives special tokens called LP tokens in proportion to how much liquidity they supplied to the pool. When a trade is facilitated by the pool a 0.3% fee is proportionally distributed amongst all the LP token holders. If the liquidity provider wants to get their underlying liquidity back, plus any accrued fees, they must burn their LP tokens.\n\nEach token swap that a liquidity pool facilitates results in a price adjustment according to a deterministic pricing algorithm. This mechanism is also called an automated market maker (AMM) and liquidity pools across different protocols may use a slightly different algorithm."
+      },
+      "insight": {
+        "title": "Add liquidity to start earning from staking",
+        "button": "Explore pools"
+      }
+    },
+    "depositsList": {
+      "title": "Liquidity Pools"
+    },
+    "modal": {
+      "stakingEnabled": {
+        "stakingUnlocked": "Staking unlocked",
+        "liquidityAdded": "Liquidity added",
+        "stakeYourTokens": "Stake your tokens to get more interest and extra rewards.",
+        "stakeTokensButton": "Stake tokens",
+        "laterButton": "Later"
+      }
+    }
   }
 }

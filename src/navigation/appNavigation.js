@@ -125,6 +125,18 @@ import RariTransferScreen from 'screens/Rari/RariTransfer';
 import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
 import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
 import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
+import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
+import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
+import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
+import LiquidityPoolsStakeTokensScreen from 'screens/LiquidityPools/StakeTokens';
+import LiquidityPoolsStakeTokensReviewScreen from 'screens/LiquidityPools/StakeTokensReview';
+import LiquidityPoolsUnstakeTokensScreen from 'screens/LiquidityPools/UnstakeTokens';
+import LiquidityPoolsUnstakeTokensReviewScreen from 'screens/LiquidityPools/UnstakeTokensReview';
+import LiquidityPoolsRemoveLiquidityScreen from 'screens/LiquidityPools/RemoveLiquidity';
+import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/RemoveLiquidityReview';
+import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
+import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
+import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -276,6 +288,19 @@ import {
   RARI_CLAIM_RGT,
   RARI_CLAIM_RGT_REVIEW,
   WALLETCONNECT_CALL_REQUEST_FLOW,
+  LIQUIDITY_POOLS_FLOW,
+  LIQUIDITY_POOLS,
+  LIQUIDITY_POOL_DASHBOARD,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_STAKE,
+  LIQUIDITY_POOLS_STAKE_REVIEW,
+  LIQUIDITY_POOLS_UNSTAKE,
+  LIQUIDITY_POOLS_UNSTAKE_REVIEW,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
+  LIQUIDITY_POOLS_INFO,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -743,6 +768,25 @@ const rariFlow = createStackNavigator({
 
 rariFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const liquidityPoolsFlow = createStackNavigator({
+  [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
+  [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
+  [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
+  [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
+  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
+  [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
@@ -784,6 +828,7 @@ const AppFlowNavigation = createStackNavigator(
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
     [RARI_FLOW]: rariFlow,
+    [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
   },
   modalTransition,
 );

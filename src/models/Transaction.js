@@ -21,6 +21,7 @@
 import { BigNumber } from 'bignumber.js';
 import type { RariPool } from 'models/RariPool';
 import type { AssetData } from 'models/Asset';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -100,6 +101,12 @@ export type RariExtra = RariDepositExtra
   | RariTransferExtra
   | RariClaimExtra;
 
+export type LiquidityPoolsExtra = {|
+  amount: string,
+  pool: LiquidityPool,
+  tokenAmounts?: string[],
+|};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
@@ -107,7 +114,8 @@ export type TransactionExtra = TxSettlementItem[]
   | AaveExtra
   | TxPoolTogetherExtra
   | TxSablierExtra
-  | RariExtra;
+  | RariExtra
+  | LiquidityPoolsExtra;
 
 export type GasToken = {
   address: string,

@@ -363,10 +363,12 @@ directly and exchange 50 mUSD. In one transaction. The same applies to 0x of cou
 tokens have different exchange rates (mStable always exchanges 1:(1-fee)), so we choose the most profitable for us.
 */
 export const getRariWithdrawTransactionData = async (
-  rariPool: RariPool, amountBN: EthersBigNumber, token: Asset,
+  senderAddress: string, rariPool: RariPool, amountBN: EthersBigNumber, token: Asset,
 ) => {
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
   if (!balancesAndPrices) return null;
+  const senderUsdBalance = await getAccountDepositInUSDBN(rariPool, senderAddress);
+  if (!senderUsdBalance) return null;
 
   const [currencies, , , , prices] = balancesAndPrices;
 
@@ -509,18 +511,45 @@ export const getRariWithdrawTransactionData = async (
       if (inputCandidate.rawFundBalanceBN.isZero()) {
         continue;
       }
+      const withdrawnAmountUsdBN = withdrawnAmountBN
+        .mul(prices[currencies.indexOf(inputCandidate.currencyCode)])
+        .div(scaleBN(RARI_TOKENS[inputCandidate.currencyCode].decimals));
+
+      const usdLeftBN = senderUsdBalance.sub(withdrawnAmountUsdBN);
+
+      const inputTokenBN = usdLeftBN
+        .mul(scaleBN(RARI_TOKENS[inputCandidate.currencyCode].decimals))
+        .div(prices[currencies.indexOf(inputCandidate.currencyCode)]);
+
       // get me the orders to sell inputCandidate to obtain amountBN.sub(withdrawnAmountBN) of user's token
-      const _0xdata = await get0xSwapOrders(
+      let _0xdata = await get0xSwapOrders(
         RARI_TOKENS[inputCandidate.currencyCode].address,
         token.symbol === ETH
           ? WETH
           : token.address,
-        inputCandidate.rawFundBalanceBN,
+        inputTokenBN,
         amountBN.sub(withdrawnAmountBN),
       ).catch(error => {
         reportErrorLog("Rari service failed: Can't get 0x swap orders", { error });
         return null;
       });
+
+      if (!_0xdata) {
+        continue;
+      }
+
+      if (_0xdata[0].some(order => EthersBigNumber.from(order.takerAssetAmount).gt(inputTokenBN))) {
+        _0xdata = await get0xSwapOrders(
+          RARI_TOKENS[inputCandidate.currencyCode].address,
+          token.symbol === ETH
+            ? WETH
+            : token.address,
+          inputTokenBN,
+        ).catch(error => {
+          reportErrorLog("Rari service failed: Can't get 0x swap orders", { error });
+          return null;
+        });
+      }
 
       if (!_0xdata) {
         continue;
@@ -643,7 +672,7 @@ export const getRariWithdrawTransaction = async (
   rariPool: RariPool, senderAddress: string, amount: number, token: Asset,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
-  const data = await getRariWithdrawTransactionData(rariPool, amountBN, token);
+  const data = await getRariWithdrawTransactionData(senderAddress, rariPool, amountBN, token);
   if (!data) return null;
 
   const {
@@ -815,10 +844,12 @@ export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, sen
       .mul(prices[currencies.indexOf(inputCandidate.currencyCode)])
       .div(scaleBN(RARI_TOKENS[inputCandidate.currencyCode].decimals));
 
-    if (inputFillAmountUsdBN.gte(senderUsdBalance.sub(withdrawnAmountUsdBN).sub(scaleBN(16)))) {
+    const usdLeftBN = senderUsdBalance.sub(withdrawnAmountUsdBN);
+
+    if (inputFillAmountUsdBN.gte(usdLeftBN.sub(scaleBN(16)))) {
       // If order is enough to cover the rest of the withdrawal, cover it and stop looping through input candidates
       const thisOutputAmountBN = inputCandidate.makerAssetFillAmountBN
-        .mul(senderUsdBalance.sub(withdrawnAmountUsdBN))
+        .mul(usdLeftBN.gt(inputFillAmountUsdBN) ? inputFillAmountUsdBN : usdLeftBN)
         .div(inputFillAmountUsdBN);
       maxAmountOfTokenBN = maxAmountOfTokenBN.add(thisOutputAmountBN);
       return maxAmountOfTokenBN;
