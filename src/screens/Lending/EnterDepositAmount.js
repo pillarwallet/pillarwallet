@@ -62,7 +62,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
-  calculateLendingDepositTransactionEstimate: (amount: number, asset: AssetToDeposit) => void,
+  calculateLendingDepositTransactionEstimate: (amount: string, asset: AssetToDeposit) => void,
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
   estimateErrorMessage: ?string,
@@ -241,7 +241,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateLendingDepositTransactionEstimate: debounce((
-    amount: number,
+    amount: string,
     asset: AssetToDeposit,
   ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset)), 500),
   fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),

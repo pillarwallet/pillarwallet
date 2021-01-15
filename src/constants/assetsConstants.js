@@ -99,3 +99,4 @@ export const CURRENCY_SYMBOLS = {
 
 export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
 
+export const VISIBLE_NUMBER_DECIMALS = 18;
