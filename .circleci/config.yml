@@ -587,9 +587,6 @@ jobs:
           keys:
             - android-node-{{ checksum "./yarn.lock" }}
 
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
-
       - *yarn_restore_cache
       - *yarn_install
       - *yarn_save_cache
