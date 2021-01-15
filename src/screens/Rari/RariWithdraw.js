@@ -43,6 +43,7 @@ import { resetEstimateTransactionAction, setEstimatingTransactionAction } from '
 
 import { ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
@@ -192,7 +193,10 @@ const RariWithdrawScreen = ({
       || !inputValid
       || !feeInfo;
 
-  const supportedAssetsWithIcons = supportedAssets.map(({ iconUrl, ...rest }) => {
+  const filteredSupportedAssets = rariPool === RARI_POOLS.ETH_POOL ?
+    supportedAssets.filter(asset => asset.symbol === ETH) : supportedAssets;
+
+  const supportedAssetsWithIcons = filteredSupportedAssets.map(({ iconUrl, ...rest }) => {
     const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return ({
       ...rest, iconUrl, icon: iconUrl, imageUrl,

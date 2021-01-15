@@ -65,9 +65,9 @@ export const fetchRariDataAction = () => {
       userDepositInUSD, userDepositInRariToken, userInterests, rariApy, rariFundBalance, rariTotalSupply,
       userRgtBalance, userUnclaimedRgt, rtgPrice, rtgSupply,
     ] = await Promise.all([
-      getAccountDepositInUSD(smartWalletAddress),
+      getAccountDepositInUSD(smartWalletAddress, rates),
       getAccountDepositInPoolToken(smartWalletAddress),
-      getUserInterests(smartWalletAddress),
+      getUserInterests(smartWalletAddress, rates),
       getRariAPY(),
       getRariFundBalanceInUSD(rates),
       getRariTokenTotalSupply(),
