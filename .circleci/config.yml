@@ -47,14 +47,14 @@ executors:
       NODE_OPTIONS: "--max-old-space-size=4096"
     shell: /bin/bash --login -o pipefail
 
-    python3-alpine-executor:
-      working_directory: ~/pillarwallet
-      docker:
-      - image: python:3.7-alpine
-        auth:
-          username: $DOCKERHUB_USER
-          password: $DOCKERHUB_PASSWORD
-      resource_class: small
+  python3-alpine-executor:
+    working_directory: ~/pillarwallet
+    docker:
+    - image: python:3.7-alpine
+      auth:
+        username: $DOCKERHUB_USER
+        password: $DOCKERHUB_PASSWORD
+    resource_class: small
 
 aliases:
   - &restore_pod_cache
@@ -784,7 +784,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop
+                - develop 
       - appcenter_ios:
           requires:
             - build-and-test
