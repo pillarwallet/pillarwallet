@@ -61,13 +61,13 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
-import { getOfferProviderLogo, getCryptoProviderName } from 'utils/exchange';
+import { getOfferProviderLogo, getCryptoProviderName, calculateAmountToBuy } from 'utils/exchange';
 import { formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
-import { calculateAmountToBuy, getAvailable } from './utils';
+import { getAvailable } from './utils';
 import AssetEnableModal from './AssetEnableModal';
 
 
@@ -85,7 +85,7 @@ type AllowanceResponse = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
-  takeOffer: (Asset, Asset, number, string, string, () => void) => void,
+  takeOffer: (Asset, Asset, number, string, string, string | number, Object => void) => void,
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
@@ -324,7 +324,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
 
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, order => {
+      takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, askRate, order => {
         resetEstimateTransaction();
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
@@ -514,8 +514,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setTokenAllowance: (fromAssetAddress, provider, callback) => dispatch(
     setTokenAllowanceAction(fromAssetAddress, provider, callback),
   ),
-  takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
-    takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
+  takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, askRate, callback) => dispatch(
+    takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, askRate, callback),
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => dispatch(

@@ -51,8 +51,9 @@ import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // utils
 import { getSmartWalletAddress } from 'utils/accounts';
-import { reportErrorLog } from 'utils/common';
+import { reportErrorLog, reportLog } from 'utils/common';
 import { getAssetsAsList, getAssetData, isSynthetixTx } from 'utils/assets';
+import { isOrderAmountTooLow } from 'utils/exchange';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
@@ -87,7 +88,8 @@ export const takeOfferAction = (
   fromAmount: number,
   provider: string,
   trackId: string,
-  callback: Function,
+  askRate: string | number,
+  callback: Object => void,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -107,6 +109,13 @@ export const takeOfferAction = (
 
     if (!fromAsset || !toAsset || !order) {
       reportErrorLog('Cannot find exchange asset');
+      callback({});
+      return;
+    }
+
+    if (isOrderAmountTooLow(askRate, fromAmount, order)) {
+      reportLog('Offer output amount and order output amount diverged');
+      Toast.show({ message: t('error.exchange.exchangeFailed'), emoji: 'hushed' });
       callback({});
       return;
     }
