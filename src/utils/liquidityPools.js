@@ -108,8 +108,8 @@ export const fetchPoolData = async (poolAddress: string, userAddress: string): P
 export const getAddLiquidityTransactions = async (
   sender: string,
   pool: LiquidityPool,
-  tokenAmounts: number[],
-  poolTokenAmount: number,
+  tokenAmounts: string[],
+  poolTokenAmount: string,
   tokensAssets: Asset[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
@@ -203,10 +203,10 @@ export const getAddLiquidityTransactions = async (
 export const getRemoveLiquidityTransactions = async (
   sender: string,
   pool: LiquidityPool,
-  poolTokenAmount: number,
+  poolTokenAmount: string,
   poolToken: Asset,
   tokensAssets: Asset[],
-  obtainedTokensAmounts: number[],
+  obtainedTokensAmounts: string[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
   const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
@@ -281,7 +281,7 @@ export const getRemoveLiquidityTransactions = async (
 export const getStakeTransactions = async (
   pool: LiquidityPool,
   sender: string,
-  amount: number,
+  amount: string,
   token: Asset,
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
@@ -301,7 +301,7 @@ export const getStakeTransactions = async (
 export const getUnstakeTransaction = (
   pool: LiquidityPool,
   sender: string,
-  amount: number,
+  amount: string,
   txFeeInWei?: BigNumber,
 ) => {
   let unstakeTransaction = getUnipoolUnstakeTransaction(pool.unipoolAddress, sender, amount);
