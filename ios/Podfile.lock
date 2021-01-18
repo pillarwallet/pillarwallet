@@ -424,6 +424,7 @@ PODS:
   - react-native-splash-screen (3.2.0):
     - React
   - react-native-udp (2.7.0):
+    - CocoaAsyncSocket
     - React
   - react-native-webview (10.2.3):
     - React
@@ -572,6 +573,7 @@ PODS:
   - Sentry/Core (5.2.2)
   - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
+    - CocoaAsyncSocket
     - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -940,7 +942,7 @@ SPEC CHECKSUMS:
   react-native-restart: d19a0f8d053d065fe64cd2baebb6487111c77149
   react-native-safe-area-context: 9d7613228b994d9d089a881e17b33bf7c2855f90
   react-native-splash-screen: 200d11d188e2e78cea3ad319964f6142b6384865
-  react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9
+  react-native-udp: 96a517e5a121cfe69f4b05eeeafefe00c623debf
   react-native-webview: 0bacc79175bc44869e4c1a015b9bc21df8cf4feb
   React-RCTActionSheet: 89a0ca9f4a06c1f93c26067af074ccdce0f40336
   React-RCTAnimation: 1bde3ecc0c104c55df246eda516e0deb03c4e49b
@@ -982,7 +984,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 36f8f47bd9879a8aea6044765c1351120fd8e3a8
   Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
-  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
+  TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
