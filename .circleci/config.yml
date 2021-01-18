@@ -130,16 +130,6 @@ aliases:
       key: node-{{ checksum "./yarn.lock" }}
       paths:
         - ~/nodes_modules
-  - &node_artifactory_authenticate
-    run:
-      name: Authenticate with Artifactory
-      command: |
-        curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-  - &node_artifactory_set_registry
-    run:
-      name: set Registry to use Artifactory
-      command: |
-        npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
   - &android_latest_npm
     run:
       name: Install latest npm version
@@ -246,8 +236,6 @@ jobs:
             - build-num
             - releases
       - *node_restore_cache
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
       - *android_latest_npm
       - *yarn_restore_cache
       - *yarn_install
@@ -281,8 +269,6 @@ jobs:
       - *homebrew_save_cache
 
       - *node_restore_cache
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
 
       - *yarn_install_ios
 
@@ -357,8 +343,6 @@ jobs:
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
 
       - *node_restore_cache
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
       - *android_latest_npm
       - *yarn_restore_cache
       - *yarn_install
@@ -440,7 +424,7 @@ jobs:
             apk add --update curl git openssh bash
       - checkout
       - run:
-          name: Fetch semget and bump tag
+          name: Fetch semtag and bump tag
           command: |
             curl -o semtag https://raw.githubusercontent.com/pnikosis/semtag/v0.0.9/semtag
             chmod +x semtag
@@ -516,9 +500,6 @@ jobs:
           name: Restore node modules cache
           keys:
             - ios-node-{{ checksum "./yarn.lock" }}
-
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
 
       - *yarn_install_ios
 
@@ -635,13 +616,6 @@ jobs:
           name: Restore node modules cache
           keys:
             - android-node-{{ checksum "./yarn.lock" }}
-
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
-
-      - run:
-          name: set Yarn to use Artifactory
-          command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
 
       - *yarn_restore_cache
       - *yarn_install
