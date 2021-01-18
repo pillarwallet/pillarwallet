@@ -64,7 +64,7 @@ const WithdrawTransactionConfirm = ({
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const withdrawAmount: number = navigation.getParam('amount');
+  const withdrawAmount: string = navigation.getParam('amount');
   const depositedAsset: DepositedAsset = navigation.getParam('asset');
   const { symbol: depositedAssetSymbol } = depositedAsset;
 
