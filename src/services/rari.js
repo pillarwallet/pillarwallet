@@ -85,7 +85,7 @@ export const getRariTokenTotalSupply = async () => {
   return mapPools(supplyPerPool);
 };
 
-export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddress: string) => {
+export const getAccountDepositBN = async (rariPool: RariPool, accountAddress: string) => {
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,
@@ -99,9 +99,34 @@ export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddres
   return balanceBN;
 };
 
-export const getAccountDepositInUSD = async (accountAddress: string) => {
+export const getAccountDeposit = async (accountAddress: string) => {
   const depositPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
-    const balanceBN = await getAccountDepositInUSDBN(rariPool, accountAddress);
+    const balanceBN = await getAccountDepositBN(rariPool, accountAddress);
+    return parseFloat(utils.formatUnits(balanceBN, 18));
+  }));
+  return mapPools(depositPerPool);
+};
+
+export const getAccountDepositInUSDBN = async (rariPool: RariPool, accountAddress: string, rates: Rates) => {
+  const rariContract = getContract(
+    getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+    RARI_FUND_MANAGER_CONTRACT_ABI,
+  );
+  if (!rariContract) return EthersBigNumber.from(0);
+  let balanceBN = await rariContract.callStatic.balanceOf(accountAddress)
+    .catch((error) => {
+      reportErrorLog("Rari service failed: Can't get user account deposit in USD", { error });
+      return EthersBigNumber.from(0);
+    });
+  if (rariPool === RARI_POOLS.ETH_POOL) {
+    balanceBN = balanceBN.mul(Math.floor(rates[ETH].USD * 1e9)).div(1e9);
+  }
+  return balanceBN;
+};
+
+export const getAccountDepositInUSD = async (accountAddress: string, rates: Rates) => {
+  const depositPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
+    const balanceBN = await getAccountDepositInUSDBN(rariPool, accountAddress, rates);
     return parseFloat(utils.formatUnits(balanceBN, 18));
   }));
   return mapPools(depositPerPool);
@@ -124,8 +149,8 @@ export const getAccountDepositInPoolToken = async (accountAddress: string) => {
   return mapPools(depositPerPool);
 };
 
-export const getUserInterests = async (accountAddress: string) => {
-  const userBalanceUSD = await getAccountDepositInUSD(accountAddress);
+export const getUserInterests = async (accountAddress: string, rates: Rates) => {
+  const userBalanceUSD = await getAccountDeposit(accountAddress);
   const userBalanceInPoolToken = await getAccountDepositInPoolToken(accountAddress);
 
   const interestsPerPool = await Promise.all(RARI_POOLS_ARRAY.map(async (rariPool) => {
@@ -166,8 +191,13 @@ export const getUserInterests = async (accountAddress: string) => {
     if (!lastTransfer) return null;
     const rsptExchangeRateOnLastTransfer = lastTransfer.amountInUSD / lastTransfer.amount;
     const initialBalance = userBalanceInPoolToken[rariPool] * rsptExchangeRateOnLastTransfer;
-    const interests = userBalanceUSD[rariPool] - initialBalance;
+    let interests = userBalanceUSD[rariPool] - initialBalance;
     const interestsPercentage = (interests / initialBalance) * 100;
+    if (rariPool === RARI_POOLS.ETH_POOL) {
+      // interests in ETH pool are in ETH - convert them to
+      const interestsBN = EthersBigNumber.from(Math.floor(interests * 1e9)).mul(Math.floor(rates[ETH].USD * 1e9));
+      interests = parseFloat(utils.formatUnits(interestsBN));
+    }
     return { interests, interestsPercentage };
   }));
   return mapPools(interestsPerPool);

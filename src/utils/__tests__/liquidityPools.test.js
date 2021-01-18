@@ -81,6 +81,9 @@ const liquidityPoolsReducerMock = {
           hourlyVolumeUSD: '5',
         },
       ],
+      liquidityPosition: {
+        liquidityTokenBalance: '0.123',
+      },
     },
   },
   isFetchingLiquidityPoolsData: false,
@@ -145,6 +148,7 @@ describe('Liquidity pools utils', () => {
             value: 4,
           },
         ],
+        userLiquidityTokenBalance: 0.123,
       });
     });
   });

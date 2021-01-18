@@ -308,7 +308,7 @@ const RariDepositScreen = ({
             <>
               <EarnedCard>
                 <BaseText secondary regular>{t('rariContent.label.earned')}</BaseText>
-                {renderEarnedInterests(summedUserDepositsInUSD)}
+                {renderEarnedInterests(totalUserInterests)}
                 {renderEarnedInterestsPercent(totalInterestsPercentage)}
               </EarnedCard>
               <Spacing h={32} />

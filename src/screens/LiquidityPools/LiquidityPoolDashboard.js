@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
 import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
-import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -57,12 +56,9 @@ import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
 import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { getBalance, convertUSDToFiat } from 'utils/assets';
+import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
-
-// selectors
-import { accountBalancesSelector } from 'selectors/balances';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -150,7 +146,6 @@ const Overlay = styled(AbsolutePositioning)`
 
 const LiquidityPoolDashboard = ({
   navigation,
-  balances,
   baseFiatCurrency,
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
@@ -173,9 +168,9 @@ const LiquidityPoolDashboard = ({
 
   useEffect(() => {
     if (
-      getBalance(balances, pool.symbol) > 0 &&
       poolStats &&
       poolStats.stakedAmount === 0 &&
+      poolStats.userLiquidityTokenBalance > 0 &&
       !shownStakingEnabledModal[pool.name] &&
       pool.rewardsEnabled
     ) {
@@ -187,7 +182,7 @@ const LiquidityPoolDashboard = ({
       ));
       setShownStakingEnabledModal(pool.name);
     }
-  }, [balances, poolStats]);
+  }, [poolStats]);
 
   if (!poolStats) return <Loader />;
 
@@ -196,7 +191,7 @@ const LiquidityPoolDashboard = ({
     return null;
   }
 
-  const balance = getBalance(balances, pool.symbol);
+  const balance = poolStats.userLiquidityTokenBalance;
   const formattedBalance = formatMoney(balance, 4);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
@@ -339,7 +334,7 @@ const LiquidityPoolDashboard = ({
                     />
                   </ButtonWrapper>
                 </Row>
-                {balance === 0 && (
+                {balance === 0 && poolStats.stakedAmount === 0 && (
                   <>
                     <Overlay />
                     <AbsolutePositioning>
@@ -470,18 +465,9 @@ const mapStateToProps = ({
   shownStakingEnabledModal,
 });
 
-const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(pools)),
   setShownStakingEnabledModal: (poolName: string) => dispatch(setShownStakingEnabledModalAction(poolName)),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard));
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(LiquidityPoolDashboard));

@@ -22,7 +22,6 @@ import { connect } from 'react-redux';
 import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { createStructuredSelector } from 'reselect';
 import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
@@ -36,7 +35,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { getBalance, convertUSDToFiat } from 'utils/assets';
+import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
@@ -44,11 +43,9 @@ import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { LIQUIDITY_POOL_DASHBOARD, LIQUIDITY_POOLS_INFO } from 'constants/navigationConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
-import { accountBalancesSelector } from 'selectors/balances';
-
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
 
-import type { Rates, Asset, Balances } from 'models/Asset';
+import type { Rates, Asset } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
@@ -59,7 +56,6 @@ type Props = {
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
   baseFiatCurrency: ?string,
   supportedAssets: Asset[],
-  balances: Balances,
   isFetchingLiquidityPoolsData: boolean,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   navigation: NavigationScreenProp<*>,
@@ -128,7 +124,6 @@ const LiquidityPoolsScreen = ({
   fetchLiquidityPoolsData,
   baseFiatCurrency,
   supportedAssets,
-  balances,
   isFetchingLiquidityPoolsData,
   liquidityPoolsReducer,
   navigation,
@@ -256,37 +251,46 @@ const LiquidityPoolsScreen = ({
     );
   };
 
-  const renderPurchasedPool = ({ item: pool, index }) => {
-    const poolStats = poolsStats[index];
-    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
-    if (!poolToken) return null;
-    const balance = getBalance(balances, poolToken.symbol);
-
-    const { tokenPrice } = poolStats;
-    const balanceInFiat = formatFiat(tokenPrice * balance, fiatCurrency);
-
+  const renderPoolListItem = (pool: LiquidityPool, balance: number, balanceInFiat: string) => {
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
         <ListItemWithImage
           label={pool.name}
-          subtext={t('tokenValue', { token: poolToken.symbol, value: balance })}
+          subtext={t('tokenValue', { token: pool.symbol, value: formatAmount(balance) })}
           itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
               <BaseText big>{balanceInFiat}</BaseText>
             </View>
-           )}
+             )}
           padding="14px 0"
         />
       </TouchableOpacity>
     );
   };
 
+  const renderPurchasedPool = ({ item: pool, index }) => {
+    const poolStats = poolsStats[index];
+    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
+    if (!poolToken) return null;
+    const balance = poolStats.userLiquidityTokenBalance;
+
+    const { currentPrice } = poolStats;
+    const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
+
+    return renderPoolListItem(pool, balance, balanceInFiat);
+  };
+
   const renderStakedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
+
+    const { currentPrice } = poolStats;
+    const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount, rates, fiatCurrency);
+    const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
+
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
-        {renderPurchasedPool({ item: pool, index })}
+        {renderPoolListItem(pool, poolStats.stakedAmount, formattedStakedAmount)}
         <Table>
           <TableRow>
             <TableLabel>{t('liquidityPoolsContent.label.availableRewards')}</TableLabel>
@@ -301,12 +305,12 @@ const LiquidityPoolsScreen = ({
 
   const isAvailablePool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats && getBalance(balances, pool.symbol) === 0 && poolStats.stakedAmount === 0;
+    return poolStats && poolStats.userLiquidityTokenBalance === 0 && poolStats.stakedAmount === 0;
   };
 
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats && getBalance(balances, pool.symbol) > 0 && poolStats.stakedAmount === 0;
+    return poolStats && poolStats.userLiquidityTokenBalance > 0 && poolStats.stakedAmount === 0;
   };
 
   const isStakedPool = (pool: LiquidityPool, index: number) => {
@@ -404,18 +408,8 @@ const mapStateToProps = ({
   rates,
 });
 
-const structuredSelector = createStructuredSelector({
-  balances: accountBalancesSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(pools)),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(LiquidityPoolsScreen));
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(LiquidityPoolsScreen));

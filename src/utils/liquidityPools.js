@@ -49,7 +49,7 @@ import type { LiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
 import type { Transaction } from 'models/Transaction';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
-export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
+export const fetchPoolData = async (poolAddress: string, userAddress: string): Promise<Object> => {
   /* eslint-disable i18next/no-literal-string */
   const query = `
     {
@@ -96,6 +96,9 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
       ) {
         hourlyVolumeUSD
       }
+      liquidityPosition(id: "${poolAddress.toLowerCase()}-${userAddress.toLowerCase()}") {
+        liquidityTokenBalance
+      }
     }
   `;
   /* eslint-enable i18next/no-literal-string */
@@ -105,8 +108,8 @@ export const fetchPoolData = async (poolAddress: string): Promise<Object> => {
 export const getAddLiquidityTransactions = async (
   sender: string,
   pool: LiquidityPool,
-  tokenAmounts: number[],
-  poolTokenAmount: number,
+  tokenAmounts: string[],
+  poolTokenAmount: string,
   tokensAssets: Asset[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
@@ -189,6 +192,7 @@ export const getAddLiquidityTransactions = async (
     extra: {
       amount: poolTokenAmount,
       pool,
+      tokenAmounts,
     },
     txFeeInWei,
   };
@@ -199,9 +203,10 @@ export const getAddLiquidityTransactions = async (
 export const getRemoveLiquidityTransactions = async (
   sender: string,
   pool: LiquidityPool,
-  poolTokenAmount: number,
+  poolTokenAmount: string,
   poolToken: Asset,
   tokensAssets: Asset[],
+  obtainedTokensAmounts: string[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
   const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
@@ -263,8 +268,9 @@ export const getRemoveLiquidityTransactions = async (
     ...removeLiquidityTransactions[0],
     tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
     extra: {
-      amoun: poolTokenAmount,
+      amount: poolTokenAmount,
       pool,
+      tokenAmounts: obtainedTokensAmounts,
     },
     txFeeInWei,
   };
@@ -275,7 +281,7 @@ export const getRemoveLiquidityTransactions = async (
 export const getStakeTransactions = async (
   pool: LiquidityPool,
   sender: string,
-  amount: number,
+  amount: string,
   token: Asset,
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
@@ -295,7 +301,7 @@ export const getStakeTransactions = async (
 export const getUnstakeTransaction = (
   pool: LiquidityPool,
   sender: string,
-  amount: number,
+  amount: string,
   txFeeInWei?: BigNumber,
 ) => {
   let unstakeTransaction = getUnipoolUnstakeTransaction(pool.unipoolAddress, sender, amount);
@@ -403,6 +409,7 @@ export const getPoolStats = (
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
     history,
+    userLiquidityTokenBalance: parseFloat(poolData.liquidityPosition?.liquidityTokenBalance) || 0,
   };
 };
 
