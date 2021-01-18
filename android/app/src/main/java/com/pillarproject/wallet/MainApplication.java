@@ -9,6 +9,7 @@ import io.intercom.android.sdk.Intercom;
 import nativeShadow.NativeShadowPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.ReactInstanceManager;
 import com.facebook.soloader.SoLoader;
 import com.wix.reactnativenotifications.RNNotificationsPackage;
 import java.lang.reflect.InvocationTargetException;
