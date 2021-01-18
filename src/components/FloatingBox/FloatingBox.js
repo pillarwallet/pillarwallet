@@ -56,6 +56,7 @@ const FloatingBox = ({ children, isVisible = true }: Props) => {
       toValue: isVisible ? 0 : getHideOffset(),
       speed: 6,
       bounciness: 4,
+      useNativeDriver: false
     }).start();
   }, [isVisible, offsetVar]);
 

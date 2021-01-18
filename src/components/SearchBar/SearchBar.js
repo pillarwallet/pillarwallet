@@ -30,6 +30,7 @@ import { fontSizes, appFont, spacing } from 'utils/variables';
 import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
 
 import type { Theme, ThemeColors } from 'models/Theme';
+// $FlowFixMe
 import type { Event } from 'react-native';
 
 
