@@ -113,7 +113,7 @@ describe('Exchange actions test', () => {
     beforeEach(() => {
       store = mockStore(storeState);
     });
-    const commonArgs = [mockSupportedAssets[1], 10, PROVIDER_UNISWAP, 'trackId'];
+    const commonArgs = [mockSupportedAssets[1], 10, PROVIDER_UNISWAP, 'trackId', '123'];
     it('Creates an exchange transaction object for valid data', async () => {
       let txData;
       await store.dispatch(takeOfferAction(mockSupportedAssets[0], ...commonArgs, (val) => { txData = val; }));

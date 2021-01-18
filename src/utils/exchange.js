@@ -22,6 +22,7 @@ import { Platform } from 'react-native';
 import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
 import { constants } from 'ethers';
+import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
 
 // models
@@ -151,3 +152,22 @@ export const createAllowanceTx = async (
 };
 
 export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode === BTC;
+
+export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string): string =>
+  new BigNumber(askRate).multipliedBy(amountToSell).toFixed();
+
+// check if the re-calculated order amount doesn't diverge from offer amount
+export const isOrderAmountTooLow = (
+  askRate: string | number,
+  fromAmount: number,
+  order: { expectedOutput?: string },
+): boolean => {
+  // no need to do anything if expectedOutput isn't provided - e.g. for Synthetix
+  if (!order.expectedOutput) return false;
+  // askRate is provided by offer
+  const offerAmount = calculateAmountToBuy(askRate, fromAmount);
+  const offerAmountBN = new BigNumber(offerAmount);
+  const orderAmountBN = new BigNumber(order.expectedOutput);
+  // stop swap if order < offer
+  return offerAmountBN.gt(orderAmountBN);
+};
