@@ -40,6 +40,8 @@ node_modules/warning/.*
 <PROJECT_ROOT>/node_modules/redux-persist/.*
 <PROJECT_ROOT>/node_modules/react-native/Libraries/.*
 <PROJECT_ROOT>/node_modules/react-native-vector-icons/dist/index.js.flow
+<PROJECT_ROOT>/node_modules/react-native-inappbrowser-reborn/.*
+<PROJECT_ROOT>/node_modules/react-native-linear-gradient/.*
 ; ;;; custom untyped end ;;;
 
 [include]
