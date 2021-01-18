@@ -14625,6 +14625,7 @@ react-native-tcp@^3.2.1:
 react-native-udp@^2.6.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/react-native-udp/-/react-native-udp-2.7.0.tgz#d04c5100fcbff343f8a2bf35a3025743d8960f93"
+  integrity sha512-tT+Wn0yLbdaTohXkGGor0HYgScGaASWCaCLSO1kCIUdNke7AtcOX5a5nfNLYrEjdUn7/2HRofuplyky7iJHSQA==
   dependencies:
     base64-js "0.0.8"
     events "^1.0.2"
