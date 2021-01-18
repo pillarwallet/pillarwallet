@@ -287,7 +287,9 @@ export async function getPurchaseTicketTransactions(
     : null;
 
   if (!approvedAmountBN || valueToDeposit.gt(approvedAmountBN)) {
-    const approveTransactionData = buildERC20ApproveTransactionData(poolContractAddress, depositAmount, decimals);
+    const approveTransactionData = buildERC20ApproveTransactionData(
+      poolContractAddress, depositAmount.toString(), decimals,
+    );
     purchaseTicketTransactions = [
       {
         from: senderAddress,
