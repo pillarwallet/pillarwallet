@@ -148,7 +148,7 @@ describe('Rari service', () => {
       },
     }));
 
-    const accountsBalance = await rariServices.getAccountDepositInUSD('0x0000');
+    const accountsBalance = await rariServices.getAccountDeposit('0x0000');
     expect(accountsBalance).toEqual({ ETH_POOL: 123.45, STABLE_POOL: 123.45, YIELD_POOL: 123.45 });
 
     getContractMock.mockRestore();
@@ -186,7 +186,7 @@ describe('Rari service', () => {
       ],
     }));
 
-    const accountsInterests = await rariServices.getUserInterests('0x0000');
+    const accountsInterests = await rariServices.getUserInterests('0x0000', rates);
     expect(accountsInterests).toEqual({
       STABLE_POOL: {
         interests: 400,
@@ -197,7 +197,7 @@ describe('Rari service', () => {
         interestsPercentage: 84.1892574507493,
       },
       ETH_POOL: {
-        interests: 400,
+        interests: 2000,
         interestsPercentage: 84.1892574507493,
       },
     });
