@@ -175,6 +175,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
   onScroll = () => {
     return Animated.event(
       [{ nativeEvent: { contentOffset: { y: this.state.scrollY } } }],
+      { useNativeDriver: false }
     );
   }
 
