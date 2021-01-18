@@ -29,6 +29,7 @@ import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constant
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -79,10 +80,6 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
     return `${formatMoney(min || max, 2)}`;
   }
   return `${formatMoney(min, 2)} - ${formatMoney(max, 2)}`;
-};
-
-export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
-  return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
 export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string => {

@@ -494,7 +494,8 @@
     },
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
-      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}.",
+      "exchangeFailed": "This transaction could not be completed. Please try again."
     },
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
@@ -1049,7 +1050,6 @@
       "ticketPurchaseScreen": "Purchase Tickets",
       "withdrawScreen": "Withdraw",
       "withdrawConfirmScreen": "Review",
-      "authorizePoolTogether": "Authorize Pool Together",
       "purchaseConfirmScreen": "Review"
     },
     "button": {
@@ -1059,10 +1059,7 @@
     },
     "paragraph": {
       "purchasedTicketsEligibleDate": "Tickets purchased today will be eligible for prizes starting {{date}}",
-      "automationMissing": "In order to join Pool Together you will need to automate transactions first.",
-      "pendingAutomation": "Please wait for Pool Together automation",
-      "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes.",
-      "allowAutomationWithToken": "Allow Pool Together to spend your {{token}} and automate transactions for you. You will have to do it only once. All further purchases will be executed with no automation fee."
+      "withdrawalNote": "If you withdraw you will no longer be eligible to win prizes."
     }
   },
 
@@ -1225,10 +1222,6 @@
       "title": "Sablier money streaming",
       "description": "Stream money to people and organizations in real-time with just one deposit"
     },
-    "peerToPeerTrading": {
-      "title": "Peer-to-peer trading",
-      "description": "Swap tokens directly with others. Safe, secure, anonymous"
-    },
     "ramp": {
       "assetDecisionAlert": {
         "title": "Please choose...",
@@ -1253,7 +1246,7 @@
     },
     "liquidityPools": {
       "title": "Liquidity Pools",
-      "description": "Stake your PLR Liquidity tokens and receive your rewards." 
+      "description": "Stake your PLR Liquidity tokens and receive your rewards."
     },
     "label": {
       "requiresActivation": "Requires activation",
@@ -1354,8 +1347,6 @@
     "linkedDeviceNotFound": " Linked device not found.",
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) to {{toAssetName}} ({{toAssetSymbol}}) exchange enabled.",
     "keyWalletAssetsTransfered": "Assets transferred. Enjoy using your Smart Wallet!",
-    "poolTogetherAutomationEnabled": "{{tokenSymbol}} enabled. Happy pooling!",
-    "poolTogetherAutomationFailed": "Can't enable {{tokenSymbol}}. Please try again",
     "walletRecovered": "Your wallet is now recovered. Enjoy using Pillar!",
     "rewardsOnTheirWay": "Referral reward is on its way. You will receive it soon.",
     "somethingWentWrong": "Something went wrong, we are already investigating it. Don't worry, your funds are safe. Please try again or contact support.",
@@ -1424,7 +1415,6 @@
     "cannotSendCollectible": "Cannot send collectible. Please try again.",
     "cannotCreateStream": "Cannot create stream. Please try again.",
     "cannotCancelStream": "Cannot cancel stream. Please try again.",
-    "cannotAllowAsset": "Cannot allow asset. Please try again.",
     "cannotPurchaseTicket": "Cannot purchase ticket. Please try again.",
     "cannotWithdraw": "Cannot withdraw. Please try again.",
     "cannotExchangeAsset": "Cannot exchange asset. Please try again.",
@@ -1709,7 +1699,7 @@
       "all": "ALL "
     }
   },
-  
+
   "liquidityPoolsContent": {
     "title": {
       "addLiquidity": "Add liquidity",
