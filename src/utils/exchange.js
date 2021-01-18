@@ -168,6 +168,6 @@ export const isOrderAmountTooLow = (
   const offerAmount = calculateAmountToBuy(askRate, fromAmount);
   const offerAmountBN = new BigNumber(offerAmount);
   const orderAmountBN = new BigNumber(order.expectedOutput);
-  // round both values and stop swap if order < offer
-  return offerAmountBN.toFixed(8) > orderAmountBN.toFixed(8);
+  // stop swap if order < offer
+  return offerAmountBN.gt(orderAmountBN);
 };
