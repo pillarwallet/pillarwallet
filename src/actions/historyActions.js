@@ -75,14 +75,12 @@ import { fetchAssetsBalancesAction, loadSupportedAssetsAction } from './assetsAc
 import { saveDbAction } from './dbActions';
 import { syncVirtualAccountTransactionsAction } from './smartWalletActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
 import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 
 export const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
-    dispatch(checkPoolTogetherApprovalTransactionAction());
   };
 };
 
