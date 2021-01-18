@@ -248,7 +248,7 @@ const getRariDepositTransactionData = async (
 };
 
 export const getRariDepositTransactionsAndExchangeFee = async (
-  rariPool: RariPool, senderAddress: string, amount: number, token: Asset, supportedAssets: Asset[], rates: Rates,
+  rariPool: RariPool, senderAddress: string, amount: string, token: Asset, supportedAssets: Asset[], rates: Rates,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
   let data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
@@ -681,7 +681,7 @@ export const getRariWithdrawTransactionData = async (
 };
 
 export const getRariWithdrawTransaction = async (
-  rariPool: RariPool, senderAddress: string, amount: number, token: Asset,
+  rariPool: RariPool, senderAddress: string, amount: string, token: Asset,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
   const data = await getRariWithdrawTransactionData(senderAddress, rariPool, amountBN, token);

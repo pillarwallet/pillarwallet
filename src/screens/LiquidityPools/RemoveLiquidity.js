@@ -67,10 +67,10 @@ type Props = {
   resetEstimateTransaction: () => void,
   calculateRemoveLiquidityTransactionEstimate: (
     pool: LiquidityPool,
-    tokenAmount: number,
+    tokenAmount: string,
     poolAsset: Asset,
     tokensAssets: Asset[],
-    obtainedAssetsValues: number[],
+    obtainedAssetsValues: string[],
   ) => void,
   balances: Balances,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
@@ -139,10 +139,10 @@ const AddLiquidityScreen = ({
 
     calculateRemoveLiquidityTransactionEstimate(
       pool,
-      parseFloat(poolTokenAmount),
+      poolTokenAmount,
       poolTokenData,
       tokensData,
-      obtainedAssetsValues.map(v => parseFloat(v)),
+      obtainedAssetsValues,
     );
   }, [poolTokenAmount, obtainedTokenFieldsValid, poolTokenFieldValid]);
 
@@ -321,10 +321,10 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateRemoveLiquidityTransactionEstimate: debounce((
     pool: LiquidityPool,
-    tokenAmount: number,
+    tokenAmount: string,
     poolAsset: Asset,
     tokensAssets: Asset[],
-    obtainedAssetsValues: number[],
+    obtainedAssetsValues: string[],
   ) => dispatch(
     calculateRemoveLiquidityTransactionEstimateAction(
       pool, tokenAmount, poolAsset, tokensAssets, obtainedAssetsValues,

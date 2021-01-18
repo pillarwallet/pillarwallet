@@ -135,8 +135,8 @@ export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
 
 export const calculateAddLiquidityTransactionEstimateAction = (
   pool: LiquidityPool,
-  tokenAmounts: number[],
-  poolTokenAmount: number,
+  tokenAmounts: string[],
+  poolTokenAmount: string,
   tokensAssets: Asset[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -185,7 +185,7 @@ export const calculateAddLiquidityTransactionEstimateAction = (
 
 export const calculateStakeTransactionEstimateAction = (
   pool: LiquidityPool,
-  tokenAmount: number,
+  tokenAmount: string,
   tokenAsset: Asset,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -233,7 +233,7 @@ export const calculateStakeTransactionEstimateAction = (
 
 export const calculateUnstakeTransactionEstimateAction = (
   pool: LiquidityPool,
-  tokenAmount: number,
+  tokenAmount: string,
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
@@ -254,10 +254,10 @@ export const calculateUnstakeTransactionEstimateAction = (
 
 export const calculateRemoveLiquidityTransactionEstimateAction = (
   pool: LiquidityPool,
-  tokenAmount: number,
+  tokenAmount: string,
   poolToken: Asset,
   tokensAssets: Asset[],
-  obtainedTokensAmounts: number[],
+  obtainedTokensAmounts: string[],
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();

@@ -209,7 +209,10 @@ const Graph = ({
       onGestureEnd();
       return true;
     },
-    onPanResponderTerminate: () => true,
+    onPanResponderTerminate: () => {
+      onGestureEnd();
+      return true;
+    },
     onShouldBlockNativeResponder: () => true,
   });
 

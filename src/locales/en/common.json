@@ -494,7 +494,8 @@
     },
     "exchange": {
       "incorrectNumber": "Incorrect number entered",
-      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}."
+      "amountTooBig": "Amount should not be bigger than your balance - {{assetBalance}} {{symbol}}.",
+      "exchangeFailed": "This transaction could not be completed. Please try again."
     },
     "walletConnect": {
       "assetNotSupported": "This data transaction or token is not supported in Pillar Wallet yet",
@@ -1225,10 +1226,6 @@
       "title": "Sablier money streaming",
       "description": "Stream money to people and organizations in real-time with just one deposit"
     },
-    "peerToPeerTrading": {
-      "title": "Peer-to-peer trading",
-      "description": "Swap tokens directly with others. Safe, secure, anonymous"
-    },
     "ramp": {
       "assetDecisionAlert": {
         "title": "Please choose...",
@@ -1253,7 +1250,7 @@
     },
     "liquidityPools": {
       "title": "Liquidity Pools",
-      "description": "Stake your PLR Liquidity tokens and receive your rewards." 
+      "description": "Stake your PLR Liquidity tokens and receive your rewards."
     },
     "label": {
       "requiresActivation": "Requires activation",
@@ -1709,7 +1706,7 @@
       "all": "ALL "
     }
   },
-  
+
   "liquidityPoolsContent": {
     "title": {
       "addLiquidity": "Add liquidity",
