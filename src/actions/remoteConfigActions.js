@@ -19,7 +19,7 @@
 */
 
 import { firebaseRemoteConfig } from 'services/firebase';
-import { reportOrWarn } from 'utils/common';
+import { reportLog } from 'utils/common';
 import { log } from 'utils/logger';
 import { isTest } from 'utils/environment';
 
@@ -38,6 +38,6 @@ export const loadRemoteConfigAction = () => {
         if (isTest) return; // do not print log on test instance
         log.info('Firebase Config: Fetched the latest remote config values, if any.');
       })
-      .catch(e => { reportOrWarn('Failed to fetch feature flags or initialize with defaults', e, 'warning'); });
+      .catch(e => { reportLog('Failed to fetch feature flags or initialize with defaults', e); });
   };
 };

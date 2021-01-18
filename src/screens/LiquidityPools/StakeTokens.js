@@ -59,7 +59,7 @@ type Props = {
   resetEstimateTransaction: () => void,
   calculateStakeTransactionEstimate: (
     pool: LiquidityPool,
-    tokenAmount: number,
+    tokenAmount: string,
     tokenAsset: Asset,
   ) => void,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
@@ -104,7 +104,7 @@ const StakeTokensScreen = ({
     if (!parseFloat(assetValue) || !isValid || !assetData) return;
     calculateStakeTransactionEstimate(
       pool,
-      parseFloat(assetValue),
+      assetValue,
       assetData,
     );
   }, [assetValue, isValid]);
@@ -189,7 +189,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateStakeTransactionEstimate: debounce((
     pool: LiquidityPool,
-    tokenAmount: number,
+    tokenAmount: string,
     tokenAsset: Asset,
   ) => dispatch(calculateStakeTransactionEstimateAction(pool, tokenAmount, tokenAsset)), 500),
 });
