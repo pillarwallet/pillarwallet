@@ -129,7 +129,7 @@ export const fetchDepositedAssetAction = (symbol: string) => {
 };
 
 export const calculateLendingDepositTransactionEstimateAction = (
-  amount: number,
+  amount: string,
   asset: AssetToDeposit,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
@@ -166,7 +166,7 @@ export const calculateLendingDepositTransactionEstimateAction = (
 };
 
 export const calculateLendingWithdrawTransactionEstimateAction = (
-  withdrawAmount: number,
+  withdrawAmount: string,
   depositedAsset: DepositedAsset,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
