@@ -18,7 +18,7 @@
 */
 // $FlowIgnore
 /* eslint-disable */
-import { YellowBox } from 'react-native';
+import { LogBox } from 'react-native';
 LogBox.ignoreLogs([
   'Class RCTCxxModule',
   'Module RNRandomBytes',
