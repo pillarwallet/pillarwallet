@@ -8,34 +8,6 @@ target 'pillarwallet' do
 
   use_react_native!(:path => config["reactNativePath"])
 
-  # pod for splash gif
-  pod 'SwiftyGif'
-  
-  # Pods for pillarwallet
-  pod 'React-cxxreact', :path => '../node_modules/react-native/ReactCommon/cxxreact'
-  pod 'React-jsi', :path => '../node_modules/react-native/ReactCommon/jsi'
-  pod 'React-jsiexecutor', :path => '../node_modules/react-native/ReactCommon/jsiexecutor'
-  pod 'React-jsinspector', :path => '../node_modules/react-native/ReactCommon/jsinspector'
-  pod 'ReactCommon/jscallinvoker', :path => "../node_modules/react-native/ReactCommon"
-  pod 'ReactCommon/turbomodule/core', :path => "../node_modules/react-native/ReactCommon"
-  pod 'Yoga', :path => '../node_modules/react-native/ReactCommon/yoga'
-
-  pod 'DoubleConversion', :podspec => '../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec'
-  pod 'glog', :podspec => '../node_modules/react-native/third-party-podspecs/glog.podspec'
-  pod 'Folly', :podspec => '../node_modules/react-native/third-party-podspecs/Folly.podspec'
-
-  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
-
-  # react-native-permissions:
-  permissions_path = '../node_modules/react-native-permissions/ios'
-  pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
-  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
-  pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
-
-  use_native_modules!
-  pod 'RNLocalize', :path => '../node_modules/react-native-localize'
-  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
-
   # Enables Flipper.
   #
   # Note that if you have use_frameworks! enabled, Flipper will not work and
@@ -44,4 +16,21 @@ target 'pillarwallet' do
   post_install do |installer|
     flipper_post_install(installer)
   end
+
+  ### Custom Pods
+  
+  # pod for splash gif
+  pod 'SwiftyGif'
+  
+  pod 'rn-fetch-blob', :path => '../node_modules/rn-fetch-blob'
+
+  # react-native-permissions:
+  permissions_path = '../node_modules/react-native-permissions/ios'
+  pod 'Permission-Camera', :path => "#{permissions_path}/Camera.podspec"
+  pod 'Permission-PhotoLibrary', :path => "#{permissions_path}/PhotoLibrary.podspec"
+  pod 'Permission-FaceID', :path => "#{permissions_path}/FaceID.podspec"
+
+  pod 'RNLocalize', :path => '../node_modules/react-native-localize'
+  pod 'react-native-date-picker', :path => '../node_modules/react-native-date-picker'
+
 end
