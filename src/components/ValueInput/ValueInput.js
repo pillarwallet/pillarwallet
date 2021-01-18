@@ -148,7 +148,8 @@ export const ValueInputComponent = (props: Props) => {
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
-  const assetBalance = parseFloat((customBalances || balances)[assetSymbol]?.balance).toFixed(VISIBLE_NUMBER_DECIMALS);
+  const assetBalance = (parseFloat((customBalances || balances)[assetSymbol]?.balance) || 0)
+    .toFixed(VISIBLE_NUMBER_DECIMALS);
   const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken).toString();
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;

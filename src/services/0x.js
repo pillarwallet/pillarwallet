@@ -42,7 +42,7 @@ export const get0xSwapOrders = async (
 
   const { data: decoded } = await axios.get(url)
     .catch((error) => {
-      if (error.response?.data?.validationErrors[0]?.reason === 'INSUFFICIENT_ASSET_LIQUIDITY') {
+      if (error.response?.data?.validationErrors?.[0]?.reason === 'INSUFFICIENT_ASSET_LIQUIDITY') {
         throw new NotEnoughLiquidityError();
       } else {
         reportErrorLog('Error requesting quote from 0x swap API', { error });
