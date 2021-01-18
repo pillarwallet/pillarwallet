@@ -393,7 +393,10 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
       fetchedAssetsSymbols = uniq(assetsSymbols[1]);
     }
 
-    if (!fetchedAssetsSymbols.length) return;
+    if (!fetchedAssetsSymbols.length) {
+      reportErrorLog('Failed to fetch exchange supported assets', null);
+      return;
+    }
 
     const exchangeSupportedAssets = fetchOneInchSuccess || fetchUniswapSuccess
       ? supportedAssets.filter(({ symbol, isSynthetixAsset }) =>
