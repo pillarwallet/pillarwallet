@@ -573,6 +573,7 @@ PODS:
   - Sentry/Core (5.2.2)
   - SwiftyGif (5.3.0)
   - TcpSockets (3.3.2):
+    - CocoaAsyncSocket
     - React
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
@@ -983,7 +984,7 @@ SPEC CHECKSUMS:
   SDWebImageWebPCoder: 36f8f47bd9879a8aea6044765c1351120fd8e3a8
   Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
-  TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
+  TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
   Yoga: 4bd86afe9883422a7c4028c00e34790f560923d6
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
