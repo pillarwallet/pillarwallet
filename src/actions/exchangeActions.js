@@ -361,6 +361,7 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       assets: { supportedAssets },
+      exchange: { exchangeSupportedAssets: _exchangeSupportedAssets },
     } = getState();
 
     dispatch({
@@ -373,7 +374,11 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
 
     const assetsSymbols = await Promise.all([oneInchAssetsSymbols, uniswapAssetsSymbols]);
 
-    if (!assetsSymbols[1]) {
+    const fetchOneInchSuccess = Array.isArray(assetsSymbols[0]);
+    const fetchUniswapSuccess = Array.isArray(assetsSymbols[1]);
+    const fetchSuccess = fetchOneInchSuccess && fetchUniswapSuccess;
+
+    if (!fetchUniswapSuccess) {
       dispatch({
         type: SET_UNISWAP_TOKENS_QUERY_STATUS,
         payload: { status: UNISWAP_TOKENS_QUERY_STATUS.ERROR },
@@ -385,11 +390,24 @@ export const getExchangeSupportedAssetsAction = (callback?: () => void) => {
       });
     }
 
-    const fetchSuccess: boolean = Array.isArray(assetsSymbols[0]) && Array.isArray(assetsSymbols[1]);
+    // if fetching failed and user can fall back to valid assets, no need to do anything
+    if (_exchangeSupportedAssets?.length && !fetchSuccess) return;
 
-    const fetchedAssetsSymbols: string[] = fetchSuccess ? uniq(assetsSymbols[0].concat(assetsSymbols[1])) : [];
+    let fetchedAssetsSymbols: string[] = [];
+    if (fetchSuccess) {
+      fetchedAssetsSymbols = uniq(assetsSymbols[0].concat(assetsSymbols[1]));
+    } else if (fetchOneInchSuccess) {
+      fetchedAssetsSymbols = uniq(assetsSymbols[0]);
+    } else if (fetchUniswapSuccess) {
+      fetchedAssetsSymbols = uniq(assetsSymbols[1]);
+    }
 
-    const exchangeSupportedAssets = fetchSuccess
+    if (!fetchedAssetsSymbols.length) {
+      reportErrorLog('Failed to fetch exchange supported assets', null);
+      return;
+    }
+
+    const exchangeSupportedAssets = fetchOneInchSuccess || fetchUniswapSuccess
       ? supportedAssets.filter(({ symbol, isSynthetixAsset }) =>
         isSynthetixAsset || fetchedAssetsSymbols.includes(symbol))
       : [];
