@@ -424,7 +424,7 @@ jobs:
             apk add --update curl git openssh bash
       - checkout
       - run:
-          name: Fetch semget and bump tag
+          name: Fetch semtag and bump tag
           command: |
             curl -o semtag https://raw.githubusercontent.com/pnikosis/semtag/v0.0.9/semtag
             chmod +x semtag
