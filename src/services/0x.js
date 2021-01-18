@@ -22,6 +22,9 @@ import axios from 'axios';
 import { BigNumber as EthersBigNumber } from 'ethers';
 import { reportErrorLog } from 'utils/common';
 
+
+export class NotEnoughLiquidityError extends Error {}
+
 // based on https://github.com/Rari-Capital/rari-dApp/blob/6d07a47206f409ee6c52690f43c172c25a26071b/src/rari-sdk/0x.js
 export const get0xSwapOrders = async (
   inputTokenAddress: string,
@@ -39,7 +42,11 @@ export const get0xSwapOrders = async (
 
   const { data: decoded } = await axios.get(url)
     .catch((error) => {
-      reportErrorLog('Error requesting quote from 0x swap API', { error });
+      if (error.response?.data?.validationErrors[0]?.reason === 'INSUFFICIENT_ASSET_LIQUIDITY') {
+        throw new NotEnoughLiquidityError();
+      } else {
+        reportErrorLog('Error requesting quote from 0x swap API', { error });
+      }
       return null;
     });
 
