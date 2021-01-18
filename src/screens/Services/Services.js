@@ -21,7 +21,6 @@ import * as React from 'react';
 import { FlatList, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
-import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
@@ -50,7 +49,6 @@ import {
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { openInAppBrowser } from 'utils/inAppBrowser';
 import {
@@ -68,7 +66,6 @@ import { isActiveAccountSmartWalletSelector, isSmartWalletActivatedSelector } fr
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
@@ -76,14 +73,10 @@ import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
 
-// assets
-import PROVIDERS_META from 'assets/exchange/providersMeta.json';
-
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
 let isAaveEnabled = true;
 let isPoolTogetherEnabled = true;
-let isPeerToPeerEnabled = false;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
@@ -93,7 +86,6 @@ let isRariEnabled = true;
 let areLiquidityPoolsEnabled = true;
 
 type Props = {
-  theme: Theme,
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
   isActiveAccountSmartWallet: boolean,
@@ -116,7 +108,6 @@ class ServicesScreen extends React.Component<Props> {
     isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_OFFERS_ENGINE);
     isAaveEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_AAVE);
     isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_POOL_TOGETHER);
-    isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_PEER_TO_PEER);
     isWyreEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
@@ -131,16 +122,9 @@ class ServicesScreen extends React.Component<Props> {
   getServices = () => {
     const {
       navigation,
-      theme,
       isActiveAccountSmartWallet,
       isSmartWalletActivated,
     } = this.props;
-    const colors = getThemeColors(theme);
-    const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
-      // +1 for WBTC.Cafe
-      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length + 1 }),
-      color: colors.primary,
-    } : null;
 
     const SWServiceDisabled = !isActiveAccountSmartWallet || !isSmartWalletActivated;
     let SWServiceLabel;
@@ -157,7 +141,6 @@ class ServicesScreen extends React.Component<Props> {
         title: t('servicesContent.exchange.title'),
         body: t('servicesContent.exchange.description'),
         action: () => navigation.navigate(EXCHANGE),
-        labelBadge: offersBadge,
       });
     }
     services.push(...this.getBuyCryptoServices());
@@ -219,15 +202,6 @@ class ServicesScreen extends React.Component<Props> {
         disabled: SWServiceDisabled,
         label: SWServiceLabel,
         action: () => navigation.navigate(RARI_DEPOSIT),
-      });
-    }
-    if (isPeerToPeerEnabled) {
-      services.push({
-        key: 'peerToPeerTrading',
-        title: t('servicesContent.peerToPeerTrading.title'),
-        body: t('servicesContent.peerToPeerTrading.description'),
-        disabled: true,
-        label: t('servicesContent.label.soon'),
       });
     }
     return services;
@@ -438,4 +412,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
-export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen);
