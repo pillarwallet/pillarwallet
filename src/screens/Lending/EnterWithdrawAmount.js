@@ -58,7 +58,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
-  calculateLendingWithdrawTransactionEstimate: (amount: number, asset: DepositedAsset) => void,
+  calculateLendingWithdrawTransactionEstimate: (amount: string, asset: DepositedAsset) => void,
   balances: Balances,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
@@ -212,7 +212,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateLendingWithdrawTransactionEstimate: debounce((
-    amount: number,
+    amount: string,
     depositedAsset: DepositedAsset,
   ) => dispatch(calculateLendingWithdrawTransactionEstimateAction(amount, depositedAsset)), 500),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
