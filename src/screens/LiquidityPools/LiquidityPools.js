@@ -251,37 +251,46 @@ const LiquidityPoolsScreen = ({
     );
   };
 
-  const renderPurchasedPool = ({ item: pool, index }) => {
-    const poolStats = poolsStats[index];
-    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
-    if (!poolToken) return null;
-    const balance = poolStats.userLiquidityTokenBalance;
-
-    const { tokenPrice } = poolStats;
-    const balanceInFiat = formatFiat(tokenPrice * balance, fiatCurrency);
-
+  const renderPoolListItem = (pool: LiquidityPool, balance: number, balanceInFiat: string) => {
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
         <ListItemWithImage
           label={pool.name}
-          subtext={t('tokenValue', { token: poolToken.symbol, value: formatAmount(balance) })}
+          subtext={t('tokenValue', { token: pool.symbol, value: formatAmount(balance) })}
           itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
               <BaseText big>{balanceInFiat}</BaseText>
             </View>
-           )}
+             )}
           padding="14px 0"
         />
       </TouchableOpacity>
     );
   };
 
+  const renderPurchasedPool = ({ item: pool, index }) => {
+    const poolStats = poolsStats[index];
+    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
+    if (!poolToken) return null;
+    const balance = poolStats.userLiquidityTokenBalance;
+
+    const { currentPrice } = poolStats;
+    const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
+
+    return renderPoolListItem(pool, balance, balanceInFiat);
+  };
+
   const renderStakedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
+
+    const { currentPrice } = poolStats;
+    const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount, rates, fiatCurrency);
+    const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
+
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
-        {renderPurchasedPool({ item: pool, index })}
+        {renderPoolListItem(pool, poolStats.stakedAmount, formattedStakedAmount)}
         <Table>
           <TableRow>
             <TableLabel>{t('liquidityPoolsContent.label.availableRewards')}</TableLabel>
