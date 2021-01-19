@@ -282,6 +282,7 @@ class SearchBar extends React.Component<Props, State> {
     Animated.timing(this.state.animShrink, {
       toValue: 100,
       duration: 250,
+      useNativeDriver: true,
     }).start();
     Keyboard.dismiss();
   };
@@ -295,6 +296,7 @@ class SearchBar extends React.Component<Props, State> {
     Animated.timing(this.state.animShrink, {
       toValue: inputShrinkSize,
       duration: 250,
+      useNativeDriver: true,
     }).start();
   };
 
