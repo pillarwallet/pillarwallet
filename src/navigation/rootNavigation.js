@@ -20,7 +20,8 @@
 
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 // screens
 import NewWalletScreen from 'screens/NewWallet';
