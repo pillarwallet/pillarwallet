@@ -355,6 +355,7 @@ export const generateAssetSelectorOption = (
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
   const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
+  // $FlowFixMe: flow update to 0.122
   return ({
     key: symbol,
     value: symbol,

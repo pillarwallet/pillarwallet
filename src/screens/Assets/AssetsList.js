@@ -306,6 +306,7 @@ class AssetsList extends React.Component<Props, State> {
 
     const sortedAssets = Object.keys(assets)
       .map(id => assets[id])
+      // $FlowFixMe: flow update to 0.122
       .map(({ symbol, ...rest }) => ({
         symbol,
         balance: getBalance(balances, symbol),

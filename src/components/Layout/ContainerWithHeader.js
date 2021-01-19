@@ -219,6 +219,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
     return (
       <View style={{ flex: 1 }}>
         {!isEmpty(headerProps) &&
+          // $FlowFixMe: flow update to 0.122
           <HeaderBlock
             {...headerProps}
             navigation={navigation}

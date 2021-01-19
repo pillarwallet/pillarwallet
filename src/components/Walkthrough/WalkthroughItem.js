@@ -124,6 +124,7 @@ class WalkthroughItem extends React.Component<Props, State> {
         <TouchableOpacity onPress={this.showNext}>
           {children}
           {!!showTooltip && refMeasures &&
+            // $FlowFixMe: flow update to 0.122
             <WalkthroughTooltip
               isAttached
               targetMeasurements={refMeasures}

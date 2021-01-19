@@ -1617,6 +1617,7 @@ export class EventDetail extends React.Component<Props> {
 
     if (settleEventData) {
       return (
+        // $FlowFixMe: flow update to 0.122
         <DetailModal {...commonProps}>
           {this.renderSettle(settleEventData, eventData)}
         </DetailModal>
@@ -1624,6 +1625,7 @@ export class EventDetail extends React.Component<Props> {
     }
 
     return (
+      // $FlowFixMe: flow update to 0.122
       <DetailModal
         {...commonProps}
         fee={this.getFee(event.hash, fee, isReceived)}

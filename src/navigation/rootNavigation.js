@@ -118,6 +118,7 @@ class WrappedRootSwitch extends React.Component<Props> {
     return (
       <>
         <ModalProvider />
+        {/* $FlowFixMe: flow update to 0.122 */}
         <RootSwitch screenProps={{ language }} {...this.props} />
       </>
     );
