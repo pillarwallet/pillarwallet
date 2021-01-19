@@ -427,7 +427,7 @@ jobs:
           name: Fetch semtag and bump tag
           command: |
             chmod +x .circleci/semtag.sh
-            ./circleci/semtag.sh
+            bash .circleci/semtag.sh
 
   get-latest-tag:
     executor: python3-alpine-executor
