@@ -30,4 +30,5 @@ import { requireNativeComponent } from 'react-native';
  * - shadowColor: string
  */
 
+// $FlowFixMe
 export default requireNativeComponent('NativeShadow');

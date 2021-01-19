@@ -668,7 +668,7 @@ export class EventDetail extends React.Component<Props> {
     return (
       <View style={{ width: '100%' }}>
         {topTokens.map((token, index) => (
-          <Row>
+          <Row key={token.name}>
             <BaseText regular secondary={options.topTokensSecondary}>{token.name}</BaseText>
             <BaseText regular>
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
