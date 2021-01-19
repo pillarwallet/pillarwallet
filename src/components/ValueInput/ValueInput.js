@@ -41,7 +41,7 @@ import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
 import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
-import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency, VISIBLE_NUMBER_DECIMALS } from 'constants/assetsConstants';
+import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
 import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
 import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
@@ -148,9 +148,8 @@ export const ValueInputComponent = (props: Props) => {
   const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
-  const assetBalance = (parseFloat((customBalances || balances)[assetSymbol]?.balance) || 0)
-    .toFixed(VISIBLE_NUMBER_DECIMALS);
-  const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken).toString();
+  const assetBalance = (customBalances || balances)[assetSymbol]?.balance || '0';
+  const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
@@ -195,7 +194,11 @@ export const ValueInputComponent = (props: Props) => {
       newTxFeeInfo?.gasToken,
     );
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
-    onValueChange(toFixedString(newMaxValue * (percent / 100)));
+    if (percent === 100) {
+      onValueChange(newMaxValue);
+    } else {
+      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)));
+    }
     const fiatValue = maxValueInFiat * (percent / 100);
     setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
   };
