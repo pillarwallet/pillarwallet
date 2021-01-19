@@ -23,7 +23,7 @@ import { BigNumber } from 'bignumber.js';
 import { keccak256 } from 'js-sha3';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
-import { get0xSwapOrders } from 'services/0x.js';
+import { get0xSwapOrders, NotEnoughLiquidityError } from 'services/0x.js';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
 import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
@@ -214,7 +214,7 @@ const getRariDepositTransactionData = async (
     reportErrorLog(
       `Rari service failed: Unable to find enough liquidity to exchange ${token.symbol} before depositing.`,
     );
-    return null;
+    throw new NotEnoughLiquidityError();
   }
 
   for (let j = 0; j < orders.length; j++) {
@@ -659,7 +659,7 @@ export const getRariWithdrawTransactionData = async (
     if (withdrawnAmountBN.lt(amountBN)) {
       reportErrorLog('Rari service failed: Unable to find enough liquidity to exchange ' +
         `withdrawn tokens to ${token.symbol}.`);
-      return null;
+      throw new NotEnoughLiquidityError();
     }
   }
 
@@ -881,7 +881,7 @@ export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, sen
     );
   }
   reportErrorLog('Rari service failed: Not enough liquidity to fill sender usd balance');
-  return null;
+  throw new NotEnoughLiquidityError();
 };
 
 export const getWithdrawalFeeRate = (rariPool: RariPool) => {

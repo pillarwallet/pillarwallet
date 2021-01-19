@@ -177,11 +177,18 @@ const RariWithdrawScreen = ({
         });
       })
       .catch((error) => {
-        reportErrorLog('Rari service failed: Error getting max balance', { error });
-        Toast.show({
-          message: t('toast.rariServiceFailed'),
-          emoji: 'hushed',
-        });
+        if (error instanceof NotEnoughLiquidityError) {
+          Toast.show({
+            message: t('toast.rariNotEnoughLiquidity'),
+            emoji: 'hushed',
+          });
+        } else {
+          reportErrorLog('Rari service failed: Error getting max balance', { error });
+          Toast.show({
+            message: t('toast.rariServiceFailed'),
+            emoji: 'hushed',
+          });
+        }
       })
       .then(() => setIsCalculatingMaxAmount(false));
   }, [selectedAsset]);
