@@ -18,4 +18,4 @@ case "$SEMVER_TAG" in
 	*)
 		exit 1
 		;;
-	esac
+esac
