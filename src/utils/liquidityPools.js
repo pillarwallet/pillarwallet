@@ -355,31 +355,24 @@ export const getPoolStats = (
   const monthAgoPrice = historyData[30] && historyData[30].reserveUSD / historyData[30].totalSupply;
   const monthPriceChange = monthAgoPrice && ((currentPrice - monthAgoPrice) * 100) / monthAgoPrice;
 
-  const tokenSymbols = [pairData.token0.symbol, pairData.token1.symbol]
+  // $FlowFixMe: flow update to 0.122
+  const tokenSymbols: [string, string] = [pairData.token0.symbol, pairData.token1.symbol]
     .map(symbol => symbol === WETH ? ETH : symbol);
 
   const tokensLiquidity = {
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[0]]: parseFloat(pairData.reserve0),
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[1]]: parseFloat(pairData.reserve1),
   };
   const tokensPricesUSD = {
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[0]]: pairData.reserveUSD / (2 * pairData.reserve0),
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[1]]: pairData.reserveUSD / (2 * pairData.reserve1),
   };
   const tokensPrices = {
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[0]]: parseFloat(pairData.token0Price),
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[1]]: parseFloat(pairData.token1Price),
   };
   const tokensPerLiquidityToken = {
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[0]]: pairData.reserve0 / pairData.totalSupply,
-    // $FlowFixMe: flow update to 0.122
     [tokenSymbols[1]]: pairData.reserve1 / pairData.totalSupply,
   };
 

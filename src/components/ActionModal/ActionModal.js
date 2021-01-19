@@ -44,7 +44,7 @@ type Props = {|
 type ItemProps = {
   label: string,
   onPress: Function,
-  value: string,
+  value?: string,
   chevron?: boolean,
   isDisabled?: boolean,
   paragraph?: React.Node,
@@ -102,7 +102,6 @@ class ActionModal extends React.Component<Props> {
     const { doNotCloseOnPress } = this.props;
     const { onPress = noop } = item;
     return (
-      // $FlowFixMe: flow update to 0.122
       <Item
         {...item}
         onPress={() => {
