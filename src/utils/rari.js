@@ -26,7 +26,7 @@ import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } f
 import { get0xSwapOrders, NotEnoughLiquidityError } from 'services/0x.js';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
-import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
+import { USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
 import {
   RARI_POOLS,
   RARI_TOKENS,
@@ -51,7 +51,7 @@ import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
 
 
-const MSTABLE_TOKENS = ['DAI', 'USDC', 'USDT', 'TUSD'];
+const MSTABLE_TOKENS = [USDC, USDT, TUSD];
 const MSTABLE_TOKENS_WITH_MUSD = [...MSTABLE_TOKENS, 'mUSD'];
 
 const getRariAcceptedCurrencies = (rariPool: RariPool) => {
@@ -153,12 +153,12 @@ const getRariDepositTransactionData = async (
   // TODO: if user wants to deposit mUSD the flow is a bit different
   // you need to use MassetValidationHelper.getRedeemValidity to get swap output data
   // but since mUSD is not yet supported we don't need to implement it right now
-  if ([DAI, USDC, USDT, TUSD].includes(token.symbol)) {
+  if (MSTABLE_TOKENS.includes(token.symbol)) {
     for (let i = 0; i < acceptedCurrencies.length; ++i) {
       acceptedCurrency = acceptedCurrencies[i];
       acceptedAsset = supportedAssets.find(asset => asset.symbol === acceptedCurrencies[i]);
 
-      if (![DAI, USDC, USDT, TUSD, mUSD].includes(acceptedCurrency) || !acceptedAsset) {
+      if (!MSTABLE_TOKENS_WITH_MUSD.includes(acceptedCurrency) || !acceptedAsset) {
         continue;
       }
 
