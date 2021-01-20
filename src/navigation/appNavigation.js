@@ -577,9 +577,11 @@ const tabNavigation = createBottomTabNavigator(
         shadowOffset: { width: 0, height: -2 },
         shadowOpacity: 0.05,
         shadowRadius: 2,
+        height: 54,
+      },
+      tabStyle: {
         paddingTop: 5,
         paddingBottom: 5,
-        height: 54,
       },
     },
     tabBarPosition: 'bottom', // eslint-disable-line i18next/no-literal-string
