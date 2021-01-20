@@ -70,7 +70,6 @@ const SelectorChevron = styled(Icon)`
 const ChevronWrapper = styled.View`
   width: 25px;
   align-items: center;
-  margin-right: 4px;
 `;
 
 const AssetName = styled(MediumText)`
@@ -104,9 +103,12 @@ const ValueInputHeader = (props: Props) => {
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />
-        <ChevronWrapper>
-          <SelectorChevron name="selector" />
-        </ChevronWrapper>
+        {!disableAssetSelection && (
+          <ChevronWrapper>
+            <SelectorChevron name="selector" />
+          </ChevronWrapper>
+        )}
+        <Spacing w={4} />
       </SideWrapper>
       <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />

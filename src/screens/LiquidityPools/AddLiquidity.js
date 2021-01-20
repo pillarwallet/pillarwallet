@@ -158,6 +158,7 @@ const AddLiquidityScreen = ({
     return (
       <ValueInput
         assetData={tokensData[tokenIndex]}
+        customAssets={[tokensData[tokenIndex]]}
         value={assetsValues[tokenIndex]}
         onValueChange={(newValue: string) => onAssetValueChange(newValue, tokenIndex)}
         onFormValid={(isValid: boolean) => {
@@ -247,8 +248,10 @@ const AddLiquidityScreen = ({
         <StyledIcon name="equal" />
         <ValueInput
           assetData={poolTokenData}
+          customAssets={[poolTokenData]}
           value={poolTokenAmount}
           disabled
+          hideMaxSend
         />
         <Table>
           <TableRow>

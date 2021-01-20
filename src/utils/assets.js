@@ -139,7 +139,7 @@ export const calculateMaxAmount = (
   balance: number | string,
   txFeeInWei: BigNumber,
   gasToken: ?GasToken = {},
-): number => {
+): string => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);
   if (!balance) balance = 0;
 
@@ -150,15 +150,15 @@ export const calculateMaxAmount = (
   const feeSymbol = get(gasToken, 'symbol', ETH);
 
   if (token !== feeSymbol) {
-    return +balance;
+    return balance;
   }
 
   // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
   const decimals = get(gasToken, 'decimals', 'ether');
   const maxAmount = utils.parseUnits(balance, decimals).sub(EthersBigNumber.from(txFeeInWei.toString()));
-  if (maxAmount.lt(0)) return 0;
+  if (maxAmount.lt(0)) return '0';
 
-  return new BigNumber(utils.formatUnits(maxAmount, decimals)).toNumber();
+  return utils.formatUnits(maxAmount, decimals).toString();
 };
 
 export const isEnoughBalanceForTransactionFee = (

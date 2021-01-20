@@ -445,7 +445,7 @@ class HomeScreen extends React.Component<Props> {
 
   renderLiquidityPool = ({ item: { pool, poolStats } }) => {
     const { rates, baseFiatCurrency } = this.props;
-    const tokenBalance = poolStats.userLiquidityTokenBalance;
+    const tokenBalance = poolStats.userLiquidityTokenBalance + poolStats.stakedAmount;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return (
       <ListItemWithImage

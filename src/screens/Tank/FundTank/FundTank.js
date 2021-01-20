@@ -219,7 +219,7 @@ class FundTank extends React.Component<Props, State> {
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
     // max amount
-    const maxAmount = calculateMaxAmount(token, balance, txFeeInWei, gasToken);
+    const maxAmount = parseFloat(calculateMaxAmount(token, balance, txFeeInWei, gasToken));
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);
