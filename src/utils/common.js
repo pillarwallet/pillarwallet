@@ -703,7 +703,7 @@ export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
 export const formatBigAmount = (amount: number) => {
   if (amount >= 1e6) {
-    return `${Math.round(amount / 1e6)}KK`; // eslint-disable-line i18next/no-literal-string
+    return `${Math.round(amount / 1e6)}M`; // eslint-disable-line i18next/no-literal-string
   }
   if (amount >= 1e3) {
     return `${Math.round(amount / 1e3)}K`; // eslint-disable-line i18next/no-literal-string
