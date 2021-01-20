@@ -161,6 +161,7 @@ class SmartWallet {
         this.handleError(err);
       }
     }
+
     return this.sdk;
   }
 
@@ -628,6 +629,10 @@ class SmartWallet {
 
   getConnectedAccountTransactionExplorerLink(hash: string): string {
     return this.getSdk().getConnectedAccountTransactionExplorerLink(hash); // not a promise
+  }
+
+  isValidSession(): Promise<string> {
+    return this.getSdk().session.verifyToken().catch(() => false);
   }
 
   handleError(error: any) {

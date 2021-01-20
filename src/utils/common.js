@@ -32,7 +32,6 @@ import {
   Linking,
   PixelRatio,
   AppState,
-  DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
@@ -400,17 +399,9 @@ export const handleUrlPress = (url: string) => {
   }
 };
 
-export const addAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.addEventListener('change', callback)
-    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
-};
+export const addAppStateChangeListener = (callback: Function) => AppState.addEventListener('change', callback);
 
-export const removeAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.removeEventListener('change', callback)
-    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
-};
+export const removeAppStateChangeListener = (callback: Function) => AppState.removeEventListener('change', callback);
 
 export const smallScreen = () => {
   if (Platform.OS === 'ios') {
