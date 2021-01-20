@@ -426,10 +426,8 @@ jobs:
       - run:
           name: Fetch semtag and bump tag
           command: |
-            curl -o semtag https://raw.githubusercontent.com/pnikosis/semtag/v0.0.9/semtag
-            chmod +x semtag
-            SEMVER_TAG=$(git log -1  --pretty='%s' | awk 'NF>1{print $NF}' | cut -d'#' -f2 | tr '[:upper:]' '[:lower:]')
-            bash semtag final -s $SEMVER_TAG
+            chmod +x .circleci/semtag.sh
+            bash .circleci/semtag.sh
 
   get-latest-tag:
     executor: python3-alpine-executor

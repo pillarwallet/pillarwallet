@@ -23,9 +23,6 @@ import get from 'lodash.get';
 
 import {
   SET_POOL_TOGETHER_PRIZE_INFO,
-  SET_POOL_TOGETHER_ALLOWANCE,
-  SET_EXECUTING_POOL_APPROVE,
-  SET_DISMISS_POOL_APPROVE,
   SET_POOL_TOGETHER_FETCHING_STATS,
   SET_POOL_TOGETHER_GRAPH_QUERY_ERROR,
 } from 'constants/poolTogetherConstants';
@@ -34,12 +31,6 @@ import type { PoolPrizeInfo } from 'models/PoolTogether';
 
 export type PoolTogetherReducerState = {
   poolStats: PoolPrizeInfo,
-  poolAllowance: {
-    [string]: boolean,
-  },
-  poolApproveExecuting: {
-    [string]: string | boolean,
-  },
   isFetchingPoolStats: boolean,
   lastSynced: {
     [string]: number,
@@ -78,14 +69,6 @@ const initialState = {
       userInfo: null,
     },
   },
-  poolAllowance: {
-    DAI: false,
-    USDC: false,
-  },
-  poolApproveExecuting: {
-    DAI: false,
-    USDC: false,
-  },
   isFetchingPoolStats: false,
   lastSynced: {
     DAI: 0,
@@ -115,31 +98,10 @@ export default function poolTogetherReducer(
           [action.payload.symbol]: false,
         },
       };
-    case SET_POOL_TOGETHER_ALLOWANCE:
-      return {
-        ...state,
-        poolAllowance: action.payload,
-      };
     case SET_POOL_TOGETHER_FETCHING_STATS:
       return {
         ...state,
         isFetchingPoolStats: action.payload,
-      };
-    case SET_EXECUTING_POOL_APPROVE:
-      return {
-        ...state,
-        poolApproveExecuting: {
-          ...state.poolApproveExecuting,
-          [action.payload.poolToken]: action.payload.txHash,
-        },
-      };
-    case SET_DISMISS_POOL_APPROVE:
-      return {
-        ...state,
-        poolApproveExecuting: {
-          ...state.poolApproveExecuting,
-          [action.payload]: false,
-        },
       };
     case SET_POOL_TOGETHER_GRAPH_QUERY_ERROR:
       return {
