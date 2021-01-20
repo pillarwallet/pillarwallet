@@ -235,10 +235,15 @@ export const formatFullAmount = (amount: string | number): string => {
 };
 
 export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
-  const formatted = amount.toString();
-  return decimals > 0
-    ? utils.parseUnits(formatted, decimals)
-    : EthersBigNumber.from(formatted);
+  let formatted = amount.toString();
+  const [whole, fraction] = formatted.split('.');
+  if (decimals > 0) {
+    if (fraction && fraction.length > decimals) {
+      formatted = `${whole}.${fraction.substring(0, decimals)}`;
+    }
+    return utils.parseUnits(formatted, decimals);
+  }
+  return EthersBigNumber.from(formatted);
 };
 
 export const parseTokenAmount = (amount: number | string, decimals: number): number => {
