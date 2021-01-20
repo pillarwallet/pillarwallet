@@ -71,7 +71,7 @@ type Props = {
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
     headerShown: false,
-    gesturesEnabled: true,
+    gestureEnabled: true,
   },
 };
 

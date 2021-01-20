@@ -359,7 +359,7 @@ const StackNavigatorModalConfig = {
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
     headerShown: false,
-    gesturesEnabled: true,
+    gestureEnabled: true,
   },
   cardStyle: {
     backgroundColor: {
