@@ -70,7 +70,7 @@ type Props = {
 
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
     gesturesEnabled: true,
   },
 };
@@ -79,14 +79,14 @@ const onBoardingFlow = createStackNavigator({
   [WELCOME]: {
     screen: WelcomeScreen,
     defaultNavigationOptions: {
-      header: null,
+      headerShown: false,
     },
   },
   [PERMISSIONS]: PermissionsScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     defaultNavigationOptions: {
-      header: null,
+      headerShown: false,
     },
   },
   [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,

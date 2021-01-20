@@ -354,7 +354,7 @@ const getTransitionSpec = (isFasterAnimation: boolean) => ({
 export const modalTransition = {
   mode: 'modal',
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
   },
   transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
     transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),

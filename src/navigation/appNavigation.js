@@ -352,13 +352,13 @@ const StackNavigatorModalConfig = {
     },
   }),
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
   },
 };
 
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
     gesturesEnabled: true,
   },
   cardStyle: {
