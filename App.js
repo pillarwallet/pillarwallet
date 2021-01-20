@@ -379,16 +379,15 @@ const AppRoot = () => (
     )}
   >
     <SafeAreaProvider>
-    <Provider store={store}>
-      <PersistGate
-        loading={<Container defaultTheme={defaultTheme}><LoadingSpinner theme={defaultTheme} /></Container>}
-        persistor={persistor}
-      >
-        {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
-      </PersistGate>
-    </Provider>
+      <Provider store={store}>
+        <PersistGate
+          loading={<Container defaultTheme={defaultTheme}><LoadingSpinner theme={defaultTheme} /></Container>}
+          persistor={persistor}
+        >
+          {getEnv().SHOW_ONLY_STORYBOOK ? <Storybook /> : <AppWithNavigationState />}
+        </PersistGate>
+      </Provider>
     </SafeAreaProvider>
-
   </Suspense>
 );
 
