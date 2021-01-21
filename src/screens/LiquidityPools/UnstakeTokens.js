@@ -155,6 +155,7 @@ const UnstakeTokensScreen = ({
       <MainContainer>
         <ValueInput
           assetData={assetData}
+          customAssets={[assetData]}
           value={assetValue}
           onValueChange={setAssetValue}
           onFormValid={setIsValid}

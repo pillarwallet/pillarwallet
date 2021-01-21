@@ -191,6 +191,7 @@ const AddLiquidityScreen = ({
     return (
       <ValueInput
         assetData={tokensData[tokenIndex]}
+        customAssets={[tokensData[tokenIndex]]}
         value={obtainedAssetsValues[tokenIndex]}
         onValueChange={(newValue: string) => onObtainedAssetValueChange(newValue, tokenIndex)}
         onFormValid={(isValid: boolean) => {
@@ -282,6 +283,7 @@ const AddLiquidityScreen = ({
       <MainContainer>
         <ValueInput
           assetData={poolTokenData}
+          customAssets={[poolTokenData]}
           value={poolTokenAmount}
           onValueChange={onPoolTokenAmountChange}
           onFormValid={setPoolTokenFieldValid}

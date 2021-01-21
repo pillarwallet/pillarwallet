@@ -47,6 +47,8 @@ import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 
+import { NotEnoughLiquidityError } from 'services/0x';
+
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
@@ -156,11 +158,18 @@ const RariAddDepositScreen = ({
       setSlippage(_slippage);
       calculateRariDepositTransactionEstimate(depositTransactions);
     }).catch((error) => {
-      reportErrorLog('Rari service failed: Error creating transaction payload', { error });
-      Toast.show({
-        message: t('toast.rariServiceFailed'),
-        emoji: 'hushed',
-      });
+      if (error instanceof NotEnoughLiquidityError) {
+        Toast.show({
+          message: t('toast.rariNotEnoughLiquidity'),
+          emoji: 'hushed',
+        });
+      } else {
+        reportErrorLog('Rari service failed: Error creating transaction payload', { error });
+        Toast.show({
+          message: t('toast.rariServiceFailed'),
+          emoji: 'hushed',
+        });
+      }
       setEstimatingTransaction(false);
     });
   }, [assetValue, selectedAsset]);

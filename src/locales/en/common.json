@@ -1431,6 +1431,7 @@
     "rariTransfer" :"{{amount}} {{token}} transfered to {{recipient}}.",
     "rariClaimRgt": "{{amount}} RGT rewards claimed from Rari Capital.",
     "rariNotEnoughEthForExchange": "Not enough ETH to pay for exchange fee. Please deposit more ETH.",
+    "rariNotEnoughLiquidity": "Not enough liquidity to exchange this token. Please select another token.",
     "poolDataFetchFailed": "Can't fetch liquidity pools data. Please try again or contact support.",
     "cannotAddLiquidity": "Cannot add liquidity. Please try again.",
     "cannotStakeTokens": "Cannot stake tokens. Please try again.",

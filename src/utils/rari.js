@@ -23,10 +23,10 @@ import { BigNumber } from 'bignumber.js';
 import { keccak256 } from 'js-sha3';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
-import { get0xSwapOrders } from 'services/0x.js';
+import { get0xSwapOrders, NotEnoughLiquidityError } from 'services/0x.js';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
-import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
+import { USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
 import {
   RARI_POOLS,
   RARI_TOKENS,
@@ -51,7 +51,7 @@ import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
 
 
-const MSTABLE_TOKENS = ['DAI', 'USDC', 'USDT', 'TUSD'];
+const MSTABLE_TOKENS = [USDC, USDT, TUSD];
 const MSTABLE_TOKENS_WITH_MUSD = [...MSTABLE_TOKENS, 'mUSD'];
 
 const getRariAcceptedCurrencies = (rariPool: RariPool) => {
@@ -153,12 +153,12 @@ const getRariDepositTransactionData = async (
   // TODO: if user wants to deposit mUSD the flow is a bit different
   // you need to use MassetValidationHelper.getRedeemValidity to get swap output data
   // but since mUSD is not yet supported we don't need to implement it right now
-  if ([DAI, USDC, USDT, TUSD].includes(token.symbol)) {
+  if (MSTABLE_TOKENS.includes(token.symbol)) {
     for (let i = 0; i < acceptedCurrencies.length; ++i) {
       acceptedCurrency = acceptedCurrencies[i];
       acceptedAsset = supportedAssets.find(asset => asset.symbol === acceptedCurrencies[i]);
 
-      if (![DAI, USDC, USDT, TUSD, mUSD].includes(acceptedCurrency) || !acceptedAsset) {
+      if (!MSTABLE_TOKENS_WITH_MUSD.includes(acceptedCurrency) || !acceptedAsset) {
         continue;
       }
 
@@ -214,7 +214,7 @@ const getRariDepositTransactionData = async (
     reportErrorLog(
       `Rari service failed: Unable to find enough liquidity to exchange ${token.symbol} before depositing.`,
     );
-    return null;
+    throw new NotEnoughLiquidityError();
   }
 
   for (let j = 0; j < orders.length; j++) {
@@ -659,7 +659,7 @@ export const getRariWithdrawTransactionData = async (
     if (withdrawnAmountBN.lt(amountBN)) {
       reportErrorLog('Rari service failed: Unable to find enough liquidity to exchange ' +
         `withdrawn tokens to ${token.symbol}.`);
-      return null;
+      throw new NotEnoughLiquidityError();
     }
   }
 
@@ -881,7 +881,7 @@ export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, sen
     );
   }
   reportErrorLog('Rari service failed: Not enough liquidity to fill sender usd balance');
-  return null;
+  throw new NotEnoughLiquidityError();
 };
 
 export const getWithdrawalFeeRate = (rariPool: RariPool) => {
