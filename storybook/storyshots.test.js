@@ -53,9 +53,6 @@ jest.mock('react-navigation', () => {
     SafeAreaView: ({ children }) => <>{children}</>,
   };
 });
-jest.mock('react-native-safe-area-context', () => ({
-  SafeAreaView: ({ children }) => <>{children}</>,
-}));
 
 jest.mock('react-navigation-redux-helpers', () => ({
   createReactNavigationReduxMiddleware: () => () => () => () => {},

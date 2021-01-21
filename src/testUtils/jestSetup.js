@@ -20,6 +20,7 @@
 
 // This script runs at the beginning of all unit tests
 import 'react-native-gesture-handler/jestSetup';
+import React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { JSDOM } from 'jsdom';
@@ -81,6 +82,8 @@ const storageCache = {};
 const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+
+jest.mock('react-native-safe-area-view', () => ({ children }) => <>{children}</>);
 
 // Source: https://reactnavigation.org/docs/testing/#mocking-native-modules
 jest.mock('react-native-reanimated', () => {
