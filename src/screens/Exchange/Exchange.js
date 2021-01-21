@@ -194,10 +194,14 @@ class ExchangeScreen extends React.Component<Props, State> {
       getWbtcFees,
       getBtcRate,
     } = this.props;
-    const { fromAsset, toAsset, fromAmount } = this.state;
     const {
-      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount,
+      fromAsset, toAsset, fromAmount, isFormValid,
+    } = this.state;
+    const {
+      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount, isFormValid: prevIsFormValid,
     } = prevState;
+
+    if (!prevIsFormValid && isFormValid) this.resetSearch();
 
     // update from and to options when (supported) assets changes or user selects an option
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
