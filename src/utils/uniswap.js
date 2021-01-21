@@ -61,11 +61,6 @@ const getBNFromNumeratorDenominator = (prop: { numerator: any, denominator: any,
   return numeratorBN.dividedBy(denominatorBN).multipliedBy(scalarValue);
 };
 
-export const getAskRate = (trade: Trade): string => {
-  const excutionPriceBN = getBNFromNumeratorDenominator(trade.executionPrice);
-  return excutionPriceBN.toFixed();
-};
-
 export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
   ...asset,
   address: toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address),

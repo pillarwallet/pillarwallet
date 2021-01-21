@@ -220,7 +220,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     const feeSymbol = get(gasToken, 'symbol', ETH);
 
     // max amount
-    const maxAmount = calculateMaxAmount(token, availableStake, txFeeInWei);
+    const maxAmount = parseFloat(calculateMaxAmount(token, availableStake, txFeeInWei));
 
     // value in fiat
     const valueInFiat = currentValue * getRate(rates, PPN_TOKEN, fiatCurrency);

@@ -68,8 +68,8 @@ type Props = {
   resetEstimateTransaction: () => void,
   calculateAddLiquidityTransactionEstimate: (
     pool: LiquidityPool,
-    tokenAmounts: number[],
-    poolTokenAmount: number,
+    tokenAmounts: string[],
+    poolTokenAmount: string,
     tokensAssets: Asset[],
   ) => void,
   balances: Balances,
@@ -138,8 +138,8 @@ const AddLiquidityScreen = ({
     if (!erc20Token) return;
     calculateAddLiquidityTransactionEstimate(
       pool,
-      assetsValues.map(f => parseFloat(f) || 0),
-      parseFloat(poolTokenAmount) || 0,
+      assetsValues,
+      poolTokenAmount,
       tokensData,
     );
   }, [assetsValues, fieldsValid]);
@@ -158,6 +158,7 @@ const AddLiquidityScreen = ({
     return (
       <ValueInput
         assetData={tokensData[tokenIndex]}
+        customAssets={[tokensData[tokenIndex]]}
         value={assetsValues[tokenIndex]}
         onValueChange={(newValue: string) => onAssetValueChange(newValue, tokenIndex)}
         onFormValid={(isValid: boolean) => {
@@ -247,8 +248,10 @@ const AddLiquidityScreen = ({
         <StyledIcon name="equal" />
         <ValueInput
           assetData={poolTokenData}
+          customAssets={[poolTokenData]}
           value={poolTokenAmount}
           disabled
+          hideMaxSend
         />
         <Table>
           <TableRow>
@@ -302,8 +305,8 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateAddLiquidityTransactionEstimate: debounce((
     pool: LiquidityPool,
-    tokenAmounts: number[],
-    poolTokenAmount: number,
+    tokenAmounts: string[],
+    poolTokenAmount: string,
     tokensAssets: Asset[],
   ) => dispatch(
     calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, poolTokenAmount, tokensAssets),

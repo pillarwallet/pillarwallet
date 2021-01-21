@@ -55186,7 +55186,6 @@ exports[`Storyshots Value Input default 1`] = `
                   Array [
                     Object {
                       "alignItems": "center",
-                      "marginRight": 4,
                       "width": 25,
                     },
                     undefined,
@@ -55206,6 +55205,18 @@ exports[`Storyshots Value Input default 1`] = `
                   }
                 />
               </View>
+              <View
+                style={
+                  Array [
+                    Object {
+                      "height": 0,
+                      "width": 4,
+                    },
+                    undefined,
+                  ]
+                }
+                w={4}
+              />
             </View>
             <Text
               numberOfLines={1}

@@ -32,7 +32,6 @@ import {
   Linking,
   PixelRatio,
   AppState,
-  DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
@@ -49,6 +48,7 @@ import {
   ETH,
   WBTC,
   sBTC,
+  VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
@@ -234,10 +234,15 @@ export const formatFullAmount = (amount: string | number): string => {
 };
 
 export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
-  const formatted = amount.toString();
-  return decimals > 0
-    ? utils.parseUnits(formatted, decimals)
-    : EthersBigNumber.from(formatted);
+  let formatted = amount.toString();
+  const [whole, fraction] = formatted.split('.');
+  if (decimals > 0) {
+    if (fraction && fraction.length > decimals) {
+      formatted = `${whole}.${fraction.substring(0, decimals)}`;
+    }
+    return utils.parseUnits(formatted, decimals);
+  }
+  return EthersBigNumber.from(formatted);
 };
 
 export const parseTokenAmount = (amount: number | string, decimals: number): number => {
@@ -393,17 +398,9 @@ export const handleUrlPress = (url: string) => {
   }
 };
 
-export const addAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.addEventListener('change', callback)
-    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
-};
+export const addAppStateChangeListener = (callback: Function) => AppState.addEventListener('change', callback);
 
-export const removeAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.removeEventListener('change', callback)
-    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
-};
+export const removeAppStateChangeListener = (callback: Function) => AppState.removeEventListener('change', callback);
 
 export const smallScreen = () => {
   if (Platform.OS === 'ios') {
@@ -699,7 +696,7 @@ export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
 export const formatBigAmount = (amount: number) => {
   if (amount >= 1e6) {
-    return `${Math.round(amount / 1e6)}KK`; // eslint-disable-line i18next/no-literal-string
+    return `${Math.round(amount / 1e6)}M`; // eslint-disable-line i18next/no-literal-string
   }
   if (amount >= 1e3) {
     return `${Math.round(amount / 1e3)}K`; // eslint-disable-line i18next/no-literal-string
@@ -710,4 +707,13 @@ export const formatBigAmount = (amount: number) => {
 export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
   return `${currencySymbol} ${formatBigAmount(amount)}`;
+};
+
+export const removeTrailingZeros = (amount: string) => {
+  if (!amount.includes('.')) return amount;
+  return amount.replace(/0+$/, '').replace(/\.$/, '');
+};
+
+export const toFixedString = (amount: number) => {
+  return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };

@@ -23,10 +23,10 @@ import { BigNumber } from 'bignumber.js';
 import { keccak256 } from 'js-sha3';
 import { ZERO_ADDRESS } from '@netgum/utils';
 import { encodeContractMethod, getContract, buildERC20ApproveTransactionData } from 'services/assets';
-import { get0xSwapOrders } from 'services/0x.js';
+import { get0xSwapOrders, NotEnoughLiquidityError } from 'services/0x.js';
 import { callSubgraph } from 'services/theGraph';
 import { getEnv, getRariPoolsEnv } from 'configs/envConfig';
-import { DAI, USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
+import { USDC, USDT, TUSD, mUSD, ETH, WETH, USD } from 'constants/assetsConstants';
 import {
   RARI_POOLS,
   RARI_TOKENS,
@@ -36,7 +36,7 @@ import {
   RARI_TRANSFER_TRANSACTION,
   RARI_POOLS_ARRAY,
 } from 'constants/rariConstants';
-import { getAccountDepositInUSDBN } from 'services/rari';
+import { getAccountDepositBN } from 'services/rari';
 import { reportErrorLog, parseTokenBigNumberAmount, scaleBN, getEthereumProvider } from 'utils/common';
 import { addressesEqual } from 'utils/assets';
 import RARI_FUND_MANAGER_CONTRACT_ABI from 'abi/rariFundManager.json';
@@ -45,12 +45,13 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import MSTABLE_CONTRACT_ABI from 'abi/mAsset.json';
 import MSTABLE_VALIDATION_HELPER_CONTRACT_ABI from 'abi/mAssetValidationHelper.json';
 import RARI_RGT_DISTRIBUTOR_CONTRACT_ABI from 'abi/rariGovernanceTokenDistributor.json';
+import RARI_FUND_MANAGER_CONTRACT_ABI_ETH from 'abi/rariFundManagerEth.json';
 import type { Asset, Rates } from 'models/Asset';
 import type { RariPool } from 'models/RariPool';
 import type { Transaction } from 'models/Transaction';
 
 
-const MSTABLE_TOKENS = ['DAI', 'USDC', 'USDT', 'TUSD'];
+const MSTABLE_TOKENS = [USDC, USDT, TUSD];
 const MSTABLE_TOKENS_WITH_MUSD = [...MSTABLE_TOKENS, 'mUSD'];
 
 const getRariAcceptedCurrencies = (rariPool: RariPool) => {
@@ -152,12 +153,12 @@ const getRariDepositTransactionData = async (
   // TODO: if user wants to deposit mUSD the flow is a bit different
   // you need to use MassetValidationHelper.getRedeemValidity to get swap output data
   // but since mUSD is not yet supported we don't need to implement it right now
-  if ([DAI, USDC, USDT, TUSD].includes(token.symbol)) {
+  if (MSTABLE_TOKENS.includes(token.symbol)) {
     for (let i = 0; i < acceptedCurrencies.length; ++i) {
       acceptedCurrency = acceptedCurrencies[i];
       acceptedAsset = supportedAssets.find(asset => asset.symbol === acceptedCurrencies[i]);
 
-      if (![DAI, USDC, USDT, TUSD, mUSD].includes(acceptedCurrency) || !acceptedAsset) {
+      if (!MSTABLE_TOKENS_WITH_MUSD.includes(acceptedCurrency) || !acceptedAsset) {
         continue;
       }
 
@@ -213,7 +214,7 @@ const getRariDepositTransactionData = async (
     reportErrorLog(
       `Rari service failed: Unable to find enough liquidity to exchange ${token.symbol} before depositing.`,
     );
-    return null;
+    throw new NotEnoughLiquidityError();
   }
 
   for (let j = 0; j < orders.length; j++) {
@@ -247,7 +248,7 @@ const getRariDepositTransactionData = async (
 };
 
 export const getRariDepositTransactionsAndExchangeFee = async (
-  rariPool: RariPool, senderAddress: string, amount: number, token: Asset, supportedAssets: Asset[], rates: Rates,
+  rariPool: RariPool, senderAddress: string, amount: string, token: Asset, supportedAssets: Asset[], rates: Rates,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
   let data = await getRariDepositTransactionData(rariPool, amountBN, token, supportedAssets, rates);
@@ -365,9 +366,20 @@ tokens have different exchange rates (mStable always exchanges 1:(1-fee)), so we
 export const getRariWithdrawTransactionData = async (
   senderAddress: string, rariPool: RariPool, amountBN: EthersBigNumber, token: Asset,
 ) => {
+  if (rariPool === RARI_POOLS.ETH_POOL) {
+    return {
+      withdrawTransactionData: encodeContractMethod(RARI_FUND_MANAGER_CONTRACT_ABI_ETH, 'withdraw', [
+        amountBN,
+      ]),
+      rariContractAddress: getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
+      exchangeFeeBN: EthersBigNumber.from(0),
+      slippage: 0,
+    };
+  }
+
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
   if (!balancesAndPrices) return null;
-  const senderUsdBalance = await getAccountDepositInUSDBN(rariPool, senderAddress);
+  const senderUsdBalance = await getAccountDepositBN(rariPool, senderAddress);
   if (!senderUsdBalance) return null;
 
   const [currencies, , , , prices] = balancesAndPrices;
@@ -647,7 +659,7 @@ export const getRariWithdrawTransactionData = async (
     if (withdrawnAmountBN.lt(amountBN)) {
       reportErrorLog('Rari service failed: Unable to find enough liquidity to exchange ' +
         `withdrawn tokens to ${token.symbol}.`);
-      return null;
+      throw new NotEnoughLiquidityError();
     }
   }
 
@@ -669,7 +681,7 @@ export const getRariWithdrawTransactionData = async (
 };
 
 export const getRariWithdrawTransaction = async (
-  rariPool: RariPool, senderAddress: string, amount: number, token: Asset,
+  rariPool: RariPool, senderAddress: string, amount: string, token: Asset,
 ) => {
   const amountBN = parseTokenBigNumberAmount(amount, token.decimals);
   const data = await getRariWithdrawTransactionData(senderAddress, rariPool, amountBN, token);
@@ -708,7 +720,13 @@ We take user's deposit in USD and:
 And there can be several exchanges too like in withdraw transaction logic.
 */
 export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, senderAddress: string) => {
-  const senderUsdBalance = await getAccountDepositInUSDBN(rariPool, senderAddress);
+  if (rariPool === RARI_POOLS.ETH_POOL) {
+    const senderEthBalance = await getAccountDepositBN(rariPool, senderAddress);
+    if (!senderEthBalance) return null;
+
+    return senderEthBalance;
+  }
+  const senderUsdBalance = await getAccountDepositBN(rariPool, senderAddress);
   if (!senderUsdBalance) return null;
   const balancesAndPrices = await getRariFundBalancesAndPrices(rariPool);
   if (!balancesAndPrices) return null;
@@ -863,10 +881,12 @@ export const getMaxWithdrawAmount = async (rariPool: RariPool, token: Asset, sen
     );
   }
   reportErrorLog('Rari service failed: Not enough liquidity to fill sender usd balance');
-  return null;
+  throw new NotEnoughLiquidityError();
 };
 
 export const getWithdrawalFeeRate = (rariPool: RariPool) => {
+  // The Withdrawal Fee is not present on the ETH Pool. (https://www.notion.so/Fees-e4689d7b800f485098548dd9e9d0a69f)
+  if (rariPool === RARI_POOLS.ETH_POOL) return Promise.resolve(EthersBigNumber.from(0));
   const rariContract = getContract(
     getRariPoolsEnv(rariPool).RARI_FUND_MANAGER_CONTRACT_ADDRESS,
     RARI_FUND_MANAGER_CONTRACT_ABI,

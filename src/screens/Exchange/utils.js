@@ -28,6 +28,7 @@ import { formatMoney } from 'utils/common';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import t from 'translations/translate';
+import { calculateAmountToBuy } from 'utils/exchange';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Option, HorizontalOption } from 'models/Selector';
@@ -74,10 +75,6 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
     return `${formatMoney(min || max, 2)}`;
   }
   return `${formatMoney(min, 2)} - ${formatMoney(max, 2)}`;
-};
-
-export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
-  return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
 export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string => {

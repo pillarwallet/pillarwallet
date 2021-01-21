@@ -28,7 +28,7 @@ import t from 'translations/translate';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
-import { fetchPoolPrizeInfo, fetchPoolAllowanceStatusAction } from 'actions/poolTogetherActions';
+import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
 
 // constants
 import { DAI, USDC } from 'constants/assetsConstants';
@@ -92,7 +92,6 @@ type Props = {
   poolPrizeInfo: PoolPrizeInfo,
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
-  fetchPoolAllowanceStatus: (symbol: string) => void,
   isFetchingPoolStats: boolean,
   theme: Theme,
   history: Object[],
@@ -126,10 +125,8 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
     const {
       logScreenView,
       fetchPoolStats,
-      fetchPoolAllowanceStatus,
     } = this.props;
     fetchPoolStats(DAI);
-    fetchPoolAllowanceStatus(DAI);
     logScreenView('View PoolTogether', 'PoolTogether');
   }
 
@@ -138,7 +135,6 @@ class PoolTogetherDashboard extends React.Component<Props, State> {
       activeTab,
     }, () => {
       this.props.fetchPoolStats(activeTab);
-      this.props.fetchPoolAllowanceStatus(activeTab);
     });
   };
 
@@ -365,7 +361,6 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
-  fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherDashboard);

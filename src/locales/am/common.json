@@ -992,7 +992,6 @@
       "ticketPurchaseScreen": "ትኬት ይግዙ ",
       "withdrawScreen": "ያውጡ",
       "withdrawConfirmScreen": "ይገምግሙ",
-      "authorizePoolTogether": "ለፑል ቱጌዘር ፈቃድ ይስጡ",
       "purchaseConfirmScreen": "ይገምግሙ"
     },
     "button": {
@@ -1001,11 +1000,8 @@
     },
     "paragraph": {
       "purchasedTicketsEligibleDate": "ዛሬ የተገዛው ትኬት ከ {{date}} ጀምሮ ለሚሰጠው ሽልማት ይውላል።",
-      "automationMissing": "ፑል ቱጌዘርን ለመቀላቀል ግብይቶትን ራስ-ሰር ማድረግ ይጠበቅብዎታል",
-      "pendingAutomation": "ፑል ቱጌዘር ራስ-ሰር እስኪሆን ይጠብቁ",
       "withdrawalNote": "ካወጡ ሽልማት የማግኘት እድል አይኖሮትም።",
-      "receiveOnWithdrawal": "{{token}} በቦርሳዎ ይደርስዎታል።",
-      "allowAutomationWithToken": "ፑል ቱጌዘር የእርስዎን {{token}} ወጪ አድርጎ ግብይትዎን እራስ-ሰር እንዲያደርግ ይፍቀዱ። አንዴ ከፈቀዱ ከዚያ ቀጥሎ ያሉ ግብይቶች ያለ ምንም ራስ-ገዝ አድራጊ ክፍያዎች የከናወናሉ።"
+      "receiveOnWithdrawal": "{{token}} በቦርሳዎ ይደርስዎታል።"
     }
   },
 
@@ -1279,8 +1275,6 @@
     "linkedDeviceNotFound": "የተያያዘው መሳርያ አልተገኘም።",
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) ወደ {{toAssetName}} ({{toAssetSymbol}}) መቀየርያ ስራ ላይ ውሏል።",
     "keyWalletAssetsTransfered": "ንብረቱ ተላልፏል። መልካም የብልህ ቦርስ አጠቃቀም ይሁንልዎት።",
-    "poolTogetherAutomationEnabled": "{{tokenSymbol}} ስራ ላይ ውሏል። ይቅናዎት!",
-    "poolTogetherAutomationFailed": "{{tokenSymbol}} ን ገቢራዊ ማድረግ አልተቻልመ። እባክዎት ትንሽ ቆይተው ይሞክሩ።",
     "walletRecovered": "አሁን ቦርሳዎ ተመልሷል። መልካም የፒላር አጠቃቀም ይሁንልዎ።",
     "rewardsOnTheirWay": "የግብዣው ሽልማት እየመጣ ነው። በቅርብ ግዜ ይደርሶታል።",
     "somethingWentWrong": "የተሳሳተ ነገር አለ፡ ስህተቱን በማጣራት ላይ ነን። ሃሳብ አይግባዎት፡ ገንዘቦ በአስተማማኝ ሁኔታ ላይ ነው ያለው። ትንሽ ቆይተው ይሞክሩ ወይም ከድጋፍ ሰጪ ጋር ይገናኙ።",

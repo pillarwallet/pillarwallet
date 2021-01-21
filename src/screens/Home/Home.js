@@ -87,6 +87,7 @@ import { fetchAllPoolsPrizes } from 'actions/poolTogetherActions';
 import { fetchUserStreamsAction } from 'actions/sablierActions';
 import { fetchRariDataAction } from 'actions/rariActions';
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
+import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
 
 // selectors
 import { combinedHistorySelector } from 'selectors/history';
@@ -182,6 +183,7 @@ type Props = {
   liquidityPoolsReducer: LiquidityPoolsReducerState,
   rates: Rates,
   hideLiquidityPools: boolean,
+  checkSmartWalletSession: () => void,
 };
 
 const RequestsWrapper = styled.View`
@@ -282,8 +284,10 @@ class HomeScreen extends React.Component<Props> {
       fetchUserStreams,
       fetchRariData,
       fetchLiquidityPoolsData,
+      checkSmartWalletSession,
     } = this.props;
 
+    checkSmartWalletSession();
     checkForMissedAssets();
     fetchAllCollectiblesData();
     fetchBadges();
@@ -433,7 +437,7 @@ class HomeScreen extends React.Component<Props> {
 
   renderLiquidityPool = ({ item: { pool, poolStats } }) => {
     const { rates, baseFiatCurrency } = this.props;
-    const tokenBalance = poolStats.userLiquidityTokenBalance;
+    const tokenBalance = poolStats.userLiquidityTokenBalance + poolStats.stakedAmount;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     return (
       <ListItemWithImage
@@ -855,6 +859,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   fetchRariData: () => dispatch(fetchRariDataAction()),
   fetchLiquidityPoolsData: (liquidityPools: LiquidityPool[]) => dispatch(fetchLiquidityPoolsDataAction(liquidityPools)),
   toggleLiquidityPools: () => dispatch(toggleLiquidityPoolsAction()),
+  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(HomeScreen));

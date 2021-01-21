@@ -512,7 +512,7 @@ export const getContract = (
 
 export const buildERC20ApproveTransactionData = (
   spenderAddress: string,
-  amount: number,
+  amount: string,
   decimals: number,
 ): string => {
   const contractAmount = parseTokenBigNumberAmount(amount, decimals);

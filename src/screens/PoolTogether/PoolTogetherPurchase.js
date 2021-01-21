@@ -26,21 +26,15 @@ import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
-import isEqual from 'lodash.isequal';
 
 // actions
 import { logScreenViewAction } from 'actions/analyticsActions';
-import {
-  fetchPoolPrizeInfo,
-  setDismissApproveAction,
-  fetchPoolAllowanceStatusAction,
-} from 'actions/poolTogetherActions';
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { fetchPoolPrizeInfo } from 'actions/poolTogetherActions';
+import { estimateTransactionsAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // constants
 import { DAI, ETH } from 'constants/assetsConstants';
-import { SEND_TOKEN_PIN_CONFIRM, POOLTOGETHER_PURCHASE_CONFIRM } from 'constants/navigationConstants';
-import { POOL_TOGETHER_ALLOW } from 'constants/poolTogetherConstants';
+import { POOLTOGETHER_PURCHASE_CONFIRM } from 'constants/navigationConstants';
 
 // components
 import { ScrollWrapper } from 'components/Layout';
@@ -48,9 +42,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import ValueInput from 'components/ValueInput';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
-import Toast from 'components/Toast';
 import FeeLabelToggle from 'components/FeeLabelToggle';
-import Modal from 'components/Modal';
 
 // models
 import type { Accounts } from 'models/Account';
@@ -61,6 +53,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { activeAccountAddressSelector } from 'selectors';
 
 // utils
 import { themedColors } from 'utils/themes';
@@ -70,13 +63,11 @@ import { getWinChance } from 'utils/poolTogether';
 import { isEnoughBalanceForTransactionFee, getAssetData, getAssetsAsList } from 'utils/assets';
 
 // services
-import { getApproveTransaction, getPurchaseTicketTransaction } from 'services/poolTogether';
+import { getPurchaseTicketTransactions } from 'services/poolTogether';
 
 // types
 import type { TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
-
-// local components
-import PoolTokenAllowModal from './PoolTokenAllowModal';
+import type { AccountTransaction } from 'services/smartWallet';
 
 
 const ContentWrapper = styled.View`
@@ -108,17 +99,14 @@ type Props = {
   poolPrizeInfo: PoolPrizeInfo,
   logScreenView: (view: string, screen: string) => void,
   fetchPoolStats: (symbol: string) => void,
-  fetchPoolAllowanceStatus: (symbol: string) => void,
-  setDismissApprove: (symbol: string) => void,
-  poolAllowance: { [string]: boolean },
-  poolApproveExecuting: { [string]: boolean | string },
   assets: Assets,
   supportedAssets: Asset[],
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (transactionDraft: TransactionDraft) => void,
-  resetEstimateTransaction: () => void,
+  estimateTransactions: (transactionDrafts: TransactionDraft[]) => void,
+  resetEstimateTransactions: () => void,
+  accountAddress: string,
 };
 
 type State = {
@@ -127,7 +115,6 @@ type State = {
   numberOfTickets: number,
   userTickets: number,
   totalPoolTicketsCount: number,
-  allowPayload: Object,
   purchasePayload: Object,
   isInputValid: boolean,
 };
@@ -150,48 +137,29 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
       numberOfTickets: poolTicketsCount,
       userTickets,
       totalPoolTicketsCount,
-      allowPayload: null,
       purchasePayload: null,
       isInputValid: false,
     };
   }
 
   componentDidMount() {
-    const { logScreenView, resetEstimateTransaction } = this.props;
-    resetEstimateTransaction();
-    // check if poolTogether is already allowed and get fee if not
-    this.updateAllowanceFeeAndTransaction();
+    const { logScreenView, resetEstimateTransactions } = this.props;
+    resetEstimateTransactions();
     this.updatePurchaseFeeAndTransaction();
     logScreenView('View PoolTogether Purchase', 'PoolTogetherPurchase');
   }
 
-  componentDidUpdate(prevProps: Props) {
-    if (!isEqual(this.props.poolAllowance, prevProps.poolAllowance)) {
-      this.updatePurchaseFeeAndTransaction();
-    }
-  }
-
-  updateAllowanceFeeAndTransaction = () => {
-    const { poolToken } = this.state;
-    const { poolAllowance, estimateTransaction } = this.props;
-    const hasAllowance = poolAllowance[poolToken];
-    if (!hasAllowance) {
-      const allowPayload = getApproveTransaction(poolToken);
-      const { to, data, amount: value } = allowPayload;
-      estimateTransaction({ to, value, data });
-      this.setState({ allowPayload });
-    }
-  }
-
-  updatePurchaseFeeAndTransaction = () => {
+  updatePurchaseFeeAndTransaction = async () => {
     const { poolToken, numberOfTickets } = this.state;
-    const { poolAllowance, estimateTransaction } = this.props;
-    if (poolAllowance[poolToken]) {
-      const purchasePayload = getPurchaseTicketTransaction(numberOfTickets, poolToken);
-      const { to, data, amount: value } = purchasePayload;
-      estimateTransaction({ to, value, data });
-      this.setState({ purchasePayload });
-    }
+    const { estimateTransactions, accountAddress } = this.props;
+    const purchasePayload = await getPurchaseTicketTransactions(accountAddress, numberOfTickets, poolToken);
+
+    const transactionDrafts = purchasePayload.map(
+      ({ to, amount: value, data }) => ({ to, value, data }),
+    );
+
+    estimateTransactions(transactionDrafts);
+    this.setState({ purchasePayload });
   }
 
   onValueChange = (value) => {
@@ -206,60 +174,11 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     });
   }
 
-  openAllowAssetModal = () => {
-    const { poolToken, allowPayload } = this.state;
-    const { estimateTransaction, resetEstimateTransaction } = this.props;
-    resetEstimateTransaction();
-    const { to, data, amount: value } = allowPayload;
-    estimateTransaction({ to, value, data });
-    Modal.open(() => (
-      <PoolTokenAllowModal
-        assetSymbol={poolToken}
-        transactionPayload={allowPayload}
-        onModalHide={() => {
-          const { setDismissApprove } = this.props;
-          setDismissApprove(poolToken);
-        }}
-        onAllow={this.allowPoolAsset}
-      />
-    ));
-  }
-
-  allowPoolAsset = () => {
-    const { navigation, feeInfo } = this.props;
-    const { allowPayload } = this.state;
-
-    if (!feeInfo) {
-      Toast.show({
-        message: t('toast.cannotAllowAsset'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
-      return;
-    }
-
-    const { fee: txFeeInWei, gasToken } = feeInfo;
-
-    const transactionPayload = {
-      ...allowPayload,
-      txFeeInWei,
-      gasToken,
-    };
-
-    navigation.navigate(SEND_TOKEN_PIN_CONFIRM, {
-      transactionPayload,
-      transactionType: POOL_TOGETHER_ALLOW,
-    });
-  };
-
   render() {
     const {
       navigation,
       fetchPoolStats,
       balances,
-      poolAllowance,
-      poolApproveExecuting,
-      fetchPoolAllowanceStatus,
       assets,
       supportedAssets,
       isEstimating,
@@ -279,13 +198,9 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
 
     let errorMessage = estimateErrorMessage;
 
-    const hasAllowance = poolAllowance[poolToken];
-
     const winChance = getWinChance(numberOfTickets + userTickets, totalPoolTicketsCount);
 
-    const isApprovalExecuting = !!poolApproveExecuting[poolToken];
-
-    if (feeInfo && purchasePayload && hasAllowance && !isEnoughBalanceForTransactionFee(balances, {
+    if (feeInfo && purchasePayload && !isEnoughBalanceForTransactionFee(balances, {
       ...purchasePayload,
       txFeeInWei: feeInfo.fee,
       gasToken: feeInfo.gasToken,
@@ -294,9 +209,10 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
     }
 
     const submitDisabled = isEstimating
-      || isApprovalExecuting
       || !isInputValid
-      || (hasAllowance && (numberOfTickets === 0 || !!errorMessage || !feeInfo));
+      || numberOfTickets === 0
+      || !!errorMessage
+      || !feeInfo;
 
     let nextNavigationFunction;
     if (purchasePayload) {
@@ -307,14 +223,13 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
             tokenValue: numberOfTickets,
             totalPoolTicketsCount,
             userTickets,
-            transactionPayload: purchasePayload,
           });
       };
     }
 
     const poolTokenItem = getAssetData(getAssetsAsList(assets), supportedAssets, poolToken);
     const assetOptions = !isEmpty(poolTokenItem) ? [poolTokenItem] : [];
-    const purchaseTransactionAvailable = !!hasAllowance && !!purchasePayload;
+    const purchaseTransactionAvailable = !!purchasePayload;
 
     return (
       <ContainerWithHeader
@@ -327,9 +242,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
               refreshing={false}
               onRefresh={() => {
                 fetchPoolStats(poolToken);
-                if (isApprovalExecuting) {
-                  fetchPoolAllowanceStatus(poolToken);
-                }
               }}
             />
           }
@@ -353,17 +265,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 })}
               </Text>
             </ContentRow>
-            <ContentRow>
-              {!hasAllowance && !isEstimating && !isApprovalExecuting && (
-                <Text center label>{t('poolTogetherContent.paragraph.automationMissing')}</Text>
-              )}
-              {!!isApprovalExecuting && (
-                <Text center label>{t('poolTogetherContent.paragraph.pendingAutomation')}</Text>
-              )}
-              {isEstimating && !isApprovalExecuting && !feeInfo && (
-                <Text center label>{t('label.fetchingFee')}</Text>
-              )}
-            </ContentRow>
             {!!purchaseTransactionAvailable && !!feeInfo && (
               <ContentRow>
                 <FeeLabelToggle
@@ -386,11 +287,6 @@ class PoolTogetherPurchase extends React.Component<Props, State> {
                 title={t('button.next')}
                 onPress={() => {
                   if (submitDisabled) return null;
-
-                  if (!hasAllowance && !isApprovalExecuting) {
-                    this.openAllowAssetModal();
-                  }
-
                   return nextNavigationFunction && nextNavigationFunction();
                 }}
                 disabled={!!submitDisabled}
@@ -409,8 +305,6 @@ const mapStateToProps = ({
   accounts: { data: accounts },
   poolTogether: {
     poolStats: poolPrizeInfo,
-    poolAllowance,
-    poolApproveExecuting,
   },
   assets: { supportedAssets },
   transactionEstimate: { isEstimating, feeInfo, errorMessage: estimateErrorMessage },
@@ -418,8 +312,6 @@ const mapStateToProps = ({
   session,
   accounts,
   poolPrizeInfo,
-  poolAllowance,
-  poolApproveExecuting,
   supportedAssets,
   isEstimating,
   feeInfo,
@@ -429,6 +321,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   assets: accountAssetsSelector,
+  accountAddress: activeAccountAddressSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -439,10 +332,8 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
-  fetchPoolAllowanceStatus: (symbol: string) => dispatch(fetchPoolAllowanceStatusAction(symbol)),
-  setDismissApprove: (symbol: string) => dispatch(setDismissApproveAction(symbol)),
-  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
-  resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
+  estimateTransactions: (transactionDrafts: TransactionDraft[]) => dispatch(estimateTransactionActions(transactionDrafts)),
+  resetEstimateTransactions: () => dispatch(resetEstimateTransactionAction()),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(PoolTogetherPurchase);

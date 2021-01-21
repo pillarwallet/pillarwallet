@@ -43,10 +43,13 @@ import { resetEstimateTransactionAction, setEstimatingTransactionAction } from '
 
 import { ETH, POPULAR_EXCHANGE_TOKENS } from 'constants/assetsConstants';
 import { RARI_WITHDRAW_REVIEW } from 'constants/navigationConstants';
+import { RARI_POOLS } from 'constants/rariConstants';
 
 import { accountAssetsSelector } from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountBalancesSelector } from 'selectors/balances';
+
+import { NotEnoughLiquidityError } from 'services/0x';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -134,11 +137,18 @@ const RariWithdrawScreen = ({
         calculateRariWithdrawTransactionEstimate(withdrawTransaction);
       })
       .catch((error) => {
-        reportErrorLog('Rari service failed: Error creating transaction payload', { error });
-        Toast.show({
-          message: t('toast.rariServiceFailed'),
-          emoji: 'hushed',
-        });
+        if (error instanceof NotEnoughLiquidityError) {
+          Toast.show({
+            message: t('toast.rariNotEnoughLiquidity'),
+            emoji: 'hushed',
+          });
+        } else {
+          reportErrorLog('Rari service failed: Error creating transaction payload', { error });
+          Toast.show({
+            message: t('toast.rariServiceFailed'),
+            emoji: 'hushed',
+          });
+        }
       });
   }, [assetValue, selectedAsset]);
 
@@ -167,11 +177,18 @@ const RariWithdrawScreen = ({
         });
       })
       .catch((error) => {
-        reportErrorLog('Rari service failed: Error getting max balance', { error });
-        Toast.show({
-          message: t('toast.rariServiceFailed'),
-          emoji: 'hushed',
-        });
+        if (error instanceof NotEnoughLiquidityError) {
+          Toast.show({
+            message: t('toast.rariNotEnoughLiquidity'),
+            emoji: 'hushed',
+          });
+        } else {
+          reportErrorLog('Rari service failed: Error getting max balance', { error });
+          Toast.show({
+            message: t('toast.rariServiceFailed'),
+            emoji: 'hushed',
+          });
+        }
       })
       .then(() => setIsCalculatingMaxAmount(false));
   }, [selectedAsset]);
@@ -192,7 +209,10 @@ const RariWithdrawScreen = ({
       || !inputValid
       || !feeInfo;
 
-  const supportedAssetsWithIcons = supportedAssets.map(({ iconUrl, ...rest }) => {
+  const filteredSupportedAssets = rariPool === RARI_POOLS.ETH_POOL ?
+    supportedAssets.filter(asset => asset.symbol === ETH) : supportedAssets;
+
+  const supportedAssetsWithIcons = filteredSupportedAssets.map(({ iconUrl, ...rest }) => {
     const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return ({
       ...rest, iconUrl, icon: iconUrl, imageUrl,

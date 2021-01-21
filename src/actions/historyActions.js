@@ -50,13 +50,12 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { checkPoolTogetherApprovalTransactionAction } from './poolTogetherActions';
+import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 
 export const afterHistoryUpdatedAction = () => {
   return async (dispatch: Dispatch) => {
     dispatch(checkEnableExchangeAllowanceTransactionsAction());
-    dispatch(checkPoolTogetherApprovalTransactionAction());
   };
 };
 

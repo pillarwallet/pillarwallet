@@ -31,6 +31,7 @@ import {
   ADD_SMART_WALLET_CONNECTED_ACCOUNT_DEVICE,
   SET_SMART_WALLET_DEPLOYMENT_ESTIMATE,
   SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_CHECKING_SMART_WALLET_SESSION,
 } from 'constants/smartWalletConstants';
 
 // types
@@ -61,6 +62,7 @@ export type SmartWalletReducerState = {
   },
   lastSyncedTransactionId: ?number,
   lastSyncedPaymentId: ?number,
+  isCheckingSmartWalletSession: boolean,
 };
 
 export type SmartWalletReducerAction = {
@@ -84,6 +86,7 @@ export const initialState = {
   },
   lastSyncedTransactionId: null,
   lastSyncedPaymentId: null,
+  isCheckingSmartWalletSession: false,
 };
 
 export default function smartWalletReducer(
@@ -179,6 +182,11 @@ export default function smartWalletReducer(
           ...state.upgrade,
           gettingDeploymentEstimate: action.payload,
         },
+      };
+    case SET_CHECKING_SMART_WALLET_SESSION:
+      return {
+        ...state,
+        isCheckingSmartWalletSession: action.payload,
       };
     default:
       return state;

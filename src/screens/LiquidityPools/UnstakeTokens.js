@@ -57,7 +57,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  calculateUnstakeTransactionEstimate: (pool: LiquidityPool, tokenAmount: number) => void,
+  calculateUnstakeTransactionEstimate: (pool: LiquidityPool, tokenAmount: string) => void,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
 
@@ -98,7 +98,7 @@ const UnstakeTokensScreen = ({
 
   useEffect(() => {
     if (!parseFloat(assetValue) || !isValid) return;
-    calculateUnstakeTransactionEstimate(pool, parseFloat(assetValue));
+    calculateUnstakeTransactionEstimate(pool, (assetValue));
   }, [assetValue, isValid]);
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
@@ -155,6 +155,7 @@ const UnstakeTokensScreen = ({
       <MainContainer>
         <ValueInput
           assetData={assetData}
+          customAssets={[assetData]}
           value={assetValue}
           onValueChange={setAssetValue}
           onFormValid={setIsValid}
@@ -181,7 +182,7 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateUnstakeTransactionEstimate: debounce((
     pool: LiquidityPool,
-    tokenAmount: number,
+    tokenAmount: string,
   ) => dispatch(calculateUnstakeTransactionEstimateAction(pool, tokenAmount)), 500),
 });
 

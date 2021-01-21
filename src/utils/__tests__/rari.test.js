@@ -62,9 +62,9 @@ const supportedAssetsMock = [
     address: '0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75',
     decimals: 18,
     description: '',
-    name: 'DAI',
-    symbol: 'DAI',
-    value: 'DAI',
+    name: 'USDT',
+    symbol: 'USDT',
+    value: 'USDT',
     wallpaperUrl: 'asset/images/tokens/wallpaper/plrBg.png',
     iconUrl: 'asset/images/tokens/icons/plrColor.png',
     iconMonoUrl: 'asset/images/tokens/icons/plr.png',
@@ -108,7 +108,7 @@ const supportedAssetsMock = [
 ];
 
 const balancesAndPricesMock = [
-  ['DAI', 'USDC'],
+  ['USDT', 'USDC'],
   ['0', '90852220468'],
   [
     ['0', '1', '2'],
@@ -167,7 +167,7 @@ describe('Rari utils', () => {
 
     it('should return data for directly depositable currency', async () => {
       const data = await getRariDepositTransactionsAndExchangeFee(
-        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[2], supportedAssetsMock, rates,
+        RARI_POOLS.STABLE_POOL, senderAddress, '1.23', supportedAssetsMock[2], supportedAssetsMock, rates,
       );
 
       expect(data).toEqual({
@@ -201,7 +201,7 @@ describe('Rari utils', () => {
 
     it('should return data for stablecoin (mStable swap)', async () => {
       const data = await getRariDepositTransactionsAndExchangeFee(
-        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[1], supportedAssetsMock, rates,
+        RARI_POOLS.STABLE_POOL, senderAddress, '1.23', supportedAssetsMock[1], supportedAssetsMock, rates,
       );
 
       expect(data).toEqual({
@@ -214,7 +214,7 @@ describe('Rari utils', () => {
             to: supportedAssetsMock[1].address,
             extra: {
               amount: EthersBigNumber.from('1230000000000000000'),
-              symbol: 'DAI',
+              symbol: 'USDT',
               decimals: 18,
               rariPool: 'STABLE_POOL',
             },
@@ -235,7 +235,7 @@ describe('Rari utils', () => {
 
     it('should return correct data on other token (0x exchange)', async () => {
       const data = await getRariDepositTransactionsAndExchangeFee(
-        RARI_POOLS.STABLE_POOL, senderAddress, 0.0001, supportedAssetsMock[0], supportedAssetsMock, rates,
+        RARI_POOLS.STABLE_POOL, senderAddress, '0.0001', supportedAssetsMock[0], supportedAssetsMock, rates,
       );
 
       expect(data).toEqual({
@@ -298,7 +298,7 @@ describe('Rari utils', () => {
         ]),
       );
 
-      jest.spyOn(rariService, 'getAccountDepositInUSDBN')
+      jest.spyOn(rariService, 'getAccountDepositBN')
         .mockImplementation(() => EthersBigNumber.from('10000000000000000000'));
     });
 
@@ -308,7 +308,7 @@ describe('Rari utils', () => {
 
     it('should return data for directly withdrawable currency', async () => {
       const data = await getRariWithdrawTransaction(
-        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[2],
+        RARI_POOLS.STABLE_POOL, senderAddress, '1.23', supportedAssetsMock[2],
       );
 
       expect(data).toEqual({
@@ -338,7 +338,7 @@ describe('Rari utils', () => {
     });
     it('should exchange via for mStable', async () => {
       const data = await getRariWithdrawTransaction(
-        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[1],
+        RARI_POOLS.STABLE_POOL, senderAddress, '1.23', supportedAssetsMock[1],
       );
 
       expect(data).toEqual({
@@ -363,7 +363,7 @@ describe('Rari utils', () => {
           to: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_PROXY_CONTRACT_ADDRESS,
           extra: {
             amount: EthersBigNumber.from('1230000000000000000'),
-            symbol: 'DAI',
+            symbol: 'USDT',
             decimals: 18,
             rariPool: 'STABLE_POOL',
           },
@@ -373,7 +373,7 @@ describe('Rari utils', () => {
     });
     it('should exchange via 0x', async () => {
       const data = await getRariWithdrawTransaction(
-        RARI_POOLS.STABLE_POOL, senderAddress, 1.23, supportedAssetsMock[0],
+        RARI_POOLS.STABLE_POOL, senderAddress, '1.23', supportedAssetsMock[0],
       );
 
       expect(data).toEqual({
@@ -429,7 +429,7 @@ describe('Rari utils', () => {
       jest.spyOn(assetsServices, 'encodeContractMethod')
         .mockImplementation((contract, method, params) => ({ method, params }));
 
-      jest.spyOn(rariService, 'getAccountDepositInUSDBN')
+      jest.spyOn(rariService, 'getAccountDepositBN')
         .mockImplementation(() => EthersBigNumber.from('10000000000000000000'));
 
       jest.spyOn(_0xService, 'get0xSwapOrders').mockImplementation(() => Promise.resolve(

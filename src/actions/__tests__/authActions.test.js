@@ -93,6 +93,7 @@ describe('Auth actions', () => {
 
   beforeEach(() => {
     store = mockStore({
+      exchange: { exchangeSupportedAssets: [] },
       assets: { data: {} },
       navigation: {},
       oAuthTokens: { data: {} },
