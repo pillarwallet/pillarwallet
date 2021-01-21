@@ -194,9 +194,7 @@ class ExchangeScreen extends React.Component<Props, State> {
       getWbtcFees,
       getBtcRate,
     } = this.props;
-    const {
-      fromAsset, toAsset, fromAmount, isFormValid,
-    } = this.state;
+    const { fromAsset, toAsset, fromAmount } = this.state;
     const {
       fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount,
     } = prevState;
@@ -223,8 +221,8 @@ class ExchangeScreen extends React.Component<Props, State> {
         fromAsset !== prevFromAsset ||
         toAsset !== prevToAsset ||
         fromAmount !== prevFromAmount) &&
-        isFormValid &&
-        validateInput(fromAmount, fromAsset, toAsset))
+        validateInput(fromAmount, fromAsset, toAsset) &&
+        shouldTriggerSearch(fromAsset, toAsset, fromAmount))
     ) {
       this.resetSearch();
       this.triggerSearch();

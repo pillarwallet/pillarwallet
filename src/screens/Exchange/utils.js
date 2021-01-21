@@ -197,7 +197,19 @@ export const getHeaderRightItems = (
   return rightItems;
 };
 
-const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number) => Number(assetBalance) >= Number(amount);
+const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number): boolean => {
+  try {
+    const amountBN = new BigNumber(amount);
+    const balanceBN = new BigNumber(assetBalance);
+    // assetBalance is fixed to 6 digits and amount is not, so usually amount will be technically higher
+    // fix and round both down to 6 to get meaningful info
+    const amountFixed = amountBN.toFixed(6, 1);
+    const balanceFixed = balanceBN.toFixed(6, 1);
+    return Number(balanceFixed) >= Number(amountFixed);
+  } catch {
+    return false;
+  }
+};
 
 export const shouldTriggerSearch = (
   fromAsset: Option,
