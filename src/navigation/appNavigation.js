@@ -1067,20 +1067,52 @@ class AppFlow extends React.Component<Props, State> {
     const isWalletBackedUp = isImported || isBackedUp;
 
     return (
-      <AppFlowNavigation
-        screenProps={{
-          profileImage: user?.profileImage,
-          showHomeUpdateIndicator,
-          intercomNotificationsCount,
-          isWalletBackedUp,
-          theme,
-          language: i18n.language,
-        }}
+      <AppFlowInner
+        profileImage={user?.profileImage}
+        showHomeUpdateIndicator={showHomeUpdateIndicator}
+        intercomNotificationsCount={intercomNotificationsCount}
+        isWalletBackedUp={isWalletBackedUp}
+        theme={theme}
+        language={i18n.language}
         navigation={navigation}
       />
     );
   }
 }
+
+const AppFlowInner = ({
+  profileImage,
+  showHomeUpdateIndicator,
+  intercomNotificationsCount,
+  isWalletBackedUp,
+  theme,
+  language,
+  navigation,
+}) => {
+  return (
+    <AppFlowNavigation
+      screenProps={React.useMemo(
+        () => ({
+          profileImage,
+          showHomeUpdateIndicator,
+          intercomNotificationsCount,
+          isWalletBackedUp,
+          theme,
+          language,
+        }),
+        [
+          profileImage,
+          showHomeUpdateIndicator,
+          intercomNotificationsCount,
+          isWalletBackedUp,
+          theme,
+          language,
+        ],
+      )}
+      navigation={navigation}
+    />
+  );
+};
 
 const mapStateToProps = ({
   user: { data: user },
