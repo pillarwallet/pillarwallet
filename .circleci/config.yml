@@ -753,7 +753,6 @@ workflows:
               ignore:
                 - develop
                 - master
-                - fix/force-semtag-run
                 
   build_and_deploy_appcenter:
     jobs:
@@ -786,7 +785,7 @@ workflows:
           filters:
             branches:
               only:
-                - fix/force-semtag-run
+                - master
       - build-and-test:
           requires:
             - bump-push-git-tag
