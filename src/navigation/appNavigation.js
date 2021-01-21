@@ -19,12 +19,12 @@
 */
 
 import * as React from 'react';
-import { createStackNavigator } from 'react-navigation-stack';
+import { createStackNavigator, CardStyleInterpolators } from 'react-navigation-stack';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import type { NavigationScreenProp } from 'react-navigation';
 import BackgroundTimer from 'react-native-background-timer';
 import { connect } from 'react-redux';
-import { Animated, Easing, View, Image, AppState } from 'react-native';
+import { View, Image, AppState } from 'react-native';
 import { withTheme } from 'styled-components';
 import { withTranslation } from 'react-i18next';
 import t from 'translations/translate';
@@ -344,15 +344,9 @@ const iconHome = require('assets/icons/icon_home_smrt.png');
 const iconConnect = require('assets/icons/icon_connect.png');
 
 const StackNavigatorModalConfig = {
-  transitionConfig: () => ({
-    transitionSpec: {
-      duration: 0,
-      timing: Animated.timing,
-      easing: Easing.step0,
-    },
-  }),
   defaultNavigationOptions: {
     headerShown: false,
+    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   },
 };
 
