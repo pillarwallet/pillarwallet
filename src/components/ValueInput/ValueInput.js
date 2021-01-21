@@ -22,6 +22,7 @@ import React, { useState } from 'react';
 import { connect } from 'react-redux';
 import { Keyboard } from 'react-native';
 import { createStructuredSelector } from 'reselect';
+import { BigNumber } from 'bignumber.js';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
 import TextInput from 'components/TextInput';
@@ -195,7 +196,9 @@ export const ValueInputComponent = (props: Props) => {
     );
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
     if (percent === 100) {
-      onValueChange(newMaxValue);
+      // TODO: if possible, try to avoid fixing to 8 and rounding down
+      const newMaxValueFixed = new BigNumber(newMaxValue).toFixed(8, 1);
+      onValueChange(newMaxValueFixed);
     } else {
       onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)));
     }

@@ -226,7 +226,7 @@ class ExchangeScreen extends React.Component<Props, State> {
         toAsset !== prevToAsset ||
         fromAmount !== prevFromAmount) &&
         validateInput(fromAmount, fromAsset, toAsset) &&
-        shouldTriggerSearch(fromAsset, toAsset, fromAmount))
+        shouldTriggerSearch(fromAsset, toAsset, parseFloat(fromAmount)))
     ) {
       this.resetSearch();
       this.triggerSearch();
