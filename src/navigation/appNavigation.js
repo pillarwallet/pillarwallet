@@ -360,11 +360,11 @@ const StackNavigatorConfig = {
   defaultNavigationOptions: {
     headerShown: false,
     gestureEnabled: true,
-  },
-  cardStyle: {
-    backgroundColor: {
-      dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
-      light: getThemeColors(getThemeByType()).basic070,
+    cardStyle: {
+      backgroundColor: {
+        dark: getThemeColors(getThemeByType(DARK_THEME)).basic070,
+        light: getThemeColors(getThemeByType()).basic070,
+      },
     },
   },
 };
