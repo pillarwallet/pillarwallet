@@ -209,7 +209,7 @@
     "flow-bin": "^0.105.0",
     "invariant": "^2.2.4",
     "jest": "^25.1.0",
-    "jest-html-reporter": "2.0.0",
+    "jest-html-reporter": "^2.8.2",
     "jest-react-native": "^18.0.0",
     "jest-styled-components": "^5.0.1",
     "jetifier": "^1.6.4",

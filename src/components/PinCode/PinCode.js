@@ -76,6 +76,7 @@ export default class PinCode extends React.Component<Props, State> {
           toValue: 1,
           duration: 500,
           easing: Easing.linear,
+          useNativeDriver: true,
         },
       ).start();
     }

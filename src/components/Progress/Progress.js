@@ -166,6 +166,7 @@ class Progress extends React.Component<Props, State> {
         toValue: newProgress,
         easing: Easing.linear,
         duration: 500,
+        useNativeDriver: false,
       },
     ).start();
   };
