@@ -175,8 +175,8 @@ class WalletSettings extends React.Component<Props, State> {
         title: t('settingsContent.settingsItem.recoveryPortal.title'),
         subtitle: t('settingsContent.settingsItem.recoveryPortal.subtitle.default'),
         onPress: () => navigation.navigate(recoveryPortalNavigationPath),
-      },
-    ];
+      });
+    }
   };
 
   handleBiometricPress = async () => {

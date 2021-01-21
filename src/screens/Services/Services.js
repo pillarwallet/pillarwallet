@@ -359,4 +359,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(ServicesScreen);
+export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen);

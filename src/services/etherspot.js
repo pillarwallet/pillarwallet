@@ -27,6 +27,7 @@ import {
   GatewayEstimatedBatch,
   P2PPaymentDeposit,
   ENSNode,
+  EnvNames,
 } from 'etherspot';
 import { BigNumber } from 'bignumber.js';
 
@@ -62,7 +63,11 @@ class EtherspotService {
       ? NetworkNames.Mainnet
       : NetworkNames.Kovan;
 
-    this.sdk = new EtherspotSdk(privateKey, { networkName });
+    const envName = getEnv().NETWORK_PROVIDER === 'homestead'
+      ? EnvNames.MainNets
+      : EnvNames.TestNets;
+
+    this.sdk = new EtherspotSdk(privateKey, { env: envName, networkName });
 
     await this.sdk.computeContractAccount({ sync: true }).catch((error) => {
       reportErrorLog('EtherspotService init computeContractAccount failed', { error });
