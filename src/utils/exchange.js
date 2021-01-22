@@ -168,10 +168,10 @@ export const isOrderAmountTooLow = (
   // askRate is provided by offer
     const offerAmount = calculateAmountToBuy(askRate, fromAmount);
     // fix and round down because offer and order can have different decimals
-    const offerAmountBN = new BigNumber(offerAmount).toFixed(8, 1);
-    const orderAmountBN = new BigNumber(order.expectedOutput).toFixed(8, 1);
+    const offerAmountFixed = new BigNumber(offerAmount).toFixed(8, 1);
+    const orderAmountFixed = new BigNumber(order.expectedOutput).toFixed(8, 1);
     // stop swap if order < offer
-    return Number(offerAmountBN) > Number(orderAmountBN);
+    return new BigNumber(offerAmountFixed).isGreaterThan(orderAmountFixed);
   } catch {
     return true;
   }

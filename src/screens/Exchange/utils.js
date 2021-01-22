@@ -205,7 +205,7 @@ const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean =>
     // fix and round both down to 6 to get meaningful info
     const amountFixed = amountBN.toFixed(6, 1);
     const balanceFixed = balanceBN.toFixed(6, 1);
-    return Number(balanceFixed) >= Number(amountFixed);
+    return new BigNumber(balanceFixed).isGreaterThanOrEqualTo(new BigNumber(amountFixed));
   } catch {
     return false;
   }
