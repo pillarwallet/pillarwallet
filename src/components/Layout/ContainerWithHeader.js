@@ -223,7 +223,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
             {...headerProps}
             navigation={navigation}
             bottomBorderAnimationValue={bottomBorderAnimationValue}
-            forceInsetTop={Platform.select({ android: 'never' })}
+            noPaddingTop
           />}
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}
