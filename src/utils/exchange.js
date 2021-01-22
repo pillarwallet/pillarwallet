@@ -188,3 +188,8 @@ export const isAmountToSellAboveMax = (maxQuantity: string | number, amountToSel
   const amountToSellBN = new BigNumber(amountToSell);
   return !maxQuantityBN.isZero() && amountToSellBN.isGreaterThan(maxQuantityBN);
 };
+
+export const getFixedQuantity = (quantity: string, decimals?: number | string): string => {
+  if (!!decimals && quantity.split('.')[1]?.length <= Number(decimals)) return quantity;
+  return new BigNumber(quantity).toFixed(Number(decimals) || 18, 1);
+};

@@ -17,7 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isFiatCurrency, isAmountToSellAboveMax, isAmountToSellBelowMin, calculateAmountToBuy } from 'utils/exchange';
+import {
+  isFiatCurrency, isAmountToSellAboveMax, isAmountToSellBelowMin, calculateAmountToBuy, getFixedQuantity,
+} from 'utils/exchange';
 import { validateInput, shouldTriggerSearch, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 const assetEth = { value: 'ETH', assetBalance: '42.42', name: 'Ethereum' };
@@ -70,5 +72,12 @@ describe('Exchange Utility function tests', () => {
     expect(calculateAmountToBuy('0.1', '20')).toEqual('2');
     expect(calculateAmountToBuy(0.00001, '2')).toEqual('0.00002');
     expect(calculateAmountToBuy(0.000000000000000000001, '2')).toEqual('0.000000000000000000002');
+  });
+  it('Gets correct fixed quantity', () => {
+    expect(getFixedQuantity('100.100', 18)).toEqual('100.100');
+    // maaaany decimals, expect rounding down to 18 decimals
+    expect(getFixedQuantity('100.1111111111111111119999999')).toEqual('100.111111111111111111');
+    expect(getFixedQuantity('100.111111111111111119999999')).toEqual('100.111111111111111119');
+    expect(getFixedQuantity('100.11111111111111111111119999999', 8)).toEqual('100.11111111');
   });
 });

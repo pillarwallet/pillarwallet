@@ -67,6 +67,7 @@ import {
   calculateAmountToBuy,
   isAmountToSellAboveMax,
   isAmountToSellBelowMin,
+  getFixedQuantity,
 } from 'utils/exchange';
 import { formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
@@ -325,10 +326,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       askRate,
       trackId = '',
     } = offer;
-    const amountToBuy = calculateAmountToBuy(askRate, fromAmount);
+    const fromAmountFixed = getFixedQuantity(fromAmount, fromAsset.decimals);
+    const amountToBuy = calculateAmountToBuy(askRate, fromAmountFixed);
 
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAsset, toAsset, fromAmount, provider, trackId, askRate, order => {
+      takeOffer(fromAsset, toAsset, fromAmountFixed, provider, trackId, askRate, order => {
         resetEstimateTransaction();
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;

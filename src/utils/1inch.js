@@ -24,6 +24,7 @@ import type { Asset } from 'models/Asset';
 
 import Toast from 'components/Toast';
 import { convertToBaseUnits, convertToNominalUnits, reportLog } from 'utils/common';
+import { getFixedQuantity } from 'utils/exchange';
 
 const EXCHANGE_ETH_ADDRESS = '0xEeeeeEeeeEeEeeEeEeEeeEEEeeeeEeeeeeeeEEeE';
 export const EXCHANGE_URL = 'https://api.1inch.exchange/v2.0';
@@ -39,7 +40,7 @@ export const get1inchCommonUrlParams = (
   toAsset: Asset,
   quantity: string,
 ): CommonUrlParams => {
-  const quantityBN = new BigNumber(quantity);
+  const quantityBN = new BigNumber(getFixedQuantity(quantity, fromAsset.decimals));
   const quantityInBaseUnits: BigNumber = convertToBaseUnits(
     new BigNumber(fromAsset.decimals), quantityBN,
   );
