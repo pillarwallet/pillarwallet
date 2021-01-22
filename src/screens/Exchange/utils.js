@@ -197,7 +197,7 @@ export const getHeaderRightItems = (
   return rightItems;
 };
 
-const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number): boolean => {
+const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
   try {
     const amountBN = new BigNumber(amount);
     const balanceBN = new BigNumber(assetBalance);
@@ -214,7 +214,7 @@ const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number): b
 export const shouldTriggerSearch = (
   fromAsset: Option,
   toAsset: Option,
-  fromAmount: number,
+  fromAmount: string,
 ) => !!+fromAmount && fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 
 export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
@@ -228,3 +228,24 @@ export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accou
 
 export const getToOption =
   (symbol: string, options: ExchangeOptions): Option => options.toOptions.find(a => a.value === symbol) || {};
+
+export const shouldResetAndTriggerSearch = (
+  fromAmount: string,
+  prevFromAmount: string,
+  fromAsset: Option,
+  prevFromAsset: Option,
+  toAsset: Option,
+  prevToAsset: Option,
+  accessToken: ?string,
+  prevAccesToken: ?string,
+): boolean => {
+  // access token has changed, init search again
+  return (prevAccesToken !== accessToken) ||
+  // valid input provided or asset changed
+  ((
+    fromAsset !== prevFromAsset ||
+    toAsset !== prevToAsset ||
+    fromAmount !== prevFromAmount) &&
+    validateInput(fromAmount, fromAsset, toAsset) &&
+    shouldTriggerSearch(fromAsset, toAsset, fromAmount));
+};

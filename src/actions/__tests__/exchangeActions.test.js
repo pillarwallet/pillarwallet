@@ -73,7 +73,7 @@ const storeState = {
   accounts: { data: [{ id: 'id', walletId: 'walletId', type: ACCOUNT_TYPES.SMART_WALLET }] },
 };
 
-const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => ({
+const getSearchRequestAction = (fromAssetCode: string, toAssetCode: string, fromAmount: string) => ({
   type: SET_EXCHANGE_SEARCH_REQUEST,
   payload: { fromAssetCode, toAssetCode, fromAmount },
 });
@@ -90,25 +90,25 @@ describe('Exchange actions test', () => {
       store = mockStore(storeState);
     });
     it('Creates Synthetix offers when needed', async () => {
-      await store.dispatch(searchOffersAction('sETH', 'sUSD', 10));
+      await store.dispatch(searchOffersAction('sETH', 'sUSD', '10'));
       const actions = store.getActions();
-      const expectedActions = [getSearchRequestAction('sETH', 'sUSD', 10), getAddOfferAction(PROVIDER_SYNTHETIX)];
+      const expectedActions = [getSearchRequestAction('sETH', 'sUSD', '10'), getAddOfferAction(PROVIDER_SYNTHETIX)];
       expect(actions).toEqual(expectedActions);
     });
     it('Creates Uniswap and 1inch offers when needed', async () => {
-      await store.dispatch(searchOffersAction('ETH', 'sUSD', 10));
+      await store.dispatch(searchOffersAction('ETH', 'sUSD', '10'));
       const actions = store.getActions();
       const expectedActions = [
-        getSearchRequestAction('ETH', 'sUSD', 10),
+        getSearchRequestAction('ETH', 'sUSD', '10'),
         getAddOfferAction(PROVIDER_1INCH),
         getAddOfferAction(PROVIDER_UNISWAP),
       ];
       expect(actions).toEqual(expectedActions);
     });
     it('Does not create offers for invalid data', async () => {
-      await store.dispatch(searchOffersAction('invalidToken', 'sUSD', 10));
+      await store.dispatch(searchOffersAction('invalidToken', 'sUSD', '10'));
       const actions = store.getActions();
-      const expectedActions = [getSearchRequestAction('invalidToken', 'sUSD', 10)];
+      const expectedActions = [getSearchRequestAction('invalidToken', 'sUSD', '10')];
       expect(actions).toEqual(expectedActions);
     });
   });
@@ -116,7 +116,7 @@ describe('Exchange actions test', () => {
     beforeEach(() => {
       store = mockStore(storeState);
     });
-    const commonArgs = [mockSupportedAssets[1], 10, PROVIDER_UNISWAP, 'trackId', '123'];
+    const commonArgs = [mockSupportedAssets[1], '10', PROVIDER_UNISWAP, 'trackId', '123'];
     it('Creates an exchange transaction object for valid data', async () => {
       let txData;
       await store.dispatch(takeOfferAction(mockSupportedAssets[0], ...commonArgs, (val) => { txData = val; }));

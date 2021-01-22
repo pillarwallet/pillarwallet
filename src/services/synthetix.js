@@ -96,7 +96,7 @@ const getSynthetixAllowance = async (clientAddress: string, fromTokenAddress: st
 };
 
 export const getSynthetixOffer = async (
-  fromAsset: Asset, toAsset: Asset, amount: string | number, clientAddress: string,
+  fromAsset: Asset, toAsset: Asset, amount: string, clientAddress: string,
 ): Promise<Offer | null> => {
   try {
     const ratesAddress = getEnv().SYNTHETIX_RATES_ADDRESS;
@@ -109,7 +109,7 @@ export const getSynthetixOffer = async (
     );
     const toAmount = utils.formatUnits(toValue.toString(), toAsset.decimals);
     const allowanceSet = await getSynthetixAllowance(clientAddress, fromAsset.address);
-    const amountBN = new BigNumber(amount.toString());
+    const amountBN = new BigNumber(amount);
     const toAmountBN = new BigNumber(toAmount.toString());
     const askRate = toAmountBN.dividedBy(amountBN).toNumber().toFixed(5);
 

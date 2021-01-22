@@ -153,13 +153,13 @@ export const createAllowanceTx = async (
 
 export const isWbtcCafe = (fromAssetCode?: string): boolean => fromAssetCode === BTC;
 
-export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string): string =>
-  new BigNumber(askRate).multipliedBy(amountToSell).toFixed();
+export const calculateAmountToBuy = (askRate: number | string, amountToSell: string): string =>
+  new BigNumber(askRate).multipliedBy(new BigNumber(amountToSell)).toFixed();
 
 // check if the re-calculated order amount doesn't diverge from offer amount
 export const isOrderAmountTooLow = (
   askRate: string | number,
-  fromAmount: number,
+  fromAmount: string,
   order: { expectedOutput?: string },
 ): boolean => {
   // no need to do anything if expectedOutput isn't provided - e.g. for Synthetix
@@ -175,4 +175,16 @@ export const isOrderAmountTooLow = (
   } catch {
     return true;
   }
+};
+
+export const isAmountToSellBelowMin = (minQuantity: string | number, amountToSell: string): boolean => {
+  const minQuantityBN = new BigNumber(minQuantity);
+  const amountToSellBN = new BigNumber(amountToSell);
+  return !minQuantityBN.isZero() && amountToSellBN.isLessThan(minQuantityBN);
+};
+
+export const isAmountToSellAboveMax = (maxQuantity: string | number, amountToSell: string): boolean => {
+  const maxQuantityBN = new BigNumber(maxQuantity);
+  const amountToSellBN = new BigNumber(amountToSell);
+  return !maxQuantityBN.isZero() && amountToSellBN.isGreaterThan(maxQuantityBN);
 };

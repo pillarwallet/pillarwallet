@@ -37,7 +37,7 @@ type CommonUrlParams = {
 export const get1inchCommonUrlParams = (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
 ): CommonUrlParams => {
   const quantityBN = new BigNumber(quantity);
   const quantityInBaseUnits: BigNumber = convertToBaseUnits(

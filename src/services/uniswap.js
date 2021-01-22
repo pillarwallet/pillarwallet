@@ -141,7 +141,7 @@ const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise
 export const getUniswapOffer = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientAddress: string,
 ): Promise<Offer | null> => {
   const [fromAssetParsed, toAssetParsed] = parseAssets([fromAsset, toAsset]);
