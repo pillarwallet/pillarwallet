@@ -68,11 +68,17 @@ export const Center = styled.View`
   align-items: center;
 `;
 
-export const ContainerOuter = styled(SafeAreaView)`
-  ${({ color, theme }) => {
-    const bgColor = color || theme?.colors?.basic070;
-    return bgColor ? `background-color: ${bgColor}` : '';
-  }}
+// Workaround: styled-components 3.x do not pass `theme` prop to FC, but do pass
+// it to class components.
+// eslint-disable-next-line react/prefer-stateless-function
+class SafeAreaViewClassWrapper extends React.Component<{}> {
+  render() {
+    return <SafeAreaView {...this.props} />;
+  }
+}
+
+export const ContainerOuter = styled(SafeAreaViewClassWrapper)`
+  background-color: ${({ color, theme }) => color || theme.colors.basic070};
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;
 
