@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
+import { useDebounce } from 'use-debounce';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
@@ -98,6 +99,7 @@ const RariWithdrawScreen = ({
   const [isCalculatingMaxAmount, setIsCalculatingMaxAmount] = useState(false);
   const [customBalances, setCustomBalances] = useState({});
 
+  const [debouncedAssetValue] = useDebounce(assetValue, 500);
 
   const rariPool = navigation.getParam('rariPool');
 
@@ -150,7 +152,7 @@ const RariWithdrawScreen = ({
           });
         }
       });
-  }, [assetValue, selectedAsset]);
+  }, [debouncedAssetValue, selectedAsset]);
 
   useEffect(() => {
     if (!selectedAsset) return;

@@ -23,6 +23,7 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
+import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -99,6 +100,8 @@ const RariAddDepositScreen = ({
   const [slippage, setSlippage] = useState(null);
   const [inputValid, setInputValid] = useState(false);
 
+  const [debouncedAssetValue] = useDebounce(assetValue, 500);
+
   const rariPool = navigation.getParam('rariPool');
 
   let notEnoughForFee = false;
@@ -172,7 +175,7 @@ const RariAddDepositScreen = ({
       }
       setEstimatingTransaction(false);
     });
-  }, [assetValue, selectedAsset]);
+  }, [debouncedAssetValue, selectedAsset]);
 
   const onNextButtonPress = () => {
     navigation.navigate(RARI_ADD_DEPOSIT_REVIEW, {
