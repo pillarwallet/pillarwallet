@@ -119,7 +119,7 @@ const RariWithdrawScreen = ({
     : estimateErrorMessage;
 
   useEffect(() => {
-    if (!assetValue || !parseFloat(assetValue) || !selectedAsset || isEstimating) return;
+    if (!assetValue || !parseFloat(assetValue) || !selectedAsset) return;
     setEstimatingTransaction(true);
     getRariWithdrawTransaction(rariPool, activeAccountAddress, assetValue, selectedAsset)
       .then(txsAndExchangeFee => {

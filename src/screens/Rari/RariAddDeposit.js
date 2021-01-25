@@ -120,7 +120,7 @@ const RariAddDepositScreen = ({
     : estimateErrorMessage;
 
   useEffect(() => {
-    if (!assetValue || !parseFloat(assetValue) || !selectedAsset || isEstimating) return;
+    if (!assetValue || !parseFloat(assetValue) || !selectedAsset) return;
     setEstimatingTransaction(true);
     getRariDepositTransactionsAndExchangeFee(
       rariPool,
