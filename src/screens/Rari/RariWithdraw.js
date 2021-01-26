@@ -26,7 +26,9 @@ import debounce from 'lodash.debounce';
 import { useDebounce } from 'use-debounce';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
+
 import { getEnv } from 'configs/envConfig';
+import { blockedTokenAddresses } from 'configs/rariConfig';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Spacing } from 'components/Layout';
@@ -58,8 +60,6 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, Balances, Assets } from 'models/Asset';
 import type { Option } from 'models/Selector';
 import type { RariPool } from 'models/RariPool';
-
-import { blockedTokenAddresses } from './config';
 
 type Props = {
   assets: Assets,
