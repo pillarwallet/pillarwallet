@@ -56,6 +56,7 @@ import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Asset, Balances, Assets } from 'models/Asset';
+import type { Option } from 'models/Selector';
 import type { RariPool } from 'models/RariPool';
 
 import { blockedTokenAddresses } from './config';
@@ -98,6 +99,7 @@ const getCustomAssetOptions = (supportedAssets: Asset[], rariPool: RariPool): Op
     const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
     return {
       ...rest,
+      value: rest.symbol,
       iconUrl,
       icon: iconUrl,
       imageUrl,
