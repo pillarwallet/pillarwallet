@@ -201,12 +201,30 @@ class EtherspotService {
     return this.sdk.increaseP2PPaymentChannelAmount(increaseRequest).then(({ hash }) => ({ hash }));
   }
 
+  buildTokenWithdrawFromAccountDepositTransaction(
+    asset: Asset,
+    withdrawAmount: string,
+  ): Promise<?{ to: string, data: string }> {
+    return this.sdk.encodeWithdrawP2PPaymentDeposit({
+      token: asset.address,
+      amount: parseTokenAmount(withdrawAmount.toString(), asset.decimals).toString(),
+    })
+      .catch((error) => {
+        reportErrorLog('setTokenWithdrawFromAccountDepositTransaction -> batchWithdrawP2PPaymentDeposit failed', {
+          error,
+          asset,
+          withdrawAmount,
+        });
+        return null;
+      });
+  }
+
   async getAccountTokenDeposit(tokenAddress: string): Promise<?P2PPaymentDeposit> {
     // returns all deposits: ETH and provided tokens
-    const deposits = await this.sdk.syncP2PPaymentDeposits({ tokens: [tokenAddress] })
+    const deposits = await this.sdk.getP2PPaymentDeposits({ tokens: [tokenAddress] })
       .then(({ items }) => items)
       .catch((error) => {
-        reportErrorLog('getAccountTokenDeposit -> syncP2PPaymentDeposits failed', { error, tokenAddress });
+        reportErrorLog('getAccountTokenDeposit -> getP2PPaymentDeposits failed', { error, tokenAddress });
         throw error;
       });
 

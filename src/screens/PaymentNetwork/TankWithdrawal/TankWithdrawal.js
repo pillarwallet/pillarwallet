@@ -52,7 +52,7 @@ import type { WithdrawalFee } from 'models/PaymentNetwork';
 import type { Assets, Balances, Rates } from 'models/Asset';
 
 // constants
-import { TANK_WITHDRAWAL_CONFIRM } from 'constants/navigationConstants';
+import { TANK_WITHDRAW_CONFIRM } from 'constants/navigationConstants';
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
 
 // actions
@@ -159,7 +159,7 @@ class TankWithdrawal extends React.Component<Props, State> {
     if (!formValues) return;
 
     Keyboard.dismiss();
-    navigation.navigate(TANK_WITHDRAWAL_CONFIRM, { amount: formValues.amount });
+    navigation.navigate(TANK_WITHDRAW_CONFIRM, { amount: formValues.amount });
   };
 
   useMaxValue = () => {

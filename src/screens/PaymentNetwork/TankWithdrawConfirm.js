@@ -26,6 +26,7 @@ import t from 'translations/translate';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // components
 import Toast from 'components/Toast';
@@ -47,10 +48,7 @@ import etherspot from 'services/etherspot';
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
-import type {
-  TransactionFeeInfo,
-  TransactionPayload,
-} from 'models/Transaction';
+import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
 
 
 type Props = {
@@ -60,27 +58,30 @@ type Props = {
   isOnline: boolean,
 };
 
-const DepositWrapper = styled.View`
+const WithdrawWrapper = styled.View`
   padding: 16px 20px;
 `;
 
-const FundTankConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
+const TankWithdrawConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const fundAmount: number = navigation.getParam('amount');
+  const withdrawAmount: number = navigation.getParam('amount');
   const PPNAsset: Asset = navigation.getParam('asset');
 
-  const { symbol, address: contractAddress, decimals } = PPNAsset;
+  const { symbol } = PPNAsset;
 
   const onNextButtonPress = async () => {
     if (isSubmitted) return;
     setIsSubmitted(true);
 
-    const accountTokenDeposit = await etherspot.getAccountTokenDeposit(contractAddress);
+    const withdrawTransactionData = etherspot.buildTokenWithdrawFromAccountDepositTransaction(
+      PPNAsset,
+      withdrawAmount,
+    );
 
-    if (!feeInfo || !accountTokenDeposit) {
+    if (!feeInfo || ! withdrawTransactionData) {
       Toast.show({
-        message: t('toast.cannotFundTank'),
+        message: t('toast.cannotWithdrawFromTank'),
         emoji: 'woman-shrugging',
         supportLink: true,
       });
@@ -89,12 +90,12 @@ const FundTankConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
     }
 
     const transactionPayload: TransactionPayload = {
-      to: accountTokenDeposit.address,
-      amount: fundAmount,
+      to: withdrawTransactionData.to,
+      amount: 0,
+      data: withdrawTransactionData,
       txFeeInWei: feeInfo.fee,
-      symbol,
-      contractAddress,
-      decimals,
+      symbol: ETH,
+      decimals: 18,
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
@@ -107,14 +108,14 @@ const FundTankConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: t('ppnContent.title.fundTankConfirmScreen') }] }}
+      headerProps={{ centerItems: [{ title: t('ppnContent.title.withdrawFromTokenTankScreen', { token: symbol }) }] }}
       minAvoidHeight={200}
     >
-      <DepositWrapper>
+      <WithdrawWrapper>
         <TokenReviewSummary
           assetSymbol={symbol}
-          text={t('ppnContent.label.youAreFundingTokenTank', { token: symbol })}
-          amount={fundAmount}
+          text={t('ppnContent.label.youAreWithdrawingFromTokenTank', { token: symbol })}
+          amount={withdrawAmount}
         />
         <Spacing h={42} />
         <Table>
@@ -135,10 +136,10 @@ const FundTankConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
         <Button
           disabled={isSubmitted || !isOnline}
           isLoading={isSubmitted}
-          title={t('ppnContent.button.fundTank')}
+          title={t('ppnContent.button.withdraw')}
           onPress={onNextButtonPress}
         />
-      </DepositWrapper>
+      </WithdrawWrapper>
     </ContainerWithHeader>
   );
 };
@@ -151,4 +152,4 @@ const mapStateToProps = ({
   isOnline,
 });
 
-export default connect(mapStateToProps)(FundTankConfirm);
+export default connect(mapStateToProps)(TankWithdrawConfirm);

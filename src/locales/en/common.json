@@ -548,12 +548,12 @@
       "fundTankConfirmScreen": "Fund tank review",
       "sendTokenViaPpnScreen": "Send {{token}} via PPN",
       "unsettledAssetsScreen": "Unsettled Assets",
-      "withdrawFromTankScreen": "Withdraw from PLR tank"
+      "withdrawFromTokenTankScreen": "Withdraw from {{token}} tank"
     },
     "button": {
       "fundTank": "Fund Pillar Tank",
       "releaseTankFunds": "Release Funds",
-      "withdrawFromTank": "Withdraw from PLR tank",
+      "withdraw": "Withdraw",
       "settleTransactions": "Settle transactions",
       "enableSmartWalletForTank": "Enable Smart Wallet to create Tank",
       "goToTank": "Go to PLR Tank"
@@ -562,7 +562,8 @@
       "availableBalance": "Available Balance",
       "paidByPillar": "No fees - paid by Pillar",
       "transactionsAvailableToSettle": "Transactions available to settle",
-      "youAreFundingTokenTank": "You are funding your {{token}} tank"
+      "youAreFundingTokenTank": "You are funding your {{token}} tank",
+      "youAreWithdrawingFromTokenTank": "You are withdrawing from {{token}} tank"
     },
     "paragraph": {
       "introFirstParagraph": "Stake PLR tokens in your tank to enable free and instant transactions between you and your contacts. PLR acts as a meta token allowing you to send and receive any asset that is supported by the Pillar Payment Network.",
@@ -1426,6 +1427,7 @@
     "failedToEstimateTransactionWithMessage": "Failed to estimate transaction: \"{{message}}\"",
     "walletBackedUp": "Your wallet is backed up now.",
     "cannotFundTank": "Cannot funk tank. Please try again.",
+    "cannotWithdrawFromTank": "Cannot withdraw from tank. Please try again.",
     "rariServiceFailed": "An error occured. Please try again or try depositing another token.",
     "rariFetchDataFailed": "Cannot fetch Rari data. Please try again",
     "rariWithdrawFeeRateFailed": "Cannot fetch Rari withdraw fee rate. Please try again.",

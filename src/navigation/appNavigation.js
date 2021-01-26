@@ -61,8 +61,8 @@ import FundTankScreen from 'screens/PaymentNetwork/FundTank';
 import FundTankConfirmScreen from 'screens/PaymentNetwork/FundTankConfirm';
 import SettleBalanceScreen from 'screens/PaymentNetwork/SettleBalance';
 import SettleBalanceConfirmScreen from 'screens/PaymentNetwork/SettleBalanceConfirm';
-import TankWithdrawalScreen from 'screens/PaymentNetwork/TankWithdrawal';
-import TankWithdrawalConfirmScreen from 'screens/PaymentNetwork/TankWithdrawalConfirm';
+import TankWithdrawScreen from 'screens/PaymentNetwork/TankWithdraw';
+import TankWithdrawConfirmScreen from 'screens/PaymentNetwork/TankWithdrawConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
@@ -159,7 +159,7 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
-import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
+import { checkEtherspotSessionAction } from 'actions/etherspotActions';
 
 // constants
 import {
@@ -215,7 +215,7 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
-  TANK_WITHDRAWAL_CONFIRM,
+  TANK_WITHDRAW_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
@@ -654,8 +654,8 @@ const tankFundFlow = createStackNavigator({
 tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankWithdrawalFlow = createStackNavigator({
-  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
-  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+  [TANK_WITHDRAWAL]: TankWithdrawScreen,
+  [TANK_WITHDRAW_CONFIRM]: TankWithdrawConfirmScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
@@ -867,7 +867,7 @@ type Props = {
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
   isFinishingOnboarding: boolean,
-  checkSmartWalletSession: () => void,
+  checkEtherspotSession: () => void,
 };
 
 type State = {
@@ -892,7 +892,7 @@ class AppFlow extends React.Component<Props, State> {
       initWalletConnect,
       backupStatus,
       user,
-      checkSmartWalletSession,
+      checkEtherspotSession,
     } = this.props;
 
     /**
@@ -909,7 +909,7 @@ class AppFlow extends React.Component<Props, State> {
     addAppStateChangeListener(this.handleAppStateChange);
 
     smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
-      checkSmartWalletSession,
+      checkEtherspotSession,
       SMART_WALLET_SESSION_CHECK_INTERVAL,
     );
 
@@ -1002,7 +1002,7 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
-      checkSmartWalletSession,
+      checkEtherspotSession,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -1019,7 +1019,7 @@ class AppFlow extends React.Component<Props, State> {
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
-      checkSmartWalletSession();
+      checkEtherspotSession();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -1112,7 +1112,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
-  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
+  checkEtherspotSession: () => dispatch(checkEtherspotSessionAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

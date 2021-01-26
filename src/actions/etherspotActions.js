@@ -343,7 +343,7 @@ export const initPPNAction = () => {
   };
 };
 
-export const estimateAccountDepositTokenTransactionAction = (depositAmount: number) => {
+export const estimateAccountTokenDepositTransactionAction = (depositAmount: number) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -378,4 +378,53 @@ export const estimateAccountDepositTokenTransactionAction = (depositAmount: numb
       assetData: mapAssetToAssetData(ppnTokenAsset),
     }));
   };
+};
+
+export const estimateTokenWithdrawFromAccountDepositTransactionAction = (withdrawAmount: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
+
+    // put into loading state at this point already
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+
+    if (isEmpty(ppnTokenAsset)) {
+      // TODO: show toast?
+      reportErrorLog('estimateTokenWithdrawFromAccountDepositTransactionAction failed: no ppnTokenAsset', { ppnTokenAsset });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    const tokenWithdrawTransactionData = await etherspot.buildTokenWithdrawFromAccountDepositTransaction(
+      ppnTokenAsset,
+      withdrawAmount,
+    );
+
+    if (!tokenWithdrawTransactionData) {
+      // TODO: show toast?
+      reportErrorLog('estimateTokenWithdrawFromAccountDepositTransactionAction failed: no tokenWithdrawTransactionData', {
+        ppnTokenAsset,
+        withdrawAmount,
+      });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    const { to, data } = tokenWithdrawTransactionData;
+
+    dispatch(estimateTransactionAction({ to, value: 0, data }));
+  };
+};
+
+export const checkEtherspotSessionAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    // TODO: add etherspot session restore?
+  }
 };

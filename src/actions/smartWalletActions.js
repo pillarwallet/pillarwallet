@@ -145,7 +145,7 @@ import {
 import { normalizeWalletAddress } from 'utils/wallet';
 
 // actions
-import { addAccountAction, initOnLoginSmartWalletAccountAction, setActiveAccountAction } from './accountsActions';
+import { addAccountAction, setActiveAccountAction } from './accountsActions';
 import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';

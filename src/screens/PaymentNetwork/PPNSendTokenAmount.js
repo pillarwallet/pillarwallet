@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -26,6 +26,7 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { addContactAction } from 'actions/contactsActions';
+import { fetchAccountDepositBalanceAction } from 'actions/etherspotActions';
 
 // components
 import ContactDetailsModal from 'components/ContactDetailsModal';
@@ -38,16 +39,14 @@ import { PPN_TOKEN } from 'configs/assetsConfig';
 import { SEND_TOKEN_CONFIRM } from 'constants/navigationConstants';
 
 // utils
-import {
-  getAssetData,
-  getAssetsAsList,
-} from 'utils/assets';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 import { isEnsName } from 'utils/validators';
 import { getContactWithEnsName } from 'utils/contacts';
 
 // selectors
 import { contactsSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 // types
 import type { Dispatch } from 'reducers/rootReducer';
@@ -55,7 +54,6 @@ import type { Assets, Balances } from 'models/Asset';
 import type { Contact } from 'models/Contact';
 import type { Option } from 'models/Selector';
 import type { TokenTransactionPayload } from 'models/Transaction';
-import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 
 type Props = {
@@ -64,6 +62,7 @@ type Props = {
   availableStake: number,
   contacts: Contact[],
   addContact: (contact: Contact) => void,
+  fetchAccountDepositBalance: () => void,
 };
 
 const PPNSendTokenAmount = ({
@@ -72,7 +71,12 @@ const PPNSendTokenAmount = ({
   availableStake,
   contacts,
   addContact,
+  fetchAccountDepositBalance,
 }: Props) => {
+  useEffect(() => {
+    fetchAccountDepositBalance();
+  }, []);
+
   const [amount, setAmount] = useState(null);
   const [inputValid, setInputValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState<?Contact>(null);
@@ -217,6 +221,7 @@ const structuredSelector = createStructuredSelector({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   addContact: (contact: Contact) => dispatch(addContactAction(contact)),
+  fetchAccountDepositBalance: () => dispatch(fetchAccountDepositBalanceAction()),
 });
 
 export default connect(structuredSelector, mapDispatchToProps)(PPNSendTokenAmount);

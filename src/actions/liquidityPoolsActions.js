@@ -37,7 +37,7 @@ import {
   getUnstakeTransaction,
   getClaimRewardsTransaction,
 } from 'utils/liquidityPools';
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 import { GraphQueryError } from 'services/theGraph';
@@ -53,7 +53,7 @@ const fetchUnipoolUserDataAction = (unipoolAddress: string) => {
     const {
       accounts: { data: accounts },
     } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     const [stakedAmount, earnedAmount] = await Promise.all([
@@ -89,7 +89,7 @@ const fetchUniswapPoolDataAction = (poolAddress: string) => {
     const {
       accounts: { data: accounts },
     } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     const poolData = await fetchPoolData(poolAddress, getAccountAddress(smartWalletAccount))
@@ -141,7 +141,7 @@ export const calculateAddLiquidityTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
@@ -190,7 +190,7 @@ export const calculateStakeTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
@@ -237,7 +237,7 @@ export const calculateUnstakeTransactionEstimateAction = (
 ) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
@@ -261,7 +261,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
@@ -307,7 +307,7 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
 export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPool, amountToClaim: number) => {
   return (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });

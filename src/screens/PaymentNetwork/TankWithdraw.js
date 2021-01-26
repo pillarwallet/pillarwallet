@@ -28,7 +28,7 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
-import { estimateAccountTokenDepositTransactionAction } from 'actions/etherspotActions';
+import { estimateTokenWithdrawFromAccountDepositTransactionAction } from 'actions/etherspotActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 
 // components
@@ -40,20 +40,17 @@ import ValueInput from 'components/ValueInput';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { FUND_CONFIRM } from 'constants/navigationConstants';
+import { TANK_WITHDRAW_CONFIRM } from 'constants/navigationConstants';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { availableStakeSelector } from 'selectors/paymentNetwork';
 
 // utils
 import { spacing } from 'utils/variables';
-import {
-  getAssetData,
-  getAssetsAsList,
-  isEnoughBalanceForTransactionFee,
-} from 'utils/assets';
+import { getAssetData, getAssetsAsList, isEnoughBalanceForTransactionFee } from 'utils/assets';
 
 // types
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
@@ -66,11 +63,12 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
-  estimateAccountTokenDepositTransaction: (amount: number) => void,
+  estimateTokenWithdrawTransaction: (amount: number) => void,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
   accountAssets: Assets,
   fetchAssetsBalances: () => void,
+  availableStake: number,
   isOnline: boolean,
 };
 
@@ -91,16 +89,17 @@ const InputWrapper = styled.View`
   z-index: 10;
 `;
 
-const FundTank = ({
+const TankWithdraw = ({
   navigation,
   balances,
   feeInfo,
   isEstimating,
-  estimateAccountTokenDepositTransaction,
+  estimateTokenWithdrawTransaction,
   estimateErrorMessage,
   resetEstimateTransaction,
   accountAssets,
   fetchAssetsBalances,
+  availableStake,
   isOnline,
 }: Props) => {
   useEffect(() => {
@@ -108,21 +107,23 @@ const FundTank = ({
     fetchAssetsBalances();
   }, []);
 
-  const [fundAmount, setFundAmount] = useState(null);
+  const [withdrawAmount, setWithdrawAmount] = useState(null);
   const [inputValid, setInputValid] = useState(false);
 
   const PPNAsset = getAssetData(getAssetsAsList(accountAssets), [], PPN_TOKEN);
 
   useEffect(() => {
-    if (!fundAmount || isEmpty(PPNAsset) || !inputValid) return;
-    estimateAccountTokenDepositTransaction(fundAmount);
-  }, [fundAmount, PPNAsset, inputValid]);
+    if (!withdrawAmount || isEmpty(PPNAsset) || !inputValid) return;
+    estimateTokenWithdrawTransaction(withdrawAmount);
+  }, [withdrawAmount, PPNAsset, inputValid]);
+
+  const accountDepositBalance: Balances = { [PPN_TOKEN]: { symbol: PPN_TOKEN, balance: availableStake.toString() } };
 
   let notEnoughForFee;
   if (feeInfo) {
     notEnoughForFee = !isEnoughBalanceForTransactionFee(balances, {
       txFeeInWei: feeInfo.fee,
-      amount: fundAmount,
+      amount: withdrawAmount,
       decimals: PPNAsset.decimals,
       symbol: PPNAsset.symbol,
       gasToken: feeInfo.gasToken,
@@ -133,20 +134,20 @@ const FundTank = ({
     ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
 
-  const showNextButton = fundAmount !== null; // only if amount input touched
+  const showNextButton = withdrawAmount !== null; // only if amount input touched
   const isNextButtonDisabled = !!isEstimating
-    || !fundAmount
+    || !withdrawAmount
     || !!errorMessage
     || !inputValid
     || !feeInfo
     || !isOnline;
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
-  const onNextButtonPress = () => navigation.navigate(FUND_CONFIRM, { amount: fundAmount, asset: PPNAsset });
+  const onNextButtonPress = () => navigation.navigate(TANK_WITHDRAW_CONFIRM, { amount: withdrawAmount, asset: PPNAsset });
 
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: t('ppnContent.title.fundTokenTankScreen', { token: PPN_TOKEN }) }] }}
+      headerProps={{ centerItems: [{ title: t('ppnContent.title.withdrawFromTokenTankScreen', { token: PPN_TOKEN }) }] }}
       footer={(
         <FooterInner>
           <FeeInfo alignItems="center">
@@ -180,10 +181,11 @@ const FundTank = ({
       {!!PPNAsset && (
         <InputWrapper>
           <ValueInput
-            value={fundAmount || ''} // cannot be null
-            onValueChange={setFundAmount}
+            value={withdrawAmount || ''} // cannot be null
+            onValueChange={setWithdrawAmount}
             assetData={PPNAsset}
             customAssets={[]}
+            customBalances={accountDepositBalance}
             onFormValid={setInputValid}
           />
         </InputWrapper>
@@ -199,12 +201,13 @@ const mapStateToProps = ({
   isEstimating,
   feeInfo,
   estimateErrorMessage,
-  isOnline
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   accountAssets: accountAssetsSelector,
+  availableStake: availableStakeSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
@@ -213,12 +216,12 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateAccountTokenDepositTransaction: debounce(
-    (amount: number) => dispatch(estimateAccountTokenDepositTransactionAction(amount)),
+  estimateTokenWithdrawTransaction: debounce(
+    (amount: number) => dispatch(estimateTokenWithdrawFromAccountDepositTransactionAction(amount)),
     200,
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   fetchAssetsBalances: () => dispatch(fetchAssetsBalancesAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(FundTank);
+export default connect(combinedMapStateToProps, mapDispatchToProps)(TankWithdraw);

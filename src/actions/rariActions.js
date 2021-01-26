@@ -37,7 +37,7 @@ import {
   SET_FETCHING_RARI_DATA_ERROR,
 } from 'constants/rariConstants';
 import { saveDbAction } from 'actions/dbActions';
-import { findFirstSmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
 import { getRariClaimRgtTransaction } from 'utils/rari';
 import {
@@ -55,7 +55,7 @@ export const fetchRariDataAction = () => {
       accounts: { data: accounts },
       rates: { data: rates },
     } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
     const smartWalletAddress = getAccountAddress(smartWalletAccount);
 
@@ -154,7 +154,7 @@ export const calculateRariClaimTransactionEstimateAction = (
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstSmartAccount(accounts);
+    const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
     dispatch(setEstimatingTransactionAction(true));
