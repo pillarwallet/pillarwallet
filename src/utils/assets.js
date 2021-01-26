@@ -249,6 +249,11 @@ export const addressesEqual = (address1: ?string, address2: ?string): boolean =>
   return isCaseInsensitiveMatch(address1, address2);
 };
 
+/** Checks if address list contains given address. Similar to `Array.includes`.  */
+export const addressesInclude = (addresses: string[], addressToFind: ?string): boolean => {
+  return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
+};
+
 export const getAssetData = (
   userAssets: Asset[],
   supportedAssetsData: Asset[],
