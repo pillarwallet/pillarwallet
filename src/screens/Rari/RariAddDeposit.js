@@ -136,7 +136,7 @@ const RariAddDepositScreen = ({
     ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
 
-  const allowedAssets = visibleAssets.filter(asset => !addressesInclude(blockedTokenAddresses, asset.address));
+  const customAssets = visibleAssets.filter(asset => !addressesInclude(blockedTokenAddresses, asset.address));
 
   useEffect(() => {
     if (!assetValue || !parseFloat(assetValue) || !selectedAsset) return;
@@ -245,7 +245,7 @@ const RariAddDepositScreen = ({
     >
       <ValueInputWrapper>
         <ValueInput
-          customAssets={allowedAssets}
+          customAssets={customAssets}
           assetData={selectedAsset}
           onAssetDataChange={setSelectedAsset}
           value={assetValue}
