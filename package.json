@@ -170,6 +170,7 @@
     "tcomb-form-native": "^0.6.11",
     "timers-browserify": "^1.0.1",
     "url": "~0.10.1",
+    "use-debounce": "^5.2.0",
     "util": "~0.10.3",
     "uuid": "^3.3.2",
     "vm-browserify": "0.0.4",
