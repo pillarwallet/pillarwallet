@@ -46,7 +46,6 @@ import { getRate } from 'utils/assets';
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-import { isGasTokenSupportedSelector } from 'selectors/smartWallet';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
@@ -65,7 +64,6 @@ type Props = {
   isLoading?: boolean,
   labelText?: string,
   showFiatDefault?: boolean,
-  isGasTokenSupported: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
   showRelayerMigration?: boolean,
@@ -97,7 +95,6 @@ const FeeLabelToggle = ({
   showRelayerMigration = true,
   accountAssets,
   accountHistory,
-  isGasTokenSupported,
   hasError,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
@@ -116,8 +113,7 @@ const FeeLabelToggle = ({
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
   showRelayerMigration = showRelayerMigration &&
-    firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR) &&
-    !isGasTokenSupported;
+    firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
 
   const openRelayerMigrationModal = () => {
     if (!showRelayerMigration) return;
@@ -157,7 +153,6 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
-  isGasTokenSupported: isGasTokenSupportedSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

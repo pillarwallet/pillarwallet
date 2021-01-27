@@ -48,7 +48,6 @@ import localeConfig from 'configs/localeConfig';
 
 // selectors
 import {
-  isGasTokenSupportedSelector,
   preferredGasTokenSelector,
 } from 'selectors/smartWallet';
 import { accountAssetsSelector } from 'selectors/assets';
@@ -77,7 +76,6 @@ type Props = {
   themeType: string,
   setAppTheme: (themeType: string, isManualThemeSelection?: boolean) => void,
   preferredGasToken: ?string,
-  isGasTokenSupported: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
   setPreferredGasToken: (token: string) => void,
@@ -103,13 +101,10 @@ class AppSettings extends React.Component<Props, State> {
       themeType,
       setAppTheme,
       preferredGasToken,
-      isGasTokenSupported,
       setPreferredGasToken,
       localisation,
       sessionLanguageCode,
     } = this.props;
-
-    const showRelayerMigration = !isGasTokenSupported;
 
     // TODO: revisit once web recovery portal has Etherspot implementation
     // const hasOtherDevicesLinked = !!devices.length
@@ -136,13 +131,7 @@ class AppSettings extends React.Component<Props, State> {
         title: t('settingsContent.settingsItem.payFeeWithPillar.title'),
         toggle: true,
         value: preferredGasToken === PLR,
-        onPress: () => {
-          if (showRelayerMigration) {
-            this.openRelayerMigrationModal();
-            return;
-          }
-          setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
-        },
+        onPress: () => setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR),
       },
       {
         key: 'darkMode',
@@ -194,17 +183,6 @@ class AppSettings extends React.Component<Props, State> {
 
   openSystemInfoModal = () => Modal.open(() => <SystemInfoModal />);
 
-  componentDidUpdate(prevProps: Props) {
-    const { isGasTokenSupported, setPreferredGasToken, preferredGasToken } = this.props;
-    const gasTokenBecameSupported = prevProps.isGasTokenSupported !== isGasTokenSupported && isGasTokenSupported;
-
-    if (gasTokenBecameSupported && this.state.isAfterRelayerMigration) {
-      // eslint-disable-next-line react/no-did-update-set-state
-      this.setState({ isAfterRelayerMigration: false });
-      setPreferredGasToken(preferredGasToken === PLR ? ETH : PLR);
-    }
-  }
-
   render() {
     return (
       <ContainerWithHeader
@@ -246,7 +224,6 @@ const mapStateToProps = ({
 });
 
 const structuredSelector = createStructuredSelector({
-  isGasTokenSupported: isGasTokenSupportedSelector,
   accountAssets: accountAssetsSelector,
   accountHistory: accountHistorySelector,
   preferredGasToken: preferredGasTokenSelector,

@@ -109,7 +109,7 @@ export const checkIfKeyBasedAccount = (account: Account): boolean => {
 export const getAccountName = (accountType: AccountTypes | TranslatedString): string => {
   switch (accountType) {
     case ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET:
-      return t('smartWalletV2');
+      return t('etherspot');
     default:
       return '';
   }

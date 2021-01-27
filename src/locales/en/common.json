@@ -12,6 +12,7 @@
   "telegram": "Telegram",
   "twitter": "Twitter",
   "youtube": "Youtube",
+  "etherspot": "Etherspot",
   "ellipsedString": "{{string}}...",
   "ellipsedMiddleString": "{{stringStart}}...{{stringEnd}}",
 

@@ -107,8 +107,8 @@ class EtherspotService {
     return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  estimateTransactionsBatch() {
-    return this.sdk.estimateGatewayBatch().then((result) => result?.estimation);
+  estimateTransactionsBatch(useGasTokenAddress?: string) {
+    return this.sdk.estimateGatewayBatch({ refundToken: useGasTokenAddress }).then((result) => result?.estimation);
   }
 
   async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
@@ -155,7 +155,10 @@ class EtherspotService {
     }, []);
   }
 
-  async setTransactionsBatchAndSend(transactions: EtherspotTransaction[]) {
+  async setTransactionsBatchAndSend(
+    transactions: EtherspotTransaction[],
+    useGasTokenAddress?: string,
+  ) {
     // clear batch
     this.clearTransactionsBatch();
 
@@ -166,7 +169,7 @@ class EtherspotService {
     });
 
     // estimate current batch
-    await this.estimateTransactionsBatch();
+    await this.estimateTransactionsBatch(useGasTokenAddress);
 
     // submit current batch
     return this.sdk.submitGatewayBatch().then(({ hash }) => ({ hash }));

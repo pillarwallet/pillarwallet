@@ -31,10 +31,12 @@ import { buildERC721TransactionData } from 'services/assets';
 // utils
 import { buildTxFeeInfo } from 'utils/etherspot';
 import { reportErrorLog } from 'utils/common';
+import { getAssetData, getAssetsAsList } from 'utils/assets';
 
 // selectors
-import { useGasTokenSelector } from 'selectors/smartWallet';
-import { activeAccountAddressSelector } from 'selectors';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/smartWallet';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
+import { accountAssetsSelector } from 'selectors/assets';
 
 // constants
 import {
@@ -124,7 +126,17 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
       errorMessage = error?.message || t('toast.transactionFeeEstimationFailed');
     });
 
-    const estimated = await etherspot.estimateTransactionsBatch().catch((error) => {
+    const useGasToken = useGasTokenSelector(getState());
+    const accountAssets = accountAssetsSelector(getState());
+    const supportedAssets = supportedAssetsSelector(getState());
+    const gasToken = useGasToken
+      ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
+      : null;
+
+    console.log('gasToken symbol: ', gasToken?.symbol)
+    console.log('gasToken address: ', gasToken?.address)
+
+    const estimated = await etherspot.estimateTransactionsBatch(gasToken?.address).catch((error) => {
       errorMessage = error?.message
         ? t('toast.failedToEstimateTransactionWithMessage', { message: error.message })
         : t('toast.transactionFeeEstimationFailed');
@@ -132,7 +144,6 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
     });
 
     if (!errorMessage) {
-      const useGasToken = useGasTokenSelector(getState());
       feeInfo = buildTxFeeInfo(estimated, useGasToken);
     }
 
