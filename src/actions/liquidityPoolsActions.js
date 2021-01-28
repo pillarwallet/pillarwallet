@@ -43,7 +43,7 @@ import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 import { GraphQueryError } from 'services/theGraph';
 import Toast from 'components/Toast';
 import t from 'translations/translate';
-import { LIQUIDITY_POOL_TYPES } from 'models/liquidityPools';
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { Asset } from 'models/Asset';
 import type { LiquidityPool, UnipoolLiquidityPool } from 'models/LiquidityPools';

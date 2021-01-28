@@ -21,6 +21,8 @@ import { getEnv } from 'configs/envConfig';
 import { STAGING } from 'constants/envConstants';
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 
+import type { LiquidityPool, UniswapLiquidityPool, UnipoolLiquidityPool } from 'models/LiquidityPools';
+
 export const SET_FETCHING_LIQUIDITY_POOLS_DATA = 'SET_FETCHING_LIQUIDITY_POOLS_DATA';
 export const SET_UNIPOOL_DATA = 'SET_UNIPOOL_DATA';
 export const SET_UNISWAP_POOL_DATA = 'SET_UNISWAP_POOL_DATA';
@@ -33,27 +35,30 @@ export const LIQUIDITY_POOLS_STAKE_TRANSACTION = 'LIQUIDITY_POOLS_STAKE_TRANSACT
 export const LIQUIDITY_POOLS_UNSTAKE_TRANSACTION = 'LIQUIDITY_POOLS_UNSTAKE_TRANSACTION';
 export const LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION = 'LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION';
 
+export const UNIPOOL_LIQUIDITY_POOLS = (): UnipoolLiquidityPool[] => {
+  if (getEnv().ENVIRONMENT === STAGING) {
+    return [
+      {
+        name: 'Uniswap v2 ETH/PLR',
+        type: LIQUIDITY_POOL_TYPES.UNIPOOL,
+        symbol: 'UNI-V2',
+        tokensProportions: [
+          { symbol: 'ETH', proportion: 0.5, progressBarColor: '#497391' },
+          { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
+        ],
+        rewards: [
+          { symbol: 'PLR', amount: 49999 },
+        ],
+        uniswapPairAddress: '0xddA2eCA2c9cB356ECd9b0135951ffBf5d577401D',
+        unipoolAddress: '0xFfD8C07309d3A3ce473Feb1d98ebF1F3171A83d9',
+        unipoolSubgraphName: 'graszka22/unipool-plr-eth-kovan',
+        iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
+        rewardsEnabled: true,
+      },
+    ];
+  }
 
-export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
-  [
-    {
-      name: 'Uniswap v2 ETH/PLR',
-      type: LIQUIDITY_POOL_TYPES.UNIPOOL,
-      symbol: 'UNI-V2',
-      tokensProportions: [
-        { symbol: 'ETH', proportion: 0.5, progressBarColor: '#497391' },
-        { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
-      ],
-      rewards: [
-        { symbol: 'PLR', amount: 49999 },
-      ],
-      uniswapPairAddress: '0xddA2eCA2c9cB356ECd9b0135951ffBf5d577401D',
-      unipoolAddress: '0xFfD8C07309d3A3ce473Feb1d98ebF1F3171A83d9',
-      unipoolSubgraphName: 'graszka22/unipool-plr-eth-kovan',
-      iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
-      rewardsEnabled: true,
-    },
-  ] : [
+  return [
     {
       name: 'Uniswap v2 ETH/PLR',
       type: LIQUIDITY_POOL_TYPES.UNIPOOL,
@@ -88,6 +93,15 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       iconUrl: 'asset/images/tokens/icons/daiplrColor.png',
       rewardsEnabled: true,
     },
+  ];
+};
+
+export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
+  if (getEnv().ENVIRONMENT === STAGING) {
+    return [];
+  }
+
+  return [
     {
       name: 'Uniswap v2 USDC/ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
@@ -309,5 +323,10 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       iconUrl: '',
     },
   ];
+};
+
+export const LIQUIDITY_POOLS = (): LiquidityPool[] => {
+  return [...UNIPOOL_LIQUIDITY_POOLS(), ...UNISWAP_LIQUIDITY_POOLS()];
+};
 
 export const UNISWAP_FEE_RATE = 0.003;

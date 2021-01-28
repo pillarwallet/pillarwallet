@@ -27,6 +27,7 @@ import {
   LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
   LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
   LIQUIDITY_POOLS,
+  UNIPOOL_LIQUIDITY_POOLS,
   UNISWAP_FEE_RATE,
 } from 'constants/liquidityPoolsConstants';
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
@@ -571,14 +572,22 @@ const mapTransactionsHistoryWithUnipool = async (
   }`;
   /* eslint-enable i18next/no-literal-string */
 
-  const responses = await Promise.all(LIQUIDITY_POOLS().map(pool => callSubgraph(pool.unipoolSubgraphName, query)));
+  const responses = await Promise.all(
+    UNIPOOL_LIQUIDITY_POOLS().map(
+      pool => callSubgraph(pool.unipoolSubgraphName, query),
+    ),
+  );
+
   const mappedHistory = transactionHistory.reduce((
     transactions,
     transaction,
     transactionIndex,
   ) => {
     const { to } = transaction;
-    const liquidityPoolIndex = LIQUIDITY_POOLS().findIndex(pool => addressesEqual(pool.unipoolAddress, to));
+    const liquidityPoolIndex = UNIPOOL_LIQUIDITY_POOLS().findIndex(
+      pool => addressesEqual(pool.unipoolAddress, to),
+    );
+
     if (liquidityPoolIndex !== -1) {
       transactions[transactionIndex] = buildUnipoolTransaction(
         accountAddress,
