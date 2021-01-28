@@ -19,7 +19,7 @@
 */
 import { getEnv } from 'configs/envConfig';
 import { STAGING } from 'constants/envConstants';
-import { LIQUIDITY_POOLS_TYPES } from 'models/LiquidityPools';
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 
 export const SET_FETCHING_LIQUIDITY_POOLS_DATA = 'SET_FETCHING_LIQUIDITY_POOLS_DATA';
 export const SET_UNIPOOL_DATA = 'SET_UNIPOOL_DATA';
@@ -38,7 +38,7 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
   [
     {
       name: 'Uniswap v2 ETH/PLR',
-      type: LIQUIDITY_POOLS_TYPES.UNIPOOL,
+      type: LIQUIDITY_POOL_TYPES.UNIPOOL,
       symbol: 'UNI-V2',
       tokensProportions: [
         { symbol: 'ETH', proportion: 0.5, progressBarColor: '#497391' },
@@ -56,7 +56,7 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
   ] : [
     {
       name: 'Uniswap v2 ETH/PLR',
-      type: LIQUIDITY_POOLS_TYPES.UNIPOOL,
+      type: LIQUIDITY_POOL_TYPES.UNIPOOL,
       symbol: 'UNI-V2',
       tokensProportions: [
         { symbol: 'ETH', proportion: 0.5, progressBarColor: '#497391' },
@@ -73,7 +73,7 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
     },
     {
       name: 'Uniswap v2 DAI/PLR',
-      type: LIQUIDITY_POOLS_TYPES.UNIPOOL,
+      type: LIQUIDITY_POOL_TYPES.UNIPOOL,
       symbol: 'UNIv2',
       tokensProportions: [
         { symbol: 'DAI', proportion: 0.5, progressBarColor: '#FABA34' },

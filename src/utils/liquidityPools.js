@@ -42,10 +42,11 @@ import {
   ADDRESSES,
   getDeadline,
 } from 'utils/uniswap';
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import UNISWAP_ROUTER_ABI from 'abi/uniswapRouter.json';
 import type { Asset } from 'models/Asset';
-import type { LiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
+import type { LiquidityPool, UnipoolLiquidityPool, LiquidityPoolStats } from 'models/LiquidityPools';
 import type { Transaction } from 'models/Transaction';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
@@ -279,7 +280,7 @@ export const getRemoveLiquidityTransactions = async (
 };
 
 export const getStakeTransactions = async (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   sender: string,
   amount: string,
   token: Asset,
@@ -299,7 +300,7 @@ export const getStakeTransactions = async (
 };
 
 export const getUnstakeTransaction = (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   sender: string,
   amount: string,
   txFeeInWei?: BigNumber,
@@ -318,7 +319,7 @@ export const getUnstakeTransaction = (
 };
 
 export const getClaimRewardsTransaction = (
-  pool: LiquidityPool,
+  pool: UnipoolLiquidityPool,
   sender: string,
   amountToClaim: number,
   txFeeInWei?: BigNumber,
@@ -376,8 +377,9 @@ export const getPoolStats = (
     [tokenSymbols[1]]: pairData.reserve1 / pairData.totalSupply,
   };
 
-  const { unipoolAddress } = pool;
-  const unipoolData = liquidityPoolsReducer.unipoolData[unipoolAddress];
+  const unipoolData = pool.type === LIQUIDITY_POOL_TYPES.UNIPOOL
+    ? liquidityPoolsReducer.unipoolData[pool.unipoolAddress]
+    : undefined;
 
   const history = historyData.map(dataPoint => ({
     date: new Date(dataPoint.date * 1000),
