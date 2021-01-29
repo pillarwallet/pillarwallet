@@ -44,7 +44,7 @@ type Props = {|
 type ItemProps = {
   label: string,
   onPress: Function,
-  value: string,
+  value?: string,
   chevron?: boolean,
   isDisabled?: boolean,
   paragraph?: React.Node,

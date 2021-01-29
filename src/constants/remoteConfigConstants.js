@@ -40,6 +40,7 @@ export const REMOTE_CONFIG = {
   APP_LOCALES_URL: 'app_locales_url',
   APP_LOCALES_LATEST_TIMESTAMP: 'app_locales_latest_timestamp',
   LEGAL_HTML_ENDPOINT_PREFIX: 'app_legal_html_endpoint_prefix',
+  RECOVERY_PORTAL_DISABLED: 'recovery_portal_disabled',
 };
 
 // These are used as a fallback in case firebase fails to fetch actual values
@@ -61,4 +62,5 @@ export const INITIAL_REMOTE_CONFIG = {
   [REMOTE_CONFIG.APP_LOCALES_URL]: 'test',
   [REMOTE_CONFIG.APP_LOCALES_LATEST_TIMESTAMP]: '1',
   [REMOTE_CONFIG.LEGAL_HTML_ENDPOINT_PREFIX]: 'https://s3.eu-west-2.amazonaws.com/pillar-prod-core-profile-images/legal/',
+  [REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED]: false,
 };

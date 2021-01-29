@@ -303,11 +303,6 @@ const LiquidityPoolsScreen = ({
     );
   };
 
-  const isAvailablePool = (pool: LiquidityPool, index: number) => {
-    const poolStats = poolsStats[index];
-    return poolStats && poolStats.userLiquidityTokenBalance === 0 && poolStats.stakedAmount === 0;
-  };
-
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
     return poolStats && poolStats.userLiquidityTokenBalance > 0 && poolStats.stakedAmount === 0;
@@ -327,7 +322,7 @@ const LiquidityPoolsScreen = ({
     let items;
     if (activeTab === TABS.AVAILABLE) {
       renderFunction = renderAvailablePool;
-      items = LIQUIDITY_POOLS().filter(isAvailablePool);
+      items = LIQUIDITY_POOLS();
     } else if (activeTab === TABS.PURCHASED) {
       renderFunction = renderPurchasedPool;
       items = LIQUIDITY_POOLS().filter(isPurchasedPool);

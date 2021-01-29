@@ -308,7 +308,7 @@ describe('Common utils', () => {
       expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1K');
     });
     it('should format 1000000 to 1KK', () => {
-      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1KK');
+      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1M');
     });
     it('should format 12345.67 to 12K', () => {
       expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12K');

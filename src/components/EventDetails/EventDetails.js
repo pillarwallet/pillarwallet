@@ -668,7 +668,7 @@ export class EventDetail extends React.Component<Props> {
     return (
       <View style={{ width: '100%' }}>
         {topTokens.map((token, index) => (
-          <Row>
+          <Row key={token.name}>
             <BaseText regular secondary={options.topTokensSecondary}>{token.name}</BaseText>
             <BaseText regular>
               {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
@@ -679,7 +679,7 @@ export class EventDetail extends React.Component<Props> {
         <Divider />
         <Spacing h={16} />
         {bottomTokens.map((token, index) => (
-          <Row>
+          <Row key={token.name}>
             <BaseText regular secondary={options.bottomTokensSecondary}>{token.name}</BaseText>
             <BaseText fontSize={20} positive>
               {getFormattedValue(formatAmount(bottomTokensAmounts[index]), token.symbol, { isPositive: true })}
@@ -1617,6 +1617,7 @@ export class EventDetail extends React.Component<Props> {
 
     if (settleEventData) {
       return (
+        // $FlowFixMe: flow update to 0.122
         <DetailModal {...commonProps}>
           {this.renderSettle(settleEventData, eventData)}
         </DetailModal>
@@ -1624,6 +1625,7 @@ export class EventDetail extends React.Component<Props> {
     }
 
     return (
+      // $FlowFixMe: flow update to 0.122
       <DetailModal
         {...commonProps}
         fee={this.getFee(event.hash, fee, isReceived)}

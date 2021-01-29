@@ -355,7 +355,8 @@ export const getPoolStats = (
   const monthAgoPrice = historyData[30] && historyData[30].reserveUSD / historyData[30].totalSupply;
   const monthPriceChange = monthAgoPrice && ((currentPrice - monthAgoPrice) * 100) / monthAgoPrice;
 
-  const tokenSymbols = [pairData.token0.symbol, pairData.token1.symbol]
+  // $FlowFixMe: flow update to 0.122
+  const tokenSymbols: [string, string] = [pairData.token0.symbol, pairData.token1.symbol]
     .map(symbol => symbol === WETH ? ETH : symbol);
 
   const tokensLiquidity = {

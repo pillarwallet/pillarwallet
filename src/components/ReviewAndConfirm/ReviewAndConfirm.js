@@ -76,6 +76,7 @@ const WarningMessage = styled(Paragraph)`
 
 const ValueHolder = ({ value, valueArray, isLoading }) => {
   if (isLoading) return <Spinner size={20} trackWidth={2} />;
+  // $FlowFixMe: flow update to 0.122
   if (!isEmpty(valueArray)) return valueArray.map(val => <Value key={val}>{val}</Value>);
   if (value) return <Value>{value}</Value>;
   return null;

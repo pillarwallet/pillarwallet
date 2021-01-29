@@ -179,7 +179,7 @@ const RIGHT = 'RIGHT';
 const animatedValueZero = new Animated.Value(0);
 
 const getCloseAction = (props, navigation) => {
-  if (props.onClose) return () => props.onClose();
+  if (props.onClose) return () => props.onClose?.();
   if (props.dismiss) return navigation ? () => navigation.dismiss() : noop;
   return navigation ? () => navigation.goBack(null) : noop;
 };
