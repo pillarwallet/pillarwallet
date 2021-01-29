@@ -123,6 +123,7 @@ export const visibleActiveAccountAssetsWithBalanceSelector = createSelector(
         const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
         const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
 
+        // $FlowFixMe: flow update to 0.122
         assetsWithBalance.push({
           imageUrl,
           formattedBalanceInFiat,

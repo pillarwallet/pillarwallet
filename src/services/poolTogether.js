@@ -302,7 +302,9 @@ export async function getPurchaseTicketTransactions(
     ];
   }
 
+  // $FlowFixMe: flow update to 0.122
   purchaseTicketTransactions[0] = {
+    // $FlowFixMe: flow update to 0.122
     ...purchaseTicketTransactions[0],
     extra: {
       symbol,

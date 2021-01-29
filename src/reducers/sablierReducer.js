@@ -63,6 +63,7 @@ export default function sablierReducer(
 ): SablierReducerState {
   switch (action.type) {
     case SET_STREAMS:
+      // $FlowFixMe: flow update to 0.122
       return {
         ...state,
         ...action.payload,

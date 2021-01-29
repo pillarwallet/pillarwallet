@@ -159,6 +159,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
 
     render() {
       return (
+        // $FlowFixMe: flow update to 0.122
         <WrappedComponent
           acceptWCRequest={this.acceptWCRequest}
           rejectWCRequest={this.rejectWCRequest}

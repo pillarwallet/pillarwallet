@@ -41,6 +41,7 @@ export const activeSyntheticAssetsSelector = createSelector(
       if (availableBalance < 0) return availableAssets;
 
       const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+      // $FlowFixMe: flow update to 0.122// $FlowFixMe: flow update to 0.122
       availableAssets.push({
         token: symbol,
         value: symbol,
