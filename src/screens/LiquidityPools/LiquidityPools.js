@@ -36,12 +36,11 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
-import { getPoolStats, isSupportedPool } from 'utils/liquidityPools';
+import { getPoolStats, supportedLiquidityPools, isSupportedPool } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { LIQUIDITY_POOL_DASHBOARD, LIQUIDITY_POOLS_INFO } from 'constants/navigationConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
 
@@ -133,15 +132,13 @@ const LiquidityPoolsScreen = ({
 }) => {
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 
+  const supportedPools = useMemo(() => supportedLiquidityPools(supportedAssets), [supportedAssets]);
+  const poolsStats = supportedPools.map((pool) => getPoolStats(pool, liquidityPoolsReducer));
+
   useEffect(() => {
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
+    fetchLiquidityPoolsData(supportedPools);
   }, []);
 
-  const supportedPools = useMemo(() =>
-    LIQUIDITY_POOLS().filter((pool) => isSupportedPool(supportedAssets, pool)),
-  [supportedAssets]);
-
-  const poolsStats = supportedPools.map((pool) => getPoolStats(pool, liquidityPoolsReducer));
 
   const tabs = [
     {
@@ -362,7 +359,7 @@ const LiquidityPoolsScreen = ({
         refreshControl={
           <RefreshControl
             refreshing={isFetchingLiquidityPoolsData}
-            onRefresh={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS())}
+            onRefresh={() => fetchLiquidityPoolsData(supportedPools)}
           />
         }
       >
@@ -383,7 +380,7 @@ const LiquidityPoolsScreen = ({
         message={t('error.theGraphQueryFailed.liquidityPools')}
         hasFailed={poolDataGraphQueryFailed}
         isFetching={isFetchingLiquidityPoolsData}
-        onRetry={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS())}
+        onRetry={() => fetchLiquidityPoolsData(supportedPools)}
       />
     </ContainerWithHeader>
   );

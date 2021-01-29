@@ -52,7 +52,6 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // models
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
@@ -60,7 +59,7 @@ import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 // utils
 import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
-import { getPoolStats } from 'utils/liquidityPools';
+import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
@@ -166,7 +165,9 @@ const LiquidityPoolDashboard = ({
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
   useEffect(() => {
-    if (!poolStats) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
+    if (!poolStats) {
+      fetchLiquidityPoolsData(supportedLiquidityPools(supportedAssets));
+    }
   }, []);
 
   useEffect(() => {

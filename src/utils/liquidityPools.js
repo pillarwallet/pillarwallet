@@ -112,6 +112,10 @@ export const isSupportedPool = (supportedAssets: Asset[], poolToCheck: Liquidity
     && poolToCheck.tokensProportions.every((token) => isSupportedAssetSymbol(supportedAssets, token.symbol));
 };
 
+export const supportedLiquidityPools = (supportedAssets: Asset[]): LiquidityPool[] => {
+  return LIQUIDITY_POOLS().filter((pool) => isSupportedPool(supportedAssets, pool));
+};
+
 export const getAddLiquidityTransactions = async (
   sender: string,
   pool: LiquidityPool,
