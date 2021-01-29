@@ -49,7 +49,7 @@ import { getPoolStats } from 'utils/liquidityPools';
 import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { LiquidityPool, UnipoolLiquidityPool } from 'models/LiquidityPools';
+import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 
@@ -60,11 +60,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  calculateStakeTransactionEstimate: (
-    pool: LiquidityPool,
-    tokenAmount: string,
-    tokenAsset: Asset,
-  ) => void,
+  calculateStakeTransactionEstimate: (pool: UnipoolLiquidityPool, tokenAmount: string, tokenAsset: Asset) => void,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
 
