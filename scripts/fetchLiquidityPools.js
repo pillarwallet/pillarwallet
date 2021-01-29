@@ -66,7 +66,7 @@ const main = async () => {
           { symbol: '${symbol1}', proportion: 0.5 },
         ],
         uniswapPairAddress: '${pair.id}',
-        iconUrl: '',
+        iconUrl: 'asset/images/tokens/icons/uniColor.png',
       },`,
       );
     });

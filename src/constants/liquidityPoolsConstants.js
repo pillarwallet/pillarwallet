@@ -122,7 +122,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
       ],
       uniswapPairAddress: '0x025d34acfd5c65cfd5a73209f99608c9e13338f3',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 USDC-ETH',
@@ -133,7 +133,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xb4e16d0168e52d35cacd2c6185b44281ec28c9dc',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 ETH-USDT',
@@ -144,7 +144,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'USDT', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x0d4a11d5eeaac28ec3f61d100daf4d40471f1852',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 DAI-ETH',
@@ -155,7 +155,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xa478c2975ab1ea89e8196811f51a7b7ade33eb11',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 WBTC-ETH',
@@ -166,7 +166,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xbb2b8038a1640196fbe3e38816f3e67cba72d940',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 UNI-ETH',
@@ -177,7 +177,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xd3d2e2692501a5c9ca623199d38826e513033a17',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 YFI-ETH',
@@ -188,7 +188,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x2fdbadf3c4d5a8666bc06645b8358ab803996e28',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 ETH-AMPL',
@@ -199,7 +199,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'AMPL', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xc5be99a02c6857f9eac67bbce58df5572498f40c',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 LINK-ETH',
@@ -210,7 +210,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xa2107fa5b38d9bbd2c461d6edf11b11a50f6b974',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 SUSHI-ETH',
@@ -221,7 +221,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xce84867c3c02b05dc570d0135103d3fb9cc19433',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 TEND-ETH',
@@ -232,7 +232,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xcfb8cf118b4f0abb2e8ce6dbeb90d6bc0a62693d',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 CORE-ETH',
@@ -243,7 +243,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x32ce7e48debdccbfe0cd037cc89526e4382cb81b',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 KP3R-ETH',
@@ -254,7 +254,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x87febfb3ac5791034fd5ef1a615e9d9627c2665d',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 DAI-BAS',
@@ -265,7 +265,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'BAS', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x0379da7a5895d13037b6937b109fa8607a659adf',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 BAC-DAI',
@@ -276,7 +276,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'DAI', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xd4405f0704621dbe9d4dea60e128e0c3b26bddbd',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 ESD-USDC',
@@ -287,7 +287,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'USDC', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x88ff79eb2bc5850f27315415da8685282c7610f9',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 USDC-DSD',
@@ -298,7 +298,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'DSD', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x66e33d2605c5fb25ebb7cd7528e7997b0afa55e8',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 SNX-ETH',
@@ -309,7 +309,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x43ae24960e5534731fc831386c07755a2dc33d47',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 PICKLE-ETH',
@@ -320,7 +320,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xdc98556ce24f007a5ef6dc1ce96322d65832a819',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 AAVE-ETH',
@@ -331,7 +331,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'ETH', proportion: 0.5 },
       ],
       uniswapPairAddress: '0xdfc14d2af169b0d36c4eff567ada9b2e0cae044f',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
     {
       name: 'Uniswap v2 USDC-USDT',
@@ -342,7 +342,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
         { symbol: 'USDT', proportion: 0.5 },
       ],
       uniswapPairAddress: '0x3041cbd36888becc7bbcbc0045e3b1f144466f5f',
-      iconUrl: '',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
     },
   ];
 };
