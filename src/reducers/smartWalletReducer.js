@@ -191,6 +191,7 @@ export default function smartWalletReducer(
     case SET_CHECKING_SMART_WALLET_SESSION:
       return {
         ...state,
+        // $FlowFixMe: flow update to 0.122
         isCheckingSmartWalletSession: action.payload,
       };
     default:
