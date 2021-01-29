@@ -17,7 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
@@ -36,7 +36,7 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
-import { getPoolStats } from 'utils/liquidityPools';
+import { getPoolStats, isSupportedPool } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -137,7 +137,11 @@ const LiquidityPoolsScreen = ({
     fetchLiquidityPoolsData(LIQUIDITY_POOLS());
   }, []);
 
-  const poolsStats = LIQUIDITY_POOLS().map(pool => getPoolStats(pool, liquidityPoolsReducer));
+  const supportedPools = useMemo(() =>
+    LIQUIDITY_POOLS().filter((pool) => isSupportedPool(supportedAssets, pool)),
+  [supportedAssets]);
+
+  const poolsStats = supportedPools.map((pool) => getPoolStats(pool, liquidityPoolsReducer));
 
   const tabs = [
     {
@@ -314,7 +318,7 @@ const LiquidityPoolsScreen = ({
   };
 
   const areThereNotAvailablePools = () => {
-    return LIQUIDITY_POOLS().some(isPurchasedPool) || LIQUIDITY_POOLS().some(isStakedPool);
+    return supportedPools.some(isPurchasedPool) || supportedPools.some(isStakedPool);
   };
 
   const renderTab = () => {
@@ -322,13 +326,13 @@ const LiquidityPoolsScreen = ({
     let items;
     if (activeTab === TABS.AVAILABLE) {
       renderFunction = renderAvailablePool;
-      items = LIQUIDITY_POOLS();
+      items = supportedPools;
     } else if (activeTab === TABS.PURCHASED) {
       renderFunction = renderPurchasedPool;
-      items = LIQUIDITY_POOLS().filter(isPurchasedPool);
+      items = supportedPools.filter(isPurchasedPool);
     } else {
       renderFunction = renderStakedPool;
-      items = LIQUIDITY_POOLS().filter(isStakedPool);
+      items = supportedPools.filter(isStakedPool);
     }
     return (
       <FlatList
