@@ -90,6 +90,7 @@ const SendFooter = (props: FooterProps) => {
     <FooterInner>
       {footerTopAddon}
       {isNextButtonVisible &&
+        // $FlowFixMe: flow update to 0.122
         <Button
           title={t('button.next')}
           marginTop={spacing.medium}

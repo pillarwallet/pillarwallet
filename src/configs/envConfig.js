@@ -221,6 +221,7 @@ export const switchEnvironments = () => {
 };
 
 // current environment accessor function
+// $FlowFixMe: flow update to 0.122
 export const getEnv = (): CurrentEnvironment => envVars[storedEnv];
 
 export const getRariPoolsEnv = (rariPool: RariPool): CurrentEnvironment => rariPoolsEnv[storedEnv][rariPool];

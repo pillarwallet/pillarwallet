@@ -1130,6 +1130,7 @@ export const fetchAvailableTxToSettleAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       notifySmartWalletNotInitialized();
+      // $FlowFixMe: flow update to 0.122
       dispatch({
         type: SET_AVAILABLE_TO_SETTLE_TX,
         payload: [],

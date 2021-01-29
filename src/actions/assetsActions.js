@@ -130,6 +130,7 @@ export const sendAssetAction = (
 
     // get wallet provider
     const cryptoWallet = new CryptoWallet(wallet.privateKey, activeAccount);
+    // $FlowFixMe: flow update to 0.122
     const walletProvider = await cryptoWallet.getProvider();
 
     // build fee with gas token if present
@@ -580,6 +581,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   const updatedAccountAssets = supportedAssets
     .filter(({ symbol }) => accountAssetsTickers.includes(symbol) && symbol !== BTC)
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+  // $FlowFixMe: flow update to 0.122
   return { id: accountId, ...updatedAccountAssets };
 };
 
