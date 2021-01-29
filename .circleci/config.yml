@@ -202,7 +202,7 @@ aliases:
   - &homebrew_save_cache
     save_cache:
       name: Save homebrew cache
-      key: homebrew-packages-v1
+      key: homebrew-packages-v2
       paths:
         - /usr/local/Homebrew
   - &homebrew_install
@@ -214,7 +214,7 @@ aliases:
     restore_cache:
       name: Restore homebrew cache
       keys:
-        - homebrew-packages-v1
+        - homebrew-packages-v2
 
 jobs:
 
@@ -264,7 +264,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
 
-      - *homebrew_restore_cache
+      #- *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
 
