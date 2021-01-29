@@ -85,7 +85,7 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
       uniswapPairAddress: '0x025d34acfd5c65cfd5a73209f99608c9e13338f3',
       unipoolAddress: '0x71B4A17E4254F85420B06bC55f431A5EEb97E7fB',
       unipoolSubgraphName: 'graszka22/unipool-plr-dai',
-      iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
+      iconUrl: 'asset/images/tokens/icons/daiplrColor.png',
       rewardsEnabled: true,
     },
   ];

@@ -50,6 +50,7 @@ import {
   SMART_WALLET_ACCOUNT_DEVICE_ADDED,
   SET_GETTING_SMART_WALLET_DEPLOYMENT_ESTIMATE,
   SET_SMART_WALLET_DEPLOYMENT_ESTIMATE,
+  SET_CHECKING_SMART_WALLET_SESSION,
 } from 'constants/smartWalletConstants';
 import { ACCOUNT_TYPES, UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import { ETH, SET_INITIAL_ASSETS } from 'constants/assetsConstants';
@@ -91,7 +92,7 @@ import aaveService from 'services/aave';
 
 // selectors
 import { accountAssetsSelector, smartAccountAssetsSelector } from 'selectors/assets';
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
 import { accountHistorySelector } from 'selectors/history';
 import { accountBalancesSelector } from 'selectors/balances';
 
@@ -145,7 +146,7 @@ import {
 import { getPrivateKeyFromPin, normalizeWalletAddress } from 'utils/wallet';
 
 // actions
-import { addAccountAction, setActiveAccountAction } from './accountsActions';
+import { addAccountAction, initOnLoginSmartWalletAccountAction, setActiveAccountAction } from './accountsActions';
 import { saveDbAction } from './dbActions';
 import { fetchAssetsBalancesAction, fetchInitialAssetsAction } from './assetsActions';
 import { fetchCollectiblesAction } from './collectiblesActions';
@@ -159,6 +160,7 @@ import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 import { fetchDepositedAssetsAction } from './lendingActions';
 import { checkKeyBasedAssetTransferTransactionsAction } from './keyBasedAssetTransferActions';
 import { fetchUserStreamsAction } from './sablierActions';
+import { lockScreenAction } from './authActions';
 
 
 const storage = Storage.getInstance('db');
@@ -1600,5 +1602,57 @@ export const estimateSmartWalletDeploymentAction = () => {
     };
 
     dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_ESTIMATE, payload: estimated });
+  };
+};
+
+
+/**
+ * should recover from 2 reported scenarios:
+ * 1) account/device disconnected
+ * 2) session expired
+ *
+ * and 1 edge case:
+ * 3) sdk initialization lost(?)
+ */
+export const checkSmartWalletSessionAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const { isCheckingSmartWalletSession } = getState().smartWallet;
+
+    if (isCheckingSmartWalletSession) return;
+
+    dispatch({ type: SET_CHECKING_SMART_WALLET_SESSION, payload: true });
+
+    let smartWalletNeedsInit;
+
+    if (smartWalletService?.sdkInitialized) {
+      const validSession = await smartWalletService.isValidSession();
+
+      if (validSession) {
+        const accountId = activeAccountIdSelector(getState());
+
+        // connected account method checks sdk state first and connects if account not found
+        const connectedAccount = await smartWalletService.connectAccount(accountId);
+
+        // reinit in case no connected account or no devices
+        smartWalletNeedsInit = isEmpty(connectedAccount) || isEmpty(connectedAccount?.devices);
+      } else {
+        // log to collect feedback for initial fix release, remove if causes too much noise
+        reportLog('Detected Archanova Smart Wallet expired session');
+        smartWalletNeedsInit = true;
+      }
+    } else {
+      // log to collect feedback for initial fix release, remove if causes too much noise
+      reportLog('Archanova Smart Wallet SDK initialization lost or never initialized');
+      smartWalletNeedsInit = true;
+    }
+
+    dispatch({ type: SET_CHECKING_SMART_WALLET_SESSION, payload: false });
+
+    if (!smartWalletNeedsInit) return;
+
+    dispatch(lockScreenAction(
+      (privateKey: string) => dispatch(initOnLoginSmartWalletAccountAction(privateKey)),
+      t('paragraph.sessionExpiredReEnterPin'),
+    ));
   };
 };

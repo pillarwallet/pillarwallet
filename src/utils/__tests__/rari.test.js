@@ -62,9 +62,9 @@ const supportedAssetsMock = [
     address: '0x0C16e81FB5E5215DB5dd5e8ECa7Bb9975fFa0F75',
     decimals: 18,
     description: '',
-    name: 'DAI',
-    symbol: 'DAI',
-    value: 'DAI',
+    name: 'USDT',
+    symbol: 'USDT',
+    value: 'USDT',
     wallpaperUrl: 'asset/images/tokens/wallpaper/plrBg.png',
     iconUrl: 'asset/images/tokens/icons/plrColor.png',
     iconMonoUrl: 'asset/images/tokens/icons/plr.png',
@@ -108,7 +108,7 @@ const supportedAssetsMock = [
 ];
 
 const balancesAndPricesMock = [
-  ['DAI', 'USDC'],
+  ['USDT', 'USDC'],
   ['0', '90852220468'],
   [
     ['0', '1', '2'],
@@ -214,7 +214,7 @@ describe('Rari utils', () => {
             to: supportedAssetsMock[1].address,
             extra: {
               amount: EthersBigNumber.from('1230000000000000000'),
-              symbol: 'DAI',
+              symbol: 'USDT',
               decimals: 18,
               rariPool: 'STABLE_POOL',
             },
@@ -363,7 +363,7 @@ describe('Rari utils', () => {
           to: getRariPoolsEnv(RARI_POOLS.STABLE_POOL).RARI_FUND_PROXY_CONTRACT_ADDRESS,
           extra: {
             amount: EthersBigNumber.from('1230000000000000000'),
-            symbol: 'DAI',
+            symbol: 'USDT',
             decimals: 18,
             rariPool: 'STABLE_POOL',
           },

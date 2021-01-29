@@ -60,6 +60,11 @@ export type Balance = {
   symbol: string,
 };
 
+export type MixedBalance = {
+  balance: number | string,
+  symbol: string,
+};
+
 export type Balances = {
   [symbol: string]: Balance,
 };
