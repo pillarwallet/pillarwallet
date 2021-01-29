@@ -249,7 +249,7 @@ const AnimatedToastList = <T>({
       swiped: 0,
       panResponder: PanResponder.create({
         ...defaultSwipeResponderOptions,
-        onPanResponderMove: Animated.event([null, { dx: xPosition }]),
+        onPanResponderMove: Animated.event([null, { dx: xPosition }], { useNativeDriver: false }),
         onPanResponderRelease: handleRelease,
         onPanResponderTerminate: clearSwipe,
       }),

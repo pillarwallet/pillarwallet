@@ -329,7 +329,7 @@ exports[`Storyshots ActivityFeedItem Badge reward 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -618,7 +618,7 @@ exports[`Storyshots ActivityFeedItem Collectible received 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -908,7 +908,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from KW when in SW ass
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -1198,7 +1198,7 @@ exports[`Storyshots ActivityFeedItem Collectible received from SW when in KW ass
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -1488,7 +1488,7 @@ exports[`Storyshots ActivityFeedItem Collectible received in SW from KW 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -1778,7 +1778,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -2068,7 +2068,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent from KW to SW 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -2358,7 +2358,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to KW when in SW asset scr
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -2648,7 +2648,7 @@ exports[`Storyshots ActivityFeedItem Collectible sent to SW when in KW asset scr
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -2938,7 +2938,7 @@ exports[`Storyshots ActivityFeedItem ENS registration 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -3164,7 +3164,7 @@ exports[`Storyshots ActivityFeedItem Key wallet created 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -3400,7 +3400,7 @@ exports[`Storyshots ActivityFeedItem Key wallet imported 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -3636,7 +3636,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -3908,7 +3908,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming contact 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -4180,7 +4180,7 @@ exports[`Storyshots ActivityFeedItem Key wallet incoming pending 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -4466,7 +4466,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -4738,7 +4738,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing contact 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -5010,7 +5010,7 @@ exports[`Storyshots ActivityFeedItem Key wallet outgoing pending 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -5296,7 +5296,7 @@ exports[`Storyshots ActivityFeedItem Key wallet referral reward 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -5568,7 +5568,7 @@ exports[`Storyshots ActivityFeedItem Liquidity added 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -5865,7 +5865,7 @@ exports[`Storyshots ActivityFeedItem Liquidity removed 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -6162,7 +6162,7 @@ exports[`Storyshots ActivityFeedItem Liquidity rewards claimed 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -6454,7 +6454,7 @@ exports[`Storyshots ActivityFeedItem Liquidity staked 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -6746,7 +6746,7 @@ exports[`Storyshots ActivityFeedItem Liquidity unstaked 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -7038,7 +7038,7 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -7340,7 +7340,7 @@ exports[`Storyshots ActivityFeedItem PPN top up 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -7612,7 +7612,7 @@ exports[`Storyshots ActivityFeedItem PPN withdrawal 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -7884,7 +7884,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit DAI 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -8123,7 +8123,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether deposit USDC 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -8362,7 +8362,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw DAI 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -8601,7 +8601,7 @@ exports[`Storyshots ActivityFeedItem PoolTogether withdraw USDC 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -8840,7 +8840,7 @@ exports[`Storyshots ActivityFeedItem Rari claim 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -9120,7 +9120,7 @@ exports[`Storyshots ActivityFeedItem Rari deposit 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -9400,7 +9400,7 @@ exports[`Storyshots ActivityFeedItem Rari pending transaction 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -9693,7 +9693,7 @@ exports[`Storyshots ActivityFeedItem Rari transfer 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -9730,7 +9730,7 @@ exports[`Storyshots ActivityFeedItem Rari transfer 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -10002,7 +10002,7 @@ exports[`Storyshots ActivityFeedItem Rari withdrawal 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -10282,7 +10282,7 @@ exports[`Storyshots ActivityFeedItem SW activated 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -10518,7 +10518,7 @@ exports[`Storyshots ActivityFeedItem Settlement 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -10782,7 +10782,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -11084,7 +11084,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -11356,7 +11356,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming contact 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -11628,7 +11628,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet incoming pending 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -11914,7 +11914,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -12186,7 +12186,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing contact 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -12458,7 +12458,7 @@ exports[`Storyshots ActivityFeedItem Smart wallet outgoing pending 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -12744,7 +12744,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -12781,7 +12781,7 @@ exports[`Storyshots ActivityFeedItem Synthetic received 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -13054,7 +13054,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -13091,7 +13091,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -13364,7 +13364,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -13401,7 +13401,7 @@ exports[`Storyshots ActivityFeedItem Synthetic sent Failed 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -13693,7 +13693,7 @@ exports[`Storyshots ActivityFeedItem Wallet backup 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -13928,7 +13928,7 @@ exports[`Storyshots Banner default 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14005,6 +14005,7 @@ exports[`Storyshots Banner default 1`] = `
         <View
           accessible={true}
           focusable={false}
+          forwardedRef={[Function]}
           hitSlop={
             Object {
               "bottom": 10,
@@ -14013,7 +14014,6 @@ exports[`Storyshots Banner default 1`] = `
               "top": 8,
             }
           }
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -14092,7 +14092,7 @@ exports[`Storyshots Banner with image 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14169,6 +14169,7 @@ exports[`Storyshots Banner with image 1`] = `
         <View
           accessible={true}
           focusable={false}
+          forwardedRef={[Function]}
           hitSlop={
             Object {
               "bottom": 10,
@@ -14177,7 +14178,6 @@ exports[`Storyshots Banner with image 1`] = `
               "top": 8,
             }
           }
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -14256,7 +14256,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14316,7 +14316,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14376,7 +14376,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14436,7 +14436,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14496,7 +14496,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14556,7 +14556,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14616,7 +14616,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14676,7 +14676,7 @@ exports[`Storyshots Button all variants 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14771,7 +14771,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14830,7 +14830,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14889,7 +14889,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -14948,7 +14948,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15007,7 +15007,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15066,7 +15066,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15125,7 +15125,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15184,7 +15184,7 @@ exports[`Storyshots Button buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15278,7 +15278,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15351,7 +15351,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15424,7 +15424,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15497,7 +15497,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15570,7 +15570,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15643,7 +15643,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15716,7 +15716,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15789,7 +15789,7 @@ exports[`Storyshots Button buttons with icons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -15897,7 +15897,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -16136,7 +16136,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -16375,7 +16375,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -16614,7 +16614,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -16853,7 +16853,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -17092,7 +17092,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -17331,7 +17331,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -17570,7 +17570,7 @@ exports[`Storyshots Button loading buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -17844,7 +17844,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -17905,7 +17905,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -17966,7 +17966,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18027,7 +18027,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18088,7 +18088,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18149,7 +18149,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18210,7 +18210,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18271,7 +18271,7 @@ exports[`Storyshots Button small buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18367,7 +18367,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18427,7 +18427,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18487,7 +18487,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18547,7 +18547,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18607,7 +18607,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18667,7 +18667,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18727,7 +18727,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18787,7 +18787,7 @@ exports[`Storyshots Button small buttons auto width 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -18882,7 +18882,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -19120,7 +19120,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -19358,7 +19358,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -19596,7 +19596,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -19834,7 +19834,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20072,7 +20072,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20310,7 +20310,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20548,7 +20548,7 @@ exports[`Storyshots Button small buttons auto width loading 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20821,7 +20821,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20880,7 +20880,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20939,7 +20939,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -20999,7 +20999,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -21059,7 +21059,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -21118,7 +21118,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -21177,7 +21177,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -21237,7 +21237,7 @@ exports[`Storyshots Button transparent buttons 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -21351,7 +21351,6 @@ exports[`Storyshots Checkbox all cases 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -21444,7 +21443,6 @@ exports[`Storyshots Checkbox all cases 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -21548,7 +21546,6 @@ exports[`Storyshots Checkbox all cases 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -21650,7 +21647,6 @@ exports[`Storyshots Checkbox all cases 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -21818,7 +21814,6 @@ exports[`Storyshots Checkbox all cases light 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -21913,7 +21908,6 @@ exports[`Storyshots Checkbox all cases light 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -22019,7 +22013,6 @@ exports[`Storyshots Checkbox all cases light 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -22123,7 +22116,6 @@ exports[`Storyshots Checkbox all cases light 1`] = `
         <View
           accessible={true}
           focusable={false}
-          isTVSelectable={true}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -22275,7 +22267,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -22796,7 +22788,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -23318,7 +23310,7 @@ exports[`Storyshots CircleButton all cases 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -24100,7 +24092,7 @@ exports[`Storyshots DetailModal Layout L 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -24172,7 +24164,7 @@ exports[`Storyshots DetailModal Layout L 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -24244,7 +24236,7 @@ exports[`Storyshots DetailModal Layout L 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -24665,7 +24657,7 @@ exports[`Storyshots DetailModal Layout M 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -24737,7 +24729,7 @@ exports[`Storyshots DetailModal Layout M 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -25073,7 +25065,7 @@ exports[`Storyshots DetailModal Layout S 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -25145,7 +25137,7 @@ exports[`Storyshots DetailModal Layout S 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -25538,7 +25530,7 @@ exports[`Storyshots DetailModal Paragraph Child 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -26081,7 +26073,7 @@ exports[`Storyshots DetailModal Pending Fee 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -26417,7 +26409,7 @@ exports[`Storyshots DetailModal Plain Text Child 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -26766,7 +26758,7 @@ exports[`Storyshots EventDetail Key Wallet Collectible from SW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -27096,7 +27088,7 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -27168,7 +27160,7 @@ exports[`Storyshots EventDetail Key Wallet Top up | KW <- SW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -27497,7 +27489,7 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -27569,7 +27561,7 @@ exports[`Storyshots EventDetail Key Wallet Top up | SW -> KW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -27897,7 +27889,7 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -27969,7 +27961,7 @@ exports[`Storyshots EventDetail Key wallet Incoming Contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -28327,7 +28319,7 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -28399,7 +28391,7 @@ exports[`Storyshots EventDetail Key wallet Incoming Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -28757,7 +28749,7 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -28829,7 +28821,7 @@ exports[`Storyshots EventDetail Key wallet Outgoing Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -29342,7 +29334,7 @@ exports[`Storyshots EventDetail Key wallet back up 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -29649,7 +29641,7 @@ exports[`Storyshots EventDetail Key wallet created 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -29721,7 +29713,7 @@ exports[`Storyshots EventDetail Key wallet created 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -30234,7 +30226,7 @@ exports[`Storyshots EventDetail Key wallet imported 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -30686,7 +30678,7 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -30758,7 +30750,7 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -31209,7 +31201,7 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -31281,7 +31273,7 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -31609,7 +31601,7 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -31681,7 +31673,7 @@ exports[`Storyshots EventDetail Liquidity reward claimed 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -32008,7 +32000,7 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -32080,7 +32072,7 @@ exports[`Storyshots EventDetail Liquidity staked 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -32408,7 +32400,7 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -32480,7 +32472,7 @@ exports[`Storyshots EventDetail Liquidity unstaked 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -32993,7 +32985,7 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -33065,7 +33057,7 @@ exports[`Storyshots EventDetail Pillar Network Activated 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -33578,7 +33570,7 @@ exports[`Storyshots EventDetail Pillar Network Created 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -33901,7 +33893,7 @@ exports[`Storyshots EventDetail Pillar Network Received 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -34224,7 +34216,7 @@ exports[`Storyshots EventDetail Pillar Network Sent 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -34846,7 +34838,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -34918,7 +34910,7 @@ exports[`Storyshots EventDetail Pillar Network Settle (PPN <-> SW) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -35247,7 +35239,7 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -35319,7 +35311,7 @@ exports[`Storyshots EventDetail Pillar Network Top Up (PPN <- SW) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -35648,7 +35640,7 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -35720,7 +35712,7 @@ exports[`Storyshots EventDetail Pillar Network Top Up (SW -> PPN) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -36049,7 +36041,7 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -36121,7 +36113,7 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (PPN -> SW) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -36450,7 +36442,7 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -36522,7 +36514,7 @@ exports[`Storyshots EventDetail Pillar Network Withdrawal (SW <- PPN) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -36861,7 +36853,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -36933,7 +36925,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit DAI 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -37272,7 +37264,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -37344,7 +37336,7 @@ exports[`Storyshots EventDetail PoolTogether Deposit USDC 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -37683,7 +37675,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -37755,7 +37747,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw DAI 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -38094,7 +38086,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -38166,7 +38158,7 @@ exports[`Storyshots EventDetail PoolTogether Withdraw USDC 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -38507,7 +38499,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -38579,7 +38571,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact (Pending) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -38907,7 +38899,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -38979,7 +38971,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -39350,7 +39342,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -39422,7 +39414,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact (Pending) 1`] 
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -39780,7 +39772,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -39852,7 +39844,7 @@ exports[`Storyshots EventDetail Smart Wallet Incoming Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -40193,7 +40185,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -40265,7 +40257,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact (Pending) 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -40593,7 +40585,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -40665,7 +40657,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -41036,7 +41028,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -41108,7 +41100,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact (Pending) 1`] 
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -41466,7 +41458,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -41538,7 +41530,7 @@ exports[`Storyshots EventDetail Smart Wallet Outgoing Non-contact 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -41867,7 +41859,7 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -41939,7 +41931,7 @@ exports[`Storyshots EventDetail Smart Wallet Top up | KW -> SW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -42268,7 +42260,7 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -42340,7 +42332,7 @@ exports[`Storyshots EventDetail Smart Wallet Top up | SW <- KW 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -42646,7 +42638,7 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -42718,7 +42710,7 @@ exports[`Storyshots EventDetail Smart wallet activated | Needs to activate PPN 1
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -43024,7 +43016,7 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -43096,7 +43088,7 @@ exports[`Storyshots EventDetail Smart wallet activated 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -43402,7 +43394,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -43474,7 +43466,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -43630,7 +43622,7 @@ exports[`Storyshots FeeLabelToggle default 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -43778,7 +43770,7 @@ exports[`Storyshots FeeLabelToggle not enough token 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -43943,7 +43935,7 @@ exports[`Storyshots FloatingBox interactive 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -44082,6 +44074,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Object {
             "backgroundColor": "rgba(250, 250, 250, 1)",
@@ -44137,7 +44130,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -44265,7 +44258,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
                 <View
                   accessible={true}
                   focusable={false}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -44308,7 +44301,7 @@ exports[`Storyshots HeaderBlock edge cases 1`] = `
               <View
                 accessible={true}
                 focusable={false}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -44396,6 +44389,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
     >
       <View
         floating={true}
+        forwardedRef={[Function]}
         style={
           Object {
             "backgroundColor": "transparent",
@@ -44454,7 +44448,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -44581,7 +44575,7 @@ exports[`Storyshots HeaderBlock floating transparent 1`] = `
                 <View
                   accessible={true}
                   focusable={false}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -44664,6 +44658,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Object {
             "backgroundColor": "rgba(250, 250, 250, 1)",
@@ -44728,7 +44723,7 @@ exports[`Storyshots HeaderBlock with close icon on the left 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -44884,6 +44879,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Object {
             "backgroundColor": "rgba(250, 250, 250, 1)",
@@ -45023,7 +45019,7 @@ exports[`Storyshots HeaderBlock with close icon on the right 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -45104,6 +45100,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Object {
             "backgroundColor": "rgba(250, 250, 250, 1)",
@@ -45165,7 +45162,7 @@ exports[`Storyshots HeaderBlock with hamburger 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -45324,6 +45321,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Object {
             "backgroundColor": "rgba(250, 250, 250, 1)",
@@ -45378,7 +45376,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -45505,7 +45503,7 @@ exports[`Storyshots HeaderBlock with items on all sides 1`] = `
                 <View
                   accessible={true}
                   focusable={false}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -45607,6 +45605,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -45818,7 +45817,7 @@ exports[`Storyshots InsightWithButton with list 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -45939,6 +45938,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -46024,7 +46024,7 @@ exports[`Storyshots InsightWithButton without list 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -46132,6 +46132,7 @@ exports[`Storyshots ListCard default 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -46315,6 +46316,7 @@ exports[`Storyshots ListCard with custom icon 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -46508,6 +46510,7 @@ exports[`Storyshots ListCard with label 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -46753,6 +46756,7 @@ exports[`Storyshots ListCard with labelText 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -46970,6 +46974,7 @@ exports[`Storyshots ListCard with note 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -47219,6 +47224,7 @@ exports[`Storyshots ListCard with subtitle 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -47460,7 +47466,7 @@ exports[`Storyshots ListItemChevron default 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -47620,7 +47626,7 @@ exports[`Storyshots ListItemChevron with addon 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -47795,7 +47801,7 @@ exports[`Storyshots ListItemChevron with subtext 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -47991,7 +47997,7 @@ exports[`Storyshots ProfileImage custom diameter 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -48103,7 +48109,7 @@ exports[`Storyshots ProfileImage default 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -48170,7 +48176,7 @@ exports[`Storyshots ProfileImage just initials 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -48281,7 +48287,7 @@ exports[`Storyshots ProfileImage with addon image 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -48348,7 +48354,7 @@ exports[`Storyshots ProfileImage with border 1`] = `
       <View
         accessible={true}
         focusable={false}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -48456,7 +48462,7 @@ exports[`Storyshots RetryGraphQueryBox default 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -48532,7 +48538,7 @@ exports[`Storyshots RetryGraphQueryBox default 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -48925,6 +48931,7 @@ exports[`Storyshots SWActivationCard default 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -49010,7 +49017,7 @@ exports[`Storyshots SWActivationCard default 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -49202,7 +49209,7 @@ exports[`Storyshots SearchBlock default 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -49296,7 +49303,7 @@ exports[`Storyshots Selector default 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -49382,7 +49389,7 @@ exports[`Storyshots Selector no options 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -49468,7 +49475,7 @@ exports[`Storyshots Selector selected option 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -49502,7 +49509,7 @@ exports[`Storyshots Selector selected option 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -49613,7 +49620,7 @@ exports[`Storyshots Selector with custom wording 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -49699,7 +49706,7 @@ exports[`Storyshots Selector with horizontal options 1`] = `
       <View
         accessible={true}
         focusable={true}
-        isTVSelectable={true}
+        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -49795,6 +49802,7 @@ exports[`Storyshots SettingsItemCarded active card 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -50015,6 +50023,7 @@ exports[`Storyshots SettingsItemCarded default 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -50201,6 +50210,7 @@ exports[`Storyshots SettingsItemCarded edge cases 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -50620,6 +50630,7 @@ exports[`Storyshots SettingsItemCarded loading card 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -51039,6 +51050,7 @@ exports[`Storyshots SettingsItemCarded with subtitle 1`] = `
         }
       >
         <View
+          forwardedRef={[Function]}
           style={
             Array [
               Object {
@@ -51304,6 +51316,7 @@ exports[`Storyshots SlideModal default 1`] = `
             }
           >
             <View
+              forwardedRef={[Function]}
               style={
                 Object {
                   "backgroundColor": "transparent",
@@ -51424,7 +51437,7 @@ exports[`Storyshots SlideModal default 1`] = `
                       <View
                         accessible={true}
                         focusable={true}
-                        isTVSelectable={true}
+                        forwardedRef={[Function]}
                         onClick={[Function]}
                         onResponderGrant={[Function]}
                         onResponderMove={[Function]}
@@ -51642,7 +51655,6 @@ exports[`Storyshots Table default 1`] = `
                     "top": 10,
                   }
                 }
-                isTVSelectable={true}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -51944,7 +51956,6 @@ exports[`Storyshots Table default 1`] = `
                     "top": 10,
                   }
                 }
-                isTVSelectable={true}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -52059,7 +52070,6 @@ exports[`Storyshots Table default 1`] = `
                     "top": 10,
                   }
                 }
-                isTVSelectable={true}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -52185,7 +52195,6 @@ exports[`Storyshots TextInput default 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -52278,7 +52287,7 @@ exports[`Storyshots TextInput default 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -52529,7 +52538,7 @@ exports[`Storyshots TextInput multiline 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -52754,7 +52763,6 @@ exports[`Storyshots TextInput numeric 1`] = `
           <View
             accessible={true}
             focusable={false}
-            isTVSelectable={true}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -52847,7 +52855,7 @@ exports[`Storyshots TextInput numeric 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -53063,7 +53071,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -53231,7 +53239,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
               <View
                 accessible={true}
                 focusable={false}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -53281,7 +53289,7 @@ exports[`Storyshots TextInput numeric with all addons 1`] = `
                 <View
                   accessible={true}
                   focusable={false}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -53626,7 +53634,7 @@ exports[`Storyshots TextInput with button 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -53750,7 +53758,7 @@ exports[`Storyshots TextInput with button 1`] = `
                 <View
                   accessible={true}
                   focusable={true}
-                  isTVSelectable={true}
+                  forwardedRef={[Function]}
                   onClick={[Function]}
                   onResponderGrant={[Function]}
                   onResponderMove={[Function]}
@@ -53949,7 +53957,7 @@ exports[`Storyshots TextInput with selector 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -53984,7 +53992,7 @@ exports[`Storyshots TextInput with selector 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -54208,6 +54216,7 @@ exports[`Storyshots ToastCard default 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -54322,7 +54331,7 @@ exports[`Storyshots ToastCard default 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -54404,6 +54413,7 @@ exports[`Storyshots ToastCard link 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -54543,7 +54553,7 @@ exports[`Storyshots ToastCard link 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -54625,6 +54635,7 @@ exports[`Storyshots ToastCard long text 1`] = `
       }
     >
       <View
+        forwardedRef={[Function]}
         style={
           Array [
             Object {
@@ -54739,7 +54750,7 @@ exports[`Storyshots ToastCard long text 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -54822,7 +54833,7 @@ exports[`Storyshots Tooltip big 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -54925,7 +54936,7 @@ exports[`Storyshots Tooltip short 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -55028,7 +55039,7 @@ exports[`Storyshots Tooltip top 1`] = `
         <View
           accessible={true}
           focusable={true}
-          isTVSelectable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -55165,7 +55176,7 @@ exports[`Storyshots Value Input default 1`] = `
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -55321,7 +55332,7 @@ exports[`Storyshots Value Input default 1`] = `
             <View
               accessible={true}
               focusable={false}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -55469,7 +55480,7 @@ exports[`Storyshots Value Input default 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -56037,7 +56048,7 @@ $ 1,066.86
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -56077,7 +56088,7 @@ $ 1,066.86
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -56117,7 +56128,7 @@ $ 1,066.86
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -56157,7 +56168,7 @@ $ 1,066.86
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -56197,7 +56208,7 @@ $ 1,066.86
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -56237,7 +56248,7 @@ $ 1,066.86
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
