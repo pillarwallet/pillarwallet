@@ -264,7 +264,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
 
-      #- *homebrew_restore_cache
+      - *homebrew_restore_cache
       - *homebrew_install
       - *homebrew_save_cache
 
