@@ -58,9 +58,9 @@ const main = async () => {
 
       console.log(
         `     {
-        name: 'Uniswap v2 ${symbol0}/${symbol1}',
+        name: 'Uniswap v2 ${symbol0}-${symbol1}',
         type: LIQUIDITY_POOL_TYPES.UNISWAP,
-        symbol: '${symbol0.toUpperCase()}-${symbol1.toUpperCase()} UNI-V2',
+        symbol: '${symbol0}-${symbol1} UNI-V2',
         tokensProportions: [
           { symbol: '${symbol0}', proportion: 0.5 },
           { symbol: '${symbol1}', proportion: 0.5 },

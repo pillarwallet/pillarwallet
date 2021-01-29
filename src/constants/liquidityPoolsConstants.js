@@ -39,7 +39,7 @@ export const UNIPOOL_LIQUIDITY_POOLS = (): UnipoolLiquidityPool[] => {
   if (getEnv().ENVIRONMENT === STAGING) {
     return [
       {
-        name: 'Uniswap v2 ETH/PLR',
+        name: 'Uniswap v2 ETH-PLR',
         type: LIQUIDITY_POOL_TYPES.UNIPOOL,
         symbol: 'UNI-V2',
         tokensProportions: [
@@ -60,7 +60,7 @@ export const UNIPOOL_LIQUIDITY_POOLS = (): UnipoolLiquidityPool[] => {
 
   return [
     {
-      name: 'Uniswap v2 ETH/PLR',
+      name: 'Uniswap v2 ETH-PLR',
       type: LIQUIDITY_POOL_TYPES.UNIPOOL,
       symbol: 'UNI-V2',
       tokensProportions: [
@@ -77,7 +77,7 @@ export const UNIPOOL_LIQUIDITY_POOLS = (): UnipoolLiquidityPool[] => {
       rewardsEnabled: true,
     },
     {
-      name: 'Uniswap v2 DAI/PLR',
+      name: 'Uniswap v2 DAI-PLR',
       type: LIQUIDITY_POOL_TYPES.UNIPOOL,
       symbol: 'UNIv2',
       tokensProportions: [
@@ -103,7 +103,29 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
 
   return [
     {
-      name: 'Uniswap v2 USDC/ETH',
+      name: 'XXXX Uniswap v2 ETH-PLR',
+      type: LIQUIDITY_POOL_TYPES.UNISWAP,
+      symbol: 'ETH-PLR UNI-V2',
+      tokensProportions: [
+        { symbol: 'ETH', proportion: 0.5, progressBarColor: '#497391' },
+        { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
+      ],
+      uniswapPairAddress: '0xae2d4004241254aed3f93873604d39883c8259f0',
+      iconUrl: 'asset/images/tokens/icons/uniColor.png',
+    },
+    {
+      name: 'XXXX Uniswap v2 DAI-PLR',
+      type: LIQUIDITY_POOL_TYPES.UNISWAP,
+      symbol: 'DAI-PLR UNI-V2',
+      tokensProportions: [
+        { symbol: 'DAI', proportion: 0.5, progressBarColor: '#FABA34' },
+        { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
+      ],
+      uniswapPairAddress: '0x025d34acfd5c65cfd5a73209f99608c9e13338f3',
+      iconUrl: '',
+    },
+    {
+      name: 'Uniswap v2 USDC-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'USDC-ETH UNI-V2',
       tokensProportions: [
@@ -114,7 +136,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 ETH/USDT',
+      name: 'Uniswap v2 ETH-USDT',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'ETH-USDT UNI-V2',
       tokensProportions: [
@@ -125,7 +147,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 DAI/ETH',
+      name: 'Uniswap v2 DAI-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'DAI-ETH UNI-V2',
       tokensProportions: [
@@ -136,7 +158,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 WBTC/ETH',
+      name: 'Uniswap v2 WBTC-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'WBTC-ETH UNI-V2',
       tokensProportions: [
@@ -147,7 +169,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 UNI/ETH',
+      name: 'Uniswap v2 UNI-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'UNI-ETH UNI-V2',
       tokensProportions: [
@@ -158,7 +180,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 YFI/ETH',
+      name: 'Uniswap v2 YFI-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'YFI-ETH UNI-V2',
       tokensProportions: [
@@ -169,7 +191,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 ETH/AMPL',
+      name: 'Uniswap v2 ETH-AMPL',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'ETH-AMPL UNI-V2',
       tokensProportions: [
@@ -180,7 +202,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 LINK/ETH',
+      name: 'Uniswap v2 LINK-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'LINK-ETH UNI-V2',
       tokensProportions: [
@@ -191,7 +213,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 SUSHI/ETH',
+      name: 'Uniswap v2 SUSHI-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'SUSHI-ETH UNI-V2',
       tokensProportions: [
@@ -202,7 +224,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 TEND/ETH',
+      name: 'Uniswap v2 TEND-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'TEND-ETH UNI-V2',
       tokensProportions: [
@@ -213,7 +235,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 CORE/ETH',
+      name: 'Uniswap v2 CORE-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'CORE-ETH UNI-V2',
       tokensProportions: [
@@ -224,7 +246,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 KP3R/ETH',
+      name: 'Uniswap v2 KP3R-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'KP3R-ETH UNI-V2',
       tokensProportions: [
@@ -235,7 +257,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 DAI/BAS',
+      name: 'Uniswap v2 DAI-BAS',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'DAI-BAS UNI-V2',
       tokensProportions: [
@@ -246,7 +268,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 BAC/DAI',
+      name: 'Uniswap v2 BAC-DAI',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'BAC-DAI UNI-V2',
       tokensProportions: [
@@ -257,7 +279,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 ESD/USDC',
+      name: 'Uniswap v2 ESD-USDC',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'ESD-USDC UNI-V2',
       tokensProportions: [
@@ -268,7 +290,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 USDC/DSD',
+      name: 'Uniswap v2 USDC-DSD',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'USDC-DSD UNI-V2',
       tokensProportions: [
@@ -279,7 +301,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 SNX/ETH',
+      name: 'Uniswap v2 SNX-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'SNX-ETH UNI-V2',
       tokensProportions: [
@@ -290,7 +312,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 PICKLE/ETH',
+      name: 'Uniswap v2 PICKLE-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'PICKLE-ETH UNI-V2',
       tokensProportions: [
@@ -301,7 +323,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 AAVE/ETH',
+      name: 'Uniswap v2 AAVE-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'AAVE-ETH UNI-V2',
       tokensProportions: [
@@ -312,7 +334,7 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
       iconUrl: '',
     },
     {
-      name: 'Uniswap v2 USDC/USDT',
+      name: 'Uniswap v2 USDC-USDT',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'USDC-USDT UNI-V2',
       tokensProportions: [
