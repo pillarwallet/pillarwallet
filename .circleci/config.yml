@@ -739,7 +739,6 @@ workflows:
               ignore:
                 - develop
                 - master
-                - chore/remove-homebrew-cache-step
                 
   build_and_deploy_appcenter:
     jobs:
@@ -748,14 +747,14 @@ workflows:
           filters:
             branches:
               only:
-                - chore/remove-homebrew-cache-step 
+                - develop
       - appcenter_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                - chore/remove-homebrew-cache-step
+                - develop
       - appcenter_android:
           context: docker-hub-creds
           requires:
@@ -763,7 +762,7 @@ workflows:
           filters:
             branches:
               only:
-                - chore/remove-homebrew-cache-step
+                - develop
 
   build_and_deploy_production:
     jobs:
