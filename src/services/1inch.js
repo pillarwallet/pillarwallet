@@ -89,7 +89,7 @@ const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, f
 export const get1inchOffer = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientAddress: string,
 ): Promise<Offer | null> => {
   const [fromAssetParsed, toAssetParsed] = parseAssets([fromAsset, toAsset]);
@@ -117,7 +117,7 @@ export const get1inchOffer = async (
 export const create1inchOrder = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientSendAddress: string,
 ): Promise<Object> => {
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
