@@ -54,6 +54,9 @@ import {
 } from 'constants/navigationConstants';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
+// models
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
+
 // utils
 import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
@@ -164,7 +167,7 @@ const LiquidityPoolDashboard = ({
 
   useEffect(() => {
     if (!poolStats) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
-  });
+  }, []);
 
   useEffect(() => {
     if (
@@ -186,10 +189,9 @@ const LiquidityPoolDashboard = ({
 
   if (!poolStats) return <Loader />;
 
-  const rewardAssetData = supportedAssets.find(({ symbol }) => symbol === pool.rewards[0].symbol);
-  if (!rewardAssetData) {
-    return null;
-  }
+  const rewardAssetData = pool.rewardsEnabled
+    ? supportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
+    : undefined;
 
   const balance = poolStats.userLiquidityTokenBalance;
   const formattedBalance = formatMoney(balance, 4);
@@ -235,7 +237,7 @@ const LiquidityPoolDashboard = ({
     });
   });
 
-  if (pool.rewardsEnabled) {
+  if (rewardAssetData) {
     stats.push({
       title: t('liquidityPoolsContent.label.weeklyRewards'),
       value: t('tokenValue', { value: formatBigAmount(pool.rewards[0].amount), token: rewardAssetData.symbol }),
@@ -302,7 +304,7 @@ const LiquidityPoolDashboard = ({
           <Stats stats={stats} />
           <Spacing h={32} />
           <HorizontalPadding>
-            {pool.rewardsEnabled && (
+            {pool.type === LIQUIDITY_POOL_TYPES.UNIPOOL && rewardAssetData && (
             <>
               <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
               <Spacing h={6} />
