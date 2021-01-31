@@ -39,6 +39,7 @@ import type { NavigationTransitionProps as TransitionProps } from 'react-navigat
 import { StackViewStyleInterpolator } from 'react-navigation-stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
+import UDresolution from '@unstoppabledomains/resolution';
 
 // constants
 import {
@@ -59,7 +60,6 @@ import type { EnsRegistry } from 'reducers/ensRegistryReducer';
 
 // local
 import { isProdEnv, isTest } from './environment';
-
 
 const WWW_URL_PATTERN = /^www\./i;
 // eslint-disable-next-line i18next/no-literal-string
@@ -420,6 +420,13 @@ export const getEthereumProvider = (network: string) => {
   // Creating a provider to automatically fallback onto Etherscan
   // if INFURA is down
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
+};
+
+export const resolveUnstoppableName = (unstoppableDomain: string): Promise<?string> => {
+  const provider = getEthereumProvider('homestead');
+  const resolution = UDresolution.fromEthersProvider(provider);
+
+  return resolution.addr(unstoppableDomain, 'ETH');
 };
 
 export const resolveEnsName = (ensName: string): Promise<?string> => {

@@ -40,7 +40,7 @@ import Modal from 'components/Modal';
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import { getThemeColors } from 'utils/themes';
-import { isEnsName, isValidAddress } from 'utils/validators';
+import { isUnstoppableName, isEnsName, isValidAddress } from 'utils/validators';
 import { addressesEqual } from 'utils/assets';
 
 import { isCaseInsensitiveMatch, lookupAddress } from 'utils/common';
@@ -103,7 +103,6 @@ export const QRCodeButton = styled.TouchableOpacity`
   right: 0;
 `;
 
-
 export const QRCodeIcon = styled(Icon)`
   color: ${({ color }) => color};
   font-size: 20px;
@@ -130,6 +129,12 @@ const renderContactInput = (
   </InputWrapper>
 );
 
+const ResolutionType = {
+  None: 0,
+  ENS: 1,
+  Unstoppable: 2,
+};
+
 const ContactDetailsModal = ({
   theme,
   contact,
@@ -143,8 +148,8 @@ const ContactDetailsModal = ({
   const [addressValue, setAddressValue] = useState('');
   const [nameValue, setNameValue] = useState('');
   const [dirtyInputs, setDirtyInputs] = useState(false);
-  const [resolvingEns, setResolvingEns] = useState(false);
-  const [ensUnresolved, setEnsUnresolved] = useState(false);
+  const [resolvingDomain, setResolvingDomain] = useState(ResolutionType.None);
+  const [domainUnresolved, setDomainUnresolved] = useState(ResolutionType.None);
   const { walletIcon, personIcon } = images(theme);
 
   // reset input value on default change
@@ -159,56 +164,69 @@ const ContactDetailsModal = ({
     if (!dirtyInputs && (!isEmpty(nameValue) || !isEmpty(addressValue))) {
       setDirtyInputs(true);
     }
-    if (ensUnresolved) setEnsUnresolved(false); // reset
+    if (domainUnresolved !== ResolutionType.None) { setDomainUnresolved(ResolutionType.None); } // reset
   }, [nameValue, addressValue]);
 
   useEffect(() => {
-    if (resolvingEns
-      || !isEmpty(nameValue)
-      || !isValidAddress(addressValue)
-      || isEnsName(addressValue)) return;
+    if (
+      resolvingDomain !== ResolutionType.None ||
+      !isEmpty(nameValue) ||
+      !isValidAddress(addressValue) ||
+      isEnsName(addressValue)
+    ) { return; }
 
-    setResolvingEns(true);
+    setResolvingDomain(ResolutionType.ENS);
     lookupAddress(addressValue)
       .then((ensName) => {
         if (ensName) setNameValue(ensName);
-        setResolvingEns(false);
+        setResolvingDomain(ResolutionType.None);
       })
-      .catch(() => setResolvingEns(false));
+      .catch(() => setResolvingDomain(ResolutionType.None));
   }, [addressValue]);
 
   useEffect(() => {
-    if (resolvingEns
-      || !isEmpty(addressValue)
-      || !isEnsName(nameValue)) return;
+    if (
+      resolvingDomain !== ResolutionType.None ||
+      !isEmpty(addressValue) ||
+      !isEnsName(nameValue) ||
+      !isUnstoppableName(nameValue)
+    ) { return; }
 
-    setEnsUnresolved(false);
-    setResolvingEns(true);
+    const resolutionType = isEnsName(nameValue)
+      ? ResolutionType.ENS
+      : ResolutionType.Unstoppable;
+    setDomainUnresolved(ResolutionType.None);
+    setResolvingDomain(resolutionType);
     getReceiverWithEnsName(nameValue)
       .then(({ receiver }) => {
         if (receiver) {
           setAddressValue(receiver);
         } else {
-          setEnsUnresolved(true);
+          setDomainUnresolved(resolutionType);
         }
-        setResolvingEns(false);
+        setResolvingDomain(ResolutionType.None);
       })
       .catch(() => {
-        setEnsUnresolved(true);
-        setResolvingEns(false);
+        setDomainUnresolved(resolutionType);
+        setResolvingDomain(ResolutionType.None);
       });
   }, [nameValue]);
 
   let errorMessage;
   if (isEmpty(addressValue)) {
     errorMessage = t('error.emptyAddress');
-  } if (!isValidAddress(addressValue)) {
+  }
+  if (!isValidAddress(addressValue)) {
     errorMessage = t('error.invalid.address');
-  } else if (!addressesEqual(contact?.ethAddress, addressValue)
-    && contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))) {
+  } else if (
+    !addressesEqual(contact?.ethAddress, addressValue) &&
+    contacts.some(({ ethAddress }) => addressesEqual(ethAddress, addressValue))
+  ) {
     errorMessage = t('error.contactWithAddressExist');
-  } else if (!isCaseInsensitiveMatch(contact?.name, nameValue)
-    && contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))) {
+  } else if (
+    !isCaseInsensitiveMatch(contact?.name, nameValue) &&
+    contacts.some(({ name }) => isCaseInsensitiveMatch(name, nameValue))
+  ) {
     errorMessage = t('error.contactWithNameExist');
   } else if (isEmpty(nameValue)) {
     errorMessage = t('error.emptyName');
@@ -217,9 +235,15 @@ const ContactDetailsModal = ({
   const colors = getThemeColors(theme);
   const modalRef = useRef();
 
-  const buttonTitle = resolvingEns ? `${t('label.resolvingEnsName')}..` : t('button.save');
+  let buttonTitle = t('button.save');
+  if (resolvingDomain === ResolutionType.ENS) {
+    buttonTitle = `${t('label.resolvingEnsName')}..`;
+  }
+  if (resolvingDomain === ResolutionType.Unstoppable) {
+    buttonTitle = `${t('label.resolvingUnstoppableName')}..`;
+  }
   const onButtonPress = () => {
-    if (!errorMessage && !resolvingEns) {
+    if (!errorMessage && resolvingDomain === ResolutionType.None) {
       if (modalRef.current) modalRef.current.close();
       // $FlowFixMe: flow update to 0.122
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
@@ -227,7 +251,7 @@ const ContactDetailsModal = ({
   };
 
   const handleScannerReadResult = (address: string) => {
-    if (isEnsName(address)) {
+    if (isEnsName(address) || isUnstoppableName(address)) {
       setAddressValue('');
       setNameValue(address);
     } else {
@@ -235,7 +259,8 @@ const ContactDetailsModal = ({
     }
   };
 
-  const openScanner = () => Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
+  const openScanner = () =>
+    Modal.open(() => <AddressScanner onRead={handleScannerReadResult} />);
 
   return (
     <ModalBox
@@ -260,14 +285,38 @@ const ContactDetailsModal = ({
             </QRCodeButton>
           )}
         </TitleWrapper>
-        {renderContactInput(addressValue, setAddressValue, t('label.address'), walletIcon, theme)}
-        {renderContactInput(nameValue, setNameValue, t('label.name'), personIcon, theme)}
-        {!!ensUnresolved && <StatusMessage secondary>{t('error.ensNameNotFound')}</StatusMessage>}
-        {dirtyInputs && !resolvingEns && !!errorMessage && <StatusMessage danger>{errorMessage}</StatusMessage>}
-        {resolvingEns && <LoadingSpinner size={25} />}
+        {renderContactInput(
+          addressValue,
+          setAddressValue,
+          t('label.address'),
+          walletIcon,
+          theme,
+        )}
+        {renderContactInput(
+          nameValue,
+          setNameValue,
+          t('label.name'),
+          personIcon,
+          theme,
+        )}
+        {domainUnresolved !== ResolutionType.None && (
+          <StatusMessage secondary>
+            {domainUnresolved === ResolutionType.ENS
+              ? t('error.ensNameNotFound')
+              : t('error.unstoppableNameNotFound')}
+          </StatusMessage>
+        )}
+        {dirtyInputs &&
+          resolvingDomain !== ResolutionType.None &&
+          !!errorMessage && (
+            <StatusMessage danger>{errorMessage}</StatusMessage>
+          )}
+        {resolvingDomain !== ResolutionType.None && (
+          <LoadingSpinner size={25} />
+        )}
         <Button
           marginTop={spacing.large}
-          disabled={!dirtyInputs || !!errorMessage || resolvingEns}
+          disabled={!dirtyInputs || !!errorMessage || resolvingDomain !== ResolutionType.None}
           onPress={onButtonPress}
           title={buttonTitle}
         />

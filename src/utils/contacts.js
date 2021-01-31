@@ -26,8 +26,8 @@ import Toast from 'components/Toast';
 import type { Contact } from 'models/Contact';
 
 // utils
-import { reportLog, resolveEnsName } from './common';
-import { isEnsName } from './validators';
+import { reportLog, resolveEnsName, resolveUnstoppableName } from './common';
+import { isEnsName, isUnstoppableName } from './validators';
 
 
 export const getReceiverWithEnsName = async (ethAddress: ?string, showNotification: boolean = true) => {
@@ -35,14 +35,15 @@ export const getReceiverWithEnsName = async (ethAddress: ?string, showNotificati
   let receiver = '';
   if (!ethAddress) return { receiverEnsName, receiver };
 
-  if (isEnsName(ethAddress)) {
-    const resolvedAddress = await resolveEnsName(ethAddress).catch((error) => {
+  if (isEnsName(ethAddress) || isUnstoppableName(ethAddress)) {
+    const resolutionMethod = isEnsName(ethAddress) ? resolveEnsName : resolveUnstoppableName;
+    const resolvedAddress = await resolutionMethod(ethAddress).catch((error) => {
       reportLog('getReceiverWithEnsName failed', { error });
       return null;
     });
     if (!resolvedAddress && showNotification) {
       Toast.show({
-        message: t('toast.ensNameNotFound'),
+        message: t(isEnsName(ethAddress) ? 'toast.ensNameNotFound' : 'toast.unstoppableNameNotFound'),
         emoji: 'woman-shrugging',
       });
       return { receiverEnsName, receiver };

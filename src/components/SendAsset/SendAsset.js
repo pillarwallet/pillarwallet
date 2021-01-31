@@ -46,7 +46,7 @@ import Modal from 'components/Modal';
 import { isValidNumber, reportErrorLog } from 'utils/common';
 import { getBalance, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getContactWithEnsName } from 'utils/contacts';
-import { isEnsName } from 'utils/validators';
+import { isEnsName, isUnstoppableName } from 'utils/validators';
 
 // selectors
 import { useGasTokenSelector } from 'selectors/smartWallet';
@@ -147,7 +147,7 @@ const SendAsset = ({
   const [inputIsValid, setInputIsValid] = useState(false);
   const [selectedContact, setSelectedContact] = useState(defaultContact);
   const [submitPressed, setSubmitPressed] = useState(false);
-  const [resolvingContactEnsName, setResolvingContactEnsName] = useState(false);
+  const [resolvingContactDomainName, setResolvingContactDomainName] = useState(false);
 
   // parse value
   const currentValue = parseFloat(amount || 0);
@@ -210,15 +210,15 @@ const SendAsset = ({
       ensName: null,
     };
 
-    if (isEnsName(ethAddress)) {
-      setResolvingContactEnsName(true);
+    if (isEnsName(ethAddress) || isUnstoppableName(ethAddress)) {
+      setResolvingContactDomainName(true);
       contact = await getContactWithEnsName(contact, ethAddress);
       if (!contact?.ensName) {
-        // failed to resolve ENS, error toast will be shown
-        setResolvingContactEnsName(false);
+        // failed to resolve Domain, error toast will be shown
+        setResolvingContactDomainName(false);
         return Promise.resolve();
       }
-      setResolvingContactEnsName(false);
+      setResolvingContactDomainName(false);
     }
 
     // if name still empty let's set it with address
@@ -365,7 +365,7 @@ const SendAsset = ({
     option,
     openAddToContacts,
   );
-  const customOptionButtonOnPress = !resolvingContactEnsName
+  const customOptionButtonOnPress = !resolvingContactDomainName
     ? addContactButtonPress
     : () => {};
   const selectedOption: ?Option = selectedContact
@@ -375,7 +375,7 @@ const SendAsset = ({
   return (
     <SendContainer
       customSelectorProps={{
-        onOptionSelect: !resolvingContactEnsName ? handleReceiverSelect : () => {},
+        onOptionSelect: !resolvingContactDomainName ? handleReceiverSelect : () => {},
         options: contactsAsOptions,
         selectedOption,
         customOptionButtonLabel: t('button.addToContacts'),

@@ -33,6 +33,8 @@ type AddressValidator = {
 };
 
 const ETH_DOMAIN = 'eth';
+const CRYPTO_DOMAIN = 'crypto';
+const ZIL_DOMAIN = 'zil';
 
 export const validatePin = (pin: string, confirmationPin?: string): string => {
   if (pin.length !== 6) {
@@ -43,6 +45,19 @@ export const validatePin = (pin: string, confirmationPin?: string): string => {
     return t('auth:error.invalidPin.doesNotMatchPrevious');
   }
   return '';
+};
+
+export const isUnstoppableName = (input: string): boolean => {
+  if (!input.toString().includes('.')) return false;
+
+  const domain = input.split('.').pop().toLowerCase();
+  const supportedDomains = [CRYPTO_DOMAIN, ZIL_DOMAIN];
+
+  if (supportedDomains.includes(domain)) {
+    return true;
+  }
+
+  return false;
 };
 
 export const isEnsName = (input: string): boolean => {
@@ -65,7 +80,7 @@ export const isValidETHAddress = (address: string): boolean => {
   } catch (e) {
     result = false;
   }
-  if (!result && isEnsName(address)) {
+  if (!result && (isEnsName(address) || isUnstoppableName(address))) {
     result = true;
   }
   return result;

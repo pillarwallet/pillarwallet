@@ -26,6 +26,7 @@ import isEmpty from 'lodash.isempty';
 import debounce from 'lodash.debounce';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
+import {isUnstoppableName, isEnsName} from 'utils/validators';
 
 // components
 import { Label } from 'components/Typography';
@@ -159,7 +160,7 @@ class SendSyntheticAmount extends React.Component<Props, State> {
     let stateToUpdate = {};
     if (!receiver) {
       Toast.show({
-        message: t('toast.ensNameNotFound'),
+        message: t(isEnsName(value?.ethAddress) ? 'toast.ensNameNotFound' : 'toast.unstoppableNameNotFound'),
         emoji: 'woman-shrugging',
       });
       stateToUpdate = { selectedContact: null, receiver: '', receiverEnsName: '' };
