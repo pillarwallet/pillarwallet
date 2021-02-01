@@ -692,14 +692,42 @@ export const hitSlop10 = {
 
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
-export const formatBigAmount = (amount: number) => {
-  if (amount >= 1e6) {
-    return `${Math.round(amount / 1e6)}M`; // eslint-disable-line i18next/no-literal-string
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
+export const formatValueInternal = (value: BigNumber) => {
+  // Keep 3 significant digits
+  return value.precision(3).toFixed();
+};
+
+export const formatBigAmount = (value: Value) => {
+  const _value = wrapBigNumber(value);
+
+  if (_value.gte(1e12)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${formatValueInternal(_value.dividedBy(1e12))}T`;
   }
-  if (amount >= 1e3) {
-    return `${Math.round(amount / 1e3)}K`; // eslint-disable-line i18next/no-literal-string
+
+  if (_value.gte(1e9)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${formatValueInternal(_value.dividedBy(1e9))}B`;
   }
-  return `${Math.round(amount)}`;
+
+  if (_value.gte(1e6)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${formatValueInternal(_value.dividedBy(1e6))}M`;
+  }
+
+  if (_value.gte(1e3)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${formatValueInternal(_value.dividedBy(1e3))}K`;
+  }
+
+  return _value.toFixed(2);
 };
 
 export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
@@ -715,3 +743,4 @@ export const removeTrailingZeros = (amount: string) => {
 export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
+

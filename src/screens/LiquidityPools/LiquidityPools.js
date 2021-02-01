@@ -34,7 +34,13 @@ import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
+import {
+  formatAmount,
+  formatFiat,
+  formatBigFiatAmount,
+  formatBigAmount,
+  formatBigFiatValue,
+} from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
@@ -210,34 +216,51 @@ const LiquidityPoolsScreen = ({
             <VerticalDivider />
             <CardColumn>
               <BaseText big>
-                {formatFiat(convertUSDToFiat(poolStats.currentPrice, rates, fiatCurrency), fiatCurrency)}
+                {formatBigFiatAmount(
+                  convertUSDToFiat(poolStats.currentPrice, rates, fiatCurrency),
+                  fiatCurrency,
+                )}
               </BaseText>
-              <BaseText small secondary>{t('liquidityPoolsContent.label.price')}</BaseText>
+              <BaseText small secondary>
+                {t('liquidityPoolsContent.label.price')}
+              </BaseText>
             </CardColumn>
             <VerticalDivider />
             <CardColumn>
               <BaseText big>
-                {formatBigFiatAmount(convertUSDToFiat(poolStats.volume, rates, fiatCurrency), fiatCurrency)}
+                {formatBigFiatAmount(
+                  convertUSDToFiat(poolStats.volume, rates, fiatCurrency),
+                  fiatCurrency,
+                )}
               </BaseText>
-              <BaseText small secondary>{t('liquidityPoolsContent.label.volume')}</BaseText>
+              <BaseText small secondary>
+                {t('liquidityPoolsContent.label.volume')}
+              </BaseText>
             </CardColumn>
           </Row>
           {pool.rewardsEnabled && (
             <>
               <HorizontalDivider />
               <Row>
-                <BaseText small secondary>{t('liquidityPoolsContent.label.weeklyRewards')}</BaseText>
+                <BaseText small secondary>
+                  {t('liquidityPoolsContent.label.weeklyRewards')}
+                </BaseText>
                 <Spacing w={16} />
                 <Rewards>
-                  {pool.rewards.map(reward => {
-                    const asset = supportedAssets.find(({ symbol }) => symbol === reward.symbol);
+                  {pool.rewards.map((reward) => {
+                    const asset = supportedAssets.find(
+                      ({ symbol }) => symbol === reward.symbol,
+                    );
                     const iconUri = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
                     return (
                       <Reward key={reward.symbol}>
                         <RewardIcon source={{ uri: iconUri }} />
                         <Spacing w={6} />
                         <BaseText regular>
-                          {t('tokenValue', { value: formatBigAmount(reward.amount), token: reward.symbol })}
+                          {t('tokenValue', {
+                            value: formatBigAmount(reward.amount),
+                            token: reward.symbol,
+                          })}
                         </BaseText>
                       </Reward>
                     );
