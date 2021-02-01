@@ -74,7 +74,7 @@ import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
-import { formatMoney, formatFiat } from 'utils/common';
+import { formatFiat, getDisplayedTokenAmount } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -89,7 +89,6 @@ import {
 } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
-
 
 type Props = {
   baseFiatCurrency: ?string,
@@ -281,7 +280,7 @@ class PPNView extends React.Component<Props, State> {
       }, 0);
     }
 
-    const availableFormattedAmount = formatMoney(availableStake, 4);
+    const availableFormattedAmount = getDisplayedTokenAmount(availableStake, PLR);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
     const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED

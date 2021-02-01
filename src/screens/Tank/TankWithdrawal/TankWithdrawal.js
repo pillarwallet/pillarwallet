@@ -39,7 +39,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // utils
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatFiat, getDisplayedTokenAmount } from 'utils/common';
 import { spacing, fontStyles } from 'utils/variables';
 import { getRate, calculateMaxAmount, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { makeAmountForm, getAmountFormFields } from 'utils/formHelpers';
@@ -201,7 +201,7 @@ class TankWithdrawal extends React.Component<Props, State> {
 
     // balance
     const balance = availableStake;
-    const formattedBalance = formatAmount(balance);
+    const formattedBalance = getDisplayedTokenAmount(balance, token);
 
     // balance in fiat
     const totalInFiat = balance * getRate(rates, PPN_TOKEN, fiatCurrency);
