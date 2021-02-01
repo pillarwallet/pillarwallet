@@ -22,13 +22,12 @@ import isEqual from 'lodash.isequal';
 import type { NavigationScreenProp, NavigationEventSubscription } from 'react-navigation';
 import { createStructuredSelector } from 'reselect';
 import Intercom from 'react-native-intercom';
-import isEmpty from 'lodash.isempty';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import styled, { withTheme } from 'styled-components/native';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
-import styled, { withTheme } from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import BadgeTouchableItem from 'components/BadgeTouchableItem';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
@@ -44,8 +43,6 @@ import SablierStream from 'components/SablierStream';
 // constants
 import {
   BADGE,
-  LENDING_DEPOSITED_ASSETS_LIST,
-  LENDING_VIEW_DEPOSITED_ASSET,
   MENU,
   WALLETCONNECT,
   POOLTOGETHER_DASHBOARD,
@@ -121,6 +118,7 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 
 // partials
 import WalletsPart from './WalletsPart';
+import DepositedAssets from './DepositedAssets';
 
 
 type Props = {
@@ -203,7 +201,6 @@ const DepositedAssetGain = styled(BaseText)`
 `;
 
 const referralImage = require('assets/images/referral_gift.png');
-const aaveImage = require('assets/images/apps/aave.png');
 
 const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
@@ -321,37 +318,6 @@ class HomeScreen extends React.Component<Props> {
         onPress={() => navigation.navigate(BADGE, { badgeId: item.badgeId })}
         style={{ paddingHorizontal: 8 }}
       />
-    );
-  };
-
-  renderDepositedAsset = ({ item: depositedAsset }: { item: DepositedAsset }) => {
-    const {
-      symbol,
-      earnInterestRate,
-      currentBalance,
-      earnedAmount,
-      earningsPercentageGain,
-      iconUrl,
-    } = depositedAsset;
-    const cornerIcon = iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : '';
-    return (
-      <ListItemWithImage
-        label={t('tokenValue', { value: formatAmountDisplay(currentBalance), token: symbol })}
-        subtext={t('aaveContent.label.currentAPYPercentage', { rate: formatAmountDisplay(earnInterestRate) })}
-        itemImageSource={aaveImage}
-        onPress={() => this.props.navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}
-        iconImageSize={52}
-        cornerIcon={cornerIcon}
-        rightColumnInnerStyle={{ alignItems: 'flex-end' }}
-        itemImageRoundedSquare
-      >
-        <DepositedAssetGain positive>
-          {t('positiveTokenValue', { value: formatAmountDisplay(earnedAmount), token: symbol })}
-        </DepositedAssetGain>
-        <BaseText secondary>
-          {t('positivePercentValue', { value: formatAmountDisplay(earningsPercentageGain) })}
-        </BaseText>
-      </ListItemWithImage>
     );
   };
 
@@ -663,25 +629,13 @@ class HomeScreen extends React.Component<Props> {
                     onPress={toggleBadges}
                     open={!hideBadges}
                   />
-                  {!isEmpty(depositedAssets) &&
-                    <CollapsibleSection
-                      label={t('aaveContent.depositedAssetsList.title')}
-                      labelRight={isFetchingDepositedAssets ? null : t('button.viewAll')}
-                      showLoadingSpinner={isFetchingDepositedAssets}
-                      onPressLabelRight={() => navigation.navigate(LENDING_DEPOSITED_ASSETS_LIST)}
-                      collapseContent={
-                        <FlatList
-                          data={depositedAssets}
-                          keyExtractor={(item) => item.symbol}
-                          renderItem={this.renderDepositedAsset}
-                          initialNumToRender={5}
-                          listKey="aave_deposits"
-                        />
-                      }
-                      onPress={toggleLendingDeposits}
-                      open={!hideLendingDeposits}
-                    />
-                  }
+                  <DepositedAssets
+                    depositedAssets={depositedAssets}
+                    isFetchingDepositedAssets={isFetchingDepositedAssets}
+                    navigation={navigation}
+                    hideLendingDeposits={hideLendingDeposits}
+                    toggleLendingDeposits={toggleLendingDeposits}
+                  />
                   {!!hasPoolTickets && !!isSmartWalletActive &&
                   <CollapsibleSection
                     label={t('poolTogetherContent.ticketsList.title')}
