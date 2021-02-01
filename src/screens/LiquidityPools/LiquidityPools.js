@@ -289,10 +289,7 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
-    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
-    if (!poolToken) return null;
     const balance = poolStats.userLiquidityTokenBalance;
-
     const { currentPrice } = poolStats;
     const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
 
