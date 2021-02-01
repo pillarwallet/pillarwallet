@@ -103,28 +103,6 @@ export const UNISWAP_LIQUIDITY_POOLS = (): UniswapLiquidityPool[] => {
 
   return [
     {
-      name: 'XXXX Uniswap v2 ETH-PLR',
-      type: LIQUIDITY_POOL_TYPES.UNISWAP,
-      symbol: 'ETH-PLR UNI-V2',
-      tokensProportions: [
-        { symbol: 'ETH', proportion: 0.5, progressBarColor: '#497391' },
-        { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
-      ],
-      uniswapPairAddress: '0xae2d4004241254aed3f93873604d39883c8259f0',
-      iconUrl: 'asset/images/tokens/icons/uniColor.png',
-    },
-    {
-      name: 'XXXX Uniswap v2 DAI-PLR',
-      type: LIQUIDITY_POOL_TYPES.UNISWAP,
-      symbol: 'DAI-PLR UNI-V2',
-      tokensProportions: [
-        { symbol: 'DAI', proportion: 0.5, progressBarColor: '#FABA34' },
-        { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
-      ],
-      uniswapPairAddress: '0x025d34acfd5c65cfd5a73209f99608c9e13338f3',
-      iconUrl: 'asset/images/tokens/icons/uniColor.png',
-    },
-    {
       name: 'Uniswap v2 USDC-ETH',
       type: LIQUIDITY_POOL_TYPES.UNISWAP,
       symbol: 'USDC-ETH UNI-V2',
