@@ -36,7 +36,7 @@ import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
-import { getPoolStats, supportedLiquidityPools, isSupportedPool } from 'utils/liquidityPools';
+import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
