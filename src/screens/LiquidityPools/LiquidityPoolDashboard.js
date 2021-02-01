@@ -278,6 +278,8 @@ const LiquidityPoolDashboard = ({
             fiatCurrency={fiatCurrency}
             onGestureStart={() => setScrollEnabled(false)}
             onGestureEnd={() => setScrollEnabled(true)}
+            showXAxisValues={false}
+            showYAxisValues={false}
           />
           <HorizontalPadding>
             <Spacing h={16} />
