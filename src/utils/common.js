@@ -699,39 +699,35 @@ export const wrapBigNumber = (value: Value): BigNumber => {
   return new BigNumber(value);
 };
 
-export const formatValueInternal = (value: BigNumber) => {
-  return value.toFixed(2);
-};
-
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);
 
   if (_value.gte(1e12)) {
     // eslint-disable-next-line i18next/no-literal-string
-    return `${formatValueInternal(_value.dividedBy(1e12))}T`;
+    return `${_value.dividedBy(1e12).toFixed(2)}T`;
   }
 
   if (_value.gte(1e9)) {
     // eslint-disable-next-line i18next/no-literal-string
-    return `${formatValueInternal(_value.dividedBy(1e9))}B`;
+    return `${_value.dividedBy(1e9).toFixed(2)}B`;
   }
 
   if (_value.gte(1e6)) {
     // eslint-disable-next-line i18next/no-literal-string
-    return `${formatValueInternal(_value.dividedBy(1e6))}M`;
+    return `${_value.dividedBy(1e6).toFixed(2)}M`;
   }
 
   if (_value.gte(1e3)) {
     // eslint-disable-next-line i18next/no-literal-string
-    return `${formatValueInternal(_value.dividedBy(1e3))}K`;
+    return `${_value.dividedBy(1e3).toFixed(2)}K`;
   }
 
   return _value.toFixed(2);
 };
 
-export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
+export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol} ${formatBigAmount(amount)}`;
+  return `${currencySymbol} ${formatBigAmount(value)}`;
 };
 
 export const removeTrailingZeros = (amount: string) => {
