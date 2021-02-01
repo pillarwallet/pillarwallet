@@ -31,6 +31,7 @@ import { Spacing } from 'components/Layout';
 // utils
 import { fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
+import { getDisplayedTokenAmount } from 'utils/common';
 
 
 type ImageObject = {
@@ -168,7 +169,7 @@ class ExchangeScheme extends React.Component<Props, State> {
           onLayout={(event) => { this.setState({ valueFromWidth: event.nativeEvent.layout.width }); }}
         >
           <ValueText>
-            {fromValue}
+            {getDisplayedTokenAmount(fromValue, fromAssetCode)}
             <SymbolText> {fromAssetCode}</SymbolText>
           </ValueText>
         </ValueWrapper>
