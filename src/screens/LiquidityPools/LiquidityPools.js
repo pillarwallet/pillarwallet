@@ -233,7 +233,7 @@ const LiquidityPoolsScreen = ({
                     const asset = supportedAssets.find(({ symbol }) => symbol === reward.symbol);
                     const iconUri = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
                     return (
-                      <Reward>
+                      <Reward key={reward.symbol}>
                         <RewardIcon source={{ uri: iconUri }} />
                         <Spacing w={6} />
                         <BaseText regular>
