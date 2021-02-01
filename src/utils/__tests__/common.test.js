@@ -34,6 +34,7 @@ import {
   extractJwtPayload,
   parseTokenAmount,
   getFormattedTransactionFeeValue,
+  formatBigAmount,
   formatBigFiatAmount,
 } from '../common';
 
@@ -303,18 +304,34 @@ describe('Common utils', () => {
     });
   });
 
+  describe('formatBigAmount', () => {
+    it('basic cases', () => {
+      expect(formatBigAmount('1')).toEqual('1.00');
+      expect(formatBigAmount('1.01')).toEqual('1.01');
+      expect(formatBigAmount('1.001')).toEqual('1.00');
+      expect(formatBigAmount('1.0055')).toEqual('1.01');
+
+      expect(formatBigAmount('12')).toEqual('12.00');
+      expect(formatBigAmount('123')).toEqual('123.00');
+
+      expect(formatBigAmount('1234')).toEqual('1.23K');
+      expect(formatBigAmount('12345')).toEqual('12.35K');
+      expect(formatBigAmount('123456')).toEqual('123.46K');
+      expect(formatBigAmount('1234567')).toEqual('1.23M');
+      expect(formatBigAmount('12345678')).toEqual('12.35M');
+      expect(formatBigAmount('123456789')).toEqual('123.46M');
+
+      expect(formatBigAmount('1002003004')).toEqual('1.00B');
+      expect(formatBigAmount('1002003004005')).toEqual('1.00T');
+    });
+  });
+
   describe('formatBigFiatAmount', () => {
-    it('should format 1000 to 1K', () => {
-      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1K');
-    });
-    it('should format 1000000 to 1KK', () => {
-      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1M');
-    });
-    it('should format 12345.67 to 12K', () => {
-      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12K');
-    });
-    it('should format 123.45 to 123', () => {
-      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123');
+    it('basic cases', () => {
+      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1.00K');
+      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1.00M');
+      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12.35K');
+      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123.45');
     });
   });
 });
