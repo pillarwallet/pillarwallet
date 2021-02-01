@@ -34,13 +34,7 @@ import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-import {
-  formatAmount,
-  formatFiat,
-  formatBigFiatAmount,
-  formatBigAmount,
-  formatBigFiatValue,
-} from 'utils/common';
+import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
