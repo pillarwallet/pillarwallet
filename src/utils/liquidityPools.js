@@ -386,6 +386,10 @@ export const getPoolStats = (
     [tokenSymbols[0]]: pairData.reserve0 / pairData.totalSupply,
     [tokenSymbols[1]]: pairData.reserve1 / pairData.totalSupply,
   };
+  const tokensReserves = {
+    [tokenSymbols[0]]: pairData.reserve0,
+    [tokenSymbols[1]]: pairData.reserve1,
+  };
 
   const unipoolData = pool.type === LIQUIDITY_POOL_TYPES.UNIPOOL
     ? liquidityPoolsReducer.unipoolData[pool.unipoolAddress]
@@ -419,6 +423,7 @@ export const getPoolStats = (
     rewardsToClaim: parseFloat(unipoolData?.earnedAmount) || 0,
     tokensPricesUSD,
     tokensPrices,
+    tokensReserves,
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
     history,

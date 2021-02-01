@@ -196,6 +196,8 @@ const LiquidityPoolDashboard = ({
 
   const balance = poolStats.userLiquidityTokenBalance;
   const formattedBalance = formatMoney(balance, 4);
+  const hasBalance = balance > 0;
+
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
   const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
@@ -392,7 +394,10 @@ const LiquidityPoolDashboard = ({
               if (!tokenData) return null;
               const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
-              const quantity = poolStats.tokensPerLiquidityToken[tokenSymbol] * (balance || 1);
+              const quantity =
+                hasBalance 
+                  ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
+                  : poolStats.tokensReserves[tokenSymbol];
               const formattedQuantity = formatAmount(quantity);
 
               return (
