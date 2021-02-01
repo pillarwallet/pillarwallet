@@ -132,10 +132,6 @@ describe('Liquidity pools utils', () => {
           ETH: 0.2,
           PLR: 0.1,
         },
-        tokensReserves: {
-          ETH: 10000,
-          PLR: 20000,
-        },
         totalLiquidity: 4000,
         totalSupply: 1000,
         volume: 500,

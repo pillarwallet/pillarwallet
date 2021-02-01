@@ -399,7 +399,7 @@ const LiquidityPoolDashboard = ({
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
               const quantity = hasBalance
                   ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
-                  : poolStats.tokensReserves[tokenSymbol];
+                  : poolStats.tokensLiquidity[tokenSymbol];
               const formattedQuantity = formatAmount(quantity);
 
               return (
