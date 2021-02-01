@@ -700,8 +700,7 @@ export const wrapBigNumber = (value: Value): BigNumber => {
 };
 
 export const formatValueInternal = (value: BigNumber) => {
-  // Keep 3 significant digits
-  return value.precision(3).toFixed();
+  return value.toFixed(2);
 };
 
 export const formatBigAmount = (value: Value) => {
