@@ -387,15 +387,17 @@ const LiquidityPoolDashboard = ({
             </>
           )}
             <Spacing h={28} />
-            <MediumText big>{t('liquidityPoolsContent.label.yourPoolShareAllocation')}</MediumText>
+            <MediumText big>{hasBalance
+              ? t('liquidityPoolsContent.label.yourPoolShareAllocation')
+              : t('liquidityPoolsContent.label.poolTokenAllocation')}
+            </MediumText>
             <Spacing h={22} />
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
               const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
               const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
-              const quantity =
-                hasBalance 
+              const quantity = hasBalance
                   ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
                   : poolStats.tokensReserves[tokenSymbol];
               const formattedQuantity = formatAmount(quantity);

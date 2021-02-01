@@ -1747,6 +1747,7 @@
       "totalLiquidity": "Total liquidity",
       "24hVolume": "24h volume",
       "tokenLiquidity": "{{tokenName}} liquidity",
+      "poolTokenAllocation": "Pool token allocation",
       "yourPoolShareAllocation": "Your pool share token allocation",
       "tokenPrice": "Token price",
       "quantity": "Quantity",
