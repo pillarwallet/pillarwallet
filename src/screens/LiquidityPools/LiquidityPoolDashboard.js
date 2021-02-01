@@ -60,6 +60,7 @@ import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
+import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
@@ -404,11 +405,13 @@ const LiquidityPoolDashboard = ({
                   : poolStats.tokensLiquidity[tokenSymbol];
               const formattedQuantity = formatAmount(quantity);
 
+              const { genericToken } = images(theme);
+
               return (
                 <View key={tokenSymbol}>
                   <StretchedRow>
                     <Row>
-                      <AllocationIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }} />
+                      <AllocationIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }} fallbackSource={genericToken} />
                       <Spacing w={8} />
                       <MediumText big>{tokenData.name}</MediumText>
                       <Spacing w={8} />
