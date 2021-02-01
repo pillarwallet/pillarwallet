@@ -46,13 +46,12 @@ import { findAccountByAddress } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
-
-// components
 import {
   formatAmount,
   formatUnits,
   getDecimalPlaces,
   findEnsNameCaseInsensitive,
+  getDisplayedTokenAmount,
 } from 'utils/common';
 
 // components
@@ -755,7 +754,7 @@ export class ActivityFeedItem extends React.Component<Props> {
                 {t('negativeTokenValue', { value: t('label.multiple') })}
               </BaseText>
               <ItemValue>
-                {t('positiveTokenValue', { value: formatAmount(amount), token: pool.symbol })}
+                {t('positiveTokenValue', { value: getDisplayedTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </ItemValue>
             </ListWrapper>
           ),
@@ -772,7 +771,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           customAddon: (
             <ListWrapper>
               <BaseText big>
-                {t('negativeTokenValue', { value: formatAmount(amount), token: pool.symbol })}
+                {t('negativeTokenValue', { value: getDisplayedTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </BaseText>
               <ItemValue>
                 {t('positiveTokenValue', { value: t('label.multiple') })}
