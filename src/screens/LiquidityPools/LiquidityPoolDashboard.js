@@ -411,7 +411,10 @@ const LiquidityPoolDashboard = ({
                 <View key={tokenSymbol}>
                   <StretchedRow>
                     <Row>
-                      <AllocationIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }} fallbackSource={genericToken} />
+                      <AllocationIcon
+                        source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }}
+                        fallbackSource={genericToken}
+                      />
                       <Spacing w={8} />
                       <MediumText big>{tokenData.name}</MediumText>
                       <Spacing w={8} />
