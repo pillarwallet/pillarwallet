@@ -307,89 +307,89 @@ const LiquidityPoolDashboard = ({
 
           <HorizontalPadding>
             {showStakeSection && (
-              <>
-                <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
-                <Spacing h={6} />
-                <Card>
-                  <StretchedRow>
-                    <Row>
-                      <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
-                      <Spacing w={12} />
-                      <MediumText fontSize={20}>{formatAmount(poolStats.stakedAmount)}{' '}
-                        <MediumText secondary regular>{pool.symbol}</MediumText>
-                      </MediumText>
-                    </Row>
-                    <MediumText big>{formattedStakedAmountInFiat}</MediumText>
-                  </StretchedRow>
-                  <Spacing h={20} />
+            <>
+              <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
+              <Spacing h={6} />
+              <Card>
+                <StretchedRow>
                   <Row>
-                    {pool.rewardsEnabled && (
-                      <>
-                        <ButtonWrapper>
-                          <Button
-                            title={t('liquidityPoolsContent.button.stake')}
-                            onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
-                          />
-                        </ButtonWrapper>
-                        <Spacing w={7} />
-                      </>
-                    )}
-                    <ButtonWrapper>
-                      <Button
-                        title={t('liquidityPoolsContent.button.unstake')}
-                        secondary
-                        onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE, { pool })}
-                      />
-                    </ButtonWrapper>
-                  </Row>
-                  {balance === 0 && poolStats.stakedAmount === 0 && (
-                    <>
-                      <Overlay />
-                      <AbsolutePositioning>
-                        <BaseText medium secondary>
-                          {t('liquidityPoolsContent.label.addLiquidityToStartEarning')}
-                        </BaseText>
-                      </AbsolutePositioning>
-                    </>
-                  )}
-                </Card>
-                <Spacing h={28} />
-
-                <MediumText big>{t('liquidityPoolsContent.label.rewards')}</MediumText>
-                <Spacing h={6} />
-                <Card>
-                  <Row>
-                    <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3` }} />
+                    <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
                     <Spacing w={12} />
-                    <View>
-                      <BaseText fontSize={20}>
-                        {formatAmount(poolStats.rewardsToClaim)}{' '}
-                        <BaseText secondary regular>{rewardAssetData.symbol}</BaseText>
-                      </BaseText>
-                      <BaseText regular secondary>
-                        {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.symbol })}
-                      </BaseText>
-                    </View>
+                    <MediumText fontSize={20}>{formatAmount(poolStats.stakedAmount)}{' '}
+                      <MediumText secondary regular>{pool.symbol}</MediumText>
+                    </MediumText>
                   </Row>
-                  <Spacing h={20} />
-                  <Button
-                    title={t('liquidityPoolsContent.button.claimRewards')}
-                    primarySecond
-                    onPress={onClaimReward}
-                  />
-                  {poolStats.stakedAmount === 0 && (
+                  <MediumText big>{formattedStakedAmountInFiat}</MediumText>
+                </StretchedRow>
+                <Spacing h={20} />
+                <Row>
+                  {pool.rewardsEnabled && (
                     <>
-                      <Overlay />
-                      <AbsolutePositioning>
-                        <BaseText medium secondary>
-                          {t('liquidityPoolsContent.label.stakeLiquidityToGetRewards')}
-                        </BaseText>
-                      </AbsolutePositioning>
+                      <ButtonWrapper>
+                        <Button
+                          title={t('liquidityPoolsContent.button.stake')}
+                          onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
+                        />
+                      </ButtonWrapper>
+                      <Spacing w={7} />
                     </>
                   )}
-                </Card>
-              </>
-            )}
+                  <ButtonWrapper>
+                    <Button
+                      title={t('liquidityPoolsContent.button.unstake')}
+                      secondary
+                      onPress={() => navigation.navigate(LIQUIDITY_POOLS_UNSTAKE, { pool })}
+                    />
+                  </ButtonWrapper>
+                </Row>
+                {balance === 0 && poolStats.stakedAmount === 0 && (
+                  <>
+                    <Overlay />
+                    <AbsolutePositioning>
+                      <BaseText medium secondary>
+                        {t('liquidityPoolsContent.label.addLiquidityToStartEarning')}
+                      </BaseText>
+                    </AbsolutePositioning>
+                  </>
+                )}
+              </Card>
+              <Spacing h={28} />
+
+              <MediumText big>{t('liquidityPoolsContent.label.rewards')}</MediumText>
+              <Spacing h={6} />
+              <Card>
+                <Row>
+                  <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${rewardAssetData.iconUrl}?size=3` }} />
+                  <Spacing w={12} />
+                  <View>
+                    <BaseText fontSize={20}>
+                      {formatAmount(poolStats.rewardsToClaim)}{' '}
+                      <BaseText secondary regular>{rewardAssetData.symbol}</BaseText>
+                    </BaseText>
+                    <BaseText regular secondary>
+                      {t('liquidityPoolsContent.label.claimedSoFar', { value: 0, token: rewardAssetData.symbol })}
+                    </BaseText>
+                  </View>
+                </Row>
+                <Spacing h={20} />
+                <Button
+                  title={t('liquidityPoolsContent.button.claimRewards')}
+                  primarySecond
+                  onPress={onClaimReward}
+                />
+                {poolStats.stakedAmount === 0 && (
+                  <>
+                    <Overlay />
+                    <AbsolutePositioning>
+                      <BaseText medium secondary>
+                        {t('liquidityPoolsContent.label.stakeLiquidityToGetRewards')}
+                      </BaseText>
+                    </AbsolutePositioning>
+                  </>
+                )}
+              </Card>
+            </>
+          )}
             <Spacing h={28} />
             <MediumText big>{t('liquidityPoolsContent.label.yourPoolShareAllocation')}</MediumText>
             <Spacing h={22} />
@@ -442,7 +442,7 @@ const LiquidityPoolDashboard = ({
                   <Spacing h={34} />
                 </View>
               );
-            })}
+          })}
           </HorizontalPadding>
         </MainContainter>
       </ScrollWrapper>
