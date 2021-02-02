@@ -56,7 +56,7 @@ import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } fro
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
-import { formatMoney, formatFiat, getDisplayedTokenAmount } from 'utils/common';
+import { formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { getSmartWalletStatus } from 'utils/smartWallet';
 import { isSWAddress } from 'utils/feedData';
@@ -255,8 +255,8 @@ class AssetScreen extends React.Component<Props> {
       : (paymentNetworkBalance <= 0 && availableStake < 0);
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
     const displayAmount = !isSynthetic
-      ? getDisplayedTokenAmount(balance, token)
-      : formatMoney(paymentNetworkBalance, 4);
+      ? balance
+      : paymentNetworkBalance;
     const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
 
     const {

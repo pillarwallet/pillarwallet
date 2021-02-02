@@ -74,7 +74,7 @@ import type { Balances, BalancesStore, Rates } from 'models/Asset';
 
 // utils
 import { getRate, addressesEqual } from 'utils/assets';
-import { formatFiat, getDisplayedTokenAmount } from 'utils/common';
+import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { getSmartWalletStatus, isDeployingSmartWallet, isHiddenUnsettledTransaction } from 'utils/smartWallet';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
@@ -280,7 +280,7 @@ class PPNView extends React.Component<Props, State> {
       }, 0);
     }
 
-    const availableFormattedAmount = getDisplayedTokenAmount(availableStake, PLR);
+    const availableFormattedAmount = formatMoney(availableStake, 4);
     const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
     const { upgrade: { status: smartWalletUpgradeStatus } } = smartWalletState;
     const sendingBlockedMessage = smartWalletUpgradeStatus === SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
