@@ -1700,7 +1700,44 @@
       "all": "ALL "
     }
   },
-
+  "oceanMarketContent": {
+    "title": {
+      "infoScreen": "Ocean market",
+      "oceanMarket": "Ocean market"
+    },
+    "oceanMarketContent": {
+      "subtitle": {
+        "balance": "Balance",
+        "ocean": "OCEAN",
+        "availableDatasets": "Available datasets"
+      },
+      "buttons": {
+        "buy": "Buy"
+      },
+      "paragraph": {
+        "balance": "The OCEAN utility token is used to stake on data, govern community funding, and buy & sell data. Its supply is disbursed over time to drive near-term growth and long-term sustainability."
+      }
+    },
+    "infoContent": {
+      "subtitle": {
+        "datatokens": "Datatokens",
+        "marketplaces": "Marketplaces",
+        "compute": "Compute-to-data",
+        "dataScience": "Data science"
+      },
+      "paragraph": {
+        "main": "Use Ocean Market app to earn by selling data and curating / staking on data. Use Ocean Protocol libraries to build your own app for secure, privacy-preserving data exchange.\n\nIn Ocean Protocol, each data service gets its own datatoken. This enables data wallets, data exchanges, and data co-ops by directly leveraging crypto wallets, exchanges, and more.",
+        "datatokens": "Ocean makes it easy to publish data services (deploy and mint ERC20 datatokens), and to consume data services (spend datatokens). Crypto wallets, exchanges, and DAOs become *data* wallets, exchanges, and DAOs.",
+        "marketplaces": "Use Ocean Market to publish data, stake on data (curate), and buy data. Earn by selling, staking, or running your own fork of Ocean Market. Data has automatic price discovery. Data is published as interoperable ERC20 datatokens. Compute-to-data enables private data to be bought & sold. It's a decentralized exchange (DEX), tuned for data.",
+        "compute": "Compute-to-data resolves the tradeoff between the benefits of using private data, and the risks of exposing it. It lets the data stay on-premise, yet allows 3rd parties to run specific compute jobs on it to get useful compute results like averaging or building an AI model.",
+        "dataScience": "As a data scientist or AI practitioner, you can benefit from access to more data (including private data), crypto-secured provenance in data & AI training, and income opportunities for selling data and curating data."
+      },
+      "insight": {
+        "title": "Use Ocean Market app",
+        "button": "Get datatoken"
+      }
+    }
+  },
   "liquidityPoolsContent": {
     "title": {
       "addLiquidity": "Add liquidity",

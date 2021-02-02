@@ -315,6 +315,9 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
   LIQUIDITY_POOLS_INFO,
+  OCEAN_MARKET,
+  OCEAN_MARKET_FLOW,
+  OCEAN_MARKET_INFO
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -332,6 +335,8 @@ import type { User } from 'models/User';
 import type { Notification } from 'models/Notification';
 import type { EthereumWallet } from 'models/Wallet';
 import type { BackupStatus } from 'reducers/walletReducer';
+import OceanMarketInfoScreen from 'screens/OceanMarket/OceanMarketInfo';
+import OceanMarketScreen from 'screens/OceanMarket/OceanMarket';
 
 
 const SLEEP_TIMEOUT = 20000;
@@ -523,6 +528,13 @@ const tabBarLabel = ({ text, theme }) => ({ focused }) => {
   );
 };
 
+const oceanMarketFlow = createStackNavigator({
+  [HOME]: OceanMarketInfoScreen,
+  [OCEAN_MARKET]: OceanMarketScreen,
+}, StackNavigatorConfig);
+
+oceanMarketFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // TAB NAVIGATION FLOW
 const tabNavigation = createBottomTabNavigator(
   {
@@ -536,6 +548,18 @@ const tabNavigation = createBottomTabNavigator(
           theme: screenProps.theme,
         }),
         tabBarLabel: tabBarLabel({ text: t('navigationTabs.home'), theme: screenProps.theme }),
+      }),
+    },
+    [OCEAN_MARKET]: {
+      screen: oceanMarketFlow,
+      navigationOptions: ({ navigation, screenProps }) => ({
+        tabBarIcon: tabBarIcon({
+          icon: iconHome,
+          hasIndicator: !navigation.isFocused() && (screenProps.showHomeUpdateIndicator
+            || !!screenProps.intercomNotificationsCount),
+          theme: screenProps.theme,
+        }),
+        tabBarLabel: tabBarLabel({ text: 'Ocean', theme: screenProps.theme }),
       }),
     },
     [ASSETS]: {
@@ -859,6 +883,7 @@ const AppFlowNavigation = createStackNavigator(
     [EXCHANGE_FLOW]: exchangeFlow,
     [RARI_FLOW]: rariFlow,
     [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
+    [OCEAN_MARKET_FLOW]: oceanMarketFlow,
   },
   modalTransition,
 );
