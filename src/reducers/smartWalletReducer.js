@@ -97,16 +97,19 @@ export default function smartWalletReducer(
     case SET_SMART_WALLET_SDK_INIT:
       return {
         ...state,
+        // $FlowFixMe: flow update to 0.122
         sdkInitialized: action.payload,
       };
     case SET_SMART_WALLET_ACCOUNTS:
       return {
         ...state,
+        // $FlowFixMe: flow update to 0.122
         accounts: action.payload,
       };
     case SET_SMART_WALLET_CONNECTED_ACCOUNT:
       return {
         ...state,
+        // $FlowFixMe: flow update to 0.122
         connectedAccount: action.payload,
       };
     case SET_SMART_WALLET_UPGRADE_STATUS:
@@ -122,6 +125,7 @@ export default function smartWalletReducer(
         ...state,
         upgrade: {
           ...state.upgrade,
+          // $FlowFixMe: flow update to 0.122
           deploymentData: {
             ...action.payload,
           },
@@ -180,12 +184,14 @@ export default function smartWalletReducer(
         ...state,
         upgrade: {
           ...state.upgrade,
+          // $FlowFixMe: flow update to 0.122
           gettingDeploymentEstimate: action.payload,
         },
       };
     case SET_CHECKING_SMART_WALLET_SESSION:
       return {
         ...state,
+        // $FlowFixMe: flow update to 0.122
         isCheckingSmartWalletSession: action.payload,
       };
     default:

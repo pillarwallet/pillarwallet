@@ -9,6 +9,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
   }
 >
   <View
+    forwardedRef={[Function]}
     style={
       Object {
         "backgroundColor": "rgba(255, 255, 255, 1)",
@@ -19,12 +20,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
     }
   >
     <View
-      androidStatusbarHeight={42}
+      androidStatusbarHeight={null}
+      forwardedRef={[Function]}
       onLayout={[Function]}
       pointerEvents="box-none"
       style={
         Object {
-          "marginTop": 42,
           "paddingBottom": 0,
           "paddingLeft": 0,
           "paddingRight": 0,
@@ -77,7 +78,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -167,7 +168,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               <View
                 accessible={true}
                 focusable={true}
-                isTVSelectable={true}
+                forwardedRef={[Function]}
                 onClick={[Function]}
                 onResponderGrant={[Function]}
                 onResponderMove={[Function]}
@@ -214,6 +215,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
   </View>
   <View
     androidStatusbarHeight={0}
+    forwardedRef={[Function]}
     onLayout={[Function]}
     pointerEvents="box-none"
     style={
@@ -931,7 +933,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -1453,7 +1455,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               accessible={true}
               focusable={true}
-              isTVSelectable={true}
+              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -1977,6 +1979,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
       </View>
     </RCTScrollView>
     <View
+      forwardedRef={[Function]}
       onLayout={[Function]}
       pointerEvents="box-none"
       style={
@@ -2051,7 +2054,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -2127,7 +2130,7 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           <View
             accessible={true}
             focusable={true}
-            isTVSelectable={true}
+            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}

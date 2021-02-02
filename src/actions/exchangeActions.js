@@ -85,7 +85,7 @@ import { saveDbAction } from './dbActions';
 export const takeOfferAction = (
   fromAsset: Asset,
   toAsset: Asset,
-  fromAmount: number,
+  fromAmount: string,
   provider: string,
   trackId: string,
   askRate: string | number,
@@ -140,28 +140,28 @@ export const takeOfferAction = (
 
 export const resetOffersAction = () => ({ type: RESET_OFFERS });
 
-const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+const searchUniswapAction = (fromAsset: Asset, toAsset: Asset, fromAmount: string, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await getUniswapOffer(fromAsset, toAsset, fromAmount, clientAddress);
     if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+const search1inchAction = (fromAsset: Asset, toAsset: Asset, fromAmount: string, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await get1inchOffer(fromAsset, toAsset, fromAmount, clientAddress);
     if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-const estimateSynthetixTxAction = (fromAsset: Asset, toAsset: Asset, fromAmount: number, clientAddress: string) => {
+const estimateSynthetixTxAction = (fromAsset: Asset, toAsset: Asset, fromAmount: string, clientAddress: string) => {
   return async (dispatch: Dispatch) => {
     const offer = await getSynthetixOffer(fromAsset, toAsset, fromAmount, clientAddress);
     if (offer) dispatch({ type: ADD_OFFER, payload: offer });
   };
 };
 
-export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: number) => {
+export const searchOffersAction = (fromAssetCode: string, toAssetCode: string, fromAmount: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       exchange: { exchangeSupportedAssets },

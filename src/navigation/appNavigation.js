@@ -1001,6 +1001,7 @@ class AppFlow extends React.Component<Props, State> {
 
     notifications
       .slice(prevNotifications.length)
+      // $FlowFixMe: flow update to 0.122
       .forEach(notification => Toast.show({ ...notification }));
   }
 
