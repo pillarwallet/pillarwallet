@@ -19,7 +19,7 @@
 */
 
 import React from 'react';
-import styled from 'styled-components/native';
+import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -30,6 +30,11 @@ import { FlatList, RefreshControl } from 'react-native';
 import { AVAILABLE_DATASETS } from 'screens/OceanMarket/mocks';
 import { Row } from 'components/Grid';
 import Button from 'components/Button';
+import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
+import type { LiquidityPool } from 'models/LiquidityPools';
+import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
+import { fetchOceanMarketDataSetsAction } from 'actions/oceanMarketActions';
+import { connect } from 'react-redux';
 
 
 type Props = {
@@ -70,17 +75,13 @@ const Image = styled.Image`
   resize-mode: contain;
 `;
 
-const Header = styled.View`
-  
-`;
+const Header = styled.View``;
 
 const DataSetItemTitle = styled(MediumText)`
   flex: 1;
 `;
 
-const OceanMarketScreen = ({
-  navigation,
-}: Props) => {
+const OceanMarketScreen = () => {
   const renderDataSetListItem = ({ item }) => (
     <DataSetItemContainer>
       <Image source={dataSetActive} />
@@ -139,4 +140,13 @@ const OceanMarketScreen = ({
   );
 };
 
-export default OceanMarketScreen;
+const mapStateToProps = ({ oceanMarket: { isFetching, dataSets } }: RootReducerState): $Shape<Props> => ({
+  isFetching,
+  dataSets,
+});
+
+const mapDispatchToProps = {
+  fetchOceanMarketDataSetsAction,
+};
+
+export default withTheme(connect(mapStateToProps, mapDispatchToProps)(OceanMarketScreen));
