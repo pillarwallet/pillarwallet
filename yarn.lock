@@ -5099,10 +5099,10 @@ clamp@^1.0.1:
   version "1.0.1"
   resolved "https://registry.yarnpkg.com/clamp/-/clamp-1.0.1.tgz#66a0e64011816e37196828fdc8c8c147312c8634"
 
-class-transformer@0.2.3:
-  version "0.2.3"
-  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.2.3.tgz#598c92ca71dcca73f91ccb875d74a3847ccfa32d"
-  integrity sha512-qsP+0xoavpOlJHuYsQJsN58HXSl8Jvveo+T37rEvCEeRfMWoytAyR0Ua/YsFgpM6AZYZ/og2PJwArwzJl1aXtQ==
+class-transformer@0.3.2:
+  version "0.3.2"
+  resolved "https://registry.yarnpkg.com/class-transformer/-/class-transformer-0.3.2.tgz#779ef5f124784324b40f8e927c774bd96cdecd4b"
+  integrity sha512-9QY6QXBH/+Gt1C3HBmJCrgY6+EFpIa6aLjfDnlXFx0zQl/HjrCE7qoaI0srNrxpMIfsobCpgUdDG5JYtJOpVsw==
 
 class-utils@^0.3.5:
   version "0.3.6"
@@ -5606,7 +5606,14 @@ create-react-context@0.3.0, create-react-context@^0.3.0:
     gud "^1.0.0"
     warning "^4.0.3"
 
-cross-fetch@3.0.4, cross-fetch@^3.0.2:
+cross-fetch@3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.6.tgz#3a4040bc8941e653e0e9cf17f29ebcd177d3365c"
+  integrity sha512-KBPUbqgFjzWlVcURG+Svp9TlhA5uliYtiNx/0r8nv0pdypeQCRJ9IaSIc3q/x3q8t3F75cHuwxVql1HFGHCNJQ==
+  dependencies:
+    node-fetch "2.6.1"
+
+cross-fetch@^3.0.2:
   version "3.0.4"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.0.4.tgz#7bef7020207e684a7638ef5f2f698e24d9eb283c"
   dependencies:
@@ -7114,16 +7121,16 @@ ethers@5.0.19:
     "@ethersproject/web" "5.0.9"
     "@ethersproject/wordlists" "5.0.5"
 
-etherspot@1.0.0-rc.1:
-  version "1.0.0-rc.1"
-  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.0.0-rc.1.tgz#3275b94a6c3c8094ed61ea67893711320f243ccd"
-  integrity sha512-9QuZF8E/0tyM3f+UHe3tIHxR8/C9XBUIM+blSGHbPe4X30hmguHbSOHWdCaWSF2KodMGsCNXFoifM/IjtqY7VQ==
+etherspot@1.0.0-rc.3:
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/etherspot/-/etherspot-1.0.0-rc.3.tgz#d341dd581fbf9d730b5665ac5eee4680af3293d2"
+  integrity sha512-LXnXuPg4F6AjmpbVM5fIDvbkNQDR+9bFZnue7XVObMUMoLpvkBhI/ckz+gNqg3zGWZtojalDwBbvMYkoTAsDuw==
   dependencies:
     "@apollo/client" "3.1.3"
     "@etherspot/contracts" "1.0.0-rc.1"
-    class-transformer "0.2.3"
+    class-transformer "0.3.2"
     class-validator "0.12.2"
-    cross-fetch "3.0.4"
+    cross-fetch "3.0.6"
     ethers-typed-data "0.1.0"
     graphql "15.3.0"
     subscriptions-transport-ws "0.9.17"
@@ -12123,6 +12130,11 @@ node-fetch-npm@^2.0.2:
 node-fetch@2.6.0, node-fetch@^2.0.0-alpha.8, node-fetch@^2.2.0, node-fetch@^2.5.0, node-fetch@^2.6.0:
   version "2.6.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.0.tgz#e633456386d4aa55863f676a7ab0daa8fdecb0fd"
+
+node-fetch@2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
+  integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
 node-fetch@^1.0.1:
   version "1.7.3"

@@ -751,6 +751,7 @@ workflows:
           filters:
             branches:
               ignore:
+                - feature/etherspot-transactions
                 - develop
                 - master
 
