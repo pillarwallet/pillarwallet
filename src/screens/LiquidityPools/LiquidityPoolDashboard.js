@@ -448,6 +448,7 @@ const LiquidityPoolDashboard = ({
 };
 
 const mapStateToProps = ({
+  appSettings: { data: { baseFiatCurrency } },
   liquidityPools: {
     isFetchingLiquidityPoolsData,
     poolDataGraphQueryFailed,
@@ -457,6 +458,7 @@ const mapStateToProps = ({
   liquidityPools: liquidityPoolsReducer,
   rates: { data: rates },
 }: RootReducerState): $Shape<Props> => ({
+  baseFiatCurrency,
   isFetchingLiquidityPoolsData,
   poolDataGraphQueryFailed,
   supportedAssets,
