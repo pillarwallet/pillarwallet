@@ -254,11 +254,11 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
   return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
 };
 
-export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string) => {
+export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };
 
-export const isSupportedAssetSymbol = (supportedAssets: Asset[], symbolToCheck: ?string) => {
+export const isSupportedAssetSymbol = (supportedAssets: Asset[], symbolToCheck: ?string): boolean => {
   return supportedAssets.some((asset: Asset) => asset.symbol === symbolToCheck);
 };
 
