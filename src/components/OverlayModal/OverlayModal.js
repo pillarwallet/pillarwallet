@@ -54,7 +54,7 @@ const ModalTitle = styled(BaseText)`
 
 const ModalMessage = styled(BaseText)`
   ${fontStyles.medium};
-  line-height: 26;
+  line-height: 26px;
   color: ${baseColors.white};
 `;
 

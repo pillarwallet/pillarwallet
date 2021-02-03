@@ -58,7 +58,7 @@ color: ${themedColors.secondaryText};
 const SmallTitle = styled(BaseText)`
   font-size: ${fontSizes.regular};
   margin-bottom: 5;
-  line-height: ${fontSizes.regular};
+  line-height: ${fontSizes.regular}px;
 `;
 
 const InnerBox = styled.View`

@@ -137,7 +137,7 @@ const FieldWrapper = styled.View`
 const FieldIcon = styled(CachedImage)`
   width: 48px;
   height: 48px;
-  margin-top: ${({ marginTop }) => marginTop || 0};
+  margin-top: ${({ marginTop }) => marginTop || 0}px;
 `;
 
 const DescriptionWrapper = styled.View`

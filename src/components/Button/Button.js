@@ -196,10 +196,10 @@ const ButtonWrapper = styled.TouchableOpacity`
   padding: 0 ${props => getButtonPadding(props)};
   background-color: ${backgroundColor};
   opacity: ${props => getButtonOpacity(props)};
-  margin-top: ${props => props.marginTop || '0px'};
-  margin-bottom: ${props => props.marginBottom || '0px'};
-  margin-left: ${props => props.marginLeft || '0px'};
-  margin-right: ${props => props.marginRight || '0px'};
+  margin-top: ${props => props.marginTop || 0}px;
+  margin-bottom: ${props => props.marginBottom || 0}px;
+  margin-left: ${props => props.marginLeft || 0}px;
+  margin-right: ${props => props.marginRight || 0}px;
   border-radius: ${({ borderRadius }) => borderRadius}px;
   ${props => getButtonWidth(props)};
   height: ${props => getButtonHeight(props)};
