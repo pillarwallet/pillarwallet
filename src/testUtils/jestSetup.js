@@ -245,6 +245,8 @@ jest.setMock('react-native-cached-image', {
   CachedImage: () => null,
 });
 
+jest.setMock('react-native-fast-image', () => null);
+
 export const mockSmartWalletAccountApiData = {
   id: 123,
   address: '0x0',
