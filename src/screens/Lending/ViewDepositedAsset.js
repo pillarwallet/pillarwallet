@@ -19,7 +19,6 @@
 */
 import React from 'react';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -33,6 +32,7 @@ import { fetchDepositedAssetAction } from 'actions/lendingActions';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { RefreshControl } from 'react-native';
+import Image from 'components/Image';
 import { ScrollWrapper } from 'components/Layout';
 import { BaseText, MediumText, TextLink } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
@@ -191,12 +191,12 @@ const ViewDepositedAsset = ({
           </InterestRate>
         </CurrentInterestRate>
         <ImagesWrapper>
-          <CachedImage
+          <Image
             style={{ width: 48, height: 48, marginRight: -80 }}
             source={aaveImage}
             resizeMode="contain"
           />
-          <CachedImage
+          <Image
             style={{ width: 48, height: 48 }}
             source={{ uri: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '' }}
             resizeMode="contain"

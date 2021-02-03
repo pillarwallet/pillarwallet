@@ -22,10 +22,10 @@
 import React from 'react';
 import { storiesOf } from '@storybook/react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import { BaseText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 
 import { themedColors, defaultTheme } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
@@ -88,7 +88,7 @@ const LText = styled(BaseText)`
 `;
 
 const SourceImage = ({ source }) => (
-  <CachedImage
+  <Image
     source={source}
     style={{
       width: 64,

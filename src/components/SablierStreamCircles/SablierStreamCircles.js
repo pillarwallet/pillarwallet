@@ -22,7 +22,6 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { MediumText } from 'components/Typography';
@@ -64,7 +63,7 @@ const CirclesWrapper = styled.View`
   align-items: center;
 `;
 
-const TokenIcon = styled(CachedImage)`
+const TokenIcon = styled(Image)`
   width: 49px;
   height: 49px;
 `;

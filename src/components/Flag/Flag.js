@@ -19,7 +19,7 @@
 */
 /* eslint-disable global-require */
 import React from 'react';
-import { CachedImage } from 'react-native-cached-image';
+import Image from 'components/Image';
 
 
 type Props = {
@@ -296,7 +296,7 @@ const Flag = (props: Props) => {
   if (!flag) {
     return null;
   }
-  return <CachedImage source={flag} style={{ width, height, borderRadius: radius }} />;
+  return <Image source={flag} style={{ width, height, borderRadius: radius }} />;
 };
 
 export default Flag;

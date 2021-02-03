@@ -20,7 +20,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
@@ -36,6 +35,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import AssetPattern from 'components/AssetPattern';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';
 import Progress from 'components/Progress';
@@ -110,12 +110,12 @@ const StretchedRow = styled(Row)`
   justify-content: space-between;
 `;
 
-const CardIcon = styled(CachedImage)`
+const CardIcon = styled(Image)`
   width: 48px;
   height: 48px;
 `;
 
-const AllocationIcon = styled(CachedImage)`
+const AllocationIcon = styled(Image)`
   width: 24px;
   height: 24px;
 `;
