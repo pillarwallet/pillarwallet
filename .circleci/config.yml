@@ -510,6 +510,10 @@ jobs:
       - *save_pod_cache
 
       - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
+      - run:
           no_output_timeout: 20m
           name: Upload to TestFlight
           command: |
@@ -743,7 +747,6 @@ workflows:
               ignore:
                 - develop
                 - master
-                - fix/2fa-pipeline-apple-issue
                 
   build_and_deploy_appcenter:
     jobs:
@@ -752,14 +755,14 @@ workflows:
           filters:
             branches:
               only:
-                - fix/2fa-pipeline-apple-issue
+                - develop
       - appcenter_ios:
           requires:
             - build-and-test
           filters:
             branches:
               only:
-                - fix/2fa-pipeline-apple-issue
+                - develop
       - appcenter_android:
           context: docker-hub-creds
           requires:
