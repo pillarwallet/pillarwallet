@@ -77,7 +77,7 @@ import type { WBTCFeesRaw, WBTCFeesWithRate } from 'models/WBTC';
 import ExchangeIntroModal from './ExchangeIntroModal';
 import ExchangeOffers from './ExchangeOffers';
 import {
-  validateInput,
+  shouldResetAndTriggerSearch,
   getBestAmountToBuy,
   provideOptions,
   getHeaderRightItems,
@@ -94,7 +94,7 @@ type Props = {
   baseFiatCurrency: ?string,
   user: Object,
   assets: Assets,
-  searchOffers: (string, string, number) => void,
+  searchOffers: (string, string, string) => void,
   balances: Balances,
   resetOffers: () => void,
   exchangeSearchRequest: ExchangeSearchRequest,
@@ -198,8 +198,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       fromAsset, toAsset, fromAmount, isFormValid,
     } = this.state;
     const {
-      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount,
+      fromAsset: prevFromAsset, toAsset: prevToAsset, fromAmount: prevFromAmount, isFormValid: prevIsFormValid,
     } = prevState;
+
+    if (!prevIsFormValid && isFormValid) this.resetSearch();
 
     // update from and to options when (supported) assets changes or user selects an option
     if (assets !== prevProps.assets || exchangeSupportedAssets !== prevProps.exchangeSupportedAssets
@@ -215,17 +217,10 @@ class ExchangeScreen extends React.Component<Props, State> {
       setTimeout(this.focusInputWithKeyboard, 300);
     }
 
-    if (
-      // access token has changed, init search again
-      (prevProps.oAuthAccessToken !== oAuthAccessToken) ||
-      // valid input provided or asset changed
-      ((
-        fromAsset !== prevFromAsset ||
-        toAsset !== prevToAsset ||
-        fromAmount !== prevFromAmount) &&
-        isFormValid &&
-        validateInput(fromAmount, fromAsset, toAsset))
-    ) {
+    const { oAuthAccessToken: prevAccessToken } = prevProps;
+    if (shouldResetAndTriggerSearch(
+      fromAmount, prevFromAmount, fromAsset, prevFromAsset, toAsset, prevToAsset, oAuthAccessToken, prevAccessToken,
+    )) {
       this.resetSearch();
       this.triggerSearch();
     }
@@ -361,11 +356,9 @@ class ExchangeScreen extends React.Component<Props, State> {
     const { fromAmount, fromAsset, toAsset } = this.state;
     const { symbol: from } = fromAsset;
     const { symbol: to } = toAsset;
-    const amount = parseFloat(fromAmount);
-    if (!from || !to || !amount || !shouldTriggerSearch(fromAsset, toAsset, amount)) return;
+    if (!from || !to || !fromAmount || !shouldTriggerSearch(fromAsset, toAsset, fromAmount)) return;
     this.setState({ isSubmitted: true });
-    searchOffers(from, to, amount);
-
+    searchOffers(from, to, fromAmount);
     this.emptyMessageTimeout = setTimeout(() => this.setState({ showEmptyMessage: true }), 5000);
   };
 

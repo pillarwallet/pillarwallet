@@ -35,7 +35,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { convertUSDToFiat } from 'utils/assets';
+import { findSupportedAsset, convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
@@ -271,7 +271,7 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
-    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
+    const poolToken = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
     if (!poolToken) return null;
     const balance = poolStats.userLiquidityTokenBalance;
 
@@ -303,11 +303,6 @@ const LiquidityPoolsScreen = ({
     );
   };
 
-  const isAvailablePool = (pool: LiquidityPool, index: number) => {
-    const poolStats = poolsStats[index];
-    return poolStats && poolStats.userLiquidityTokenBalance === 0 && poolStats.stakedAmount === 0;
-  };
-
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
     return poolStats && poolStats.userLiquidityTokenBalance > 0 && poolStats.stakedAmount === 0;
@@ -327,7 +322,7 @@ const LiquidityPoolsScreen = ({
     let items;
     if (activeTab === TABS.AVAILABLE) {
       renderFunction = renderAvailablePool;
-      items = LIQUIDITY_POOLS().filter(isAvailablePool);
+      items = LIQUIDITY_POOLS();
     } else if (activeTab === TABS.PURCHASED) {
       renderFunction = renderPurchasedPool;
       items = LIQUIDITY_POOLS().filter(isPurchasedPool);

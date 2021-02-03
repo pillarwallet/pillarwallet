@@ -165,6 +165,7 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
+import { checkSmartWalletSessionAction } from 'actions/smartWalletActions';
 
 // constants
 import {
@@ -334,6 +335,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 
 
 const SLEEP_TIMEOUT = 20000;
+const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
@@ -889,6 +891,7 @@ type Props = {
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
   isFinishingOnboarding: boolean,
+  checkSmartWalletSession: () => void,
 };
 
 type State = {
@@ -896,6 +899,7 @@ type State = {
 };
 
 let lockTimer;
+let smartWalletSessionCheckInterval;
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -912,6 +916,7 @@ class AppFlow extends React.Component<Props, State> {
       initWalletConnect,
       backupStatus,
       user,
+      checkSmartWalletSession,
     } = this.props;
 
     /**
@@ -926,6 +931,11 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
+
+    smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
+      checkSmartWalletSession,
+      SMART_WALLET_SESSION_CHECK_INTERVAL,
+    );
 
     if (!user?.walletId) {
       this.checkIfOnboardingFinished();
@@ -962,6 +972,7 @@ class AppFlow extends React.Component<Props, State> {
 
     notifications
       .slice(prevNotifications.length)
+      // $FlowFixMe: flow update to 0.122
       .forEach(notification => Toast.show({ ...notification }));
   }
 
@@ -978,6 +989,7 @@ class AppFlow extends React.Component<Props, State> {
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
+    BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
 
   checkIfOnboardingFinished = () => {
@@ -1015,6 +1027,7 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
+      checkSmartWalletSession,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -1031,6 +1044,7 @@ class AppFlow extends React.Component<Props, State> {
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
+      checkSmartWalletSession();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -1159,6 +1173,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
+  checkSmartWalletSession: () => dispatch(checkSmartWalletSessionAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

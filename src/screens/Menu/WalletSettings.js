@@ -37,6 +37,7 @@ import {
   RECOVERY_PORTAL_SETUP_SIGN_UP,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -55,6 +56,9 @@ import type { Theme } from 'models/Theme';
 
 // selectors
 import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // relative
 import { SettingsSection } from './SettingsSection';
@@ -96,6 +100,8 @@ const showFaceIDFailedMessage = () => {
   });
 };
 
+let isRecoveryPortalDisabled = false;
+
 class WalletSettings extends React.Component<Props, State> {
   state = {
     supportedBiometryType: null,
@@ -111,6 +117,7 @@ class WalletSettings extends React.Component<Props, State> {
       this.setState({ supportedBiometryType });
     });
     this.retrieveWalletObject();
+    isRecoveryPortalDisabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED);
   }
 
   retrieveWalletObject = async () => {
@@ -148,7 +155,7 @@ class WalletSettings extends React.Component<Props, State> {
       ? RECOVERY_PORTAL_SETUP_SIGN_UP
       : RECOVERY_PORTAL_SETUP_INTRO;
 
-    return [
+    const settings = [
       {
         key: 'changePIN',
         title: t('settingsContent.settingsItem.changePIN.title'),
@@ -169,14 +176,19 @@ class WalletSettings extends React.Component<Props, State> {
         value: !omitPinOnLogin,
         toggle: true,
       },
-      {
+    ];
+
+    if (!isRecoveryPortalDisabled) {
+      settings.push({
         key: 'recoveryPortal',
         title: t('settingsContent.settingsItem.recoveryPortal.title'),
         subtitle: recoveryPortalSubtitle,
         disabled: !isSmartWalletActivated,
         onPress: () => isSmartWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
-      },
-    ];
+      });
+    }
+
+    return settings;
   };
 
   handleBiometricPress = async () => {
@@ -191,6 +203,7 @@ class WalletSettings extends React.Component<Props, State> {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
         .then((status) => {
           if (status === RESULTS.GRANTED) {
+            // $FlowFixMe: flow update to 0.122
             changeUseBiometrics(!useBiometrics, { ...wallet, pin });
             return;
           }
@@ -200,6 +213,7 @@ class WalletSettings extends React.Component<Props, State> {
       return;
     }
 
+    // $FlowFixMe: flow update to 0.122
     changeUseBiometrics(!useBiometrics, { ...wallet, pin });
   };
 

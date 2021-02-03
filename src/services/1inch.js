@@ -26,7 +26,6 @@ import { getEnv } from 'configs/envConfig';
 // utils
 import {
   getEthereumProvider,
-  convertToNominalUnits,
   reportLog,
   reportErrorLog,
 } from 'utils/common';
@@ -35,6 +34,7 @@ import {
   get1inchCommonUrlParams,
   getResponseData,
   parseAssets,
+  parseTokenAmount,
 } from 'utils/1inch';
 import { parseOffer, createAllowanceTx } from 'utils/exchange';
 
@@ -89,7 +89,7 @@ const getAllowanceSet = async (clientAddress: string, safeFromAddress: string, f
 export const get1inchOffer = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientAddress: string,
 ): Promise<Offer | null> => {
   const [fromAssetParsed, toAssetParsed] = parseAssets([fromAsset, toAsset]);
@@ -102,22 +102,14 @@ export const get1inchOffer = async (
   const response = await getResponseData(url, 'Failed to fetch 1inch offer');
   if (!response) return null;
 
-  const toTokenAmount = convertToNominalUnits(
-    new BigNumber(toAssetParsed.decimals),
-    new BigNumber(response.toTokenAmount),
-  );
+  const toTokenAmount = parseTokenAmount(toAssetParsed.decimals, response.toTokenAmount);
+  const fromTokenAmount = parseTokenAmount(fromAssetParsed.decimals, response.fromTokenAmount);
+  const askRate = toTokenAmount.dividedBy(fromTokenAmount);
 
   // rate from target amount to zero means no pair available
   if (toTokenAmount.isZero()) return null;
 
   const allowanceSet = await getAllowanceSet(clientAddress, safeFromAddress, fromAssetParsed);
-
-  const fromTokenAmount = convertToNominalUnits(
-    new BigNumber(fromAssetParsed.decimals),
-    new BigNumber(response.fromTokenAmount),
-  );
-
-  const askRate = toTokenAmount.dividedBy(fromTokenAmount);
 
   return parseOffer(fromAssetParsed, toAssetParsed, allowanceSet, askRate.toFixed(), PROVIDER_1INCH);
 };
@@ -125,7 +117,7 @@ export const get1inchOffer = async (
 export const create1inchOrder = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientSendAddress: string,
 ): Promise<Object> => {
   const { amount, safeToAddress, safeFromAddress } = get1inchCommonUrlParams(fromAsset, toAsset, quantity);
@@ -143,9 +135,12 @@ export const create1inchOrder = async (
 
   const { data, to, value } = response.tx;
 
+  const toTokenAmount = parseTokenAmount(toAsset.decimals, response.toTokenAmount);
+
   return {
     orderId: '-',
     sendToAddress: to,
+    expectedOutput: toTokenAmount.toString(),
     transactionObj: {
       data,
       to,

@@ -80,13 +80,13 @@ export const LIQUIDITY_POOLS = () => getEnv().ENVIRONMENT === STAGING ?
         { symbol: 'PLR', proportion: 0.5, progressBarColor: '#00ff24' },
       ],
       rewards: [
-        { symbol: 'PLR', amount: 29999 },
+        { symbol: 'PLR', amount: 0 },
       ],
       uniswapPairAddress: '0x025d34acfd5c65cfd5a73209f99608c9e13338f3',
       unipoolAddress: '0x71B4A17E4254F85420B06bC55f431A5EEb97E7fB',
       unipoolSubgraphName: 'graszka22/unipool-plr-dai',
-      iconUrl: 'asset/images/tokens/icons/ethplruniColor.png',
-      rewardsEnabled: true,
+      iconUrl: 'asset/images/tokens/icons/daiplrColor.png',
+      rewardsEnabled: false,
     },
   ];
 

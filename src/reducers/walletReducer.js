@@ -88,6 +88,7 @@ const walletReducer = (
     case REMOVE_WALLET_PRIVATE_KEY:
       return {
         ...state,
+        // $FlowFixMe: flow update to 0.122
         data: { ...state.data, privateKey: null },
       };
     case UPDATE_PIN_ATTEMPTS:

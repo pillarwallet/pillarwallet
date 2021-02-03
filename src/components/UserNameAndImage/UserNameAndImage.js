@@ -66,6 +66,7 @@ const UserNameAndImage = (props: Props) => {
   const userImageUri = profileImage ? `${profileImage}?t=${lastUpdateTime || 0}` : null;
   return (
     <UserWrapper onPress={() => navigation.navigate(MANAGE_USERS_FLOW)}>
+      {/* $FlowFixMe: flow update to 0.122 */}
       <ProfileImage
         uri={userImageUri}
         userName={username}

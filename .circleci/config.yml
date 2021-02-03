@@ -9,13 +9,14 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "11.5.0"
+      xcode: "12.3.0"
     resource_class: medium
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+      HOMEBREW_NO_AUTO_UPDATE: 1
 
     shell: /bin/bash --login -o pipefail
 
@@ -199,22 +200,11 @@ aliases:
       paths:
         - ~/android/.gradle
         - ~/android/.m2
-  - &homebrew_save_cache
-    save_cache:
-      name: Save homebrew cache
-      key: homebrew-packages-v1
-      paths:
-        - /usr/local/Homebrew
   - &homebrew_install
     run:
       name: Install coureutils
       command: |
         brew install coreutils
-  - &homebrew_restore_cache
-    restore_cache:
-      name: Restore homebrew cache
-      keys:
-        - homebrew-packages-v1
 
 jobs:
 
@@ -264,9 +254,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
 
-      - *homebrew_restore_cache
       - *homebrew_install
-      - *homebrew_save_cache
 
       - *node_restore_cache
 
@@ -426,10 +414,8 @@ jobs:
       - run:
           name: Fetch semtag and bump tag
           command: |
-            curl -o semtag https://raw.githubusercontent.com/pnikosis/semtag/v0.0.9/semtag
-            chmod +x semtag
-            SEMVER_TAG=$(git log -1  --pretty='%s' | awk 'NF>1{print $NF}' | cut -d'#' -f2 | tr '[:upper:]' '[:lower:]')
-            bash semtag final -s $SEMVER_TAG
+            chmod +x .circleci/semtag.sh
+            bash .circleci/semtag.sh
 
   get-latest-tag:
     executor: python3-alpine-executor
@@ -472,9 +458,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
 
-      - *homebrew_restore_cache
       - *homebrew_install
-      - *homebrew_save_cache
 
       - run:
           name: Set production environment
@@ -763,7 +747,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop 
+                - develop
       - appcenter_ios:
           requires:
             - build-and-test

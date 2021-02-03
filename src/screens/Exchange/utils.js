@@ -29,6 +29,7 @@ import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constant
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
 import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
+import { calculateAmountToBuy } from 'utils/exchange';
 import t from 'translations/translate';
 
 import type { NavigationScreenProp } from 'react-navigation';
@@ -79,10 +80,6 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
     return `${formatMoney(min || max, 2)}`;
   }
   return `${formatMoney(min, 2)} - ${formatMoney(max, 2)}`;
-};
-
-export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
-  return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
 };
 
 export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string => {
@@ -200,12 +197,24 @@ export const getHeaderRightItems = (
   return rightItems;
 };
 
-const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number) => Number(assetBalance) >= Number(amount);
+const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
+  try {
+    const amountBN = new BigNumber(amount);
+    const balanceBN = new BigNumber(assetBalance);
+    // assetBalance is fixed to 6 digits and amount is not, so usually amount will be technically higher
+    // fix and round both down to 6 to get meaningful info
+    const amountFixed = amountBN.toFixed(6, 1);
+    const balanceFixed = balanceBN.toFixed(6, 1);
+    return new BigNumber(balanceFixed).isGreaterThanOrEqualTo(new BigNumber(amountFixed));
+  } catch {
+    return false;
+  }
+};
 
 export const shouldTriggerSearch = (
   fromAsset: Option,
   toAsset: Option,
-  fromAmount: number,
+  fromAmount: string,
 ) => !!+fromAmount && fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 
 export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
@@ -219,3 +228,24 @@ export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accou
 
 export const getToOption =
   (symbol: string, options: ExchangeOptions): Option => options.toOptions.find(a => a.value === symbol) || {};
+
+export const shouldResetAndTriggerSearch = (
+  fromAmount: string,
+  prevFromAmount: string,
+  fromAsset: Option,
+  prevFromAsset: Option,
+  toAsset: Option,
+  prevToAsset: Option,
+  accessToken: ?string,
+  prevAccesToken: ?string,
+): boolean => {
+  // access token has changed, init search again
+  return (prevAccesToken !== accessToken) ||
+  // valid input provided or asset changed
+  ((
+    fromAsset !== prevFromAsset ||
+    toAsset !== prevToAsset ||
+    fromAmount !== prevFromAmount) &&
+    validateInput(fromAmount, fromAsset, toAsset) &&
+    shouldTriggerSearch(fromAsset, toAsset, fromAmount));
+};

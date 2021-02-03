@@ -17,24 +17,11 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import urlTools from 'url';
-import isEmpty from 'lodash.isempty';
 
-const allowedDeepLinkProtocols = ['pillarwallet:', 'wc:']; // eslint-disable-line i18next/no-literal-string
+/* eslint-disable i18next/no-literal-string */
 
-type ParsedDeepLink = {
-  action?: string,
-  query?: Object,
-  protocol?: string,
-}
-
-export const validateDeepLink = (url: string): ParsedDeepLink => {
-  if (!url || typeof url !== 'string') return {};
-  const params = urlTools.parse(url, true);
-  if (isEmpty(params)) return {};
-  const { protocol } = params;
-  if (!allowedDeepLinkProtocols.includes(protocol)) return {};
-  const { host: action, query = {} } = params;
-  // $FlowFixMe: flow update to 0.122
-  return { action, query, protocol };
-};
+export const blockedTokenAddresses = [
+  '0xe3818504c1b32bf1557b16c238b2e01fd3149c17', // PLR
+  '0xae2d4004241254aed3f93873604d39883c8259f0', // PLR/ETH
+  '0x025d34acfd5c65cfd5a73209f99608c9e13338f3', // PLR/DAI
+];

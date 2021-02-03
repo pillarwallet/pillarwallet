@@ -45,6 +45,7 @@ export const setRatesAction = (newRates: Rates) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (isEmpty(newRates)) return;
     const { rates: { data: currentRates = {} } } = getState();
+    // $FlowFixMe: flow update to 0.122
     const rates = { ...currentRates, ...newRates };
     dispatch(saveDbAction('rates', { rates }, true));
     dispatch({ type: UPDATE_RATES, payload: rates });

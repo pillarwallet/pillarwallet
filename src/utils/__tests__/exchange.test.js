@@ -17,7 +17,9 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import { isFiatCurrency } from 'utils/exchange';
+import {
+  isFiatCurrency, isAmountToSellAboveMax, isAmountToSellBelowMin, calculateAmountToBuy, getFixedQuantity,
+} from 'utils/exchange';
 import { validateInput, shouldTriggerSearch, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 const assetEth = { value: 'ETH', assetBalance: '42.42', name: 'Ethereum' };
@@ -39,9 +41,9 @@ describe('Exchange Utility function tests', () => {
     expect(validateInput('10', null, assetPlr)).toBeFalsy();
   });
   it('Should trigger search under certain conditions', () => {
-    expect(shouldTriggerSearch(assetEth, assetPlr, 10)).toBeTruthy();
-    expect(shouldTriggerSearch(assetEth, assetEth, 10)).toBeFalsy();
-    expect(shouldTriggerSearch(assetPlr, assetEth, 10)).toBeFalsy();
+    expect(shouldTriggerSearch(assetEth, assetPlr, '10')).toBeTruthy();
+    expect(shouldTriggerSearch(assetEth, assetEth, '10')).toBeFalsy();
+    expect(shouldTriggerSearch(assetPlr, assetEth, '10')).toBeFalsy();
   });
   it('Should get asset balance from fiat amount', () => {
     const rates = { PLR: { USD: 10.0, GBP: 20.0 } };
@@ -52,5 +54,30 @@ describe('Exchange Utility function tests', () => {
     expect(getAssetBalanceFromFiat('USD', 0, rates, 'PLR')).toBe(0);
     expect(getAssetBalanceFromFiat('USD', 0, rates, 'error')).toBe(0);
     expect(getAssetBalanceFromFiat('USD', 'error', rates, 'PLR')).toBe(0);
+  });
+  it('Checks if amount to sell is below min', () => {
+    expect(isAmountToSellBelowMin('10', '8')).toBeTruthy();
+    expect(isAmountToSellBelowMin('8', '10')).toBeFalsy();
+    expect(isAmountToSellBelowMin('8', '8')).toBeFalsy();
+    expect(isAmountToSellBelowMin('0', '420')).toBeFalsy();
+  });
+  it('Checks if amount to sell is above max', () => {
+    expect(isAmountToSellAboveMax('10', '11')).toBeTruthy();
+    expect(isAmountToSellAboveMax('11', '10')).toBeFalsy();
+    expect(isAmountToSellAboveMax('10', '10')).toBeFalsy();
+    expect(isAmountToSellAboveMax('0.000000', '10')).toBeFalsy();
+  });
+  it('Calculates amount to buy from askRate', () => {
+    expect(calculateAmountToBuy(10, '20')).toEqual('200');
+    expect(calculateAmountToBuy('0.1', '20')).toEqual('2');
+    expect(calculateAmountToBuy(0.00001, '2')).toEqual('0.00002');
+    expect(calculateAmountToBuy(0.000000000000000000001, '2')).toEqual('0.000000000000000000002');
+  });
+  it('Gets correct fixed quantity', () => {
+    expect(getFixedQuantity('100.100', 18)).toEqual('100.100');
+    // maaaany decimals, expect rounding down to 18 decimals
+    expect(getFixedQuantity('100.1111111111111111119999999')).toEqual('100.111111111111111111');
+    expect(getFixedQuantity('100.111111111111111119999999')).toEqual('100.111111111111111119');
+    expect(getFixedQuantity('100.11111111111111111111119999999', 8)).toEqual('100.11111111');
   });
 });

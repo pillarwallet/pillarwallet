@@ -40,7 +40,7 @@ import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationCon
 
 // utils
 import { formatAmount } from 'utils/common';
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalRemoveLiquidityAssetValues } from 'utils/liquidityPools';
 
 // selectors
@@ -123,7 +123,7 @@ const AddLiquidityScreen = ({
   const tokensData = pool.tokensProportions
     .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
 
-  const poolTokenData = supportedAssets.find(asset => asset.symbol === pool.symbol);
+  const poolTokenData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (
@@ -191,6 +191,7 @@ const AddLiquidityScreen = ({
     return (
       <ValueInput
         assetData={tokensData[tokenIndex]}
+        customAssets={[tokensData[tokenIndex]]}
         value={obtainedAssetsValues[tokenIndex]}
         onValueChange={(newValue: string) => onObtainedAssetValueChange(newValue, tokenIndex)}
         onFormValid={(isValid: boolean) => {
@@ -282,6 +283,7 @@ const AddLiquidityScreen = ({
       <MainContainer>
         <ValueInput
           assetData={poolTokenData}
+          customAssets={[poolTokenData]}
           value={poolTokenAmount}
           onValueChange={onPoolTokenAmountChange}
           onFormValid={setPoolTokenFieldValid}

@@ -1,6 +1,6 @@
 {
   "name": "pillarwallet",
-  "version": "2.30.2",
+  "version": "2.31.0",
   "private": true,
   "scripts": {
     "start": "react-native start",
@@ -174,6 +174,7 @@
     "tcomb-form-native": "^0.6.11",
     "timers-browserify": "^1.0.1",
     "url": "~0.10.1",
+    "use-debounce": "^5.2.0",
     "util": "~0.10.3",
     "uuid": "^3.3.2",
     "vm-browserify": "0.0.4",
@@ -210,7 +211,7 @@
     "eslint-plugin-promise": "^3.7.0",
     "eslint-plugin-react": "^7.7.0",
     "eslint-plugin-react-native": "^3.2.1",
-    "flow-bin": "^0.105.0",
+    "flow-bin": "^0.122.0",
     "invariant": "^2.2.4",
     "jest": "^25.1.0",
     "jest-html-reporter": "^2.8.2",

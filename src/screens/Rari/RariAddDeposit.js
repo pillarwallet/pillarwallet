@@ -23,7 +23,10 @@ import styled from 'styled-components/native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import debounce from 'lodash.debounce';
+import { useDebounce } from 'use-debounce';
 import t from 'translations/translate';
+
+import { blockedTokenAddresses } from 'configs/rariConfig';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText } from 'components/Typography';
@@ -34,7 +37,7 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 import Toast from 'components/Toast';
 
 import { getRariDepositTransactionsAndExchangeFee } from 'utils/rari';
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { isEnoughBalanceForTransactionFee, addressesInclude } from 'utils/assets';
 import { reportErrorLog, formatUnits } from 'utils/common';
 
 import { calculateRariDepositTransactionEstimateAction } from 'actions/rariActions';
@@ -43,19 +46,25 @@ import { resetEstimateTransactionAction, setEstimatingTransactionAction } from '
 import { ETH } from 'constants/assetsConstants';
 import { RARI_ADD_DEPOSIT_REVIEW } from 'constants/navigationConstants';
 
-import { accountAssetsSelector } from 'selectors/assets';
+import {
+  accountAssetsSelector,
+  visibleActiveAccountAssetsWithBalanceSelector,
+} from 'selectors/assets';
 import { activeAccountAddressSelector } from 'selectors/selectors';
 import { accountBalancesSelector } from 'selectors/balances';
+
+import { NotEnoughLiquidityError } from 'services/0x';
 
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Rates, Asset, Balances, Assets } from 'models/Asset';
+import type { Option } from 'models/Selector';
 import type { RariPool } from 'models/RariPool';
-
 
 type Props = {
   assets: Assets,
+  visibleAssets: Option[],
   navigation: NavigationScreenProp<*>,
   rariApy: {[RariPool]: number},
   calculateRariDepositTransactionEstimate: (Object[]) => void,
@@ -82,8 +91,19 @@ const ValueInputWrapper = styled.View`
 `;
 
 const RariAddDepositScreen = ({
-  assets, navigation, rariApy, calculateRariDepositTransactionEstimate, supportedAssets, feeInfo,
-  isEstimating, estimateErrorMessage, resetEstimateTransaction, activeAccountAddress, rates, setEstimatingTransaction,
+  assets,
+  visibleAssets,
+  navigation,
+  rariApy,
+  calculateRariDepositTransactionEstimate,
+  supportedAssets,
+  feeInfo,
+  isEstimating,
+  estimateErrorMessage,
+  resetEstimateTransaction,
+  activeAccountAddress,
+  rates,
+  setEstimatingTransaction,
   balances,
 }: Props) => {
   useEffect(() => {
@@ -96,6 +116,8 @@ const RariAddDepositScreen = ({
   const [exchangeFeeBN, setExchangeFee] = useState(null);
   const [slippage, setSlippage] = useState(null);
   const [inputValid, setInputValid] = useState(false);
+
+  const [debouncedAssetValue] = useDebounce(assetValue, 500);
 
   const rariPool = navigation.getParam('rariPool');
 
@@ -113,6 +135,8 @@ const RariAddDepositScreen = ({
   const errorMessage = notEnoughForFee
     ? t('error.notEnoughTokenForFee', { token: feeInfo?.gasToken?.symbol || ETH })
     : estimateErrorMessage;
+
+  const customAssets = visibleAssets.filter(asset => !addressesInclude(blockedTokenAddresses, asset.address));
 
   useEffect(() => {
     if (!assetValue || !parseFloat(assetValue) || !selectedAsset) return;
@@ -133,6 +157,7 @@ const RariAddDepositScreen = ({
         setEstimatingTransaction(false);
         return;
       }
+
       const { depositTransactions, exchangeFeeBN: _exchangeFeeBN, slippage: _slippage } = txsAndExchangeFee;
       if (selectedAsset.symbol === ETH && parseFloat(formatUnits(_exchangeFeeBN, 18)) > parseFloat(assetValue)) {
         Toast.show({
@@ -156,14 +181,21 @@ const RariAddDepositScreen = ({
       setSlippage(_slippage);
       calculateRariDepositTransactionEstimate(depositTransactions);
     }).catch((error) => {
-      reportErrorLog('Rari service failed: Error creating transaction payload', { error });
-      Toast.show({
-        message: t('toast.rariServiceFailed'),
-        emoji: 'hushed',
-      });
+      if (error instanceof NotEnoughLiquidityError) {
+        Toast.show({
+          message: t('toast.rariNotEnoughLiquidity'),
+          emoji: 'hushed',
+        });
+      } else {
+        reportErrorLog('Rari service failed: Error creating transaction payload', { error });
+        Toast.show({
+          message: t('toast.rariServiceFailed'),
+          emoji: 'hushed',
+        });
+      }
       setEstimatingTransaction(false);
     });
-  }, [assetValue, selectedAsset]);
+  }, [debouncedAssetValue, selectedAsset]);
 
   const onNextButtonPress = () => {
     navigation.navigate(RARI_ADD_DEPOSIT_REVIEW, {
@@ -213,6 +245,7 @@ const RariAddDepositScreen = ({
     >
       <ValueInputWrapper>
         <ValueInput
+          customAssets={customAssets}
           assetData={selectedAsset}
           onAssetDataChange={setSelectedAsset}
           value={assetValue}
@@ -246,6 +279,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   assets: accountAssetsSelector,
+  visibleAssets: visibleActiveAccountAssetsWithBalanceSelector,
   activeAccountAddress: activeAccountAddressSelector,
   balances: accountBalancesSelector,
 });
