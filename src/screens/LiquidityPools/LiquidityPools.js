@@ -35,7 +35,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
 import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { convertUSDToFiat } from 'utils/assets';
+import { findSupportedAsset, convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
@@ -271,7 +271,7 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
-    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
+    const poolToken = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
     if (!poolToken) return null;
     const balance = poolStats.userLiquidityTokenBalance;
 
