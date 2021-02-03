@@ -23,9 +23,6 @@ platform :ios do
           team_id: "J9DEY3FGPD"
         )
 
-    #sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration release -scheme pillarwallet -derivedDataPath ../build"
-    #sh "mkdir -p ../build/pillarwallet/Payload && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet.ipa *"
-
     gym(
       workspace: "pillarwallet.xcworkspace",
       configuration: "Release",
@@ -45,10 +42,6 @@ platform :ios do
     # 1. Delete the expired prov. profile.
     # 2. Run match with readonly set to false in order for match to create a new Distribution certificate and a new provisioning profile.
     # When the new one is created, using match, it should be created with the same name, so we should expect no changes/problems to occure in the gym stage.
-
-    #sigh(force: true)
-
-    #sh "cd /Users/distiller/pillarwallet/ios/output/gym/ && fastlane sigh resign pillarwallet.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../../AppStore_com.pillarproject.wallet.mobileprovision'"
 
     commit = last_git_commit
     upload_to_testflight(
@@ -101,21 +94,6 @@ platform :ios do
       derived_data_path: "build"
     )
 
-    # trigger the build
-    #sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
-
-    # manually zip the results into an ipa
-    #sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
-
-    # download the signing cert
-    #sigh(
-      #app_identifier: "com.pillarproject.wallet.staging",
-      #force: true
-    #)
-
-    # apply the signing certs to the build
-    #sh "cd /Users/distiller/pillarwallet/ios/output/gym/ && fastlane sigh resign pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '../../AppStore_com.pillarproject.wallet.staging.mobileprovision'"
-
     # questions remaining:
     # 1. do we need to download certs, then build, then download more certs and re-sign? sounds like at least one step doesnt' need doing
     # 2. given that we have the process working now, should we try to shuffle the sh "xcodebuild" blocks into fast-lane speak? we shouldn't need to run anything direct from commandline
@@ -155,6 +133,13 @@ platform :ios do
     # ensure we don't have automatic code signing set up
     #disable_automatic_code_signing(path: "pillarwallet.xcodeproj")
 
+    app_store_connect_api_key(
+      key_id: ENV["APPLE_API_KEY_ID"],
+      issuer_id: ENV["APPLE_API_KEY_ISSUER_ID"],
+      key_filepath: "./AuthKey.p8",
+      in_house: false,
+    )
+
     #register_devices(devices_file: "./devices.txt")
     register_devices(
       devices_file: "./devices.txt"
@@ -168,14 +153,6 @@ platform :ios do
           team_id: "J9DEY3FGPD",
           force_for_new_devices: false
           )
-
-    # get our appstore provisioning profile
-    #match(type: "appstore",
-      #readonly: true,
-      #git_branch: "develop",
-      #app_identifier: "com.pillarproject.wallet.staging",
-      #team_id: "J9DEY3FGPD",
-    #)
 
     gym(
       workspace: "pillarwallet.xcworkspace",
@@ -195,19 +172,6 @@ platform :ios do
     # Gym command xcargs will have to be reviewed and changed at the point when the current Distribution cert. and prov. profile expire.
     # Especially the PROVISIONING_PROFILE_SPECIFIER set in there since it is hardcoded to a prov. profile that is specific, we need to change it to a standard match AdHoc com.pillarproject.wallet.staging
     # withouth the numbers created at the end, which have been added by match command back when the profile was created.
-
-    # get our push-notification cert
-    #get_push_certificate(
-      #force: false,
-      #app_identifier: "com.pillarproject.wallet.staging",
-      #team_id: "J9DEY3FGPD",
-    #)
-
-    # trigger the build
-    #sh "xcodebuild -workspace ../pillarwallet.xcworkspace -configuration Staging.Release -scheme Staging -derivedDataPath ../build -verbose "
-
-    # manually zip the results into an ipa
-    #sh "mkdir -p ../build/pillarwallet/Payload && rm -rf ../build/pillarwallet/Payload/* && cp -R ../build/Build/Products/Release-iphoneos/pillarwallet-staging.app ../build/pillarwallet/Payload && cp -R ../pillarwallet/SwiftSupport ../build/pillarwallet && rm -rf ../build/pillarwallet/Payload/pillarwallet-staging.app/libswiftRemoteMirror.dylib && cd ../build/pillarwallet && /usr/bin/zip -r -X ../../pillarwallet-staging.ipa *"
 
     #sh "fastlane sigh resign ../pillarwallet-staging.ipa --signing_identity 'iPhone Distribution: PILLAR PROJECT WORLDWIDE LIMITED (J9DEY3FGPD)' --provisioning_profile '" + ENV["sigh_com.pillarproject.wallet.staging_adhoc_profile-path"] + "'"
     changelog = build_custom_changelog
