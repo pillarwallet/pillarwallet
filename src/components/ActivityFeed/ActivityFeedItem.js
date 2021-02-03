@@ -759,7 +759,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
         };
         break;
       }
@@ -779,7 +779,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
         };
         break;
       }
@@ -791,7 +791,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           subtext: pool.name,
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
         };
         break;
       }
@@ -804,7 +804,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
         };
         break;
       }
@@ -817,7 +817,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
         };
         break;
       }
