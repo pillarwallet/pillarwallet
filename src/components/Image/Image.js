@@ -20,9 +20,17 @@
 
 import * as React from 'react';
 import FastImage from 'react-native-fast-image';
-import type { FastImageProps } from 'react-native-fast-image';
+import type { FastImageProps, FastImageSource } from 'react-native-fast-image';
 
-export type ImageProps = FastImageProps
+export type ImageProps = FastImageProps;
+
+const getValidSource = (source: FastImageSource | number) => {
+  if (typeof source.uri !== 'string') return source;
+
+  const { uri } = source;
+  const isValidSource = uri.startsWith('https://') || uri.startsWith('http://');
+  return isValidSource ? source : null;
+};
 
 // Note: this component should be FC, but is class because our version of Styled Components does not work with FCs.
 // This can be refactored to FC as soon as we update Styled Componenents.
@@ -35,8 +43,10 @@ class Image extends React.Component<ImageProps> {
   static preload = FastImage.preload;
 
   render() {
-    return <FastImage {...this.props} />;
+    const { source, ...rest } = this.props;
+    return <FastImage source={getValidSource(source)} {...rest} />;
   }
 }
+
 export default Image;
 
