@@ -34,7 +34,7 @@ import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-import { formatFiat, formatBigFiatAmount, formatBigAmount, getDisplayedTokenAmount } from 'utils/common';
+import { formatFiat, formatBigFiatAmount, formatBigAmount, formatTokenAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
@@ -255,7 +255,7 @@ const LiquidityPoolsScreen = ({
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
         <ListItemWithImage
           label={pool.name}
-          subtext={t('tokenValue', { token: pool.symbol, value: getDisplayedTokenAmount(balance, pool.symbol) })}
+          subtext={t('tokenValue', { token: pool.symbol, value: formatTokenAmount(balance, pool.symbol) })}
           itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
@@ -297,7 +297,7 @@ const LiquidityPoolsScreen = ({
             <BaseText>
               {t(
                 'tokenValue',
-                { value: getDisplayedTokenAmount(poolStats.rewardsToClaim, tokenSymbol), token: tokenSymbol },
+                { value: formatTokenAmount(poolStats.rewardsToClaim, tokenSymbol), token: tokenSymbol },
               )}
             </BaseText>
           </TableRow>

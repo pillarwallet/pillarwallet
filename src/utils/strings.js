@@ -19,7 +19,7 @@
 */
 
 import t from 'translations/translate';
-import { getDisplayedTokenAmount } from './common';
+import { formatTokenAmount } from './common';
 
 type FormattedValueOptions = {|
   isPositive?: boolean,
@@ -33,7 +33,7 @@ export const capitalize = (str: string): string => {
 
 export const getFormattedValue = (tokenValue: string, token: string, options: ?FormattedValueOptions) => {
   const { isPositive, noSymbol } = options || {};
-  const value = getDisplayedTokenAmount(tokenValue, token);
+  const value = formatTokenAmount(tokenValue, token);
   if (noSymbol || typeof isPositive === 'undefined') return t('tokenValue', { value, token });
   if (isPositive) return t('positiveTokenValue', { value, token });
   return t('negativeTokenValue', { value, token });

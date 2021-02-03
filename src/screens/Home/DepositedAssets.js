@@ -28,7 +28,7 @@ import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import { BaseText } from 'components/Typography';
 import CollapsibleSection from 'components/CollapsibleSection';
 import { LENDING_DEPOSITED_ASSETS_LIST, LENDING_VIEW_DEPOSITED_ASSET } from 'constants/navigationConstants';
-import { formatAmountDisplay, getDisplayedTokenAmount } from 'utils/common';
+import { formatAmountDisplay, formatTokenAmount } from 'utils/common';
 import { fontSizes } from 'utils/variables';
 
 type Props = {
@@ -61,10 +61,10 @@ const DepositedAssets = ({
       iconUrl,
     } = depositedAsset;
     const cornerIcon = iconUrl ? { uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` } : '';
-    const displayedEarned = getDisplayedTokenAmount(earnedAmount, symbol);
+    const displayedEarned = formatTokenAmount(earnedAmount, symbol);
     return (
       <ListItemWithImage
-        label={t('tokenValue', { value: getDisplayedTokenAmount(currentBalance, symbol), token: symbol })}
+        label={t('tokenValue', { value: formatTokenAmount(currentBalance, symbol), token: symbol })}
         subtext={t('aaveContent.label.currentAPYPercentage', { rate: formatAmountDisplay(earnInterestRate) })}
         itemImageSource={aaveImage}
         onPress={() => navigation.navigate(LENDING_VIEW_DEPOSITED_ASSET, { depositedAsset })}

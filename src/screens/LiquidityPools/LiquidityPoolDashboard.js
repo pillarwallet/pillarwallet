@@ -55,7 +55,7 @@ import {
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
-import { getDisplayedTokenAmount, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
+import { formatTokenAmount, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
@@ -191,7 +191,7 @@ const LiquidityPoolDashboard = ({
   }
 
   const balance = poolStats.userLiquidityTokenBalance;
-  const formattedBalance = getDisplayedTokenAmount(balance, pool.symbol);
+  const formattedBalance = formatTokenAmount(balance, pool.symbol);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
   const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
@@ -310,7 +310,7 @@ const LiquidityPoolDashboard = ({
                   <Row>
                     <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
                     <Spacing w={12} />
-                    <MediumText fontSize={20}>{getDisplayedTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
+                    <MediumText fontSize={20}>{formatTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
                       <MediumText secondary regular>{pool.symbol}</MediumText>
                     </MediumText>
                   </Row>
@@ -389,7 +389,7 @@ const LiquidityPoolDashboard = ({
               const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
               const quantity = poolStats.tokensPerLiquidityToken[tokenSymbol] * (balance || 1);
-              const formattedQuantity = getDisplayedTokenAmount(quantity, tokenSymbol);
+              const formattedQuantity = formatTokenAmount(quantity, tokenSymbol);
 
               return (
                 <View key={tokenSymbol}>

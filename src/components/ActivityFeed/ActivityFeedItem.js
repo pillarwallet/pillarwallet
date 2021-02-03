@@ -51,7 +51,7 @@ import {
   formatUnits,
   getDecimalPlaces,
   findEnsNameCaseInsensitive,
-  getDisplayedTokenAmount,
+  formatTokenAmount,
 } from 'utils/common';
 
 // components
@@ -754,7 +754,7 @@ export class ActivityFeedItem extends React.Component<Props> {
                 {t('negativeTokenValue', { value: t('label.multiple') })}
               </BaseText>
               <ItemValue>
-                {t('positiveTokenValue', { value: getDisplayedTokenAmount(amount, pool.symbol), token: pool.symbol })}
+                {t('positiveTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </ItemValue>
             </ListWrapper>
           ),
@@ -771,7 +771,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           customAddon: (
             <ListWrapper>
               <BaseText big>
-                {t('negativeTokenValue', { value: getDisplayedTokenAmount(amount, pool.symbol), token: pool.symbol })}
+                {t('negativeTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </BaseText>
               <ItemValue>
                 {t('positiveTokenValue', { value: t('label.multiple') })}

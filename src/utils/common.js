@@ -222,7 +222,7 @@ export const formatAmount = (amount: string | number, precision: number = 6): st
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
 
-export const getDisplayedTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {

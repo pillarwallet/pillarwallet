@@ -24,7 +24,7 @@ import { getEnv } from 'configs/envConfig';
 import { CachedImage } from 'react-native-cached-image';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import { getDisplayedTokenAmount } from 'utils/common';
+import { formatTokenAmount } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -57,7 +57,7 @@ export const TokenReviewSummaryComponent = ({
   assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets, theme, assetIcon, fiatAmount,
 }: Props) => {
   const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
-  const formattedAmount = getDisplayedTokenAmount(amount, assetSymbol);
+  const formattedAmount = formatTokenAmount(amount, assetSymbol);
 
   if (asset) {
     assetIcon = { uri: `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` };
