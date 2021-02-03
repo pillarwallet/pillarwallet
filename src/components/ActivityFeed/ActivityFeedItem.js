@@ -43,7 +43,7 @@ import {
   isTimedOutTransaction,
 } from 'utils/feedData';
 import { findAccountByAddress } from 'utils/accounts';
-import { images, isSvgImage } from 'utils/images';
+import { images, getImageUrl, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
 
@@ -759,7 +759,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -779,7 +779,7 @@ export class ActivityFeedItem extends React.Component<Props> {
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -791,7 +791,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           subtext: pool.name,
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
-          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -804,7 +804,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -817,7 +817,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: pool.iconUrl ? `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` : undefined,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
