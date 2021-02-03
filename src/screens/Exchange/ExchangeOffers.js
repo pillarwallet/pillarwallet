@@ -61,7 +61,14 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
-import { getOfferProviderLogo, getCryptoProviderName, calculateAmountToBuy } from 'utils/exchange';
+import {
+  getOfferProviderLogo,
+  getCryptoProviderName,
+  calculateAmountToBuy,
+  isAmountToSellAboveMax,
+  isAmountToSellBelowMin,
+  getFixedQuantity,
+} from 'utils/exchange';
 import { formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
 
@@ -69,7 +76,6 @@ import { spacing } from 'utils/variables';
 import ExchangeStatus from './ExchangeStatus';
 import { getAvailable } from './utils';
 import AssetEnableModal from './AssetEnableModal';
-
 
 export type EnableData = {
   providerName: string,
@@ -85,7 +91,7 @@ type AllowanceResponse = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
-  takeOffer: (Asset, Asset, number, string, string, string | number, Object => void) => void,
+  takeOffer: (Asset, Asset, string, string, string, string | number, Object => void) => void,
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
@@ -320,11 +326,11 @@ class ExchangeOffers extends React.Component<Props, State> {
       askRate,
       trackId = '',
     } = offer;
-    const amountToSell = parseFloat(fromAmount);
-    const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
+    const fromAmountFixed = getFixedQuantity(fromAmount, fromAsset.decimals);
+    const amountToBuy = calculateAmountToBuy(askRate, fromAmountFixed);
 
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, askRate, order => {
+      takeOffer(fromAsset, toAsset, fromAmountFixed, provider, trackId, askRate, order => {
         resetEstimateTransaction();
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
@@ -383,16 +389,11 @@ class ExchangeOffers extends React.Component<Props, State> {
     const providerLogo = getOfferProviderLogo(offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
-    const amountToSell = parseFloat(fromAmount);
-    const minQuantityNumeric = parseFloat(minQuantity);
-    const maxQuantityNumeric = parseFloat(maxQuantity);
-    const isBelowMin = minQuantityNumeric !== 0 && amountToSell < minQuantityNumeric;
-    const isAboveMax = maxQuantityNumeric !== 0 && amountToSell > maxQuantityNumeric;
+    const isBelowMin = isAmountToSellBelowMin(minQuantity, fromAmount);
+    const isAboveMax = isAmountToSellAboveMax(maxQuantity, fromAmount);
 
     const minOrMaxNeeded = isBelowMin || isAboveMax;
-    const isTakeButtonDisabled = !!minOrMaxNeeded
-      || isTakeOfferPressed
-      || !allowanceSet;
+    const isTakeButtonDisabled = !!minOrMaxNeeded || isTakeOfferPressed || !allowanceSet;
 
     const additionalData = {
       offer,

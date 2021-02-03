@@ -4,7 +4,7 @@ exports[`IconButton should render IconButton correctly 1`] = `
 <View
   accessible={true}
   focusable={false}
-  isTVSelectable={true}
+  forwardedRef={[Function]}
   onClick={[Function]}
   onResponderGrant={[Function]}
   onResponderMove={[Function]}

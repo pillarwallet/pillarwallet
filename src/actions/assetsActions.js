@@ -546,6 +546,7 @@ export const getSupportedTokens = (supportedAssets: Asset[], accountsAssets: Ass
   const updatedAccountAssets = supportedAssets
     .filter(({ symbol }) => accountAssetsTickers.includes(symbol) && symbol !== BTC)
     .reduce((memo, asset) => ({ ...memo, [asset.symbol]: asset }), {});
+  // $FlowFixMe: flow update to 0.122
   return { id: accountId, ...updatedAccountAssets };
 };
 

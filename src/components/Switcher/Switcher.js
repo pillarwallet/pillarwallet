@@ -88,6 +88,7 @@ class Switcher extends React.Component<Props, State> {
       {
         toValue,
         duration: 300,
+        useNativeDriver: true,
       },
     ).start();
   };
