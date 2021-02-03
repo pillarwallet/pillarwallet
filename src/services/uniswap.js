@@ -68,7 +68,7 @@ import { ETH } from 'constants/assetsConstants';
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+const getEthProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -79,9 +79,9 @@ const getBackupRoute = async (
   let tokenMiddle;
   const chainId = getChainId();
   try {
-    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, ethProvider);
-    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, ethProvider);
-    tokenMiddle = await Fetcher.fetchTokenData(chainId, WETH[chainId].address, ethProvider);
+    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, getEthProvider());
+    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, getEthProvider());
+    tokenMiddle = await Fetcher.fetchTokenData(chainId, WETH[chainId].address, getEthProvider());
   } catch (e) {
     reportLog('Uniswap: failed to fetch token data', e, 'warning');
     return null;
@@ -90,8 +90,8 @@ const getBackupRoute = async (
   let pair1;
   let pair2;
   try {
-    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, ethProvider);
-    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, ethProvider);
+    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, getEthProvider());
+    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, getEthProvider());
   } catch (e) {
     reportLog('Pair unsupported by Uniswap', e, 'warning');
     return null;
@@ -110,9 +110,9 @@ const getRoute = async (fromAsset: Asset, toAsset: Asset): Promise<Route> => {
   } = toAsset;
   const chainId = getChainId();
   try {
-    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, ethProvider, fromSymbol, fromName);
-    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, ethProvider, toSymbol, toName);
-    const pair = await Fetcher.fetchPairData(token1, token2, ethProvider);
+    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, getEthProvider(), fromSymbol, fromName);
+    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, getEthProvider(), toSymbol, toName);
+    const pair = await Fetcher.fetchPairData(token1, token2, getEthProvider());
     const route = new Route([pair], token1);
     return route;
   } catch (e) {
@@ -125,7 +125,7 @@ const getTrade = async (
   fromQuantityInBaseUnits: string,
   route: Route,
 ): Promise<Trade> => {
-  const fromToken = await Fetcher.fetchTokenData(getChainId(), toChecksumAddress(fromAssetAddress), ethProvider);
+  const fromToken = await Fetcher.fetchTokenData(getChainId(), toChecksumAddress(fromAssetAddress), getEthProvider());
   const fromTokenAmount = new TokenAmount(fromToken, fromQuantityInBaseUnits);
   const trade = new Trade(route, fromTokenAmount, TradeType.EXACT_INPUT);
   return trade;
@@ -133,7 +133,7 @@ const getTrade = async (
 
 const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise<boolean> => {
   if (fromAsset.code === ETH) return true;
-  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
+  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, getEthProvider());
   const allowance: BigNumber = await assetContract.allowance(clientAddress, UNISWAP_ROUTER_ADDRESS);
   return allowance.gt(0);
 };
@@ -243,7 +243,7 @@ export const createUniswapOrder = async (
   } else if (fromAsset.code === ETH && toAsset.code !== ETH) {
     txValue = quantityBaseUnits.toFixed();
     const orderData = await getUniswapOrderData(
-      WETH[chainId],
+      WETH[getChainId()],
       toAsset,
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
@@ -292,6 +292,7 @@ export const createUniswapOrder = async (
     txValue,
     txData,
   );
+
   return {
     orderId: '-',
     sendToAddress: txObject.to,
