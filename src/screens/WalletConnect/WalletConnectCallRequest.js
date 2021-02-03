@@ -49,7 +49,14 @@ import { formatTransactionFee } from 'utils/common';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TX, REQUEST_TYPE } from 'constants/walletConnectConstants';
+import {
+  PERSONAL_SIGN,
+  ETH_SEND_TX,
+  ETH_SIGN_TX,
+  REQUEST_TYPE,
+  ETH_SIGN_TYPED_DATA,
+  ETH_SIGN,
+} from 'constants/walletConnectConstants';
 
 // types
 import type { Asset, AssetData, Assets, Balances } from 'models/Asset';
@@ -303,11 +310,29 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
           </ScrollWrapper>
         );
         break;
-      case 'eth_sign':
+      case ETH_SIGN:
         type = REQUEST_TYPE.MESSAGE;
 
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
+        body = (
+          <ScrollWrapper regularPadding>
+            <LabeledRow>
+              <Label>{t('transactions.label.address')}</Label>
+              <Value>{address}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>{t('transactions.label.message')}</Label>
+              <Value>{message}</Value>
+            </LabeledRow>
+          </ScrollWrapper>
+        );
+        break;
+      case ETH_SIGN_TYPED_DATA:
+        type = REQUEST_TYPE.MESSAGE;
+
+        [address, message] = params;
+
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
