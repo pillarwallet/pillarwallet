@@ -24,28 +24,23 @@ import {
 } from '@uniswap/sdk';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
+import { getEnv } from 'configs/envConfig';
 
 import ROUTER_ABI from 'abi/uniswapRouter.json';
-import { isProdEnv } from 'utils/environment';
 import { encodeContractMethod } from 'services/assets';
 import { ETH } from 'constants/assetsConstants';
 import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
 
 import type { Asset } from 'models/Asset';
 
-const isMainnet = isProdEnv;
-export const chainId = isMainnet ? ChainId.MAINNET : ChainId.KOVAN;
+type UniswapChainId = ChainId.MAINNET | ChainId.KOVAN;
+
+export const getChainId = (): UniswapChainId => {
+  return getEnv().NETWORK_PROVIDER === 'homestead' ? ChainId.MAINNET : ChainId.KOVAN;
+};
+
 const UNISWAP_ALLOWED_SLIPPAGE = 1 - (ALLOWED_SLIPPAGE / 100);
 const DEADLINE_FROM_NOW = 60 * 15; // seconds
-export const ADDRESSES = isMainnet ?
-  {
-    WETH: '0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2',
-    router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  } :
-  {
-    WETH: '0xc778417E063141139Fce010982780140Aa0cD5Ab',
-    router: '0x7a250d5630B4cF539739dF2C5dAcb4c659F2488D',
-  };
 
 const getBNFromNumeratorDenominator = (prop: { numerator: any, denominator: any, scalar?: any }): BigNumber => {
   const { numerator, denominator, scalar } = prop;
@@ -63,7 +58,7 @@ const getBNFromNumeratorDenominator = (prop: { numerator: any, denominator: any,
 
 export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
   ...asset,
-  address: toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address),
+  address: toChecksumAddress(asset.symbol === ETH ? WETH[getChainId()]?.address : asset.address),
   code: asset.symbol,
 }));
 

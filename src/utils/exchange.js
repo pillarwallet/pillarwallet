@@ -41,7 +41,7 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { encodeContractMethod } from 'services/assets';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
-import { chainId } from './uniswap';
+import { getChainId } from './uniswap';
 import { reportOrWarn, getEthereumProvider } from './common';
 
 export type ExchangeOptions = {
@@ -105,7 +105,7 @@ export const parseOffer = (
 };
 
 export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
-  return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
+  return fromAssetSymbol === ETH && contractAddress === WETH[getChainId()].address;
 };
 
 /* eslint-disable i18next/no-literal-string */
