@@ -69,7 +69,7 @@ type Props = {|
 
 const Wrapper = styled(Animated.View)`
   width: 100%;
-  border-bottom-width: 1;
+  border-bottom-width: 1px;
   ${({ floating }) => floating && `
     position: absolute;
     top: 0;

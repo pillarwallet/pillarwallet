@@ -87,28 +87,28 @@ const getTextStyle = (props) => {
 };
 
 export const BaseText = styled.Text`
-  font-family: ${appFont.regular};
+  font-family: "${appFont.regular}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const BoldText = styled(BaseText)`
-  font-family: ${appFont.bold};
+  font-family: "${appFont.bold}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const LightText = styled(BaseText)`
-  font-family: ${appFont.light};
+  font-family: "${appFont.light}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}
 `;
 
 export const MediumText = styled(BaseText)`
-  font-family: ${appFont.medium};
+  font-family: "${appFont.medium}";
   text-align-vertical: center;
   color: ${({ theme }) => theme.colors.basic010};
   ${(props) => getTextStyle(props)}

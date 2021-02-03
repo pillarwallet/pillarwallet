@@ -64,7 +64,7 @@ const TextWrapper = styled.View`
 `;
 
 const ButtonWrapper = styled.View`
-  height: ${({ height }) => height};
+  height: ${({ height }) => height}px;
   justify-content: center;
 `;
 
