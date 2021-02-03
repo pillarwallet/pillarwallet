@@ -29,10 +29,14 @@ export type ImageProps = FastImageProps
 
 // eslint-disable-next-line react/prefer-stateless-function
 class Image extends React.Component<ImageProps> {
+  static resizeMode = FastImage.resizeMode;
+  static priority = FastImage.priority;
+  static cacheControl = FastImage.cacheControl;
+  static preload = FastImage.preload;
+
   render() {
     return <FastImage {...this.props} />;
   }
 }
-
 export default Image;
 
