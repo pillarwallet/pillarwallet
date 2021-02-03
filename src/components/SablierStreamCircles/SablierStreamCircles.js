@@ -29,6 +29,7 @@ import CircularProgressBar from 'components/CircularProgressBar';
 import { Spacing } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import { getDeviceWidth, formatAmount, formatUnits, getDecimalPlaces, isCaseInsensitiveMatch } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { themedColors, getThemeColors } from 'utils/themes';

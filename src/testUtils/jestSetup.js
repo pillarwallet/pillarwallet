@@ -238,13 +238,6 @@ jest.setMock('cryptocompare', {
 
 jest.setMock('react-native-share', {});
 
-jest.setMock('react-native-cached-image', {
-  ImageCacheManager: () => ({
-    clearCache: () => Promise.resolve(),
-  }),
-  CachedImage: () => null,
-});
-
 jest.setMock('react-native-fast-image', () => null);
 
 export const mockSmartWalletAccountApiData = {
