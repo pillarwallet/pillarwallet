@@ -496,10 +496,10 @@ PODS:
     - React
   - RNDeviceInfo (5.6.1):
     - React
-  - RNFastImage (8.1.5):
-    - React
-    - SDWebImage (~> 5.0)
-    - SDWebImageWebPCoder (~> 0.4.1)
+  - RNFastImage (8.3.4):
+    - React-Core
+    - SDWebImage (~> 5.8)
+    - SDWebImageWebPCoder (~> 0.6.1)
   - RNFBAnalytics (7.3.1):
     - Firebase/Analytics (~> 6.27.0)
     - React
@@ -565,9 +565,9 @@ PODS:
   - SDWebImage (5.10.2):
     - SDWebImage/Core (= 5.10.2)
   - SDWebImage/Core (5.10.2)
-  - SDWebImageWebPCoder (0.4.1):
+  - SDWebImageWebPCoder (0.6.1):
     - libwebp (~> 1.0)
-    - SDWebImage/Core (~> 5.5)
+    - SDWebImage/Core (~> 5.7)
   - Sentry (5.2.2):
     - Sentry/Core (= 5.2.2)
   - Sentry/Core (5.2.2)
@@ -958,7 +958,7 @@ SPEC CHECKSUMS:
   RNCAsyncStorage: e0dd7c8a36543b4ef84969acd9f8aceba3a92dc2
   RNColorMatrixImageFilters: c120b5bff0d3c39f0eb3ba1751a4d70ed7f4b56a
   RNDeviceInfo: b6e650fbd234732c759544218657d549b4339038
-  RNFastImage: 35ae972d6727c84ee3f5c6897e07f84d0a3445e9
+  RNFastImage: d4870d58f5936111c56218dbd7fcfc18e65b58ff
   RNFBAnalytics: dae6d7b280ba61c96e1bbdd34aca3154388f025e
   RNFBApp: 6fd8a7e757135d4168bf033a8812c241af7363a0
   RNFBCrashlytics: 88de72c2476b5868a892d9523b89b86c527c540e
@@ -981,7 +981,7 @@ SPEC CHECKSUMS:
   RNVectorIcons: 0bb4def82230be1333ddaeee9fcba45f0b288ed4
   RSKImageCropper: 617b4976e4a0ca18f3ce84f6cfa5945e574b51a3
   SDWebImage: b969dcfc02c40a5da71eac0b03b8f1a0c794a86f
-  SDWebImageWebPCoder: 36f8f47bd9879a8aea6044765c1351120fd8e3a8
+  SDWebImageWebPCoder: d0dac55073088d24b2ac1b191a71a8f8d0adac21
   Sentry: 8fa58a051237554f22507fb483b9a1de0171a2dc
   SwiftyGif: e466e86c660d343357ab944a819a101c4127cb40
   TcpSockets: bd31674146c0931a064fc254a59812dfd1a73ae0
