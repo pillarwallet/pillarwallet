@@ -198,6 +198,9 @@ const LiquidityPoolDashboard = ({
   const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
 
+  const hasStakedTokens = poolStats && poolStats?.stakedAmount > 0;
+  const showStakeSection = pool.rewardsEnabled || hasStakedTokens;
+
   const onAddLiquidity = () => {
     navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY, { pool });
   };
@@ -301,8 +304,9 @@ const LiquidityPoolDashboard = ({
           <Spacing h={6} />
           <Stats stats={stats} />
           <Spacing h={32} />
+
           <HorizontalPadding>
-            {pool.rewardsEnabled && (
+            {showStakeSection && (
             <>
               <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
               <Spacing h={6} />
@@ -319,13 +323,17 @@ const LiquidityPoolDashboard = ({
                 </StretchedRow>
                 <Spacing h={20} />
                 <Row>
-                  <ButtonWrapper>
-                    <Button
-                      title={t('liquidityPoolsContent.button.stake')}
-                      onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
-                    />
-                  </ButtonWrapper>
-                  <Spacing w={7} />
+                  {pool.rewardsEnabled && (
+                    <>
+                      <ButtonWrapper>
+                        <Button
+                          title={t('liquidityPoolsContent.button.stake')}
+                          onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
+                        />
+                      </ButtonWrapper>
+                      <Spacing w={7} />
+                    </>
+                  )}
                   <ButtonWrapper>
                     <Button
                       title={t('liquidityPoolsContent.button.unstake')}
@@ -346,6 +354,7 @@ const LiquidityPoolDashboard = ({
                 )}
               </Card>
               <Spacing h={28} />
+
               <MediumText big>{t('liquidityPoolsContent.label.rewards')}</MediumText>
               <Spacing h={6} />
               <Card>

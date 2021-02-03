@@ -25,6 +25,7 @@ import {
   SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+import { LIQUIDITY_POOLS_TYPES } from 'models/LiquidityPools';
 import {
   getStakedAmount,
   getEarnedAmount,
@@ -124,7 +125,7 @@ export const fetchLiquidityPoolsDataAction = (pools: LiquidityPool[]) => {
   return async (dispatch: Dispatch) => {
     dispatch({ type: SET_FETCHING_LIQUIDITY_POOLS_DATA, payload: true });
     await Promise.all(pools.map(async pool => {
-      if (pool.rewardsEnabled) {
+      if (pool.type === LIQUIDITY_POOLS_TYPES.UNIPOOL) {
         await dispatch(fetchUnipoolUserDataAction(pool.unipoolAddress));
       }
       await dispatch(fetchUniswapPoolDataAction(pool.uniswapPairAddress));
