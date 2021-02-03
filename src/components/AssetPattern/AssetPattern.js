@@ -19,16 +19,15 @@
 */
 
 import * as React from 'react';
-import { Dimensions, Image } from 'react-native';
+import { Dimensions } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import { ColorMatrix, saturate } from 'react-native-color-matrix-image-filters';
-import { CachedImage } from 'react-native-cached-image';
 
 import { getColorByTheme, getThemeType } from 'utils/themes';
 import { images } from 'utils/images';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
+import Image from 'components/Image';
 import type { Theme } from 'models/Theme';
-
 
 type Props = {
   token: string,
@@ -90,7 +89,7 @@ const IconWrapper = styled.View`
   background-color: ${({ theme }) => theme.colors.basic050};
 `;
 
-const NoIconImage = styled(CachedImage)`
+const NoIconImage = styled(Image)`
   height: 192px;
   width: 192px;
 `;

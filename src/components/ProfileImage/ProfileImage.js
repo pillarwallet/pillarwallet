@@ -20,14 +20,14 @@
 import * as React from 'react';
 import { ImageBackground } from 'react-native';
 import styled, { css } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import { fontSizes } from 'utils/variables';
 import { getInitials } from 'utils/accounts';
 import { getColorByTheme } from 'utils/themes';
+import Image from 'components/Image';
 import { MediumText } from 'components/Typography';
 
 
-const CircleImage = styled(CachedImage)`
+const CircleImage = styled(Image)`
   width: ${props => (props.diameter ? props.diameter : '50')}px;
   height: ${props => (props.diameter ? props.diameter : '50')}px;
   border-radius: ${props => (props.diameter ? props.diameter / 2 : '25')}px;
@@ -65,7 +65,7 @@ const InnerUsername = styled(MediumText)`
   color: ${getColorByTheme({ lightCustom: '#6690eb', darkKey: 'primaryAccent240' })};
 `;
 
-const CornerIcon = styled(CachedImage)`
+const CornerIcon = styled(Image)`
   width: ${({ size }) => size}px;
   height: ${({ size }) => size}px;
   position: absolute;
