@@ -217,7 +217,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   estimateTokenWithdrawTransaction: debounce(
-    (amount: number) => dispatch(estimateTokenWithdrawFromAccountDepositTransactionAction(amount)),
+    () => dispatch(estimateTokenWithdrawFromAccountDepositTransactionAction()),
     200,
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),

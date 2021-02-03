@@ -65,14 +65,46 @@ export const setEstimatingTransactionAction = (isEstimating: boolean) => ({
   payload: isEstimating,
 });
 
-export const setEstimatingErrorAction = (errorMessage: string) => ({
-  type: SET_TRANSACTION_ESTIMATE_ERROR,
-  payload: errorMessage,
-});
+export const setTransactionsEstimateErrorAction = (errorMessage: string) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const currentErrorMessage = getState().transactionEstimate.errorMessage;
+    if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
+
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+
+    Toast.show({
+      message: errorMessage,
+      emoji: 'woman-shrugging',
+      supportLink: true,
+    });
+  };
+};
+
+export const setTransactionsEstimateFeeAction = (estimated) => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    if (!estimated) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+      return;
+    }
+
+    const useGasToken = useGasTokenSelector(getState());
+    const feeInfo = buildTxFeeInfo(estimated, useGasToken);
+
+    if (!feeInfo || (feeInfo.fee && !feeInfo.fee.gt(0))) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
+      return;
+    }
+
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
+    dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+  };
+};
 
 export const estimateTransactionsAction = (transactions: TransactionDraft[]) => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     // reset batch, not a promise
     try {
@@ -120,7 +152,6 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
     );
 
     let errorMessage;
-    let feeInfo;
 
     await etherspot.setTransactionsBatch(etherspotTransactions).catch((error) => {
       errorMessage = error?.message || t('toast.transactionFeeEstimationFailed');
@@ -133,9 +164,6 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
       ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
       : null;
 
-    console.log('gasToken symbol: ', gasToken?.symbol)
-    console.log('gasToken address: ', gasToken?.address)
-
     const estimated = await etherspot.estimateTransactionsBatch(gasToken?.address).catch((error) => {
       errorMessage = error?.message
         ? t('toast.failedToEstimateTransactionWithMessage', { message: error.message })
@@ -143,29 +171,12 @@ export const estimateTransactionsAction = (transactions: TransactionDraft[]) => 
       return null;
     });
 
-    if (!errorMessage) {
-      feeInfo = buildTxFeeInfo(estimated, useGasToken);
-    }
-
-    if (!errorMessage && feeInfo && feeInfo.fee && !feeInfo.fee.gt(0)) {
-      errorMessage = t('toast.transactionFeeEstimationFailed');
-    }
-
-    const currentErrorMessage = getState().transactionEstimate.errorMessage;
     if (errorMessage) {
-      dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: errorMessage });
-      if (currentErrorMessage) Toast.closeAll(); // hide if previous shown
-      Toast.show({
-        message: errorMessage,
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
+      dispatch(setTransactionsEstimateErrorAction(errorMessage));
       return;
     }
 
-    dispatch({ type: SET_TRANSACTION_ESTIMATE_ERROR, payload: null });
-    dispatch({ type: SET_TRANSACTION_ESTIMATE_FEE_INFO, payload: feeInfo });
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+    dispatch(setTransactionsEstimateFeeAction(estimated));
   };
 };
 

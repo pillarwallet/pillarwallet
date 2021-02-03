@@ -19,6 +19,7 @@
 */
 import isEmpty from 'lodash.isempty';
 import { type Account as EtherspotAccount, type P2PPaymentChannel } from 'etherspot';
+import t from 'translations/translate';
 
 // constants
 import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
@@ -38,7 +39,12 @@ import { addAccountAction, setActiveAccountAction } from 'actions/accountsAction
 import { saveDbAction } from 'actions/dbActions';
 import { fetchAssetsBalancesAction } from 'actions/assetsActions';
 import { fetchCollectiblesAction } from 'actions/collectiblesActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+  setTransactionsEstimateErrorAction,
+  setTransactionsEstimateFeeAction,
+} from 'actions/transactionEstimateActions';
 import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // services
@@ -65,6 +71,7 @@ import { buildHistoryTransaction } from 'utils/history';
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector, activeAccountIdSelector } from 'selectors';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -292,7 +299,7 @@ export const fetchAccountPaymentChannelsAction = () => {
 
         const assetData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, tokenAddress);
         if (!assetData) {
-          reportErrorLog('fetchAccountPaymentChannelsAction paymntChannel failed: no assetData found', {
+          reportErrorLog('fetchAccountPaymentChannelsAction paymentChannel failed: no assetData found', {
             paymentChannel,
           });
           return transactions;
@@ -380,7 +387,7 @@ export const estimateAccountTokenDepositTransactionAction = (depositAmount: numb
   };
 };
 
-export const estimateTokenWithdrawFromAccountDepositTransactionAction = (withdrawAmount: number) => {
+export const estimateTokenWithdrawFromAccountDepositTransactionAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -390,7 +397,7 @@ export const estimateTokenWithdrawFromAccountDepositTransactionAction = (withdra
     if (!etherspotAccount) return;
 
     // put into loading state at this point already
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
     const accountAssets = accountAssetsSelector(getState());
     const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
@@ -398,28 +405,23 @@ export const estimateTokenWithdrawFromAccountDepositTransactionAction = (withdra
     if (isEmpty(ppnTokenAsset)) {
       // TODO: show toast?
       reportErrorLog('estimateTokenWithdrawFromAccountDepositTransactionAction failed: no ppnTokenAsset', { ppnTokenAsset });
-      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      dispatch(setEstimatingTransactionAction(false));
       return;
     }
 
-    const tokenWithdrawTransactionData = await etherspot.buildTokenWithdrawFromAccountDepositTransaction(
-      ppnTokenAsset,
-      withdrawAmount,
-    );
+    const useGasToken = useGasTokenSelector(getState());
+    const gasToken = useGasToken
+      ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
+      : null;
 
-    if (!tokenWithdrawTransactionData) {
-      // TODO: show toast?
-      reportErrorLog('estimateTokenWithdrawFromAccountDepositTransactionAction failed: no tokenWithdrawTransactionData', {
-        ppnTokenAsset,
-        withdrawAmount,
-      });
-      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+    const estimated = await etherspot.estimateWithdrawFromAccountDepositTransaction(gasToken?.address);
+
+    if (!estimated) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.cannotWithdrawFromTank')));
       return;
     }
 
-    const { to, data } = tokenWithdrawTransactionData;
-
-    dispatch(estimateTransactionAction({ to, value: 0, data }));
+    dispatch(setTransactionsEstimateFeeAction(estimated));
   };
 };
 

@@ -52,7 +52,5 @@ export const preferredGasTokenSelector = ({ appSettings: { data: { preferredGasT
 
 export const useGasTokenSelector = createSelector(
   preferredGasTokenSelector,
-  (isGasTokenSupported, preferredGasToken) => {
-    return isGasTokenSupported && preferredGasToken !== ETH;
-  },
+  (preferredGasToken) => preferredGasToken && preferredGasToken !== ETH,
 );

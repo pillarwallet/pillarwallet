@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { constants, utils } from 'ethers';
+import { constants, util } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
@@ -28,6 +28,7 @@ import {
   P2PPaymentDeposit,
   ENSNode,
   EnvNames,
+  GatewayKnownOps,
 } from 'etherspot';
 import { BigNumber } from 'bignumber.js';
 
@@ -54,6 +55,12 @@ import type { TransactionPayload } from 'models/Transaction';
 import type { P2PPaymentChannel } from 'etherspot';
 import type { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
 
+
+export type EtherspotTransactionEstimate = {
+  refundAmount: BigNumber;
+  estimatedGas: number;
+  estimatedGasPrice: BigNumber;
+};
 
 class EtherspotService {
   sdk: EtherspotSdk;
@@ -107,8 +114,9 @@ class EtherspotService {
     return Promise.all(transactions.map((transaction) => this.sdk.batchExecuteAccountTransaction(transaction)));
   }
 
-  estimateTransactionsBatch(useGasTokenAddress?: string) {
-    return this.sdk.estimateGatewayBatch({ refundToken: useGasTokenAddress }).then((result) => result?.estimation);
+  estimateTransactionsBatch(useGasTokenAddress?: string): Promise<?$Shape<EtherspotTransactionEstimate>> {
+    return this.sdk.estimateGatewayBatch({ refundToken: useGasTokenAddress })
+      .then((result) => result?.estimation)
   }
 
   async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
@@ -204,6 +212,21 @@ class EtherspotService {
     return this.sdk.increaseP2PPaymentChannelAmount(increaseRequest).then(({ hash }) => ({ hash }));
   }
 
+  estimateWithdrawFromAccountDepositTransaction(
+    useGasTokenAddress?: string,
+  ): Promise<?$Shape<EtherspotTransactionEstimate>> {
+    return this.sdk.estimateGatewayKnownOp({
+      op: GatewayKnownOps.WithdrawP2PDeposit,
+      refundToken: useGasTokenAddress,
+    })
+      .catch((error) => {
+        reportErrorLog('estimateWithdrawFromAccountDepositTransaction -> estimateGatewayKnownOp failed', {
+          error,
+        });
+        return null;
+      });
+  }
+
   buildTokenWithdrawFromAccountDepositTransaction(
     asset: Asset,
     withdrawAmount: string,
@@ -212,14 +235,14 @@ class EtherspotService {
       token: asset.address,
       amount: parseTokenAmount(withdrawAmount.toString(), asset.decimals).toString(),
     })
-      .catch((error) => {
-        reportErrorLog('setTokenWithdrawFromAccountDepositTransaction -> batchWithdrawP2PPaymentDeposit failed', {
-          error,
-          asset,
-          withdrawAmount,
-        });
-        return null;
+    .catch((error) => {
+      reportErrorLog('buildTokenWithdrawFromAccountDepositTransaction -> encodeWithdrawP2PPaymentDeposit failed', {
+        error,
+        asset,
+        withdrawAmount,
       });
+      return null;
+    });
   }
 
   async getAccountTokenDeposit(tokenAddress: string): Promise<?P2PPaymentDeposit> {
@@ -236,7 +259,7 @@ class EtherspotService {
   }
 
   async getAccountTokenDepositBalance(tokenAddress: string): BigNumber {
-    const tokenDeposit = await this.getAccountTokenDeposit(tokenAddress);
+    const tokenDeposit: ?P2PPaymentDeposit = await this.getAccountTokenDeposit(tokenAddress);
     if (!tokenDeposit) {
       reportErrorLog('getAccountTokenDepositBalance failed: cannot find token deposit', { tokenAddress });
       return new BigNumber(0);

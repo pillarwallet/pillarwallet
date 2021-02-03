@@ -43,7 +43,7 @@ import { getRariClaimRgtTransaction } from 'utils/rari';
 import {
   estimateTransactionAction,
   setEstimatingTransactionAction,
-  setEstimatingErrorAction,
+  setTransactionsEstimateErrorAction,
 } from 'actions/transactionEstimateActions';
 import Toast from 'components/Toast';
 import type { Dispatch, GetState } from 'reducers/rootReducer';
@@ -165,12 +165,7 @@ export const calculateRariClaimTransactionEstimateAction = (
     );
 
     if (!transaction) {
-      dispatch(setEstimatingErrorAction(t('toast.transactionFeeEstimationFailed')));
-      Toast.show({
-        message: t('toast.transactionFeeEstimationFailed'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
+      dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));
       return;
     }
 

@@ -23,6 +23,7 @@ import { connect } from 'react-redux';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
+import { ZERO_ADDRESS } from '@netgum/utils';
 
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
@@ -70,32 +71,48 @@ const TankWithdrawConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
 
   const { symbol } = PPNAsset;
 
+  const showUnableToWithdrawToast = () => {
+    Toast.show({
+      message: t('toast.cannotWithdrawFromTank'),
+      emoji: 'woman-shrugging',
+      supportLink: true,
+    });
+    setIsSubmitted(false);
+  };
+
   const onNextButtonPress = async () => {
     if (isSubmitted) return;
     setIsSubmitted(true);
 
-    const withdrawTransactionData = etherspot.buildTokenWithdrawFromAccountDepositTransaction(
+    /**
+     * separate from other toast below as next etherspot call locks the
+     * state in back-end so we don't want to lock unless it was really estimated
+     */
+    if (!feeInfo) {
+      showUnableToWithdrawToast();
+      return;
+    }
+
+    const tokenWithdrawTransaction = await etherspot.buildTokenWithdrawFromAccountDepositTransaction(
       PPNAsset,
       withdrawAmount,
     );
 
-    if (!feeInfo || ! withdrawTransactionData) {
-      Toast.show({
-        message: t('toast.cannotWithdrawFromTank'),
-        emoji: 'woman-shrugging',
-        supportLink: true,
-      });
-      setIsSubmitted(false);
+    if (!tokenWithdrawTransaction) {
+      showUnableToWithdrawToast();
       return;
     }
 
+    const { to, data } = tokenWithdrawTransaction
+
     const transactionPayload: TransactionPayload = {
-      to: withdrawTransactionData.to,
+      to,
       amount: 0,
-      data: withdrawTransactionData,
+      data,
       txFeeInWei: feeInfo.fee,
       symbol: ETH,
       decimals: 18,
+      contractAddress: ZERO_ADDRESS,
     };
 
     if (feeInfo?.gasToken) transactionPayload.gasToken = feeInfo.gasToken;
