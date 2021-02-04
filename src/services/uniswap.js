@@ -78,10 +78,11 @@ const getBackupRoute = async (
   let token2;
   let tokenMiddle;
   const chainId = getChainId();
+  const provider = getEthProvider();
   try {
-    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, getEthProvider());
-    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, getEthProvider());
-    tokenMiddle = await Fetcher.fetchTokenData(chainId, WETH[chainId].address, getEthProvider());
+    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, provider);
+    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, provider);
+    tokenMiddle = await Fetcher.fetchTokenData(chainId, WETH[chainId].address, provider);
   } catch (e) {
     reportLog('Uniswap: failed to fetch token data', e, 'warning');
     return null;
@@ -90,8 +91,8 @@ const getBackupRoute = async (
   let pair1;
   let pair2;
   try {
-    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, getEthProvider());
-    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, getEthProvider());
+    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, provider);
+    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, provider);
   } catch (e) {
     reportLog('Pair unsupported by Uniswap', e, 'warning');
     return null;
@@ -109,10 +110,11 @@ const getRoute = async (fromAsset: Asset, toAsset: Asset): Promise<Route> => {
     address: toAddress, symbol: toSymbol, name: toName,
   } = toAsset;
   const chainId = getChainId();
+  const provider = getEthProvider();
   try {
-    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, getEthProvider(), fromSymbol, fromName);
-    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, getEthProvider(), toSymbol, toName);
-    const pair = await Fetcher.fetchPairData(token1, token2, getEthProvider());
+    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, provider, fromSymbol, fromName);
+    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, provider, toSymbol, toName);
+    const pair = await Fetcher.fetchPairData(token1, token2, provider);
     const route = new Route([pair], token1);
     return route;
   } catch (e) {
@@ -170,9 +172,10 @@ const getUniswapOrderData = async (
   toAssetDecimals: string,
 ): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber, expectedOutputRaw: string } | null> => {
   let route = await getRoute(fromAsset, toAsset);
+  const WETHAddress = WETH[getChainId()].address;
   if (!route && (
-    fromAsset.address.toLowerCase() === UNISWAP_ROUTER_ADDRESS.toLowerCase()
-      || toAsset.address.toLowerCase() === UNISWAP_ROUTER_ADDRESS.toLowerCase()
+    fromAsset.address.toLowerCase() === WETHAddress.toLowerCase()
+      || toAsset.address.toLowerCase() === WETHAddress.toLowerCase()
   )) {
     reportLog('Unable to find a possible route', null, 'error');
   }
