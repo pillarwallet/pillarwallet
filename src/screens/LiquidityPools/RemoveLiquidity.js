@@ -40,7 +40,7 @@ import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationCon
 
 // utils
 import { formatAmount } from 'utils/common';
-import { isEnoughBalanceForTransactionFee } from 'utils/assets';
+import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalRemoveLiquidityAssetValues } from 'utils/liquidityPools';
 
 // selectors
@@ -123,7 +123,7 @@ const AddLiquidityScreen = ({
   const tokensData = pool.tokensProportions
     .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
 
-  const poolTokenData = supportedAssets.find(asset => asset.symbol === pool.symbol);
+  const poolTokenData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
 
   useEffect(() => {
     if (
