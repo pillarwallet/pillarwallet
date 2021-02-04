@@ -123,18 +123,33 @@ export const getAddLiquidityTransactions = async (
       : null;
 
     if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
-      const approveTransactionData =
-        buildERC20ApproveTransactionData(ADDRESSES.router, tokenAmount, tokenAsset.decimals);
       addLiquidityTransactions = [
         {
           from: sender,
           to: tokenAsset.address,
-          data: approveTransactionData,
+          data: buildERC20ApproveTransactionData(ADDRESSES.router, tokenAmount, tokenAsset.decimals),
           amount: 0,
           symbol: ETH,
         },
         ...addLiquidityTransactions,
       ];
+
+      // ERC20 token contracts (incl. PLR itself) can throw error when trying to change non-zero approved allowance
+      // in order to prevent spedning both old and new allowance. As a way to mitigate it, we are first sending
+      // zeroing approve transaction.
+      // See: https://docs.openzeppelin.com/contracts/2.x/api/token/erc20#IERC20-approve-address-uint256-
+      if (approvedAmountBN?.gt(0)) {
+        addLiquidityTransactions = [
+          {
+            from: sender,
+            to: tokenAsset.address,
+            data: buildERC20ApproveTransactionData(ADDRESSES.router, '0', tokenAsset.decimals),
+            amount: 0,
+            symbol: ETH,
+          },
+          ...addLiquidityTransactions,
+        ];
+      }
     }
   };
 
