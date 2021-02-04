@@ -39,7 +39,7 @@ import {
   ETH_SIGN_TYPED_DATA,
   PERSONAL_SIGN,
 } from 'constants/walletConnectConstants';
-import { SEND_TOKEN_TRANSACTION, WALLETCONNECT } from 'constants/navigationConstants';
+import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
 
 // types
 import type { TransactionPayload } from 'models/Transaction';
@@ -90,6 +90,8 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
+  completeCheckingAndDismiss = () => this.setState({ isChecking: false }, this.handleDismissal);
+
   handleCallRequest = (pin: string, wallet: Object) => {
     const { request } = this;
 
@@ -131,15 +133,10 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
       } else {
         await rejectCallRequest(request.callId);
       }
-      this.setState(
-        {
-          isChecking: false,
-        },
-        () => {
-          this.handleDismissal();
-          this.handleNavigationToTransactionState(txStatus);
-        },
-      );
+      this.setState({ isChecking: false }, () => {
+        this.handleDismissal();
+        this.handleNavigationToTransactionState(txStatus);
+      });
     });
   };
 
@@ -152,12 +149,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(request.callId);
     }
-    this.setState(
-      {
-        isChecking: false,
-      },
-      () => this.handleDismissal(),
-    );
+    this.completeCheckingAndDismiss();
   };
 
   handleSignMessage = async (request: CallRequest, wallet: Object) => {
@@ -176,12 +168,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(request.callId, error.toString());
     }
-    this.setState(
-      {
-        isChecking: false,
-      },
-      () => this.handleDismissal(),
-    );
+    this.completeCheckingAndDismiss();
   };
 
   handleSignTypedData = async (request: CallRequest, wallet: Object) => {
@@ -193,12 +180,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(request.callId, error.toString());
     }
-    this.setState(
-      {
-        isChecking: false,
-      },
-      () => this.handleDismissal(),
-    );
+    this.completeCheckingAndDismiss();
   };
 
   handleNavigationToTransactionState = (params: ?Object) => {
@@ -211,12 +193,6 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     navigation.goBack(null);
-    resetIncorrectPassword();
-  };
-
-  handleDismissal = () => {
-    const { navigation, resetIncorrectPassword } = this.props;
-    navigation.navigate(WALLETCONNECT);
     resetIncorrectPassword();
   };
 

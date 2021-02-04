@@ -70,6 +70,7 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // local components
 import withWCRequests from './withWCRequests';
@@ -93,6 +94,7 @@ type Props = {
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
+  isSmartWalletActivated: boolean,
 };
 
 const FooterWrapper = styled.View`
@@ -146,7 +148,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
 
   componentDidMount() {
     const requestMethod = get(this.request, 'method');
-    this.props.resetEstimateTransaction();
+    const { isSmartWalletActivated, resetEstimateTransaction } = this.props;
+
+    // cannot estimate if smart wallet account not deployed
+    if (!isSmartWalletActivated) return;
+
+    resetEstimateTransaction();
     if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
@@ -202,6 +209,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
       feeInfo,
       isEstimating,
       estimateErrorMessage,
+      isSmartWalletActivated,
     } = this.props;
 
     const colors = getThemeColors(theme);
@@ -218,7 +226,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
     let body = null;
     let address = '';
     let message = '';
-    let errorMessage = estimateErrorMessage;
+    let errorMessage = isSmartWalletActivated
+      ? estimateErrorMessage
+      : t('walletConnectContent.error.smartWalletNeedToBeActivated');
     let transactionPayload;
 
     const gasToken = feeInfo?.gasToken || null;
@@ -355,6 +365,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
         } catch (e) {
           ([message] = params);
         }
+
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
@@ -427,6 +438,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   accountAssets: accountAssetsSelector,
+  isSmartWalletActivated: isSmartWalletActivatedSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
