@@ -19,16 +19,33 @@
 */
 import * as React from 'react';
 import { connect } from 'react-redux';
+
+// components
 import CheckAuth from 'components/CheckAuth';
+
+// actions
 import { approveCallRequestAction, rejectCallRequestAction } from 'actions/walletConnectActions';
 import { sendAssetAction } from 'actions/assetsActions';
 import { resetIncorrectPasswordAction } from 'actions/authActions';
-import { SEND_TOKEN_TRANSACTION, WALLETCONNECT } from 'constants/navigationConstants';
-import { signMessage, signPersonalMessage, signTransaction } from 'utils/wallet';
 
+// utils
+import { signMessage, signPersonalMessage, signTransaction, signTypedData } from 'utils/wallet';
+
+// constants
+import {
+  ETH_SEND_TX,
+  ETH_SIGN,
+  ETH_SIGN_TX,
+  ETH_SIGN_TYPED_DATA,
+  PERSONAL_SIGN,
+} from 'constants/walletConnectConstants';
+import { SEND_TOKEN_TRANSACTION } from 'constants/navigationConstants';
+
+// types
 import type { TransactionPayload } from 'models/Transaction';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
+
 
 type Props = {
   requests: CallRequest[],
@@ -73,6 +90,8 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     navigation.dismiss();
   };
 
+  completeCheckingAndDismiss = () => this.setState({ isChecking: false }, this.handleDismissal);
+
   handleCallRequest = (pin: string, wallet: Object) => {
     const { request } = this;
 
@@ -83,15 +102,18 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     let callback = () => {};
 
     switch (request.method) {
-      case 'eth_sendTransaction':
+      case ETH_SEND_TX:
         callback = () => this.handleSendTransaction(request, wallet);
         break;
-      case 'eth_signTransaction':
+      case ETH_SIGN_TX:
         callback = () => this.handleSignTransaction(request, wallet);
         break;
-      case 'eth_sign':
-      case 'personal_sign':
+      case ETH_SIGN:
+      case PERSONAL_SIGN:
         callback = () => this.handleSignMessage(request, wallet);
+        break;
+      case ETH_SIGN_TYPED_DATA:
+        callback = () => this.handleSignTypedData(request, wallet);
         break;
       default:
         break;
@@ -111,15 +133,10 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
       } else {
         await rejectCallRequest(request.callId);
       }
-      this.setState(
-        {
-          isChecking: false,
-        },
-        () => {
-          this.handleDismissal();
-          this.handleNavigationToTransactionState(txStatus);
-        },
-      );
+      this.setState({ isChecking: false }, () => {
+        this.handleDismissal();
+        this.handleNavigationToTransactionState(txStatus);
+      });
     });
   };
 
@@ -132,12 +149,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(request.callId);
     }
-    this.setState(
-      {
-        isChecking: false,
-      },
-      () => this.handleDismissal(),
-    );
+    this.completeCheckingAndDismiss();
   };
 
   handleSignMessage = async (request: CallRequest, wallet: Object) => {
@@ -145,7 +157,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     let message = '';
     try {
       let result = null;
-      if (request.method === 'personal_sign') {
+      if (request.method === PERSONAL_SIGN) {
         message = request.params[0]; // eslint-disable-line
         result = await signPersonalMessage(message, wallet);
       } else {
@@ -156,12 +168,19 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
     } catch (error) {
       await rejectCallRequest(request.callId, error.toString());
     }
-    this.setState(
-      {
-        isChecking: false,
-      },
-      () => this.handleDismissal(),
-    );
+    this.completeCheckingAndDismiss();
+  };
+
+  handleSignTypedData = async (request: CallRequest, wallet: Object) => {
+    const { approveCallRequest, rejectCallRequest } = this.props;
+    try {
+      const message = request.params[1]; // eslint-disable-line
+      const result = await signTypedData(message, wallet);
+      await approveCallRequest(request.callId, result);
+    } catch (error) {
+      await rejectCallRequest(request.callId, error.toString());
+    }
+    this.completeCheckingAndDismiss();
   };
 
   handleNavigationToTransactionState = (params: ?Object) => {
@@ -174,12 +193,6 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
   handleBack = () => {
     const { navigation, resetIncorrectPassword } = this.props;
     navigation.goBack(null);
-    resetIncorrectPassword();
-  };
-
-  handleDismissal = () => {
-    const { navigation, resetIncorrectPassword } = this.props;
-    navigation.navigate(WALLETCONNECT);
     resetIncorrectPassword();
   };
 
