@@ -254,6 +254,10 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
   return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
 };
 
+export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
+  return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
+};
+
 export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
   return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
 };

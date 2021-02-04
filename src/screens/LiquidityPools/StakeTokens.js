@@ -43,6 +43,7 @@ import { resetEstimateTransactionAction } from 'actions/transactionEstimateActio
 import { calculateStakeTransactionEstimateAction } from 'actions/liquidityPoolsActions';
 
 // utils
+import { findSupportedAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // types
@@ -105,7 +106,7 @@ const StakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = supportedAssets.find(asset => asset.symbol === pool.symbol);
+  const assetData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 
@@ -134,12 +135,12 @@ const StakeTokensScreen = ({
     { amount: assetValue, poolToken: assetData, pool },
   );
 
-  const poolTokenCustomBalances = {
-    [pool.symbol]: {
+  const poolTokenCustomBalances = assetData != null ? {
+    [assetData.symbol]: {
       balance: poolStats?.userLiquidityTokenBalance,
-      symbol: pool?.symbol,
+      symbol: assetData?.symbol,
     },
-  };
+  } : {};
 
   return (
     <ContainerWithHeader

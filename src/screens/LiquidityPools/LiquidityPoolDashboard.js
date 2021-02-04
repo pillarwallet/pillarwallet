@@ -53,9 +53,6 @@ import {
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
 
-// models
-import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
-
 // utils
 import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
@@ -191,7 +188,7 @@ const LiquidityPoolDashboard = ({
 
   if (!poolStats) return <Loader />;
 
-  const rewardAssetData = pool.rewardsEnabled
+  const rewardAssetData = pool.rewards?.[0]
     ? supportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
     : undefined;
 
@@ -203,6 +200,9 @@ const LiquidityPoolDashboard = ({
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
   const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
+
+  const hasStakedTokens = poolStats && poolStats?.stakedAmount > 0;
+  const showStakeSection = pool.rewardsEnabled || hasStakedTokens;
 
   const onAddLiquidity = () => {
     navigation.navigate(LIQUIDITY_POOLS_ADD_LIQUIDITY, { pool });
@@ -241,7 +241,7 @@ const LiquidityPoolDashboard = ({
     });
   });
 
-  if (rewardAssetData) {
+  if (pool.rewardsEnabled && rewardAssetData) {
     stats.push({
       title: t('liquidityPoolsContent.label.weeklyRewards'),
       value: t('tokenValue', { value: formatBigAmount(pool.rewards[0].amount), token: rewardAssetData.symbol }),
@@ -309,8 +309,9 @@ const LiquidityPoolDashboard = ({
           <Spacing h={6} />
           <Stats stats={stats} />
           <Spacing h={32} />
+
           <HorizontalPadding>
-            {pool.type === LIQUIDITY_POOL_TYPES.UNIPOOL && rewardAssetData && (
+            {showStakeSection && rewardAssetData && (
             <>
               <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
               <Spacing h={6} />
@@ -327,13 +328,17 @@ const LiquidityPoolDashboard = ({
                 </StretchedRow>
                 <Spacing h={20} />
                 <Row>
-                  <ButtonWrapper>
-                    <Button
-                      title={t('liquidityPoolsContent.button.stake')}
-                      onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
-                    />
-                  </ButtonWrapper>
-                  <Spacing w={7} />
+                  {pool.rewardsEnabled && (
+                    <>
+                      <ButtonWrapper>
+                        <Button
+                          title={t('liquidityPoolsContent.button.stake')}
+                          onPress={() => navigation.navigate(LIQUIDITY_POOLS_STAKE, { pool })}
+                        />
+                      </ButtonWrapper>
+                      <Spacing w={7} />
+                    </>
+                  )}
                   <ButtonWrapper>
                     <Button
                       title={t('liquidityPoolsContent.button.unstake')}
@@ -354,6 +359,7 @@ const LiquidityPoolDashboard = ({
                 )}
               </Card>
               <Spacing h={28} />
+
               <MediumText big>{t('liquidityPoolsContent.label.rewards')}</MediumText>
               <Spacing h={6} />
               <Card>

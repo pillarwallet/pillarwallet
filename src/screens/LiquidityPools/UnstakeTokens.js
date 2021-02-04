@@ -39,6 +39,7 @@ import { LIQUIDITY_POOLS_UNSTAKE_REVIEW } from 'constants/navigationConstants';
 import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 
 // utils
+import { findSupportedAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // actions
@@ -105,7 +106,7 @@ const UnstakeTokensScreen = ({
   }, [pool]);
 
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
-  const assetData = supportedAssets.find(asset => asset.symbol === pool.symbol);
+  const assetData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
   const [isValid, setIsValid] = useState(false);
 
@@ -130,12 +131,12 @@ const UnstakeTokensScreen = ({
     { amount: assetValue, poolToken: assetData, pool },
   );
 
-  const customBalances = assetData && {
+  const customBalances = assetData != null ? {
     [assetData.symbol]: {
       balance: poolStats?.stakedAmount,
       symbol: assetData.symbol,
     },
-  };
+  } : 0;
 
   return (
     <ContainerWithHeader
