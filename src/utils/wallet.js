@@ -21,10 +21,12 @@ import { ethers, utils } from 'ethers';
 import DeviceInfo from 'react-native-device-info';
 import isEmpty from 'lodash.isempty';
 import get from 'lodash.get';
-import { isHexString } from '@walletconnect/utils';
+import { convertUtf8ToHex, isHexString } from '@walletconnect/utils';
 import { getEnv } from 'configs/envConfig';
+import { toBuffer, keccak256, bufferToHex } from 'ethereumjs-util';
+import { TypedDataUtils } from 'eth-sig-util';
 
-import { getRandomInt, ethSign, getEthereumProvider, printLog, reportLog, reportErrorLog } from 'utils/common';
+import { getRandomInt, getEthereumProvider, printLog, reportLog, reportErrorLog } from 'utils/common';
 import Storage from 'services/storage';
 import { saveDbAction } from 'actions/dbActions';
 import type { Dispatch } from 'reducers/rootReducer';
@@ -82,19 +84,77 @@ export function signTransaction(trx: Object, walletInstance: Object): Promise<st
   return wallet.signTransaction(signTx);
 }
 
+export function encodePersonalMessage(message: string): string {
+  const data = toBuffer(convertUtf8ToHex(message));
+
+  const buf = Buffer.concat([
+    Buffer.from("\x19Ethereum Signed Message:\n" + data.length.toString(), "utf8"), // eslint-disable-line
+    data,
+  ]);
+
+  return bufferToHex(buf);
+}
+
+export function hashPersonalMessage(message: string): string {
+  const data = encodePersonalMessage(message);
+
+  const buf = toBuffer(data);
+  const hash = keccak256(buf);
+
+  return bufferToHex(hash);
+}
+
 // handle eth_sign
 export function signMessage(message: any, walletInstance: Object): string {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
-  // TODO: this method needs to be replaced when ethers.js is migrated to v4.0
-  return ethSign(message, wallet.privateKey);
+
+  const data = isHexString(message) ? ethers.utils.arrayify(message) : message;
+
+  return wallet.signMessage(data);
 }
 
 // handle personal_sign
-export function signPersonalMessage(message: string, walletInstance: Object): Promise<string> {
+export function signPersonalMessage(messageHex: string, walletInstance: Object): Promise<string> {
   const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
   const wallet = walletInstance.connect(provider);
-  return wallet.signMessage(isHexString(message) ? ethers.utils.arrayify(message) : message);
+
+  const actualMessage = ethers.utils.toUtf8String(messageHex);
+  const data = hashPersonalMessage(actualMessage);
+
+  return wallet.signMessage(ethers.utils.arrayify(data));
+}
+
+export function encodeTypedDataMessage(message: string): string {
+  const useV4 = true;
+  const data = TypedDataUtils.sanitizeData(JSON.parse(message));
+
+  const buf = Buffer.concat([
+    Buffer.from('1901', 'hex'),
+    TypedDataUtils.hashStruct('EIP712Domain', data.domain, data.types, useV4), // eslint-disable-line
+    TypedDataUtils.hashStruct(data.primaryType.toString(), data.message, data.types, useV4),
+  ]);
+
+  return bufferToHex(buf);
+}
+
+export function hashTypedDataMessage(message: string): string {
+  const data = encodeTypedDataMessage(message);
+
+  const buf = toBuffer(data);
+  const hash = keccak256(buf);
+
+  return bufferToHex(hash);
+}
+
+// handle eth_signTypedData
+export function signTypedData(data: string, walletInstance: Object): Promise<string> {
+  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+  const wallet = walletInstance.connect(provider);
+
+  const hashedTypedData = hashTypedDataMessage(data);
+
+  return wallet.signMessage(ethers.utils.arrayify(hashedTypedData));
 }
 
 export async function getWalletFromStorage(storageData: Object, dispatch: Dispatch) {
