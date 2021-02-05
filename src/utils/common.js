@@ -46,8 +46,7 @@ import {
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   ETH,
-  WBTC,
-  sBTC,
+  HIGH_VALUE_TOKENS,
   VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
@@ -212,15 +211,9 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  switch (assetSymbol) {
-    case ETH:
-      return 4;
-    case WBTC:
-    case sBTC:
-      return 8;
-    default:
-      return 2;
-  }
+  if (assetSymbol === ETH) return 4;
+  if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
+  return 2;
 };
 
 export const formatAmount = (amount: string | number, precision: number = 6): string => {
@@ -228,6 +221,9 @@ export const formatAmount = (amount: string | number, precision: number = 6): st
 
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
+
+export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+  formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
