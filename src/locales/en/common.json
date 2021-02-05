@@ -1195,6 +1195,9 @@
     },
     "paragraph": {
       "finalFeeMightBeHigher": "Note: a fee below might be shown as higher than provided on the connected platform, however, normally it will be less"
+    },
+    "error": {
+      "smartWalletNeedToBeActivated": "Smart Wallet needs to be activated to proceed."
     }
   },
 
