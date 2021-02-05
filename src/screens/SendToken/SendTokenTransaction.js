@@ -34,7 +34,7 @@ import Animation from 'components/Animation';
 import Toast from 'components/Toast';
 
 // utils
-import { fontSizes, spacing, fontStyles } from 'utils/variables';
+import { fontSizes, spacing, objectFontStyles } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { isPoolTogetherTag } from 'utils/poolTogether';
 import { isSablierTransactionTag } from 'utils/sablier';
@@ -308,8 +308,8 @@ class SendTokenTransaction extends React.Component<Props> {
     const transactionStatusTitle = isSuccess
       ? getTransactionSuccessTitle({ transactionTokenType, transactionType, isAllowanceTransaction })
       : t('error.transactionFailed.default');
-    const titleStyle = { ...fontStyles.large, marginTop: 16, marginBottom: 7 };
-    const textStyle = { ...fontStyles.regular, marginBottom: 75 };
+    const titleStyle = { ...objectFontStyles.large, marginTop: 16, marginBottom: 7 };
+    const textStyle = { ...objectFontStyles.regular, marginBottom: 75 };
     return (
       <Container>
         <Wrapper flex={1} center regularPadding>

@@ -23,6 +23,10 @@ import styled from 'styled-components/native';
 import { fontStyles, appFont, fontSizes, lineHeights } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
+type StyleValue = string | number | null | void;
+
+// Naive transformer from css values to add px units to numberic prosp. Required by Styled Components.
+export const toCssValue = (value: StyleValue) => (typeof value === 'number' ? `${value}px` : value);
 
 const getFontSize = (props) => {
   const propsKeys = Object.keys(props);
@@ -68,16 +72,16 @@ const getTextStyle = (props) => {
 
   // font size
   if (props.fontSize) {
-    textProps.fontSize = props.fontSize;
+    textProps.fontSize = toCssValue(props.fontSize);
   } else {
-    textProps.fontSize = getFontSize(props);
+    textProps.fontSize = toCssValue(getFontSize(props));
   }
 
   // line height
   if (props.lineHeight) {
-    textProps.lineHeight = props.lineHeight;
+    textProps.lineHeight = toCssValue(props.lineHeight);
   } else {
-    textProps.lineHeight = getLineHeight(props);
+    textProps.lineHeight = toCssValue(getLineHeight(props));
   }
 
   // other
@@ -85,6 +89,8 @@ const getTextStyle = (props) => {
 
   return { ...textProps };
 };
+
+
 
 export const BaseText = styled.Text`
   font-family: "${appFont.regular}";
