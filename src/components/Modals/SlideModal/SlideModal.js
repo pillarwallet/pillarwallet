@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import React from 'react';
-import type { Node as ReactNode, AbstractComponent } from 'react';
+import type { Node as ReactNode } from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import isEmpty from 'lodash.isempty';
 import pick from 'lodash.pick';
@@ -327,21 +327,11 @@ class SlideModal extends React.Component<Props, State> {
   }
 }
 
-// withTheme:
-// - is implicitly typed as any;
-// - uses innerRef prop instead of forwarding until v4;
-//   see: https://styled-components.com/docs/api#deprecated-innerref-prop;
-//
-// so the type of wrapped component is set manually to make prop validation
-// of SlideModal work.
-
-type Ref<T> = ((null | T) => mixed) | { current: null | T };
-type ThemedProps = {| ...OwnProps, innerRef: Ref<SlideModal> |};
-const ThemedSlideModal: AbstractComponent<ThemedProps, SlideModal> = withTheme(SlideModal);
+const ThemedSlideModal = withTheme(SlideModal);
 
 // Exported because some calls to React.createRef need this to be passed as type parameter.
 export type SlideModalInstance = SlideModal;
 
 export default React.forwardRef<OwnProps, SlideModalInstance>((props, ref) => (
-  <ThemedSlideModal {...props} innerRef={ref} />
+  <ThemedSlideModal {...props} ref={ref} />
 ));

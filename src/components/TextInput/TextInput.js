@@ -569,7 +569,7 @@ class TextInput extends React.Component<Props, State> {
                     >
                       <InputField
                         {...inputProps}
-                        innerRef={(input) => {
+                        ref={(input) => {
                           if (getInputRef) getInputRef(input);
                           this.multilineInputField = input;
                         }}
@@ -613,7 +613,7 @@ class TextInput extends React.Component<Props, State> {
             {Platform.OS === 'ios' && <IosFocusInput
               caretHidden
               autoCorrect={false}
-              innerRef={(ref) => { this.rnInput = ref; }}
+              ref={(ref) => { this.rnInput = ref; }}
               onFocus={this.handleRNFocus}
             />}
           </ItemHolder>

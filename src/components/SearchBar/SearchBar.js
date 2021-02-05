@@ -199,7 +199,7 @@ const SearchInput = (props: SearchInputProps) => {
         placeholderTextColor={colors.secondaryText}
         underlineColorAndroid="transparent"
         autoCorrect={false}
-        innerRef={inputRef}
+        ref={inputRef}
         needsExtraPadding={showIcon}
       />
       {showIcon &&
