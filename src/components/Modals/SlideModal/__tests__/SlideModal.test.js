@@ -20,7 +20,7 @@
 import * as React from 'react';
 import { BaseText } from 'components/Typography';
 import { shallow } from 'enzyme';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components/native';
 import { defaultTheme } from 'utils/themes';
 import SlideModal from '../SlideModal';
 

@@ -22,7 +22,7 @@ import { Provider } from 'react-redux';
 import renderer from 'react-test-renderer';
 import thunk from 'redux-thunk';
 import configureMockStore from 'redux-mock-store';
-import { ThemeProvider } from 'styled-components';
+import { ThemeProvider } from 'styled-components/native';
 import { defaultTheme } from 'utils/themes';
 import ActivityFeed from 'components/ActivityFeed/ActivityFeed';
 import { I18nextProvider } from 'react-i18next';
