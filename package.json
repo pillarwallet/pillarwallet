@@ -216,7 +216,7 @@
     "jest": "^25.1.0",
     "jest-html-reporter": "^2.8.2",
     "jest-react-native": "^18.0.0",
-    "jest-styled-components": "^5.0.1",
+    "jest-styled-components": "^7.0.3",
     "jetifier": "^1.6.4",
     "jsdom": "^16.1.0",
     "metro-react-native-babel-preset": "^0.59.0",

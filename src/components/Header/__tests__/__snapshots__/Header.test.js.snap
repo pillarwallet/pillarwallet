@@ -12,7 +12,6 @@ exports[`Header should render Header correctly 1`] = `
         "paddingTop": 0,
         "zIndex": 10,
       },
-      undefined,
     ]
   }
 >
@@ -27,7 +26,6 @@ exports[`Header should render Header correctly 1`] = `
           "marginBottom": 4,
           "marginTop": 20,
         },
-        undefined,
       ]
     }
   >
@@ -48,14 +46,12 @@ exports[`Header should render Header correctly 1`] = `
             "flexShrink": 1,
             "justifyContent": "flex-start",
           },
-          undefined,
         ]
       }
     >
       <View
         accessible={true}
         focusable={true}
-        forwardedRef={[Function]}
         onClick={[Function]}
         onResponderGrant={[Function]}
         onResponderMove={[Function]}
@@ -114,7 +110,6 @@ exports[`Header should render Header correctly 1`] = `
             "flexShrink": 1,
             "justifyContent": "flex-end",
           },
-          undefined,
         ]
       }
     />

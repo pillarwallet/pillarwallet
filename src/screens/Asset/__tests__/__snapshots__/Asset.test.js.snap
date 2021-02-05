@@ -9,7 +9,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
   }
 >
   <View
-    forwardedRef={[Function]}
     style={
       Object {
         "backgroundColor": "rgba(255, 255, 255, 1)",
@@ -28,7 +27,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             "paddingVertical": 10,
             "width": "100%",
           },
-          undefined,
         ]
       }
     >
@@ -41,7 +39,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               "justifyContent": "space-between",
               "width": "100%",
             },
-            undefined,
           ]
         }
       >
@@ -64,7 +61,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           <View
             accessible={true}
             focusable={true}
-            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -121,7 +117,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "paddingRight": 12,
                 "paddingTop": 0,
               },
-              undefined,
             ]
           }
         />
@@ -139,7 +134,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "height": 36,
                 "justifyContent": "flex-end",
               },
-              undefined,
             ]
           }
         >
@@ -154,7 +148,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               accessible={true}
               focusable={true}
-              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -268,7 +261,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "justifyContent": "center",
                 "width": "100%",
               },
-              undefined,
             ]
           }
         >
@@ -279,7 +271,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "height": 220,
                   "width": "100%",
                 },
-                undefined,
               ]
             }
           >
@@ -797,7 +788,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "marginTop": 0,
                 "paddingBottom": 8,
               },
-              undefined,
             ]
           }
         >
@@ -809,7 +799,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "flexDirection": "row",
                   "justifyContent": "center",
                 },
-                undefined,
               ]
             }
           >
@@ -819,25 +808,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 Array [
                   Object {
                     "color": "#0A1427",
-                    "fontFamily": "EuclidCircularB-Regular",
+                    "fontFamily": "EuclidCircularB-Medium",
+                    "fontSize": 36,
+                    "lineHeight": 54,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Medium",
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontSize": 36,
-                        "lineHeight": 54,
-                        "textAlign": "center",
-                      },
-                      undefined,
-                    ],
-                  ],
                 ]
               }
             >
@@ -850,7 +826,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 Object {
                   "flexDirection": "row",
                 },
-                undefined,
               ]
             }
           >
@@ -860,16 +835,11 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   Object {
                     "color": "#0A1427",
                     "fontFamily": "EuclidCircularB-Regular",
+                    "fontSize": 12,
+                    "lineHeight": 18,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "fontSize": 12,
-                      "lineHeight": 18,
-                      "textAlign": "center",
-                    },
-                    undefined,
-                  ],
                 ]
               }
             >
@@ -892,7 +862,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 "paddingBottom": 30,
                 "paddingTop": 10,
               },
-              undefined,
             ]
           }
         >
@@ -911,14 +880,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "paddingRight": 10,
                   "paddingTop": 0,
                 },
-                undefined,
               ]
             }
           >
             <View
               accessible={true}
               focusable={true}
-              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -944,7 +911,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Object {
                       "position": "relative",
                     },
-                    undefined,
                   ]
                 }
               >
@@ -1300,7 +1266,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             "position": "absolute",
                             "width": 64,
                           },
-                          undefined,
                         ]
                       }
                     >
@@ -1327,7 +1292,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "position": "absolute",
                                 "width": 64,
                               },
-                              undefined,
                             ],
                             Object {
                               "flex": 0,
@@ -1393,7 +1357,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "position": "absolute",
                               "width": 63,
                             },
-                            undefined,
                           ]
                         }
                       />
@@ -1417,20 +1380,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#007AFF",
                       "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 16,
+                      "letterSpacing": 0.1,
+                      "opacity": 1,
+                      "textAlign": "center",
                       "textAlignVertical": "center",
                     },
-                    Array [
-                      Object {
-                        "color": "#007AFF",
-                        "fontSize": 16,
-                        "letterSpacing": 0.1,
-                        "opacity": 1,
-                        "textAlign": "center",
-                      },
-                      undefined,
-                    ],
                   ]
                 }
               >
@@ -1440,7 +1397,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             <View
               accessible={true}
               focusable={true}
-              forwardedRef={[Function]}
               onClick={[Function]}
               onResponderGrant={[Function]}
               onResponderMove={[Function]}
@@ -1466,7 +1422,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                     Object {
                       "position": "relative",
                     },
-                    undefined,
                   ]
                 }
               >
@@ -1822,7 +1777,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                             "position": "absolute",
                             "width": 64,
                           },
-                          undefined,
                         ]
                       }
                     >
@@ -1849,7 +1803,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                                 "position": "absolute",
                                 "width": 64,
                               },
-                              undefined,
                             ],
                             Object {
                               "flex": 0,
@@ -1915,7 +1868,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                               "position": "absolute",
                               "width": 63,
                             },
-                            undefined,
                           ]
                         }
                       />
@@ -1939,20 +1891,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                 style={
                   Array [
                     Object {
-                      "color": "#0A1427",
+                      "color": "#8B939E",
                       "fontFamily": "EuclidCircularB-Regular",
+                      "fontSize": 16,
+                      "letterSpacing": 0.1,
+                      "opacity": 1,
+                      "textAlign": "center",
                       "textAlignVertical": "center",
                     },
-                    Array [
-                      Object {
-                        "color": "#8B939E",
-                        "fontSize": 16,
-                        "letterSpacing": 0.1,
-                        "opacity": 1,
-                        "textAlign": "center",
-                      },
-                      undefined,
-                    ],
                   ]
                 }
               >
@@ -2007,20 +1953,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           style={
             Array [
               Object {
-                "color": "#0A1427",
+                "color": "#ffffff",
                 "fontFamily": "EuclidCircularB-Regular",
+                "fontSize": 12,
+                "lineHeight": 18,
+                "marginBottom": 8,
+                "textAlign": "center",
                 "textAlignVertical": "center",
               },
-              Array [
-                Object {
-                  "color": "#ffffff",
-                  "fontSize": 12,
-                  "lineHeight": 18,
-                  "marginBottom": 8,
-                  "textAlign": "center",
-                },
-                undefined,
-              ],
             ]
           }
         >
@@ -2032,14 +1972,12 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               Object {
                 "flexDirection": "row",
               },
-              undefined,
             ]
           }
         >
           <View
             accessible={true}
             focusable={true}
-            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -2077,22 +2015,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#FFFFFF",
                     "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 12,
-                    "lineHeight": 18,
+                    "fontSize": 14,
+                    "lineHeight": 14,
+                    "marginTop": 2.52,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#FFFFFF",
-                      "fontSize": 14,
-                      "lineHeight": 14,
-                      "marginTop": 2.52,
-                      "textAlign": "center",
-                    },
-                    undefined,
-                  ],
                 ]
               }
               variant="danger"
@@ -2107,7 +2037,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   "height": 0,
                   "width": 8,
                 },
-                undefined,
               ]
             }
             w={8}
@@ -2115,7 +2044,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
           <View
             accessible={true}
             focusable={true}
-            forwardedRef={[Function]}
             onClick={[Function]}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
@@ -2153,22 +2081,14 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               style={
                 Array [
                   Object {
-                    "color": "#0A1427",
+                    "color": "#FFFFFF",
                     "fontFamily": "EuclidCircularB-Regular",
-                    "fontSize": 12,
-                    "lineHeight": 18,
+                    "fontSize": 14,
+                    "lineHeight": 14,
+                    "marginTop": 2.52,
+                    "textAlign": "center",
                     "textAlignVertical": "center",
                   },
-                  Array [
-                    Object {
-                      "color": "#FFFFFF",
-                      "fontSize": 14,
-                      "lineHeight": 14,
-                      "marginTop": 2.52,
-                      "textAlign": "center",
-                    },
-                    undefined,
-                  ],
                 ]
               }
               variant="default"
