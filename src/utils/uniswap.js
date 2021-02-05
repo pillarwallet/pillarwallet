@@ -24,20 +24,18 @@ import {
 } from '@uniswap/sdk';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
-import { getEnv } from 'configs/envConfig';
 
 import ROUTER_ABI from 'abi/uniswapRouter.json';
 import { encodeContractMethod } from 'services/assets';
 import { ETH } from 'constants/assetsConstants';
 import { ALLOWED_SLIPPAGE } from 'constants/exchangeConstants';
+import { isProdEnv } from 'utils/environment';
 
 import type { Asset } from 'models/Asset';
 
 type UniswapChainId = ChainId.MAINNET | ChainId.KOVAN;
 
-export const getChainId = (): UniswapChainId => {
-  return getEnv().NETWORK_PROVIDER === 'homestead' ? ChainId.MAINNET : ChainId.KOVAN;
-};
+export const getUniswapChainId = (): UniswapChainId => isProdEnv() ? ChainId.MAINNET : ChainId.KOVAN;
 
 const UNISWAP_ALLOWED_SLIPPAGE = 1 - (ALLOWED_SLIPPAGE / 100);
 const DEADLINE_FROM_NOW = 60 * 15; // seconds
@@ -58,7 +56,7 @@ const getBNFromNumeratorDenominator = (prop: { numerator: any, denominator: any,
 
 export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
   ...asset,
-  address: toChecksumAddress(asset.symbol === ETH ? WETH[getChainId()]?.address : asset.address),
+  address: toChecksumAddress(asset.symbol === ETH ? WETH[getUniswapChainId()]?.address : asset.address),
   code: asset.symbol,
 }));
 
@@ -149,3 +147,7 @@ export const generateTxObject = (
   value,
   data: txData,
 });
+
+export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
+  return fromAssetSymbol === ETH && contractAddress === WETH[getUniswapChainId()].address;
+};

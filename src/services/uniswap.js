@@ -49,7 +49,7 @@ import {
   swapExactTokensToEth,
   swapExactEthToTokens,
   generateTxObject,
-  getChainId,
+  getUniswapChainId,
 } from 'utils/uniswap';
 import { parseOffer, createAllowanceTx, getFixedQuantity } from 'utils/exchange';
 
@@ -77,7 +77,7 @@ const getBackupRoute = async (
   let token1;
   let token2;
   let tokenMiddle;
-  const chainId = getChainId();
+  const chainId = getUniswapChainId();
   const provider = getEthProvider();
   try {
     token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, provider);
@@ -109,7 +109,7 @@ const getRoute = async (fromAsset: Asset, toAsset: Asset): Promise<Route> => {
   const {
     address: toAddress, symbol: toSymbol, name: toName,
   } = toAsset;
-  const chainId = getChainId();
+  const chainId = getUniswapChainId();
   const provider = getEthProvider();
   try {
     const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, provider, fromSymbol, fromName);
@@ -127,7 +127,8 @@ const getTrade = async (
   fromQuantityInBaseUnits: string,
   route: Route,
 ): Promise<Trade> => {
-  const fromToken = await Fetcher.fetchTokenData(getChainId(), toChecksumAddress(fromAssetAddress), getEthProvider());
+  const fromToken =
+    await Fetcher.fetchTokenData(getUniswapChainId(), toChecksumAddress(fromAssetAddress), getEthProvider());
   const fromTokenAmount = new TokenAmount(fromToken, fromQuantityInBaseUnits);
   const trade = new Trade(route, fromTokenAmount, TradeType.EXACT_INPUT);
   return trade;
@@ -172,7 +173,7 @@ const getUniswapOrderData = async (
   toAssetDecimals: string,
 ): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber, expectedOutputRaw: string } | null> => {
   let route = await getRoute(fromAsset, toAsset);
-  const WETHAddress = WETH[getChainId()].address;
+  const WETHAddress = WETH[getUniswapChainId()].address;
   if (!route && (
     fromAsset.address.toLowerCase() === WETHAddress.toLowerCase()
       || toAsset.address.toLowerCase() === WETHAddress.toLowerCase()
@@ -221,7 +222,7 @@ export const createUniswapOrder = async (
   let txData = '';
   let txValue = '0';
   let expectedOutput;
-  const chainId = getChainId();
+  const chainId = getUniswapChainId();
 
   if (fromAsset.code !== ETH && toAsset.code !== ETH) {
     const orderData = await getUniswapOrderData(
@@ -246,7 +247,7 @@ export const createUniswapOrder = async (
   } else if (fromAsset.code === ETH && toAsset.code !== ETH) {
     txValue = quantityBaseUnits.toFixed();
     const orderData = await getUniswapOrderData(
-      WETH[getChainId()],
+      WETH[getUniswapChainId()],
       toAsset,
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),

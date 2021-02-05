@@ -49,8 +49,10 @@ import {
   getRate,
   getBalance,
 } from 'utils/assets';
-import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
+import { getOfferProviderLogo } from 'utils/exchange';
 import { showWbtcErrorToast } from 'services/wbtcCafe';
+import { isProdEnv } from 'utils/environment';
+import { isWethConvertedTx } from 'utils/uniswap';
 
 // types
 import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
@@ -68,7 +70,6 @@ import { accountBalancesSelector } from 'selectors/balances';
 import ExchangeScheme from './ExchangeScheme';
 import WBTCCafeInfo from './WBTCCafeInfo';
 import ConfirmationTable from './ConfirmationTable';
-import { getEnv } from '../../configs/envConfig';
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -146,7 +147,7 @@ const ExchangeConfirmScreen = ({
     const isConvertedTx = isWethConvertedTx(symbol, contractAddress);
 
     // for WETH converted txs on homestead, we need to provide ETH data or else estimation fails
-    const contractAddressForEstimation = getEnv().NETWORK_PROVIDER === 'homestead' && isConvertedTx
+    const contractAddressForEstimation = isProdEnv() && isConvertedTx
       ? ethersConstants.AddressZero
       : contractAddress;
 
