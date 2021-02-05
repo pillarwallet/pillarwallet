@@ -203,6 +203,7 @@ class WalletSettings extends React.Component<Props, State> {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
         .then((status) => {
           if (status === RESULTS.GRANTED) {
+            // $FlowFixMe: flow update to 0.122
             changeUseBiometrics(!useBiometrics, { ...wallet, pin });
             return;
           }
@@ -212,6 +213,7 @@ class WalletSettings extends React.Component<Props, State> {
       return;
     }
 
+    // $FlowFixMe: flow update to 0.122
     changeUseBiometrics(!useBiometrics, { ...wallet, pin });
   };
 

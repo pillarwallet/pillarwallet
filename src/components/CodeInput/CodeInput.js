@@ -29,6 +29,7 @@ import { themedColors } from 'utils/themes';
 import { fontStyles, spacing } from 'utils/variables';
 import { responsiveSize } from 'utils/ui';
 
+// $FlowFixMe
 import type { Event } from 'react-native';
 
 

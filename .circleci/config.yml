@@ -9,13 +9,14 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "11.5.0"
+      xcode: "12.3.0"
     resource_class: medium
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+      HOMEBREW_NO_AUTO_UPDATE: 1
 
     shell: /bin/bash --login -o pipefail
 
@@ -199,22 +200,11 @@ aliases:
       paths:
         - ~/android/.gradle
         - ~/android/.m2
-  - &homebrew_save_cache
-    save_cache:
-      name: Save homebrew cache
-      key: homebrew-packages-v1
-      paths:
-        - /usr/local/Homebrew
   - &homebrew_install
     run:
       name: Install coureutils
       command: |
         brew install coreutils
-  - &homebrew_restore_cache
-    restore_cache:
-      name: Restore homebrew cache
-      keys:
-        - homebrew-packages-v1
 
 jobs:
 
@@ -264,9 +254,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
 
-      - *homebrew_restore_cache
       - *homebrew_install
-      - *homebrew_save_cache
 
       - *node_restore_cache
 
@@ -306,6 +294,10 @@ jobs:
             sed -i.bak "s/_widget_signature_/$WIDGET_SIGNATURE/g" ./src/configs/buildConfig.js
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
+      - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
       - run:
           no_output_timeout: 20m
           name: Upload to App Center
@@ -470,9 +462,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
 
-      - *homebrew_restore_cache
       - *homebrew_install
-      - *homebrew_save_cache
 
       - run:
           name: Set production environment
@@ -519,6 +509,10 @@ jobs:
             bundle exec pod install --verbose
       - *save_pod_cache
 
+      - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
       - run:
           no_output_timeout: 20m
           name: Upload to TestFlight
@@ -761,7 +755,7 @@ workflows:
           filters:
             branches:
               only:
-                - develop 
+                - develop
       - appcenter_ios:
           requires:
             - build-and-test

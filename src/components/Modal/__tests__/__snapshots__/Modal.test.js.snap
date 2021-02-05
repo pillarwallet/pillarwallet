@@ -28,6 +28,7 @@ exports[`Modal opens a modal 1`] = `
   <View
     accessible={true}
     focusable={true}
+    forwardedRef={[Function]}
     onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
@@ -81,6 +82,7 @@ exports[`Modal opens a modal 1`] = `
     }
   >
     <View
+      forwardedRef={[Function]}
       hideModalContentWhileAnimating={false}
       onModalHide={[Function]}
       onModalWillHide={[Function]}
@@ -127,13 +129,14 @@ exports[`Modal opens a modal 1`] = `
       swipeThreshold={100}
     >
       <View
+        forwardedRef={[Function]}
         onLayout={[Function]}
         pointerEvents="box-none"
-        statusBarHeight={42}
+        statusBarHeight={null}
         style={
           Object {
             "left": 0,
-            "marginTop": 82,
+            "marginTop": 40,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -186,6 +189,7 @@ exports[`Modal opens multiple modals 1`] = `
   <View
     accessible={true}
     focusable={true}
+    forwardedRef={[Function]}
     onClick={[Function]}
     onResponderGrant={[Function]}
     onResponderMove={[Function]}
@@ -239,6 +243,7 @@ exports[`Modal opens multiple modals 1`] = `
     }
   >
     <View
+      forwardedRef={[Function]}
       hideModalContentWhileAnimating={false}
       onModalHide={[Function]}
       onModalWillHide={[Function]}
@@ -285,13 +290,14 @@ exports[`Modal opens multiple modals 1`] = `
       swipeThreshold={100}
     >
       <View
+        forwardedRef={[Function]}
         onLayout={[Function]}
         pointerEvents="box-none"
-        statusBarHeight={42}
+        statusBarHeight={null}
         style={
           Object {
             "left": 0,
-            "marginTop": 82,
+            "marginTop": 40,
             "paddingBottom": 0,
             "paddingLeft": 20,
             "paddingRight": 20,
@@ -338,6 +344,7 @@ exports[`Modal opens multiple modals 1`] = `
         <View
           accessible={true}
           focusable={true}
+          forwardedRef={[Function]}
           onClick={[Function]}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
@@ -391,6 +398,7 @@ exports[`Modal opens multiple modals 1`] = `
           }
         >
           <View
+            forwardedRef={[Function]}
             hideModalContentWhileAnimating={false}
             onModalHide={[Function]}
             onModalWillHide={[Function]}
@@ -437,13 +445,14 @@ exports[`Modal opens multiple modals 1`] = `
             swipeThreshold={100}
           >
             <View
+              forwardedRef={[Function]}
               onLayout={[Function]}
               pointerEvents="box-none"
-              statusBarHeight={42}
+              statusBarHeight={null}
               style={
                 Object {
                   "left": 0,
-                  "marginTop": 82,
+                  "marginTop": 40,
                   "paddingBottom": 0,
                   "paddingLeft": 20,
                   "paddingRight": 20,

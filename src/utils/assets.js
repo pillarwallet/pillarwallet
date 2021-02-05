@@ -254,6 +254,10 @@ export const addressesInclude = (addresses: string[], addressToFind: ?string): b
   return addresses.some(item => isCaseInsensitiveMatch(item, addressToFind));
 };
 
+export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?string): Asset | void => {
+  return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
+};
+
 export const getAssetData = (
   userAssets: Asset[],
   supportedAssetsData: Asset[],
@@ -355,6 +359,7 @@ export const generateAssetSelectorOption = (
   const formattedBalanceInFiat = rates ? getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol) : '';
   const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
 
+  // $FlowFixMe: flow update to 0.122
   return ({
     key: symbol,
     value: symbol,
