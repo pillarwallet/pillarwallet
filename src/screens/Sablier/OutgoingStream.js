@@ -87,6 +87,11 @@ const SelectorWrapper = styled.View`
   padding: 30px 0 48px;
 `;
 
+const ButtonWrapper = styled.View`
+  align-items: center;
+  padding: 0px 20px;
+`;
+
 class OutgoingStream extends React.Component<Props> {
   componentDidMount() {
     this.props.resetEstimateTransaction();
@@ -190,13 +195,13 @@ class OutgoingStream extends React.Component<Props> {
             selectedOption={recipient}
           />
         </SelectorWrapper>
-        <Button
-          title={t('sablierContent.button.cancelStream')}
-          onPress={this.onCancel}
-          isLoading={isEstimating}
-          marginLeft={20}
-          marginRight={20}
-        />
+        <ButtonWrapper>
+          <Button
+            title={t('sablierContent.button.cancelStream')}
+            onPress={this.onCancel}
+            isLoading={isEstimating}
+          />
+        </ButtonWrapper>
         <Spacing h={24} />
         <ActivityFeed
           navigation={navigation}
