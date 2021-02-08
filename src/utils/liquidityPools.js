@@ -222,7 +222,7 @@ export const getRemoveLiquidityTransactions = async (
   obtainedTokensAmounts: string[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
-  const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
+  const poolTokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
   const deadline = getDeadline();
 
   let removeLiquidityTransactionData;
@@ -232,7 +232,7 @@ export const getRemoveLiquidityTransactions = async (
     const erc20TokenData = tokensAssets[erc20TokenIndex];
     removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidityETH', [
       erc20TokenData.address,
-      tokenAmountBN,
+      poolTokenAmountBN,
       0,
       0,
       sender,
@@ -242,7 +242,7 @@ export const getRemoveLiquidityTransactions = async (
     removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidity', [
       tokensAssets[0].address,
       tokensAssets[1].address,
-      tokenAmountBN,
+      poolTokenAmountBN,
       0,
       0,
       sender,
@@ -263,7 +263,7 @@ export const getRemoveLiquidityTransactions = async (
     ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
     : null;
 
-  if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
+  if (!approvedAmountBN || poolTokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(
       UNISWAP_ROUTER_ADDRESS, poolTokenAmount, poolToken.decimals);
     removeLiquidityTransactions = [
