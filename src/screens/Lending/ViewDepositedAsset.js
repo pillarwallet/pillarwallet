@@ -45,7 +45,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { LENDING_ENTER_DEPOSIT_AMOUNT, LENDING_ENTER_WITHDRAW_AMOUNT } from 'constants/navigationConstants';
 
 // utils
-import { formatAmountDisplay, formatFiat } from 'utils/common';
+import { formatAmountDisplay, formatFiat, formatTokenAmount } from 'utils/common';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { getRate } from 'utils/assets';
@@ -170,6 +170,8 @@ const ViewDepositedAsset = ({
   const firstDepositBadgeEvent = badgesEvents.find(({ badgeType }) => badgeType === 'first-aave-deposit');
   if (firstDepositBadgeEvent) activityFeedData.push(firstDepositBadgeEvent);
 
+  const displayedEarned = formatTokenAmount(earnedAmount, assetSymbol);
+
   return (
     <ContainerWithHeader
       navigation={navigation}
@@ -204,7 +206,7 @@ const ViewDepositedAsset = ({
         </ImagesWrapper>
         <ValuesWrapper>
           <TokenValueWrapper>
-            <TokenValue>{formatAmountDisplay(currentBalance)}</TokenValue>
+            <TokenValue>{formatTokenAmount(currentBalance, assetSymbol)}</TokenValue>
             <TokenSymbol>{assetSymbol}</TokenSymbol>
           </TokenValueWrapper>
           <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
@@ -223,7 +225,7 @@ const ViewDepositedAsset = ({
             <MediumText positive fontSize={fontSizes.medium}>
               {t('positiveValue', {
                 value: t('tokenValue', {
-                  value: formatAmountDisplay(earnedAmount),
+                  value: +displayedEarned ? displayedEarned : formatAmountDisplay(earnedAmount),
                   token: assetSymbol,
                 }),
               })}

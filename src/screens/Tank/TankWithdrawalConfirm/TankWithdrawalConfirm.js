@@ -36,7 +36,7 @@ import { ASSETS } from 'constants/navigationConstants';
 import ReviewAndConfirm from 'components/ReviewAndConfirm';
 
 // utils
-import { formatTransactionFee } from 'utils/common';
+import { formatTransactionFee, formatTokenAmount } from 'utils/common';
 import { getGasToken, getTxFeeInWei } from 'utils/transactions';
 
 // types
@@ -102,6 +102,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     } = this.props;
     const { buttonSubmitted } = this.state;
     const amount = navigation.getParam('amount', '0');
+    const formattedAmount = formatTokenAmount(amount, PPN_TOKEN);
 
     const gasToken = getGasToken(useGasToken, feeInfo);
     const feeDisplayValue = formatTransactionFee(getTxFeeInWei(useGasToken, feeInfo), gasToken);
@@ -113,7 +114,7 @@ class TankWithdrawalConfirm extends React.Component<Props, State> {
     const reviewData = [
       {
         label: t('transactions.label.amount'),
-        value: t('tokenValue', { value: amount, token: PPN_TOKEN }),
+        value: t('tokenValue', { value: formattedAmount, token: PPN_TOKEN }),
       },
       {
         label: t('transactions.label.receiver'),
