@@ -32,7 +32,7 @@ import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
 
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatAmount, formatTokenAmount, formatFiat } from 'utils/common';
 import { getFormattedRate, getRate } from 'utils/assets';
 import { getAddLiquidityTransactions } from 'utils/liquidityPools';
 
@@ -142,7 +142,7 @@ const AddLiquidityReviewScreen = ({
             <TableRow key={token.symbol}>
               <TableLabel>{token.name}</TableLabel>
               <BaseText regular>
-                {t('tokenValue', { value: formatAmount(tokensValues[i]), token: token.symbol })}{' '}
+                {t('tokenValue', { value: formatTokenAmount(tokensValues[i], token.symbol), token: token.symbol })}{' '}
                 <BaseText secondary>{tokensValuesInFiat[i]}</BaseText>
               </BaseText>
             </TableRow>
