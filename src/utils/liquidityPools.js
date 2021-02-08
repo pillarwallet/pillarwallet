@@ -417,7 +417,6 @@ export const getPoolStats = (
     dailyFees: dailyVolume * UNISWAP_FEE_RATE,
     tokensLiquidity,
     stakedAmount: new BigNumber(unipoolData?.stakedAmount ?? '0'),
-    roughStakedAmount: parseFloat(unipoolData?.stakedAmount) || 0,
     rewardsToClaim: parseFloat(unipoolData?.earnedAmount) || 0,
     tokensPricesUSD,
     tokensPrices,

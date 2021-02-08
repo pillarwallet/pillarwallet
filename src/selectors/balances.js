@@ -132,12 +132,12 @@ const liquidityPoolsBalanceListSelector = createSelector(
     const {
       currentPrice,
       roughUserLiquidityTokenBalance,
-      roughStakedAmount,
+      stakedAmount,
     } = getPoolStats(pool, liquidityPoolsState) ?? {};
 
-    if ([currentPrice, roughUserLiquidityTokenBalance, roughStakedAmount].includes(undefined)) return null;
+    if ([currentPrice, roughUserLiquidityTokenBalance].includes(undefined)) return null;
     return {
-      balance: (roughUserLiquidityTokenBalance + roughStakedAmount) * currentPrice,
+      balance: (roughUserLiquidityTokenBalance + stakedAmount.toNumber()) * currentPrice,
       symbol: USD,
     };
   }).filter(Boolean),

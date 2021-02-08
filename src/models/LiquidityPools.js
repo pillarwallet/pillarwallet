@@ -62,7 +62,6 @@ export type LiquidityPoolStats = {
   dailyFees: number,
   tokensLiquidity: {[string]: number },
   stakedAmount: BigNumber,
-  roughStakedAmount: number,
   rewardsToClaim: number,
   tokensPrices: {[string]: number },
   tokensPricesUSD: {[string]: number },
