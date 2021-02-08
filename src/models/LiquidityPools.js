@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+import type { BigNumber } from 'bignumber.js';
+
 export const LIQUIDITY_POOLS_TYPES = {
   UNIPOOL: ('UNIPOOL': 'UNIPOOL'),
 };
@@ -59,7 +61,8 @@ export type LiquidityPoolStats = {
   dailyVolume: number,
   dailyFees: number,
   tokensLiquidity: {[string]: number },
-  stakedAmount: number,
+  stakedAmount: BigNumber,
+  roughStakedAmount: number,
   rewardsToClaim: number,
   tokensPrices: {[string]: number },
   tokensPricesUSD: {[string]: number },

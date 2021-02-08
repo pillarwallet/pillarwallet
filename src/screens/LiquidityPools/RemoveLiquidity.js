@@ -178,12 +178,14 @@ const AddLiquidityScreen = ({
     const tokenMaxWithdrawn = ((tokenPool * maxAmountBurned) / totalAmount);
 
     const tokenSymbol = tokensData[tokenIndex]?.symbol;
-    const customBalances = tokenSymbol && {
-      [tokenSymbol]: {
-        balance: tokenMaxWithdrawn,
-        symbol: tokenSymbol,
-      },
-    };
+    const customBalances: Balances = tokenSymbol
+      ? {
+        [tokenSymbol]: {
+          balance: tokenMaxWithdrawn,
+          symbol: tokenSymbol,
+        },
+      }
+      : {};
     return (
       <ValueInput
         assetData={tokensData[tokenIndex]}

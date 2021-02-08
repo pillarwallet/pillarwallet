@@ -168,7 +168,7 @@ const LiquidityPoolDashboard = ({
   useEffect(() => {
     if (
       poolStats &&
-      poolStats.stakedAmount === 0 &&
+      poolStats.roughStakedAmount === 0 &&
       poolStats.roughUserLiquidityTokenBalance > 0 &&
       !shownStakingEnabledModal[pool.name] &&
       pool.rewardsEnabled
@@ -194,10 +194,10 @@ const LiquidityPoolDashboard = ({
   const formattedBalance = formatTokenAmount(balance, pool.symbol);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
-  const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
+  const stakedAmountInFiat = convertUSDToFiat(poolStats.roughStakedAmount * poolStats.currentPrice, rates, fiatCurrency);
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
 
-  const hasStakedTokens = poolStats && poolStats?.stakedAmount > 0;
+  const hasStakedTokens = poolStats && poolStats?.roughStakedAmount > 0;
   const showStakeSection = pool.rewardsEnabled || hasStakedTokens;
 
   const onAddLiquidity = () => {
@@ -314,7 +314,7 @@ const LiquidityPoolDashboard = ({
                   <Row>
                     <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
                     <Spacing w={12} />
-                    <MediumText fontSize={20}>{formatTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
+                    <MediumText fontSize={20}>{formatTokenAmount(poolStats.roughStakedAmount, pool.symbol)}{' '}
                       <MediumText secondary regular>{pool.symbol}</MediumText>
                     </MediumText>
                   </Row>
@@ -341,7 +341,7 @@ const LiquidityPoolDashboard = ({
                     />
                   </ButtonWrapper>
                 </Row>
-                {balance === 0 && poolStats.stakedAmount === 0 && (
+                {balance === 0 && poolStats.roughStakedAmount === 0 && (
                   <>
                     <Overlay />
                     <AbsolutePositioning>
@@ -376,7 +376,7 @@ const LiquidityPoolDashboard = ({
                   primarySecond
                   onPress={onClaimReward}
                 />
-                {poolStats.stakedAmount === 0 && (
+                {poolStats.roughStakedAmount === 0 && (
                   <>
                     <Overlay />
                     <AbsolutePositioning>

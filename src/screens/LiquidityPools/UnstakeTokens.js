@@ -116,7 +116,7 @@ const UnstakeTokensScreen = ({
 
   const customBalances = assetData != null ? {
     [assetData.symbol]: {
-      balance: poolStats?.stakedAmount,
+      balance: poolStats?.stakedAmount.toFixed(),
       symbol: assetData.symbol,
     },
   } : 0;
