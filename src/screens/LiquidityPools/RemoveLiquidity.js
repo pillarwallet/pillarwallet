@@ -153,12 +153,12 @@ const AddLiquidityScreen = ({
     setObtainedAssetsValues(amounts.pairTokens.map((amount) => formatAmount(amount)));
   };
 
-  const onObtainedAssetValueChange = (tokenIndex: number, newValue: string, newPercent: number | undefined) => {
+  const onObtainedAssetValueChange = (tokenIndex: number, newValue: string, newPercent: number | void) => {
     const amounts = calculateProportionalAssetAmountsForRemoval(pool, newValue || '0', tokenIndex, liquidityPoolsState);
 
     // Ensure we will withdraw everything if user want to remove max value.
     if (newPercent === 100) {
-      onPoolTokenAmountChange(poolStats?.userLiquidityTokenBalance);
+      onPoolTokenAmountChange(poolStats?.userLiquidityTokenBalance ?? '0');
       return;
     }
 
@@ -189,7 +189,7 @@ const AddLiquidityScreen = ({
         assetData={tokensData[tokenIndex]}
         customAssets={[tokensData[tokenIndex]]}
         value={obtainedAssetsValues[tokenIndex]}
-        onValueChange={(newValue: string, newPercent: number | undefined) =>
+        onValueChange={(newValue: string, newPercent: number | void) =>
           onObtainedAssetValueChange(tokenIndex, newValue, newPercent)
         }
         onFormValid={(isValid: boolean) => {

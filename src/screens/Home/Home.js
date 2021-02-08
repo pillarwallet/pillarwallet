@@ -526,11 +526,13 @@ class HomeScreen extends React.Component<Props> {
     const hasRariDeposits = !!rariDeposits.length;
 
     const purchasedLiquidityPools = LIQUIDITY_POOLS()
-      .map(pool => ({
+      .map((pool) => ({
         pool,
         poolStats: getPoolStats(pool, liquidityPoolsReducer),
       }))
-      .filter(({ poolStats }) => poolStats && (poolStats.roughUserLiquidityTokenBalance > 0 || poolStats.stakedAmount > 0));
+      .filter(
+        ({ poolStats }) => poolStats && (poolStats.roughUserLiquidityTokenBalance > 0 || poolStats.stakedAmount > 0),
+      );
 
     return (
       <React.Fragment>

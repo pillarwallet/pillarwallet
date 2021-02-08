@@ -64,7 +64,7 @@ export type ExternalProps = {
   assetData: Option,
   onAssetDataChange: (Option) => void,
   value: string,
-  onValueChange: (string, number | undefined) => void, // `newPercent` provided as the second argument (if used by user)
+  onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
   horizontalOptions?: HorizontalOption[],
   showCollectibles?: boolean,
   txFeeInfo?: Object,

@@ -17,11 +17,13 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+
+import { BigNumber } from 'bignumber.js';
 import {
   getPoolStats,
   getShareOfPool,
   calculateProportionalAssetValues,
-  calculateProportionalRemoveLiquidityAssetValues,
+  calculateProportionalAssetAmountsForRemoval,
 } from 'utils/liquidityPools';
 import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
@@ -174,24 +176,23 @@ describe('Liquidity pools utils', () => {
     });
   });
 
-  describe('calculateProportionalRemoveLiquidityAssetValues', () => {
-    it('should calculate assets proportions in unipool pool (output token)', () => {
-      const assetsValues = calculateProportionalRemoveLiquidityAssetValues(
-        unipoolPool,
-        1000,
-        0,
-        liquidityPoolsReducerMock,
-      );
-      expect(assetsValues).toEqual([1000, 2000, 100]);
+  describe('calculateProportionalAssetAmountsForRemoval', () => {
+    it('should calculate for pair token input', () => {
+      expect(calculateProportionalAssetAmountsForRemoval(unipoolPool, '1000', 0, liquidityPoolsReducerMock)).toEqual({
+        pairTokens: [BigNumber(1000), BigNumber(2000)],
+        poolToken: BigNumber(100),
+      });
+      expect(calculateProportionalAssetAmountsForRemoval(unipoolPool, '2000', 1, liquidityPoolsReducerMock)).toEqual({
+        pairTokens: [BigNumber(1000), BigNumber(2000)],
+        poolToken: BigNumber(100),
+      });
     });
-    it('should calculate assets proportions in unipool pool (pool token)', () => {
-      const assetsValues = calculateProportionalRemoveLiquidityAssetValues(
-        unipoolPool,
-        100,
-        2,
-        liquidityPoolsReducerMock,
-      );
-      expect(assetsValues).toEqual([1000, 2000, 100]);
+
+    it('should calculate for pool token input', () => {
+      expect(calculateProportionalAssetAmountsForRemoval(unipoolPool, '100', null, liquidityPoolsReducerMock)).toEqual({
+        pairTokens: [BigNumber(1000), BigNumber(2000)],
+        poolToken: BigNumber(100),
+      });
     });
   });
 });
