@@ -65,7 +65,7 @@ const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
-  if ((isProdEnv && !__DEV__) || isTest) return;
+  if ((isProdEnv() && !__DEV__) || isTest) return;
   console.log(...params); // eslint-disable-line
 };
 
@@ -675,7 +675,7 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv
+export const getEnsPrefix = () => isProdEnv()
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
 
