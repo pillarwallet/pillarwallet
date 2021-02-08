@@ -308,7 +308,7 @@ const LiquidityPoolsScreen = ({
 
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats && poolStats.userLiquidityTokenBalance.gt(0) && poolStats.stakedAmount.eq(0);
+    return poolStats && poolStats.userLiquidityTokenBalance.gt(0);
   };
 
   const isStakedPool = (pool: LiquidityPool, index: number) => {
