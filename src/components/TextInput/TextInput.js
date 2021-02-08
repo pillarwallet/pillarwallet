@@ -163,7 +163,7 @@ const AddonRegularText = styled(BaseText)`
 const AddonIcon = styled(Icon)`
   font-size: 16px;
   color: ${({ theme }) => theme.colors.basic010};
-  margin-right: 9;
+  margin-right: 9px;
 `;
 
 const Selector = styled.TouchableOpacity`
