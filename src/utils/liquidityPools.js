@@ -466,7 +466,7 @@ export const calculateProportionalAssetValues = (
   return [token0Deposited, token1Deposited, amountMinted];
 };
 
-export type RemoveLiquidityAmounts = {
+type RemoveLiquidityAmounts = {
   pairTokens: BigNumber[];
   poolToken: BigNumber;
 }
