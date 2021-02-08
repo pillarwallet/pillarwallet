@@ -473,13 +473,13 @@ export type RemoveLiquidityAmounts = {
 }
 
 // the same as above, but for removing liquidity
-export const calculateProportionalRemoveLiquidityAssetValues = (
+export const calculateProportionalAssetAmountsForRemoval = (
   pool: LiquidityPool,
   tokenAmount: string,
   tokenIndex: number,
-  liquidityPoolsReducer: LiquidityPoolsReducerState,
+  liquidityPoolsState: LiquidityPoolsReducerState,
 ): RemoveLiquidityAmounts => {
-  const poolData = liquidityPoolsReducer.poolsData[pool.uniswapPairAddress];
+  const poolData = liquidityPoolsState.poolsData[pool.uniswapPairAddress];
   const pairData = poolData.pair;
 
   let amount0;
@@ -499,6 +499,7 @@ export const calculateProportionalRemoveLiquidityAssetValues = (
     amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
     amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   }
+
   return { pairTokens: [amount0, amount1], poolToken: amountPool };
 };
 

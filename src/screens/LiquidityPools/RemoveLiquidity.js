@@ -39,9 +39,9 @@ import { ETH } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationConstants';
 
 // utils
-import { formatAmount, formatTokenAmount } from 'utils/common';
+import { formatAmount } from 'utils/common';
 import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
-import { getPoolStats, calculateProportionalRemoveLiquidityAssetValues } from 'utils/liquidityPools';
+import { getPoolStats, calculateProportionalAssetAmountsForRemoval } from 'utils/liquidityPools';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -147,32 +147,25 @@ const AddLiquidityScreen = ({
     );
   }, [poolTokenAmount, obtainedTokenFieldsValid, poolTokenFieldValid]);
 
-  const onObtainedAssetValueChange = (newValue: string, tokenIndex: number) => {
-    const amounts = calculateProportionalRemoveLiquidityAssetValues(
-      pool,
-      newValue || '0',
-      tokenIndex,
-      liquidityPoolsState,
-    );
-
-    setPoolTokenAmount(formatAmount(amounts.poolToken));
-
-    const formattedAssetsValues = amounts.pairTokens.map((amount, i) =>
-      i === tokenIndex ? newValue : formatTokenAmount(amount),
-    );
-    setObtainedAssetsValues(formattedAssetsValues);
-  };
-
   const onPoolTokenAmountChange = (newValue: string) => {
-    const amounts = calculateProportionalRemoveLiquidityAssetValues(
-      pool,
-      newValue || '0',
-      null,
-      liquidityPoolsState,
-    );
-
+    const amounts = calculateProportionalAssetAmountsForRemoval(pool, newValue || '0', null, liquidityPoolsState);
     setPoolTokenAmount(newValue);
     setObtainedAssetsValues(amounts.pairTokens.map((amount) => formatAmount(amount)));
+  };
+
+  const onObtainedAssetValueChange = (tokenIndex: number, newValue: string, newPercent: number | undefined) => {
+    const amounts = calculateProportionalAssetAmountsForRemoval(pool, newValue || '0', tokenIndex, liquidityPoolsState);
+
+    // Ensure we will withdraw everything if user want to remove max value.
+    if (newPercent === 100) {
+      onPoolTokenAmountChange(poolStats?.userLiquidityTokenBalance);
+      return;
+    }
+
+    setPoolTokenAmount(formatAmount(amounts.poolToken));
+    setObtainedAssetsValues(amounts.pairTokens.map((amount, i) =>
+      i === tokenIndex ? newValue : formatAmount(amount),
+    ));
   };
 
   const renderTokenInput = (tokenIndex: number) => {
@@ -196,7 +189,9 @@ const AddLiquidityScreen = ({
         assetData={tokensData[tokenIndex]}
         customAssets={[tokensData[tokenIndex]]}
         value={obtainedAssetsValues[tokenIndex]}
-        onValueChange={(newValue: string) => onObtainedAssetValueChange(newValue, tokenIndex)}
+        onValueChange={(newValue: string, newPercent: number | undefined) =>
+          onObtainedAssetValueChange(tokenIndex, newValue, newPercent)
+        }
         onFormValid={(isValid: boolean) => {
           const newFieldsValid = [...obtainedTokenFieldsValid];
           newFieldsValid[tokenIndex] = isValid;
