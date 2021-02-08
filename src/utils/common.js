@@ -216,9 +216,13 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
   return 2;
 };
 
-export const formatAmount = (amount: string | number, precision: number = 6): string => {
-  const roundedNumber = new BigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
+export const wrapBigNumber = (amount: BigNumber | string | number): BigNumber => {
+  if (amount instanceof BigNumber) return amount;
+  return BigNumber(amount);
+};
 
+export const formatAmount = (amount: BigNumber | string | number, precision: number = 6): string => {
+  const roundedNumber = wrapBigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
 

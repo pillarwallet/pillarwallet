@@ -467,38 +467,39 @@ export const calculateProportionalAssetValues = (
   return [token0Deposited, token1Deposited, amountMinted];
 };
 
+export type RemoveLiquidityAmounts = {
+  pairTokens: BigNumber[];
+  poolToken: BigNumber;
+}
+
 // the same as above, but for removing liquidity
 export const calculateProportionalRemoveLiquidityAssetValues = (
   pool: LiquidityPool,
-  tokenAmount: number,
+  tokenAmount: string,
   tokenIndex: number,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
-): number[] => {
-  const poolAddress = pool.uniswapPairAddress;
-  const poolData = liquidityPoolsReducer.poolsData[poolAddress];
+): RemoveLiquidityAmounts => {
+  const poolData = liquidityPoolsReducer.poolsData[pool.uniswapPairAddress];
   const pairData = poolData.pair;
 
-  const totalAmount = parseFloat(pairData.totalSupply);
-  const token0Pool = parseFloat(pairData.reserve0);
-  const token1Pool = parseFloat(pairData.reserve1);
-  let token0Withdrawn;
-  let token1Withdrawn;
-  let poolTokenBurned;
+  let amount0;
+  let amount1;
+  let amountPool;
 
   if (tokenIndex === 0) {
-    token0Withdrawn = tokenAmount;
-    poolTokenBurned = (token0Withdrawn * totalAmount) / token0Pool;
-    token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
+    amount0 = new BigNumber(tokenAmount);
+    amountPool = amount0.multipliedBy(pairData.totalSupply).dividedBy(pairData.reserve0);
+    amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   } else if (tokenIndex === 1) {
-    token1Withdrawn = tokenAmount;
-    poolTokenBurned = (token1Withdrawn * totalAmount) / token1Pool;
-    token0Withdrawn = (token0Pool * poolTokenBurned) / totalAmount;
+    amount1 = new BigNumber(tokenAmount);
+    amountPool = amount1.multipliedBy(pairData.totalSupply).dividedBy(pairData.reserve1);
+    amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
   } else {
-    poolTokenBurned = tokenAmount;
-    token0Withdrawn = (token0Pool * poolTokenBurned) / totalAmount;
-    token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
+    amountPool = new BigNumber(tokenAmount);
+    amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
+    amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   }
-  return [token0Withdrawn, token1Withdrawn, poolTokenBurned];
+  return { pairTokens: [amount0, amount1], poolToken: amountPool };
 };
 
 export const isLiquidityPoolsTransactionTag = (txTag: ?string) => {

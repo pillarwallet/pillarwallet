@@ -39,7 +39,7 @@ import { ETH } from 'constants/assetsConstants';
 import { LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW } from 'constants/navigationConstants';
 
 // utils
-import { formatAmount } from 'utils/common';
+import { formatAmount, formatTokenAmount } from 'utils/common';
 import { findSupportedAsset, isEnoughBalanceForTransactionFee } from 'utils/assets';
 import { getPoolStats, calculateProportionalRemoveLiquidityAssetValues } from 'utils/liquidityPools';
 
@@ -73,7 +73,7 @@ type Props = {
     obtainedAssetsValues: string[],
   ) => void,
   balances: Balances,
-  liquidityPoolsReducer: LiquidityPoolsReducerState,
+  liquidityPoolsState: LiquidityPoolsReducerState,
 };
 
 const MainContainer = styled.View`
@@ -107,7 +107,7 @@ const AddLiquidityScreen = ({
   resetEstimateTransaction,
   balances,
   calculateRemoveLiquidityTransactionEstimate,
-  liquidityPoolsReducer,
+  liquidityPoolsState,
 }: Props) => {
   useEffect(() => {
     resetEstimateTransaction();
@@ -118,7 +118,8 @@ const AddLiquidityScreen = ({
   const [poolTokenFieldValid, setPoolTokenFieldValid] = useState(true);
 
   const { pool } = navigation.state.params;
-  const poolStats = getPoolStats(pool, liquidityPoolsReducer);
+  const poolStats = getPoolStats(pool, liquidityPoolsState);
+
 
   const tokensData = pool.tokensProportions
     .map(({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol));
@@ -147,29 +148,31 @@ const AddLiquidityScreen = ({
   }, [poolTokenAmount, obtainedTokenFieldsValid, poolTokenFieldValid]);
 
   const onObtainedAssetValueChange = (newValue: string, tokenIndex: number) => {
-    const assetsAmounts = calculateProportionalRemoveLiquidityAssetValues(
+    const amounts = calculateProportionalRemoveLiquidityAssetValues(
       pool,
-      parseFloat(newValue) || 0,
+      newValue || '0',
       tokenIndex,
-      liquidityPoolsReducer,
+      liquidityPoolsState,
     );
 
-    setPoolTokenAmount(formatAmount(assetsAmounts.pop()));
+    setPoolTokenAmount(formatAmount(amounts.poolToken));
 
-    const formattedAssetsValues = assetsAmounts
-      .map((amount, i) => i === tokenIndex ? newValue : formatAmount(amount));
+    const formattedAssetsValues = amounts.pairTokens.map((amount, i) =>
+      i === tokenIndex ? newValue : formatTokenAmount(amount),
+    );
     setObtainedAssetsValues(formattedAssetsValues);
   };
 
   const onPoolTokenAmountChange = (newValue: string) => {
-    const assetsAmounts = calculateProportionalRemoveLiquidityAssetValues(
+    const amounts = calculateProportionalRemoveLiquidityAssetValues(
       pool,
-      parseFloat(newValue) || 0,
-      pool.tokensProportions.length,
-      liquidityPoolsReducer,
+      newValue || '0',
+      null,
+      liquidityPoolsState,
     );
-    setObtainedAssetsValues(assetsAmounts.map(formatAmount));
+
     setPoolTokenAmount(newValue);
+    setObtainedAssetsValues(amounts.pairTokens.map((amount) => formatAmount(amount)));
   };
 
   const renderTokenInput = (tokenIndex: number) => {
@@ -200,7 +203,6 @@ const AddLiquidityScreen = ({
           setObtainedTokenFieldsValid(newFieldsValid);
         }}
         customBalances={customBalances}
-        hideMaxSend
       />
     );
   };
@@ -302,13 +304,13 @@ const AddLiquidityScreen = ({
 const mapStateToProps = ({
   assets: { supportedAssets },
   transactionEstimate: { feeInfo, isEstimating, errorMessage: estimateErrorMessage },
-  liquidityPools: liquidityPoolsReducer,
+  liquidityPools: liquidityPoolsState,
 }: RootReducerState): $Shape<Props> => ({
   supportedAssets,
   isEstimating,
   feeInfo,
   estimateErrorMessage,
-  liquidityPoolsReducer,
+  liquidityPoolsState,
 });
 
 const structuredSelector = createStructuredSelector({
