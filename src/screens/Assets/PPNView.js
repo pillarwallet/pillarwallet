@@ -84,7 +84,6 @@ import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/payme
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
 
-
 type Props = {
   baseFiatCurrency: ?string,
   rates: Rates,

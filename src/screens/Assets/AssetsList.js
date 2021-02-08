@@ -47,7 +47,7 @@ import { hideAssetAction } from 'actions/userSettingsActions';
 // utils
 import { getAccountAddress } from 'utils/accounts';
 import { getBalance, getRate } from 'utils/assets';
-import { formatMoney, formatFiat, formatAmount } from 'utils/common';
+import { formatMoney, formatFiat, formatTokenAmount } from 'utils/common';
 import { fontStyles, spacing } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
 
@@ -64,7 +64,6 @@ import type { Theme } from 'models/Theme';
 import { accountBalancesSelector } from 'selectors/balances';
 import { activeAccountSelector } from 'selectors';
 import { accountAssetsSelector } from 'selectors/assets';
-
 
 const IS_IOS = Platform.OS === 'ios';
 
@@ -264,7 +263,7 @@ class AssetsList extends React.Component<Props, State> {
           label={name}
           avatarUrl={fullIconUrl}
           balance={{
-            balance: formatAmount(balance),
+            balance: formatTokenAmount(balance, symbol),
             value: formattedBalanceInFiat,
             token: symbol,
           }}

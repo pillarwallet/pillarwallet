@@ -41,7 +41,7 @@ import { setDismissTransactionAction, getWbtcGatewayAddressAction } from 'action
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // utils
-import { formatAmountDisplay, formatFiat } from 'utils/common';
+import { formatTokenAmount, formatFiat } from 'utils/common';
 import {
   isEnoughBalanceForTransactionFee,
   getAssetDataByAddress,
@@ -249,7 +249,7 @@ const ExchangeConfirmScreen = ({
 
   const toQuantity = isWbtcCafe ? wbtcEstimationData?.estimate || 0 : receiveQuantity;
 
-  const formattedReceiveAmount = formatAmountDisplay(toQuantity);
+  const formattedReceiveAmount = formatTokenAmount(toQuantity, toAssetCode);
 
   const receiveAmountInFiat = parseFloat(toQuantity) * getRate(rates, toAssetCode, fiatCurrency);
   const formattedReceiveAmountInFiat = formatFiat(receiveAmountInFiat, fiatCurrency);

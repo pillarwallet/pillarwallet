@@ -34,8 +34,8 @@ import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { convertUSDToFiat } from 'utils/assets';
+import { formatFiat, formatBigFiatAmount, formatBigAmount, formatTokenAmount } from 'utils/common';
+import { findSupportedAsset, convertUSDToFiat } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
@@ -50,7 +50,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Theme } from 'models/Theme';
-
 
 type Props = {
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
@@ -256,7 +255,7 @@ const LiquidityPoolsScreen = ({
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
         <ListItemWithImage
           label={pool.name}
-          subtext={t('tokenValue', { token: pool.symbol, value: formatAmount(balance) })}
+          subtext={t('tokenValue', { token: pool.symbol, value: formatTokenAmount(balance, pool.symbol) })}
           itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
@@ -271,7 +270,7 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
-    const poolToken = supportedAssets.find(({ symbol }) => symbol === pool.symbol);
+    const poolToken = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
     if (!poolToken) return null;
     const balance = poolStats.userLiquidityTokenBalance;
 
@@ -287,6 +286,7 @@ const LiquidityPoolsScreen = ({
     const { currentPrice } = poolStats;
     const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount, rates, fiatCurrency);
     const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
+    const tokenSymbol = pool.rewards[0].symbol;
 
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
@@ -295,7 +295,10 @@ const LiquidityPoolsScreen = ({
           <TableRow>
             <TableLabel>{t('liquidityPoolsContent.label.availableRewards')}</TableLabel>
             <BaseText>
-              {t('tokenValue', { value: formatAmount(poolStats.rewardsToClaim), token: pool.rewards[0].symbol })}
+              {t(
+                'tokenValue',
+                { value: formatTokenAmount(poolStats.rewardsToClaim, tokenSymbol), token: tokenSymbol },
+              )}
             </BaseText>
           </TableRow>
         </Table>

@@ -54,7 +54,7 @@ import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkCons
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
 import { getColorByTheme } from 'utils/themes';
-import { formatMoney, formatFiat } from 'utils/common';
+import { formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
 import { isSWAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
@@ -231,7 +231,7 @@ class AssetScreen extends React.Component<Props> {
     const balance = getBalance(balances, token);
     const isWalletEmpty = balance <= 0;
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-    const displayAmount = formatMoney(balance, 4);
+    const displayAmount = balance;
     const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);
 
     const {
