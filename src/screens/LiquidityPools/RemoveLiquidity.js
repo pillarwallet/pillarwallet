@@ -200,6 +200,7 @@ const AddLiquidityScreen = ({
           setObtainedTokenFieldsValid(newFieldsValid);
         }}
         customBalances={customBalances}
+        hideMaxSend
       />
     );
   };
