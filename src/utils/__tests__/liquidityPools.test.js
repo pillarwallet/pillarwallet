@@ -117,7 +117,7 @@ describe('Liquidity pools utils', () => {
         monthPriceChange: undefined,
         weekPriceChange: undefined,
         rewardsToClaim: 1000,
-        stakedAmount: 10,
+        stakedAmount: BigNumber(10),
         tokensLiquidity: {
           ETH: 10000,
           PLR: 20000,
@@ -151,8 +151,7 @@ describe('Liquidity pools utils', () => {
             value: 4,
           },
         ],
-        userLiquidityTokenBalance: '0.123',
-        roughUserLiquidityTokenBalance: 0.123,
+        userLiquidityTokenBalance: BigNumber('0.123'),
       });
     });
   });

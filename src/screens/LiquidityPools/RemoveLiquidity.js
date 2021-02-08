@@ -158,7 +158,7 @@ const AddLiquidityScreen = ({
 
     // Ensure we will withdraw everything if user want to remove max value.
     if (newPercent === 100) {
-      onPoolTokenAmountChange(poolStats?.userLiquidityTokenBalance ?? '0');
+      onPoolTokenAmountChange(poolStats?.userLiquidityTokenBalance.toFixed() ?? '0');
       return;
     }
 
@@ -171,7 +171,7 @@ const AddLiquidityScreen = ({
   const renderTokenInput = (tokenIndex: number) => {
     const poolTokenSymbol = poolTokenData?.symbol;
     if (!poolTokenSymbol) return null;
-    const maxAmountBurned = poolStats?.roughUserLiquidityTokenBalance || 0;
+    const maxAmountBurned = poolStats?.userLiquidityTokenBalance.toNumber() ?? 0;
     const totalAmount = parseFloat(poolStats?.totalSupply);
     const tokenPool = parseFloat(poolStats?.tokensLiquidity[pool.tokensProportions[tokenIndex].symbol]);
 
@@ -242,7 +242,7 @@ const AddLiquidityScreen = ({
 
   const poolTokenCustomBalances = poolTokenData && {
     [poolTokenData.symbol]: {
-      balance: poolStats?.userLiquidityTokenBalance,
+      balance: poolStats?.userLiquidityTokenBalance.toFixed(),
       symbol: poolTokenData.symbol,
     },
   };

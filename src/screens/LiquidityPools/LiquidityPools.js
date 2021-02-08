@@ -272,7 +272,7 @@ const LiquidityPoolsScreen = ({
     const poolStats = poolsStats[index];
     const poolToken = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
     if (!poolToken) return null;
-    const balance = poolStats.roughUserLiquidityTokenBalance;
+    const balance = poolStats.userLiquidityTokenBalance.toNumber();
 
     const { currentPrice } = poolStats;
     const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
@@ -308,7 +308,7 @@ const LiquidityPoolsScreen = ({
 
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats && poolStats.roughUserLiquidityTokenBalance > 0 && poolStats.stakedAmount.eq(0);
+    return poolStats && poolStats.userLiquidityTokenBalance.gt(0) && poolStats.stakedAmount.eq(0);
   };
 
   const isStakedPool = (pool: LiquidityPool, index: number) => {

@@ -423,8 +423,7 @@ export const getPoolStats = (
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
     history,
-    userLiquidityTokenBalance: poolData.liquidityPosition?.liquidityTokenBalance ?? '0',
-    roughUserLiquidityTokenBalance: parseFloat(poolData.liquidityPosition?.liquidityTokenBalance) || 0,
+    userLiquidityTokenBalance: new BigNumber(poolData.liquidityPosition?.liquidityTokenBalance ?? '0'),
   };
 };
 

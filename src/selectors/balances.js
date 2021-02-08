@@ -131,13 +131,13 @@ const liquidityPoolsBalanceListSelector = createSelector(
   (liquidityPoolsState: LiquidityPoolsReducerState): MixedBalance[] => LIQUIDITY_POOLS().map(pool => {
     const {
       currentPrice,
-      roughUserLiquidityTokenBalance,
+      userLiquidityTokenBalance,
       stakedAmount,
     } = getPoolStats(pool, liquidityPoolsState) ?? {};
 
-    if ([currentPrice, roughUserLiquidityTokenBalance].includes(undefined)) return null;
+    if (currentPrice === undefined) return null;
     return {
-      balance: (roughUserLiquidityTokenBalance + stakedAmount.toNumber()) * currentPrice,
+      balance: (userLiquidityTokenBalance.toNumber() + stakedAmount.toNumber()) * currentPrice,
       symbol: USD,
     };
   }).filter(Boolean),

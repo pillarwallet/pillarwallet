@@ -126,7 +126,7 @@ const StakeTokensScreen = ({
     assetData != null
       ? {
         [assetData.symbol]: {
-          balance: poolStats?.userLiquidityTokenBalance ?? '0',
+          balance: poolStats?.userLiquidityTokenBalance.toFixed() ?? '0',
           symbol: assetData?.symbol,
         },
       }

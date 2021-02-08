@@ -68,6 +68,5 @@ export type LiquidityPoolStats = {
   tokensPerLiquidityToken: {[string]: number },
   totalSupply: number,
   history: {date: Date, value: number}[],
-  userLiquidityTokenBalance: string,
-  roughUserLiquidityTokenBalance: number,
+  userLiquidityTokenBalance: BigNumber,
 };
