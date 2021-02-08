@@ -175,7 +175,7 @@ const AddLiquidityScreen = ({
   const renderTokenInput = (tokenIndex: number) => {
     const poolTokenSymbol = poolTokenData?.symbol;
     if (!poolTokenSymbol) return null;
-    const maxAmountBurned = poolStats?.userLiquidityTokenBalance || 0;
+    const maxAmountBurned = poolStats?.roughUserLiquidityTokenBalance || 0;
     const totalAmount = parseFloat(poolStats?.totalSupply);
     const tokenPool = parseFloat(poolStats?.tokensLiquidity[pool.tokensProportions[tokenIndex].symbol]);
 

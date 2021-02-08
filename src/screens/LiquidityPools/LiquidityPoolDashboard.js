@@ -169,7 +169,7 @@ const LiquidityPoolDashboard = ({
     if (
       poolStats &&
       poolStats.stakedAmount === 0 &&
-      poolStats.userLiquidityTokenBalance > 0 &&
+      poolStats.roughUserLiquidityTokenBalance > 0 &&
       !shownStakingEnabledModal[pool.name] &&
       pool.rewardsEnabled
     ) {
@@ -190,7 +190,7 @@ const LiquidityPoolDashboard = ({
     return null;
   }
 
-  const balance = poolStats.userLiquidityTokenBalance;
+  const balance = poolStats.roughUserLiquidityTokenBalance;
   const formattedBalance = formatTokenAmount(balance, pool.symbol);
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);

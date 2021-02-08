@@ -149,7 +149,8 @@ describe('Liquidity pools utils', () => {
             value: 4,
           },
         ],
-        userLiquidityTokenBalance: 0.123,
+        userLiquidityTokenBalance: '0.123',
+        roughUserLiquidityTokenBalance: 0.123,
       });
     });
   });
