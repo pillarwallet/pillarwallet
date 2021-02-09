@@ -68,7 +68,7 @@ const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
-  if ((isProdEnv && !__DEV__) || isTest) return;
+  if ((isProdEnv() && !__DEV__) || isTest) return;
   console.log(...params); // eslint-disable-line
 };
 

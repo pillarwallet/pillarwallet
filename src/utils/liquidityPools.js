@@ -29,6 +29,7 @@ import {
   LIQUIDITY_POOLS,
   UNISWAP_FEE_RATE,
 } from 'constants/liquidityPoolsConstants';
+import { UNISWAP_ROUTER_ADDRESS } from 'constants/exchangeConstants';
 import { buildERC20ApproveTransactionData, encodeContractMethod, getContract } from 'services/assets';
 import { callSubgraph } from 'services/theGraph';
 import { parseTokenBigNumberAmount, formatUnits } from 'utils/common';
@@ -38,10 +39,7 @@ import {
   getUnstakeTransaction as getUnipoolUnstakeTransaction,
   getClaimRewardsTransaction as getUnipoolClaimRewardsTransaction,
 } from 'utils/unipool';
-import {
-  ADDRESSES,
-  getDeadline,
-} from 'utils/uniswap';
+import { getDeadline } from 'utils/uniswap';
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 import UNISWAP_ROUTER_ABI from 'abi/uniswapRouter.json';
 import type { Asset } from 'models/Asset';
@@ -119,22 +117,37 @@ export const getAddLiquidityTransactions = async (
   const addApproveTransaction = async (tokenAmount, tokenAmountBN, tokenAsset) => {
     const erc20Contract = getContract(tokenAsset.address, ERC20_CONTRACT_ABI);
     const approvedAmountBN = erc20Contract
-      ? await erc20Contract.allowance(sender, ADDRESSES.router)
+      ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
       : null;
 
     if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
-      const approveTransactionData =
-        buildERC20ApproveTransactionData(ADDRESSES.router, tokenAmount, tokenAsset.decimals);
       addLiquidityTransactions = [
         {
           from: sender,
           to: tokenAsset.address,
-          data: approveTransactionData,
+          data: buildERC20ApproveTransactionData(UNISWAP_ROUTER_ADDRESS, tokenAmount, tokenAsset.decimals),
           amount: 0,
           symbol: ETH,
         },
         ...addLiquidityTransactions,
       ];
+
+      // ERC20 token contracts (incl. PLR itself) can throw error when trying to change non-zero approved allowance
+      // in order to prevent spedning both old and new allowance. As a way to mitigate it, we are first sending
+      // zeroing approve transaction.
+      // See: https://docs.openzeppelin.com/contracts/2.x/api/token/erc20#IERC20-approve-address-uint256-
+      if (approvedAmountBN?.gt(0)) {
+        addLiquidityTransactions = [
+          {
+            from: sender,
+            to: tokenAsset.address,
+            data: buildERC20ApproveTransactionData(UNISWAP_ROUTER_ADDRESS, '0', tokenAsset.decimals),
+            amount: 0,
+            symbol: ETH,
+          },
+          ...addLiquidityTransactions,
+        ];
+      }
     }
   };
 
@@ -157,7 +170,7 @@ export const getAddLiquidityTransactions = async (
 
     addLiquidityTransactions = [{
       from: sender,
-      to: ADDRESSES.router,
+      to: UNISWAP_ROUTER_ADDRESS,
       data: addLiquidityTransactionData,
       amount: parseFloat(ethAmount),
       symbol: ETH,
@@ -177,7 +190,7 @@ export const getAddLiquidityTransactions = async (
     ]);
     addLiquidityTransactions = [{
       from: sender,
-      to: ADDRESSES.router,
+      to: UNISWAP_ROUTER_ADDRESS,
       data: addLiquidityTransactionData,
       amount: 0,
       symbol: ETH,
@@ -239,7 +252,7 @@ export const getRemoveLiquidityTransactions = async (
 
   let removeLiquidityTransactions = [{
     from: sender,
-    to: ADDRESSES.router,
+    to: UNISWAP_ROUTER_ADDRESS,
     data: removeLiquidityTransactionData,
     amount: 0,
     symbol: ETH,
@@ -247,12 +260,12 @@ export const getRemoveLiquidityTransactions = async (
 
   const erc20Contract = getContract(poolToken.address, ERC20_CONTRACT_ABI);
   const approvedAmountBN = erc20Contract
-    ? await erc20Contract.allowance(sender, ADDRESSES.router)
+    ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
     : null;
 
   if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(
-      ADDRESSES.router, poolTokenAmount, poolToken.decimals);
+      UNISWAP_ROUTER_ADDRESS, poolTokenAmount, poolToken.decimals);
     removeLiquidityTransactions = [
       {
         from: sender,
@@ -673,7 +686,7 @@ const mapTransactionsHistoryWithUniswap = async (
     transactionIndex,
   ) => {
     const { to } = transaction;
-    if (addressesEqual(ADDRESSES.router, to)) {
+    if (addressesEqual(UNISWAP_ROUTER_ADDRESS, to)) {
       transactions[transactionIndex] = buildUniswapTransaction(
         accountAddress,
         transaction,

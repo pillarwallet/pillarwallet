@@ -19,7 +19,6 @@
 */
 import CookieManager from 'react-native-cookies';
 import { Platform } from 'react-native';
-import { WETH } from '@uniswap/sdk';
 import get from 'lodash.get';
 import { constants } from 'ethers';
 import { BigNumber } from 'bignumber.js';
@@ -28,7 +27,7 @@ import { BigNumber } from 'bignumber.js';
 import type { Offer } from 'models/Offer';
 import type { Asset } from 'models/Asset';
 import type { Theme } from 'models/Theme';
-import { ETH, BTC } from 'constants/assetsConstants';
+import { BTC } from 'constants/assetsConstants';
 import { LIGHT_THEME } from 'constants/appSettingsConstants';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { AllowanceTransaction } from 'models/Transaction';
@@ -40,7 +39,6 @@ import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 import { encodeContractMethod } from 'services/assets';
 import { getThemeName } from './themes';
 import { staticImages } from './images';
-import { chainId } from './uniswap';
 import { reportOrWarn } from './common';
 
 export type ExchangeOptions = {
@@ -101,10 +99,6 @@ export const parseOffer = (
     description: '',
     provider,
   };
-};
-
-export const isWethConvertedTx = (fromAssetSymbol: string, contractAddress: string): boolean => {
-  return fromAssetSymbol === ETH && contractAddress === WETH[chainId].address;
 };
 
 /* eslint-disable i18next/no-literal-string */

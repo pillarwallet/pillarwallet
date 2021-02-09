@@ -23,7 +23,7 @@ import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
-import debounce from 'lodash.debounce';
+import { useDebounce } from 'use-debounce';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -122,9 +122,10 @@ const AddLiquidityScreen = ({
   useEffect(() => {
     resetEstimateTransaction();
   }, []);
+
   const [assetsValues, setAssetsValues] = useState(['', '']);
-  const [poolTokenAmount, setPoolTokenAmount] = useState('0');
   const [fieldsValid, setFieldsValid] = useState([true, true]);
+  const [poolTokenAmount, setPoolTokenAmount] = useState('0');
 
   const { pool } = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
@@ -132,17 +133,13 @@ const AddLiquidityScreen = ({
   const tokensData = pool.tokensProportions.map(({ symbol }) => supportedAssets.find(asset => asset.symbol === symbol));
   const poolTokenData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
 
+  const [debouncedAssetsValues] = useDebounce(assetsValues, 500);
   useEffect(() => {
-    if (!assetsValues.every(f => !!parseFloat(f)) || !fieldsValid.every(f => f)) return;
-    const erc20Token = tokensData[1];
-    if (!erc20Token) return;
-    calculateAddLiquidityTransactionEstimate(
-      pool,
-      assetsValues,
-      poolTokenAmount,
-      tokensData,
-    );
-  }, [assetsValues, fieldsValid]);
+    if (!tokensData.every((token) => token != null)) return;
+    if (!assetsValues.every((f) => !!parseFloat(f))) return;
+    if (!fieldsValid.every((f) => f)) return;
+    calculateAddLiquidityTransactionEstimate(pool, assetsValues, poolTokenAmount, tokensData);
+  }, [debouncedAssetsValues, fieldsValid]);
 
   const onAssetValueChange = (newValue: string, tokenIndex: number) => {
     const assetsAmounts = calculateProportionalAssetValues(
@@ -303,14 +300,14 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateAddLiquidityTransactionEstimate: debounce((
+  calculateAddLiquidityTransactionEstimate: (
     pool: LiquidityPool,
     tokenAmounts: string[],
     poolTokenAmount: string,
     tokensAssets: Asset[],
   ) => dispatch(
     calculateAddLiquidityTransactionEstimateAction(pool, tokenAmounts, poolTokenAmount, tokensAssets),
-  ), 500),
+  ),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(AddLiquidityScreen);
