@@ -66,7 +66,7 @@ const WithdrawWrapper = styled.View`
 const TankWithdrawConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
 
-  const withdrawAmount: number = navigation.getParam('amount');
+  const withdrawAmount: string = navigation.getParam('amount');
   const PPNAsset: Asset = navigation.getParam('asset');
 
   const { symbol } = PPNAsset;
@@ -103,7 +103,7 @@ const TankWithdrawConfirm = ({ navigation, feeInfo, isOnline }: Props) => {
       return;
     }
 
-    const { to, data } = tokenWithdrawTransaction
+    const { to, data } = tokenWithdrawTransaction;
 
     const transactionPayload: TransactionPayload = {
       to,

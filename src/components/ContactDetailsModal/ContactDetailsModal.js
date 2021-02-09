@@ -185,9 +185,9 @@ const ContactDetailsModal = ({
     setEnsUnresolved(false);
     setResolvingEns(true);
     getReceiverWithEnsName(nameValue)
-      .then(({ receiver }) => {
-        if (receiver) {
-          setAddressValue(receiver);
+      .then((resolved) => {
+        if (resolved?.receiver) {
+          setAddressValue(resolved?.receiver);
         } else {
           setEnsUnresolved(true);
         }

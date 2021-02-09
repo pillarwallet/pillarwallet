@@ -50,7 +50,6 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import { loadSupportedAssetsAction } from './assetsActions';
 import { saveDbAction } from './dbActions';
 import { checkEnableExchangeAllowanceTransactionsAction } from './exchangeActions';
-import { extractEnsInfoFromTransactionsAction } from './ensRegistryActions';
 
 
 export const afterHistoryUpdatedAction = () => {

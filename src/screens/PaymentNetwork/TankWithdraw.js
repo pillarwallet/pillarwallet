@@ -142,12 +142,19 @@ const TankWithdraw = ({
     || !feeInfo
     || !isOnline;
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
-  const onNextButtonPress = () => navigation.navigate(TANK_WITHDRAW_CONFIRM, { amount: withdrawAmount, asset: PPNAsset });
+  const onNextButtonPress = () => navigation.navigate(
+    TANK_WITHDRAW_CONFIRM,
+    { amount: withdrawAmount, asset: PPNAsset },
+  );
 
   return (
     <ContainerWithHeader
       navigation={navigation}
-      headerProps={{ centerItems: [{ title: t('ppnContent.title.withdrawFromTokenTankScreen', { token: PPN_TOKEN }) }] }}
+      headerProps={{
+        centerItems: [{
+          title: t('ppnContent.title.withdrawFromTokenTankScreen', { token: PPN_TOKEN }),
+        }],
+      }}
       footer={(
         <FooterInner>
           <FeeInfo alignItems="center">

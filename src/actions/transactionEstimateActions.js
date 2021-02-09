@@ -49,7 +49,7 @@ import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type { TransactionDraft } from 'models/Transaction';
-import type { EtherspotTransaction } from 'models/Etherspot';
+import type { EtherspotTransaction, EtherspotTransactionEstimate } from 'models/Etherspot';
 
 
 export const resetEstimateTransactionAction = () => {
@@ -81,7 +81,7 @@ export const setTransactionsEstimateErrorAction = (errorMessage: string) => {
   };
 };
 
-export const setTransactionsEstimateFeeAction = (estimated) => {
+export const setTransactionsEstimateFeeAction = (estimated: ?$Shape<EtherspotTransactionEstimate>) => {
   return (dispatch: Dispatch, getState: GetState) => {
     if (!estimated) {
       dispatch(setTransactionsEstimateErrorAction(t('toast.transactionFeeEstimationFailed')));

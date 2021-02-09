@@ -26,7 +26,7 @@ import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { accountHasGasTokenSupport, getSmartWalletStatus } from 'utils/smartWallet';
+import { getSmartWalletStatus } from 'utils/smartWallet';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';

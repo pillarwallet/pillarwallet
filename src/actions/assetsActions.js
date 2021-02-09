@@ -194,7 +194,9 @@ export const sendAssetAction = (
       historyTx = buildHistoryTransaction({
         ...transactionResult,
         to,
+        hash: transactionHash,
         from: accountAddress,
+        // $FlowFixMe
         asset: isCollectibleTransaction ? transaction.name : symbol,
         note,
         gasPrice: transaction.gasPrice,

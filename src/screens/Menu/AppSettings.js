@@ -43,7 +43,6 @@ import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 // utils
 import { spacing } from 'utils/variables';
 import SystemInfoModal from 'components/SystemInfoModal';
-import RelayerMigrationModal from 'components/RelayerMigrationModal';
 import localeConfig from 'configs/localeConfig';
 
 // selectors
@@ -86,15 +85,7 @@ type Props = {
   sessionLanguageCode: ?string,
 };
 
-type State = {
-  isAfterRelayerMigration: boolean,
-};
-
-class AppSettings extends React.Component<Props, State> {
-  state = {
-    isAfterRelayerMigration: false,
-  };
-
+class AppSettings extends React.Component<Props> {
   getItems = () => {
     const {
       baseFiatCurrency,
@@ -166,18 +157,6 @@ class AppSettings extends React.Component<Props, State> {
   openBaseFiatCurrencyModal = () => Modal.open(() => <BaseFiatCurrencyModal />)
 
   openLanguageModal = () => Modal.open(() => <LanguageModal />)
-
-  openRelayerMigrationModal = () => {
-    const { accountAssets, accountHistory } = this.props;
-
-    Modal.open(() => (
-      <RelayerMigrationModal
-        accountAssets={accountAssets}
-        accountHistory={accountHistory}
-        onMigrated={() => this.setState({ isAfterRelayerMigration: true })}
-      />
-    ));
-  }
 
   openAnalyticsModal = () => Modal.open(() => <AnalyticsModal />)
 

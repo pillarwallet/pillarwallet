@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import get from 'lodash.get';
 import { BigNumber } from 'bignumber.js';
 import { useState } from 'react';
-import Emoji from 'react-native-emoji';
 import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
@@ -32,12 +31,9 @@ import t from 'translations/translate';
 import { Label, BaseText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 import { Spacing } from 'components/Layout';
-import RelayerMigrationModal from 'components/RelayerMigrationModal';
-import Modal from 'components/Modal';
 
 // constants
 import { defaultFiatCurrency, ETH } from 'constants/assetsConstants';
-import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
 import { formatTransactionFee, getCurrencySymbol } from 'utils/common';
@@ -46,9 +42,6 @@ import { getRate } from 'utils/assets';
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-
-// services
-import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
 import type { Rates, Assets } from 'models/Asset';
@@ -66,7 +59,6 @@ type Props = {
   showFiatDefault?: boolean,
   accountAssets: Assets,
   accountHistory: Transaction[],
-  showRelayerMigration?: boolean,
   hasError?: boolean,
 };
 
@@ -92,9 +84,6 @@ const FeeLabelToggle = ({
   isLoading,
   labelText,
   showFiatDefault,
-  showRelayerMigration = true,
-  accountAssets,
-  accountHistory,
   hasError,
 }: Props) => {
   const [isFiatValueVisible, setIsFiatValueVisible] = useState(showFiatDefault);
@@ -112,19 +101,6 @@ const FeeLabelToggle = ({
   const feeInFiatDisplayValue = `${currencySymbol}${feeInFiat.toFixed(2)}`;
   const labelValue = isFiatValueVisible ? feeInFiatDisplayValue : feeDisplayValue;
 
-  showRelayerMigration = showRelayerMigration &&
-    firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.APP_FEES_PAID_WITH_PLR);
-
-  const openRelayerMigrationModal = () => {
-    if (!showRelayerMigration) return;
-    Modal.open(() => (
-      <RelayerMigrationModal
-        accountAssets={accountAssets}
-        accountHistory={accountHistory}
-      />
-    ));
-  };
-
   return (
     <LabelWrapper >
       <Label>{labelText || t('label.estimatedFee')}&nbsp;</Label>
@@ -133,11 +109,6 @@ const FeeLabelToggle = ({
         <BaseText small color="#ffffff">{labelValue}</BaseText>
       </FeePill>
       <Spacing w={8} />
-      {showRelayerMigration && (
-        <BaseText small link onPress={openRelayerMigrationModal}>
-          {t('label.payWithPLR')} <Emoji name="ok_hand" style={{ fontSize: 12 }} />
-        </BaseText>
-      )}
     </LabelWrapper>
   );
 };

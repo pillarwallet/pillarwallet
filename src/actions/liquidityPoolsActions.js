@@ -24,7 +24,6 @@ import {
   SET_LIQUIDITY_POOLS_GRAPH_QUERY_ERROR,
   SET_SHOWN_STAKING_ENABLED_MODAL,
 } from 'constants/liquidityPoolsConstants';
-import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { LIQUIDITY_POOLS_TYPES } from 'models/LiquidityPools';
 import {
   getStakedAmount,
@@ -40,7 +39,11 @@ import {
 } from 'utils/liquidityPools';
 import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { reportErrorLog } from 'utils/common';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import {
+  estimateTransactionAction,
+  estimateTransactionsAction,
+  setEstimatingTransactionAction,
+} from 'actions/transactionEstimateActions';
 import { GraphQueryError } from 'services/theGraph';
 import Toast from 'components/Toast';
 import t from 'translations/translate';
@@ -145,9 +148,9 @@ export const calculateAddLiquidityTransactionEstimateAction = (
     const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const addLiquidityTransactions = await getAddLiquidityTransactions(
+    const addLiquidityTransactions: ?Object[] = await getAddLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
       pool,
       tokenAmounts,
@@ -159,28 +162,24 @@ export const calculateAddLiquidityTransactionEstimateAction = (
     });
 
     if (!addLiquidityTransactions) {
+      dispatch(setEstimatingTransactionAction(false));
+
       Toast.show({
         message: t('toast.cannotAddLiquidity'),
         emoji: 'hushed',
         supportLink: true,
       });
+
+      return;
     }
 
-    const sequentialTransactions = addLiquidityTransactions
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactionDrafts = addLiquidityTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      addLiquidityTransactions[0].to,
-      addLiquidityTransactions[0].amount,
-      addLiquidityTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactionDrafts));
   };
 };
 
@@ -194,9 +193,9 @@ export const calculateStakeTransactionEstimateAction = (
     const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const stakeTransactions = await getStakeTransactions(
+    const stakeTransactions: ?Object[] = await getStakeTransactions(
       pool,
       getAccountAddress(smartWalletAccount),
       tokenAmount,
@@ -207,28 +206,24 @@ export const calculateStakeTransactionEstimateAction = (
     });
 
     if (!stakeTransactions) {
+      dispatch(setEstimatingTransactionAction(false));
+
       Toast.show({
         message: t('toast.cannotStakeTokens'),
         emoji: 'hushed',
         supportLink: true,
       });
+
+      return;
     }
 
-    const sequentialTransactions = stakeTransactions
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactionDrafts = stakeTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      stakeTransactions[0].to,
-      stakeTransactions[0].amount,
-      stakeTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactionDrafts));
   };
 };
 
@@ -241,15 +236,15 @@ export const calculateUnstakeTransactionEstimateAction = (
     const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = getUnstakeTransaction(
+    const { to, amount: value, data } = getUnstakeTransaction(
       pool,
       getAccountAddress(smartWalletAccount),
       tokenAmount,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };
 
@@ -265,9 +260,9 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
     const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const removeLiquidityTransactions = await getRemoveLiquidityTransactions(
+    const removeLiquidityTransactions: ?Object[] = await getRemoveLiquidityTransactions(
       getAccountAddress(smartWalletAccount),
       pool,
       tokenAmount,
@@ -280,28 +275,24 @@ export const calculateRemoveLiquidityTransactionEstimateAction = (
     });
 
     if (!removeLiquidityTransactions) {
+      dispatch(setEstimatingTransactionAction(false));
+
       Toast.show({
         message: t('toast.cannotRemoveLiquidity'),
         emoji: 'hushed',
         supportLink: true,
       });
+
+      return;
     }
 
-    const sequentialTransactions = removeLiquidityTransactions
-      .slice(1)
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const transactionDrafts = removeLiquidityTransactions.map(({
+      to,
+      amount: value,
+      data,
+    }) => ({ to, value, data }));
 
-    dispatch(estimateTransactionAction(
-      removeLiquidityTransactions[0].to,
-      removeLiquidityTransactions[0].amount,
-      removeLiquidityTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(transactionDrafts));
   };
 };
 
@@ -311,15 +302,15 @@ export const calculateClaimRewardsTransactionEstimateAction = (pool: LiquidityPo
     const smartWalletAccount = findFirstEtherspotAccount(accounts);
     if (!smartWalletAccount) return;
 
-    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+    dispatch(setEstimatingTransactionAction(true));
 
-    const { to, amount, data } = getClaimRewardsTransaction(
+    const { to, amount: value, data } = getClaimRewardsTransaction(
       pool,
       getAccountAddress(smartWalletAccount),
       amountToClaim,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };
 

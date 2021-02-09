@@ -103,7 +103,7 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
     switch (request.method) {
       case ETH_SEND_TX:
-        callback = () => this.handleSendTransaction(request, wallet);
+        callback = () => this.handleSendTransaction(request);
         break;
       case ETH_SIGN_TX:
         callback = () => this.handleSignTransaction(request, wallet);
@@ -124,9 +124,14 @@ class WalletConnectPinConfirmScreeen extends React.Component<Props, State> {
 
   handleSendTransaction = (request: CallRequest) => {
     const {
-      sendAsset, approveCallRequest, rejectCallRequest, navigation,
+      sendAsset,
+      approveCallRequest,
+      rejectCallRequest,
+      navigation,
     } = this.props;
+
     const transactionPayload = navigation.getParam('transactionPayload', {});
+
     sendAsset(transactionPayload, async (txStatus: Object) => {
       if (txStatus.isSuccess) {
         await approveCallRequest(request.callId, txStatus.txHash);

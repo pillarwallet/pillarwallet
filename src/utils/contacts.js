@@ -25,44 +25,50 @@ import Toast from 'components/Toast';
 // types
 import type { Contact } from 'models/Contact';
 
+// services
+import etherspot from 'services/etherspot';
+
 // utils
-import { reportLog, resolveEnsName } from './common';
+import { reportLog } from './common';
 import { isEnsName } from './validators';
 
 
-export const getReceiverWithEnsName = async (ethAddress: ?string, showNotification: boolean = true) => {
-  let receiverEnsName = '';
-  let receiver = '';
-  if (!ethAddress) return { receiverEnsName, receiver };
+export const getReceiverWithEnsName = async (
+  ethAddressOrEnsName: ?string,
+  showNotification: boolean = true,
+): Promise<?{ receiverEnsName?: string, receiver: ?string}> => {
+  if (!ethAddressOrEnsName) return null;
 
-  if (isEnsName(ethAddress)) {
-    const resolvedAddress = await resolveEnsName(ethAddress).catch((error) => {
+  if (isEnsName(ethAddressOrEnsName)) {
+    const resolved = await etherspot.getENSNode(ethAddressOrEnsName).catch((error) => {
       reportLog('getReceiverWithEnsName failed', { error });
       return null;
     });
-    if (!resolvedAddress && showNotification) {
+
+    if (!resolved?.address && showNotification) {
       Toast.show({
         message: t('toast.ensNameNotFound'),
         emoji: 'woman-shrugging',
       });
-      return { receiverEnsName, receiver };
+      return null;
     }
-    receiverEnsName = ethAddress;
-    receiver = resolvedAddress;
-  } else {
-    receiver = ethAddress;
+
+    return {
+      receiverEnsName: ethAddressOrEnsName,
+      receiver: resolved.address,
+    };
   }
 
-  return { receiverEnsName, receiver };
+  return { receiver: ethAddressOrEnsName };
 };
 
 export const getContactWithEnsName = async (contact: Contact, ensName: string): Promise<Contact> => {
-  const { receiverEnsName, receiver } = await getReceiverWithEnsName(ensName);
+  const resolved = await getReceiverWithEnsName(ensName);
 
   return {
     ...contact,
-    name: contact?.name || receiverEnsName,
-    ensName: receiverEnsName,
-    ethAddress: receiver || contact?.ethAddress,
+    name: contact?.name || resolved?.receiverEnsName || '',
+    ensName: resolved?.receiverEnsName,
+    ethAddress: resolved?.receiver || contact?.ethAddress,
   };
 };

@@ -43,7 +43,6 @@ export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: b
 
   // TODO: revisit etherspot gasToken
   const { estimatedGas, estimatedGasPrice, gasToken = null } = estimated;
-  console.log('estimated: ', estimated)
 
   const ethCost = new BigNumber(estimatedGasPrice.mul(estimatedGas).toString());
 

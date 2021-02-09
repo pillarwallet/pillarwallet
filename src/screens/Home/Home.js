@@ -25,6 +25,7 @@ import Intercom from 'react-native-intercom';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
+import isEmpty from 'lodash.isempty';
 
 // components
 import ActivityFeed from 'components/ActivityFeed';
@@ -296,10 +297,10 @@ class HomeScreen extends React.Component<Props> {
     fetchDepositedAssets();
     fetchPoolStats();
     fetchUserStreams();
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS())
+    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
     if (!isStaging) {
       fetchRariData();
-    };
+    }
   };
 
   renderBadge = ({ item }) => {
@@ -681,7 +682,7 @@ class HomeScreen extends React.Component<Props> {
                       open={!hideRari}
                     />
                   }
-                  {!!purchasedLiquidityPools.length && !!isSmartWalletActive &&
+                  {!isEmpty(purchasedLiquidityPools) && (
                     <CollapsibleSection
                       label={t('liquidityPoolsContent.depositsList.title')}
                       showLoadingSpinner={isFetchingLiquidityPoolsData}
@@ -699,7 +700,7 @@ class HomeScreen extends React.Component<Props> {
                       onPress={toggleLiquidityPools}
                       open={!hideLiquidityPools}
                     />
-                  }
+                  )}
                 </React.Fragment>
               )}
               flatListProps={{

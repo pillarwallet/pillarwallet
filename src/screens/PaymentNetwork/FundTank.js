@@ -199,7 +199,7 @@ const mapStateToProps = ({
   isEstimating,
   feeInfo,
   estimateErrorMessage,
-  isOnline
+  isOnline,
 });
 
 const structuredSelector = createStructuredSelector({

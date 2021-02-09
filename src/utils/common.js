@@ -51,6 +51,9 @@ import {
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
 
+// services
+import etherspot from 'services/etherspot';
+
 // types
 import type { GasInfo } from 'models/GasInfo';
 import type { GasToken } from 'models/Transaction';
@@ -417,20 +420,10 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
-export const resolveEnsName = (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.resolveName(ensName);
-};
-
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let ensName;
-  try {
-    ensName = await provider.lookupAddress(address);
-  } catch (_) {
-    //
-  }
-  return ensName;
+  const resolved = await etherspot.getENSNode(address);
+
+  return resolved?.name;
 };
 
 export const padWithZeroes = (value: string, length: number): string => {

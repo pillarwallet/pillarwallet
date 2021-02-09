@@ -67,7 +67,6 @@ import { getPurchaseTicketTransactions } from 'services/poolTogether';
 
 // types
 import type { TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
-import type { AccountTransaction } from 'services/smartWallet';
 
 
 const ContentWrapper = styled.View`
@@ -332,7 +331,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   logScreenView: (view: string, screen: string) => dispatch(logScreenViewAction(view, screen)),
   fetchPoolStats: (symbol: string) => dispatch(fetchPoolPrizeInfo(symbol)),
-  estimateTransactions: (transactionDrafts: TransactionDraft[]) => dispatch(estimateTransactionActions(transactionDrafts)),
+  estimateTransactions: (
+    transactionDrafts: TransactionDraft[],
+  ) => dispatch(estimateTransactionsAction(transactionDrafts)),
   resetEstimateTransactions: () => dispatch(resetEstimateTransactionAction()),
 });
 

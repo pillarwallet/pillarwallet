@@ -25,7 +25,7 @@ import { connect } from 'react-redux';
 import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // constants
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY_INTRO } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
@@ -87,12 +87,13 @@ const WalletRecoveryOptions = ({
 
   const recoveryOptions = [
     { title: t('auth:button.enterWordsSeed'), route: IMPORT_WALLET },
-    // TODO: revisit once web recovery portal has Etherspot implementation
-    // { title: t('auth:button.useRecoveryPortal'), route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO },
   ];
 
   if (!isRecoveryPortalDisabled) {
-    recoveryOptions.push({ title: t('auth:button.useRecoveryPortal'), route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO });
+    recoveryOptions.push({
+      title: t('auth:button.useRecoveryPortal'),
+      route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
+    });
   }
 
   return (

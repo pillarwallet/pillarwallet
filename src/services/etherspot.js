@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-import { constants, util } from 'ethers';
+import { constants, utils } from 'ethers';
 import {
   Sdk as EtherspotSdk,
   NetworkNames,
@@ -49,18 +49,12 @@ import { ETH } from 'constants/assetsConstants';
 import { getEnv } from 'configs/envConfig';
 
 // types
-import type { EtherspotTransaction } from 'models/Etherspot';
+import type { EtherspotTransaction, EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { Asset, Balance } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
 import type { P2PPaymentChannel } from 'etherspot';
 import type { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
 
-
-export type EtherspotTransactionEstimate = {
-  refundAmount: BigNumber;
-  estimatedGas: number;
-  estimatedGasPrice: BigNumber;
-};
 
 class EtherspotService {
   sdk: EtherspotSdk;
@@ -116,7 +110,7 @@ class EtherspotService {
 
   estimateTransactionsBatch(useGasTokenAddress?: string): Promise<?$Shape<EtherspotTransactionEstimate>> {
     return this.sdk.estimateGatewayBatch({ refundToken: useGasTokenAddress })
-      .then((result) => result?.estimation)
+      .then((result) => result?.estimation);
   }
 
   async getBalances(accountAddress: string, assets: Asset[]): Promise<Balance[]> {
@@ -235,14 +229,14 @@ class EtherspotService {
       token: asset.address,
       amount: parseTokenAmount(withdrawAmount.toString(), asset.decimals).toString(),
     })
-    .catch((error) => {
-      reportErrorLog('buildTokenWithdrawFromAccountDepositTransaction -> encodeWithdrawP2PPaymentDeposit failed', {
-        error,
-        asset,
-        withdrawAmount,
+      .catch((error) => {
+        reportErrorLog('buildTokenWithdrawFromAccountDepositTransaction -> encodeWithdrawP2PPaymentDeposit failed', {
+          error,
+          asset,
+          withdrawAmount,
+        });
+        return null;
       });
-      return null;
-    });
   }
 
   async getAccountTokenDeposit(tokenAddress: string): Promise<?P2PPaymentDeposit> {
