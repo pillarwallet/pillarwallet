@@ -24,14 +24,13 @@ import { getEnv } from 'configs/envConfig';
 import { CachedImage } from 'react-native-cached-image';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
-import { formatAmount } from 'utils/common';
+import { formatTokenAmount } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import type { Rates, Asset } from 'models/Asset';
 import type { RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
-
 
 type Props = {
   amount: number,
@@ -41,6 +40,8 @@ type Props = {
   baseFiatCurrency: ?string,
   supportedAssets: Asset[],
   theme: Theme,
+  assetIcon?: {uri: string} | number,
+  fiatAmount?: string,
 };
 
 const Container = styled.View`
@@ -53,23 +54,25 @@ const TokenImage = styled(CachedImage)`
 `;
 
 export const TokenReviewSummaryComponent = ({
-  assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets, theme,
+  assetSymbol, amount, rates, baseFiatCurrency, text, supportedAssets, theme, assetIcon, fiatAmount,
 }: Props) => {
   const asset = supportedAssets.find(({ symbol }) => assetSymbol === symbol);
-  if (!asset) return null;
-  const assetIcon = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
-  const formattedAmount = formatAmount(amount);
-  const fiatAmount = getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
+  const formattedAmount = formatTokenAmount(amount, assetSymbol);
+
+  if (asset) {
+    assetIcon = { uri: `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3` };
+    fiatAmount = fiatAmount || getFormattedRate(rates, amount, asset.symbol, baseFiatCurrency || defaultFiatCurrency);
+  }
 
   const { genericToken } = images(theme);
 
   return (
     <Container>
-      <TokenImage source={{ uri: assetIcon }} fallbackSource={genericToken} />
+      <TokenImage source={assetIcon} fallbackSource={!!asset && genericToken} />
       <Spacing h={16} />
       <BaseText regular>{text}</BaseText>
       <Spacing h={16} />
-      <MediumText giant>{formattedAmount} <MediumText secondary fontSize={20}>{asset.symbol}</MediumText></MediumText>
+      <MediumText giant>{formattedAmount} <MediumText secondary fontSize={20}>{assetSymbol}</MediumText></MediumText>
       <Spacing h={7} />
       <BaseText secondary small>{fiatAmount}</BaseText>
     </Container>

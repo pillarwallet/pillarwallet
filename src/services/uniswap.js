@@ -30,13 +30,19 @@ import { ethers } from 'ethers';
 import { toChecksumAddress } from '@netgum/utils';
 import { BigNumber } from 'bignumber.js';
 import { getEnv } from 'configs/envConfig';
+import axios, { AxiosResponse } from 'axios';
 
 // utils
-import { reportOrWarn, reportLog, convertToBaseUnits, getEthereumProvider } from 'utils/common';
+import {
+  reportOrWarn,
+  reportLog,
+  convertToBaseUnits,
+  getEthereumProvider,
+  reportErrorLog,
+} from 'utils/common';
 import {
   chainId,
   ADDRESSES,
-  getAskRate,
   parseAssets,
   getExpectedOutput,
   applyAllowedSlippage,
@@ -46,10 +52,10 @@ import {
   swapExactEthToTokens,
   generateTxObject,
 } from 'utils/uniswap';
-import { parseOffer, createAllowanceTx } from 'utils/exchange';
+import { parseOffer, createAllowanceTx, getFixedQuantity } from 'utils/exchange';
 
 // services
-import { callSubgraph } from 'services/theGraph';
+import { defaultAxiosRequestConfig } from 'services/api';
 
 // models
 import type { Asset } from 'models/Asset';
@@ -57,7 +63,7 @@ import type { Offer } from 'models/Offer';
 import type { AllowanceTransaction } from 'models/Transaction';
 
 // constants
-import { PROVIDER_UNISWAP, UNISWAP_SUBGRAPH_NAME } from 'constants/exchangeConstants';
+import { PROVIDER_UNISWAP } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 
 // assets
@@ -135,20 +141,26 @@ const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise
 export const getUniswapOffer = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientAddress: string,
 ): Promise<Offer | null> => {
-  parseAssets([fromAsset, toAsset]);
-  const decimalsBN = new BigNumber(fromAsset.decimals);
-  const quantityBN = new BigNumber(quantity);
+  const [fromAssetParsed, toAssetParsed] = parseAssets([fromAsset, toAsset]);
+
+  const decimalsBN = new BigNumber(fromAssetParsed.decimals);
+
+  // handle edge case when user provides an amount with more than 18 decimals
+  const quantityFixed = getFixedQuantity(quantity, fromAssetParsed.decimals);
+  const quantityBN = new BigNumber(quantityFixed);
+
   const fromAssetQuantityBaseUnits = convertToBaseUnits(decimalsBN, quantityBN);
-  const route: ?Route = await getRoute(fromAsset, toAsset);
+  const route: ?Route = await getRoute(fromAssetParsed, toAssetParsed);
   if (!route) return null;
-  const trade: Trade = await getTrade(fromAsset.address, fromAssetQuantityBaseUnits.toFixed(), route);
-  const askRate = getAskRate(trade);
-  const allowanceSet = await getAllowanceSet(clientAddress, fromAsset);
-  const offer: Offer = parseOffer(fromAsset, toAsset, allowanceSet, askRate, PROVIDER_UNISWAP);
-  return offer;
+  const trade: Trade = await getTrade(fromAssetParsed.address, fromAssetQuantityBaseUnits.toFixed(), route);
+  const expectedOutput = getExpectedOutput(trade);
+  const askRate = expectedOutput.dividedBy(quantityBN);
+  const allowanceSet = await getAllowanceSet(clientAddress, fromAssetParsed);
+
+  return parseOffer(fromAssetParsed, toAssetParsed, allowanceSet, askRate, PROVIDER_UNISWAP);
 };
 
 const getUniswapOrderData = async (
@@ -156,7 +168,7 @@ const getUniswapOrderData = async (
   toAsset: Asset,
   fromAssetQuantityBaseUnits: string,
   toAssetDecimals: string,
-): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber } | null> => {
+): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber, expectedOutputRaw: string } | null> => {
   let route = await getRoute(fromAsset, toAsset);
   if (!route && (
     fromAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
@@ -176,11 +188,14 @@ const getUniswapOrderData = async (
   const expectedOutput: BigNumber = getExpectedOutput(trade);
   const toAssetDecimalsBN = new BigNumber(toAssetDecimals);
   const expectedOutputWithSlippage = applyAllowedSlippage(expectedOutput, toAssetDecimalsBN);
-  const expectedOutputWithSlippageBaseUnits = convertToBaseUnits(toAssetDecimalsBN, expectedOutputWithSlippage);
+  const expectedOutputWithSlippageFixed = getFixedQuantity(expectedOutputWithSlippage.toString(), toAssetDecimals);
+  const expectedOutputWithSlippageBaseUnits =
+    convertToBaseUnits(toAssetDecimalsBN, new BigNumber(expectedOutputWithSlippageFixed));
   const mappedPath: string[] = route.path.map(p => p.address);
 
   return {
     path: mappedPath,
+    expectedOutputRaw: expectedOutput.toString(), // no slippage applied
     expectedOutputBaseUnits: expectedOutputWithSlippageBaseUnits,
   };
 };
@@ -188,7 +203,7 @@ const getUniswapOrderData = async (
 export const createUniswapOrder = async (
   fromAsset: Asset,
   toAsset: Asset,
-  quantity: number | string,
+  quantity: string,
   clientSendAddress: string,
 ): Promise<Object | null> => {
   if (!fromAsset || !toAsset) {
@@ -197,11 +212,12 @@ export const createUniswapOrder = async (
   }
 
   const decimalsBN = new BigNumber(fromAsset.decimals);
-  const quantityBN = new BigNumber(quantity);
+  const quantityBN = new BigNumber(getFixedQuantity(quantity, fromAsset.decimals));
   const quantityBaseUnits = convertToBaseUnits(decimalsBN, quantityBN);
 
   let txData = '';
   let txValue = '0';
+  let expectedOutput;
   if (fromAsset.code !== ETH && toAsset.code !== ETH) {
     const orderData = await getUniswapOrderData(
       fromAsset,
@@ -210,7 +226,8 @@ export const createUniswapOrder = async (
       toAsset.decimals.toString(),
     );
     if (!orderData) return null;
-    const { path, expectedOutputBaseUnits } = orderData;
+    const { path, expectedOutputBaseUnits, expectedOutputRaw } = orderData;
+    expectedOutput = expectedOutputRaw;
 
     const deadline = getDeadline();
 
@@ -230,7 +247,8 @@ export const createUniswapOrder = async (
       toAsset.decimals.toString(),
     );
     if (!orderData) return null;
-    const { path, expectedOutputBaseUnits } = orderData;
+    const { path, expectedOutputBaseUnits, expectedOutputRaw } = orderData;
+    expectedOutput = expectedOutputRaw;
 
     const deadline = getDeadline();
 
@@ -248,7 +266,8 @@ export const createUniswapOrder = async (
       toAsset.decimals.toString(),
     );
     if (!orderData) return null;
-    const { path, expectedOutputBaseUnits } = orderData;
+    const { path, expectedOutputBaseUnits, expectedOutputRaw } = orderData;
+    expectedOutput = expectedOutputRaw;
 
     const deadline = getDeadline();
 
@@ -261,23 +280,21 @@ export const createUniswapOrder = async (
     );
   }
 
-  if (!txData) {
+  if (!txData || !expectedOutput) {
     reportOrWarn('Unable to create order', null, 'error');
     return null;
   }
 
-  const txCount = await ethProvider.getTransactionCount(clientSendAddress);
   const txObject = generateTxObject(
-    txCount.toString(),
     ADDRESSES.router,
     txValue,
     txData,
   );
-
   return {
     orderId: '-',
     sendToAddress: txObject.to,
     transactionObj: txObject,
+    expectedOutput,
   };
 };
 
@@ -287,36 +304,18 @@ export const createUniswapAllowanceTx =
     return allowanceTx;
   };
 
-export const fetchUniswapSupportedTokens = async (supportedAssetCodes: string[]): Promise<string[]> => {
-  let finished = false;
-  let i = 0;
-  let results = [];
-  const parsedAssetCodes = supportedAssetCodes.map(a => `"${a}"`);
-  while (!finished) {
-    /* eslint-disable no-await-in-loop */
-    /* eslint-disable i18next/no-literal-string */
-    const query = `
-      {
-        tokens(first: 1000, skip: ${i * 1000},
-          where: { 
-            symbol_in: [${parsedAssetCodes.toString()}]
-          }
-        ) {
-          symbol
-        }
-      }
-    `;
-    /* eslint-enable i18next/no-literal-string */
-    const response = await callSubgraph(UNISWAP_SUBGRAPH_NAME, query);
-    const assets = response?.tokens;
-    if (assets) {
-      results = results.concat(assets.map(a => a.symbol));
+export const fetchUniswapSupportedTokens = (): Promise<?string[]> => axios
+  .get(getEnv().UNISWAP_CACHED_SUBGRAPH_ASSETS_URL, defaultAxiosRequestConfig)
+  .then(({ data: responseData }: AxiosResponse) => {
+    if (!responseData) {
+      reportErrorLog('fetchUniswapSupportedTokens failed: unexpected response', { response: responseData });
+      return null;
     }
-    if (!assets || assets.length !== 1000) {
-      finished = true;
-    } else {
-      i++;
-    }
-  }
-  return results;
-};
+
+    // response is CSV
+    return responseData.split(',');
+  })
+  .catch((error) => {
+    reportErrorLog('fetchUniswapSupportedTokens failed: API request error', { error });
+    return null;
+  });

@@ -9,13 +9,14 @@ executors:
   ios-executor:
     working_directory: ~/pillarwallet
     macos:
-      xcode: "11.5.0"
+      xcode: "12.3.0"
     resource_class: medium
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
       FL_OUTPUT_DIR: output
       _JAVA_OPTIONS: "-Xms128m -Xmx3024m"
       GRADLE_OPTS: '-Dorg.gradle.jvmargs="-Xmx1248m -XX:+HeapDumpOnOutOfMemoryError"'
+      HOMEBREW_NO_AUTO_UPDATE: 1
 
     shell: /bin/bash --login -o pipefail
 
@@ -46,6 +47,15 @@ executors:
     environment:
       NODE_OPTIONS: "--max-old-space-size=4096"
     shell: /bin/bash --login -o pipefail
+
+  python3-alpine-executor:
+    working_directory: ~/pillarwallet
+    docker:
+    - image: python:3.7-alpine
+      auth:
+        username: $DOCKERHUB_USER
+        password: $DOCKERHUB_PASSWORD
+    resource_class: small
 
 aliases:
   - &restore_pod_cache
@@ -121,16 +131,6 @@ aliases:
       key: node-{{ checksum "./yarn.lock" }}
       paths:
         - ~/nodes_modules
-  - &node_artifactory_authenticate
-    run:
-      name: Authenticate with Artifactory
-      command: |
-        curl -u $ARTIFACTORY_PUBLISHING_USER:$ARTIFACTORY_PUBLISHING_PASSWORD https://pillarproject.jfrog.io/pillarproject/api/npm/auth >> ~/pillarwallet/.npmrc
-  - &node_artifactory_set_registry
-    run:
-      name: set Registry to use Artifactory
-      command: |
-        npm config set registry https://pillarproject.jfrog.io/pillarproject/api/npm/npm/
   - &android_latest_npm
     run:
       name: Install latest npm version
@@ -200,24 +200,14 @@ aliases:
       paths:
         - ~/android/.gradle
         - ~/android/.m2
-  - &homebrew_save_cache
-    save_cache:
-      name: Save homebrew cache
-      key: homebrew-packages-v1
-      paths:
-        - /usr/local/Homebrew
   - &homebrew_install
     run:
       name: Install coureutils
       command: |
         brew install coreutils
-  - &homebrew_restore_cache
-    restore_cache:
-      name: Restore homebrew cache
-      keys:
-        - homebrew-packages-v1
 
 jobs:
+
   build-and-test:
     executor: node10-executor
     steps:
@@ -236,8 +226,6 @@ jobs:
             - build-num
             - releases
       - *node_restore_cache
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
       - *android_latest_npm
       - *yarn_restore_cache
       - *yarn_install
@@ -266,13 +254,9 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/ios_appcenter.txt .
 
-      - *homebrew_restore_cache
       - *homebrew_install
-      - *homebrew_save_cache
 
       - *node_restore_cache
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
 
       - *yarn_install_ios
 
@@ -311,6 +295,10 @@ jobs:
             sed -i.bak "s/_staging_rampnetwork_api_key_/$STAGING_RAMPNETWORK_API_KEY/g" ./src/configs/buildConfig.js
             echo "$buildNumber" >> ~/pillarwallet/buildNumber.txt
       - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
+      - run:
           no_output_timeout: 20m
           name: Upload to App Center
           command: |
@@ -347,8 +335,6 @@ jobs:
             aws --region $AWS_DEFAULT_REGION s3 cp $NONPROD_KEYSTORE_S3_BUCKET/android_appcenter.txt .
 
       - *node_restore_cache
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
       - *android_latest_npm
       - *yarn_restore_cache
       - *yarn_install
@@ -421,9 +407,27 @@ jobs:
           failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
-  get-latest-tag:
-    executor: node10-executor
+  bump-push-git-tag:
+    executor: python3-alpine-executor
     steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl git openssh bash
+      - checkout
+      - run:
+          name: Fetch semtag and bump tag
+          command: |
+            chmod +x .circleci/semtag.sh
+            bash .circleci/semtag.sh
+
+  get-latest-tag:
+    executor: python3-alpine-executor
+    steps:
+      - run:
+          name: Install dependencies
+          command: |
+            apk add --update curl git openssh bash
       - checkout
       - attach_workspace: &attach_workspace
           at: /tmp/workspace
@@ -458,9 +462,7 @@ jobs:
           command: |
             aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/ios_prod.txt .
 
-      - *homebrew_restore_cache
       - *homebrew_install
-      - *homebrew_save_cache
 
       - run:
           name: Set production environment
@@ -487,9 +489,6 @@ jobs:
           keys:
             - ios-node-{{ checksum "./yarn.lock" }}
 
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
-
       - *yarn_install_ios
 
       - save_cache:
@@ -510,6 +509,10 @@ jobs:
             bundle exec pod install --verbose
       - *save_pod_cache
 
+      - run:
+          name: Fetch App Store Connect API key
+          command: |
+            aws --region $AWS_DEFAULT_REGION s3 cp $PROD_KEYSTORE_S3_BUCKET/AuthKey.p8 ./ios
       - run:
           no_output_timeout: 20m
           name: Upload to TestFlight
@@ -605,13 +608,6 @@ jobs:
           name: Restore node modules cache
           keys:
             - android-node-{{ checksum "./yarn.lock" }}
-
-      - *node_artifactory_authenticate
-      - *node_artifactory_set_registry
-
-      - run:
-          name: set Yarn to use Artifactory
-          command: echo 'registry "https://pillarproject.jfrog.io/pillarproject/api/npm/npm/"' >> ~/pillarwallet/.yarnrc
 
       - *yarn_restore_cache
       - *yarn_install
@@ -741,7 +737,19 @@ jobs:
 
 workflows:
   version: 2.1
-  build_and_deploy:
+
+  build_and_test:
+    jobs:
+      - build-and-test:
+          context: docker-hub-creds
+          filters:
+            branches:
+              ignore:
+                - feature/etherspot-transactions
+                - develop
+                - master
+
+  build_and_deploy_appcenter:
     jobs:
       - build-and-test:
           context: docker-hub-creds
@@ -764,6 +772,23 @@ workflows:
             branches:
               only:
                 - develop
+
+  build_and_deploy_production:
+    jobs:
+      - bump-push-git-tag:
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - master
+      - build-and-test:
+          requires:
+            - bump-push-git-tag
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - master
       - get-latest-tag:
           context: docker-hub-creds
           requires:

@@ -25,23 +25,21 @@ import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import type { RootReducerState } from 'reducers/rootReducer';
-import type {
-  Balances,
-  Rates,
-} from 'models/Asset';
+import type { Balances, Rates, MixedBalance } from 'models/Asset';
 
 import BalanceView from 'components/PortfolioBalance/BalanceView';
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
-import { calculateBalanceInFiat } from 'utils/assets';
+import { balanceInEth } from 'utils/assets';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { themedColors } from 'utils/themes';
-import { allBalancesSelector } from 'selectors/balances';
+import { allBalancesSelector, servicesBalanceListSelector } from 'selectors/balances';
+import { ETH } from 'constants/assetsConstants';
 
 
 type Props = {
   rates: Rates,
   balances: Balances,
+  serviceBalances: MixedBalance[],
   fiatCurrency: string,
   style: Object,
   showBalance: boolean,
@@ -67,8 +65,8 @@ const ContentWrapper = styled.View`
 `;
 
 const ToggleIcon = styled(Icon)`
-  font-size: ${({ bigger }) => bigger ? fontSizes.large : fontSizes.medium}px;
-  color: ${themedColors.accent};
+  font-size: ${fontSizes.medium}px;
+  color: ${({ theme }) => theme.colors.basic020};
   margin-left: 6px;
   margin-bottom: 5px;
 `;
@@ -79,20 +77,32 @@ const BalanceText = styled(MediumText)`
 `;
 
 const LabelText = styled(BaseText)`
-  color: ${themedColors.secondaryText};
   font-size: ${fontSizes.regular}px;
   margin-bottom: 8px;
 `;
 
+export const getTotalInEth = (values: MixedBalance[], rates: Rates) => {
+  return values.map<number>(({ symbol, balance }) => {
+    const rate = rates[symbol]?.[ETH]
+      ?? (!!rates[ETH]?.[symbol] && 1 / rates[ETH]?.[symbol])
+      ?? 0;
+    const amount = typeof balance === 'number' ? balance : parseFloat(balance);
+    return rate * amount;
+  })
+    .map(ethBalance => Number.isNaN(ethBalance) ? 0 : ethBalance)
+    .reduce((a, b) => a + b, 0);
+};
 
 const getCombinedBalances = (props: Props): number => {
   const {
     balances,
+    serviceBalances,
     fiatCurrency,
     rates,
   } = props;
 
-  return calculateBalanceInFiat(rates, balances, fiatCurrency);
+  const ethRate = rates[ETH]?.[fiatCurrency] ?? 0;
+  return ethRate * (balanceInEth(balances, rates) + getTotalInEth(serviceBalances, rates));
 };
 
 class PortfolioBalance extends React.PureComponent<Props> {
@@ -108,11 +118,11 @@ class PortfolioBalance extends React.PureComponent<Props> {
 
     return (
       <BalanceWrapper>
-        <LabelText>{t('title.totalBalance')}</LabelText>
+        <LabelText secondary>{t('title.totalBalance')}</LabelText>
         <BalanceButton onPress={toggleBalanceVisibility}>
           <ContentWrapper>
             {!showBalance
-              ? <BalanceText>{t('button.viewBalance')}</BalanceText>
+              ? <BalanceText secondary>{t('button.viewBalance')}</BalanceText>
               : (
                 <BalanceView
                   style={style}
@@ -138,6 +148,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: allBalancesSelector,
+  serviceBalances: servicesBalanceListSelector,
 });
 
 const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({

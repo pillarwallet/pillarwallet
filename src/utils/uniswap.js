@@ -61,17 +61,11 @@ const getBNFromNumeratorDenominator = (prop: { numerator: any, denominator: any,
   return numeratorBN.dividedBy(denominatorBN).multipliedBy(scalarValue);
 };
 
-export const getAskRate = (trade: Trade): string => {
-  const excutionPriceBN = getBNFromNumeratorDenominator(trade.executionPrice);
-  return excutionPriceBN.toFixed();
-};
-
-export const parseAssets = (assets: Asset[]) => {
-  assets.forEach(asset => {
-    asset.address = toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address);
-    asset.code = asset.symbol;
-  });
-};
+export const parseAssets = (assets: Asset[]): Asset[] => assets.map((asset) => ({
+  ...asset,
+  address: toChecksumAddress(asset.symbol === ETH ? WETH[chainId]?.address : asset.address),
+  code: asset.symbol,
+}));
 
 export const getExpectedOutput = (
   trade: Trade,
@@ -152,7 +146,6 @@ export const swapExactEthToTokens = (
 };
 
 export const generateTxObject = (
-  txCount: string,
   to: string,
   value: string,
   txData: string,
@@ -160,10 +153,6 @@ export const generateTxObject = (
   return {
     to,
     value,
-    nonce: txCount,
-    gasLimit: '0',
-    gasPrice: '0',
-    chainId,
     data: txData,
   };
 };

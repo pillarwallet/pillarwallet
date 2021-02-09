@@ -17,34 +17,58 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import isEmpty from 'lodash.isempty';
+import { type Account as EtherspotAccount } from 'etherspot';
+import t from 'translations/translate';
+
+// constants
+import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
+import { ACCOUNT_TYPES } from 'constants/accountsConstants';
+import { SET_INITIAL_ASSETS } from 'constants/assetsConstants';
+import { PPN_TOKEN } from 'configs/assetsConfig';
+import {
+  MARK_PLR_TANK_INITIALISED,
+  SET_PAYMENT_CHANNELS,
+  UPDATE_PAYMENT_NETWORK_STAKED,
+} from 'constants/paymentNetworkConstants';
+import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+
+// actions
+import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
+import { saveDbAction } from 'actions/dbActions';
+import { fetchAssetsBalancesAction } from 'actions/assetsActions';
+import { fetchCollectiblesAction } from 'actions/collectiblesActions';
+import {
+  estimateTransactionAction,
+  setEstimatingTransactionAction,
+  setTransactionsEstimateErrorAction,
+  setTransactionsEstimateFeeAction,
+} from 'actions/transactionEstimateActions';
+import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // services
 import etherspot from 'services/etherspot';
 
+// utils
+import { normalizeWalletAddress } from 'utils/wallet';
+import { formatUnits, reportErrorLog } from 'utils/common';
+import {
+  addressesEqual,
+  getAssetData,
+  getAssetsAsList,
+  mapAssetToAssetData,
+} from 'utils/assets';
+import { findFirstEtherspotAccount } from 'utils/accounts';
+
+// selectors
+import { accountAssetsSelector } from 'selectors/assets';
+import { accountHistorySelector } from 'selectors/history';
+import { activeAccountAddressSelector } from 'selectors';
+import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/smartWallet';
+
 // types
 import type { Dispatch, GetState } from 'reducers/rootReducer';
-import { reportErrorLog } from 'utils/common';
-import { saveDbAction } from 'actions/dbActions';
-import {
-  addAccountAction,
-  setActiveAccountAction,
-} from 'actions/accountsActions';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
-import { normalizeWalletAddress } from 'utils/wallet';
-import {
-  SET_INITIAL_ASSETS,
-} from 'constants/assetsConstants';
-import { fetchAssetsBalancesAction } from 'actions/assetsActions';
-import { fetchCollectiblesAction } from 'actions/collectiblesActions';
 import type SDKWrapper from 'services/api';
-import { addressesEqual } from 'utils/assets';
-import {
-  SET_ETHERSPOT_ACCOUNTS,
-} from 'constants/etherspotConstants';
-import {
-  findFirstEtherspotAccount,
-} from 'utils/accounts';
-import { Account as EtherspotAccount } from 'etherspot';
 
 
 export const initEtherspotServiceAction = (privateKey: string) => {
@@ -153,6 +177,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
     // set active
     const accountId = normalizeWalletAddress(etherspotAccounts[0].address);
     dispatch(setActiveAccountAction(accountId));
+    dispatch(checkUserENSNameAction());
 
     // set default assets for active Etherspot wallet
     const initialAssets = await api.fetchInitialAssets(walletId);
@@ -168,7 +193,7 @@ export const importEtherspotAccountsAction = (privateKey: string) => {
   };
 };
 
-export const setEtherspotEnsNameAction = (username: string) => {
+export const reserveEtherspotENSNameAction = (username: string) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const {
       accounts: { data: accounts },
@@ -179,29 +204,225 @@ export const setEtherspotEnsNameAction = (username: string) => {
 
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) {
-      reportErrorLog('setEtherspotEnsNameAction failed: no Etherspot account found');
+      reportErrorLog('reserveEtherspotENSNameAction failed: no Etherspot account found');
       return;
     }
 
     const reserved = await etherspot.reserveENSName(username);
     if (!reserved) {
-      reportErrorLog('setEtherspotEnsNameAction reserveENSName failed', { username });
+      reportErrorLog('reserveEtherspotENSNameAction reserveENSName failed', { username });
     }
   };
 };
 
-export const setupPPNAction = () => {
-  return () => {
-    // TODO: implement with etherspot
-    // const accountHistory = accountHistorySelector(getState());
-    // const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
-    // if (!hasPpnPayments) return;
-    // await dispatch(fetchVirtualAccountBalanceAction());
-    // const { paymentNetwork: { availableStake } } = getState();
+export const fetchAccountDepositBalanceAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: { data: { isOnline } },
+      assets: { supportedAssets },
+    } = getState();
 
-    // if (availableStake || hasPpnPayments) {
-    //   dispatch({ type: MARK_PLR_TANK_INITIALISED });
-    //   dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
-    // }
+    if (!isOnline) {
+      // nothing to do offline
+      return;
+    }
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+    if (isEmpty(ppnTokenAsset)) {
+      // TODO: show toast?
+      reportErrorLog('fetchAccountDepositBalanceAction failed: no ppnTokenAsset', { PPN_TOKEN });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    // process staked amount
+    const stakedAmount = await etherspot.getAccountTokenDepositBalance(ppnTokenAsset.address);
+    const stakedAmountFormatted = Number(formatUnits(stakedAmount, ppnTokenAsset.decimals));
+
+    dispatch(saveDbAction('paymentNetworkStaked', { paymentNetworkStaked: stakedAmountFormatted }, true));
+    dispatch({ type: UPDATE_PAYMENT_NETWORK_STAKED, payload: stakedAmountFormatted });
+  };
+};
+
+// const shouldPaymentChannelTransactionBeUpdated = (
+//   paymentChannel: P2PPaymentChannel,
+//   accountHistory: Transaction[],
+// ): boolean => true || !accountHistory.some(({
+//   hash: transactionHash,
+//   stateInPPN: prevStateInPPN,
+// }) => isCaseInsensitiveMatch(transactionHash, paymentChannel.hash) && paymentChannel.state === prevStateInPPN);
+
+export const fetchAccountPaymentChannelsAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      session: { data: { isOnline } },
+      // assets: { supportedAssets },
+    } = getState();
+
+    if (!isOnline) {
+      // nothing to do offline
+      return;
+    }
+
+    // TODO: etherspot finish mapping to history
+
+    const accountAddress = activeAccountAddressSelector(getState());
+    // const accountAssets = accountAssetsSelector(getState());
+    const paymentChannels = await etherspot.getPaymentChannelsByAddress(accountAddress);
+
+    dispatch({ type: SET_PAYMENT_CHANNELS, payload: paymentChannels });
+
+    // const accountId = activeAccountIdSelector(getState());
+    // const { history: { data: currentHistory } } = getState();
+    // const accountHistory = currentHistory[accountId] || [];
+
+    // map payments to history as sent/received transactions
+    // const paymentChannelsTransactions = paymentChannels
+    //   .filter((paymentChannel) => shouldPaymentChannelTransactionBeUpdated(paymentChannel, accountHistory))
+    //   .reduce((transactions, paymentChannel) => {
+    //     const {
+    //       hash,
+    //       committedAmount,
+    //       updatedAt,
+    //       recipient: to,
+    //       sender: from,
+    //       token: tokenAddress,
+    //       state: stateInPPN,
+    //     } = paymentChannel;
+    //
+    //     const assetData = getAssetDataByAddress(getAssetsAsList(accountAssets), supportedAssets, tokenAddress);
+    //     if (!assetData) {
+    //       reportErrorLog('fetchAccountPaymentChannelsAction paymentChannel failed: no assetData found', {
+    //         paymentChannel,
+    //       });
+    //       return transactions;
+    //     }
+    //
+    //     const { symbol: tokenSymbol } = assetData;
+    //     const transaction = buildHistoryTransaction({
+    //       from,
+    //       to,
+    //       hash,
+    //       stateInPPN,
+    //       value: committedAmount.toString(),
+    //       asset: tokenSymbol,
+    //       isPPNTransaction: true,
+    //       createdAt: +new Date(updatedAt) / 1000,
+    //       status: TX_CONFIRMED_STATUS,
+    //     });
+    //
+    //     return transactions.concat(transaction);
+    //   }, []);
+
+    //
+    // const updatedAccountHistory = [...paymentChannelsTransactions, ...accountHistory];
+    // const updatedHistory = updateAccountHistory(currentHistory, accountId, updatedAccountHistory);
+    // dispatch({ type: SET_HISTORY, payload: updatedHistory });
+    // dispatch(saveDbAction('history', { history: updatedHistory }, true));
+  };
+};
+
+export const initPPNAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    if (getState().paymentNetwork.isTankInitialised) {
+      // already initialized
+      return;
+    }
+
+    const accountHistory = accountHistorySelector(getState());
+    const hasPpnPayments = accountHistory.some(({ isPPNTransaction }) => isPPNTransaction);
+
+    await dispatch(fetchAccountDepositBalanceAction());
+    const { paymentNetwork: { availableStake } } = getState();
+
+    if (availableStake || hasPpnPayments) {
+      dispatch({ type: MARK_PLR_TANK_INITIALISED });
+      dispatch(saveDbAction('isPLRTankInitialised', { isPLRTankInitialised: true }, true));
+    }
+  };
+};
+
+export const estimateAccountTokenDepositTransactionAction = (depositAmount: number) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
+
+    // put into loading state at this point already
+    dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+    if (isEmpty(ppnTokenAsset)) {
+      // TODO: show toast?
+      reportErrorLog('estimateAccountDepositTransactionAction failed: no ppnTokenAsset', { ppnTokenAsset });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    const tokenDeposit = await etherspot.getAccountTokenDeposit(ppnTokenAsset.address);
+    if (!tokenDeposit) {
+      // TODO: show toast?
+      reportErrorLog('estimateAccountDepositTransactionAction failed: no tokenDeposit', { ppnTokenAsset });
+      dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: false });
+      return;
+    }
+
+    dispatch(estimateTransactionAction({
+      to: tokenDeposit.address,
+      value: depositAmount,
+      assetData: mapAssetToAssetData(ppnTokenAsset),
+    }));
+  };
+};
+
+export const estimateTokenWithdrawFromAccountDepositTransactionAction = () => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const {
+      accounts: { data: accounts },
+      assets: { supportedAssets },
+    } = getState();
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
+
+    // put into loading state at this point already
+    dispatch(setEstimatingTransactionAction(true));
+
+    const accountAssets = accountAssetsSelector(getState());
+    const ppnTokenAsset = getAssetData(getAssetsAsList(accountAssets), supportedAssets, PPN_TOKEN);
+
+    if (isEmpty(ppnTokenAsset)) {
+      // TODO: show toast?
+      reportErrorLog(
+        'estimateTokenWithdrawFromAccountDepositTransactionAction failed: no ppnTokenAsset',
+        { ppnTokenAsset },
+      );
+      dispatch(setEstimatingTransactionAction(false));
+      return;
+    }
+
+    const useGasToken = useGasTokenSelector(getState());
+    const gasToken = useGasToken
+      ? getAssetData(getAssetsAsList(accountAssets), supportedAssets, preferredGasTokenSelector(getState()))
+      : null;
+
+    const estimated = await etherspot.estimateWithdrawFromAccountDepositTransaction(gasToken?.address);
+
+    if (!estimated) {
+      dispatch(setTransactionsEstimateErrorAction(t('toast.cannotWithdrawFromTank')));
+      return;
+    }
+
+    dispatch(setTransactionsEstimateFeeAction(estimated));
+  };
+};
+
+export const checkEtherspotSessionAction = () => {
+  return async () => {
+    // TODO: add etherspot session restore?
   };
 };

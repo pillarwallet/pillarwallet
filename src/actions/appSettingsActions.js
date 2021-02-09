@@ -171,6 +171,11 @@ export const hasSeenExchangeIntroAction = () => {
   };
 };
 
+export const hasSeenWbtcCafeIntroAction = () => (dispatch: Dispatch) => {
+  dispatch(saveDbAction('app_settings', { appSettings: { hasSeenWbtcCafeIntro: true } }));
+  dispatch({ type: UPDATE_APP_SETTINGS, payload: { hasSeenWbtcCafeIntro: true } });
+};
+
 export const toggleBalanceAction = () => {
   return (dispatch: Dispatch, getState: GetState) => {
     const {
@@ -264,6 +269,30 @@ export const toggleSablierAction = () => {
 
     dispatch(saveDbAction('app_settings', { appSettings: { hideSablier: newSablierState } }));
     dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideSablier: newSablierState } });
+  };
+};
+
+export const toggleRariAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideRari } },
+    } = getState();
+    const newRariState = !hideRari;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideRari: newRariState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideRari: newRariState } });
+  };
+};
+
+export const toggleLiquidityPoolsAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    const {
+      appSettings: { data: { hideLiquidityPools } },
+    } = getState();
+    const newLiquidityPoolsState = !hideLiquidityPools;
+
+    dispatch(saveDbAction('app_settings', { appSettings: { hideLiquidityPools: newLiquidityPoolsState } }));
+    dispatch({ type: UPDATE_APP_SETTINGS, payload: { hideLiquidityPools: newLiquidityPoolsState } });
   };
 };
 

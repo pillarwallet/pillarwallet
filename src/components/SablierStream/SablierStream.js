@@ -182,7 +182,7 @@ class SablierStream extends React.Component<Props> {
             colorEnd={progressBarColor}
             height={4}
             barPadding={0}
-            emptyBarBackgroundColor={colors.tertiary}
+            emptyBarBackgroundColor={colors.basic080}
           />
         </AssetContainer>
         <Spacing w={44} />

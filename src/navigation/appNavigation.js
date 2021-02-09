@@ -45,7 +45,7 @@ import SendTokenPinConfirmScreen from 'screens/SendToken/SendTokenPinConfirmScre
 import SendTokenConfirmScreen from 'screens/SendToken/SendTokenConfirm';
 import SendTokenTransactionScreen from 'screens/SendToken/SendTokenTransaction';
 import SendCollectibleConfirmScreen from 'screens/SendCollectible/SendCollectibleConfirm';
-import PPNSendTokenAmountScreen from 'screens/Tank/SendToken/PPNSendTokenAmount';
+import PPNSendTokenAmountScreen from 'screens/PaymentNetwork/PPNSendTokenAmount';
 import HomeScreen from 'screens/Home';
 import BackupPhraseScreen from 'screens/BackupPhrase';
 import BackupPhraseValidateScreen from 'screens/BackupPhraseValidate';
@@ -57,18 +57,16 @@ import WalletConnectPinConfirm from 'screens/WalletConnect/WalletConnectPinConfi
 import BadgeScreen from 'screens/Badge';
 import OTPScreen from 'screens/OTP';
 import ConfirmClaimScreen from 'screens/Referral/ConfirmClaimScreen';
-import FundTankScreen from 'screens/Tank/FundTank';
-import FundConfirmScreen from 'screens/Tank/FundConfirm';
-import SettleBalanceScreen from 'screens/Tank/SettleBalance';
-import SettleBalanceConfirmScreen from 'screens/Tank/SettleBalanceConfirm';
-import TankWithdrawalScreen from 'screens/Tank/TankWithdrawal';
-import TankWithdrawalConfirmScreen from 'screens/Tank/TankWithdrawalConfirm';
+import FundTankScreen from 'screens/PaymentNetwork/FundTank';
+import FundTankConfirmScreen from 'screens/PaymentNetwork/FundTankConfirm';
+import SettleBalanceScreen from 'screens/PaymentNetwork/SettleBalance';
+import SettleBalanceConfirmScreen from 'screens/PaymentNetwork/SettleBalanceConfirm';
+import TankWithdrawScreen from 'screens/PaymentNetwork/TankWithdraw';
+import TankWithdrawConfirmScreen from 'screens/PaymentNetwork/TankWithdrawConfirm';
 import ManageDetailsSessionsScreen from 'screens/ManageDetailsSessions';
 import AccountsScreen from 'screens/Accounts';
 import AddOrEditUserScreen from 'screens/Users/AddOrEditUser';
 import UnsettledAssetsScreen from 'screens/UnsettledAssets';
-import SendSyntheticConfirmScreen from 'screens/SendSynthetic/SendSyntheticConfirm';
-import SendSyntheticAmountScreen from 'screens/SendSynthetic/SendSyntheticAmount';
 import LogoutPendingScreen from 'screens/LogoutPending';
 import ReferFriendsScreen from 'screens/ReferFriends';
 import ReferralSentScreen from 'screens/ReferFriends/ReferralSent';
@@ -116,6 +114,29 @@ import SablierOutgoingStreamScreen from 'screens/Sablier/OutgoingStream';
 import SablierWithdrawScreen from 'screens/Sablier/Withdraw';
 import SablierWithdrawReviewScreen from 'screens/Sablier/WithdrawReview';
 import SendwyreInputScreen from 'screens/SendwyreInput/SendwyreInput';
+import WBTCCafeScreen from 'screens/WBTCCafe';
+import RariDepositScreen from 'screens/Rari/RariDeposit';
+import RariInfoScreen from 'screens/Rari/RariInfo';
+import RariAddDepositScreen from 'screens/Rari/RariAddDeposit';
+import RariAddDepositReviewScreen from 'screens/Rari/RariAddDepositReview';
+import RariWithdrawScreen from 'screens/Rari/RariWithdraw';
+import RariWithdrawReviewScreen from 'screens/Rari/RariWithdrawReview';
+import RariTransferScreen from 'screens/Rari/RariTransfer';
+import RariTransferReviewScreen from 'screens/Rari/RariTransferReview';
+import RariClaimRgtScreen from 'screens/Rari/RariClaimRgt';
+import RariClaimRgtReviewScreen from 'screens/Rari/RariClaimRgtReview';
+import LiquidityPoolDashboardScreen from 'screens/LiquidityPools/LiquidityPoolDashboard';
+import LiquidityPoolsAddLiquidityScreen from 'screens/LiquidityPools/AddLiquidity';
+import LiquidityPoolsAddLiquidityReviewScreen from 'screens/LiquidityPools/AddLiquidityReview';
+import LiquidityPoolsStakeTokensScreen from 'screens/LiquidityPools/StakeTokens';
+import LiquidityPoolsStakeTokensReviewScreen from 'screens/LiquidityPools/StakeTokensReview';
+import LiquidityPoolsUnstakeTokensScreen from 'screens/LiquidityPools/UnstakeTokens';
+import LiquidityPoolsUnstakeTokensReviewScreen from 'screens/LiquidityPools/UnstakeTokensReview';
+import LiquidityPoolsRemoveLiquidityScreen from 'screens/LiquidityPools/RemoveLiquidity';
+import LiquidityPoolsRemoveLiquidityReviewScreen from 'screens/LiquidityPools/RemoveLiquidityReview';
+import LiquidityPoolsClaimRewardsReviewScreen from 'screens/LiquidityPools/ClaimRewardsReview';
+import LiquidityPoolsScreen from 'screens/LiquidityPools/LiquidityPools';
+import LiquidityPoolsInfoScreen from 'screens/LiquidityPools/LiquidityPoolsInfo';
 
 // components
 import RetryApiRegistration from 'components/RetryApiRegistration';
@@ -138,6 +159,7 @@ import { endWalkthroughAction } from 'actions/walkthroughsActions';
 import { handleSystemDefaultThemeChangeAction } from 'actions/appSettingsActions';
 import { finishOnboardingAction } from 'actions/onboardingActions';
 import { handleSystemLanguageChangeAction } from 'actions/sessionActions';
+import { checkEtherspotSessionAction } from 'actions/etherspotActions';
 
 // constants
 import {
@@ -189,14 +211,11 @@ import {
   ADD_EDIT_USER,
   MENU,
   PPN_SEND_TOKEN_AMOUNT,
-  PPN_SEND_TOKEN_FROM_ASSET_FLOW,
-  PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  PPN_SEND_TOKEN_FLOW,
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL_FLOW,
   TANK_WITHDRAWAL,
-  TANK_WITHDRAWAL_CONFIRM,
-  SEND_SYNTHETIC_AMOUNT,
-  SEND_SYNTHETIC_CONFIRM,
+  TANK_WITHDRAW_CONFIRM,
   LOGOUT_PENDING,
   UNSETTLED_ASSETS_FLOW,
   REFER_FLOW,
@@ -257,6 +276,32 @@ import {
   SABLIER_WITHDRAW_REVIEW,
   SENDWYRE_INPUT,
   EXCHANGE_FLOW,
+  WBTC_CAFE,
+  RARI_FLOW,
+  RARI_DEPOSIT,
+  RARI_INFO,
+  RARI_ADD_DEPOSIT,
+  RARI_ADD_DEPOSIT_REVIEW,
+  RARI_WITHDRAW,
+  RARI_WITHDRAW_REVIEW,
+  RARI_TRANSFER,
+  RARI_TRANSFER_REVIEW,
+  RARI_CLAIM_RGT,
+  RARI_CLAIM_RGT_REVIEW,
+  WALLETCONNECT_CALL_REQUEST_FLOW,
+  LIQUIDITY_POOLS_FLOW,
+  LIQUIDITY_POOLS,
+  LIQUIDITY_POOL_DASHBOARD,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY,
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_STAKE,
+  LIQUIDITY_POOLS_STAKE_REVIEW,
+  LIQUIDITY_POOLS_UNSTAKE,
+  LIQUIDITY_POOLS_UNSTAKE_REVIEW,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW,
+  LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
+  LIQUIDITY_POOLS_INFO,
 } from 'constants/navigationConstants';
 import { DARK_THEME } from 'constants/appSettingsConstants';
 
@@ -277,6 +322,7 @@ import type { BackupStatus } from 'reducers/walletReducer';
 
 
 const SLEEP_TIMEOUT = 20000;
+const SMART_WALLET_SESSION_CHECK_INTERVAL = 30 * 60000; // 30 min
 const ACTIVE_APP_STATE = 'active';
 const BACKGROUND_APP_STATE = 'background';
 const APP_LOGOUT_STATES = [BACKGROUND_APP_STATE];
@@ -340,6 +386,7 @@ const exchangeFlow = createStackNavigator({
   [EXCHANGE_INFO]: ExchangeInfoScreen,
   [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
   [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -348,21 +395,34 @@ exchangeFlow.navigationOptions = hideTabNavigatorOnChildView;
 const servicesFlow = createStackNavigator({
   [SERVICES]: ServicesScreen,
   [SENDWYRE_INPUT]: SendwyreInputScreen,
+  [WBTC_CAFE]: WBTCCafeScreen,
 }, StackNavigatorConfig);
 
 servicesFlow.navigationOptions = hideTabNavigatorOnChildView;
 
-// WALLETCONNECT FLOW
+// WALLET CONNECT CALL REQUEST FLOW
+const walletConnectCallRequestFlow = createStackNavigator(
+  {
+    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
+    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
+    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+  },
+  StackNavigatorConfig,
+);
+
+walletConnectCallRequestFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+// WALLET CONNECT FLOW
 const walletConnectFlow = createStackNavigator(
   {
     [WALLETCONNECT]: WalletConnectScreen,
+    [WALLETCONNECT_CALL_REQUEST_FLOW]: walletConnectCallRequestFlow,
     [WALLETCONNECT_SESSION_REQUEST_SCREEN]: WalletConnectSessionRequest,
-    [WALLETCONNECT_CALL_REQUEST_SCREEN]: WalletConnectCallRequest,
-    [WALLETCONNECT_PIN_CONFIRM_SCREEN]: WalletConnectPinConfirm,
     [EXPLORE_APPS]: ExploreAppsScreen,
   },
   StackNavigatorConfig,
 );
+
 walletConnectFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 
@@ -545,20 +605,6 @@ const backupWalletFlow = createStackNavigator({
 const ppnSendTokenFromAssetFlow = createStackNavigator(
   {
     [PPN_SEND_TOKEN_AMOUNT]: PPNSendTokenAmountScreen,
-  },
-  StackNavigatorModalConfig,
-);
-
-// PPN SEND SYNTHETIC ASSET FULL FLOW
-const ppnSendSyntheticAssetFlow = createStackNavigator(
-  {
-    // synthetic
-    [SEND_SYNTHETIC_AMOUNT]: SendSyntheticAmountScreen,
-    [SEND_SYNTHETIC_CONFIRM]: SendSyntheticConfirmScreen,
-    [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
-    [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
-    // other
-    [SEND_TOKEN_AMOUNT]: SendTokenAmountScreen,
     [SEND_TOKEN_CONFIRM]: SendTokenConfirmScreen,
     [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
     [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
@@ -569,7 +615,7 @@ const ppnSendSyntheticAssetFlow = createStackNavigator(
 // MANAGE WALLETS FLOW
 const manageWalletsFlow = createStackNavigator({
   [ACCOUNTS]: AccountsScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
+  [FUND_CONFIRM]: FundTankConfirmScreen,
 }, StackNavigatorConfig);
 
 manageWalletsFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -600,14 +646,18 @@ unsettledAssetsFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankFundFlow = createStackNavigator({
   [FUND_TANK]: FundTankScreen,
-  [FUND_CONFIRM]: FundConfirmScreen,
+  [FUND_CONFIRM]: FundTankConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 tankFundFlow.navigationOptions = hideTabNavigatorOnChildView;
 
 const tankWithdrawalFlow = createStackNavigator({
-  [TANK_WITHDRAWAL]: TankWithdrawalScreen,
-  [TANK_WITHDRAWAL_CONFIRM]: TankWithdrawalConfirmScreen,
+  [TANK_WITHDRAWAL]: TankWithdrawScreen,
+  [TANK_WITHDRAW_CONFIRM]: TankWithdrawConfirmScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
 }, StackNavigatorConfig);
 
 tankWithdrawalFlow.navigationOptions = hideTabNavigatorOnChildView;
@@ -703,13 +753,48 @@ const sablierFlow = createStackNavigator({
 
 sablierFlow.navigationOptions = hideTabNavigatorOnChildView;
 
+const rariFlow = createStackNavigator({
+  [RARI_DEPOSIT]: RariDepositScreen,
+  [RARI_INFO]: RariInfoScreen,
+  [RARI_ADD_DEPOSIT]: RariAddDepositScreen,
+  [RARI_ADD_DEPOSIT_REVIEW]: RariAddDepositReviewScreen,
+  [RARI_WITHDRAW]: RariWithdrawScreen,
+  [RARI_WITHDRAW_REVIEW]: RariWithdrawReviewScreen,
+  [RARI_TRANSFER]: RariTransferScreen,
+  [RARI_TRANSFER_REVIEW]: RariTransferReviewScreen,
+  [RARI_CLAIM_RGT]: RariClaimRgtScreen,
+  [RARI_CLAIM_RGT_REVIEW]: RariClaimRgtReviewScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+rariFlow.navigationOptions = hideTabNavigatorOnChildView;
+
+const liquidityPoolsFlow = createStackNavigator({
+  [LIQUIDITY_POOLS]: LiquidityPoolsScreen,
+  [LIQUIDITY_POOL_DASHBOARD]: LiquidityPoolDashboardScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY]: LiquidityPoolsAddLiquidityScreen,
+  [LIQUIDITY_POOLS_ADD_LIQUIDITY_REVIEW]: LiquidityPoolsAddLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_STAKE]: LiquidityPoolsStakeTokensScreen,
+  [LIQUIDITY_POOLS_STAKE_REVIEW]: LiquidityPoolsStakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_UNSTAKE]: LiquidityPoolsUnstakeTokensScreen,
+  [LIQUIDITY_POOLS_UNSTAKE_REVIEW]: LiquidityPoolsUnstakeTokensReviewScreen,
+  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY]: LiquidityPoolsRemoveLiquidityScreen,
+  [LIQUIDITY_POOLS_REMOVE_LIQUIDITY_REVIEW]: LiquidityPoolsRemoveLiquidityReviewScreen,
+  [LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW]: LiquidityPoolsClaimRewardsReviewScreen,
+  [LIQUIDITY_POOLS_INFO]: LiquidityPoolsInfoScreen,
+  [SEND_TOKEN_PIN_CONFIRM]: SendTokenPinConfirmScreen,
+  [SEND_TOKEN_TRANSACTION]: SendTokenTransactionScreen,
+}, StackNavigatorConfig);
+
+liquidityPoolsFlow.navigationOptions = hideTabNavigatorOnChildView;
+
 // APP NAVIGATION FLOW
 const AppFlowNavigation = createStackNavigator(
   {
     [TAB_NAVIGATION]: tabNavigation,
     [SEND_TOKEN_FROM_ASSET_FLOW]: sendTokenFlow,
-    [PPN_SEND_TOKEN_FROM_ASSET_FLOW]: ppnSendTokenFromAssetFlow,
-    [PPN_SEND_SYNTHETIC_ASSET_FLOW]: ppnSendSyntheticAssetFlow,
+    [PPN_SEND_TOKEN_FLOW]: ppnSendTokenFromAssetFlow,
     [SEND_TOKEN_FROM_CONTACT_FLOW]: sendTokenFlow,
     [SEND_COLLECTIBLE_FROM_ASSET_FLOW]: sendTokenFlow,
     [CHANGE_PIN_FLOW]: changePinFlow,
@@ -744,6 +829,8 @@ const AppFlowNavigation = createStackNavigator(
     [CONTACTS_FLOW]: contactsFlow,
     [SABLIER_FLOW]: sablierFlow,
     [EXCHANGE_FLOW]: exchangeFlow,
+    [RARI_FLOW]: rariFlow,
+    [LIQUIDITY_POOLS_FLOW]: liquidityPoolsFlow,
   },
   modalTransition,
 );
@@ -780,6 +867,7 @@ type Props = {
   handleSystemLanguageChange: () => void,
   isAuthorizing: boolean,
   isFinishingOnboarding: boolean,
+  checkEtherspotSession: () => void,
 };
 
 type State = {
@@ -787,6 +875,7 @@ type State = {
 };
 
 let lockTimer;
+let smartWalletSessionCheckInterval;
 
 class AppFlow extends React.Component<Props, State> {
   state = {
@@ -803,6 +892,7 @@ class AppFlow extends React.Component<Props, State> {
       initWalletConnect,
       backupStatus,
       user,
+      checkEtherspotSession,
     } = this.props;
 
     /**
@@ -817,6 +907,11 @@ class AppFlow extends React.Component<Props, State> {
     startListeningNotifications();
     startListeningIntercomNotifications();
     addAppStateChangeListener(this.handleAppStateChange);
+
+    smartWalletSessionCheckInterval = BackgroundTimer.setInterval(
+      checkEtherspotSession,
+      SMART_WALLET_SESSION_CHECK_INTERVAL,
+    );
 
     if (!user?.walletId) {
       this.checkIfOnboardingFinished();
@@ -853,6 +948,7 @@ class AppFlow extends React.Component<Props, State> {
 
     notifications
       .slice(prevNotifications.length)
+      // $FlowFixMe: flow update to 0.122
       .forEach(notification => Toast.show({ ...notification }));
   }
 
@@ -869,6 +965,7 @@ class AppFlow extends React.Component<Props, State> {
     stopListeningNotifications();
     stopListeningIntercomNotifications();
     removeAppStateChangeListener(this.handleAppStateChange);
+    BackgroundTimer.clearInterval(smartWalletSessionCheckInterval);
   }
 
   checkIfOnboardingFinished = () => {
@@ -906,6 +1003,7 @@ class AppFlow extends React.Component<Props, State> {
       endWalkthrough,
       handleSystemDefaultThemeChange,
       handleSystemLanguageChange,
+      checkEtherspotSession,
     } = this.props;
     const { lastAppState } = this.state;
     BackgroundTimer.clearTimeout(lockTimer);
@@ -922,6 +1020,7 @@ class AppFlow extends React.Component<Props, State> {
       && nextAppState === ACTIVE_APP_STATE) {
       handleSystemDefaultThemeChange();
       handleSystemLanguageChange();
+      checkEtherspotSession();
     }
     this.setState({ lastAppState: nextAppState });
   };
@@ -1014,6 +1113,7 @@ const mapDispatchToProps = dispatch => ({
   handleSystemDefaultThemeChange: () => dispatch(handleSystemDefaultThemeChangeAction()),
   finishOnboarding: () => dispatch(finishOnboardingAction()),
   handleSystemLanguageChange: () => dispatch(handleSystemLanguageChangeAction()),
+  checkEtherspotSession: () => dispatch(checkEtherspotSessionAction()),
 });
 
 const ConnectedAppFlow = withTranslation()(connect(mapStateToProps, mapDispatchToProps)(AppFlow));

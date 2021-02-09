@@ -62,7 +62,7 @@ type Props = {
   navigation: NavigationScreenProp<*>,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
-  calculateLendingDepositTransactionEstimate: (amount: number, asset: AssetToDeposit) => void,
+  calculateLendingDepositTransactionEstimate: (amount: string, asset: AssetToDeposit) => void,
   isFetchingAssetsToDeposit: boolean,
   fetchAssetsToDeposit: () => void,
   estimateErrorMessage: ?string,
@@ -115,7 +115,7 @@ const EnterDepositAmount = ({
 
   const preselectedAssetSymbol: string = navigation.getParam('symbol');
   const [selectedAssetSymbol, setSelectedAssetSymbol] = useState(preselectedAssetSymbol);
-  const [depositAmount, setDepositAmount] = useState('');
+  const [depositAmount, setDepositAmount] = useState(null);
   const [inputValid, setInputValid] = useState(false);
 
   const assetToDeposit = assetsToDeposit.find(({ symbol }) => symbol === selectedAssetSymbol);
@@ -126,7 +126,7 @@ const EnterDepositAmount = ({
   }, [assetsToDeposit]);
 
   useEffect(() => {
-    if (!depositAmount || !assetToDeposit || !inputValid) return;
+    if (!depositAmount || !assetToDeposit || !inputValid || Number(depositAmount) === 0) return;
     calculateLendingDepositTransactionEstimate(depositAmount, assetToDeposit);
   }, [depositAmount, assetToDeposit, inputValid]);
 
@@ -195,7 +195,7 @@ const EnterDepositAmount = ({
       {!isFetchingAssetsToDeposit && assetToDeposit && (
         <InputWrapper>
           <ValueInput
-            value={depositAmount}
+            value={depositAmount || ''}
             onValueChange={setDepositAmount}
             assetData={assetToDeposit}
             onAssetDataChange={({ symbol }) => setSelectedAssetSymbol(symbol)}
@@ -241,7 +241,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   calculateLendingDepositTransactionEstimate: debounce((
-    amount: number,
+    amount: string,
     asset: AssetToDeposit,
   ) => dispatch(calculateLendingDepositTransactionEstimateAction(amount, asset)), 500),
   fetchAssetsToDeposit: () => dispatch(fetchAssetsToDepositAction()),

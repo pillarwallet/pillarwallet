@@ -14,7 +14,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import * as React from 'react';
+import React, { useEffect } from 'react';
 import { FlatList } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -25,7 +25,8 @@ import { connect } from 'react-redux';
 import { resetOnboardingAndNavigateAction } from 'actions/onboardingActions';
 
 // constants
-import { IMPORT_WALLET } from 'constants/navigationConstants';
+import { IMPORT_WALLET, RECOVERY_PORTAL_WALLET_RECOVERY_INTRO } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -35,6 +36,9 @@ import { ScrollWrapper } from 'components/Layout';
 // utils
 import { getThemeColors } from 'utils/themes';
 
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
+
 // types
 import type { Theme } from 'models/Theme';
 import type { Dispatch } from 'reducers/rootReducer';
@@ -42,6 +46,7 @@ import type { Dispatch } from 'reducers/rootReducer';
 // images
 const imageRecovery = require('assets/images/recovery.png');
 
+let isRecoveryPortalDisabled = true;
 
 const RecoveryIcon = styled.Image`
   width: 73px;
@@ -61,6 +66,10 @@ const WalletRecoveryOptions = ({
   theme,
   resetOnboardingAndNavigate,
 }: Props) => {
+  useEffect(() => {
+    isRecoveryPortalDisabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED);
+  }, []);
+
   const colors = getThemeColors(theme);
 
   const renderRecoveryOption = ({ item }) => {
@@ -78,9 +87,14 @@ const WalletRecoveryOptions = ({
 
   const recoveryOptions = [
     { title: t('auth:button.enterWordsSeed'), route: IMPORT_WALLET },
-    // TODO: revisit once web recovery portal has Etherspot implementation
-    // { title: t('auth:button.useRecoveryPortal'), route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO },
   ];
+
+  if (!isRecoveryPortalDisabled) {
+    recoveryOptions.push({
+      title: t('auth:button.useRecoveryPortal'),
+      route: RECOVERY_PORTAL_WALLET_RECOVERY_INTRO,
+    });
+  }
 
   return (
     <ContainerWithHeader headerProps={{ centerItems: [{ title: t('auth:title.recoveryOptions') }] }}>

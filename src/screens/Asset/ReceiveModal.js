@@ -157,7 +157,6 @@ class ReceiveModal extends React.Component<Props> {
               label={t('label.erc20TokensOnly')}
               labelStyle={{ fontSize: fontSizes.tiny }}
               primary
-              containerStyle={{ marginLeft: 8 }}
             />
           ),
         }] : undefined}

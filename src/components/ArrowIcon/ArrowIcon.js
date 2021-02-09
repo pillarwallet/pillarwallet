@@ -35,7 +35,7 @@ const ArrowIcon = ({ theme }: Props) => {
       name="direct"
       style={{
         fontSize: 24,
-        color: getThemeColors(theme).text,
+        color: getThemeColors(theme).basic010,
       }}
     />
   );

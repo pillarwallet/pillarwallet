@@ -26,7 +26,7 @@ import t from 'translations/translate';
 import { format as formatDate } from 'date-fns';
 
 // actions
-import { estimateTransactionAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
+import { estimateTransactionsAction, resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -41,6 +41,7 @@ import Toast from 'components/Toast';
 // constants
 import { SEND_TOKEN_PIN_CONFIRM } from 'constants/navigationConstants';
 import { SABLIER_CREATE_STREAM } from 'constants/sablierConstants';
+import { ETH } from 'constants/assetsConstants';
 
 // services
 import { getSablierCreateStreamTransaction } from 'services/sablier';
@@ -61,9 +62,7 @@ import type { Assets, Asset, Balances } from 'models/Asset';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { EnsRegistry } from 'reducers/ensRegistryReducer';
-import type { TransactionFeeInfo } from 'models/Transaction';
-import type { AccountTransaction } from 'services/smartWallet';
-import { ETH } from 'constants/assetsConstants';
+import type { TransactionDraft, TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
 
 
 type Props = {
@@ -76,11 +75,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (
-    receiver: string,
-    data: string,
-    sequentialTransactions: ?AccountTransaction[],
-  ) => void,
+  estimateTransactions: (transactionDrafts: TransactionDraft[]) => void,
   resetEstimateTransaction: () => void,
 };
 
@@ -94,14 +89,14 @@ const ClockIcon = styled(Icon)`
 `;
 
 class NewStreamReview extends React.Component<Props> {
-  transactionPayload: ?Object;
+  transactionPayload: ?TransactionPayload;
   asset: Asset;
 
   async componentDidMount() {
     const {
       navigation,
       resetEstimateTransaction,
-      estimateTransaction,
+      estimateTransactions,
       activeAccountAddress,
     } = this.props;
 
@@ -123,9 +118,27 @@ class NewStreamReview extends React.Component<Props> {
       getTimestamp(endDate),
     );
 
-    const { to, data, sequentialSmartWalletTransactions } = this.transactionPayload;
+    const {
+      to,
+      data,
+      amount,
+      sequentialTransactions,
+    } = this.transactionPayload;
 
-    estimateTransaction(to, data, sequentialSmartWalletTransactions);
+    let transactionDrafts = [{ to, value: Number(amount), data }];
+
+    if (sequentialTransactions) {
+      transactionDrafts = [
+        ...transactionDrafts,
+        ...sequentialTransactions.map((sequential) => ({
+          to: sequential.to,
+          value: Number(sequential.amount),
+          data: sequential.data,
+        })),
+      ];
+    }
+
+    estimateTransactions(transactionDrafts);
   }
 
   getAsset = () => {
@@ -282,11 +295,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateTransaction: (
-    receiver: string,
-    data: string,
-    sequentialTransactions: ?AccountTransaction[],
-  ) => dispatch(estimateTransactionAction(receiver, 0, data, null, sequentialTransactions)),
+  estimateTransactions: (
+    transactionDrafts: TransactionDraft[],
+  ) => dispatch(estimateTransactionsAction(transactionDrafts)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

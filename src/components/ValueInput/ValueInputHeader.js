@@ -21,12 +21,12 @@
 import * as React from 'react';
 import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
+import { getEnv } from 'configs/envConfig';
 import type { Option } from 'models/Selector';
 import { resolveAssetSource } from 'utils/textInput';
 import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
 import Icon from 'components/Icon';
-import { themedColors } from 'utils/themes';
 import { fontStyles } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
@@ -64,24 +64,22 @@ const Image = styled(CachedImage)`
 
 const SelectorChevron = styled(Icon)`
   font-size: 16px;
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
 `;
 
 const ChevronWrapper = styled.View`
   width: 25px;
   align-items: center;
-  margin-right: 4px;
 `;
 
 const AssetName = styled(MediumText)`
   ${fontStyles.medium};
-  ${({ theme }) => `color: ${theme.colors.text};`}
   flex: 1;
 `;
 
 const LabelText = styled(BaseText)`
   ${fontStyles.regular};
-  color: ${themedColors.link};
+  color: ${({ theme }) => theme.colors.basic000};
   margin-top: 1px;
 `;
 
@@ -89,24 +87,30 @@ const ValueInputHeader = (props: Props) => {
   const {
     asset, labelText, onLabelPress, onAssetPress, theme, disableAssetSelection,
   } = props;
-  const { id, name, imageUrl } = asset;
+  const { id, name, iconUrl } = asset;
+  let imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
+  imageUrl = asset.imageUrl || imageUrl;
   const optionImageSource = resolveAssetSource(imageUrl);
   const { genericToken } = images(theme);
+
   return (
     <Wrapper>
-      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection}>
+      <SideWrapper onPress={onAssetPress} disabled={disableAssetSelection || !onAssetPress} >
         <Image
           key={id}
           source={optionImageSource}
-          fallbackSource={genericToken}
+          fallbackSource={optionImageSource.uri !== undefined && genericToken}
           resizeMode="contain"
           style={{ height: 24, width: 24 }}
         />
-        <ChevronWrapper>
-          <SelectorChevron name="selector" />
-        </ChevronWrapper>
+        {!disableAssetSelection && (
+          <ChevronWrapper>
+            <SelectorChevron name="selector" />
+          </ChevronWrapper>
+        )}
+        <Spacing w={4} />
       </SideWrapper>
-      <AssetName onPress={onAssetPress} numberOfLines={1}>{name}</AssetName>
+      <AssetName onPress={disableAssetSelection ? null : onAssetPress} numberOfLines={1}>{name}</AssetName>
       <Spacing w={8} />
       <LabelText onPress={onLabelPress}>{labelText}</LabelText>
     </Wrapper>

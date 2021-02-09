@@ -32,6 +32,13 @@ import { rejectCallRequestAction } from 'actions/walletConnectActions';
 import { TOKEN_TRANSFER } from 'constants/functionSignaturesConstants';
 import { WALLETCONNECT_PIN_CONFIRM_SCREEN } from 'constants/navigationConstants';
 import { ETH } from 'constants/assetsConstants';
+import {
+  ETH_SEND_TX,
+  ETH_SIGN,
+  ETH_SIGN_TX,
+  ETH_SIGN_TYPED_DATA,
+  PERSONAL_SIGN,
+} from 'constants/walletConnectConstants';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
@@ -132,16 +139,17 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
       const { navigation } = this.props;
 
       switch (request.method) {
-        case 'eth_sendTransaction':
-        case 'eth_signTransaction':
+        case ETH_SEND_TX:
+        case ETH_SIGN_TX:
           navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
             callId: request.callId,
             transactionPayload,
           });
           break;
 
-        case 'eth_sign':
-        case 'personal_sign':
+        case ETH_SIGN:
+        case PERSONAL_SIGN:
+        case ETH_SIGN_TYPED_DATA:
           navigation.navigate(WALLETCONNECT_PIN_CONFIRM_SCREEN, {
             callId: request.callId,
             transactionPayload: null,
@@ -159,6 +167,7 @@ export default function withWCRequests(WrappedComponent: React.ComponentType<*>)
 
     render() {
       return (
+        // $FlowFixMe: flow update to 0.122
         <WrappedComponent
           acceptWCRequest={this.acceptWCRequest}
           rejectWCRequest={this.rejectWCRequest}

@@ -64,13 +64,16 @@ const CardContent = styled.View`
   flex-direction: column;
   flex-wrap: wrap;
   width: 100%;
+`;
+
+const MainTitleWrapper = styled.View`
   flex: 1;
+  flex-direction: row;
 `;
 
 const CardTitle = styled(MediumText)`
   color: ${({ theme }) => theme.colors.basic010};
   ${fontStyles.big};
-  flex: 1;
 `;
 
 const CardSubtitleView = styled.View`
@@ -157,7 +160,9 @@ export const ListCard = (props: Props) => {
         {customIcon}
         <CardContent>
           <TitleWrapper>
-            {getTitle()}
+            <MainTitleWrapper>
+              {getTitle()}
+            </MainTitleWrapper>
             {(!!label || !!labelBadge) &&
             <LabelWrapper>
               {!!label && <Label>{label}</Label>}

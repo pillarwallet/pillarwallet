@@ -67,7 +67,10 @@
         "top:",
         "transparent",
         "width:",
-        "z-index"
+        "z-index",
+        "eth",
+        "crypto",
+        "zil"
       ],
       "ignoreCallee": [
         "Buffer.from",
@@ -176,6 +179,11 @@
         "underlineColorAndroid",
         "url",
         "viewBox",
+        "d",
+        "preserveAspectRatio",
+        "strokeLinejoin",
+        "strokeLinecap",
+        "strokeDasharray",
       ],
       "ignoreProperty": [
         "_id",

@@ -58,7 +58,7 @@ import { dismissSmartWalletInsightAction } from 'actions/insightsActions';
 
 // utils
 import { calculateBalanceInFiat } from 'utils/assets';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, getColorByTheme } from 'utils/themes';
 
 // partials
 import AssetsList from './AssetsList';
@@ -98,11 +98,16 @@ const ListWrapper = styled.View`
   flexGrow: 1;
 `;
 
+const TopWrapper = styled.View`
+  background-color: ${({ theme }) => theme.colors.basic070};
+  margin-bottom: 8px;
+`;
+
 const ActionsWrapper = styled(Wrapper)`
   margin: 30px 0;
   border-bottom-width: ${StyleSheet.hairlineWidth}px;
   border-top-width: ${StyleSheet.hairlineWidth}px;
-  border-color: ${themedColors.border};
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
 `;
 
 
@@ -210,7 +215,7 @@ class WalletView extends React.Component<Props, State> {
             onClose={() => { hideInsight(); }}
             wrapperStyle={{ borderBottomWidth: 1, borderBottomColor: colors.border }}
           />
-          {!isInSearchAndFocus && !!SWInsightDismissed && (
+          {!isInSearchAndFocus && !SWInsightDismissed && (
             <InsightWithButton
               title={t('insight.smartWalletIntro.title')}
               description={t('insight.smartWalletIntro.description.intro')}
@@ -224,34 +229,36 @@ class WalletView extends React.Component<Props, State> {
             />
           )}
         </>
-        <TouchableOpacity
-          onPress={() => this.props.navigation.navigate(ASSET_SEARCH)}
-          disabled={activeTab === COLLECTIBLES}
-        >
-          <SearchBlock
-            searchInputPlaceholder={
-              activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')
-            }
-            onSearchChange={this.handleSearchChange}
-            wrapperStyle={{
-              paddingHorizontal: spacing.layoutSides,
-              paddingVertical: spacing.mediumLarge,
-              marginBottom: searchMarginBottom,
-            }}
-            onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
-            onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
-            itemSearchState={!!isInSearchMode}
-            navigation={navigation}
-            disabled={activeTab === TOKENS}
-          />
-        </TouchableOpacity>
-        {!isInSearchAndFocus &&
-          <Tabs
-            tabs={this.getAssetTabs()}
-            wrapperStyle={{ paddingTop: 22, paddingBottom: 8 }}
-            activeTab={activeTab}
-          />
-        }
+        <TopWrapper>
+          <TouchableOpacity
+            onPress={() => this.props.navigation.navigate(ASSET_SEARCH)}
+            disabled={activeTab === COLLECTIBLES}
+          >
+            <SearchBlock
+              searchInputPlaceholder={
+                activeTab === TOKENS ? t('label.searchAsset') : t('label.searchCollectible')
+              }
+              onSearchChange={this.handleSearchChange}
+              wrapperStyle={{
+                paddingHorizontal: spacing.layoutSides,
+                paddingVertical: spacing.mediumLarge,
+                marginBottom: searchMarginBottom,
+              }}
+              onSearchFocus={() => this.setState({ hideInsightForSearch: true })}
+              onSearchBlur={() => this.setState({ hideInsightForSearch: false })}
+              itemSearchState={!!isInSearchMode}
+              navigation={navigation}
+              disabled={activeTab === TOKENS}
+            />
+          </TouchableOpacity>
+          {!isInSearchAndFocus &&
+            <Tabs
+              tabs={this.getAssetTabs()}
+              wrapperStyle={{ paddingTop: 22 }}
+              activeTab={activeTab}
+            />
+          }
+        </TopWrapper>
         <ListWrapper>
           {activeTab === TOKENS && (
             <AssetsList balance={balance} />

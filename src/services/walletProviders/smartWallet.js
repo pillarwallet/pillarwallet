@@ -1,10 +1,8 @@
 // @flow
-import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import { ethToWei } from '@netgum/utils';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import { sdkConstants } from '@smartwallet/sdk';
-import { getEnv } from 'configs/envConfig';
 
 // services
 import { buildERC721TransactionData, encodeContractMethod } from 'services/assets';
@@ -14,7 +12,6 @@ import smartWalletService from 'services/smartWallet';
 import { ETH, SPEED_TYPES } from 'constants/assetsConstants';
 
 // utils
-import { getEthereumProvider } from 'utils/common';
 import { getAccountAddress } from 'utils/accounts';
 import { catchTransactionError } from 'utils/wallet';
 
@@ -23,7 +20,7 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
 // types
 import type { Account } from 'models/Account';
-import type { CollectibleTransactionPayload, SyntheticTransaction, TokenTransactionPayload } from 'models/Transaction';
+import type { CollectibleTransactionPayload, TokenTransactionPayload } from 'models/Transaction';
 
 
 const {
@@ -62,7 +59,7 @@ export default class SmartWalletProvider {
       amount,
       gasToken,
       data: transactionData,
-      sequentialSmartWalletTransactions = [],
+      sequentialTransactions: sequentialSmartWalletTransactions = [],
     } = transaction;
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
     const from = getAccountAddress(account);
@@ -107,7 +104,6 @@ export default class SmartWalletProvider {
       contractAddress,
       decimals = 18,
       usePPN,
-      extra,
       gasToken,
     } = transaction;
     let { data, to: recipient } = transaction;
@@ -116,13 +112,6 @@ export default class SmartWalletProvider {
     if (usePPN) {
       let paymentType;
       let reference;
-
-      const syntheticTransactionInfo: SyntheticTransaction = get(extra, 'syntheticTransaction');
-      if (!isEmpty(syntheticTransactionInfo)) {
-        const { transactionId } = syntheticTransactionInfo;
-        reference = transactionId;
-        paymentType = sdkConstants.AccountPaymentTypes.SyntheticsExchange;
-      }
 
       const sendValue = utils.parseUnits(amount.toString(), decimals);
       return smartWalletService
@@ -190,8 +179,7 @@ export default class SmartWalletProvider {
     const from = getAccountAddress(account);
     const transactionSpeed = this.mapTransactionSpeed(transaction.txSpeed);
 
-    const provider = getEthereumProvider(getEnv().COLLECTIBLES_NETWORK);
-    const data = await buildERC721TransactionData({ ...transaction, from }, provider);
+    const data = await buildERC721TransactionData({ ...transaction, from });
 
     return smartWalletService
       .transferAsset({

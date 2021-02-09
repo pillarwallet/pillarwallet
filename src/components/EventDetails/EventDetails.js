@@ -25,7 +25,7 @@ import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
 import { CachedImage } from 'react-native-cached-image';
-import { utils } from 'ethers';
+import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
 import t from 'translations/translate';
@@ -40,10 +40,12 @@ import ProfileImage from 'components/ProfileImage';
 import Toast from 'components/Toast';
 import Modal from 'components/Modal';
 import DetailModal, { DetailRow, DetailParagraph, FEE_PENDING } from 'components/DetailModal';
+import WBTCCafeWarning from 'screens/Exchange/WBTCCafeWarning';
+import { Spacing } from 'components/Layout';
 
 // utils
 import { spacing, fontSizes } from 'utils/variables';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { getThemeColors } from 'utils/themes';
 import { addressesEqual, getRate, getAssetDataByAddress } from 'utils/assets';
 import {
   formatFiat,
@@ -71,7 +73,7 @@ import { getFormattedValue } from 'utils/strings';
 import smartWalletInstance from 'services/smartWallet';
 
 // constants
-import { defaultFiatCurrency, ETH, DAI } from 'constants/assetsConstants';
+import { defaultFiatCurrency, ETH, DAI, BTC, WBTC } from 'constants/assetsConstants';
 import { COLLECTIBLE_TRANSACTION } from 'constants/collectiblesConstants';
 import {
   TRANSACTION_EVENT,
@@ -97,7 +99,6 @@ import {
   SEND_TOKEN_FROM_CONTACT_FLOW,
   TANK_FUND_FLOW,
   SEND_TOKEN_FROM_HOME_FLOW,
-  SEND_SYNTHETIC_AMOUNT,
   SETTLE_BALANCE,
   TANK_WITHDRAWAL_FLOW,
   LENDING_ENTER_WITHDRAW_AMOUNT,
@@ -108,6 +109,11 @@ import {
   POOLTOGETHER_WITHDRAW,
   SABLIER_INCOMING_STREAM,
   SABLIER_OUTGOING_STREAM,
+  PPN_SEND_TOKEN_AMOUNT,
+  EXCHANGE,
+  RARI_DEPOSIT,
+  RARI_CLAIM_RGT,
+  LIQUIDITY_POOL_DASHBOARD,
 } from 'constants/navigationConstants';
 import { AAVE_LENDING_DEPOSIT_TRANSACTION, AAVE_LENDING_WITHDRAW_TRANSACTION } from 'constants/lendingConstants';
 import { POOLTOGETHER_DEPOSIT_TRANSACTION, POOLTOGETHER_WITHDRAW_TRANSACTION } from 'constants/poolTogetherConstants';
@@ -116,6 +122,22 @@ import {
   SABLIER_WITHDRAW,
   SABLIER_CANCEL_STREAM,
 } from 'constants/sablierConstants';
+import { WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
+import {
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_TOKENS_DATA,
+  RARI_GOVERNANCE_TOKEN_DATA,
+} from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 
 // selectors
 import {
@@ -149,6 +171,7 @@ import type { Stream } from 'models/Sablier';
 
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Selector } from 'selectors';
 
 
@@ -263,7 +286,7 @@ const IconCircle = styled.View`
   width: 64px;
   height: 64px;
   border-radius: ${({ borderRadius }) => borderRadius || 32}px;
-  background-color: ${props => props.backgroundColor || themedColors.tertiary};
+  background-color: ${({ backgroundColor, theme }) => backgroundColor || theme.colors.basic060};
   align-items: center;
   justify-content: center;
   text-align: center;
@@ -299,12 +322,11 @@ const SettleWrapper = styled.View`
 const Divider = styled.View`
   width: 100%;
   height: 1px;
-  background-color: ${themedColors.tertiary};
-  margin: 8px 0px 18px;
+  background-color: ${({ theme }) => theme.colors.basic060};
 `;
 
 const ErrorMessage = styled(BaseText)`
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   margin-bottom: ${spacing.large}px;
   width: 100%;
   text-align: center;
@@ -320,6 +342,10 @@ const CornerIcon = styled(CachedImage)`
   position: absolute;
   top: 0;
   right: 0;
+`;
+
+const ListWrapper = styled.View`
+  align-items: center;
 `;
 
 export class EventDetail extends React.Component<Props> {
@@ -507,7 +533,7 @@ export class EventDetail extends React.Component<Props> {
     const contactFromAddress = relatedAddress
       && { ethAddress: relatedAddress, username: ensRegistry[relatedAddress] || relatedAddress };
     const contact = contactFromAddress;
-    navigation.navigate(SEND_SYNTHETIC_AMOUNT, { contact });
+    navigation.navigate(PPN_SEND_TOKEN_AMOUNT, { contact });
   };
 
   settle = () => {
@@ -566,10 +592,65 @@ export class EventDetail extends React.Component<Props> {
     navigation.navigate(SABLIER_OUTGOING_STREAM, { stream });
   }
 
+  goToWbtcCafeExchange = () => {
+    const { navigation } = this.props;
+    navigation.navigate(EXCHANGE, { fromAssetCode: BTC, toAssetCode: WBTC });
+  }
+
   goToStreamWithdraw = (streamId: string) => {
     const { navigation, incomingStreams } = this.props;
     const stream = incomingStreams.find(({ id }) => id === streamId);
     navigation.navigate(SABLIER_WITHDRAW, { stream });
+  }
+
+  goToRariDeposit = () => this.props.navigation.navigate(RARI_DEPOSIT);
+  goToRariClaim = () => this.props.navigation.navigate(RARI_CLAIM_RGT);
+
+  goToLiquidityPool = (pool: LiquidityPool) => {
+    this.props.navigation.navigate(LIQUIDITY_POOL_DASHBOARD, { pool });
+  }
+
+  getLiquidityEventButtons = (buttonTitle: string, pool: LiquidityPool) => {
+    return [{
+      secondary: true,
+      title: buttonTitle,
+      onPress: () => this.goToLiquidityPool(pool),
+    }];
+  }
+
+  renderLiquidityPoolsExchange = (
+    topTokens: {name: string, symbol: string}[],
+    topTokensAmounts: number[],
+    bottomTokens: {name: string, symbol: string }[],
+    bottomTokensAmounts: number[],
+    options: {
+      topTokensSecondary?: boolean,
+      bottomTokensSecondary?: boolean
+    },
+  ) => {
+    return (
+      <View style={{ width: '100%' }}>
+        {topTokens.map((token, index) => (
+          <Row key={token.name}>
+            <BaseText regular secondary={options.topTokensSecondary}>{token.name}</BaseText>
+            <BaseText regular>
+              {getFormattedValue(formatAmount(topTokensAmounts[index]), token.symbol, { isPositive: false })}
+            </BaseText>
+          </Row>
+              ))}
+        <Spacing h={16} />
+        <Divider />
+        <Spacing h={16} />
+        {bottomTokens.map((token, index) => (
+          <Row key={token.name}>
+            <BaseText regular secondary={options.bottomTokensSecondary}>{token.name}</BaseText>
+            <BaseText fontSize={20} positive>
+              {getFormattedValue(formatAmount(bottomTokensAmounts[index]), token.symbol, { isPositive: true })}
+            </BaseText>
+          </Row>
+        ))}
+      </View>
+    );
   }
 
   getReferButtonTitle = () => {
@@ -695,6 +776,7 @@ export class EventDetail extends React.Component<Props> {
       depositedAssets,
       keyBasedWalletAddress,
       ensRegistry,
+      supportedAssets,
     } = this.props;
 
     const value = formatUnits(event.value, assetDecimals);
@@ -901,7 +983,7 @@ export class EventDetail extends React.Component<Props> {
         break;
       }
       case SABLIER_WITHDRAW: {
-        const { incomingStreams, supportedAssets } = this.props;
+        const { incomingStreams } = this.props;
         const { contactAddress, assetAddress, streamId } = event.extra;
         const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
         const assetData = getAssetDataByAddress([], supportedAssets, assetAddress);
@@ -932,6 +1014,154 @@ export class EventDetail extends React.Component<Props> {
       }
       case SABLIER_CANCEL_STREAM:
         return null;
+      case WBTC_PENDING_TRANSACTION:
+        eventData = {
+          buttons: [{
+            title: t('wbtcCafe.buyMore'),
+            onPress: this.goToWbtcCafeExchange,
+            secondary: true,
+          }],
+        };
+        break;
+      case RARI_DEPOSIT_TRANSACTION:
+      case RARI_CLAIM_TRANSACTION:
+      case RARI_WITHDRAW_TRANSACTION: {
+        const {
+          symbol, decimals, amount, rftMinted, rftBurned, claimed, rariPool, rgtBurned,
+        } = event.extra;
+        let label = null;
+        let subtext = null;
+        let negativeValueAmount = null;
+        let negativeValueToken = null;
+        let positiveValueAmount = null;
+        let positiveValueToken = null;
+        const buttons = [];
+
+        const rariToken = rariPool && RARI_TOKENS_DATA[rariPool].symbol;
+        const formattedAmount = formatAmount(
+          formatUnits(amount || claimed, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+
+        if (event.tag === RARI_DEPOSIT_TRANSACTION) {
+          label = t('label.deposit');
+          subtext = t('label.fromWalletToRari');
+          negativeValueAmount = formattedAmount;
+          negativeValueToken = symbol;
+          positiveValueAmount = formatAmount(formatUnits(rftMinted, 18));
+          positiveValueToken = rariToken;
+          buttons.push({
+            secondary: true,
+            title: t('button.depositMore'),
+            onPress: () => this.goToRariDeposit(),
+          });
+        } else if (event.tag === RARI_WITHDRAW_TRANSACTION) {
+          label = t('label.withdrawal');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formatAmount(formatUnits(rftBurned, 18));
+          negativeValueToken = rariToken;
+          positiveValueAmount = formattedAmount;
+          positiveValueToken = symbol;
+          buttons.push({
+            secondary: true,
+            title: t('button.withdrawMore'),
+            onPress: () => this.goToRariDeposit(),
+          });
+        } else {
+          label = t('label.rewardsClaimed');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formattedAmount;
+          positiveValueAmount = formatAmount(formatUnits(EthersBigNumber.from(amount).sub(rgtBurned), 18));
+          negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+          positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+          buttons.push({
+            secondary: true,
+            title: t('button.claimMore'),
+            onPress: () => this.goToRariClaim(),
+          });
+        }
+
+        eventData = {
+          name: label,
+          sublabel: subtext,
+          buttons,
+          fee: this.getFeeLabel(event),
+          customActionTitle: (
+            <ListWrapper>
+              <MediumText large lineHeight={24}>
+                {t('negativeTokenValue', { value: negativeValueAmount, token: negativeValueToken })}
+              </MediumText>
+              <MediumText large positive lineHeight={38}>
+                {t('positiveTokenValue', { value: positiveValueAmount, token: positiveValueToken })}
+              </MediumText>
+            </ListWrapper>
+          ),
+        };
+        break;
+      }
+      case RARI_TRANSFER_TRANSACTION: {
+        eventData = {
+          buttons: [{
+            secondary: true,
+            title: t('button.transferMore'),
+            onPress: () => this.goToRariDeposit(),
+          }],
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION: {
+        const {
+          amount, pool, tokenAmounts,
+        } = event.extra;
+        const tokensData = pool.tokensProportions.map(
+          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+        );
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.addMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+          customActionTitle: this.renderLiquidityPoolsExchange(
+            tokensData, tokenAmounts, [pool], [amount], { topTokensSecondary: true },
+          ),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
+        const { amount, pool, tokenAmounts } = event.extra;
+        const tokensData = pool.tokensProportions.map(
+          ({ symbol: tokenSymbol }) => supportedAssets.find(({ symbol }) => symbol === tokenSymbol),
+        );
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.removeMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+          customActionTitle: this.renderLiquidityPoolsExchange(
+            [pool], [amount], tokensData, tokenAmounts, { bottomTokensSecondary: true },
+          ),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.stakeMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.unstakeMoreLiquidity'), pool),
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
+        const { pool } = event.extra;
+        eventData = {
+          buttons: this.getLiquidityEventButtons(t('button.claimMoreRewards'), pool),
+          fee: this.getFeeLabel(event),
+        };
+        break;
+      }
       default:
         const isPPNTransaction = get(event, 'isPPNTransaction', false);
         const isTrxBetweenSWAccount = isSWAddress(event.from, accounts) && isSWAddress(event.to, accounts);
@@ -1265,7 +1495,9 @@ export class EventDetail extends React.Component<Props> {
         })}
         {!isFailed &&
         <>
+          <Spacing h={8} />
           <Divider />
+          <Spacing h={18} />
           <Row>
             <BaseText regular positive>{t('label.toSmartWallet')}</BaseText>
             <View>
@@ -1328,6 +1560,7 @@ export class EventDetail extends React.Component<Props> {
 
     if (settleEventData) {
       return (
+        // $FlowFixMe: flow update to 0.122
         <DetailModal {...commonProps}>
           {this.renderSettle(settleEventData, eventData)}
         </DetailModal>
@@ -1335,6 +1568,7 @@ export class EventDetail extends React.Component<Props> {
     }
 
     return (
+      // $FlowFixMe: flow update to 0.122
       <DetailModal
         {...commonProps}
         fee={this.getFee(event.hash, fee, isReceived)}
@@ -1348,6 +1582,7 @@ export class EventDetail extends React.Component<Props> {
         {customActionTitle}
         {!!subtitle && <DetailParagraph>{subtitle}</DetailParagraph>}
         {!!errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
+        {event.tag === WBTC_PENDING_TRANSACTION && <WBTCCafeWarning />}
       </DetailModal>
     );
   };

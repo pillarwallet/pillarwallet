@@ -58,9 +58,9 @@ import { fetchRinkebyETHBalance } from 'services/assets';
 import { accountBalancesSelector } from 'selectors/balances';
 
 // types
-import type { CollectibleTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { CollectibleTransactionPayload, TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { AssetData, Balances } from 'models/Asset';
+import type { Balances } from 'models/Asset';
 
 
 type Props = {
@@ -72,7 +72,7 @@ type Props = {
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  estimateTransaction: (recipient: string, assetData: AssetData) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
 };
 
 const WarningMessage = styled(Paragraph)`
@@ -130,7 +130,7 @@ const SendCollectibleConfirm = ({
 
   useEffect(() => {
     resetEstimateTransaction();
-    estimateTransaction(receiver, assetData);
+    estimateTransaction({ to: receiver, value: 0, assetData });
     if (isKovanNetwork) fetchRinkebyEth();
   }, []);
 
@@ -266,10 +266,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (
-    recipient: string,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, 0, null, assetData)),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
 });
 
 export default connect(combinedMapStateToProps, mapDispatchToProps)(SendCollectibleConfirm);

@@ -26,6 +26,7 @@ import isEqual from 'lodash.isequal';
 import styled, { withTheme } from 'styled-components/native';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
+import { BigNumber as EthersBigNumber } from 'ethers';
 
 // utils
 import { getThemeColors } from 'utils/themes';
@@ -45,13 +46,12 @@ import { findAccountByAddress } from 'utils/accounts';
 import { images, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
-
-// components
 import {
   formatAmount,
   formatUnits,
   getDecimalPlaces,
   findEnsNameCaseInsensitive,
+  formatTokenAmount,
 } from 'utils/common';
 
 // components
@@ -94,11 +94,26 @@ import {
   SABLIER_EVENT,
 } from 'constants/sablierConstants';
 import { DAI } from 'constants/assetsConstants';
+import { WBTC_SETTLED_TRANSACTION, WBTC_PENDING_TRANSACTION } from 'constants/exchangeConstants';
+import {
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_TOKENS_DATA,
+  RARI_GOVERNANCE_TOKEN_DATA,
+} from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+} from 'constants/liquidityPoolsConstants';
 
 // selectors
 import { activeAccountAddressSelector } from 'selectors';
 import { assetDecimalsSelector } from 'selectors/assets';
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // types
 import type { ColorKey, Theme } from 'models/Theme';
@@ -109,6 +124,7 @@ import type { TransactionsGroup } from 'utils/feedData';
 import type { ReferralRewardsIssuersAddresses } from 'reducers/referralsReducer';
 import type { Asset } from 'models/Asset';
 import type { AaveExtra } from 'models/Transaction';
+
 
 type Props = {
   type?: string,
@@ -121,7 +137,6 @@ type Props = {
   feedType?: string,
   activeAccountAddress: string,
   accounts: Accounts,
-  isSmartWalletActivated: boolean,
   assetDecimals: number,
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
@@ -167,6 +182,7 @@ const poolTogetherLogo = require('assets/images/pool_together.png');
 const daiIcon = require('assets/images/dai_color.png');
 const usdcIcon = require('assets/images/usdc_color.png');
 const sablierLogo = require('assets/icons/sablier.png');
+const wbtcLogo = require('assets/images/exchangeProviders/wbtcLogo.png');
 
 const ListWrapper = styled.View`
   align-items: flex-end;
@@ -180,6 +196,7 @@ const ItemValue = styled(BaseText)`
 `;
 
 const aaveImage = require('assets/images/apps/aave.png');
+const rariLogo = require('assets/images/rari_logo.png');
 
 export class ActivityFeedItem extends React.Component<Props> {
   NAMES = () => ({
@@ -322,7 +339,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   }
 
   getWalletCreatedEventData = (event: Object) => {
-    const { isSmartWalletActivated, theme } = this.props;
+    const { theme } = this.props;
     const { keyWalletIcon, smartWalletIcon } = images(theme);
     switch (event.eventTitle) {
       case 'Wallet created':
@@ -336,7 +353,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES().SMART_WALLET,
           itemImageSource: smartWalletIcon,
           actionLabel: this.STATUSES().CREATED,
-          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case 'Wallet imported':
         return {
@@ -350,7 +366,7 @@ export class ActivityFeedItem extends React.Component<Props> {
   };
 
   getUserEventData = (event: Object) => {
-    const { isSmartWalletActivated, theme } = this.props;
+    const { theme } = this.props;
     const { keyWalletIcon, PPNIcon } = images(theme);
     switch (event.subType) {
       case WALLET_CREATE_EVENT:
@@ -360,7 +376,6 @@ export class ActivityFeedItem extends React.Component<Props> {
           label: this.NAMES().PPN_NETWORK,
           itemImageSource: PPNIcon,
           actionLabel: this.STATUSES().CREATED,
-          badge: isSmartWalletActivated ? null : t('label.needToActivate'),
         };
       case WALLET_BACKUP_EVENT:
         return {
@@ -540,6 +555,18 @@ export class ActivityFeedItem extends React.Component<Props> {
           actionLabel: this.STATUSES().ADDED,
         };
         break;
+      case WBTC_SETTLED_TRANSACTION:
+        const wbtcValue = `+ ${getFormattedValue(String(event.value / 100000000), event.asset)}`;
+        const wbtcValueFixed = `+ ${getFormattedValue(String((event.value / 100000000).toFixed(5)), event.asset)}`;
+        data = {
+          label: elipsizeAddress(relevantAddress),
+          fullItemValue: wbtcValue,
+          itemValue: wbtcValueFixed,
+          valueColor: 'secondaryAccent140',
+          isReceived,
+          itemImageSource: wbtcLogo,
+        };
+        break;
       case SMART_WALLET_ACCOUNT_DEVICE_REMOVED:
         data = {
           label: this.NAMES().SMART_WALLET,
@@ -631,6 +658,163 @@ export class ActivityFeedItem extends React.Component<Props> {
             isFailed: true,
           };
         }
+        break;
+      }
+      case RARI_DEPOSIT_TRANSACTION:
+      case RARI_WITHDRAW_TRANSACTION:
+      case RARI_CLAIM_TRANSACTION: {
+        const {
+          symbol, decimals, amount, rftMinted, rftBurned, rariPool, rgtBurned,
+        } = event.extra;
+        let label = null;
+        let subtext = null;
+        let negativeValueAmount = null;
+        let negativeValueToken = null;
+        let positiveValueAmount = null;
+        let positiveValueToken = null;
+
+        const rariToken = rariPool && RARI_TOKENS_DATA[rariPool].symbol;
+        const formattedAmount = formatAmount(formatUnits(amount, decimals), symbol ? getDecimalPlaces(symbol) : 6);
+
+        if (event.tag === RARI_DEPOSIT_TRANSACTION) {
+          label = t('label.deposit');
+          subtext = t('label.fromWalletToRari');
+          negativeValueAmount = formattedAmount;
+          negativeValueToken = symbol;
+          positiveValueAmount = rftMinted && formatAmount(formatUnits(rftMinted, 18));
+          positiveValueToken = rariToken;
+        } else if (event.tag === RARI_WITHDRAW_TRANSACTION) {
+          label = t('label.withdraw');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = rftBurned && formatAmount(formatUnits(rftBurned, 18));
+          negativeValueToken = rariToken;
+          positiveValueAmount = formattedAmount;
+          positiveValueToken = symbol;
+        } else {
+          label = t('label.claim');
+          subtext = t('label.fromRariToWallet');
+          negativeValueAmount = formattedAmount;
+          positiveValueAmount = formatAmount(formatUnits(EthersBigNumber.from(amount).sub(rgtBurned), 18));
+          negativeValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+          positiveValueToken = RARI_GOVERNANCE_TOKEN_DATA.symbol;
+        }
+
+        data = {
+          ...data,
+          label,
+          subtext,
+          itemImageSource: rariLogo,
+          customAddon: (
+            <ListWrapper>
+              {negativeValueAmount && (
+                <BaseText big>
+                  {t('negativeTokenValue', { value: negativeValueAmount, token: negativeValueToken })}
+                </BaseText>
+              )}
+              {positiveValueAmount && (
+                <ItemValue>
+                  {t('positiveTokenValue', { value: positiveValueAmount, token: positiveValueToken })}
+                </ItemValue>
+              )}
+            </ListWrapper>
+          ),
+          customAddonAlignLeft: true,
+          rightColumnInnerStyle: {
+            flexDirection: 'row',
+            alignItems: 'center',
+          },
+        };
+        break;
+      }
+      case RARI_TRANSFER_TRANSACTION: {
+        const { contactAddress, amount, rariPool } = event.extra;
+        const formattedAmount = formatAmount(formatUnits(amount, 18));
+        const usernameOrAddress = findEnsNameCaseInsensitive(ensRegistry, contactAddress) || contactAddress;
+        data = {
+          ...data,
+          label: usernameOrAddress,
+          profileImage: true,
+          itemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
+          fullItemValue: getFormattedValue(formattedAmount, RARI_TOKENS_DATA[rariPool].symbol, { isPositive: false }),
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.liquidityAdded'),
+          subtext: t('liquidityPoolsContent.label.fromWalletToPool', { poolName: pool.name }),
+          customAddon: (
+            <ListWrapper>
+              <BaseText big>
+                {t('negativeTokenValue', { value: t('label.multiple') })}
+              </BaseText>
+              <ItemValue>
+                {t('positiveTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
+              </ItemValue>
+            </ListWrapper>
+          ),
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.liquidityRemoved'),
+          subtext: t('liquidityPoolsContent.label.fromPoolToWallet', { poolName: pool.name }),
+          customAddon: (
+            <ListWrapper>
+              <BaseText big>
+                {t('negativeTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
+              </BaseText>
+              <ItemValue>
+                {t('positiveTokenValue', { value: t('label.multiple') })}
+              </ItemValue>
+            </ListWrapper>
+          ),
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_STAKE_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.staked'),
+          subtext: pool.name,
+          itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
+          fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_UNSTAKE_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.unstaked'),
+          subtext: pool.name,
+          itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
+          fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
+          valueColor: 'secondaryAccent140',
+          itemImageUrl: pool.iconUrl,
+        };
+        break;
+      }
+      case LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION: {
+        const { amount, pool } = event.extra;
+        data = {
+          ...data,
+          label: t('liquidityPoolsContent.label.rewardsClaimed'),
+          subtext: t('liquidityPoolsContent.label.fromPoolToWallet', { poolName: pool.name }),
+          itemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
+          fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
+          valueColor: 'secondaryAccent140',
+          itemImageUrl: pool.iconUrl,
+        };
         break;
       }
       default:
@@ -733,11 +917,15 @@ export class ActivityFeedItem extends React.Component<Props> {
 
           data = {
             label: usernameOrAddress,
-            fullItemValue: getFormattedValue(formattedFullValue, event.asset, {
-              isPositive: isReceived,
-              noSymbol: !formattedFullValue,
-            }),
-            itemValue: getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
+            fullItemValue: event.tag === WBTC_PENDING_TRANSACTION
+              ? getFormattedValue(String(event.value / 1000000000000000000), event.asset)
+              : getFormattedValue(formattedFullValue, event.asset, {
+                isPositive: isReceived,
+                noSymbol: !formattedFullValue,
+              }),
+            itemValue: event.tag === WBTC_PENDING_TRANSACTION
+              ? `+ ${getFormattedValue((event.value / 1000000000000000000).toFixed(5), event.asset)}`
+              : getFormattedValue(formattedValue, event.asset, { isPositive: isReceived, noSymbol: isZero }),
             valueColor: isReceived && !this.isZeroValue(value) ? 'secondaryAccent140' : 'basic010',
             ...additionalInfo,
             isReceived,
@@ -780,7 +968,7 @@ export class ActivityFeedItem extends React.Component<Props> {
       collectibleUrl: isSvgImage(image) ? image : icon,
       subtext,
       actionLabel: isReceived ? this.STATUSES().RECEIVED : this.STATUSES().SENT,
-      iconBackgroundColor: 'card',
+      iconBackgroundColor: 'basic070',
       iconBorder: true,
       fallbackToGenericToken: true,
       isReceived,
@@ -868,7 +1056,6 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   activeAccountAddress: activeAccountAddressSelector,
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
   assetDecimals: assetDecimalsSelector((_, props) => props.event.asset),
 });
 

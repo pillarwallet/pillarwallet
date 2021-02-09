@@ -121,7 +121,7 @@ const Welcome = ({
       toValue: -20,
       easing: Easing.elastic(1),
       duration: 2000,
-      userNativeDriver: true,
+      useNativeDriver: true,
     }).start();
   }, []);
 

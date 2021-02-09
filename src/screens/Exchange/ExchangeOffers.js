@@ -51,8 +51,8 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Allowance, Offer } from 'models/Offer';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Theme } from 'models/Theme';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
-import type { Asset, AssetData, Balances, Rates } from 'models/Asset';
+import type { TokenTransactionPayload, TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
+import type { Asset, Balances, Rates } from 'models/Asset';
 import type { SessionData } from 'models/Session';
 
 //  selectors
@@ -61,15 +61,21 @@ import { accountBalancesSelector } from 'selectors/balances';
 import { useGasTokenSelector } from 'selectors/smartWallet';
 
 // utils
-import { getOfferProviderLogo, getCryptoProviderName } from 'utils/exchange';
+import {
+  getOfferProviderLogo,
+  getCryptoProviderName,
+  calculateAmountToBuy,
+  isAmountToSellAboveMax,
+  isAmountToSellBelowMin,
+  getFixedQuantity,
+} from 'utils/exchange';
 import { formatAmountDisplay } from 'utils/common';
 import { spacing } from 'utils/variables';
 
 // partials
 import ExchangeStatus from './ExchangeStatus';
-import { calculateAmountToBuy, getAvailable } from './utils';
+import { getAvailable } from './utils';
 import AssetEnableModal from './AssetEnableModal';
-
 
 export type EnableData = {
   providerName: string,
@@ -85,7 +91,7 @@ type AllowanceResponse = {
 type Props = {
   navigation: NavigationScreenProp<*>,
   offers: Offer[],
-  takeOffer: (Asset, Asset, number, string, string, () => void) => void,
+  takeOffer: (Asset, Asset, string, string, string, string | number, Object => void) => void,
   setExecutingTransaction: () => void,
   setTokenAllowance: (string, string, (AllowanceResponse) => Promise<void>) => void,
   exchangeAllowances: Allowance[],
@@ -106,7 +112,7 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
-  estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
   resetEstimateTransaction: () => void,
 };
 
@@ -232,7 +238,7 @@ class ExchangeOffers extends React.Component<Props, State> {
     const providerName = getCryptoProviderName(provider);
 
     resetEstimateTransaction();
-    estimateTransaction(payToAddress, 0, data);
+    estimateTransaction({ to: payToAddress, value: 0, data });
 
     const transactionPayload = {
       amount: 0,
@@ -309,6 +315,7 @@ class ExchangeOffers extends React.Component<Props, State> {
       takeOffer,
       setExecutingTransaction,
       fromAmount,
+      resetEstimateTransaction,
     } = this.props;
 
     const {
@@ -319,11 +326,12 @@ class ExchangeOffers extends React.Component<Props, State> {
       askRate,
       trackId = '',
     } = offer;
-    const amountToSell = parseFloat(fromAmount);
-    const amountToBuy = calculateAmountToBuy(askRate, amountToSell);
+    const fromAmountFixed = getFixedQuantity(fromAmount, fromAsset.decimals);
+    const amountToBuy = calculateAmountToBuy(askRate, fromAmountFixed);
 
     this.setState({ pressedOfferId: _id }, () => {
-      takeOffer(fromAsset, toAsset, amountToSell, provider, trackId, order => {
+      takeOffer(fromAsset, toAsset, fromAmountFixed, provider, trackId, askRate, order => {
+        resetEstimateTransaction();
         this.setState({ pressedOfferId: '' }); // reset offer card button loading spinner
         if (isEmpty(order)) return;
         setExecutingTransaction();
@@ -381,16 +389,11 @@ class ExchangeOffers extends React.Component<Props, State> {
     const providerLogo = getOfferProviderLogo(offerProvider, theme, 'horizontal');
     const amountToBuyString = formatAmountDisplay(amountToBuy);
 
-    const amountToSell = parseFloat(fromAmount);
-    const minQuantityNumeric = parseFloat(minQuantity);
-    const maxQuantityNumeric = parseFloat(maxQuantity);
-    const isBelowMin = minQuantityNumeric !== 0 && amountToSell < minQuantityNumeric;
-    const isAboveMax = maxQuantityNumeric !== 0 && amountToSell > maxQuantityNumeric;
+    const isBelowMin = isAmountToSellBelowMin(minQuantity, fromAmount);
+    const isAboveMax = isAmountToSellAboveMax(maxQuantity, fromAmount);
 
     const minOrMaxNeeded = isBelowMin || isAboveMax;
-    const isTakeButtonDisabled = !!minOrMaxNeeded
-      || isTakeOfferPressed
-      || !allowanceSet;
+    const isTakeButtonDisabled = !!minOrMaxNeeded || isTakeOfferPressed || !allowanceSet;
 
     const additionalData = {
       offer,
@@ -512,13 +515,11 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   setTokenAllowance: (fromAssetAddress, provider, callback) => dispatch(
     setTokenAllowanceAction(fromAssetAddress, provider, callback),
   ),
-  takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, callback) => dispatch(
-    takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, callback),
+  takeOffer: (fromAsset, toAsset, fromAmount, provider, trackId, askRate, callback) => dispatch(
+    takeOfferAction(fromAsset, toAsset, fromAmount, provider, trackId, askRate, callback),
   ),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  estimateTransaction: (recipientAddress: string, value: number, data: ?string, assetData?: AssetData) => dispatch(
-    estimateTransactionAction(recipientAddress, value, data, assetData),
-  ),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
 });
 
 export default withTheme(connect(combinedMapStateToProps, mapDispatchToProps)(ExchangeOffers));

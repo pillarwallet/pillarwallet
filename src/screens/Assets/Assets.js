@@ -50,13 +50,12 @@ import { fetchAllCollectiblesDataAction } from 'actions/collectiblesActions';
 // constants
 import { FETCH_INITIAL_FAILED, FETCHED } from 'constants/assetsConstants';
 import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
-import { ACCOUNT_TYPES } from 'constants/accountsConstants';
 import { BLOCKCHAIN_NETWORK_TYPES } from 'constants/blockchainNetworkConstants';
 import { ACCOUNTS, WALLET_SETTINGS } from 'constants/navigationConstants';
 
 // utils
 import { getAccountName } from 'utils/accounts';
-import { getThemeColors } from 'utils/themes';
+import { getThemeColors, getColorByThemeOutsideStyled } from 'utils/themes';
 import { getSupportedBiometryType } from 'utils/keychain';
 
 // selectors
@@ -174,7 +173,7 @@ class AssetsScreen extends React.Component<Props, State> {
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.SMART_WALLET_VIEW,
           customHeaderButtonProps: {
-            backgroundColor: walletType === ACCOUNT_TYPES.KEY_BASED ? colors.legacyWallet : colors.smartWallet,
+            backgroundColor: colors.primaryAccent130,
           },
         };
 
@@ -184,7 +183,21 @@ class AssetsScreen extends React.Component<Props, State> {
           label: activeBNetworkTitle,
           action: () => navigation.navigate(ACCOUNTS),
           screenView: VIEWS.PPN_VIEW,
-          customHeaderButtonProps: { isActive: availableStake > 0 || hasUnsettledTx },
+          customHeaderButtonProps: {
+            isActive: availableStake > 0 || hasUnsettledTx,
+            backgroundColor: getColorByThemeOutsideStyled(theme.current, {
+              lightCustom: 'transparent', darkKey: 'synthetic140',
+            }),
+            color: getColorByThemeOutsideStyled(theme.current, {
+              lightKey: 'basic010', darkKey: 'basic090',
+            }),
+            style: {
+              borderWidth: 1,
+              borderColor: getColorByThemeOutsideStyled(theme.current, {
+                lightKey: 'basic005', darkKey: 'synthetic140',
+              }),
+            },
+          },
         };
     }
   };

@@ -72,6 +72,7 @@ import { setRatesAction } from 'actions/ratesActions';
 import { resetAppServicesAction, resetAppStateAction } from 'actions/authActions';
 import { fetchReferralRewardAction } from 'actions/referralsActions';
 import { checkIfKeyBasedWalletHasPositiveBalanceAction } from 'actions/keyBasedAssetTransferActions';
+import { getExchangeSupportedAssetsAction } from 'actions/exchangeActions';
 
 // other
 import { initialAssets } from 'fixtures/assets';
@@ -81,7 +82,8 @@ import type { Dispatch, GetState } from 'reducers/rootReducer';
 import type SDKWrapper from 'services/api';
 import {
   importEtherspotAccountsAction,
-  setupPPNAction,
+  initEtherspotServiceAction,
+  initPPNAction,
 } from 'actions/etherspotActions';
 
 
@@ -248,10 +250,11 @@ export const setupAppServicesAction = (privateKey: ?string) => {
       dispatch(fetchBadgesAction(false));
       dispatch(fetchReferralRewardAction());
 
-      // create smart wallet account only for new wallets
+      await dispatch(initEtherspotServiceAction(privateKey));
       await dispatch(importEtherspotAccountsAction(privateKey));
+
       // await dispatch(fetchTransactionsHistoryAction()); TODO: etherspot
-      dispatch(setupPPNAction());
+      dispatch(initPPNAction());
 
       // add wallet created / imported events
       dispatch(getWalletsCreationEventsAction());
@@ -287,6 +290,8 @@ export const finishOnboardingAction = (retry?: boolean, recoveryData?: Object) =
 
 
     await dispatch(setupAppServicesAction(walletData?.privateKey));
+
+    dispatch(getExchangeSupportedAssetsAction());
 
     const { errorMessage, usernameRegistrationFailed } = getState().onboarding;
 

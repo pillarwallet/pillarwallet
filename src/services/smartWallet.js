@@ -161,6 +161,7 @@ class SmartWallet {
         this.handleError(err);
       }
     }
+
     return this.sdk;
   }
 
@@ -510,14 +511,16 @@ class SmartWallet {
       data,
     ];
 
-    // supporting 2, can be added up to 5
+    // can be added up to 5
     if (sequentialTransactions.length) {
-      estimateMethodParams = [
-        ...estimateMethodParams,
-        sequentialTransactions[0].recipient,
-        sequentialTransactions[0].value,
-        sequentialTransactions[0].data,
-      ];
+      sequentialTransactions.forEach(tx => {
+        estimateMethodParams = [
+          ...estimateMethodParams,
+          tx.recipient,
+          ethToWei(tx.value || 0),
+          tx.data,
+        ];
+      });
     }
 
     estimateMethodParams = [...estimateMethodParams, transactionSpeed];
@@ -626,6 +629,10 @@ class SmartWallet {
 
   getConnectedAccountTransactionExplorerLink(hash: string): string {
     return this.getSdk().getConnectedAccountTransactionExplorerLink(hash); // not a promise
+  }
+
+  isValidSession(): Promise<string> {
+    return this.getSdk().session.verifyToken().catch(() => false);
   }
 
   handleError(error: any) {

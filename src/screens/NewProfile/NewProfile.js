@@ -46,7 +46,7 @@ import { PERMISSIONS, SET_WALLET_PIN_CODE } from 'constants/navigationConstants'
 import { fontStyles, spacing } from 'utils/variables';
 import { themedColors, getThemeColors } from 'utils/themes';
 import { validateUsername } from 'utils/validators';
-import { getEnsPrefix } from 'utils/common';
+import { getENSPrefix } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
@@ -203,7 +203,7 @@ const NewProfile = ({
         <TextInput
           errorMessage={usernameValidationErrorMessage || errorMessage}
           loading={isCheckingUsername}
-          rightPlaceholder={!existingUser ? getEnsPrefix() : ''}
+          rightPlaceholder={!existingUser ? getENSPrefix() : ''}
           iconProps={{
             icon: statusIcon,
             color: iconColor,

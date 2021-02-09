@@ -30,7 +30,9 @@ import {
   TX_CONFIRMED_STATUS,
   TX_FAILED_STATUS,
   TX_PENDING_STATUS,
+  TRANSACTION_EVENT,
 } from 'constants/historyConstants';
+import { PAYMENT_NETWORK_TX_SETTLEMENT, PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT } from 'constants/paymentNetworkConstants';
 
 // types
 import type {
@@ -40,6 +42,9 @@ import type {
   TransactionEthers,
   TransactionsStore,
 } from 'models/Transaction';
+import type { Accounts } from 'models/Account';
+
+import { mapTransactionsHistory } from 'utils/feedData';
 
 export const buildHistoryTransaction = ({
   from,
@@ -163,3 +168,20 @@ export const getTrxInfo = async (api: SDKWrapper, hash: string, network?: string
     status,
   };
 };
+
+export const getTransactionsFromHistory = (history: Transaction[], accounts: Accounts) => {
+  const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
+  return mapTransactionsHistory(
+    tokenTxHistory,
+    accounts,
+    TRANSACTION_EVENT,
+  );
+};
+
+export const getTokenTransactionsFromHistory =
+  (history: Transaction[], accounts: Accounts, token: string): Transaction[] => {
+    const mappedTransactions = getTransactionsFromHistory(history, accounts);
+    return mappedTransactions
+      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
+      || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+  };

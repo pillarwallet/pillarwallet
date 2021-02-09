@@ -248,7 +248,7 @@ export const getSablierCreateStreamTransaction = async (
       data: approveTransactionData,
       amount: 0,
       symbol: ETH,
-      sequentialSmartWalletTransactions: [sablierCreateStreamTransaction],
+      sequentialTransactions: [sablierCreateStreamTransaction],
     };
   }
 

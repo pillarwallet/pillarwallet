@@ -23,7 +23,6 @@ import type { NavigationScreenProp } from 'react-navigation';
 import { Platform, Linking } from 'react-native';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, request as requestPermission, RESULTS } from 'react-native-permissions';
-import { createStructuredSelector } from 'reselect';
 import t from 'translations/translate';
 
 // actions
@@ -38,6 +37,7 @@ import {
   RECOVERY_PORTAL_SETUP_SIGN_UP,
   REVEAL_BACKUP_PHRASE,
 } from 'constants/navigationConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -54,8 +54,8 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { BackupStatus } from 'reducers/walletReducer';
 import type { Theme } from 'models/Theme';
 
-// selectors
-import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
+// services
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // relative
 import { SettingsSection } from './SettingsSection';
@@ -81,7 +81,6 @@ type Props = {
   toggleOmitPinOnLogin: () => void,
   omitPinOnLogin?: boolean,
   backupStatus: BackupStatus,
-  isSmartWalletActivated: boolean,
   hasSeenRecoveryPortalIntro: boolean,
   theme: Theme,
 };
@@ -96,6 +95,8 @@ const showFaceIDFailedMessage = () => {
     autoClose: true,
   });
 };
+
+let isRecoveryPortalDisabled = false;
 
 class WalletSettings extends React.Component<Props, State> {
   state = {
@@ -112,6 +113,7 @@ class WalletSettings extends React.Component<Props, State> {
       this.setState({ supportedBiometryType });
     });
     this.retrieveWalletObject();
+    isRecoveryPortalDisabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.RECOVERY_PORTAL_DISABLED);
   }
 
   retrieveWalletObject = async () => {
@@ -136,20 +138,15 @@ class WalletSettings extends React.Component<Props, State> {
       useBiometrics,
       omitPinOnLogin,
       toggleOmitPinOnLogin,
-      isSmartWalletActivated,
       hasSeenRecoveryPortalIntro,
     } = this.props;
     const { supportedBiometryType } = this.state;
-
-    const recoveryPortalSubtitle = isSmartWalletActivated
-      ? t('settingsContent.settingsItem.recoveryPortal.subtitle.default')
-      : t('settingsContent.settingsItem.recoveryPortal.subtitle.smartWalletNotActivated');
 
     const recoveryPortalNavigationPath = hasSeenRecoveryPortalIntro
       ? RECOVERY_PORTAL_SETUP_SIGN_UP
       : RECOVERY_PORTAL_SETUP_INTRO;
 
-    return [
+    const settings = [
       {
         key: 'changePIN',
         title: t('settingsContent.settingsItem.changePIN.title'),
@@ -170,14 +167,18 @@ class WalletSettings extends React.Component<Props, State> {
         value: !omitPinOnLogin,
         toggle: true,
       },
-      {
+    ];
+
+    if (!isRecoveryPortalDisabled) {
+      settings.push({
         key: 'recoveryPortal',
         title: t('settingsContent.settingsItem.recoveryPortal.title'),
-        subtitle: recoveryPortalSubtitle,
-        disabled: !isSmartWalletActivated,
-        onPress: () => isSmartWalletActivated && navigation.navigate(recoveryPortalNavigationPath),
-      },
-    ];
+        subtitle: t('settingsContent.settingsItem.recoveryPortal.subtitle.default'),
+        onPress: () => navigation.navigate(recoveryPortalNavigationPath),
+      });
+    }
+
+    return settings;
   };
 
   handleBiometricPress = async () => {
@@ -192,6 +193,7 @@ class WalletSettings extends React.Component<Props, State> {
       requestPermission(PERMISSIONS.IOS.FACE_ID)
         .then((status) => {
           if (status === RESULTS.GRANTED) {
+            // $FlowFixMe: flow update to 0.122
             changeUseBiometrics(!useBiometrics, { ...wallet, pin });
             return;
           }
@@ -201,6 +203,7 @@ class WalletSettings extends React.Component<Props, State> {
       return;
     }
 
+    // $FlowFixMe: flow update to 0.122
     changeUseBiometrics(!useBiometrics, { ...wallet, pin });
   };
 
@@ -294,15 +297,6 @@ const mapStateToProps = ({
   backupStatus,
 });
 
-const structuredSelector = createStructuredSelector({
-  isSmartWalletActivated: isSmartWalletActivatedSelector,
-});
-
-const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
-  ...structuredSelector(state),
-  ...mapStateToProps(state),
-});
-
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   changeUseBiometrics: (enabled: boolean, data: KeyChainData) => dispatch(
     changeUseBiometricsAction(enabled, data),
@@ -311,4 +305,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   toggleOmitPinOnLogin: () => dispatch(toggleOmitPinOnLoginAction()),
 });
 
-export default connect(combinedMapStateToProps, mapDispatchToProps)(WalletSettings);
+export default connect(mapStateToProps, mapDispatchToProps)(WalletSettings);

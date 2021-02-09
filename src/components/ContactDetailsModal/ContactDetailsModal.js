@@ -185,9 +185,9 @@ const ContactDetailsModal = ({
     setEnsUnresolved(false);
     setResolvingEns(true);
     getReceiverWithEnsName(nameValue)
-      .then(({ receiver }) => {
-        if (receiver) {
-          setAddressValue(receiver);
+      .then((resolved) => {
+        if (resolved?.receiver) {
+          setAddressValue(resolved?.receiver);
         } else {
           setEnsUnresolved(true);
         }
@@ -221,6 +221,7 @@ const ContactDetailsModal = ({
   const onButtonPress = () => {
     if (!errorMessage && !resolvingEns) {
       if (modalRef.current) modalRef.current.close();
+      // $FlowFixMe: flow update to 0.122
       onSave({ ...contact, name: nameValue, ethAddress: addressValue });
     }
   };

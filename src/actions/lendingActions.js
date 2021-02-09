@@ -21,7 +21,7 @@ import isEmpty from 'lodash.isempty';
 
 // actions
 import { saveDbAction } from 'actions/dbActions';
-import { estimateTransactionAction } from 'actions/transactionEstimateActions';
+import { estimateTransactionAction, estimateTransactionsAction } from 'actions/transactionEstimateActions';
 
 // services
 import aaveService from 'services/aave';
@@ -31,7 +31,7 @@ import { accountAssetsSelector } from 'selectors/assets';
 
 // utils
 import { getAssetData, getAssetsAsList } from 'utils/assets';
-import { findFirstLegacySmartAccount, getAccountAddress } from 'utils/accounts';
+import { findFirstEtherspotAccount, getAccountAddress } from 'utils/accounts';
 import { getAaveDepositTransactions, getAaveWithdrawTransaction } from 'utils/aave';
 
 // constants
@@ -78,14 +78,14 @@ export const fetchDepositedAssetsAction = () => {
     } = getState();
 
     const currentAccountAssets = accountAssetsSelector(getState());
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
-    if (!smartWalletAccount) return;
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
 
     if (isFetchingDepositedAssets) return;
     dispatch({ type: SET_FETCHING_LENDING_DEPOSITED_ASSETS });
 
     const depositedAssets = await aaveService.getAccountDepositedAssets(
-      getAccountAddress(smartWalletAccount),
+      getAccountAddress(etherspotAccount),
       getAssetsAsList(currentAccountAssets),
       supportedAssets,
     );
@@ -101,14 +101,14 @@ export const fetchDepositedAssetAction = (symbol: string) => {
       lending: { depositedAssets, isFetchingDepositedAssets },
     } = getState();
     const currentAccountAssets = accountAssetsSelector(getState());
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
-    if (!smartWalletAccount) return;
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
 
     if (isFetchingDepositedAssets) return;
     dispatch({ type: SET_FETCHING_LENDING_DEPOSITED_ASSETS });
 
     const asset = getAssetData(getAssetsAsList(currentAccountAssets), supportedAssets, symbol);
-    const accountAddress = getAccountAddress(smartWalletAccount);
+    const accountAddress = getAccountAddress(etherspotAccount);
 
     const updatedDepositedAsset = await aaveService.fetchAccountDepositedAsset(accountAddress, asset);
     if (!updatedDepositedAsset) return;
@@ -129,60 +129,50 @@ export const fetchDepositedAssetAction = (symbol: string) => {
 };
 
 export const calculateLendingDepositTransactionEstimateAction = (
-  amount: number,
+  amount: string,
   asset: AssetToDeposit,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
-    if (!smartWalletAccount) return;
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
 
     // initiate state earlier
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
     // may include approve transaction
     const aaveDepositNeededTransactions = await getAaveDepositTransactions(
-      getAccountAddress(smartWalletAccount),
+      getAccountAddress(etherspotAccount),
       amount,
       asset,
     );
 
-    const sequentialTransactions = aaveDepositNeededTransactions
-      .slice(1) // exclude first, take rest if exist
-      .map(({
-        to: recipient,
-        amount: value,
-        data,
-      }) => ({ recipient, value, data }));
+    const sequentialTransactions = aaveDepositNeededTransactions.map(
+      ({ to, amount: value, data }) => ({ to, value, data }),
+    );
 
-    dispatch(estimateTransactionAction(
-      aaveDepositNeededTransactions[0].to,
-      aaveDepositNeededTransactions[0].amount,
-      aaveDepositNeededTransactions[0].data,
-      null,
-      sequentialTransactions,
-    ));
+    dispatch(estimateTransactionsAction(sequentialTransactions));
   };
 };
 
 export const calculateLendingWithdrawTransactionEstimateAction = (
-  withdrawAmount: number,
+  withdrawAmount: string,
   depositedAsset: DepositedAsset,
 ) => {
   return async (dispatch: Dispatch, getState: GetState) => {
     const { accounts: { data: accounts } } = getState();
-    const smartWalletAccount = findFirstLegacySmartAccount(accounts);
-    if (!smartWalletAccount) return;
+    const etherspotAccount = findFirstEtherspotAccount(accounts);
+    if (!etherspotAccount) return;
 
     // initiate state earlier
     dispatch({ type: SET_ESTIMATING_TRANSACTION, payload: true });
 
-    const { to, amount, data } = await getAaveWithdrawTransaction(
-      getAccountAddress(smartWalletAccount),
+    const { to, amount: value, data } = await getAaveWithdrawTransaction(
+      getAccountAddress(etherspotAccount),
       withdrawAmount,
       depositedAsset,
     );
 
-    dispatch(estimateTransactionAction(to, amount, data));
+    dispatch(estimateTransactionAction({ to, value, data }));
   };
 };

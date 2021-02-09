@@ -64,7 +64,7 @@ import {
   SET_ESTIMATED_WITHDRAWAL_FEE,
   PAYMENT_NETWORK_ACCOUNT_TOPUP,
   PAYMENT_NETWORK_SUBSCRIBE_TO_TX_STATUS,
-  PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+  // PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
   UPDATE_PAYMENT_NETWORK_STAKED,
   SET_AVAILABLE_TO_SETTLE_TX,
   START_FETCHING_AVAILABLE_TO_SETTLE_TX,
@@ -410,12 +410,6 @@ export const fetchVirtualAccountBalanceAction = () => {
         },
       };
     }, {});
-    const { paymentNetwork: { balances } } = getState();
-    const updatedBalances = {
-      ...balances,
-      [accountId]: accountBalances,
-    };
-    dispatch(saveDbAction('paymentNetworkBalances', { paymentNetworkBalances: updatedBalances }, true));
 
     dispatch({
       type: UPDATE_PAYMENT_NETWORK_ACCOUNT_BALANCES,
@@ -654,7 +648,7 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
     if (event.name === ACCOUNT_TRANSACTION_UPDATED) {
       const {
         accounts: { data: accounts },
-        paymentNetwork: { txToListen },
+        // paymentNetwork: { txToListen },
         wallet: { data: walletData },
         assets: { supportedAssets },
       } = getState();
@@ -662,12 +656,12 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
       const activeAccountAddress = getActiveAccountAddress(accounts);
       const txHash = get(event, 'payload.hash', '').toLowerCase();
       const txStatus = get(event, 'payload.state', '');
-      const txGasInfo = get(event, 'payload.gas', {});
+      // const txGasInfo = get(event, 'payload.gas', {});
       const txSenderAddress = get(event, 'payload.from.account.address', '');
       const txReceiverAddress = get(event, 'payload.to.address', '');
       const txSenderEnsName = get(event, 'payload.from.account.ensName', '');
       const txType = get(event, 'payload.transactionType', '');
-      const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
+      // const txToListenFound = txToListen.find(hash => isCaseInsensitiveMatch(hash, txHash));
       const skipNotifications = [transactionTypes.TopUpErc20Approve];
 
       const txFromHistory = currentHistory[activeAccountAddress].find(tx => tx.hash === txHash);
@@ -746,33 +740,33 @@ export const onSmartWalletSdkEventAction = (event: Object) => {
             });
           }
 
-          if (txToListenFound) {
-            const { txUpdated, updatedHistory } = updateHistoryRecord(
-              currentHistory,
-              txHash,
-              (transaction) => ({
-                ...transaction,
-                gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
-                gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
-                status: TX_CONFIRMED_STATUS,
-              }));
-
-            if (txUpdated) {
-              dispatch(saveDbAction('history', { history: updatedHistory }, true));
-              dispatch({
-                type: SET_HISTORY,
-                payload: updatedHistory,
-              });
-              dispatch(afterHistoryUpdatedAction());
-              dispatch({
-                type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
-                payload: txHash,
-              });
-              currentHistory = getState().history.data;
-            }
-          } else {
-            dispatch(fetchTransactionsHistoryAction());
-          }
+          // if (txToListenFound) {
+          //   const { txUpdated, updatedHistory } = updateHistoryRecord(
+          //     currentHistory,
+          //     txHash,
+          //     (transaction) => ({
+          //       ...transaction,
+          //       gasPrice: txGasInfo.price ? txGasInfo.price.toNumber() : transaction.gasPrice,
+          //       gasUsed: txGasInfo.used ? txGasInfo.used.toNumber() : transaction.gasUsed,
+          //       status: TX_CONFIRMED_STATUS,
+          //     }));
+          //
+          //   if (txUpdated) {
+          //     dispatch(saveDbAction('history', { history: updatedHistory }, true));
+          //     dispatch({
+          //       type: SET_HISTORY,
+          //       payload: updatedHistory,
+          //     });
+          //     dispatch(afterHistoryUpdatedAction());
+          //     dispatch({
+          //       type: PAYMENT_NETWORK_UNSUBSCRIBE_TX_STATUS,
+          //       payload: txHash,
+          //     });
+          //     currentHistory = getState().history.data;
+          //   }
+          // } else {
+          dispatch(fetchTransactionsHistoryAction());
+          // }
           dispatch(fetchAssetsBalancesAction());
         }
       }
@@ -1127,6 +1121,7 @@ export const fetchAvailableTxToSettleAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
     if (!smartWalletService || !smartWalletService.sdkInitialized) {
       notifySmartWalletNotInitialized();
+      // $FlowFixMe: flow update to 0.122
       dispatch({
         type: SET_AVAILABLE_TO_SETTLE_TX,
         payload: [],
@@ -1590,3 +1585,55 @@ export const estimateSmartWalletDeploymentAction = () => {
     dispatch({ type: SET_SMART_WALLET_DEPLOYMENT_ESTIMATE, payload: estimated });
   };
 };
+
+
+/**
+ * should recover from 2 reported scenarios:
+ * 1) account/device disconnected
+ * 2) session expired
+ *
+ * and 1 edge case:
+ * 3) sdk initialization lost(?)
+ */
+// export const checkSmartWalletSessionAction = () => {
+//   return async (dispatch: Dispatch, getState: GetState) => {
+//     const { isCheckingSmartWalletSession } = getState().smartWallet;
+//
+//     if (isCheckingSmartWalletSession) return;
+//
+//     dispatch({ type: SET_CHECKING_SMART_WALLET_SESSION, payload: true });
+//
+//     let smartWalletNeedsInit;
+//
+//     if (smartWalletService?.sdkInitialized) {
+//       const validSession = await smartWalletService.isValidSession();
+//
+//       if (validSession) {
+//         const accountId = activeAccountIdSelector(getState());
+//
+//         // connected account method checks sdk state first and connects if account not found
+//         const connectedAccount = await smartWalletService.connectAccount(accountId);
+//
+//         // reinit in case no connected account or no devices
+//         smartWalletNeedsInit = isEmpty(connectedAccount) || isEmpty(connectedAccount?.devices);
+//       } else {
+//         // log to collect feedback for initial fix release, remove if causes too much noise
+//         reportLog('Detected Archanova Smart Wallet expired session');
+//         smartWalletNeedsInit = true;
+//       }
+//     } else {
+//       // log to collect feedback for initial fix release, remove if causes too much noise
+//       reportLog('Archanova Smart Wallet SDK initialization lost or never initialized');
+//       smartWalletNeedsInit = true;
+//     }
+//
+//     dispatch({ type: SET_CHECKING_SMART_WALLET_SESSION, payload: false });
+//
+//     if (!smartWalletNeedsInit) return;
+//
+//     dispatch(lockScreenAction(
+//       (privateKey: string) => dispatch(initOnLoginSmartWalletAccountAction(privateKey)),
+//       t('paragraph.sessionExpiredReEnterPin'),
+//     ));
+//   };
+// };

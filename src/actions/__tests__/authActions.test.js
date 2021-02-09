@@ -93,6 +93,7 @@ describe('Auth actions', () => {
 
   beforeEach(() => {
     store = mockStore({
+      exchange: { exchangeSupportedAssets: [] },
       assets: { data: {} },
       navigation: {},
       oAuthTokens: { data: {} },
@@ -128,6 +129,7 @@ describe('Auth actions', () => {
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },
       { type: UPDATE_SESSION, payload: { isAuthorizing: false } },
+      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
     ];
 
     const pin = '123456';
@@ -151,6 +153,7 @@ describe('Auth actions', () => {
       { type: SET_CONNECTED_DEVICES, payload: [] },
       { type: SET_SMART_WALLET_CONNECTED_ACCOUNT, payload: mockSmartWalletConnectedAccount },
       { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.FETCHING } },
+      { type: SET_UNISWAP_TOKENS_QUERY_STATUS, payload: { status: UNISWAP_TOKENS_QUERY_STATUS.SUCCESS } },
       { type: UPDATE_USER, payload: merge({}, mockRegisteredUser, mockUpdatedUser) },
       { type: UPDATE_PIN_ATTEMPTS, payload: { lastPinAttempt: 0, pinAttemptsCount: 0 } },
       { type: UPDATE_APP_SETTINGS, payload: { initialDeeplinkExecuted: true } },

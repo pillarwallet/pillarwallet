@@ -17,8 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { RefreshControl, ScrollView, View } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
@@ -29,8 +28,11 @@ import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
 // actions
-import { fetchVirtualAccountBalanceAction } from 'actions/smartWalletActions';
 import { fetchTransactionsHistoryAction } from 'actions/historyActions';
+import {
+  fetchAccountDepositBalanceAction,
+  fetchAccountPaymentChannelsAction,
+} from 'actions/etherspotActions';
 
 // components
 import { BaseText } from 'components/Typography';
@@ -42,7 +44,6 @@ import ActivityFeed from 'components/ActivityFeed';
 import InsightWithButton from 'components/InsightWithButton';
 
 // constants
-import { defaultFiatCurrency, ETH, PLR } from 'constants/assetsConstants';
 import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import {
   FUND_TANK,
@@ -50,7 +51,7 @@ import {
   UNSETTLED_ASSETS,
   TANK_WITHDRAWAL,
   SERVICES,
-  SEND_SYNTHETIC_AMOUNT,
+  PPN_SEND_TOKEN_AMOUNT,
 } from 'constants/navigationConstants';
 import {
   PAYMENT_COMPLETED,
@@ -60,6 +61,7 @@ import {
   PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
   PAYMENT_NETWORK_TX_SETTLEMENT,
 } from 'constants/paymentNetworkConstants';
+import { PPN_TOKEN } from 'configs/assetsConfig';
 
 // types
 import type { Accounts } from 'models/Account';
@@ -67,9 +69,10 @@ import type { Transaction } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { Theme } from 'models/Theme';
 import type { Balances, BalancesStore, Rates } from 'models/Asset';
+import type { P2PPaymentChannel } from 'etherspot';
 
 // utils
-import { getRate, addressesEqual } from 'utils/assets';
+import { addressesEqual } from 'utils/assets';
 import { formatMoney, formatFiat } from 'utils/common';
 import { mapTransactionsHistory } from 'utils/feedData';
 import { isHiddenUnsettledTransaction } from 'utils/smartWallet';
@@ -78,11 +81,7 @@ import { getThemeColors, themedColors } from 'utils/themes';
 import { findFirstEtherspotAccount, getAccountId } from 'utils/accounts';
 
 // selectors
-import {
-  availableStakeSelector,
-  paymentNetworkNonZeroBalancesSelector,
-  PPNTransactionsSelector,
-} from 'selectors/paymentNetwork';
+import { availableStakeSelector, PPNTransactionsSelector } from 'selectors/paymentNetwork';
 import { accountHistorySelector } from 'selectors/history';
 import { activeAccountAddressSelector } from 'selectors';
 
@@ -92,20 +91,17 @@ type Props = {
   rates: Rates,
   navigation: NavigationScreenProp<*>,
   availableStake: number,
-  assetsOnNetwork: Object,
-  fetchVirtualAccountBalance: () => void,
+  fetchAccountDepositBalance: () => void,
   accounts: Accounts,
   PPNTransactions: Transaction[],
   history: Object[],
-  fetchSmartWalletTransactions: () => void,
+  fetchTransactionsHistory: () => void,
   theme: Theme,
   onScroll: (event: Object) => void,
   activeAccountAddress: string,
   balances: BalancesStore,
-};
-
-type State = {
-  activeTab: string,
+  fetchAccountPaymentChannels: () => void,
+  paymentChannels: P2PPaymentChannel[],
 };
 
 const AssetButtonsWrapper = styled.View`
@@ -144,59 +140,67 @@ const INCOMING = 'INCOMING';
 const SENT = 'SENT';
 const SETTLED = 'SETTLED';
 
-
-class PPNView extends React.Component<Props, State> {
-  state = {
-    activeTab: INCOMING,
+const PPNView = ({
+  navigation,
+  availableStake,
+  accounts,
+  balances,
+  fetchAccountDepositBalance,
+  PPNTransactions,
+  baseFiatCurrency,
+  history,
+  fetchTransactionsHistory,
+  theme,
+  onScroll,
+  activeAccountAddress,
+  fetchAccountPaymentChannels,
+}: Props) => {
+  const refreshData = () => {
+    fetchTransactionsHistory();
+    fetchAccountDepositBalance();
+    fetchAccountPaymentChannels();
   };
 
-  setActiveTab = (activeTab) => {
-    this.setState({ activeTab });
-  };
+  // initial
+  useEffect(() => { refreshData(); }, []);
 
-  navigateToBuyPillar = () => {
-    const { navigation } = this.props;
-    navigation.navigate(SERVICES);
-  };
+  const [activeTab, setActiveTab] = useState(INCOMING);
 
-  navigateToFundTank = () => {
-    const { navigation } = this.props;
-    navigation.navigate(FUND_TANK);
-  };
+  const navigateToBuyPillar = () => navigation.navigate(SERVICES);
+  const navigateToFundTank = () => navigation.navigate(FUND_TANK);
 
-  renderInsight = () => {
-    const {
-      availableStake,
-      accounts,
-      balances,
-    } = this.props;
+  const renderInsight = () => {
     const etherspotAccount = findFirstEtherspotAccount(accounts);
     if (!etherspotAccount) return null;
 
     const etherspotAccountId = getAccountId(etherspotAccount);
     const accountBalances: Balances = balances[etherspotAccountId];
-    const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PLR}].balance`, 0), 10) > 0;
+    const hasPLRInSmartWallet = parseInt(get(accountBalances, `[${PPN_TOKEN}].balance`, 0), 10) > 0;
 
     if (!availableStake) {
       const insightProps = {};
       if (!hasPLRInSmartWallet) {
-        insightProps.buttonTitle = t('button.notEnoughPLR');
+        insightProps.buttonTitle = t('button.notEnoughToken', { token: PPN_TOKEN });
         insightProps.buttonProps = { disabled: true, secondary: true };
         insightProps.footerChildren = (
           <Button
-            title={t('button.buyPLR')}
+            title={t('button.buyToken', { token: PPN_TOKEN })}
             small
             marginTop={12}
-            onPress={this.navigateToBuyPillar}
+            onPress={navigateToBuyPillar}
           />);
       } else {
-        insightProps.buttonTitle = t('button.topUpPLRTank');
-        insightProps.onButtonPress = this.navigateToFundTank;
+        insightProps.buttonTitle = t('button.topUpTokenTank', { token: PPN_TOKEN });
+        insightProps.onButtonPress = navigateToFundTank;
       }
       return (
         <InsightWithButton
           title={t('insight.pillarNetworkActivate.hasNoPPNBalance.title')}
-          description={t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit')}
+          description={
+            t('insight.pillarNetworkActivate.hasNoPPNBalance.description.activationBenefit', {
+              token: PPN_TOKEN,
+            })
+          }
           {...insightProps}
         />
       );
@@ -205,219 +209,198 @@ class PPNView extends React.Component<Props, State> {
     return null;
   };
 
-  render() {
-    const { activeTab } = this.state;
+  const colors = getThemeColors(theme);
+
+  const availableFormattedAmount = formatMoney(availableStake, 4);
+
+  const PPNTransactionsMapped = mapTransactionsHistory(
+    PPNTransactions,
+    accounts,
+    TRANSACTION_EVENT,
+  );
+
+  const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
     const {
-      availableStake,
-      assetsOnNetwork,
-      fetchVirtualAccountBalance,
-      navigation,
-      accounts,
-      PPNTransactions,
-      baseFiatCurrency,
-      rates,
-      history,
-      fetchSmartWalletTransactions,
-      theme,
-      onScroll,
-      activeAccountAddress,
-    } = this.props;
-    const colors = getThemeColors(theme);
-
-    let incomingBalanceInFiat = 0;
-    const assetsOnNetworkArray = Object.values(assetsOnNetwork);
-    if (assetsOnNetworkArray.length) {
-      incomingBalanceInFiat = assetsOnNetworkArray.reduce((totalInFiat, incomingAsset) => {
-        const tokenSymbol = get(incomingAsset, 'symbol', ETH);
-        const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
-        const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-        const tokenRate = getRate(rates, tokenSymbol, fiatCurrency);
-        return totalInFiat + (tokenBalance * tokenRate);
-      }, 0);
-    }
-
-    const availableFormattedAmount = formatMoney(availableStake, 4);
-
-    const PPNTransactionsMapped = mapTransactionsHistory(
-      PPNTransactions,
-      accounts,
-      TRANSACTION_EVENT,
-    );
-
-    const PPNTransactionsGrouped = PPNTransactionsMapped.reduce((filtered, transaction) => {
-      const {
-        stateInPPN, hash, tag, from, to,
-      } = transaction;
-      const {
-        settled, incoming, sent,
-      } = filtered;
-      switch (tag) {
-        case PAYMENT_NETWORK_ACCOUNT_TOPUP:
-          filtered.incoming = incoming.concat(transaction);
-          break;
-        case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
+      stateInPPN, hash, tag, from, to,
+    } = transaction;
+    const {
+      settled, incoming, sent,
+    } = filtered;
+    switch (tag) {
+      case PAYMENT_NETWORK_ACCOUNT_TOPUP:
+        filtered.incoming = incoming.concat(transaction);
+        break;
+      case PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL:
+        filtered.sent = sent.concat(transaction);
+        break;
+      case PAYMENT_NETWORK_TX_SETTLEMENT:
+        filtered.settled = settled.concat(transaction);
+        break;
+      default:
+        if (addressesEqual(from, activeAccountAddress) && !addressesEqual(to, activeAccountAddress)) {
           filtered.sent = sent.concat(transaction);
-          break;
-        case PAYMENT_NETWORK_TX_SETTLEMENT:
-          filtered.settled = settled.concat(transaction);
-          break;
-        default:
-          if (addressesEqual(from, activeAccountAddress) && !addressesEqual(to, activeAccountAddress)) {
-            filtered.sent = sent.concat(transaction);
-          } else if (stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
-            filtered.incoming = incoming.concat(transaction);
-            filtered.unsettledCount += 1;
-          }
-      }
-      return filtered;
-    }, {
-      settled: [], incoming: [], sent: [], unsettledCount: 0,
-    });
-
-    const historyTabs = [
-      {
-        id: INCOMING,
-        name: t('ppnContent.tabs.incoming.title'),
-        onPress: () => this.setActiveTab(INCOMING),
-        data: PPNTransactionsGrouped.incoming,
-        emptyState: {
-          title: t('ppnContent.tabs.incoming.emptyState.title'),
-        },
-      },
-      {
-        id: SENT,
-        name: t('ppnContent.tabs.sent.title'),
-        onPress: () => this.setActiveTab(SENT),
-        data: PPNTransactionsGrouped.sent,
-        emptyState: {
-          title: t('ppnContent.tabs.sent.emptyState.title'),
-        },
-      },
-      {
-        id: SETTLED,
-        name: t('ppnContent.tabs.settled.title'),
-        onPress: () => this.setActiveTab(SETTLED),
-        data: PPNTransactionsGrouped.settled,
-        emptyState: {
-          title: t('ppnContent.tabs.settled.emptyState.title'),
-        },
-      },
-    ];
-
-    const showSettleButton = activeTab === INCOMING && !!PPNTransactionsGrouped.unsettledCount;
-
-    return (
-      <View style={{ flex: 1 }}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: showSettleButton ? (56 + spacing.rhythm) : 0,
-          }}
-          refreshControl={
-            <RefreshControl
-              refreshing={false}
-              onRefresh={() => {
-                fetchSmartWalletTransactions();
-                fetchVirtualAccountBalance();
-              }}
-            />
-          }
-          onScroll={onScroll}
-          scrollEventThrottle={16}
-        >
-          {this.renderInsight()}
-          <TopPartWrapper>
-            <TankBalanceWrapper>
-              <TankBalance>
-                {t('tokenValue', { value: availableFormattedAmount, token: 'PLR' })}
-              </TankBalance>
-            </TankBalanceWrapper>
-            <AssetButtonsWrapper>
-              <CircleButton
-                label={t('button.topUp')}
-                onPress={this.navigateToFundTank}
-                fontIcon="plus"
-                fontIconStyle={{ fontSize: fontSizes.big }}
-              />
-              <CircleButton
-                label={t('button.withdraw')}
-                fontIcon="up-arrow"
-                fontIconStyle={{ fontSize: fontSizes.big }}
-                onPress={() => navigation.navigate(TANK_WITHDRAWAL)}
-                disabled={availableStake <= 0}
-              />
-              <CircleButton
-                label={t('button.send')}
-                fontIcon="paperPlane"
-                onPress={() => navigation.navigate(SEND_SYNTHETIC_AMOUNT)}
-                disabled={availableStake <= 0}
-              />
-            </AssetButtonsWrapper>
-          </TopPartWrapper>
-          {incomingBalanceInFiat > 0 &&
-          <ListItemChevron
-            wrapperStyle={{
-              borderTopWidth: 0,
-              borderBottomWidth: 1,
-              borderColor: colors.border,
-              opacity: 1,
-            }}
-            chevronStyle={{ color: colors.secondaryText }}
-            label={t('label.incomingBalance')}
-            rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
-            onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
-            color={colors.text}
-            bordered
-          />}
-          {(!!PPNTransactionsMapped.length || availableStake > 0) &&
-          <Tabs
-            tabs={historyTabs}
-            wrapperStyle={{ paddingTop: 30, paddingBottom: 26 }}
-            activeTab={activeTab}
-          />
-          }
-          {(!!PPNTransactionsMapped.length || availableStake > 0) &&
-          <ActivityFeed
-            navigation={navigation}
-            tabs={historyTabs}
-            activeTab={activeTab}
-            hideTabs
-            initialNumToRender={6}
-            wrapperStyle={{ flexGrow: 1 }}
-            contentContainerStyle={{ flexGrow: 1 }}
-            isPPNView
-          />
-          }
-        </ScrollView>
-        {showSettleButton &&
-          <FloatingButtonView>
-            <Button
-              style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
-              block={false}
-              title={t('button.settleTransactions')}
-              onPress={() => navigation.navigate(SETTLE_BALANCE)}
-            />
-          </FloatingButtonView>
+        } else if (stateInPPN === PAYMENT_COMPLETED && !isHiddenUnsettledTransaction(hash, history)) {
+          filtered.incoming = incoming.concat(transaction);
+          filtered.unsettledCount += 1;
         }
-      </View>
-    );
-  }
-}
+    }
+    return filtered;
+  }, {
+    settled: [],
+    incoming: [],
+    sent: [],
+    unsettledCount: 0,
+  });
+
+  const incomingBalanceInFiat = PPNTransactionsGrouped.incoming.reduce((totalInFiat) => {
+    // const tokenSymbol = get(incomingAsset, 'symbol', ETH);
+    // const tokenBalance = parseFloat(get(incomingAsset, 'balance', '0'));
+    // const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
+    // const tokenRate = getRate(rates, tokenSymbol, fiatCurrency);
+    return totalInFiat + 1; // (tokenBalance * tokenRate);
+  }, 0);
+
+  const historyTabs = [
+    {
+      id: INCOMING,
+      name: t('ppnContent.tabs.incoming.title'),
+      onPress: () => setActiveTab(INCOMING),
+      data: PPNTransactionsGrouped.incoming,
+      emptyState: {
+        title: t('ppnContent.tabs.incoming.emptyState.title'),
+      },
+    },
+    {
+      id: SENT,
+      name: t('ppnContent.tabs.sent.title'),
+      onPress: () => setActiveTab(SENT),
+      data: PPNTransactionsGrouped.sent,
+      emptyState: {
+        title: t('ppnContent.tabs.sent.emptyState.title'),
+      },
+    },
+    {
+      id: SETTLED,
+      name: t('ppnContent.tabs.settled.title'),
+      onPress: () => setActiveTab(SETTLED),
+      data: PPNTransactionsGrouped.settled,
+      emptyState: {
+        title: t('ppnContent.tabs.settled.emptyState.title'),
+      },
+    },
+  ];
+
+  const showSettleButton = activeTab === INCOMING && !!PPNTransactionsGrouped.unsettledCount;
+
+  return (
+    <View style={{ flex: 1 }}>
+      <ScrollView
+        contentContainerStyle={{
+          flexGrow: 1,
+          paddingBottom: showSettleButton ? (56 + spacing.rhythm) : 0,
+        }}
+        refreshControl={
+          <RefreshControl
+            refreshing={false}
+            onRefresh={refreshData}
+          />
+        }
+        onScroll={onScroll}
+        scrollEventThrottle={16}
+      >
+        {renderInsight()}
+        <TopPartWrapper>
+          <TankBalanceWrapper>
+            <TankBalance>
+              {t('tokenValue', { value: availableFormattedAmount, token: PPN_TOKEN })}
+            </TankBalance>
+          </TankBalanceWrapper>
+          <AssetButtonsWrapper>
+            <CircleButton
+              label={t('button.topUp')}
+              onPress={navigateToFundTank}
+              fontIcon="plus"
+              fontIconStyle={{ fontSize: fontSizes.big }}
+            />
+            <CircleButton
+              label={t('button.withdraw')}
+              fontIcon="up-arrow"
+              fontIconStyle={{ fontSize: fontSizes.big }}
+              onPress={() => navigation.navigate(TANK_WITHDRAWAL)}
+              disabled={availableStake <= 0}
+            />
+            <CircleButton
+              label={t('button.send')}
+              fontIcon="paperPlane"
+              onPress={() => navigation.navigate(PPN_SEND_TOKEN_AMOUNT)}
+              disabled={availableStake <= 0}
+            />
+          </AssetButtonsWrapper>
+        </TopPartWrapper>
+        {incomingBalanceInFiat > 0 &&
+        <ListItemChevron
+          wrapperStyle={{
+            borderTopWidth: 0,
+            borderBottomWidth: 1,
+            borderColor: colors.border,
+            opacity: 1,
+          }}
+          chevronStyle={{ color: colors.secondaryText }}
+          label={t('label.incomingBalance')}
+          rightAddon={(<BlueText>{formatFiat(incomingBalanceInFiat, baseFiatCurrency)}</BlueText>)}
+          onPress={() => navigation.navigate(UNSETTLED_ASSETS)}
+          color={colors.text}
+          bordered
+        />}
+        {(!!PPNTransactionsMapped.length || availableStake > 0) &&
+        <Tabs
+          tabs={historyTabs}
+          wrapperStyle={{ paddingTop: 30, paddingBottom: 26 }}
+          activeTab={activeTab}
+        />
+        }
+        {(!!PPNTransactionsMapped.length || availableStake > 0) &&
+        <ActivityFeed
+          navigation={navigation}
+          tabs={historyTabs}
+          activeTab={activeTab}
+          hideTabs
+          initialNumToRender={6}
+          wrapperStyle={{ flexGrow: 1 }}
+          contentContainerStyle={{ flexGrow: 1 }}
+          isPPNView
+        />
+        }
+      </ScrollView>
+      {showSettleButton &&
+        <FloatingButtonView>
+          <Button
+            style={{ paddingLeft: spacing.rhythm, paddingRight: spacing.rhythm }}
+            block={false}
+            title={t('button.settleTransactions')}
+            onPress={() => navigation.navigate(SETTLE_BALANCE)}
+          />
+        </FloatingButtonView>
+      }
+    </View>
+  );
+};
 
 const mapStateToProps = ({
   rates: { data: rates },
   appSettings: { data: { baseFiatCurrency } },
   accounts: { data: accounts },
   balances: { data: balances },
+  paymentNetwork: { paymentChannels },
 }: RootReducerState): $Shape<Props> => ({
   rates,
   baseFiatCurrency,
   accounts,
   balances,
+  paymentChannels,
 });
 
 const structuredSelector = createStructuredSelector({
-  assetsOnNetwork: paymentNetworkNonZeroBalancesSelector,
   availableStake: availableStakeSelector,
   PPNTransactions: PPNTransactionsSelector,
   history: accountHistorySelector,
@@ -430,8 +413,9 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  fetchVirtualAccountBalance: () => dispatch(fetchVirtualAccountBalanceAction()),
-  fetchSmartWalletTransactions: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchAccountDepositBalance: () => dispatch(fetchAccountDepositBalanceAction()),
+  fetchTransactionsHistory: () => dispatch(fetchTransactionsHistoryAction()),
+  fetchAccountPaymentChannels: () => dispatch(fetchAccountPaymentChannelsAction()),
 });
 
 export default withTheme(withNavigation(connect(combinedMapStateToProps, mapDispatchToProps)(PPNView)));

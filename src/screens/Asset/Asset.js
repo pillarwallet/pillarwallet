@@ -26,7 +26,6 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // components
@@ -50,20 +49,16 @@ import { fetchReferralRewardsIssuerAddressesAction } from 'actions/referralsActi
 // constants
 import { EXCHANGE, SEND_TOKEN_FROM_ASSET_FLOW } from 'constants/navigationConstants';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
-import { TRANSACTION_EVENT } from 'constants/historyConstants';
-import {
-  PAYMENT_NETWORK_TX_SETTLEMENT,
-  PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL,
-  PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT,
-} from 'constants/paymentNetworkConstants';
+import { PAYMENT_NETWORK_ACCOUNT_WITHDRAWAL } from 'constants/paymentNetworkConstants';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
-import { themedColors } from 'utils/themes';
-import { formatMoney, formatFiat } from 'utils/common';
+import { getColorByTheme } from 'utils/themes';
+import { formatFiat } from 'utils/common';
 import { getBalance, getRate } from 'utils/assets';
-import { isSWAddress, mapTransactionsHistory } from 'utils/feedData';
+import { isSWAddress } from 'utils/feedData';
 import { isAaveTransactionTag } from 'utils/aave';
+import { getTokenTransactionsFromHistory } from 'utils/history';
 
 // configs
 import assetsConfig from 'configs/assetsConfig';
@@ -72,7 +67,6 @@ import assetsConfig from 'configs/assetsConfig';
 import { activeAccountSelector } from 'selectors';
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountHistorySelector } from 'selectors/history';
-import { availableStakeSelector, paymentNetworkAccountBalancesSelector } from 'selectors/paymentNetwork';
 import { accountAssetsSelector } from 'selectors/assets';
 
 // models, types
@@ -91,10 +85,8 @@ type Props = {
   resetHideRemoval?: Function,
   accounts: Accounts,
   activeAccount: ?Account,
-  paymentNetworkBalances: Balances,
   history: Object[],
   logScreenView: (contentName: string, contentType: string, contentId: string) => void,
-  availableStake: number,
   getExchangeSupportedAssets: () => void,
   exchangeSupportedAssets: Asset[],
   fetchReferralRewardsIssuerAddresses: () => void,
@@ -109,7 +101,7 @@ const AssetCardWrapper = styled.View`
   padding-bottom: 30px;
   border-top-width: 1px;
   border-bottom-width: 1px;
-  border-color: ${themedColors.border};
+  border-color: ${getColorByTheme({ lightKey: 'basic060', darkKey: 'basic080' })};
   margin-top: 4px;
 `;
 
@@ -129,19 +121,18 @@ const ValueWrapper = styled.View`
 const TokenValue = styled(MediumText)`
   ${fontStyles.giant};
   text-align: center;
-  color: ${({ isSynthetic, theme }) => isSynthetic ? theme.colors.primary : theme.colors.text};
+  color: ${({ isSynthetic, theme }) => isSynthetic ? theme.colors.basic000 : theme.colors.basic010};
 `;
 
 const ValueInFiat = styled(BaseText)`
   ${fontStyles.small};
   text-align: center;
-  color: ${themedColors.text};
 `;
 
 const Disclaimer = styled(BaseText)`
   ${fontStyles.regular};
   text-align: center;
-  color: ${themedColors.negative};
+  color: ${({ theme }) => theme.colors.secondaryAccent240};
   margin-top: 5px;
 `;
 
@@ -152,16 +143,6 @@ const Description = styled(Paragraph)`
 const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
-
-const SyntheticAssetIcon = styled(CachedImage)`
-  width: 12px;
-  height: 24px;
-  margin-right: 4px;
-  margin-top: 1px;
-  tint-color: ${themedColors.primary};
-`;
-
-const lightningIcon = require('assets/icons/icon_lightning.png');
 
 class AssetScreen extends React.Component<Props> {
   forceRender = false;
@@ -232,13 +213,11 @@ class AssetScreen extends React.Component<Props> {
     const {
       rates,
       balances,
-      paymentNetworkBalances,
       fetchAssetsBalances,
       baseFiatCurrency,
       navigation,
       accounts,
       history,
-      availableStake,
       exchangeSupportedAssets,
       fetchReferralRewardsIssuerAddresses,
       isFetchingUniswapTokens,
@@ -246,17 +225,14 @@ class AssetScreen extends React.Component<Props> {
       getExchangeSupportedAssets,
     } = this.props;
     const { assetData } = this.props.navigation.state.params;
-    const { token, isSynthetic = false } = assetData;
+    const { token } = assetData;
     const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
     const tokenRate = getRate(rates, token, fiatCurrency);
     const balance = getBalance(balances, token);
-    const paymentNetworkBalance = getBalance(paymentNetworkBalances, token);
-    const isWalletEmpty = !isSynthetic
-      ? balance <= 0
-      : (paymentNetworkBalance <= 0 && availableStake < 0);
+    const isWalletEmpty = balance <= 0;
     const totalInFiat = isWalletEmpty ? 0 : (balance * tokenRate);
-    const displayAmount = !isSynthetic ? formatMoney(balance, 4) : formatMoney(paymentNetworkBalance, 4);
-    const fiatAmount = !isSynthetic ? formatFiat(totalInFiat, baseFiatCurrency) : paymentNetworkBalance * tokenRate;
+    const displayAmount = balance;
+    const fiatAmount = formatFiat(totalInFiat, baseFiatCurrency);
 
     const {
       listed: isListed = true,
@@ -265,17 +241,9 @@ class AssetScreen extends React.Component<Props> {
       disclaimer,
     } = assetsConfig[token] || {};
 
-    const tokenTxHistory = history.filter(({ tranType }) => tranType !== 'collectible');
-    const mappedTransactions = mapTransactionsHistory(
-      tokenTxHistory,
-      accounts,
-      TRANSACTION_EVENT,
-    );
-    const tokenTransactions = mappedTransactions
-      .filter(({ asset, tag = '', extra = [] }) => (asset === token && tag !== PAYMENT_NETWORK_ACCOUNT_DEPLOYMENT)
-        || (tag === PAYMENT_NETWORK_TX_SETTLEMENT && extra.find(({ symbol }) => symbol === token)));
+    const tokenTransactions = getTokenTransactionsFromHistory(history, accounts, token);
 
-    const mainnetTransactions = tokenTransactions
+    const relatedTransactions = tokenTransactions
       .filter(({
         isPPNTransaction = false,
         from,
@@ -287,10 +255,6 @@ class AssetScreen extends React.Component<Props> {
         && !isAaveTransactionTag(tag);
       });
 
-    const ppnTransactions = tokenTransactions.filter(({ isPPNTransaction = false, tag = '' }) => {
-      return isPPNTransaction || tag === PAYMENT_NETWORK_TX_SETTLEMENT;
-    });
-    const relatedTransactions = isSynthetic ? ppnTransactions : mainnetTransactions;
     const isSupportedByExchange = exchangeSupportedAssets.some(({ symbol }) => symbol === token);
 
     return (
@@ -326,10 +290,7 @@ class AssetScreen extends React.Component<Props> {
           />
           <DataWrapper>
             <ValueWrapper>
-              {!!isSynthetic &&
-                <SyntheticAssetIcon source={lightningIcon} />
-              }
-              <TokenValue isSynthetic={isSynthetic}>
+              <TokenValue>
                 {t('tokenValue', { value: displayAmount, token })}
               </TokenValue>
             </ValueWrapper>
@@ -354,7 +315,6 @@ class AssetScreen extends React.Component<Props> {
               noBalance={isWalletEmpty}
               isSendDisabled={!isAssetConfigSendActive}
               isReceiveDisabled={!isReceiveActive}
-              showButtons={isSynthetic ? ['receive'] : undefined} // eslint-disable-line i18next/no-literal-string
             />
           </AssetCardWrapper>
           {!!relatedTransactions.length &&
@@ -396,9 +356,7 @@ const mapStateToProps = ({
 
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
-  paymentNetworkBalances: paymentNetworkAccountBalancesSelector,
   history: accountHistorySelector,
-  availableStake: availableStakeSelector,
   assets: accountAssetsSelector,
   activeAccount: activeAccountSelector,
 });

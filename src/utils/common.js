@@ -32,7 +32,6 @@ import {
   Linking,
   PixelRatio,
   AppState,
-  DeviceEventEmitter,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
@@ -47,10 +46,13 @@ import {
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   ETH,
-  WBTC,
-  sBTC,
+  HIGH_VALUE_TOKENS,
+  VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 import * as NAVSCREENS from 'constants/navigationConstants';
+
+// services
+import etherspot from 'services/etherspot';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
@@ -212,15 +214,9 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  switch (assetSymbol) {
-    case ETH:
-      return 4;
-    case WBTC:
-    case sBTC:
-      return 8;
-    default:
-      return 2;
-  }
+  if (assetSymbol === ETH) return 4;
+  if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
+  return 2;
 };
 
 export const formatAmount = (amount: string | number, precision: number = 6): string => {
@@ -229,15 +225,23 @@ export const formatAmount = (amount: string | number, precision: number = 6): st
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
 
+export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+  formatAmount(amount, getDecimalPlaces(assetSymbol));
+
 export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
 };
 
 export const parseTokenBigNumberAmount = (amount: number | string, decimals: number): utils.BigNumber => {
-  const formatted = amount.toString();
-  return decimals > 0
-    ? utils.parseUnits(formatted, decimals)
-    : EthersBigNumber.from(formatted);
+  let formatted = amount.toString();
+  const [whole, fraction] = formatted.split('.');
+  if (decimals > 0) {
+    if (fraction && fraction.length > decimals) {
+      formatted = `${whole}.${fraction.substring(0, decimals)}`;
+    }
+    return utils.parseUnits(formatted, decimals);
+  }
+  return EthersBigNumber.from(formatted);
 };
 
 export const parseTokenAmount = (amount: number | string, decimals: number): number => {
@@ -249,10 +253,22 @@ export const getCurrencySymbol = (currency: string): string => {
   return CURRENCY_SYMBOLS[currency] || '';
 };
 
-export const formatFiat = (src: number | string, baseFiatCurrency?: ?string): string => {
+export const commify = (
+  src: number | string, options?: { skipCents?: boolean },
+): string => {
   const REGEX = '\\d(?=(\\d{3})+\\D)';
   const num = new BigNumber(src).toFixed(2);
-  const formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
+  let formatedValue = num.replace(new RegExp(REGEX, 'g'), '$&,');
+  if (options?.skipCents) {
+    formatedValue = formatedValue.substring(0, formatedValue.length - 3);
+  }
+  return formatedValue;
+};
+
+export const formatFiat = (
+  src: number | string, baseFiatCurrency?: ?string, options?: { skipCents?: boolean },
+): string => {
+  const formatedValue = commify(src, options);
   const value = parseFloat(formatedValue) > 0 ? formatedValue : 0;
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const currencySymbol = getCurrencySymbol(fiatCurrency);
@@ -309,8 +325,7 @@ const DEFAULT_TRANSITION_SCREENS = [
   NAVSCREENS.MANAGE_USERS_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
+  NAVSCREENS.PPN_SEND_TOKEN_FLOW,
   NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
   NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
   NAVSCREENS.POOLTOGETHER_FLOW,
@@ -382,17 +397,9 @@ export const handleUrlPress = (url: string) => {
   }
 };
 
-export const addAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.addEventListener('change', callback)
-    : DeviceEventEmitter.addListener('ActivityStateChange', callback);
-};
+export const addAppStateChangeListener = (callback: Function) => AppState.addEventListener('change', callback);
 
-export const removeAppStateChangeListener = (callback: Function) => {
-  return Platform.OS === 'ios'
-    ? AppState.removeEventListener('change', callback)
-    : DeviceEventEmitter.removeListener('ActivityStateChange', callback);
-};
+export const removeAppStateChangeListener = (callback: Function) => AppState.removeEventListener('change', callback);
 
 export const smallScreen = () => {
   if (Platform.OS === 'ios') {
@@ -413,20 +420,10 @@ export const getEthereumProvider = (network: string) => {
   return new providers.FallbackProvider([infuraProvider, etherscanProvider]);
 };
 
-export const resolveEnsName = (ensName: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  return provider.resolveName(ensName);
-};
-
 export const lookupAddress = async (address: string): Promise<?string> => {
-  const provider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
-  let ensName;
-  try {
-    ensName = await provider.lookupAddress(address);
-  } catch (_) {
-    //
-  }
-  return ensName;
+  const resolved = await etherspot.getENSNode(address);
+
+  return resolved?.name;
 };
 
 export const padWithZeroes = (value: string, length: number): string => {
@@ -670,6 +667,42 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv
+export const getENSPrefix = () => getEnv().NETWORK_PROVIDER === 'homestead'
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
-  : '.pillar.kovan';
+  : '.pillar'; // eslint-disable-line i18next/no-literal-string
+
+
+export const getFullENSName = (username: string) => `${username}${getENSPrefix()}`;
+
+export const hitSlop10 = {
+  top: 10,
+  bottom: 10,
+  left: 10,
+  right: 10,
+};
+
+export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
+
+export const formatBigAmount = (amount: number) => {
+  if (amount >= 1e6) {
+    return `${Math.round(amount / 1e6)}M`; // eslint-disable-line i18next/no-literal-string
+  }
+  if (amount >= 1e3) {
+    return `${Math.round(amount / 1e3)}K`; // eslint-disable-line i18next/no-literal-string
+  }
+  return `${Math.round(amount)}`;
+};
+
+export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
+  const currencySymbol = getCurrencySymbol(fiatCurrency);
+  return `${currencySymbol} ${formatBigAmount(amount)}`;
+};
+
+export const removeTrailingZeros = (amount: string) => {
+  if (!amount.includes('.')) return amount;
+  return amount.replace(/0+$/, '').replace(/\.$/, '');
+};
+
+export const toFixedString = (amount: number) => {
+  return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
+};

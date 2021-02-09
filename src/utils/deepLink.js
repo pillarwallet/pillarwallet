@@ -35,5 +35,6 @@ export const validateDeepLink = (url: string): ParsedDeepLink => {
   const { protocol } = params;
   if (!allowedDeepLinkProtocols.includes(protocol)) return {};
   const { host: action, query = {} } = params;
+  // $FlowFixMe: flow update to 0.122
   return { action, query, protocol };
 };

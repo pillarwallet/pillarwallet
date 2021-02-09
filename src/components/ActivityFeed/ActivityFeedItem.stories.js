@@ -37,6 +37,21 @@ import {
   POOLTOGETHER_WITHDRAW_TRANSACTION,
   POOLTOGETHER_DEPOSIT_TRANSACTION,
 } from 'constants/poolTogetherConstants';
+import {
+  RARI_DEPOSIT_TRANSACTION,
+  RARI_WITHDRAW_TRANSACTION,
+  RARI_TRANSFER_TRANSACTION,
+  RARI_CLAIM_TRANSACTION,
+  RARI_POOLS,
+} from 'constants/rariConstants';
+import {
+  LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+  LIQUIDITY_POOLS_STAKE_TRANSACTION,
+  LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+  LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+  LIQUIDITY_POOLS,
+} from 'constants/liquidityPoolsConstants';
 import { withTheme } from 'styled-components/native';
 import WithThemeDecorator from '../../../storybook/WithThemeDecorator';
 
@@ -602,6 +617,146 @@ storiesOf('ActivityFeedItem', module)
           symbol: 'USDC',
           decimals: 18,
           amount: '1000000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('Rari deposit', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: RARI_DEPOSIT_TRANSACTION,
+        extra: {
+          symbol: 'USDC',
+          decimals: 6,
+          amount: '1000000',
+          rariPool: RARI_POOLS.STABLE_POOL,
+          rftMinted: '1000000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('Rari withdrawal', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: RARI_WITHDRAW_TRANSACTION,
+        extra: {
+          symbol: 'USDC',
+          decimals: 6,
+          amount: '1000000',
+          rariPool: RARI_POOLS.STABLE_POOL,
+          rftBurned: '1000000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('Rari claim', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: RARI_CLAIM_TRANSACTION,
+        extra: {
+          amount: '1000000000000000000',
+          rgtBurned: '300000000000000000',
+        },
+      }}
+    />
+  ))
+  .add('Rari transfer', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: RARI_TRANSFER_TRANSACTION,
+        extra: {
+          amount: '1000000000000000000',
+          rariPool: RARI_POOLS.STABLE_POOL,
+          contactAddress: '0x000000',
+        },
+      }}
+    />
+  ))
+  .add('Rari pending transaction', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: RARI_DEPOSIT_TRANSACTION,
+        extra: {
+          symbol: 'USDC',
+          decimals: 6,
+          amount: '1000000',
+          rariPool: RARI_POOLS.STABLE_POOL,
+        },
+        status: TX_PENDING_STATUS,
+      }}
+    />
+  ))
+  .add('Liquidity added', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_ADD_LIQUIDITY_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity removed', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_REMOVE_LIQUIDITY_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity staked', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_STAKE_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity unstaked', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_UNSTAKE_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
+        },
+      }}
+    />
+  ))
+  .add('Liquidity rewards claimed', () => (
+    <ActivityFeedItem
+      {...reduxData}
+      event={{
+        type: TRANSACTION_EVENT,
+        tag: LIQUIDITY_POOLS_REWARDS_CLAIM_TRANSACTION,
+        extra: {
+          amount: 12.3,
+          pool: LIQUIDITY_POOLS()[0],
         },
       }}
     />

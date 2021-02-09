@@ -22,36 +22,21 @@ import isEmpty from 'lodash.isempty';
 import { BigNumber } from 'bignumber.js';
 import maxBy from 'lodash.maxby';
 import Intercom from 'react-native-intercom';
-import { getEnv } from 'configs/envConfig';
 
-import { getRate, getBalance, sortAssets } from 'utils/assets';
-import { formatFiat, formatMoney, formatAmount, isValidNumber } from 'utils/common';
+import { getRate, getBalance, sortAssets, generateAssetSelectorOption } from 'utils/assets';
+import { formatMoney } from 'utils/common';
 import { defaultFiatCurrency, ETH, POPULAR_EXCHANGE_TOKENS, BTC } from 'constants/assetsConstants';
 import { EXCHANGE_INFO } from 'constants/navigationConstants';
-import { SMART_WALLET_UPGRADE_STATUSES } from 'constants/smartWalletConstants';
-import { getSmartWalletStatus, getDeploymentData } from 'utils/smartWallet';
 import t from 'translations/translate';
+import { calculateAmountToBuy } from 'utils/exchange';
 
 import type { NavigationScreenProp } from 'react-navigation';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { Rates, Asset, Assets, Balances } from 'models/Asset';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
-import type { Accounts } from 'models/Account';
-import type { SmartWalletStatus } from 'models/SmartWalletStatus';
 import type { Allowance, Offer } from 'models/Offer';
 import type { ExchangeOptions } from 'utils/exchange';
 
-export const getBalanceInFiat = (
-  baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
-  rates: Rates,
-  symbol: string,
-): number => {
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  const assetBalanceInFiat = assetBalance ?
-    parseFloat(assetBalance) * getRate(rates, symbol, fiatCurrency) : 0;
-  return assetBalanceInFiat;
-};
+/* eslint-disable i18next/no-literal-string */
 
 export const getAssetBalanceFromFiat = (
   baseFiatCurrency: ?string,
@@ -63,16 +48,6 @@ export const getAssetBalanceFromFiat = (
   const assetBalanceFromFiat = fiatBalance ?
     parseFloat(fiatBalance) / getRate(rates, symbol, fiatCurrency) : 0;
   return assetBalanceFromFiat || 0;
-};
-
-export const getFormattedBalanceInFiat = (
-  baseFiatCurrency: ?string,
-  assetBalance: ?string | ?number,
-  rates: Rates,
-  symbol: string): string => {
-  const assetBalanceInFiat = getBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-  const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
-  return formatFiat(assetBalanceInFiat, fiatCurrency);
 };
 
 export const getAvailable = (_min: string, _max: string, rate: string) => {
@@ -102,10 +77,6 @@ export const getAvailable = (_min: string, _max: string, rate: string) => {
   return `${formatMoney(min, 2)} - ${formatMoney(max, 2)}`;
 };
 
-export const calculateAmountToBuy = (askRate: number | string, amountToSell: number | string) => {
-  return (new BigNumber(askRate)).multipliedBy(amountToSell).toFixed();
-};
-
 export const getBestAmountToBuy = (offers: Offer[], fromAmount: string): ?string => {
   const bestRate = maxBy(offers, 'askRate')?.askRate;
   if (!bestRate || !+fromAmount) return null;
@@ -119,6 +90,20 @@ export const validateInput = (
 ): boolean =>
   !!+fromAmount && fromAmount[fromAmount.length - 1] !== '.' && !!fromAsset && !!toAsset;
 
+const getBtcOption = (): Option => {
+  const btcAsset = {
+    name: 'Bitcoin',
+    address: '',
+    description: '',
+    iconUrl: 'asset/images/tokens/icons/btcColor.png',
+    symbol: BTC,
+    decimals: 8,
+    iconMonoUrl: '',
+    wallpaperUrl: '',
+  };
+  return generateAssetSelectorOption(btcAsset);
+};
+
 const generateAssetsOptions = (
   assets: Assets,
   exchangeSupportedAssets: Asset[],
@@ -129,26 +114,7 @@ const generateAssetsOptions = (
   return sortAssets(assets)
     .filter(({ symbol }) => (getBalance(balances, symbol) !== 0 || symbol === ETH)
       && exchangeSupportedAssets.some(asset => asset.symbol === symbol))
-    .map(({ symbol, iconUrl, ...rest }) => {
-      const assetBalance = formatAmount(getBalance(balances, symbol));
-      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
-      return ({
-        key: symbol,
-        value: symbol,
-        imageUrl,
-        icon: iconUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        formattedBalanceInFiat,
-        customProps: {
-          rightColumnInnerStyle: { alignItems: 'flex-end' },
-        },
-      });
-    });
+    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
 };
 
 const generateSupportedAssetsOptions = (
@@ -159,27 +125,7 @@ const generateSupportedAssetsOptions = (
 ): Option[] => {
   if (!Array.isArray(exchangeSupportedAssets)) return [];
   return exchangeSupportedAssets
-    .map(({ symbol, iconUrl, ...rest }) => {
-      const rawAssetBalance = getBalance(balances, symbol);
-      const assetBalance = rawAssetBalance ? formatAmount(rawAssetBalance) : '';
-      const formattedBalanceInFiat = getFormattedBalanceInFiat(baseFiatCurrency, assetBalance, rates, symbol);
-      const imageUrl = iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '';
-
-      return {
-        key: symbol,
-        value: symbol,
-        icon: iconUrl,
-        imageUrl,
-        iconUrl,
-        symbol,
-        ...rest,
-        assetBalance,
-        formattedBalanceInFiat,
-        customProps: {
-          rightColumnInnerStyle: { alignItems: 'flex-end' },
-        },
-      };
-    }).filter(asset => asset.key !== BTC);
+    .map((asset) => generateAssetSelectorOption(asset, balances, rates, baseFiatCurrency));
 };
 
 const generatePopularOptions = (assetsOptionsBuying: Option[]): Option[] => POPULAR_EXCHANGE_TOKENS
@@ -200,6 +146,7 @@ export const provideOptions = (
   balances: Balances,
   rates: Rates,
   baseFiatCurrency: ?string,
+  isWbtcCafeActive?: boolean,
 ): ExchangeOptions => {
   const assetsOptionsBuying = generateSupportedAssetsOptions(
     exchangeSupportedAssets,
@@ -215,7 +162,7 @@ export const provideOptions = (
     rates,
   );
   return {
-    fromOptions: assetsOptionsFrom,
+    fromOptions: isWbtcCafeActive ? assetsOptionsFrom.concat([getBtcOption()]) : assetsOptionsFrom,
     toOptions: assetsOptionsBuying,
     horizontalOptions: generateHorizontalOptions(assetsOptionsBuying), // the same for buy/sell
   };
@@ -245,33 +192,46 @@ export const getHeaderRightItems = (
   return rightItems;
 };
 
-const isEnoughAssetBalance = (assetBalance: ?string, amount: string | number) => Number(assetBalance) >= Number(amount);
-
-export const getErrorMessage = (
-  amount: string,
-  asset: Option,
-): string => {
-  const { assetBalance = '', symbol = '' } = asset;
-  const isValid = isValidNumber(amount);
-  if (!isValid) {
-    return t('error.amount.invalidNumber');
-  } else if (!isEnoughAssetBalance(assetBalance, amount)) {
-    return t('error.amount.shouldNotBeGreaterThanBalanceValue', { balance: assetBalance, token: symbol });
+const isEnoughAssetBalance = (assetBalance: ?string, amount: string): boolean => {
+  try {
+    const amountBN = new BigNumber(amount);
+    const balanceBN = new BigNumber(assetBalance);
+    // assetBalance is fixed to 6 digits and amount is not, so usually amount will be technically higher
+    // fix and round both down to 6 to get meaningful info
+    const amountFixed = amountBN.toFixed(6, 1);
+    const balanceFixed = balanceBN.toFixed(6, 1);
+    return new BigNumber(balanceFixed).isGreaterThanOrEqualTo(new BigNumber(amountFixed));
+  } catch {
+    return false;
   }
-  return '';
 };
 
 export const shouldTriggerSearch = (
   fromAsset: Option,
   toAsset: Option,
-  fromAmount: number,
+  fromAmount: string,
 ) => !!+fromAmount && fromAsset.value !== toAsset.value && isEnoughAssetBalance(fromAsset.assetBalance, fromAmount);
 
-export const shouldBlockView = (smartWalletState: SmartWalletReducerState, accounts: Accounts): boolean => {
-  const deploymentData = getDeploymentData(smartWalletState);
-  const smartWalletStatus: SmartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-  const sendingBlockedMessage = smartWalletStatus.sendingBlockedMessage || {};
-  return !isEmpty(sendingBlockedMessage)
-    && smartWalletStatus.status !== SMART_WALLET_UPGRADE_STATUSES.ACCOUNT_CREATED
-    && !deploymentData.error;
+export const getToOption =
+  (symbol: string, options: ExchangeOptions): Option => options.toOptions.find(a => a.value === symbol) || {};
+
+export const shouldResetAndTriggerSearch = (
+  fromAmount: string,
+  prevFromAmount: string,
+  fromAsset: Option,
+  prevFromAsset: Option,
+  toAsset: Option,
+  prevToAsset: Option,
+  accessToken: ?string,
+  prevAccesToken: ?string,
+): boolean => {
+  // access token has changed, init search again
+  return (prevAccesToken !== accessToken) ||
+  // valid input provided or asset changed
+  ((
+    fromAsset !== prevFromAsset ||
+    toAsset !== prevToAsset ||
+    fromAmount !== prevFromAmount) &&
+    validateInput(fromAmount, fromAsset, toAsset) &&
+    shouldTriggerSearch(fromAsset, toAsset, fromAmount));
 };

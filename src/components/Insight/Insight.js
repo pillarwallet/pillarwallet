@@ -26,7 +26,7 @@ import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
-import { getThemeColors, themedColors } from 'utils/themes';
+import { getThemeColors, themedColors, getColorByTheme } from 'utils/themes';
 import { BaseText, MediumText } from 'components/Typography';
 import type { Theme } from 'models/Theme';
 
@@ -37,16 +37,11 @@ type InsightChecklistItem = {
   onPress: () => void,
 };
 
-type InsightNumberedListItem = {
-  title: string,
-  body: string,
-};
-
 type Props = {
   title?: string,
   onClose?: () => void,
   insightChecklist: InsightChecklistItem[],
-  insightNumberedList: InsightNumberedListItem[],
+  insightNumberedList: string[],
   children?: React.Node,
   isVisible: boolean,
   onLayout?: Function,
@@ -54,6 +49,7 @@ type Props = {
   wrapperPadding?: number | string,
   theme: Theme,
   titleStyle?: Object,
+  borderRadius?: number,
 };
 
 
@@ -87,7 +83,7 @@ const CardTitle = styled(MediumText)`
 `;
 
 const InsightText = styled(BaseText)`
-  color: ${props => props.color};
+  color: ${({ theme }) => theme.colors.basic030};
   ${fontStyles.regular};
   flex: 1;
 `;
@@ -112,7 +108,7 @@ const TinyCircle = styled.View`
   height: 4px;
   width: 4px;
   border-radius: 4px;
-  background-color: ${themedColors.negative};
+  background-color: ${getColorByTheme({ lightKey: 'secondaryAccent240', darkKey: 'basic020' })};
 `;
 
 const CheckIcon = styled(Icon)`
@@ -122,7 +118,7 @@ const CheckIcon = styled(Icon)`
 
 const NumberedListItem = styled.View`
   flex-direction: row;
-  align-items: flex-start;
+  align-items: center;
   justify-content: flex-start;
   margin-bottom: 8px;
 `;
@@ -152,18 +148,13 @@ const TextRow = styled.View`
 `;
 
 const ListNumber = styled(BaseText)`
-  color: ${themedColors.control};
+  color: ${({ theme }) => theme.colors.basic070};
   font-size: ${fontSizes.tiny}px;
   line-height: 16px;
 `;
 
-const ListTitle = styled(MediumText)`
-  color: ${themedColors.text};
-  ${fontStyles.regular};
-`;
-
-const ListBody = styled(BaseText)`
-  color: ${themedColors.accent};
+const NumberedListItemText = styled(BaseText)`
+  color: ${themedColors.secondaryText};
   ${fontStyles.regular};
   flex-wrap: wrap;
   flex: 1;
@@ -193,6 +184,7 @@ const Insight = (props: Props) => {
     wrapperPadding,
     theme,
     titleStyle,
+    borderRadius,
   } = props;
 
   const colors = getThemeColors(theme);
@@ -203,6 +195,7 @@ const Insight = (props: Props) => {
       <ShadowedCard
         wrapperStyle={{ marginBottom: 10, width: '100%' }}
         contentWrapperStyle={{ paddingLeft: 20, paddingRight: 40 }}
+        borderRadius={borderRadius}
       >
         {!!onClose &&
         <Close
@@ -226,7 +219,7 @@ const Insight = (props: Props) => {
                     <StatusIconWrapper>
                       <StatusIcon isDone={!!status} />
                     </StatusIconWrapper>
-                    <InsightText color={status ? colors.secondaryText : colors.text}>{listItem}</InsightText>
+                    <InsightText>{listItem}</InsightText>
                   </ListItem>
                 );
               }}
@@ -236,7 +229,6 @@ const Insight = (props: Props) => {
               extraData={props}
               keyExtractor={(item) => item.title}
               renderItem={({ item, index }) => {
-                const { title: itemTitle, body } = item;
                 return (
                   <NumberedListItem>
                     <ListNumberWrapper>
@@ -244,10 +236,7 @@ const Insight = (props: Props) => {
                     </ListNumberWrapper>
                     <TextWrapper>
                       <TextRow>
-                        <ListTitle>{itemTitle}</ListTitle>
-                      </TextRow>
-                      <TextRow>
-                        <ListBody>{body}</ListBody>
+                        <NumberedListItemText>{item}</NumberedListItemText>
                       </TextRow>
                     </TextWrapper>
                   </NumberedListItem>

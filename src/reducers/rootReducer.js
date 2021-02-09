@@ -51,7 +51,6 @@ import blockchainNetworkReducer from './blockchainNetworkReducer';
 import userSettingsReducer from './userSettingsReducer';
 import userEventsReducer from './userEventsReducer';
 import walkthroughsReducer from './walkthroughsReducer';
-import syntheticsReducer from './syntheticsReducer';
 import ensRegistryReducer from './ensRegistryReducer';
 import insightsReducer from './insightsReducer';
 import referralsReducer from './referralsReducer';
@@ -66,6 +65,8 @@ import fiatToCryptoReducer from './fiatToCryptoReducer';
 import onboardingReducer from './onboardingReducer';
 import cacheReducer from './cacheReducer';
 import transactionEstimateReducer from './transactionEstimateReducer';
+import rariReducer from './rariReducer';
+import liquidityPoolsReducer from './liquidityPoolsReducer';
 
 // local types
 import type { OfflineQueueReducerState } from './offlineQueueReducer';
@@ -95,7 +96,6 @@ import type { BlockchainNetworkAction, BlockchainNetworkReducerState } from './b
 import type { UserSettingsReducerAction, UserSettingsReducerState } from './userSettingsReducer';
 import type { UserEventsReducerAction, UserEventsReducerState } from './userEventsReducer';
 import type { WalkthroughsReducerAction, WalkthroughsReducerState } from './walkthroughsReducer';
-import type { SyntheticsReducerAction, SyntheticsReducerState } from './syntheticsReducer';
 import type { EnsRegistryReducerAction, EnsRegistryReducerState } from './ensRegistryReducer';
 import type { InsightsReducerAction, InsightsReducerState } from './insightsReducer';
 import type { ReferralsReducerAction, ReferralsReducerState } from './referralsReducer';
@@ -113,6 +113,8 @@ import type { FiatToCryptoReducerAction, FiatToCryptoReducerState } from './fiat
 import type { CacheAction, CacheReducerState } from './cacheReducer';
 import type { OnboardingReducerAction, OnboardingReducerState } from './onboardingReducer.js';
 import type { TransactionEstimateReducerAction, TransactionEstimateReducerState } from './transactionEstimateReducer';
+import type { RariReducerAction, RariReducerState } from './rariReducer';
+import type { LiquidityPoolsReducerState, LiquidityPoolsReducerAction } from './liquidityPoolsReducer';
 
 export type RootReducerState = {|
   offlineQueue: OfflineQueueReducerState,
@@ -139,7 +141,6 @@ export type RootReducerState = {|
   userSettings: UserSettingsReducerState,
   userEvents: UserEventsReducerState,
   walkthroughs: WalkthroughsReducerState,
-  synthetics: SyntheticsReducerState,
   ensRegistry: EnsRegistryReducerState,
   referrals: ReferralsReducerState,
   insights: InsightsReducerState,
@@ -154,6 +155,8 @@ export type RootReducerState = {|
   onboarding: OnboardingReducerState,
   cache: CacheReducerState,
   transactionEstimate: TransactionEstimateReducerState,
+  rari: RariReducerState,
+  liquidityPools: LiquidityPoolsReducerState,
 |};
 
 type RootReducerAction =
@@ -173,7 +176,6 @@ type RootReducerAction =
   | UserEventsReducerAction
   | WalkthroughsReducerAction
   | DbAction
-  | SyntheticsReducerAction
   | EnsRegistryReducerAction
   | InsightsReducerAction
   | ReferralsReducerAction
@@ -186,7 +188,9 @@ type RootReducerAction =
   | FiatToCryptoReducerAction
   | OnboardingReducerAction
   | CacheAction
-  | TransactionEstimateReducerAction;
+  | TransactionEstimateReducerAction
+  | RariReducerAction
+  | LiquidityPoolsReducerAction;
 
 export type GetState = () => RootReducerState;
 export type ThunkAction = (
@@ -223,7 +227,6 @@ const appReducer = combineReducers({
   userSettings: userSettingsReducer,
   userEvents: userEventsReducer,
   walkthroughs: walkthroughsReducer,
-  synthetics: syntheticsReducer,
   ensRegistry: ensRegistryReducer,
   insights: insightsReducer,
   referrals: referralsReducer,
@@ -238,6 +241,8 @@ const appReducer = combineReducers({
   onboarding: onboardingReducer,
   cache: cacheReducer,
   transactionEstimate: transactionEstimateReducer,
+  rari: rariReducer,
+  liquidityPools: liquidityPoolsReducer,
 });
 
 export const initialState = appReducer(undefined, {});

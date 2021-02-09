@@ -38,6 +38,7 @@ import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
+import Toast from 'components/Toast';
 
 // utils
 import { spacing, fontSizes, fontStyles } from 'utils/variables';
@@ -48,20 +49,28 @@ import { formatTransactionFee } from 'utils/common';
 
 // constants
 import { ETH } from 'constants/assetsConstants';
-import { PERSONAL_SIGN, ETH_SEND_TX, ETH_SIGN_TX, REQUEST_TYPE } from 'constants/walletConnectConstants';
+import {
+  PERSONAL_SIGN,
+  ETH_SEND_TX,
+  ETH_SIGN_TX,
+  REQUEST_TYPE,
+  ETH_SIGN_TYPED_DATA,
+  ETH_SIGN,
+} from 'constants/walletConnectConstants';
 
 // types
-import type { Asset, AssetData, Assets, Balances } from 'models/Asset';
+import type { Asset, Assets, Balances } from 'models/Asset';
 import type { NavigationScreenProp } from 'react-navigation';
 import type { CallRequest } from 'models/WalletConnect';
 import type { Theme } from 'models/Theme';
-import type { TokenTransactionPayload, TransactionFeeInfo } from 'models/Transaction';
+import type { TokenTransactionPayload, TransactionDraft, TransactionFeeInfo } from 'models/Transaction';
 import type { Account } from 'models/Account';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 
 // selectors
 import { accountBalancesSelector } from 'selectors/balances';
 import { accountAssetsSelector } from 'selectors/assets';
+import { isSmartWalletActivatedSelector } from 'selectors/smartWallet';
 
 // local components
 import withWCRequests from './withWCRequests';
@@ -80,11 +89,12 @@ type Props = {
   acceptWCRequest: (request: CallRequest, transactionPayload: ?TokenTransactionPayload) => void,
   accountAssets: Assets,
   supportedAssets: Asset[],
-  estimateTransaction: (recipient: string, value: number, data: ?string, assetData: AssetData) => void,
+  estimateTransaction: (transactionDraft: TransactionDraft) => void,
   resetEstimateTransaction: () => void,
   isEstimating: boolean,
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
+  isSmartWalletActivated: boolean,
 };
 
 const FooterWrapper = styled.View`
@@ -138,7 +148,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
 
   componentDidMount() {
     const requestMethod = get(this.request, 'method');
-    this.props.resetEstimateTransaction();
+    const { isSmartWalletActivated, resetEstimateTransaction } = this.props;
+
+    // cannot estimate if smart wallet account not deployed
+    if (!isSmartWalletActivated) return;
+
+    resetEstimateTransaction();
     if ([ETH_SEND_TX, ETH_SIGN_TX].includes(requestMethod)) {
       this.fetchTransactionEstimate();
     }
@@ -155,6 +170,8 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
       data,
     } = this.transactionDetails;
 
+    if (!to) return;
+
     const value = Number(amount || 0);
 
     const { symbol, decimals } = getAssetDataByAddress(
@@ -165,7 +182,12 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
 
     const assetData = { contractAddress, token: symbol, decimals };
 
-    estimateTransaction(to, value, data, assetData);
+    estimateTransaction({
+      to,
+      value,
+      data,
+      assetData,
+    });
   };
 
   handleFormSubmit = (request, transactionPayload) => {
@@ -181,7 +203,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
     if (request) {
       rejectWCRequest(request);
     }
-    navigation.goBack();
+    navigation.dismiss();
   };
 
   render() {
@@ -192,6 +214,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
       feeInfo,
       isEstimating,
       estimateErrorMessage,
+      isSmartWalletActivated,
     } = this.props;
 
     const colors = getThemeColors(theme);
@@ -208,7 +231,9 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
     let body = null;
     let address = '';
     let message = '';
-    let errorMessage = estimateErrorMessage;
+    let errorMessage = isSmartWalletActivated
+      ? estimateErrorMessage
+      : t('walletConnectContent.error.smartWalletNeedToBeActivated');
     let transactionPayload;
 
     const gasToken = feeInfo?.gasToken || null;
@@ -233,8 +258,10 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
           symbol,
           decimals,
         } = transactionPayload;
-
-        if (this.unsupportedTransaction) {
+        if (!to) {
+          Toast.show({ message: t('toast.walkthroughFailed'), emoji: 'hushed' });
+          errorMessage = t('error.transactionFailed.cantCalculateFee');
+        } else if (this.unsupportedTransaction) {
           errorMessage = t('error.walletConnect.assetNotSupported');
         } else if (feeInfo && !isEnoughBalanceForTransactionFee(balances, {
           amount,
@@ -298,11 +325,29 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
           </ScrollWrapper>
         );
         break;
-      case 'eth_sign':
+      case ETH_SIGN:
         type = REQUEST_TYPE.MESSAGE;
 
         address = params[0]; // eslint-disable-line
         message = params[1]; // eslint-disable-line
+        body = (
+          <ScrollWrapper regularPadding>
+            <LabeledRow>
+              <Label>{t('transactions.label.address')}</Label>
+              <Value>{address}</Value>
+            </LabeledRow>
+            <LabeledRow>
+              <Label>{t('transactions.label.message')}</Label>
+              <Value>{message}</Value>
+            </LabeledRow>
+          </ScrollWrapper>
+        );
+        break;
+      case ETH_SIGN_TYPED_DATA:
+        type = REQUEST_TYPE.MESSAGE;
+
+        [address, message] = params;
+
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
@@ -325,6 +370,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
         } catch (e) {
           ([message] = params);
         }
+
         body = (
           <ScrollWrapper regularPadding>
             <LabeledRow>
@@ -397,6 +443,7 @@ const mapStateToProps = ({
 const structuredSelector = createStructuredSelector({
   balances: accountBalancesSelector,
   accountAssets: accountAssetsSelector,
+  isSmartWalletActivated: isSmartWalletActivatedSelector,
 });
 
 const combinedMapStateToProps = (state) => ({
@@ -405,12 +452,7 @@ const combinedMapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
-  estimateTransaction: (
-    recipient: string,
-    value: number,
-    data: ?string,
-    assetData: AssetData,
-  ) => dispatch(estimateTransactionAction(recipient, value, data, assetData)),
+  estimateTransaction: (transactionDraft: TransactionDraft) => dispatch(estimateTransactionAction(transactionDraft)),
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
 });
 

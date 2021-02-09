@@ -476,9 +476,6 @@
       "notEnoughToken": "Nedovoljno {{token}}",
       "shouldBeGreaterThan1Wei": "Iznos mora biti veći od 1 Wei (0.000000000000000001 ETH)"
     },
-    "synthetics": {
-      "failedToCalculate": "Neuspješno računanje synthetics mjenjačnice."
-    },
     "exchange": {
       "incorrectNumber": "Netočan broj",
       "amountTooBig": "Iznos ne smije biti veći od vašeg stanja - {{assetBalance}} {{symbol}}"
@@ -995,7 +992,6 @@
       "ticketPurchaseScreen": "Kupite Karte",
       "withdrawScreen": "Podigni",
       "withdrawConfirmScreen": "Pregledaj",
-      "authorizePoolTogether": "Odobri Pool Together",
       "purchaseConfirmScreen": "Pregledaj"
     },
     "button": {
@@ -1004,11 +1000,8 @@
     },
     "paragraph": {
       "purchasedTicketsEligibleDate": "Ulaznice kupljene danas moći će dobiti nagrade početkom {{date}}",
-      "automationMissing": "Da biste se pridružili Pool Togetheru, prvo ćete morati automatizirati transakcije.",
-      "pendingAutomation": "Molimo pričekajte automatizaciju Pool Together",
       "withdrawalNote": "Ako odustanete, više nećete imati pravo na osvajanje nagrada.",
-      "receiveOnWithdrawal": "Dobiti ćete {{token]] u vaš novčanik",
-      "allowAutomationWithToken": "Dopustite Pool Together da potroše {{token}} i automatiziraju transakcije umjesto vas. Morat ćete to učiniti samo jednom. Sve daljnje kupnje izvršit će se bez naknade za automatizaciju."
+      "receiveOnWithdrawal": "Dobiti ćete {{token]] u vaš novčanik"
     }
   },
 
@@ -1282,8 +1275,6 @@
     "linkedDeviceNotFound": "Povezani uređaj nije pronađen.",
     "exchangeEnabled": "{{fromAssetName}} ({{fromAssetSymbol}}) u {{toAssetName}} ({{toAssetSymbol}}) izmjena omogućena.",
     "keyWalletAssetsTransfered": "Imovina prenesena. Uživajte u korištenju svog pametnog novčanika!",
-    "poolTogetherAutomationEnabled": "{{tokenSymbol}} omogućen. Sretno Poolanje!",
-    "poolTogetherAutomationFailed": "Nije moguće omogućiti {{tokenSymbol}}. Molimo pokušajte ponovo",
     "walletRecovered": "Novčanik je sada oporavljen. Uživajte u korištenju Pillara!",
     "rewardsOnTheirWay": "Nagrada za preporuku je na putu. Uskoro ćete ju dobiti.",
     "somethingWentWrong": "Nešto je pošlo po zlu, mi to već istražujemo. Ne brinite, vaša sredstva su sigurna. Pokušajte ponovo ili kontaktirajte podršku.",

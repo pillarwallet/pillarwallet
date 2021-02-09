@@ -21,13 +21,33 @@ import { createSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
 
 // constants
-import { PLR } from 'constants/assetsConstants';
+import { PLR, USD } from 'constants/assetsConstants';
+import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
+
+// utils
+import { getStreamBalance } from 'utils/sablier';
+import { formatUnits } from 'utils/common';
+import { getPoolStats } from 'utils/liquidityPools';
 
 // types
 import type { RootReducerState } from 'reducers/rootReducer';
+import type { MixedBalance } from 'models/Asset';
+import type { LendingReducerState } from 'reducers/lendingReducer';
+import type { PoolPrizeInfo } from 'models/PoolTogether';
+import type { SablierReducerState } from 'reducers/sablierReducer';
+import type { RariReducerState } from 'reducers/rariReducer';
+import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 // selectors
-import { balancesSelector, activeAccountIdSelector } from './selectors';
+import {
+  balancesSelector,
+  activeAccountIdSelector,
+  lendingSelector,
+  poolTogetherStatsSelector,
+  sablierSelector,
+  rariSelector,
+  liquidityPoolsSelector,
+} from './selectors';
 import { availableStakeSelector } from './paymentNetwork';
 
 
@@ -68,4 +88,66 @@ export const allBalancesSelector = createSelector(
 export const keyBasedWalletHasPositiveBalanceSelector = createSelector(
   ({ keyBasedAssetTransfer }: RootReducerState) => keyBasedAssetTransfer?.hasPositiveBalance,
   (hasPositiveBalance) => !!hasPositiveBalance,
+);
+
+const aaveBalanceListSelector = createSelector(
+  lendingSelector,
+  (lending: LendingReducerState): MixedBalance[] =>
+    lending.depositedAssets.map(({ currentBalance: balance, symbol }) => ({ symbol, balance })),
+);
+
+const poolTogetherBalanceListSelector = createSelector(
+  poolTogetherStatsSelector,
+  (poolTogetherStats: PoolPrizeInfo): MixedBalance[] => Object.keys(poolTogetherStats)
+    .map(symbol => ({
+      symbol,
+      balance: poolTogetherStats[symbol].userInfo?.ticketBalance ?? 0,
+    })),
+);
+
+const sablierBalanceListSelector = createSelector(
+  sablierSelector,
+  ({ incomingStreams }: SablierReducerState): MixedBalance[] => incomingStreams
+    .map<?MixedBalance>(stream => {
+      const { symbol, decimals } = stream.token;
+      if (!symbol || !decimals) return null;
+
+      return {
+        symbol,
+        balance: formatUnits(getStreamBalance(stream), parseInt(decimals, 10)),
+      };
+    })
+    .filter(Boolean),
+);
+
+const rariBalanceListSelector = createSelector(
+  rariSelector,
+  ({ userDepositInUSD }: RariReducerState): MixedBalance[] => Object.keys(userDepositInUSD)
+    .map(pool => ({ balance: userDepositInUSD[pool], symbol: USD })),
+);
+
+const liquidityPoolsBalanceListSelector = createSelector(
+  liquidityPoolsSelector,
+  (liquidityPoolsState: LiquidityPoolsReducerState): MixedBalance[] => LIQUIDITY_POOLS().map(pool => {
+    const {
+      currentPrice,
+      userLiquidityTokenBalance,
+      stakedAmount,
+    } = getPoolStats(pool, liquidityPoolsState) ?? {};
+
+    if ([currentPrice, userLiquidityTokenBalance, stakedAmount].includes(undefined)) return null;
+    return {
+      balance: (userLiquidityTokenBalance + stakedAmount) * currentPrice,
+      symbol: USD,
+    };
+  }).filter(Boolean),
+);
+
+export const servicesBalanceListSelector = createSelector(
+  aaveBalanceListSelector,
+  poolTogetherBalanceListSelector,
+  sablierBalanceListSelector,
+  rariBalanceListSelector,
+  liquidityPoolsBalanceListSelector,
+  (...balanceLists: MixedBalance[][]) => ([]: MixedBalance[]).concat(...balanceLists),
 );

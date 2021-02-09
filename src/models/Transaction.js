@@ -19,6 +19,9 @@
 */
 
 import { BigNumber } from 'bignumber.js';
+import type { RariPool } from 'models/RariPool';
+import type { AssetData } from 'models/Asset';
+import type { LiquidityPool } from 'models/LiquidityPools';
 
 export type TxSettlementItem = {
   symbol: string,
@@ -26,11 +29,11 @@ export type TxSettlementItem = {
   hash: string,
 };
 
-export type TxPoolTogetherExtra = {
+export type TxPoolTogetherExtra = {|
   symbol: string,
   decimals: number,
   amount: string,
-}
+|};
 
 type TxWithdrawalExtra = {
   paymentHash: string,
@@ -53,11 +56,11 @@ export type SyntheticTransactionExtra = {
   syntheticTransaction: $Shape<SyntheticTransaction>,
 };
 
-export type AaveExtra = {
+export type AaveExtra = {|
   symbol: string,
   decimals: number,
   amount: string,
-};
+|};
 
 export type TxSablierExtra = {
   assetAddress: string,
@@ -66,13 +69,53 @@ export type TxSablierExtra = {
   streamId: string,
 };
 
+export type RariDepositExtra = {|
+  symbol: string,
+  decimals: number,
+  amount: number,
+  rariPool: ?RariPool,
+  rftMinted: string,
+|};
+
+export type RariWithdrawExtra = {|
+  symbol: string,
+  decimals: number,
+  amount: number,
+  rariPool: ?RariPool,
+  rftBurned: string,
+|};
+
+export type RariTransferExtra = {|
+  amount: string,
+  rariPool: ?RariPool,
+  contactAddress: string,
+|};
+
+export type RariClaimExtra = {|
+  amount: string,
+  rgtBurned: string,
+|};
+
+export type RariExtra = RariDepositExtra
+  | RariWithdrawExtra
+  | RariTransferExtra
+  | RariClaimExtra;
+
+export type LiquidityPoolsExtra = {|
+  amount: string,
+  pool: LiquidityPool,
+  tokenAmounts?: string[],
+|};
+
 export type TransactionExtra = TxSettlementItem[]
   | TxWithdrawalExtra
   | SyntheticTransactionExtra
   | EnsTransactionExtra
   | AaveExtra
   | TxPoolTogetherExtra
-  | TxSablierExtra;
+  | TxSablierExtra
+  | RariExtra
+  | LiquidityPoolsExtra;
 
 export type GasToken = {
   address: string,
@@ -105,6 +148,7 @@ export type Transaction = {
   stateInPPN?: string,
   feeWithGasToken?: ?FeeWithGasToken,
   type?: string,
+  tranType?: string,
 }
 
 export type TransactionsStore = {
@@ -132,14 +176,14 @@ export type TokenTransactionPayload = {
   extra?: Object,
   usePPN?: boolean,
   gasToken?: ?GasToken,
-  sequentialSmartWalletTransactions?: TokenTransactionPayload[],
+  sequentialTransactions?: TokenTransactionPayload[],
 }
 
 export type CollectibleTransactionPayload = {
   to: string,
   receiverEnsName?: string,
   name: string,
-  contractAddress: ?string,
+  contractAddress: string,
   tokenType: string,
   tokenId: string,
   note?: ?string,
@@ -152,7 +196,7 @@ export type CollectibleTransactionPayload = {
   txFeeInWei: number,
 }
 
-export type TransactionPayload = TokenTransactionPayload | CollectibleTransactionPayload;
+export type TransactionPayload = $Shape<TokenTransactionPayload & CollectibleTransactionPayload>;
 
 export type TransactionEthers = {
   from: string,
@@ -185,8 +229,13 @@ export type TransactionFeeInfo = {
 };
 
 export type AllowanceTransaction = {
-  nonce: string,
   to: string,
-  chainId: string,
   data: string,
+};
+
+export type TransactionDraft = {
+  to: string,
+  value: number,
+  assetData?: AssetData,
+  data?: string,
 };

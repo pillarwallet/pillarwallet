@@ -36,13 +36,14 @@ import Input from 'components/Input';
 import { Spacing } from 'components/Layout';
 import Modal from 'components/Modal';
 
-import { formatAmount, isValidNumber } from 'utils/common';
-import { themedColors, getThemeColors } from 'utils/themes';
+import { formatAmount, isValidNumber, noop, toFixedString } from 'utils/common';
+import { getThemeColors } from 'utils/themes';
 import { images } from 'utils/images';
-import { calculateMaxAmount } from 'utils/assets';
+import { calculateMaxAmount, getFormattedBalanceInFiat, getBalanceInFiat } from 'utils/assets';
 
-import { COLLECTIBLES, TOKENS, defaultFiatCurrency } from 'constants/assetsConstants';
-import { getBalanceInFiat, getFormattedBalanceInFiat, getAssetBalanceFromFiat } from 'screens/Exchange/utils';
+import { COLLECTIBLES, TOKENS, BTC, defaultFiatCurrency } from 'constants/assetsConstants';
+import { MIN_WBTC_CAFE_AMOUNT } from 'constants/exchangeConstants';
+import { getAssetBalanceFromFiat } from 'screens/Exchange/utils';
 
 import { accountBalancesSelector } from 'selectors/balances';
 import { visibleActiveAccountAssetsWithBalanceSelector } from 'selectors/assets';
@@ -61,7 +62,7 @@ export type ExternalProps = {
   customBalances?: Balances,
   selectorOptionsTitle?: string,
   assetData: Option,
-  onAssetDataChange: (Option) => void,
+  onAssetDataChange?: (Option) => void,
   value: string,
   onValueChange: (string) => void,
   horizontalOptions?: HorizontalOption[],
@@ -72,6 +73,8 @@ export type ExternalProps = {
   leftSideSymbol?: string,
   getInputRef?: (Input) => void,
   onFormValid?: (boolean) => void,
+  disableAssetChange?: boolean,
+  customRates?: Rates,
 };
 
 type InnerProps = {
@@ -91,19 +94,22 @@ const CollectibleWrapper = styled.View`
 
 const SelectorChevron = styled(Icon)`
   font-size: 16px;
-  color: ${themedColors.secondaryText};
+  color: ${({ theme }) => theme.colors.basic030};
 `;
 
 export const getErrorMessage = (
   amount: string,
   assetBalance: string,
   assetSymbol: string,
+  fiatValue?: ?string,
 ): string => {
   const isValid = isValidNumber(amount);
-  if (!isValid) {
+  if (!isValid || (!!fiatValue && !isValidNumber(fiatValue))) {
     return t('error.amount.invalidNumber');
-  } else if (Number(assetBalance) < Number(amount)) {
+  } else if (assetSymbol !== BTC && Number(assetBalance) < Number(amount)) {
     return t('error.amount.notEnoughToken', { token: assetSymbol });
+  } else if (assetSymbol === BTC && +amount && Number(amount) < MIN_WBTC_CAFE_AMOUNT) {
+    return t('wbtcCafe.higherAmount');
   }
   return '';
 };
@@ -132,38 +138,47 @@ export const ValueInputComponent = (props: Props) => {
     leftSideSymbol,
     getInputRef,
     onFormValid,
+    disableAssetChange,
+    customRates,
   } = props;
 
   const [valueInFiat, setValueInFiat] = useState<string>('');
   const [displayFiatAmount, setDisplayFiatAmount] = useState<boolean>(false);
-  const [errorMessageState, setErrorMessageState] = useState<?string>(null);
+
+  const ratesWithCustomRates = { ...rates, ...customRates };
 
   const assetSymbol = assetData.symbol || '';
-  const assetBalance = +formatAmount((customBalances || balances)[assetSymbol]?.balance);
-  const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken).toString();
+  const assetBalance = (customBalances || balances)[assetSymbol]?.balance || '0';
+  const maxValue = calculateMaxAmount(assetSymbol, assetBalance, txFeeInfo?.fee, txFeeInfo?.gasToken);
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
 
-  const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, rates, assetSymbol);
-  const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, rates, assetSymbol);
+  const formattedMaxValueInFiat = getFormattedBalanceInFiat(fiatCurrency, maxValue, ratesWithCustomRates, assetSymbol);
+  const formattedValueInFiat = getFormattedBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+
+  React.useEffect(() => {
+    if (disabled) { // handle fiat updates when disabled, e.g. on Exchange screen
+      const fiatValue = getBalanceInFiat(fiatCurrency, value, ratesWithCustomRates, assetSymbol);
+      setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
+    }
+  }, [value]);
 
   const handleValueChange = (newValue: string) => {
-    let errorMessage = null;
     // ethers will crash with commas, TODO: we need a proper localisation
     newValue = newValue.replace(/,/g, '.');
     if (displayFiatAmount) {
-      setValueInFiat(newValue);
-      const convertedValue = getAssetBalanceFromFiat(baseFiatCurrency, newValue, rates, assetSymbol).toString();
-      onValueChange(convertedValue);
-
-      errorMessage = getErrorMessage(convertedValue, maxValue, assetSymbol);
+      const split = newValue.split('.');
+      // only allow 2 decimals in fiat mode
+      if (split.length <= 2 && !(split[1] && split[1].length > 2)) {
+        setValueInFiat(newValue);
+        const convertedValue =
+        getAssetBalanceFromFiat(baseFiatCurrency, newValue, ratesWithCustomRates, assetSymbol).toString();
+        onValueChange(convertedValue);
+      }
     } else {
-      setValueInFiat(getBalanceInFiat(fiatCurrency, newValue, rates, assetSymbol).toString());
+      const fiatValue = getBalanceInFiat(fiatCurrency, newValue, ratesWithCustomRates, assetSymbol);
+      setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
       onValueChange(newValue);
-      errorMessage = getErrorMessage(newValue, maxValue, assetSymbol);
-    }
-    if (errorMessage) {
-      setErrorMessageState(errorMessage);
     }
   };
 
@@ -172,15 +187,20 @@ export const ValueInputComponent = (props: Props) => {
     if (updateTxFee) {
       newTxFeeInfo = await updateTxFee(assetSymbol, percent / 100);
     }
-    const newMaxValue = formatAmount(calculateMaxAmount(
+    const newMaxValue = calculateMaxAmount(
       assetSymbol,
       assetBalance,
       newTxFeeInfo?.fee,
       newTxFeeInfo?.gasToken,
-    ));
-    const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, rates, assetSymbol);
-    onValueChange((parseFloat(newMaxValue) * (percent / 100)).toString());
-    setValueInFiat((maxValueInFiat * (percent / 100)).toString());
+    );
+    const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
+    if (percent === 100) {
+      onValueChange(newMaxValue);
+    } else {
+      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)));
+    }
+    const fiatValue = maxValueInFiat * (percent / 100);
+    setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));
   };
 
   const onInputBlur = () => {
@@ -220,14 +240,16 @@ export const ValueInputComponent = (props: Props) => {
     ));
   };
 
+  const disableAssetSelection = disableAssetChange || assetsOptions.length <= 1;
+
   const getCustomLabel = () => {
     return (
       <ValueInputHeader
         asset={assetData}
-        onAssetPress={openAssetSelector}
+        onAssetPress={() => !disableAssetSelection && openAssetSelector()}
         labelText={hideMaxSend ? null : `${formatAmount(maxValue, 2)} ${assetSymbol} (${formattedMaxValueInFiat})`}
         onLabelPress={() => !disabled && handleUsePercent(100)}
-        disableAssetSelection={assetsOptions.length <= 1}
+        disableAssetSelection={disableAssetSelection}
       />
     );
   };
@@ -243,20 +265,32 @@ export const ValueInputComponent = (props: Props) => {
     inputAccessoryViewID: INPUT_ACCESSORY_NATIVE_ID,
     onBlur: onInputBlur,
     onFocus: onInputFocus,
+    selection: disabled ? { start: 0, end: 0 } : null,
   };
 
-  const errorMessage = disabled ? null : getErrorMessage(value, maxValue, assetSymbol);
+  const errorMessage = disabled ? null : getErrorMessage(
+    value, maxValue, assetSymbol, displayFiatAmount ? valueInFiat : null,
+  );
 
   React.useEffect(() => {
     if (onFormValid) {
       onFormValid(!errorMessage);
     }
-  }, [value, assetData]);
+  }, [errorMessage]);
 
   const colors = getThemeColors(theme);
   const { towellie: genericCollectible } = images(theme);
 
   const { tokenType = TOKENS } = assetData;
+
+  const toggleDisplayFiat = () => {
+    // when switching at error state, reset values to avoid new errors
+    if (errorMessage) {
+      setValueInFiat('0');
+      handleValueChange('0');
+    }
+    setDisplayFiatAmount(!displayFiatAmount);
+  };
 
   return (
     <>
@@ -264,16 +298,16 @@ export const ValueInputComponent = (props: Props) => {
         <TextInput
           style={{ width: '100%' }}
           hasError={!!errorMessage}
-          errorMessage={errorMessage || errorMessageState}
+          errorMessage={errorMessage}
           inputProps={inputProps}
           numeric
           itemHolderStyle={{ borderRadius: 10 }}
-          onRightAddonPress={openAssetSelector}
+          onRightAddonPress={disableAssetChange ? noop : openAssetSelector}
           leftSideText={displayFiatAmount
             ? t('tokenValue', { value: formatAmount(value || '0', 2), token: assetSymbol || '' })
             : formattedValueInFiat
           }
-          onLeftSideTextPress={() => setDisplayFiatAmount(!displayFiatAmount)}
+          onLeftSideTextPress={toggleDisplayFiat}
           rightPlaceholder={displayFiatAmount ? fiatCurrency : assetSymbol}
           leftSideSymbol={leftSideSymbol}
           getInputRef={getInputRef}
@@ -283,7 +317,7 @@ export const ValueInputComponent = (props: Props) => {
       )}
       {tokenType === COLLECTIBLES && (
         <CollectibleWrapper>
-          <MediumText medium onPress={openAssetSelector}>{assetData.name}
+          <MediumText medium onPress={disableAssetChange ? noop : openAssetSelector}>{assetData.name}
             <SelectorChevron name="selector" color={colors.labelTertiary} />
           </MediumText>
           <Spacing h={16} />

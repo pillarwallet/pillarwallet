@@ -92,6 +92,8 @@ const glyphMap = {
   wallet: '\uE842',
   direct: '\uE8C4',
   minus: '\uE81E',
+  question: '\uE845',
+  equal: '\uE88C',
 };
 
 export type IconProps = {

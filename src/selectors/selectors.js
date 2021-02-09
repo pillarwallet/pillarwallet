@@ -36,9 +36,6 @@ export const collectiblesHistorySelector =
   ({ collectibles }: RootReducerState) => collectibles.transactionHistory;
 export const historySelector = ({ history }: RootReducerState) => history.data;
 
-export const paymentNetworkBalancesSelector =
-  ({ paymentNetwork }: RootReducerState) => paymentNetwork.balances;
-
 export const accountsSelector = ({ accounts }: RootReducerState) => accounts.data;
 
 export const activeAccountSelector =
@@ -60,8 +57,6 @@ export const activeAccountAddressSelector = createSelector(
 );
 
 export const assetsSelector = ({ assets }: RootReducerState) => assets.data;
-export const syntheticAssetsSelector = ({ synthetics }: RootReducerState) => synthetics.data;
-
 
 export const hiddenAssetsSelector = ({ userSettings }: RootReducerState) =>
   get(userSettings, 'data.hiddenAssets', {});
@@ -81,3 +76,11 @@ export const poolTogetherStatsSelector = ({ poolTogether }: RootReducerState) =>
   get(poolTogether, 'poolStats', {});
 
 export const contactsSelector = ({ contacts }: RootReducerState) => contacts.data;
+
+export const lendingSelector = ({ lending }: RootReducerState) => lending;
+
+export const sablierSelector = ({ sablier }: RootReducerState) => sablier;
+
+export const rariSelector = ({ rari }: RootReducerState) => rari;
+
+export const liquidityPoolsSelector = ({ liquidityPools }: RootReducerState) => liquidityPools;

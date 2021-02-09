@@ -52,8 +52,10 @@ export const WALLETCONNECT_INIT_ERROR = 'WALLETCONNECT_INIT_ERROR';
 export const TOGGLE_WALLET_CONNECT_PROMO_CARD = 'TOGGLE_WALLET_CONNECT_PROMO_CARD';
 
 export const PERSONAL_SIGN = 'personal_sign';
+export const ETH_SIGN = 'eth_sign';
 export const ETH_SEND_TX = 'eth_sendTransaction';
 export const ETH_SIGN_TX = 'eth_signTransaction';
+export const ETH_SIGN_TYPED_DATA = 'eth_signTypedData';
 
 export const REQUEST_TYPE = {
   CALL: 'call',

@@ -55,6 +55,7 @@ type Props = {
   footerProps?: FooterProps,
   children?: React.Node,
   isLoading?: boolean,
+  customScreenTitle?: string,
 };
 
 const FooterInner = styled.View`
@@ -89,6 +90,7 @@ const SendFooter = (props: FooterProps) => {
     <FooterInner>
       {footerTopAddon}
       {isNextButtonVisible &&
+        // $FlowFixMe: flow update to 0.122
         <Button
           title={t('button.next')}
           marginTop={spacing.medium}
@@ -106,11 +108,12 @@ const SendContainer = (props: Props) => {
     footerProps = {},
     children,
     isLoading,
+    customScreenTitle,
   } = props;
 
   return (
     <ContainerWithHeader
-      headerProps={{ centerItems: [{ title: t('transactions.title.sendScreen') }] }}
+      headerProps={{ centerItems: [{ title: customScreenTitle || t('transactions.title.sendScreen') }] }}
       footer={<SendFooter {...footerProps} />}
       minAvoidHeight={800}
     >

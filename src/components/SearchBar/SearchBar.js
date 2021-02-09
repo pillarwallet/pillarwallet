@@ -30,6 +30,7 @@ import { fontSizes, appFont, spacing } from 'utils/variables';
 import { getColorByThemeOutsideStyled, getThemeColors, getThemeType } from 'utils/themes';
 
 import type { Theme, ThemeColors } from 'models/Theme';
+// $FlowFixMe
 import type { Event } from 'react-native';
 
 
@@ -45,13 +46,20 @@ type InputPropsType = {
   validator?: (val: string) => string,
 };
 
+type IconProps = {|
+  icon: string,
+  style?: Object,
+  onPress?: () => void,
+  persistIconOnFocus?: boolean,
+|};
+
 type CommonComponentsProps = {
   inputProps: InputPropsType,
   placeholder?: string,
   backgroundColor?: string,
   inputRef?: RNTextInput,
   inputIconName?: string,
-  iconProps?: Object,
+  iconProps?: IconProps,
 };
 
 type Props = CommonComponentsProps & {
@@ -165,10 +173,16 @@ const SearchInput = (props: SearchInputProps) => {
     borderColor,
   } = props;
 
-  const { icon, style: iconStyle = {}, onPress } = iconProps;
+  const {
+    icon,
+    style: iconStyle = {},
+    onPress,
+    persistIconOnFocus,
+  } = iconProps;
   const defaultOnIconPress = isFocused ? handleSubmit : onFocus;
   const onIconPress = onPress || defaultOnIconPress;
   const iconName = icon || 'search'; // eslint-disable-line i18next/no-literal-string
+  const showIcon = persistIconOnFocus || !isFocused;
 
   return (
     <InputWrapper
@@ -186,9 +200,9 @@ const SearchInput = (props: SearchInputProps) => {
         underlineColorAndroid="transparent"
         autoCorrect={false}
         innerRef={inputRef}
-        needsExtraPadding={!isFocused}
+        needsExtraPadding={showIcon}
       />
-      {!isFocused &&
+      {showIcon &&
       <InputIcon
         icon={iconName}
         onPress={onIconPress}
@@ -268,6 +282,7 @@ class SearchBar extends React.Component<Props, State> {
     Animated.timing(this.state.animShrink, {
       toValue: 100,
       duration: 250,
+      useNativeDriver: false,
     }).start();
     Keyboard.dismiss();
   };
@@ -281,6 +296,7 @@ class SearchBar extends React.Component<Props, State> {
     Animated.timing(this.state.animShrink, {
       toValue: inputShrinkSize,
       duration: 250,
+      useNativeDriver: false,
     }).start();
   };
 

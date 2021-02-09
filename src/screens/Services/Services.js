@@ -21,7 +21,6 @@ import * as React from 'react';
 import { FlatList, Alert } from 'react-native';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
-import { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import t from 'translations/translate';
 
@@ -42,11 +41,13 @@ import {
   POOLTOGETHER_DASHBOARD,
   SABLIER_STREAMS,
   SENDWYRE_INPUT,
+  WBTC_CAFE,
+  RARI_DEPOSIT,
+  LIQUIDITY_POOLS,
 } from 'constants/navigationConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // utils
-import { getThemeColors } from 'utils/themes';
 import { spacing } from 'utils/variables';
 import { openInAppBrowser } from 'utils/inAppBrowser';
 import {
@@ -54,41 +55,35 @@ import {
   getAccountAddress,
   checkIfLegacySmartWalletAccount,
 } from 'utils/accounts';
-import { getSmartWalletStatus } from 'utils/smartWallet';
 import { rampWidgetUrl, wyreWidgetUrl, altalixWidgetUrl } from 'utils/fiatToCrypto';
 
 // services
 import { firebaseRemoteConfig } from 'services/firebase';
 
 // types
-import type { Theme } from 'models/Theme';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Accounts } from 'models/Account';
 import type { User } from 'models/User';
-import type { SmartWalletReducerState } from 'reducers/smartWalletReducer';
 import type { SendwyreTrxValues } from 'models/FiatToCryptoProviders';
 import type SDKWrapper from 'services/api';
-
-// assets
-import PROVIDERS_META from 'assets/exchange/providersMeta.json';
 
 // Config constants, to be overwritten in componentDidMount
 let isOffersEngineEnabled = true;
 let isAaveEnabled = true;
 let isPoolTogetherEnabled = true;
-let isPeerToPeerEnabled = true;
 let isWyreEnabled = true;
 let isRampEnabled = true;
 let isSablierEnabled = true;
 let isAltalixEnabled = true;
+let isWBTCCafeEnabled = true;
+let isRariEnabled = true;
+let areLiquidityPoolsEnabled = true;
 
 type Props = {
-  theme: Theme,
   navigation: NavigationScreenProp<*>,
   getMetaData: () => void,
   user: User,
   accounts: Accounts,
-  smartWalletState: SmartWalletReducerState,
   getApi: () => SDKWrapper,
   isAltalixAvailable: null | boolean,
   loadAltalixInfo: () => void,
@@ -104,25 +99,19 @@ class ServicesScreen extends React.Component<Props> {
     isOffersEngineEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_OFFERS_ENGINE);
     isAaveEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_AAVE);
     isPoolTogetherEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_POOL_TOGETHER);
-    isPeerToPeerEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_PEER_TO_PEER);
     isWyreEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_WYRE);
     isRampEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RAMP);
     isSablierEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_SABLIER);
     isAltalixEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_ALTALIX);
+    isWBTCCafeEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.WBTC_CAFE);
+    isRariEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_RARI);
+    areLiquidityPoolsEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.FEATURE_LIQUIDITY_POOLS);
 
     if (isAltalixAvailable === null) loadAltalixInfo();
   }
 
   getServices = () => {
-    const {
-      navigation,
-      theme,
-    } = this.props;
-    const colors = getThemeColors(theme);
-    const offersBadge = Array.isArray(PROVIDERS_META) && !!PROVIDERS_META.length ? {
-      label: t('servicesContent.exchange.label.exchangeCount', { count: PROVIDERS_META.length }),
-      color: colors.primary,
-    } : null;
+    const { navigation } = this.props;
 
     const services = [];
     if (isOffersEngineEnabled) {
@@ -131,10 +120,17 @@ class ServicesScreen extends React.Component<Props> {
         title: t('servicesContent.exchange.title'),
         body: t('servicesContent.exchange.description'),
         action: () => navigation.navigate(EXCHANGE),
-        labelBadge: offersBadge,
       });
     }
     services.push(...this.getBuyCryptoServices());
+    if (areLiquidityPoolsEnabled) {
+      services.push({
+        key: 'liquidityPools',
+        title: t('servicesContent.liquidityPools.title'),
+        body: t('servicesContent.liquidityPools.description'),
+        action: () => navigation.navigate(LIQUIDITY_POOLS),
+      });
+    }
     if (isAaveEnabled) {
       services.push({
         key: 'depositPool',
@@ -159,13 +155,20 @@ class ServicesScreen extends React.Component<Props> {
         action: () => navigation.navigate(SABLIER_STREAMS),
       });
     }
-    if (isPeerToPeerEnabled) {
+    if (isWBTCCafeEnabled) {
       services.push({
-        key: 'peerToPeerTrading',
-        title: t('servicesContent.peerToPeerTrading.title'),
-        body: t('servicesContent.peerToPeerTrading.description'),
-        disabled: true,
-        label: t('servicesContent.label.soon'),
+        key: 'wbtc',
+        title: t('wbtcCafe.cafe'),
+        body: t('wbtcCafe.trade'),
+        action: () => navigation.navigate(WBTC_CAFE),
+      });
+    }
+    if (isRariEnabled) {
+      services.push({
+        key: 'rari',
+        title: t('servicesContent.rari.title'),
+        body: t('servicesContent.rari.description'),
+        action: () => navigation.navigate(RARI_DEPOSIT),
       });
     }
     return services;
@@ -250,17 +253,9 @@ class ServicesScreen extends React.Component<Props> {
   }
 
   getCryptoPurchaseAddress = (): string | null => {
-    const { accounts, smartWalletState } = this.props;
+    const { accounts } = this.props;
 
     const activeAccount = getActiveAccount(accounts);
-    const smartWalletStatus = getSmartWalletStatus(accounts, smartWalletState);
-
-    if (!smartWalletStatus.hasAccount) {
-      Modal.open(() => (
-        <BuyCryptoAccountWarnModal message={ACCOUNT_MSG.NO_SW_ACCOUNT} />
-      ));
-      return null;
-    }
 
     if (!activeAccount || !checkIfLegacySmartWalletAccount(activeAccount)) {
       Modal.open(() => (
@@ -348,12 +343,10 @@ class ServicesScreen extends React.Component<Props> {
 const mapStateToProps = ({
   user: { data: user },
   accounts: { data: accounts },
-  smartWallet: smartWalletState,
   fiatToCrypto: { isAltalixAvailable },
 }: RootReducerState): $Shape<Props> => ({
   user,
   accounts,
-  smartWalletState,
   isAltalixAvailable,
 });
 
@@ -366,4 +359,4 @@ const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   getApi: () => ((dispatch((_, getState, api) => api): $FlowFixMe): SDKWrapper),
 });
 
-export default withTheme(connect(mapStateToProps, mapDispatchToProps)(ServicesScreen));
+export default connect(mapStateToProps, mapDispatchToProps)(ServicesScreen);
