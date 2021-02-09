@@ -299,8 +299,8 @@ class SmartWallet {
       });
   }
 
-  getAccountStakedAmount(tokenAddress: ?string): Promise<BigNumber> {
-    if (!tokenAddress) return Promise.resolve(new BigNumber(0));
+  getAccountStakedAmount(tokenAddress: ?string): Promise<BigNumber> | BigNumber {
+    if (!tokenAddress) return new BigNumber(0);
     return this.getSdk().getConnectedAccountVirtualBalance(tokenAddress)
       .then(data => {
         let value;
