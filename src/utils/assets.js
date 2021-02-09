@@ -137,7 +137,7 @@ export const getFormattedRate = (
 export const calculateMaxAmount = (
   token: string,
   balance: number | string,
-  txFeeInWei: BigNumber,
+  txFeeInWei: ?(BigNumber | string | number),
   gasToken: ?GasToken = {},
 ): string => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);
@@ -153,7 +153,7 @@ export const calculateMaxAmount = (
     return balance;
   }
 
-  // we need to convert txFeeInWei to BigNumber as ethers.js utils use different library for Big Numbers
+  // we need to convert txFeeInWei to EthersBigNumber as ethers.js utils use different library for Big Numbers
   const decimals = get(gasToken, 'decimals', 'ether');
   const maxAmount = utils.parseUnits(balance, decimals).sub(EthersBigNumber.from(txFeeInWei.toString()));
   if (maxAmount.lt(0)) return '0';
@@ -164,7 +164,7 @@ export const calculateMaxAmount = (
 export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
   transaction: {
-    txFeeInWei: number,
+    txFeeInWei: ?(BigNumber | string | number),
     gasToken?: ?GasToken,
     amount?: any,
     decimals?: number,
@@ -199,7 +199,7 @@ export const isEnoughBalanceForTransactionFee = (
     }
   }
 
-  const txFeeInWeiBN = new BigNumber(txFeeInWei.toString()); // compatibility
+  const txFeeInWeiBN = new BigNumber(txFeeInWei?.toString() ?? 0); // compatibility
 
   return balanceInWei.gte(txFeeInWeiBN);
 };

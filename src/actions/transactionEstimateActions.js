@@ -129,7 +129,7 @@ export const estimateTransactionAction = (
       feeInfo = buildTxFeeInfo(estimated, useGasToken);
     }
 
-    if (!errorMessage && feeInfo && !feeInfo.fee.gt(0)) {
+    if (!errorMessage && feeInfo && !feeInfo.fee?.gt(0)) {
       errorMessage = t('toast.transactionFeeEstimationFailed');
     }
 
