@@ -337,7 +337,7 @@ const getEthPoolAPY = async (servicesApys: Object[]) => {
         maxApyBN = apyBN;
       }
     });
-    return maxApyBN;
+    return parseFloat(maxApyBN.toString()) / 1e16;
   }
   // If balance > 0, calculate the APY using the factors
   let apyBN = EthersBigNumber.from(0);
