@@ -20,7 +20,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
@@ -36,6 +35,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import AssetPattern from 'components/AssetPattern';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';
 import Progress from 'components/Progress';
@@ -54,7 +54,7 @@ import {
 } from 'constants/navigationConstants';
 
 // utils
-import { formatMoney, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
+import { formatTokenAmount, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
@@ -68,7 +68,6 @@ import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Theme } from 'models/Theme';
 
 import StakingEnabledModal from './StakingEnabledModal';
-
 
 type Props = {
   navigation: NavigationScreenProp<*>,
@@ -110,12 +109,12 @@ const StretchedRow = styled(Row)`
   justify-content: space-between;
 `;
 
-const CardIcon = styled(CachedImage)`
+const CardIcon = styled(Image)`
   width: 48px;
   height: 48px;
 `;
 
-const AllocationIcon = styled(CachedImage)`
+const AllocationIcon = styled(Image)`
   width: 24px;
   height: 24px;
 `;
@@ -193,7 +192,7 @@ const LiquidityPoolDashboard = ({
     : undefined;
 
   const balance = poolStats.userLiquidityTokenBalance;
-  const formattedBalance = formatMoney(balance, 4);
+  const formattedBalance = formatTokenAmount(balance, pool.symbol);
   const hasBalance = balance > 0;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
@@ -320,7 +319,7 @@ const LiquidityPoolDashboard = ({
                   <Row>
                     <CardIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3` }} />
                     <Spacing w={12} />
-                    <MediumText fontSize={20}>{formatAmount(poolStats.stakedAmount)}{' '}
+                    <MediumText fontSize={20}>{formatTokenAmount(poolStats.stakedAmount, pool.symbol)}{' '}
                       <MediumText secondary regular>{pool.symbol}</MediumText>
                     </MediumText>
                   </Row>
@@ -409,7 +408,7 @@ const LiquidityPoolDashboard = ({
               const quantity = hasBalance
                   ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
                   : poolStats.tokensLiquidity[tokenSymbol];
-              const formattedQuantity = formatAmount(quantity);
+              const formattedQuantity = formatTokenAmount(quantity, tokenSymbol);
 
               const { genericToken } = images(theme);
 

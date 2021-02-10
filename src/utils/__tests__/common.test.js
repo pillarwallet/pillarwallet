@@ -36,7 +36,10 @@ import {
   getFormattedTransactionFeeValue,
   formatBigAmount,
   formatBigFiatAmount,
-} from '../common';
+  formatTokenAmount,
+} from 'utils/common';
+
+import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
 
 const gasToken = {
   address: '0x0',
@@ -332,6 +335,26 @@ describe('Common utils', () => {
       expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1.00M');
       expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12.35K');
       expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123.45');
+    });
+  });
+
+  describe('formatTokenAmount', () => {
+    it('formats ETH correctly', () => {
+      expect(formatTokenAmount(123.456789, ETH)).toEqual('123.4567');
+      expect(formatTokenAmount(123.45, ETH)).toEqual('123.45');
+      expect(formatTokenAmount('123.450000000', ETH)).toEqual('123.45');
+    });
+    it('formats high value tokens correctly', () => {
+      HIGH_VALUE_TOKENS.forEach(token => {
+        // 8 decimals
+        expect(formatTokenAmount('123.123456789', token)).toEqual('123.12345678');
+      });
+    });
+    it('formats other tokens correctly', () => {
+      expect(formatTokenAmount(123.456789, PLR)).toEqual('123.45');
+      expect(formatTokenAmount('123.456789', USDC)).toEqual('123.45');
+      expect(formatTokenAmount('123.4000000', USDC)).toEqual('123.4');
+      expect(formatTokenAmount('123.456789')).toEqual('123.45');
     });
   });
 });

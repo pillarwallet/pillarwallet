@@ -27,16 +27,13 @@ import * as ethUtil from 'ethereumjs-util';
 import {
   Dimensions,
   Platform,
-  Animated,
-  Easing,
   Linking,
   PixelRatio,
   AppState,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
-import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
-import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import { CardStyleInterpolators } from 'react-navigation-stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
@@ -46,11 +43,9 @@ import {
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   ETH,
-  WBTC,
-  sBTC,
+  HIGH_VALUE_TOKENS,
   VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
-import * as NAVSCREENS from 'constants/navigationConstants';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
@@ -66,7 +61,7 @@ const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
-  if ((isProdEnv && !__DEV__) || isTest) return;
+  if ((isProdEnv() && !__DEV__) || isTest) return;
   console.log(...params); // eslint-disable-line
 };
 
@@ -212,15 +207,9 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  switch (assetSymbol) {
-    case ETH:
-      return 4;
-    case WBTC:
-    case sBTC:
-      return 8;
-    default:
-      return 2;
-  }
+  if (assetSymbol === ETH) return 4;
+  if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
+  return 2;
 };
 
 export const formatAmount = (amount: string | number, precision: number = 6): string => {
@@ -228,6 +217,9 @@ export const formatAmount = (amount: string | number, precision: number = 6): st
 
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
+
+export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+  formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
@@ -322,69 +314,12 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
-const DEFAULT_TRANSITION_SCREENS = [
-  NAVSCREENS.MANAGE_USERS_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
-  NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
-  NAVSCREENS.POOLTOGETHER_FLOW,
-];
-
-const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
-  return DEFAULT_TRANSITION_SCREENS.some(
-    screenName =>
-      screenName === transitionProps.scene.route.routeName ||
-      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName),
-  );
-};
-
-const getTransitionDuration = (isFaster: boolean) => {
-  let duration = 400;
-  if (isFaster && Platform.OS === 'android') {
-    duration = 250;
-  }
-  return duration;
-};
-
-const getTransitionSpec = (isFasterAnimation: boolean) => ({
-  duration: getTransitionDuration(isFasterAnimation),
-  easing: Easing.out(Easing.poly(2)),
-  timing: Animated.timing,
-});
-
 export const modalTransition = {
   mode: 'modal',
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
+    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   },
-  transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
-    transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),
-    screenInterpolator: (sceneProps: TransitionProps) => {
-      const needsDefaultTransition = getIfNeedsDefTransition(transitionProps, prevTransitionProps);
-      if (needsDefaultTransition) {
-        return Platform.OS === 'ios'
-          ? StackViewStyleInterpolator.forHorizontal(sceneProps)
-          : StackViewStyleInterpolator.forFadeFromBottomAndroid(sceneProps);
-      }
-
-      const { layout, position, scene } = sceneProps;
-      const { index } = scene;
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
-
-      const height = layout.initHeight;
-      const translateY = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [height, 0, 0],
-      });
-      return { opacity, transform: [{ translateY }] };
-    },
-  }),
 };
 
 export const handleUrlPress = (url: string) => {
@@ -679,7 +614,7 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv
+export const getEnsPrefix = () => isProdEnv()
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
 

@@ -22,13 +22,13 @@ import * as React from 'react';
 import { RefreshControl, FlatList } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Insight from 'components/Insight/Insight';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import Tabs from 'components/Tabs';
 import SablierStream from 'components/SablierStream';
@@ -62,7 +62,7 @@ const EmptyStateContainer = styled.View`
   padding: 0 20px;
 `;
 
-const SablierLogo = styled(CachedImage)`
+const SablierLogo = styled(Image)`
   width: 64px;
   height: 64px;
   align-self: center;

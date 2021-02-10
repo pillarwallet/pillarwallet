@@ -31,20 +31,20 @@ export const RESET_ASSETS_SEARCH_RESULT = 'RESET_ASSETS_SEARCH_RESULT';
 export const SET_INITIAL_ASSETS = 'SET_INITIAL_ASSETS';
 export const UPDATE_SUPPORTED_ASSETS = 'UPDATE_SUPPORTED_ASSETS';
 export const UPDATE_BALANCES = 'UPDATE_BALANCES';
-export const BTC = 'BTC';
-export const ETH = 'ETH';
-export const PLR = 'PLR';
+
+// fiat
 export const EUR = 'EUR';
 export const GBP = 'GBP';
 export const USD = 'USD';
+
+// token symbols
+export const ETH = 'ETH';
+export const PLR = 'PLR';
 export const HOT = 'HOT';
 export const HOLO = 'HOLO';
-export const WBTC = 'WBTC';
-export const sBTC = 'sBTC';
 export const SNX = 'SNX';
 export const RSPT = 'RSPT';
 export const WETH = 'WETH';
-
 const LINK = 'LINK';
 const BAT = 'BAT';
 const AE = 'AE';
@@ -62,22 +62,39 @@ const ZIL = 'ZIL';
 const ZRX = 'ZRX';
 export const TUSD = 'TUSD';
 export const mUSD = 'mUSD';
+const YFI = 'YFI';
+
+// BTC tokens
+export const BTC = 'BTC';
+export const WBTC = 'WBTC';
+const sBTC = 'sBTC';
+const iBTC = 'iBTC';
+const renBTC = 'renBTC';
+const tBTC = 'tBTC';
+const OBTC = 'OBTC';
+const wBTC = 'wBTC'; // testnet
+const testBTC = 'testBTC'; // testnet
+
+export const TOKENS = 'TOKENS';
+export const COLLECTIBLES = 'COLLECTIBLES';
+export const BADGES = 'BADGES';
+export const SYNTHETIC = 'SYNTHETIC';
+export const NONSYNTHETIC = 'NONSYNTHETIC';
+export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
+
+export const defaultFiatCurrency = GBP;
+export const supportedFiatCurrencies = [GBP, EUR, USD];
+
+export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
+export const VISIBLE_NUMBER_DECIMALS = 18;
 
 export const POPULAR_EXCHANGE_TOKENS = [
   ETH, PLR, LINK, BAT, PPT, AE, DAI, KNC, MKR, USDT, VERI, BNT, OMG, WAX, ZIL, ZRX,
 ];
 
-export const ETHEREUM_ADDRESS_PREFIX = 'ethereum';
-
-export const supportedFiatCurrencies = [GBP, EUR, USD];
-export const defaultFiatCurrency = GBP;
-
-export const TOKENS = 'TOKENS';
-export const COLLECTIBLES = 'COLLECTIBLES';
-export const BADGES = 'BADGES';
-
-export const SYNTHETIC = 'SYNTHETIC';
-export const NONSYNTHETIC = 'NONSYNTHETIC';
+export const HIGH_VALUE_TOKENS = [
+  YFI, WBTC, sBTC, BTC, iBTC, renBTC, tBTC, OBTC, wBTC, testBTC,
+];
 
 export const SPEED_TYPES = {
   SLOW: 'min',
@@ -96,7 +113,3 @@ export const CURRENCY_SYMBOLS = {
   GBP: '£',
   EUR: '€',
 };
-
-export const DEFAULT_ACCOUNTS_ASSETS_DATA_KEY = 'default';
-
-export const VISIBLE_NUMBER_DECIMALS = 18;

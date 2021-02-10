@@ -41,8 +41,6 @@ import {
   reportErrorLog,
 } from 'utils/common';
 import {
-  chainId,
-  ADDRESSES,
   parseAssets,
   getExpectedOutput,
   applyAllowedSlippage,
@@ -51,6 +49,7 @@ import {
   swapExactTokensToEth,
   swapExactEthToTokens,
   generateTxObject,
+  getUniswapChainId,
 } from 'utils/uniswap';
 import { parseOffer, createAllowanceTx, getFixedQuantity } from 'utils/exchange';
 
@@ -63,13 +62,13 @@ import type { Offer } from 'models/Offer';
 import type { AllowanceTransaction } from 'models/Transaction';
 
 // constants
-import { PROVIDER_UNISWAP } from 'constants/exchangeConstants';
+import { PROVIDER_UNISWAP, UNISWAP_ROUTER_ADDRESS } from 'constants/exchangeConstants';
 import { ETH } from 'constants/assetsConstants';
 
 // assets
 import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 
-const ethProvider = getEthereumProvider(getEnv().NETWORK_PROVIDER);
+const getEthProvider = () => getEthereumProvider(getEnv().NETWORK_PROVIDER);
 
 const getBackupRoute = async (
   fromAssetAddress: string,
@@ -78,10 +77,12 @@ const getBackupRoute = async (
   let token1;
   let token2;
   let tokenMiddle;
+  const chainId = getUniswapChainId();
+  const provider = getEthProvider();
   try {
-    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, ethProvider);
-    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, ethProvider);
-    tokenMiddle = await Fetcher.fetchTokenData(chainId, ADDRESSES.WETH, ethProvider);
+    token1 = await Fetcher.fetchTokenData(chainId, fromAssetAddress, provider);
+    token2 = await Fetcher.fetchTokenData(chainId, toAssetAddress, provider);
+    tokenMiddle = await Fetcher.fetchTokenData(chainId, WETH[chainId].address, provider);
   } catch (e) {
     reportLog('Uniswap: failed to fetch token data', e, 'warning');
     return null;
@@ -90,8 +91,8 @@ const getBackupRoute = async (
   let pair1;
   let pair2;
   try {
-    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, ethProvider);
-    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, ethProvider);
+    pair1 = await Fetcher.fetchPairData(token1, tokenMiddle, provider);
+    pair2 = await Fetcher.fetchPairData(tokenMiddle, token2, provider);
   } catch (e) {
     reportLog('Pair unsupported by Uniswap', e, 'warning');
     return null;
@@ -108,11 +109,12 @@ const getRoute = async (fromAsset: Asset, toAsset: Asset): Promise<Route> => {
   const {
     address: toAddress, symbol: toSymbol, name: toName,
   } = toAsset;
-
+  const chainId = getUniswapChainId();
+  const provider = getEthProvider();
   try {
-    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, ethProvider, fromSymbol, fromName);
-    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, ethProvider, toSymbol, toName);
-    const pair = await Fetcher.fetchPairData(token1, token2, ethProvider);
+    const token1 = await Fetcher.fetchTokenData(chainId, fromAddress, provider, fromSymbol, fromName);
+    const token2 = await Fetcher.fetchTokenData(chainId, toAddress, provider, toSymbol, toName);
+    const pair = await Fetcher.fetchPairData(token1, token2, provider);
     const route = new Route([pair], token1);
     return route;
   } catch (e) {
@@ -125,7 +127,8 @@ const getTrade = async (
   fromQuantityInBaseUnits: string,
   route: Route,
 ): Promise<Trade> => {
-  const fromToken = await Fetcher.fetchTokenData(chainId, toChecksumAddress(fromAssetAddress), ethProvider);
+  const fromToken =
+    await Fetcher.fetchTokenData(getUniswapChainId(), toChecksumAddress(fromAssetAddress), getEthProvider());
   const fromTokenAmount = new TokenAmount(fromToken, fromQuantityInBaseUnits);
   const trade = new Trade(route, fromTokenAmount, TradeType.EXACT_INPUT);
   return trade;
@@ -133,8 +136,8 @@ const getTrade = async (
 
 const getAllowanceSet = async (clientAddress: string, fromAsset: Asset): Promise<boolean> => {
   if (fromAsset.code === ETH) return true;
-  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, ethProvider);
-  const allowance: BigNumber = await assetContract.allowance(clientAddress, ADDRESSES.router);
+  const assetContract = new ethers.Contract(fromAsset.address, ERC20_CONTRACT_ABI, getEthProvider());
+  const allowance: BigNumber = await assetContract.allowance(clientAddress, UNISWAP_ROUTER_ADDRESS);
   return allowance.gt(0);
 };
 
@@ -170,9 +173,10 @@ const getUniswapOrderData = async (
   toAssetDecimals: string,
 ): Promise<{ path: string[], expectedOutputBaseUnits: BigNumber, expectedOutputRaw: string } | null> => {
   let route = await getRoute(fromAsset, toAsset);
+  const WETHAddress = WETH[getUniswapChainId()].address;
   if (!route && (
-    fromAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
-      || toAsset.address.toLowerCase() === ADDRESSES.WETH.toLowerCase()
+    fromAsset.address.toLowerCase() === WETHAddress.toLowerCase()
+      || toAsset.address.toLowerCase() === WETHAddress.toLowerCase()
   )) {
     reportLog('Unable to find a possible route', null, 'error');
   }
@@ -218,6 +222,8 @@ export const createUniswapOrder = async (
   let txData = '';
   let txValue = '0';
   let expectedOutput;
+  const chainId = getUniswapChainId();
+
   if (fromAsset.code !== ETH && toAsset.code !== ETH) {
     const orderData = await getUniswapOrderData(
       fromAsset,
@@ -241,7 +247,7 @@ export const createUniswapOrder = async (
   } else if (fromAsset.code === ETH && toAsset.code !== ETH) {
     txValue = quantityBaseUnits.toFixed();
     const orderData = await getUniswapOrderData(
-      WETH[chainId],
+      WETH[getUniswapChainId()],
       toAsset,
       quantityBaseUnits.toFixed(),
       toAsset.decimals.toString(),
@@ -286,10 +292,11 @@ export const createUniswapOrder = async (
   }
 
   const txObject = generateTxObject(
-    ADDRESSES.router,
+    UNISWAP_ROUTER_ADDRESS,
     txValue,
     txData,
   );
+
   return {
     orderId: '-',
     sendToAddress: txObject.to,
@@ -300,7 +307,7 @@ export const createUniswapOrder = async (
 
 export const createUniswapAllowanceTx =
   async (fromAssetAddress: string, clientAddress: string): Promise<AllowanceTransaction | null> => {
-    const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, ADDRESSES.router);
+    const allowanceTx = await createAllowanceTx(fromAssetAddress, clientAddress, UNISWAP_ROUTER_ADDRESS);
     return allowanceTx;
   };
 

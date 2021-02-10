@@ -43,16 +43,15 @@ import {
   isTimedOutTransaction,
 } from 'utils/feedData';
 import { findAccountByAddress } from 'utils/accounts';
-import { images, isSvgImage } from 'utils/images';
+import { images, getImageUrl, isSvgImage } from 'utils/images';
 import { isPoolTogetherAddress } from 'utils/poolTogether';
 import { getFormattedValue } from 'utils/strings';
-
-// components
 import {
   formatAmount,
   formatUnits,
   getDecimalPlaces,
   findEnsNameCaseInsensitive,
+  formatTokenAmount,
 } from 'utils/common';
 
 // components
@@ -755,11 +754,11 @@ export class ActivityFeedItem extends React.Component<Props> {
                 {t('negativeTokenValue', { value: t('label.multiple') })}
               </BaseText>
               <ItemValue>
-                {t('positiveTokenValue', { value: formatAmount(amount), token: pool.symbol })}
+                {t('positiveTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -772,14 +771,14 @@ export class ActivityFeedItem extends React.Component<Props> {
           customAddon: (
             <ListWrapper>
               <BaseText big>
-                {t('negativeTokenValue', { value: formatAmount(amount), token: pool.symbol })}
+                {t('negativeTokenValue', { value: formatTokenAmount(amount, pool.symbol), token: pool.symbol })}
               </BaseText>
               <ItemValue>
                 {t('positiveTokenValue', { value: t('label.multiple') })}
               </ItemValue>
             </ListWrapper>
           ),
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -791,7 +790,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           subtext: pool.name,
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: false }),
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -804,7 +803,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }
@@ -817,7 +816,7 @@ export class ActivityFeedItem extends React.Component<Props> {
           itemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           fullItemValue: getFormattedValue(formatAmount(amount), pool.rewards[0].symbol, { isPositive: true }),
           valueColor: 'secondaryAccent140',
-          itemImageUrl: pool.iconUrl,
+          itemImageUrl: getImageUrl(pool.iconUrl, 3),
         };
         break;
       }

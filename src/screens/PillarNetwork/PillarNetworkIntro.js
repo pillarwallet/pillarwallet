@@ -20,7 +20,6 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { FlatList, Platform } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
@@ -29,6 +28,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper } from 'components/Layout';
 import { BoldText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import Button from 'components/Button';
 import { LabelBadge } from 'components/LabelBadge';
 import { ListItemChevron } from 'components/ListItem/ListItemChevron';
@@ -109,7 +109,7 @@ const Subtext = styled(MediumText)`
   margin-top: ${responsiveSize(10)}px;
 `;
 
-const FeatureIcon = styled(CachedImage)`
+const FeatureIcon = styled(Image)`
   height: 124px;
   width: 124px;
   margin-bottom: 24px;

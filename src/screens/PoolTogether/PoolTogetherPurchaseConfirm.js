@@ -23,7 +23,6 @@ import { RefreshControl } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { createStructuredSelector } from 'reselect';
@@ -41,6 +40,7 @@ import { ScrollWrapper, Spacing } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import Table, { TableRow, TableLabel, TableAmount, TableTotal, TableFee } from 'components/Table';
 import Toast from 'components/Toast';
 
@@ -64,7 +64,7 @@ const ContentWrapper = styled.View`
   padding: 16px 20px;
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(Image)`
   width: 64px;
   height: 64px;
 `;

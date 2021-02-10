@@ -19,7 +19,6 @@
 */
 import React from 'react';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 import isEmpty from 'lodash.isempty';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
@@ -33,6 +32,7 @@ import { fetchDepositedAssetAction } from 'actions/lendingActions';
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { RefreshControl } from 'react-native';
+import Image from 'components/Image';
 import { ScrollWrapper } from 'components/Layout';
 import { BaseText, MediumText, TextLink } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
@@ -45,7 +45,7 @@ import { TRANSACTION_EVENT } from 'constants/historyConstants';
 import { LENDING_ENTER_DEPOSIT_AMOUNT, LENDING_ENTER_WITHDRAW_AMOUNT } from 'constants/navigationConstants';
 
 // utils
-import { formatAmountDisplay, formatFiat } from 'utils/common';
+import { formatAmountDisplay, formatFiat, formatTokenAmount } from 'utils/common';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { getRate } from 'utils/assets';
@@ -170,6 +170,8 @@ const ViewDepositedAsset = ({
   const firstDepositBadgeEvent = badgesEvents.find(({ badgeType }) => badgeType === 'first-aave-deposit');
   if (firstDepositBadgeEvent) activityFeedData.push(firstDepositBadgeEvent);
 
+  const displayedEarned = formatTokenAmount(earnedAmount, assetSymbol);
+
   return (
     <ContainerWithHeader
       navigation={navigation}
@@ -191,12 +193,12 @@ const ViewDepositedAsset = ({
           </InterestRate>
         </CurrentInterestRate>
         <ImagesWrapper>
-          <CachedImage
+          <Image
             style={{ width: 48, height: 48, marginRight: -80 }}
             source={aaveImage}
             resizeMode="contain"
           />
-          <CachedImage
+          <Image
             style={{ width: 48, height: 48 }}
             source={{ uri: iconUrl ? `${getEnv().SDK_PROVIDER}/${iconUrl}?size=3` : '' }}
             resizeMode="contain"
@@ -204,7 +206,7 @@ const ViewDepositedAsset = ({
         </ImagesWrapper>
         <ValuesWrapper>
           <TokenValueWrapper>
-            <TokenValue>{formatAmountDisplay(currentBalance)}</TokenValue>
+            <TokenValue>{formatTokenAmount(currentBalance, assetSymbol)}</TokenValue>
             <TokenSymbol>{assetSymbol}</TokenSymbol>
           </TokenValueWrapper>
           <ValueInFiat secondary>{valueInFiatFormatted}</ValueInFiat>
@@ -223,7 +225,7 @@ const ViewDepositedAsset = ({
             <MediumText positive fontSize={fontSizes.medium}>
               {t('positiveValue', {
                 value: t('tokenValue', {
-                  value: formatAmountDisplay(earnedAmount),
+                  value: +displayedEarned ? displayedEarned : formatAmountDisplay(earnedAmount),
                   token: assetSymbol,
                 }),
               })}
