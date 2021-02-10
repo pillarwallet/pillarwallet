@@ -40,12 +40,14 @@ import { Footer, Wrapper } from 'components/Layout';
 import SearchBlock from 'components/SearchBlock';
 import Button from 'components/Button';
 import Tabs from 'components/Tabs';
+import TextWithCopy from 'components/TextWithCopy';
+import { BaseText } from 'components/Typography';
 import Checkbox from 'components/Checkbox';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
 
 // utils
-import { spacing } from 'utils/variables';
+import { fontStyles, spacing } from 'utils/variables';
 import {
   addressesEqual,
   getAssetData,
@@ -76,6 +78,7 @@ type Props = {
   addKeyBasedAssetToTransfer: (assetData: AssetData, amount?: number) => void,
   removeKeyBasedAssetToTransfer: (assetData: AssetData) => void,
   supportedAssets: Asset[],
+  walletAddress: ?string,
   keyBasedAssetsToTransfer: KeyBasedAssetTransfer[],
   calculateTransactionsGas: () => void,
 };
@@ -93,6 +96,22 @@ const CheckboxWrapper = styled.View`
   top: 0;
   height: 100%;
   justify-content: center;
+`;
+
+const WalletInfoContainer = styled.View`
+  align-items: center;
+  //background-color: red;
+  margin-vertical: ${spacing.medium}px;
+`;
+
+const WalletInfoText = styled(BaseText)`
+  ${fontStyles.regular};
+  color: ${({ theme }) => theme.colors.basic030};
+  margin-bottom: ${spacing.small}px;
+`;
+
+const WalletInfoAddress = styled(TextWithCopy)`
+  ${fontStyles.small};
 `;
 
 const renderEmptyResult = (emptyMessage: string, isLoading: boolean) => (
@@ -137,6 +156,7 @@ const KeyBasedAssetTransferChoose = ({
   availableBalances,
   availableCollectibles,
   supportedAssets,
+  walletAddress,
   addKeyBasedAssetToTransfer,
   removeKeyBasedAssetToTransfer,
   keyBasedAssetsToTransfer,
@@ -314,11 +334,12 @@ const KeyBasedAssetTransferChoose = ({
         </Footer>
       )}
     >
-      <ScrollView
-        stickyHeaderIndices={[1]}
-        scrollEnabled={!inSearchMode}
-        contentContainerStyle={{ flex: 1 }}
-      >
+      <ScrollView stickyHeaderIndices={[1]} scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
+        <WalletInfoContainer>
+          <WalletInfoText>migrating from</WalletInfoText>
+          <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
+        </WalletInfoContainer>
+
         <SearchBlock
           searchInputPlaceholder={t('label.searchAsset')}
           onSearchChange={(query) => setSearchQuery(query)}
@@ -345,6 +366,7 @@ const mapStateToProps = ({
     isFetchingAvailableBalances,
     isFetchingAvailableCollectibles,
   },
+  wallet: { data: walletData },
 }: RootReducerState): $Shape<Props> => ({
   keyBasedAssetsToTransfer,
   isFetchingAvailableBalances,
@@ -352,6 +374,7 @@ const mapStateToProps = ({
   availableBalances,
   availableCollectibles,
   supportedAssets,
+  walletAddress: walletData?.address,
 });
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({

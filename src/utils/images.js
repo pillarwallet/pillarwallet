@@ -50,6 +50,8 @@ const highFeesLight = require('assets/icons/high_fees.png');
 const highFeesDark = require('assets/icons/high_fees_dark.png');
 const infoIconLight = require('assets/icons/icon_info_light.png');
 const infoIconDark = require('assets/icons/icon_info_dark.png');
+const copyIconLight = require('assets/icons/icon_copy.png');
+const copyIconDark = require('assets/icons/icon_copy_dark.png');
 
 
 // exchange providers
@@ -147,6 +149,10 @@ export const images = (theme: Theme) => {
     infoIcon: getImageByTheme(currentTheme, {
       lightTheme: infoIconLight,
       darkTheme: infoIconDark,
+    }),
+    copy: getImageByTheme(currentTheme, {
+      lightTheme: copyIconLight,
+      darkTheme: copyIconDark,
     }),
   };
 };
