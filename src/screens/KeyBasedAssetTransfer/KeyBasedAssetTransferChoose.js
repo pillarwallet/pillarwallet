@@ -333,7 +333,7 @@ const KeyBasedAssetTransferChoose = ({
         </Footer>
       )}
     >
-      <ScrollView stickyHeaderIndices={[1]} scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
+      <ScrollView stickyHeaderIndices={[2]} scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
         <WalletInfoContainer>
           <WalletInfoText>{t('transactions.label.migratingFrom')}</WalletInfoText>
           <WalletInfoAddress>{walletAddress}</WalletInfoAddress>

@@ -18,6 +18,8 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
+/* eslint-disable object-curly-newline */
+
 import * as React from 'react';
 import { Image } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -53,7 +55,10 @@ const TextWithCopy = ({ theme, children, ...rest }: Props) => {
   };
 
   return (
-    <Container onPress={() => handleCopyToClipboard(children)}>
+    <Container
+      onPress={() => handleCopyToClipboard(children)}
+      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
+    >
       <Text {...rest}>{children}</Text>
       <Image source={images(theme).copy} />
     </Container>
