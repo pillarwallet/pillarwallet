@@ -44,9 +44,7 @@ const Text = styled(BaseText)`
   margin-right: ${spacing.small}px;
 `;
 
-type TextProps = React.ElementConfig<typeof BaseText>;
-
-type Props = $Rest<TextProps, { children: any }> & {|
+type Props = React.ElementConfig<typeof BaseText> & {|
   textToCopy?: string,
 |};
 
