@@ -208,6 +208,7 @@ aliases:
 
 jobs:
 
+  # Run tests and set build numbers
   build-and-test:
     executor: node10-executor
     steps:
@@ -239,6 +240,39 @@ jobs:
           failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
+  # Run tests and set build numbers - etherspot temporary
+  build-and-test-etherspot:
+    executor: node10-executor
+    steps:
+      - checkout
+      - run:
+          name: Save build number
+          command: |
+            APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
+            mkdir -p /tmp/workspace/build-num
+            mkdir -p /tmp/workspace/releases
+            cd /tmp/workspace/build-num
+            echo ${APP_BUILD_NUMBER}-etherspot > app_build_number.txt
+      - persist_to_workspace:
+          root: /tmp/workspace
+          paths:
+            - build-num
+            - releases
+      - *node_restore_cache
+      - *android_latest_npm
+      - *yarn_restore_cache
+      - *yarn_install
+      - *yarn_save_cache
+      - *node_save_cache
+      - run:
+          name: Run validation
+          command: yarn validate
+      - slack/status:
+          fail_only: true
+          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
+          webhook: "${SLACK_WEBHOOK_URL}"
+
+  # Build appcenter ios
   appcenter_ios:
     executor: ios-executor
     steps:
@@ -319,6 +353,7 @@ jobs:
           failure_message: "$(gshuf -n 1 ios_appcenter.txt) :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
+  # Build appcenter android
   appcenter_android:
     executor: android-executor
     steps:
@@ -407,6 +442,7 @@ jobs:
           failure_message: '$(shuf -n 1 android_appcenter.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
+  # Fetch, bump and push new tag
   bump-push-git-tag:
     executor: python3-alpine-executor
     steps:
@@ -421,6 +457,7 @@ jobs:
             chmod +x .circleci/semtag.sh
             bash .circleci/semtag.sh
 
+  # Fetch and set latest tag
   get-latest-tag:
     executor: python3-alpine-executor
     steps:
@@ -447,6 +484,7 @@ jobs:
             - build-num
             - releases
 
+  # Build testflight ios
   prod_ios:
     executor: ios-executor
     steps:
@@ -561,6 +599,7 @@ jobs:
           failure_message: '$(gshuf -n 1 ios_prod.txt) :circleci-fail:'
           webhook: "${SLACK_WEBHOOK_URL}"
 
+  # Build internal track play store
   prod_android:
     executor: android-executor
     steps:
@@ -745,9 +784,34 @@ workflows:
           filters:
             branches:
               ignore:
+                - feature/etherspot
                 - feature/etherspot-transactions
                 - develop
                 - master
+
+  build_and_deploy_etherspot_appcenter:
+    jobs:
+      - build-and-test-etherspot:
+          context: docker-hub-creds
+          filters:
+            branches:
+              only:
+                - feature/etherspot
+      - appcenter_ios:
+          requires:
+            - build-and-test-etherspot
+          filters:
+            branches:
+              only:
+                - feature/etherspot
+      - appcenter_android:
+          context: docker-hub-creds
+          requires:
+            - build-and-test-etherspot
+          filters:
+            branches:
+              only:
+                - feature/etherspot
 
   build_and_deploy_appcenter:
     jobs:
