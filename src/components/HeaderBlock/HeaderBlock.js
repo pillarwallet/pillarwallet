@@ -23,7 +23,7 @@ import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled, { withTheme } from 'styled-components/native';
 import { ThemeProvider } from 'styled-components';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';

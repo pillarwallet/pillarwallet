@@ -41,7 +41,7 @@ import { setDismissTransactionAction, getWbtcGatewayAddressAction } from 'action
 import { estimateTransactionAction } from 'actions/transactionEstimateActions';
 
 // utils
-import { formatAmountDisplay, formatFiat } from 'utils/common';
+import { formatTokenAmount, formatFiat } from 'utils/common';
 import {
   isEnoughBalanceForTransactionFee,
   getAssetDataByAddress,
@@ -49,9 +49,10 @@ import {
   getRate,
   getBalance,
 } from 'utils/assets';
-import { getOfferProviderLogo, isWethConvertedTx } from 'utils/exchange';
-import { isProdEnv } from 'utils/environment';
+import { getOfferProviderLogo } from 'utils/exchange';
 import { showWbtcErrorToast } from 'services/wbtcCafe';
+import { isProdEnv } from 'utils/environment';
+import { isWethConvertedTx } from 'utils/uniswap';
 
 // types
 import type { Asset, AssetData, Assets, Balances, Rates } from 'models/Asset';
@@ -145,8 +146,8 @@ const ExchangeConfirmScreen = ({
   const fetchTransactionEstimate = () => {
     const isConvertedTx = isWethConvertedTx(symbol, contractAddress);
 
-    // for WETH converted txs on homestead, we need to provide ETH data or else estimation is always 0$
-    const contractAddressForEstimation = isProdEnv && isConvertedTx
+    // for WETH converted txs on homestead, we need to provide ETH data or else estimation fails
+    const contractAddressForEstimation = isProdEnv() && isConvertedTx
       ? ethersConstants.AddressZero
       : contractAddress;
 
@@ -244,7 +245,7 @@ const ExchangeConfirmScreen = ({
 
   const toQuantity = isWbtcCafe ? wbtcEstimationData?.estimate || 0 : receiveQuantity;
 
-  const formattedReceiveAmount = formatAmountDisplay(toQuantity);
+  const formattedReceiveAmount = formatTokenAmount(toQuantity, toAssetCode);
 
   const receiveAmountInFiat = parseFloat(toQuantity) * getRate(rates, toAssetCode, fiatCurrency);
   const formattedReceiveAmountInFiat = formatFiat(receiveAmountInFiat, fiatCurrency);
