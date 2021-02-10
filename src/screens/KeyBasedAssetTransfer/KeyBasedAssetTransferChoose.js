@@ -347,7 +347,9 @@ const KeyBasedAssetTransferChoose = ({
           wrapperStyle={{ paddingHorizontal: spacing.large, paddingVertical: spacing.mediumLarge }}
           onSearchFocus={() => setInSearchMode(true)}
           onSearchBlur={() => setInSearchMode(false)}
+          hideOverlay
         />
+
         <Tabs tabs={assetsTabs} activeTab={activeTab} />
         {activeTab === TOKENS && renderAssets()}
         {activeTab === COLLECTIBLES && renderCollectibles()}

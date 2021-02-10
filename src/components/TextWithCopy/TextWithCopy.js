@@ -22,13 +22,15 @@
 
 import * as React from 'react';
 import { Image } from 'react-native';
-import { useTranslation } from 'react-i18next';
 import Clipboard from '@react-native-community/clipboard';
+import { useTranslation } from 'react-i18next';
 import styled, { withTheme } from 'styled-components/native';
 
-import Toast from 'components/Toast';
+// components
 import { BaseText } from 'components/Typography';
+import Toast from 'components/Toast';
 
+// utils
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
@@ -44,21 +46,23 @@ const Text = styled(BaseText)`
 
 type TextProps = React.ElementConfig<typeof BaseText>;
 
-type Props = $Rest<TextProps, { children: any }>;
+type Props = $Rest<TextProps, { children: any }> & {|
+  textToCopy?: string,
+|};
 
-const TextWithCopy = ({ theme, children, ...rest }: Props) => {
+const TextWithCopy = ({ theme, children, textToCopy, ...rest }: Props) => {
   const { t } = useTranslation();
 
-  const handleCopyToClipboard = (address: string) => {
-    Clipboard.setString(address);
+  const handleCopyToClipboard = () => {
+    const text = textToCopy ?? (typeof children === 'string' ? children : undefined);
+    if (!text) return;
+
+    Clipboard.setString(text);
     Toast.show({ message: t('toast.addressCopiedToClipboard'), emoji: 'ok_hand' });
   };
 
   return (
-    <Container
-      onPress={() => handleCopyToClipboard(children)}
-      hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }}
-    >
+    <Container hitSlop={{ top: 15, bottom: 15, left: 15, right: 15 }} onPress={handleCopyToClipboard}>
       <Text {...rest}>{children}</Text>
       <Image source={images(theme).copy} />
     </Container>
