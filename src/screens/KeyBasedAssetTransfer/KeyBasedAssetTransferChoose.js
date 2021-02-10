@@ -100,8 +100,7 @@ const CheckboxWrapper = styled.View`
 
 const WalletInfoContainer = styled.View`
   align-items: center;
-  //background-color: red;
-  margin-vertical: ${spacing.medium}px;
+  margin-top: ${spacing.medium}px;
 `;
 
 const WalletInfoText = styled(BaseText)`
@@ -336,7 +335,7 @@ const KeyBasedAssetTransferChoose = ({
     >
       <ScrollView stickyHeaderIndices={[1]} scrollEnabled={!inSearchMode} contentContainerStyle={{ flex: 1 }}>
         <WalletInfoContainer>
-          <WalletInfoText>migrating from</WalletInfoText>
+          <WalletInfoText>{t('transactions.label.migratingFrom')}</WalletInfoText>
           <WalletInfoAddress>{walletAddress}</WalletInfoAddress>
         </WalletInfoContainer>
 
