@@ -245,8 +245,13 @@ class SmartWallet {
     walletId: string,
     privateKey: string,
     fcmToken: ?string,
-  ) {
+  ): Promise<any> {
     const backendAccounts = await api.listAccounts(walletId);
+    if (!backendAccounts) {
+      reportErrorLog('Unable to sync smart wallets', { walletId });
+      return Promise.resolve();
+    }
+
     const registerOnBackendPromises = smartAccounts.map(async account => {
       const backendAccount = backendAccounts.some(({ ethAddress }) => addressesEqual(ethAddress, account.address));
       if (!backendAccount) {
@@ -259,6 +264,7 @@ class SmartWallet {
       }
       return Promise.resolve();
     });
+
     return Promise
       .all(registerOnBackendPromises)
       .catch(e => reportErrorLog('Unable to sync smart wallets', { e }));

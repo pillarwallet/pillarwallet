@@ -7159,72 +7159,6 @@ exports[`Storyshots ActivityFeedItem PPN created 1`] = `
                   pillarNetwork
                 </Text>
               </View>
-              <View
-                h={4}
-                style={
-                  Array [
-                    Object {
-                      "height": 4,
-                      "width": 0,
-                    },
-                    undefined,
-                  ]
-                }
-              />
-              <View
-                label="label.needToActivate"
-                labelStyle={
-                  Object {
-                    "fontSize": 10,
-                    "lineHeight": 14,
-                  }
-                }
-                primary={true}
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#007AFF",
-                      "borderRadius": 12,
-                      "paddingBottom": 3,
-                      "paddingLeft": 8,
-                      "paddingRight": 8,
-                      "paddingTop": 3,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Medium",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#FFFFFF",
-                            "fontSize": 8,
-                          },
-                          Object {
-                            "fontSize": 10,
-                            "lineHeight": 14,
-                          },
-                        ],
-                      ],
-                    ]
-                  }
-                >
-                  label.needToActivate
-                </Text>
-              </View>
             </View>
             <View
               rightColumn={true}
@@ -10901,72 +10835,6 @@ exports[`Storyshots ActivityFeedItem Smart wallet created 1`] = `
                   type="DEFAULT"
                 >
                   smartWallet
-                </Text>
-              </View>
-              <View
-                h={4}
-                style={
-                  Array [
-                    Object {
-                      "height": 4,
-                      "width": 0,
-                    },
-                    undefined,
-                  ]
-                }
-              />
-              <View
-                label="label.needToActivate"
-                labelStyle={
-                  Object {
-                    "fontSize": 10,
-                    "lineHeight": 14,
-                  }
-                }
-                primary={true}
-                style={
-                  Array [
-                    Object {
-                      "backgroundColor": "#007AFF",
-                      "borderRadius": 12,
-                      "paddingBottom": 3,
-                      "paddingLeft": 8,
-                      "paddingRight": 8,
-                      "paddingTop": 3,
-                    },
-                    undefined,
-                  ]
-                }
-              >
-                <Text
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#0A1427",
-                          "fontFamily": "EuclidCircularB-Medium",
-                          "textAlignVertical": "center",
-                        },
-                        Array [
-                          Object {
-                            "color": "#FFFFFF",
-                            "fontSize": 8,
-                          },
-                          Object {
-                            "fontSize": 10,
-                            "lineHeight": 14,
-                          },
-                        ],
-                      ],
-                    ]
-                  }
-                >
-                  label.needToActivate
                 </Text>
               </View>
             </View>
@@ -43406,7 +43274,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                     Object {
                       "alignItems": "center",
                       "alignSelf": "auto",
-                      "backgroundColor": "#007AFF",
+                      "backgroundColor": "#EBF0F6",
                       "borderRadius": 6,
                       "flexDirection": "row",
                       "height": 52,
@@ -43436,7 +43304,7 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                         },
                         Array [
                           Object {
-                            "color": "#FFFFFF",
+                            "color": "#007AFF",
                             "fontSize": 16,
                             "lineHeight": 16,
                             "marginTop": 2.88,
@@ -43446,9 +43314,9 @@ exports[`Storyshots EventDetail Smart wallet created | Needs to activate 1`] = `
                         ],
                       ]
                     }
-                    variant="default"
+                    variant="secondary"
                   >
-                    button.activate
+                    button.topUp
                   </Text>
                 </View>
               </View>
@@ -48891,193 +48759,6 @@ exports[`Storyshots ReviewSummary token 1`] = `
         >
           € 25.53
         </Text>
-      </View>
-    </View>
-  </View>
-</View>
-`;
-
-exports[`Storyshots SWActivationCard default 1`] = `
-<View
-  style={
-    Object {
-      "height": "100%",
-    }
-  }
->
-  <View
-    style={
-      Array [
-        Object {
-          "alignItems": "stretch",
-          "height": "100%",
-          "justifyContent": "flex-start",
-        },
-        undefined,
-      ]
-    }
-  >
-    <View
-      style={
-        Array [
-          Object {
-            "paddingBottom": 15,
-            "paddingLeft": 16,
-            "paddingRight": 16,
-            "paddingTop": 30,
-          },
-          undefined,
-        ]
-      }
-    >
-      <View
-        forwardedRef={[Function]}
-        style={
-          Array [
-            Object {
-              "opacity": 1,
-              "position": "relative",
-            },
-            Object {
-              "transform": Array [
-                Object {
-                  "scaleY": 1,
-                },
-              ],
-            },
-          ]
-        }
-      >
-        <View
-          accessible={true}
-          borderRadius={30}
-          focusable={false}
-          onClick={[Function]}
-          onResponderGrant={[Function]}
-          onResponderMove={[Function]}
-          onResponderRelease={[Function]}
-          onResponderTerminate={[Function]}
-          onResponderTerminationRequest={[Function]}
-          onStartShouldSetResponder={[Function]}
-          opacity={1}
-          style={
-            Array [
-              Object {
-                "backgroundColor": "#FFFFFF",
-                "borderRadius": 30,
-                "flexDirection": "column",
-                "justifyContent": "flex-start",
-                "opacity": 1,
-                "width": "100%",
-              },
-              Object {},
-            ]
-          }
-        >
-          <View
-            onLayout={[Function]}
-          >
-            <View
-              style={
-                Array [
-                  Object {
-                    "paddingBottom": 30,
-                    "paddingLeft": 30,
-                    "paddingRight": 30,
-                    "paddingTop": 22,
-                  },
-                  undefined,
-                ]
-              }
-            >
-              <Text
-                medium={true}
-                style={
-                  Array [
-                    Object {
-                      "color": "#0A1427",
-                      "fontFamily": "EuclidCircularB-Regular",
-                      "fontSize": 16,
-                      "lineHeight": 24,
-                      "textAlignVertical": "center",
-                    },
-                    Array [
-                      Object {
-                        "marginBottom": 20,
-                      },
-                      Object {
-                        "marginBottom": 24,
-                      },
-                    ],
-                  ]
-                }
-              >
-                smartWalletContent.activationCard.description.default
-              </Text>
-              <View
-                accessible={true}
-                focusable={true}
-                forwardedRef={[Function]}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "center",
-                    "alignSelf": "auto",
-                    "backgroundColor": "#007AFF",
-                    "borderRadius": 3,
-                    "flexDirection": "row",
-                    "height": 32,
-                    "justifyContent": "center",
-                    "marginBottom": 0,
-                    "marginLeft": 0,
-                    "marginRight": 0,
-                    "marginTop": 0,
-                    "opacity": 1,
-                    "paddingBottom": 0,
-                    "paddingLeft": 20,
-                    "paddingRight": 20,
-                    "paddingTop": 0,
-                    "width": "100%",
-                  }
-                }
-              >
-                <Text
-                  small={true}
-                  style={
-                    Array [
-                      Object {
-                        "color": "#0A1427",
-                        "fontFamily": "EuclidCircularB-Regular",
-                        "fontSize": 12,
-                        "lineHeight": 18,
-                        "textAlignVertical": "center",
-                      },
-                      Array [
-                        Object {
-                          "color": "#FFFFFF",
-                          "fontSize": 14,
-                          "lineHeight": 14,
-                          "marginTop": 2.52,
-                          "textAlign": "center",
-                        },
-                        undefined,
-                      ],
-                    ]
-                  }
-                  variant="default"
-                >
-                  smartWalletContent.activationCard.button.activate
-                </Text>
-              </View>
-            </View>
-          </View>
-        </View>
       </View>
     </View>
   </View>

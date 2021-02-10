@@ -24,8 +24,9 @@ import Adapter from 'enzyme-adapter-react-16';
 import { JSDOM } from 'jsdom';
 import { BN } from 'ethereumjs-util'; // same BigNumber library as in Archanova SDK
 import { View as mockView } from 'react-native';
-import { utils, BigNumber as EthersBigNumber, constants as ethersConstants } from 'ethers';
+import { utils, BigNumber as EthersBigNumber, constants as ethersConstants, Wallet as EthersWallet } from 'ethers';
 import mocktract from 'mocktract';
+import { Account, AccountStates, AccountStores, AccountTypes } from 'etherspot';
 
 // constants
 import { ACCOUNT_TYPES } from 'constants/accountsConstants';
@@ -143,6 +144,7 @@ jest.setMock('ethers', {
       fromEncryptedJson: () => mockWallet,
     },
   },
+  Wallet: EthersWallet,
   Contract: mocktract,
   utils: {
     parseEther: x => x,
@@ -154,6 +156,9 @@ jest.setMock('ethers', {
     formatEther: utils.formatEther,
     randomBytes: utils.randomBytes,
     entropyToMnemonic: utils.entropyToMnemonic,
+    isHexString: utils.isHexString,
+    Interface: utils.Interface,
+    SigningKey: utils.SigningKey,
   },
   providers: {
     getDefaultProvider: () => mockInjectedProvider,
@@ -252,6 +257,22 @@ export const mockSmartWalletAccountApiData = {
   state: 'Created',
   nextState: null,
   updatedAt: '2019-05-10T07:15:09.000Z',
+};
+
+export const mockEtherspotAccount = {
+  id: '0x9c',
+  isActive: false,
+  walletId: '',
+  type: ACCOUNT_TYPES.ETHERSPOT_SMART_WALLET,
+};
+
+export const mockEtherspotApiAccount: Account = {
+  address: '0x9c',
+  type: AccountTypes.Key,
+  state: AccountStates.UnDeployed,
+  store: AccountStores.PersonalAccountRegistry,
+  createdAt: new Date(),
+  updatedAt: new Date(),
 };
 
 export const mockSmartWalletAccount = {

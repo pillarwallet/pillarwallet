@@ -83,7 +83,7 @@ class EtherspotService {
     // return this.sdk.api.subscribe()
   }
 
-  getAccounts(): ?EtherspotAccount[] {
+  getAccounts(): Promise<?EtherspotAccount[]> {
     return this.sdk.getConnectedAccounts()
       .then(({ items }: EtherspotAccounts) => items) // TODO: pagination
       .catch((error) => {

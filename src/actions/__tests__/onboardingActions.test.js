@@ -28,17 +28,15 @@ import { SET_ONBOARDING_USERNAME_REGISTRATION_FAILED, SET_REGISTERING_USER } fro
 import { UPDATE_OAUTH_TOKENS } from 'constants/oAuthConstants';
 import { UPDATE_SESSION } from 'constants/sessionConstants';
 import { SET_USER } from 'constants/userConstants';
-import { SET_SMART_WALLET_ACCOUNTS, SET_SMART_WALLET_SDK_INIT } from 'constants/smartWalletConstants';
 import { UPDATE_ACCOUNTS } from 'constants/accountsConstants';
 import {
   DEFAULT_ACCOUNTS_ASSETS_DATA_KEY,
   SET_INITIAL_ASSETS,
   UPDATE_ASSETS,
-  UPDATE_SUPPORTED_ASSETS,
 } from 'constants/assetsConstants';
-import { SET_HISTORY } from 'constants/historyConstants';
 import { UPDATE_RATES } from 'constants/ratesConstants';
 import { UPDATE_BADGES } from 'constants/badgesConstants';
+import { SET_ETHERSPOT_ACCOUNTS } from 'constants/etherspotConstants';
 
 // actions
 import {
@@ -52,16 +50,16 @@ import { transformAssetsToObject } from 'utils/assets';
 
 // services
 import PillarSdk from 'services/api';
+import etherspot from 'services/etherspot';
 
 // other
 import { initialAssets as mockInitialAssets } from 'fixtures/assets';
 
 // test utils
 import {
+  mockEtherspotAccount,
+  mockEtherspotApiAccount,
   mockExchangeRates,
-  mockSmartWalletAccount,
-  mockSmartWalletAccountApiData,
-  mockSmartWalletConnectedAccount,
   mockSupportedAssets,
   mockUserBadges,
 } from 'testUtils/jestSetup';
@@ -83,7 +81,7 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   setUsername: jest.fn(),
   fetchAccessTokens: jest.fn(),
   fetchNotifications: jest.fn(),
-  listAccounts: jest.fn(),
+  listAccounts: () => [],
   registerOnAuthServer: jest.fn(() => ({
     userId: 1,
     walletId: 2,
@@ -95,7 +93,11 @@ jest.mock('services/api', () => jest.fn().mockImplementation(() => ({
   fetchInitialAssets: jest.fn(() => mockFetchInitialAssetsResponse),
   fetchSupportedAssets: jest.fn(() => mockSupportedAssets),
   fetchBadges: jest.fn(() => mockUserBadges),
+  registerSmartWallet: jest.fn(() => Promise.resolve(null)),
 })));
+
+
+jest.spyOn(etherspot, 'getAccounts').mockImplementation(() => [mockEtherspotApiAccount]);
 
 const pillarSdk = new PillarSdk();
 
@@ -131,6 +133,7 @@ const mockOauthTokens: Object = {
 };
 
 const mockFcmToken = '12x2342x212';
+const randomPrivateKey = '0x09e910621c2e988e9f7f6ffcd7024f54ec1461fa6e86a4b545e9e1fe21c28866';
 
 describe('Onboarding actions', () => {
   let store;
@@ -242,11 +245,10 @@ describe('Onboarding actions', () => {
         data: mockImportedWallet,
       },
       user: { data: mockUser },
-      accounts: { data: [mockSmartWalletAccount] },
-      smartWallet: { connectedAccount: mockSmartWalletConnectedAccount },
+      accounts: { data: [mockEtherspotAccount] },
       assets: {
         supportedAssets: [],
-        data: { [mockSmartWalletAccount.id]: transformAssetsToObject(mockInitialAssets) },
+        data: { [mockEtherspotAccount.id]: transformAssetsToObject(mockInitialAssets) },
       },
       history: { data: {} },
       balances: { data: {} },
@@ -261,21 +263,22 @@ describe('Onboarding actions', () => {
       },
       { type: UPDATE_RATES, payload: mockExchangeRates },
       { type: UPDATE_BADGES, payload: mockUserBadges.map((badge) => ({ ...badge, balance: 1 })) },
-      { type: SET_SMART_WALLET_SDK_INIT, payload: true },
-      { type: SET_SMART_WALLET_ACCOUNTS, payload: [mockSmartWalletAccountApiData] },
-      { type: UPDATE_ACCOUNTS, payload: [{ ...mockSmartWalletAccount, extra: mockSmartWalletAccountApiData }] },
+      { type: SET_ETHERSPOT_ACCOUNTS, payload: [mockEtherspotApiAccount] },
+      { type: UPDATE_ACCOUNTS, payload: [{ ...mockEtherspotAccount, extra: mockEtherspotApiAccount }] },
+      { type: UPDATE_ACCOUNTS, payload: [{ ...mockEtherspotAccount, isActive: true }] },
       {
         type: SET_INITIAL_ASSETS,
         payload: {
-          accountId: mockSmartWalletAccount.id,
+          accountId: mockEtherspotAccount.id,
           assets: transformAssetsToObject(mockInitialAssets),
         },
       },
-      { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
-      { type: SET_HISTORY, payload: { [mockSmartWalletAccount.id]: [] } },
+      // TODO: uncomment after Etherspot history is implemented
+      // { type: UPDATE_SUPPORTED_ASSETS, payload: mockSupportedAssets },
+      // { type: SET_HISTORY, payload: { [mockEtherspotAccount.id]: [] } },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKeyF'))
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);
@@ -300,7 +303,7 @@ describe('Onboarding actions', () => {
       },
     ];
 
-    return store.dispatch(setupAppServicesAction('0xprivateKey'))
+    return store.dispatch(setupAppServicesAction(randomPrivateKey))
       .then(() => {
         const actualActions = store.getActions();
         expect(actualActions).toEqual(expectedActions);

@@ -32,6 +32,7 @@ import {
   UPDATE_PAYMENT_NETWORK_STAKED,
 } from 'constants/paymentNetworkConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
+import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
 
 // actions
 import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -48,6 +49,7 @@ import { checkUserENSNameAction } from 'actions/ensRegistryActions';
 
 // services
 import etherspot from 'services/etherspot';
+import { firebaseRemoteConfig } from 'services/firebase';
 
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
@@ -222,8 +224,10 @@ export const fetchAccountDepositBalanceAction = () => {
       assets: { supportedAssets },
     } = getState();
 
-    if (!isOnline) {
-      // nothing to do offline
+    const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+    if (!isOnline || !ppnEnabled) {
+      // nothing to do offline or if PPN is disabled
       return;
     }
 
@@ -260,8 +264,10 @@ export const fetchAccountPaymentChannelsAction = () => {
       // assets: { supportedAssets },
     } = getState();
 
-    if (!isOnline) {
-      // nothing to do offline
+    const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+    if (!isOnline || !ppnEnabled) {
+      // nothing to do offline or if PPN is disabled
       return;
     }
 
@@ -325,8 +331,10 @@ export const fetchAccountPaymentChannelsAction = () => {
 
 export const initPPNAction = () => {
   return async (dispatch: Dispatch, getState: GetState) => {
-    if (getState().paymentNetwork.isTankInitialised) {
-      // already initialized
+    const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+    if (!ppnEnabled || getState().paymentNetwork.isTankInitialised) {
+      // nothing to do if PPN is disabled or already initialized
       return;
     }
 

@@ -208,7 +208,9 @@ const AccountsScreen = ({
 
   const networksToShow: ListItem[] = [];
 
-  if (ppnNetwork) {
+  const ppnEnabled = firebaseRemoteConfig.getBoolean(REMOTE_CONFIG.PPN_ENABLED);
+
+  if (ppnEnabled && ppnNetwork) {
     const { isActive } = ppnNetwork;
     const availableStakeFormattedAmount = formatMoney(availableStake);
     networksToShow.push({
