@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import { Platform, Animated, Easing } from 'react-native';
-import styled, { withTheme } from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native';
 import LinearGradient from 'react-native-linear-gradient';
 import t from 'translations/translate';
 

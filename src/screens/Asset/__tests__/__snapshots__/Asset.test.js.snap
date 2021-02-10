@@ -20,26 +20,25 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
     }
   >
     <View
-      androidStatusbarHeight={null}
-      forwardedRef={[Function]}
-      onLayout={[Function]}
-      pointerEvents="box-none"
       style={
-        Object {
-          "paddingBottom": 0,
-          "paddingLeft": 0,
-          "paddingRight": 0,
-          "paddingTop": 20,
-        }
+        Array [
+          Object {
+            "height": 58,
+            "paddingHorizontal": 16,
+            "paddingVertical": 10,
+            "width": "100%",
+          },
+          undefined,
+        ]
       }
     >
       <View
         style={
           Array [
             Object {
-              "height": 58,
-              "paddingHorizontal": 16,
-              "paddingVertical": 10,
+              "alignItems": "center",
+              "flexDirection": "row",
+              "justifyContent": "space-between",
               "width": "100%",
             },
             undefined,
@@ -51,9 +50,94 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
             Array [
               Object {
                 "alignItems": "center",
+                "flexBasis": 0,
                 "flexDirection": "row",
-                "justifyContent": "space-between",
-                "width": "100%",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "height": 36,
+                "justifyContent": "flex-start",
+              },
+              Object {},
+            ]
+          }
+        >
+          <View
+            accessible={true}
+            focusable={true}
+            forwardedRef={[Function]}
+            onClick={[Function]}
+            onResponderGrant={[Function]}
+            onResponderMove={[Function]}
+            onResponderRelease={[Function]}
+            onResponderTerminate={[Function]}
+            onResponderTerminationRequest={[Function]}
+            onStartShouldSetResponder={[Function]}
+            style={
+              Object {
+                "alignItems": "center",
+                "backgroundColor": "#EBF0F6",
+                "borderRadius": 36,
+                "height": 36,
+                "justifyContent": "center",
+                "opacity": 1,
+                "paddingBottom": 0,
+                "paddingLeft": 0,
+                "paddingRight": 0,
+                "paddingTop": 0,
+                "position": "relative",
+                "width": 36,
+              }
+            }
+          >
+            <View
+              name="back"
+              style={
+                Object {
+                  "color": "#0A1427",
+                  "fontSize": 18,
+                  "marginBottom": undefined,
+                  "marginLeft": undefined,
+                  "marginRight": undefined,
+                  "marginTop": undefined,
+                  "paddingTop": 0,
+                }
+              }
+            />
+          </View>
+        </View>
+        <View
+          style={
+            Array [
+              Object {
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexDirection": "row",
+                "flexGrow": 4,
+                "flexShrink": 1,
+                "height": 40,
+                "justifyContent": "center",
+                "paddingBottom": 0,
+                "paddingLeft": 12,
+                "paddingRight": 12,
+                "paddingTop": 0,
+              },
+              undefined,
+            ]
+          }
+        />
+        <View
+          style={
+            Array [
+              Object {
+                "alignContent": "center",
+                "alignItems": "center",
+                "flexBasis": 0,
+                "flexDirection": "row",
+                "flexGrow": 1,
+                "flexShrink": 1,
+                "flexWrap": "wrap",
+                "height": 36,
+                "justifyContent": "flex-end",
               },
               undefined,
             ]
@@ -61,18 +145,10 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
         >
           <View
             style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexBasis": 0,
-                  "flexDirection": "row",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "height": 36,
-                  "justifyContent": "flex-start",
-                },
-                Object {},
-              ]
+              Object {
+                "marginLeft": 8,
+                "marginRight": -10,
+              }
             }
           >
             <View
@@ -88,27 +164,26 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
               onStartShouldSetResponder={[Function]}
               style={
                 Object {
-                  "alignItems": "center",
-                  "backgroundColor": "#EBF0F6",
-                  "borderRadius": 36,
+                  "alignItems": "flex-start",
+                  "alignSelf": "center",
                   "height": 36,
                   "justifyContent": "center",
                   "opacity": 1,
-                  "paddingBottom": 0,
-                  "paddingLeft": 0,
-                  "paddingRight": 0,
-                  "paddingTop": 0,
+                  "paddingBottom": 5,
+                  "paddingLeft": 10,
+                  "paddingRight": 10,
+                  "paddingTop": 5,
                   "position": "relative",
-                  "width": 36,
+                  "width": 44,
                 }
               }
             >
               <View
-                name="back"
+                name="info-circle-inverse"
                 style={
                   Object {
                     "color": "#0A1427",
-                    "fontSize": 18,
+                    "fontSize": 24,
                     "marginBottom": undefined,
                     "marginLeft": undefined,
                     "marginRight": undefined,
@@ -117,96 +192,6 @@ exports[`Asset renders the Asset Screen correctly 1`] = `
                   }
                 }
               />
-            </View>
-          </View>
-          <View
-            style={
-              Array [
-                Object {
-                  "alignItems": "center",
-                  "flexBasis": 0,
-                  "flexDirection": "row",
-                  "flexGrow": 4,
-                  "flexShrink": 1,
-                  "height": 40,
-                  "justifyContent": "center",
-                  "paddingBottom": 0,
-                  "paddingLeft": 12,
-                  "paddingRight": 12,
-                  "paddingTop": 0,
-                },
-                undefined,
-              ]
-            }
-          />
-          <View
-            style={
-              Array [
-                Object {
-                  "alignContent": "center",
-                  "alignItems": "center",
-                  "flexBasis": 0,
-                  "flexDirection": "row",
-                  "flexGrow": 1,
-                  "flexShrink": 1,
-                  "flexWrap": "wrap",
-                  "height": 36,
-                  "justifyContent": "flex-end",
-                },
-                undefined,
-              ]
-            }
-          >
-            <View
-              style={
-                Object {
-                  "marginLeft": 8,
-                  "marginRight": -10,
-                }
-              }
-            >
-              <View
-                accessible={true}
-                focusable={true}
-                forwardedRef={[Function]}
-                onClick={[Function]}
-                onResponderGrant={[Function]}
-                onResponderMove={[Function]}
-                onResponderRelease={[Function]}
-                onResponderTerminate={[Function]}
-                onResponderTerminationRequest={[Function]}
-                onStartShouldSetResponder={[Function]}
-                style={
-                  Object {
-                    "alignItems": "flex-start",
-                    "alignSelf": "center",
-                    "height": 36,
-                    "justifyContent": "center",
-                    "opacity": 1,
-                    "paddingBottom": 5,
-                    "paddingLeft": 10,
-                    "paddingRight": 10,
-                    "paddingTop": 5,
-                    "position": "relative",
-                    "width": 44,
-                  }
-                }
-              >
-                <View
-                  name="info-circle-inverse"
-                  style={
-                    Object {
-                      "color": "#0A1427",
-                      "fontSize": 24,
-                      "marginBottom": undefined,
-                      "marginLeft": undefined,
-                      "marginRight": undefined,
-                      "marginTop": undefined,
-                      "paddingTop": 0,
-                    }
-                  }
-                />
-              </View>
             </View>
           </View>
         </View>

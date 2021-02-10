@@ -20,7 +20,8 @@
 
 import * as React from 'react';
 import type { SwitchNavigator as SwitchNavigatorType } from 'react-navigation';
-import { createStackNavigator, createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createSwitchNavigator, createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 
 // screens
 import NewWalletScreen from 'screens/NewWallet';
@@ -69,8 +70,8 @@ type Props = {
 
 const StackNavigatorConfig = {
   defaultNavigationOptions: {
-    header: null,
-    gesturesEnabled: true,
+    headerShown: false,
+    gestureEnabled: true,
   },
 };
 
@@ -78,14 +79,14 @@ const onBoardingFlow = createStackNavigator({
   [WELCOME]: {
     screen: WelcomeScreen,
     defaultNavigationOptions: {
-      header: null,
+      headerShown: false,
     },
   },
   [PERMISSIONS]: PermissionsScreen,
   [NEW_WALLET]: {
     screen: NewWalletScreen,
     defaultNavigationOptions: {
-      header: null,
+      headerShown: false,
     },
   },
   [IMPORT_WALLET_LEGALS]: ImportWalletLegalsScreen,
