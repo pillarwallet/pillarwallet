@@ -30,7 +30,7 @@ import { BaseText } from 'components/Typography';
 import { fontStyles, spacing } from 'utils/variables';
 import { images } from 'utils/images';
 
-const Container = styled.View`
+const Container = styled.TouchableOpacity`
   flex-direction: row;
   align-items: center;
 `;
@@ -53,10 +53,8 @@ const TextWithCopy = ({ theme, children, ...rest }: Props) => {
   };
 
   return (
-    <Container>
-      <Text {...rest} onPress={() => handleCopyToClipboard(children)}>
-        {children}
-      </Text>
+    <Container onPress={() => handleCopyToClipboard(children)}>
+      <Text {...rest}>{children}</Text>
       <Image source={images(theme).copy} />
     </Container>
   );
