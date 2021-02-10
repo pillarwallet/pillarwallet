@@ -21,7 +21,6 @@
 import React, { useRef } from 'react';
 import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import styled, { withTheme } from 'styled-components/native';
 import t from 'translations/translate';
@@ -31,6 +30,7 @@ import { connect } from 'react-redux';
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import { fontStyles, spacing } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import FeeLabelToggle from 'components/FeeLabelToggle';
@@ -81,7 +81,7 @@ const ContentWrapper = styled(SafeAreaView)`
   align-items: center;
 `;
 
-const AssetImage = styled(CachedImage)`
+const AssetImage = styled(Image)`
   margin-top: 4px;
   width: 64px;
   height: 64px;

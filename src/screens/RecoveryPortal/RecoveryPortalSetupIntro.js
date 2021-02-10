@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
@@ -35,6 +34,7 @@ import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { ScrollWrapper, Wrapper } from 'components/Layout';
 import { BaseText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 
 // utils
 import { fontStyles, spacing } from 'utils/variables';
@@ -70,7 +70,7 @@ const ButtonWrapper = styled(Wrapper)`
   padding: 0 ${spacing.rhythm}px;
 `;
 
-const FeatureIcon = styled(CachedImage)`
+const FeatureIcon = styled(Image)`
   height: 124px;
   width: 124px;
   margin-bottom: 24px;

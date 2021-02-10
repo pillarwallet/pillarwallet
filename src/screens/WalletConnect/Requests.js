@@ -22,12 +22,12 @@ import * as React from 'react';
 import { FlatList } from 'react-native';
 import { withNavigation, type NavigationScreenProp } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import { MediumText, BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
 import ShadowedCard from 'components/ShadowedCard';
+import Image from 'components/Image';
 import { Spacing } from 'components/Layout';
 import { spacing, fontSizes } from 'utils/variables';
 import { getThemeColors } from 'utils/themes';
@@ -83,7 +83,7 @@ class Requests extends React.Component<Props> {
       <CardWrapper>
         <ShadowedCard borderRadius={30}>
           <ItemContainer>
-            <CachedImage
+            <Image
               style={{
                 height: 50,
                 width: 50,

@@ -21,7 +21,6 @@
 import React from 'react';
 import { FlatList, Alert, View } from 'react-native';
 import Emoji from 'react-native-emoji';
-import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import Intercom from 'react-native-intercom';
 import styled, { withTheme } from 'styled-components/native';
@@ -36,6 +35,7 @@ import { images } from 'utils/images';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Image from 'components/Image';
 import SettingsListItem from 'components/ListItem/SettingsItem';
 import ShadowedCard from 'components/ShadowedCard';
 import { TextLink } from 'components/Typography';
@@ -114,7 +114,7 @@ const LockScreenSection = styled.View`
   padding: ${spacing.mediumLarge}px;
 `;
 
-const HeaderLogo = styled(CachedImage)`
+const HeaderLogo = styled(Image)`
   width: 68px;
   height: 20px;
 `;

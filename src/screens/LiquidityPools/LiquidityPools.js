@@ -22,12 +22,12 @@ import { connect } from 'react-redux';
 import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Table, { TableRow, TableLabel } from 'components/Table';
+import Image from 'components/Image';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Tabs from 'components/Tabs';
@@ -108,7 +108,7 @@ const Rewards = styled.View`
   margin-bottom: -8px;
 `;
 
-const RewardIcon = styled(CachedImage)`
+const RewardIcon = styled(Image)`
   width: 20px;
   height: 20px;
 `;

@@ -19,11 +19,12 @@
 */
 
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
 import { SvgCssUri } from 'react-native-svg';
 import { isSvgImage } from 'utils/images';
+import Image from 'components/Image';
+import type { ImageProps } from 'components/Image';
 
-type Props = CachedImage | SvgCssUri;
+type Props = ImageProps | SvgCssUri;
 
 const CollectibleImage = (props: Props) => {
   const { uri } = props.source;
@@ -37,7 +38,7 @@ const CollectibleImage = (props: Props) => {
       />
     );
   }
-  return <CachedImage {...props} style={[{ width: props.width, height: props.height }, props.style]} />;
+  return <Image {...props} style={[{ width: props.width, height: props.height }, props.style]} />;
 };
 
 export default CollectibleImage;

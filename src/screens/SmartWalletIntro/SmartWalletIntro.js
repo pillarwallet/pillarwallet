@@ -21,7 +21,6 @@ import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // actions
@@ -37,6 +36,7 @@ import { ScrollWrapper, Wrapper, Container } from 'components/Layout';
 import { MediumText, BoldText } from 'components/Typography';
 import Button from 'components/Button';
 import CheckAuth from 'components/CheckAuth';
+import Image from 'components/Image';
 import Loader from 'components/Loader';
 
 // utils
@@ -85,7 +85,7 @@ const ButtonWrapper = styled(Wrapper)`
   padding: 0 46px;
 `;
 
-const FeatureIcon = styled(CachedImage)`
+const FeatureIcon = styled(Image)`
   height: 124px;
   width: 124px;
   margin-bottom: 24px;

@@ -21,7 +21,6 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { Platform, Linking } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import * as Keychain from 'react-native-keychain';
 import { PERMISSIONS, RESULTS, request as requestPermission } from 'react-native-permissions';
 import type { NavigationScreenProp } from 'react-navigation';
@@ -34,6 +33,7 @@ import { beginOnboardingAction } from 'actions/onboardingActions';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import Toast from 'components/Toast';
 
 // utils
@@ -73,7 +73,7 @@ const ButtonsWrapper = styled.View`
   padding-bottom: 15%;
 `;
 
-const TouchIdImage = styled(CachedImage)`
+const TouchIdImage = styled(Image)`
   width: 164px;
   height: 164px;
   tintColor: ${themedColors.positive};

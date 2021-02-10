@@ -22,7 +22,6 @@ import React, { useEffect } from 'react';
 import type { AbstractComponent } from 'react';
 import { SafeAreaView } from 'react-navigation';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 import { connect, useDispatch } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
@@ -34,6 +33,7 @@ import { deploySmartWalletAction, estimateSmartWalletDeploymentAction } from 'ac
 // components
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import { MediumText, BaseText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
 import FeeLabelToggle from 'components/FeeLabelToggle';
@@ -134,7 +134,7 @@ const SWActivationModal = ({
         <ModalContainer>
           <MediumText center medium>{t('smartWalletContent.activationModal.title')}</MediumText>
           <Spacing h={18} />
-          <CachedImage
+          <Image
             style={{ width: 64, height: 64, alignSelf: 'center' }}
             source={smartWalletIcon}
           />

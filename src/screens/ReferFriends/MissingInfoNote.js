@@ -21,10 +21,10 @@
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import { Note } from 'components/Note';
+import Image from 'components/Image';
 import { spacing } from 'utils/variables';
 import { images } from 'utils/images';
 import type { Theme } from 'models/Theme';
@@ -38,7 +38,7 @@ type Props = {
 };
 
 
-const NoteImage = styled(CachedImage)`
+const NoteImage = styled(Image)`
   width: 48px;
   height: 48px;
 `;
