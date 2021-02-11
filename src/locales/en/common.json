@@ -1307,7 +1307,8 @@
       "totalFee": "Total fee",
       "youAreSending": "You are sending",
       "fees": "Fees",
-      "allowancePlusEthFee": "Allowance + Ethereum fee"
+      "allowancePlusEthFee": "Allowance + Ethereum fee",
+      "migratingFrom": "migrating from"
     },
     "paragraph": {
       "exchangeTransactionSuccess": "It may take some time for this transaction to complete",
