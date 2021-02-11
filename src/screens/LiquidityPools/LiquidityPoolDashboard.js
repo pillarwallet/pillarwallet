@@ -54,7 +54,7 @@ import {
 } from 'constants/navigationConstants';
 
 // utils
-import { formatTokenAmount, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
+import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
 import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { images } from 'utils/images';
@@ -367,7 +367,7 @@ const LiquidityPoolDashboard = ({
                   <Spacing w={12} />
                   <View>
                     <BaseText fontSize={20}>
-                      {formatAmount(poolStats.rewardsToClaim)}{' '}
+                      {formatTokenAmount(poolStats.rewardsToClaim, rewardAssetData.symbol)}{' '}
                       <BaseText secondary regular>{rewardAssetData.symbol}</BaseText>
                     </BaseText>
                     <BaseText regular secondary>
