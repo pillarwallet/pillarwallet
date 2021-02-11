@@ -19,10 +19,10 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import ShadowedCard from 'components/ShadowedCard';
 import { Note } from 'components/Note';
+import Image from 'components/Image';
 import { fontStyles, spacing, fontSizes } from 'utils/variables';
 import { BaseText, MediumText } from 'components/Typography';
 import { LabelBadge } from 'components/LabelBadge';
@@ -52,7 +52,7 @@ const CardRow = styled.View`
    align-items: center;
 `;
 
-const CardImage = styled(CachedImage)`
+const CardImage = styled(Image)`
   width: 60px;
   height: 60px;
   border-radius: 30px;

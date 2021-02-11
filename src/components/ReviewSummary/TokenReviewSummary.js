@@ -21,9 +21,9 @@ import React from 'react';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
 import { getEnv } from 'configs/envConfig';
-import { CachedImage } from 'react-native-cached-image';
 import { BaseText, MediumText } from 'components/Typography';
 import { Spacing } from 'components/Layout';
+import Image from 'components/Image';
 import { formatTokenAmount } from 'utils/common';
 import { getFormattedRate } from 'utils/assets';
 import { images } from 'utils/images';
@@ -48,7 +48,7 @@ const Container = styled.View`
   align-items: center;
 `;
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(Image)`
   width: 64px;
   height: 64px;
 `;

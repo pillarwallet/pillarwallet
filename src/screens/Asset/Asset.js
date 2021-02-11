@@ -26,7 +26,6 @@ import isEmpty from 'lodash.isempty';
 import type { NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { createStructuredSelector } from 'reselect';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 // components
@@ -34,6 +33,7 @@ import AssetButtons from 'components/AssetButtons';
 import ActivityFeed from 'components/ActivityFeed';
 import SlideModal from 'components/Modals/SlideModal';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Image from 'components/Image';
 import { ScrollWrapper } from 'components/Layout';
 import AssetPattern from 'components/AssetPattern';
 import { BaseText, Paragraph, MediumText } from 'components/Typography';
@@ -151,7 +151,7 @@ const ValuesWrapper = styled.View`
   flex-direction: row;
 `;
 
-const SyntheticAssetIcon = styled(CachedImage)`
+const SyntheticAssetIcon = styled(Image)`
   width: 12px;
   height: 24px;
   margin-right: 4px;

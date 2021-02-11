@@ -26,7 +26,7 @@ import { Wrapper } from 'components/Layout';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { Paragraph } from 'components/Typography';
 import Button from 'components/Button';
-import styled from 'styled-components/native/index';
+import styled from 'styled-components/native';
 import { spacing } from 'utils/variables';
 import { IMPORT_WALLET_LEGALS, FORGOT_PIN } from 'constants/navigationConstants';
 

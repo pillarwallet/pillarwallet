@@ -27,16 +27,13 @@ import * as ethUtil from 'ethereumjs-util';
 import {
   Dimensions,
   Platform,
-  Animated,
-  Easing,
   Linking,
   PixelRatio,
   AppState,
 } from 'react-native';
 import { providers, utils, BigNumber as EthersBigNumber } from 'ethers';
 import { format as formatDate, isToday, isYesterday } from 'date-fns';
-import type { NavigationTransitionProps as TransitionProps } from 'react-navigation';
-import { StackViewStyleInterpolator } from 'react-navigation-stack';
+import { CardStyleInterpolators } from 'react-navigation-stack';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
 
@@ -49,7 +46,6 @@ import {
   HIGH_VALUE_TOKENS,
   VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
-import * as NAVSCREENS from 'constants/navigationConstants';
 
 // types
 import type { GasInfo } from 'models/GasInfo';
@@ -318,69 +314,12 @@ export const getiOSNavbarHeight = (): number => {
   return 0;
 };
 
-const DEFAULT_TRANSITION_SCREENS = [
-  NAVSCREENS.MANAGE_USERS_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_HOME_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_TOKEN_FROM_ASSET_FLOW,
-  NAVSCREENS.PPN_SEND_SYNTHETIC_ASSET_FLOW,
-  NAVSCREENS.SEND_TOKEN_FROM_CONTACT_FLOW,
-  NAVSCREENS.SEND_COLLECTIBLE_FROM_ASSET_FLOW,
-  NAVSCREENS.POOLTOGETHER_FLOW,
-];
-
-const getIfNeedsDefTransition = (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => {
-  return DEFAULT_TRANSITION_SCREENS.some(
-    screenName =>
-      screenName === transitionProps.scene.route.routeName ||
-      (prevTransitionProps && screenName === prevTransitionProps.scene.route.routeName),
-  );
-};
-
-const getTransitionDuration = (isFaster: boolean) => {
-  let duration = 400;
-  if (isFaster && Platform.OS === 'android') {
-    duration = 250;
-  }
-  return duration;
-};
-
-const getTransitionSpec = (isFasterAnimation: boolean) => ({
-  duration: getTransitionDuration(isFasterAnimation),
-  easing: Easing.out(Easing.poly(2)),
-  timing: Animated.timing,
-});
-
 export const modalTransition = {
   mode: 'modal',
   defaultNavigationOptions: {
-    header: null,
+    headerShown: false,
+    cardStyleInterpolator: CardStyleInterpolators.forVerticalIOS,
   },
-  transitionConfig: (transitionProps: TransitionProps, prevTransitionProps: TransitionProps) => ({
-    transitionSpec: getTransitionSpec(getIfNeedsDefTransition(transitionProps, prevTransitionProps)),
-    screenInterpolator: (sceneProps: TransitionProps) => {
-      const needsDefaultTransition = getIfNeedsDefTransition(transitionProps, prevTransitionProps);
-      if (needsDefaultTransition) {
-        return Platform.OS === 'ios'
-          ? StackViewStyleInterpolator.forHorizontal(sceneProps)
-          : StackViewStyleInterpolator.forFadeFromBottomAndroid(sceneProps);
-      }
-
-      const { layout, position, scene } = sceneProps;
-      const { index } = scene;
-      const opacity = position.interpolate({
-        inputRange: [index - 1, index - 0.99, index],
-        outputRange: [0, 1, 1],
-      });
-
-      const height = layout.initHeight;
-      const translateY = position.interpolate({
-        inputRange: [index - 1, index, index + 1],
-        outputRange: [height, 0, 0],
-      });
-      return { opacity, transform: [{ translateY }] };
-    },
-  }),
 };
 
 export const handleUrlPress = (url: string) => {
@@ -688,19 +627,42 @@ export const hitSlop10 = {
 
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
-export const formatBigAmount = (amount: number) => {
-  if (amount >= 1e6) {
-    return `${Math.round(amount / 1e6)}M`; // eslint-disable-line i18next/no-literal-string
-  }
-  if (amount >= 1e3) {
-    return `${Math.round(amount / 1e3)}K`; // eslint-disable-line i18next/no-literal-string
-  }
-  return `${Math.round(amount)}`;
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
 };
 
-export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
+export const formatBigAmount = (value: Value) => {
+  const _value = wrapBigNumber(value);
+
+  if (_value.gte(1e12)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e12).toFixed(2)}T`;
+  }
+
+  if (_value.gte(1e9)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e9).toFixed(2)}B`;
+  }
+
+  if (_value.gte(1e6)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e6).toFixed(2)}M`;
+  }
+
+  if (_value.gte(1e3)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e3).toFixed(2)}K`;
+  }
+
+  return _value.toFixed(2);
+};
+
+export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol} ${formatBigAmount(amount)}`;
+  return `${currencySymbol} ${formatBigAmount(value)}`;
 };
 
 export const removeTrailingZeros = (amount: string) => {
@@ -711,3 +673,4 @@ export const removeTrailingZeros = (amount: string) => {
 export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
+

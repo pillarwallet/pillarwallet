@@ -48,7 +48,7 @@ import type { TransactionFeeInfo } from 'models/Transaction';
 import type { RootReducerState, Dispatch } from 'reducers/rootReducer';
 import type { Balances } from 'models/Asset';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
-import type { LiquidityPool } from 'models/LiquidityPools';
+import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 
 
 type Props = {
@@ -57,11 +57,15 @@ type Props = {
   accountAddress: string,
   balances: Balances,
   resetEstimateTransaction: () => void,
-  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool, amountToClaim: number) => void,
+  calculateClaimRewardsTransactionEstimate: (pool: UnipoolLiquidityPool, amountToClaim: number) => void,
   isEstimating: boolean,
   estimateErrorMessage: ?string,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
+
+type NavigationParams = {|
+  pool: UnipoolLiquidityPool,
+|};
 
 const MainWrapper = styled.View`
   padding: 32px 20px;
@@ -79,7 +83,7 @@ const ClaimRewardReviewScreen = ({
   liquidityPoolsReducer,
 }: Props) => {
   const [isSubmitted, setIsSubmitted] = useState(false);
-  const { pool } = navigation.state.params;
+  const { pool }: NavigationParams = navigation.state.params;
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
 
   const rewardsToClaim = poolStats?.rewardsToClaim || 0;
@@ -137,7 +141,7 @@ const ClaimRewardReviewScreen = ({
     >
       <MainWrapper>
         <TokenReviewSummary
-          assetSymbol={pool.rewards[0].symbol}
+          assetSymbol={pool.rewards?.[0].symbol}
           text={t('liquidityPoolsContent.label.youAreClaiming')}
           amount={rewardsToClaim}
         />
@@ -197,7 +201,7 @@ const combinedMapStateToProps = (state: RootReducerState): $Shape<Props> => ({
 
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
-  calculateClaimRewardsTransactionEstimate: (pool: LiquidityPool, amountToClaim: number) =>
+  calculateClaimRewardsTransactionEstimate: (pool: UnipoolLiquidityPool, amountToClaim: number) =>
     dispatch(calculateClaimRewardsTransactionEstimateAction(pool, amountToClaim)),
 });
 

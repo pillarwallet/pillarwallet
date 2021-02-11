@@ -20,7 +20,7 @@
 import React, { useState } from 'react';
 import { FlatList, ScrollView, View } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
-import styled, { withTheme } from 'styled-components/native/index';
+import styled, { withTheme } from 'styled-components/native';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import t from 'translations/translate';
 

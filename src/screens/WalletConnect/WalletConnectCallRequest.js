@@ -23,7 +23,6 @@ import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import { connect } from 'react-redux';
 import { utils } from 'ethers';
-import { CachedImage } from 'react-native-cached-image';
 import { createStructuredSelector } from 'reselect';
 import { BigNumber } from 'bignumber.js';
 import get from 'lodash.get';
@@ -36,6 +35,7 @@ import { estimateTransactionAction, resetEstimateTransactionAction } from 'actio
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, Paragraph, MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Spinner from 'components/Spinner';
 import Toast from 'components/Toast';
@@ -279,7 +279,7 @@ class WalletConnectCallRequestScreen extends React.Component<Props> {
               <Value>{name}</Value>
             </LabeledRow>
             {!!icon && (
-              <CachedImage
+              <Image
                 key={name}
                 style={{
                   height: 55,

@@ -22,7 +22,6 @@ import * as React from 'react';
 import { TouchableOpacity, View, TouchableWithoutFeedback } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import tForm from 'tcomb-form-native';
 import get from 'lodash.get';
 import t from 'translations/translate';
@@ -42,6 +41,7 @@ import Button from 'components/Button';
 import InsightWithButton from 'components/InsightWithButton';
 import { Note } from 'components/Note';
 import Modal from 'components/Modal';
+import Image from 'components/Image';
 import Icon from 'components/Icon';
 
 // utils
@@ -134,7 +134,7 @@ const FieldWrapper = styled.View`
   padding: 20px 0 25px;
 `;
 
-const FieldIcon = styled(CachedImage)`
+const FieldIcon = styled(Image)`
   width: 48px;
   height: 48px;
   margin-top: ${({ marginTop }) => marginTop || 0};
