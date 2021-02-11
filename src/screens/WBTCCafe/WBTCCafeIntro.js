@@ -56,7 +56,7 @@ color: ${themedColors.secondaryText};
 `;
 
 const SmallTitle = styled(BaseText)`
-  font-size: ${fontSizes.regular};
+  font-size: ${fontSizes.regular}px;
   margin-bottom: 5px;
   line-height: ${fontSizes.regular}px;
 `;
