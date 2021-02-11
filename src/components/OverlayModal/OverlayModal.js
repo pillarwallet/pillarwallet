@@ -41,8 +41,8 @@ type State = {|
 |};
 
 const Wrapper = styled.View`
-  padding-left: 16;
-  padding-right: 16;
+  padding-left: 16px;
+  padding-right: 16px;
   background-color: ${UIColors.darkShadowColor};
   flex: 1;
 `;
@@ -59,8 +59,8 @@ const ModalMessage = styled(BaseText)`
 `;
 
 const TextWrapper = styled.View`
-  padding-left: 20;
-  padding-right: 20;
+  padding-left: 20px;
+  padding-right: 20px;
 `;
 
 const ButtonWrapper = styled.View`
