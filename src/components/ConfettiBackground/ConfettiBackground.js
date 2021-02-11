@@ -20,11 +20,9 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
-
 import { spacing } from 'utils/variables';
 import { getDeviceWidth } from 'utils/common';
-
+import Image from 'components/Image';
 
 type Props = {
   children: React.Node,
@@ -46,7 +44,7 @@ const ContentWrapper = styled.View`
   padding: 40px ${spacing.layoutSides}px;
 `;
 
-const Confetti = styled(CachedImage)`
+const Confetti = styled(Image)`
   position: absolute;
   left: 0;
   ${({ top }) => top ? 'top: 0;' : 'bottom: 0;'}

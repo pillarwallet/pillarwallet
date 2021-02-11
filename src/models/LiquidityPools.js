@@ -18,36 +18,44 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 
-export const LIQUIDITY_POOLS_TYPES = {
+import type { BigNumber } from 'bignumber.js';
+
+export const LIQUIDITY_POOL_TYPES = {
+  UNISWAP: ('UNISWAP': 'UNISWAP'),
   UNIPOOL: ('UNIPOOL': 'UNIPOOL'),
 };
 
-export type LiquidityPoolType = $Values<typeof LIQUIDITY_POOLS_TYPES>;
+export type LiquidityPoolType = $Values<typeof LIQUIDITY_POOL_TYPES>;
 
 export type LiquidityPoolBase = {
-  type: LiquidityPoolType,
   name: string,
   symbol: string,
   tokensProportions: {
     symbol: string,
-    proportion: number
+    proportion: number,
+    progressBarColor?: string,
   }[],
-  rewards: {
+  iconUrl: string,
+  rewardsEnabled?: boolean,
+  rewards?: {
     symbol: string,
     amount: number,
   }[],
-  iconUrl: string,
-  rewardsEnabled: boolean,
+};
+
+export type UniswapLiquidityPool = LiquidityPoolBase & {
+  type: typeof LIQUIDITY_POOL_TYPES.UNISWAP,
+  uniswapPairAddress: string,
 };
 
 export type UnipoolLiquidityPool = LiquidityPoolBase & {
-  type: typeof LIQUIDITY_POOLS_TYPES.UNIPOOL,
+  type: typeof LIQUIDITY_POOL_TYPES.UNIPOOL,
   uniswapPairAddress: string,
   unipoolAddress: string,
   unipoolSubgraphName: string,
 };
 
-export type LiquidityPool = UnipoolLiquidityPool;
+export type LiquidityPool = UniswapLiquidityPool | UnipoolLiquidityPool;
 
 export type LiquidityPoolStats = {
   currentPrice: number,
@@ -59,12 +67,12 @@ export type LiquidityPoolStats = {
   dailyVolume: number,
   dailyFees: number,
   tokensLiquidity: {[string]: number },
-  stakedAmount: number,
+  stakedAmount: BigNumber,
   rewardsToClaim: number,
   tokensPrices: {[string]: number },
   tokensPricesUSD: {[string]: number },
   tokensPerLiquidityToken: {[string]: number },
   totalSupply: number,
   history: {date: Date, value: number}[],
-  userLiquidityTokenBalance: number,
+  userLiquidityTokenBalance: BigNumber,
 };

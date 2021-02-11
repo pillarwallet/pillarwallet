@@ -22,7 +22,6 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import { MediumText } from 'components/Typography';
@@ -30,6 +29,7 @@ import CircularProgressBar from 'components/CircularProgressBar';
 import { Spacing } from 'components/Layout';
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import { getDeviceWidth, formatAmount, formatUnits, getDecimalPlaces, isCaseInsensitiveMatch } from 'utils/common';
 import { getAssetDataByAddress, getAssetsAsList } from 'utils/assets';
 import { themedColors, getThemeColors } from 'utils/themes';
@@ -64,7 +64,7 @@ const CirclesWrapper = styled.View`
   align-items: center;
 `;
 
-const TokenIcon = styled(CachedImage)`
+const TokenIcon = styled(Image)`
   width: 49px;
   height: 49px;
 `;

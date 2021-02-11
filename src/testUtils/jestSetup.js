@@ -19,6 +19,8 @@
 */
 
 // This script runs at the beginning of all unit tests
+import 'react-native-gesture-handler/jestSetup';
+import React from 'react';
 import Enzyme from 'enzyme';
 import Adapter from 'enzyme-adapter-react-16';
 import { JSDOM } from 'jsdom';
@@ -80,6 +82,23 @@ const storageCache = {};
 const MockAsyncStorage = new StorageMock(storageCache);
 
 jest.mock('@react-native-community/async-storage', () => MockAsyncStorage);
+
+jest.mock('react-native-safe-area-view', () => ({ children }) => <>{children}</>);
+
+// Source: https://reactnavigation.org/docs/testing/#mocking-native-modules
+jest.mock('react-native-reanimated', () => {
+  // eslint-disable-next-line global-require
+  const Reanimated = require('react-native-reanimated/mock');
+
+  // Silence the warning: Animated: `useNativeDriver` is not supported because the native animated module is missing
+  jest.mock('react-native/Libraries/Animated/src/NativeAnimatedHelper');
+
+  // The mock for `call` immediately calls the callback which is incorrect
+  // So we override it with a no-op
+  Reanimated.default.call = () => {};
+
+  return Reanimated;
+});
 
 jest.setMock('@react-native-firebase/crashlytics');
 jest.setMock('@react-native-firebase/app/lib/internal/registry/nativeModule', {});
@@ -238,12 +257,7 @@ jest.setMock('cryptocompare', {
 
 jest.setMock('react-native-share', {});
 
-jest.setMock('react-native-cached-image', {
-  ImageCacheManager: () => ({
-    clearCache: () => Promise.resolve(),
-  }),
-  CachedImage: () => null,
-});
+jest.setMock('react-native-fast-image', () => null);
 
 export const mockSmartWalletAccountApiData = {
   id: 123,

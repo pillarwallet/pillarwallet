@@ -20,13 +20,13 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import { connect } from 'react-redux';
 import t from 'translations/translate';
 
 import { ADD_EDIT_USER } from 'constants/navigationConstants';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Image from 'components/Image';
 import { Wrapper } from 'components/Layout';
 import { MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -50,7 +50,7 @@ type Props = {
   isPillarRewardCampaignActive: boolean,
 };
 
-const RewardBadge = styled(CachedImage)`
+const RewardBadge = styled(Image)`
   width: 104px;
   height: 104px;
   margin-bottom: ${spacing.medium}px;

@@ -20,11 +20,11 @@
 
 import React, { useRef } from 'react';
 import { ScrollView } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 
 import { MediumText, BaseText } from 'components/Typography';
+import Image from 'components/Image';
 import Button from 'components/Button';
 import ModalBox from 'components/ModalBox';
 import { Spacing } from 'components/Layout';
@@ -43,7 +43,7 @@ const ModalWrapper = styled.View`
   align-items: center;
 `;
 
-const CautionImage = styled(CachedImage)`
+const CautionImage = styled(Image)`
   width: 144px;
   height: 144px;
 `;

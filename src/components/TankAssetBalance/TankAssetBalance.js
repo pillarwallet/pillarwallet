@@ -20,10 +20,10 @@
 import * as React from 'react';
 import { View } from 'react-native';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import { fontSizes } from 'utils/variables';
 import { BaseText } from 'components/Typography';
+import Image from 'components/Image';
 
 type Props = {
   amount: string,
@@ -45,7 +45,7 @@ const BalanceInTank = styled(BaseText)`
   font-size: ${fontSizes.big}px;
 `;
 
-const Icon = styled(CachedImage)`
+const Icon = styled(Image)`
   width: 6px;
   height: 12px;
   margin-right: 4px;

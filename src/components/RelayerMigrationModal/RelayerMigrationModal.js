@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
 import { SafeAreaView } from 'react-navigation';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
@@ -34,6 +33,7 @@ import { Spacing } from 'components/Layout';
 import { BaseText, MediumText } from 'components/Typography';
 import SlideModal from 'components/Modals/SlideModal';
 import Button from 'components/Button';
+import Image from 'components/Image';
 
 // constants
 import { PLR } from 'constants/assetsConstants';
@@ -114,7 +114,7 @@ class RelayerMigrationModal extends React.PureComponent<Props, State> {
             <MediumText center medium>{t('relayerMigrationContent.modal.switch.title')}</MediumText>
             <Spacing h={18} />
             {iconUrl &&
-            <CachedImage
+            <Image
               style={{ width: 64, height: 64, alignSelf: 'center' }}
               source={{ uri: `${getEnv().SDK_PROVIDER}/${iconUrl}?size=2` }}
               resizeMode="contain"
