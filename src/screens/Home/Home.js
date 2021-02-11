@@ -530,10 +530,7 @@ class HomeScreen extends React.Component<Props> {
         pool,
         poolStats: getPoolStats(pool, liquidityPoolsReducer),
       }))
-      .filter(
-        ({ poolStats }) =>
-          poolStats && (poolStats.userLiquidityTokenBalance.gt(0) || poolStats.stakedAmount.gt(0)),
-      );
+      .filter(({ poolStats }) => poolStats?.userLiquidityTokenBalance.gt(0) || poolStats?.stakedAmount.gt(0));
 
     return (
       <React.Fragment>
