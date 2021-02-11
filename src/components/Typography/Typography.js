@@ -25,7 +25,7 @@ import { getThemeColors } from 'utils/themes';
 
 type StyleValue = string | number | null | void;
 
-// Naive transformer from css values to add px units to numberic prosp. Required by Styled Components.
+// Naive transformer from css values to add px units to numeric prosp. Required by Styled Components.
 const toCssLength = (value: StyleValue) => (typeof value === 'number' ? `${value}px` : value);
 
 const getFontSize = (props) => {
