@@ -46,6 +46,8 @@ type Props = {
   fiatCurrency: string,
   onGestureStart: () => void,
   onGestureEnd: () => void,
+  showXAxisValues?: boolean,
+  showYAxisValues?: boolean,
 };
 
 const DateButton = styled.TouchableOpacity`
@@ -71,7 +73,13 @@ const YEAR = 'YEAR';
 const ALL = 'ALL';
 
 const ValueOverTimeGraph = ({
-  data, fiatCurrency, theme, onGestureStart, onGestureEnd,
+  data,
+  fiatCurrency,
+  theme,
+  onGestureStart,
+  onGestureEnd,
+  showXAxisValues = true,
+  showYAxisValues = true,
 }: Props) => {
   const [activeTimeRange, setActiveTimeRange] = useState(WEEK);
 
@@ -146,11 +154,15 @@ const ValueOverTimeGraph = ({
   };
 
   const getYAxisValue = (y: number) => {
+    if (!showYAxisValues) return undefined;
+
     const amountInFiat = ((maxY - minY) * y) + minY;
     return (+amountInFiat.toPrecision(2)).toFixed(2);
   };
 
   const getXAxisValue = (x: number) => {
+    if (!showXAxisValues) return undefined;
+
     const rangeStartMs = getTime(timeRangeStart);
     const nowMs = getTime(timeRangeEnd);
     let date = new Date(rangeStartMs + ((nowMs - rangeStartMs) * x));

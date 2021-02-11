@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { SafeAreaView } from 'react-navigation';
+import SafeAreaView from 'react-native-safe-area-view';
 import { Platform, StatusBar, StyleSheet } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import { spacing } from 'utils/variables';
@@ -68,7 +68,16 @@ export const Center = styled.View`
   align-items: center;
 `;
 
-export const ContainerOuter = styled(SafeAreaView)`
+// Workaround: styled-components 3.x do not pass `theme` prop to FC, but do pass
+// it to class components.
+// eslint-disable-next-line react/prefer-stateless-function
+class SafeAreaViewClassWrapper extends React.Component<{}> {
+  render() {
+    return <SafeAreaView {...this.props} />;
+  }
+}
+
+export const ContainerOuter = styled(SafeAreaViewClassWrapper)`
   background-color: ${({ color, theme }) => color || theme.colors.basic070};
   ${props => props.androidStatusbarHeight ? `padding-top: ${props.androidStatusbarHeight}px` : ''};
 `;

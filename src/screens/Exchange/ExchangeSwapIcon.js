@@ -19,9 +19,9 @@
 */
 import React from 'react';
 import { TouchableOpacity } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import { images } from 'utils/images';
+import Image from 'components/Image';
 import type { Theme } from 'models/Theme';
 
 const Wrapper = styled.View`
@@ -43,7 +43,7 @@ const ExchangeSwapIcon = ({
   return (
     <Wrapper>
       <TouchableOpacity onPress={onPress} disabled={disabled} >
-        <CachedImage
+        <Image
           style={{ width: 18, height: 20 }}
           source={exchangeIcon}
           resizeMode="contain"

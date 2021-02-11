@@ -19,7 +19,6 @@
 */
 
 import * as React from 'react';
-import { CachedImage } from 'react-native-cached-image';
 import { withNavigation, NavigationScreenProp } from 'react-navigation';
 import styled from 'styled-components/native';
 import { connect } from 'react-redux';
@@ -30,6 +29,7 @@ import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { Spacing } from 'components/Layout';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import { spacing, fontSizes } from 'utils/variables';
 import { themedColors } from 'utils/themes';
 import { toggleWCPromoCardAction } from 'actions/walletConnectActions';
@@ -115,7 +115,7 @@ const PromoCard = ({ promoCardCollapsed, toggleWCPromoCard, navigation }: Props)
   return (
     <CardWrapper>
       <ShadowedCard borderRadius={30}>
-        <CachedImage
+        <Image
           source={promoImage}
           resizeMode="cover"
           style={{ width: '100%', aspectRatio: promoImageAspectRatio }}

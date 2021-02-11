@@ -19,7 +19,7 @@
 */
 import * as React from 'react';
 import QRCode from 'react-native-qrcode-svg';
-import { withTheme } from 'styled-components/native/index';
+import { withTheme } from 'styled-components/native';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 import type { Theme } from 'models/Theme';
 

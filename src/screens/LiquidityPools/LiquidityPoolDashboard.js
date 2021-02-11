@@ -20,7 +20,6 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { View, RefreshControl } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { getEnv } from 'configs/envConfig';
@@ -36,6 +35,7 @@ import { BaseText, MediumText } from 'components/Typography';
 import CircleButton from 'components/CircleButton';
 import AssetPattern from 'components/AssetPattern';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 import Stats from 'components/Stats';
 import Progress from 'components/Progress';
@@ -52,12 +52,12 @@ import {
   LIQUIDITY_POOLS_REMOVE_LIQUIDITY,
   LIQUIDITY_POOLS_CLAIM_REWARDS_REVIEW,
 } from 'constants/navigationConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 // utils
-import { formatTokenAmount, formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
+import { formatTokenAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
 import { convertUSDToFiat } from 'utils/assets';
-import { getPoolStats } from 'utils/liquidityPools';
+import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
+import { images } from 'utils/images';
 import { getColorByThemeOutsideStyled } from 'utils/themes';
 
 // types
@@ -109,12 +109,12 @@ const StretchedRow = styled(Row)`
   justify-content: space-between;
 `;
 
-const CardIcon = styled(CachedImage)`
+const CardIcon = styled(Image)`
   width: 48px;
   height: 48px;
 `;
 
-const AllocationIcon = styled(CachedImage)`
+const AllocationIcon = styled(Image)`
   width: 24px;
   height: 24px;
 `;
@@ -162,8 +162,10 @@ const LiquidityPoolDashboard = ({
   const [scrollEnabled, setScrollEnabled] = useState(true);
 
   useEffect(() => {
-    if (!poolStats) { fetchLiquidityPoolsData(LIQUIDITY_POOLS()); }
-  });
+    if (!poolStats) {
+      fetchLiquidityPoolsData(supportedLiquidityPools(supportedAssets));
+    }
+  }, []);
 
   useEffect(() => {
     if (
@@ -185,13 +187,14 @@ const LiquidityPoolDashboard = ({
 
   if (!poolStats) return <Loader />;
 
-  const rewardAssetData = supportedAssets.find(({ symbol }) => symbol === pool.rewards[0].symbol);
-  if (!rewardAssetData) {
-    return null;
-  }
+  const rewardAssetData = pool.rewards?.[0]
+    ? supportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
+    : undefined;
 
   const balance = poolStats.userLiquidityTokenBalance.toNumber();
   const formattedBalance = formatTokenAmount(balance, pool.symbol);
+  const hasBalance = balance > 0;
+
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
   const stakedAmountInFiat = convertUSDToFiat(
@@ -241,7 +244,7 @@ const LiquidityPoolDashboard = ({
     });
   });
 
-  if (pool.rewardsEnabled) {
+  if (pool.rewardsEnabled && rewardAssetData) {
     stats.push({
       title: t('liquidityPoolsContent.label.weeklyRewards'),
       value: t('tokenValue', { value: formatBigAmount(pool.rewards[0].amount), token: rewardAssetData.symbol }),
@@ -279,6 +282,8 @@ const LiquidityPoolDashboard = ({
             fiatCurrency={fiatCurrency}
             onGestureStart={() => setScrollEnabled(false)}
             onGestureEnd={() => setScrollEnabled(true)}
+            showXAxisValues={false}
+            showYAxisValues={false}
           />
           <HorizontalPadding>
             <Spacing h={16} />
@@ -309,7 +314,7 @@ const LiquidityPoolDashboard = ({
           <Spacing h={32} />
 
           <HorizontalPadding>
-            {showStakeSection && (
+            {showStakeSection && rewardAssetData && (
             <>
               <MediumText big>{t('liquidityPoolsContent.label.staked')}</MediumText>
               <Spacing h={6} />
@@ -366,7 +371,7 @@ const LiquidityPoolDashboard = ({
                   <Spacing w={12} />
                   <View>
                     <BaseText fontSize={20}>
-                      {formatAmount(poolStats.rewardsToClaim)}{' '}
+                      {formatTokenAmount(poolStats.rewardsToClaim, rewardAssetData.symbol)}{' '}
                       <BaseText secondary regular>{rewardAssetData.symbol}</BaseText>
                     </BaseText>
                     <BaseText regular secondary>
@@ -394,21 +399,31 @@ const LiquidityPoolDashboard = ({
             </>
           )}
             <Spacing h={28} />
-            <MediumText big>{t('liquidityPoolsContent.label.yourPoolShareAllocation')}</MediumText>
+            <MediumText big>{hasBalance
+              ? t('liquidityPoolsContent.label.yourPoolShareAllocation')
+              : t('liquidityPoolsContent.label.poolTokenAllocation')}
+            </MediumText>
             <Spacing h={22} />
             {pool.tokensProportions.map(({ symbol: tokenSymbol, proportion, progressBarColor }) => {
               const tokenData = supportedAssets.find(({ symbol }) => symbol === tokenSymbol);
               if (!tokenData) return null;
               const tokenPriceInFiat = convertUSDToFiat(poolStats.tokensPricesUSD[tokenSymbol], rates, fiatCurrency);
               const formattedTokenPrice = formatFiat(tokenPriceInFiat, fiatCurrency);
-              const quantity = poolStats.tokensPerLiquidityToken[tokenSymbol] * (balance || 1);
+              const quantity = hasBalance
+                  ? poolStats.tokensPerLiquidityToken[tokenSymbol] * balance
+                  : poolStats.tokensLiquidity[tokenSymbol];
               const formattedQuantity = formatTokenAmount(quantity, tokenSymbol);
+
+              const { genericToken } = images(theme);
 
               return (
                 <View key={tokenSymbol}>
                   <StretchedRow>
                     <Row>
-                      <AllocationIcon source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }} />
+                      <AllocationIcon
+                        source={{ uri: `${getEnv().SDK_PROVIDER}/${tokenData.iconUrl}?size=3` }}
+                        fallbackSource={genericToken}
+                      />
                       <Spacing w={8} />
                       <MediumText big>{tokenData.name}</MediumText>
                       <Spacing w={8} />

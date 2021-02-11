@@ -258,6 +258,14 @@ export const findSupportedAsset = (supportedAssets: Asset[], addressToFind: ?str
   return supportedAssets.find(asset => addressesEqual(asset.address, addressToFind));
 };
 
+export const isSupportedAssetAddress = (supportedAssets: Asset[], addressToCheck: ?string): boolean => {
+  return supportedAssets.some((asset: Asset) => addressesEqual(asset.address, addressToCheck));
+};
+
+export const isSupportedAssetSymbol = (supportedAssets: Asset[], symbolToCheck: ?string): boolean => {
+  return supportedAssets.some((asset: Asset) => asset.symbol === symbolToCheck);
+};
+
 export const getAssetData = (
   userAssets: Asset[],
   supportedAssetsData: Asset[],

@@ -224,6 +224,7 @@ class ContainerWithHeader extends React.Component<Props, State> {
             {...headerProps}
             navigation={navigation}
             bottomBorderAnimationValue={bottomBorderAnimationValue}
+            noPaddingTop
           />}
         <StyledSafeAreaView
           forceInset={{ top: topInset, bottom: bottomInset, ...inset }}

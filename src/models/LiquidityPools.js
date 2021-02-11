@@ -20,36 +20,42 @@
 
 import type { BigNumber } from 'bignumber.js';
 
-export const LIQUIDITY_POOLS_TYPES = {
+export const LIQUIDITY_POOL_TYPES = {
+  UNISWAP: ('UNISWAP': 'UNISWAP'),
   UNIPOOL: ('UNIPOOL': 'UNIPOOL'),
 };
 
-export type LiquidityPoolType = $Values<typeof LIQUIDITY_POOLS_TYPES>;
+export type LiquidityPoolType = $Values<typeof LIQUIDITY_POOL_TYPES>;
 
 export type LiquidityPoolBase = {
-  type: LiquidityPoolType,
   name: string,
   symbol: string,
   tokensProportions: {
     symbol: string,
-    proportion: number
+    proportion: number,
+    progressBarColor?: string,
   }[],
-  rewards: {
+  iconUrl: string,
+  rewardsEnabled?: boolean,
+  rewards?: {
     symbol: string,
     amount: number,
   }[],
-  iconUrl: string,
-  rewardsEnabled: boolean,
+};
+
+export type UniswapLiquidityPool = LiquidityPoolBase & {
+  type: typeof LIQUIDITY_POOL_TYPES.UNISWAP,
+  uniswapPairAddress: string,
 };
 
 export type UnipoolLiquidityPool = LiquidityPoolBase & {
-  type: typeof LIQUIDITY_POOLS_TYPES.UNIPOOL,
+  type: typeof LIQUIDITY_POOL_TYPES.UNIPOOL,
   uniswapPairAddress: string,
   unipoolAddress: string,
   unipoolSubgraphName: string,
 };
 
-export type LiquidityPool = UnipoolLiquidityPool;
+export type LiquidityPool = UniswapLiquidityPool | UnipoolLiquidityPool;
 
 export type LiquidityPoolStats = {
   currentPrice: number,

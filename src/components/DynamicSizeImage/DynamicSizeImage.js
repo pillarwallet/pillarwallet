@@ -19,8 +19,8 @@
 */
 
 import * as React from 'react';
-import { Image } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
+import { Image as RNImage } from 'react-native';
+import Image from 'components/Image';
 
 
 type ImageSource = ?string | { [uri: string]: string };
@@ -62,11 +62,11 @@ class DynamicSizeImage extends React.Component<Props, State> {
     const { imageSource } = this.props;
 
     if (!!imageSource && typeof imageSource === 'object' && imageSource.uri) {
-      Image.getSize(imageSource.uri, (width, height) => {
+      RNImage.getSize(imageSource.uri, (width, height) => {
         if (width && height) this.setImageSize(width, height);
       });
     } else {
-      const { width, height } = Image.resolveAssetSource(imageSource) || {};
+      const { width, height } = RNImage.resolveAssetSource(imageSource) || {};
       if (width && height) this.setImageSize(width, height);
     }
   };
@@ -76,7 +76,7 @@ class DynamicSizeImage extends React.Component<Props, State> {
     const { width, height } = this.state;
 
     return (
-      <CachedImage
+      <Image
         source={imageSource}
         resizeMode="contain"
         style={{ ...style, width, height }}

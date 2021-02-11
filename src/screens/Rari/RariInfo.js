@@ -22,11 +22,11 @@ import React from 'react';
 import { View } from 'react-native';
 import { connect } from 'react-redux';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import { BaseText, MediumText } from 'components/Typography';
+import Image from 'components/Image';
 import Insight from 'components/Insight/Insight';
 import InsightWithButton from 'components/InsightWithButton';
 import { Spacing } from 'components/Layout';
@@ -77,7 +77,7 @@ const Paragraph = styled(BaseText)`
   ${fontStyles.medium};
 `;
 
-const Banner = styled(CachedImage)`
+const Banner = styled(Image)`
   width: ${bannerWidth}px;
   height: ${bannerWidth * (120 / 335)}px;
 `;
@@ -89,7 +89,7 @@ const RariLogoWrapper = styled.View`
   right: ${bannerWidth * (12 / 335)}px;
 `;
 
-const RariLogo = styled(CachedImage)`
+const RariLogo = styled(Image)`
   width: ${bannerWidth * (48 / 335)}px;
   height: ${bannerWidth * (48 / 335)}px;
 `;
