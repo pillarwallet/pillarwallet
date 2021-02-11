@@ -47,7 +47,7 @@ import { findSupportedAsset } from 'utils/assets';
 import { getPoolStats } from 'utils/liquidityPools';
 
 // types
-import type { Asset } from 'models/Asset';
+import type { Asset, Balances } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
@@ -135,12 +135,15 @@ const StakeTokensScreen = ({
     { amount: assetValue, poolToken: assetData, pool },
   );
 
-  const poolTokenCustomBalances = assetData != null ? {
-    [assetData.symbol]: {
-      balance: poolStats?.userLiquidityTokenBalance,
-      symbol: assetData?.symbol,
-    },
-  } : {};
+  const poolTokenCustomBalances: Balances =
+    assetData != null
+      ? {
+        [assetData.symbol]: {
+          balance: poolStats?.userLiquidityTokenBalance.toFixed() ?? '0',
+          symbol: assetData?.symbol,
+        },
+      }
+      : {};
 
   return (
     <ContainerWithHeader

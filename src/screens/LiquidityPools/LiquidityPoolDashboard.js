@@ -170,8 +170,8 @@ const LiquidityPoolDashboard = ({
   useEffect(() => {
     if (
       poolStats &&
-      poolStats.stakedAmount === 0 &&
-      poolStats.userLiquidityTokenBalance > 0 &&
+      poolStats.stakedAmount.eq(0) &&
+      poolStats.userLiquidityTokenBalance.gt(0) &&
       !shownStakingEnabledModal[pool.name] &&
       pool.rewardsEnabled
     ) {
@@ -191,16 +191,20 @@ const LiquidityPoolDashboard = ({
     ? supportedAssets.find(({ symbol }) => symbol === pool.rewards?.[0].symbol)
     : undefined;
 
-  const balance = poolStats.userLiquidityTokenBalance;
+  const balance = poolStats.userLiquidityTokenBalance.toNumber();
   const formattedBalance = formatTokenAmount(balance, pool.symbol);
   const hasBalance = balance > 0;
 
   const fiatCurrency = baseFiatCurrency || defaultFiatCurrency;
   const fiatBalance = formatFiat(convertUSDToFiat(balance * poolStats.currentPrice, rates, fiatCurrency), fiatCurrency);
-  const stakedAmountInFiat = convertUSDToFiat(poolStats.stakedAmount * poolStats.currentPrice, rates, fiatCurrency);
+  const stakedAmountInFiat = convertUSDToFiat(
+    poolStats.stakedAmount.toNumber() * poolStats.currentPrice,
+    rates,
+    fiatCurrency,
+  );
   const formattedStakedAmountInFiat = formatFiat(stakedAmountInFiat, fiatCurrency);
 
-  const hasStakedTokens = poolStats && poolStats?.stakedAmount > 0;
+  const hasStakedTokens = poolStats && poolStats?.stakedAmount.gt(0);
   const showStakeSection = pool.rewardsEnabled || hasStakedTokens;
 
   const onAddLiquidity = () => {
@@ -346,7 +350,7 @@ const LiquidityPoolDashboard = ({
                     />
                   </ButtonWrapper>
                 </Row>
-                {balance === 0 && poolStats.stakedAmount === 0 && (
+                {balance === 0 && poolStats.stakedAmount.eq(0) && (
                   <>
                     <Overlay />
                     <AbsolutePositioning>
@@ -381,7 +385,7 @@ const LiquidityPoolDashboard = ({
                   primarySecond
                   onPress={onClaimReward}
                 />
-                {poolStats.stakedAmount === 0 && (
+                {poolStats.stakedAmount.eq(0) && (
                   <>
                     <Overlay />
                     <AbsolutePositioning>

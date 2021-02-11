@@ -288,7 +288,8 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
-    const balance = poolStats.userLiquidityTokenBalance;
+    const balance = poolStats.userLiquidityTokenBalance.toNumber();
+
     const { currentPrice } = poolStats;
     const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
 
@@ -299,13 +300,13 @@ const LiquidityPoolsScreen = ({
     const poolStats = poolsStats[index];
 
     const { currentPrice } = poolStats;
-    const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount, rates, fiatCurrency);
+    const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount.toNumber(), rates, fiatCurrency);
     const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
     const tokenSymbol = pool.rewards[0].symbol;
 
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
-        {renderPoolListItem(pool, poolStats.stakedAmount, formattedStakedAmount)}
+        {renderPoolListItem(pool, poolStats.stakedAmount.toNumber(), formattedStakedAmount)}
         <Table>
           <TableRow>
             <TableLabel>{t('liquidityPoolsContent.label.availableRewards')}</TableLabel>
@@ -323,12 +324,12 @@ const LiquidityPoolsScreen = ({
 
   const isPurchasedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats && poolStats.userLiquidityTokenBalance > 0 && poolStats.stakedAmount === 0;
+    return poolStats && poolStats.userLiquidityTokenBalance.gt(0);
   };
 
   const isStakedPool = (pool: LiquidityPool, index: number) => {
     const poolStats = poolsStats[index];
-    return poolStats && poolStats.stakedAmount > 0;
+    return poolStats && poolStats.stakedAmount.gt(0);
   };
 
   const areThereNotAvailablePools = () => {

@@ -233,7 +233,7 @@ export const getRemoveLiquidityTransactions = async (
   obtainedTokensAmounts: string[],
   txFeeInWei?: BigNumber,
 ): Promise<Object[]> => {
-  const tokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
+  const poolTokenAmountBN = parseTokenBigNumberAmount(poolTokenAmount, poolToken.decimals);
   const deadline = getDeadline();
 
   let removeLiquidityTransactionData;
@@ -243,7 +243,7 @@ export const getRemoveLiquidityTransactions = async (
     const erc20TokenData = tokensAssets[erc20TokenIndex];
     removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidityETH', [
       erc20TokenData.address,
-      tokenAmountBN,
+      poolTokenAmountBN,
       0,
       0,
       sender,
@@ -253,7 +253,7 @@ export const getRemoveLiquidityTransactions = async (
     removeLiquidityTransactionData = encodeContractMethod(UNISWAP_ROUTER_ABI, 'removeLiquidity', [
       tokensAssets[0].address,
       tokensAssets[1].address,
-      tokenAmountBN,
+      poolTokenAmountBN,
       0,
       0,
       sender,
@@ -274,7 +274,7 @@ export const getRemoveLiquidityTransactions = async (
     ? await erc20Contract.allowance(sender, UNISWAP_ROUTER_ADDRESS)
     : null;
 
-  if (!approvedAmountBN || tokenAmountBN.gt(approvedAmountBN)) {
+  if (!approvedAmountBN || poolTokenAmountBN.gt(approvedAmountBN)) {
     const approveTransactionData = buildERC20ApproveTransactionData(
       UNISWAP_ROUTER_ADDRESS, poolTokenAmount, poolToken.decimals);
     removeLiquidityTransactions = [
@@ -428,14 +428,14 @@ export const getPoolStats = (
     dailyVolume,
     dailyFees: dailyVolume * UNISWAP_FEE_RATE,
     tokensLiquidity,
-    stakedAmount: parseFloat(unipoolData?.stakedAmount) || 0,
+    stakedAmount: new BigNumber(unipoolData?.stakedAmount ?? '0'),
     rewardsToClaim: parseFloat(unipoolData?.earnedAmount) || 0,
     tokensPricesUSD,
     tokensPrices,
     tokensPerLiquidityToken,
     totalSupply: parseFloat(pairData.totalSupply),
     history,
-    userLiquidityTokenBalance: parseFloat(poolData.liquidityPosition?.liquidityTokenBalance) || 0,
+    userLiquidityTokenBalance: new BigNumber(poolData.liquidityPosition?.liquidityTokenBalance ?? '0'),
   };
 };
 
@@ -478,38 +478,40 @@ export const calculateProportionalAssetValues = (
   return [token0Deposited, token1Deposited, amountMinted];
 };
 
+type RemoveLiquidityAmounts = {
+  pairTokens: BigNumber[];
+  poolToken: BigNumber;
+}
+
 // the same as above, but for removing liquidity
-export const calculateProportionalRemoveLiquidityAssetValues = (
+export const calculateProportionalAssetAmountsForRemoval = (
   pool: LiquidityPool,
-  tokenAmount: number,
-  tokenIndex: number,
-  liquidityPoolsReducer: LiquidityPoolsReducerState,
-): number[] => {
-  const poolAddress = pool.uniswapPairAddress;
-  const poolData = liquidityPoolsReducer.poolsData[poolAddress];
+  tokenAmount: string,
+  tokenIndex: number | null,
+  liquidityPoolsState: LiquidityPoolsReducerState,
+): RemoveLiquidityAmounts => {
+  const poolData = liquidityPoolsState.poolsData[pool.uniswapPairAddress];
   const pairData = poolData.pair;
 
-  const totalAmount = parseFloat(pairData.totalSupply);
-  const token0Pool = parseFloat(pairData.reserve0);
-  const token1Pool = parseFloat(pairData.reserve1);
-  let token0Withdrawn;
-  let token1Withdrawn;
-  let poolTokenBurned;
+  let amount0;
+  let amount1;
+  let amountPool;
 
   if (tokenIndex === 0) {
-    token0Withdrawn = tokenAmount;
-    poolTokenBurned = (token0Withdrawn * totalAmount) / token0Pool;
-    token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
+    amount0 = new BigNumber(tokenAmount);
+    amountPool = amount0.multipliedBy(pairData.totalSupply).dividedBy(pairData.reserve0);
+    amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   } else if (tokenIndex === 1) {
-    token1Withdrawn = tokenAmount;
-    poolTokenBurned = (token1Withdrawn * totalAmount) / token1Pool;
-    token0Withdrawn = (token0Pool * poolTokenBurned) / totalAmount;
+    amount1 = new BigNumber(tokenAmount);
+    amountPool = amount1.multipliedBy(pairData.totalSupply).dividedBy(pairData.reserve1);
+    amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
   } else {
-    poolTokenBurned = tokenAmount;
-    token0Withdrawn = (token0Pool * poolTokenBurned) / totalAmount;
-    token1Withdrawn = (token1Pool * poolTokenBurned) / totalAmount;
+    amountPool = new BigNumber(tokenAmount);
+    amount0 = amountPool.multipliedBy(pairData.reserve0).dividedBy(pairData.totalSupply);
+    amount1 = amountPool.multipliedBy(pairData.reserve1).dividedBy(pairData.totalSupply);
   }
-  return [token0Withdrawn, token1Withdrawn, poolTokenBurned];
+
+  return { pairTokens: [amount0, amount1], poolToken: amountPool };
 };
 
 export const isLiquidityPoolsTransactionTag = (txTag: ?string) => {
