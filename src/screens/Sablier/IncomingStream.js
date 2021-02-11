@@ -22,13 +22,13 @@ import * as React from 'react';
 import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Button from 'components/Button';
 import SablierStreamCircles from 'components/SablierStreamCircles';
 import Selector from 'components/Selector';
+import Image from 'components/Image';
 import { Spacing } from 'components/Layout';
 import ActivityFeed from 'components/ActivityFeed';
 import { BaseText, MediumText } from 'components/Typography';
@@ -61,7 +61,7 @@ type Props = {
   accounts: Accounts,
 };
 
-const TokenIcon = styled(CachedImage)`
+const TokenIcon = styled(Image)`
   width: 48px;
   height: 48px;
 `;

@@ -19,10 +19,10 @@
 */
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import ShadowedCard from 'components/ShadowedCard';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import { BaseText, MediumText } from 'components/Typography';
 import Spinner from 'components/Spinner';
 
@@ -85,7 +85,7 @@ const IconWrapper = styled.View`
 `;
 
 const iconRadius = responsiveSize(52);
-const CardImage = styled(CachedImage)`
+const CardImage = styled(Image)`
   height: ${iconRadius}px;
   width: ${iconRadius}px;
   border-radius: ${iconRadius / 2}px;

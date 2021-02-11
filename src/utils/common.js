@@ -43,8 +43,7 @@ import {
   CURRENCY_SYMBOLS,
   ETHEREUM_ADDRESS_PREFIX,
   ETH,
-  WBTC,
-  sBTC,
+  HIGH_VALUE_TOKENS,
   VISIBLE_NUMBER_DECIMALS,
 } from 'constants/assetsConstants';
 
@@ -62,7 +61,7 @@ const WWW_URL_PATTERN = /^www\./i;
 const supportedAddressPrefixes = new RegExp(`^(?:${ETHEREUM_ADDRESS_PREFIX}):`, 'gi');
 
 export const printLog = (...params: any) => {
-  if ((isProdEnv && !__DEV__) || isTest) return;
+  if ((isProdEnv() && !__DEV__) || isTest) return;
   console.log(...params); // eslint-disable-line
 };
 
@@ -208,15 +207,9 @@ export const isValidNumber = (amount: string = '0') => {
 };
 
 export const getDecimalPlaces = (assetSymbol: ?string): number => {
-  switch (assetSymbol) {
-    case ETH:
-      return 4;
-    case WBTC:
-    case sBTC:
-      return 8;
-    default:
-      return 2;
-  }
+  if (assetSymbol === ETH) return 4;
+  if (HIGH_VALUE_TOKENS.includes(assetSymbol)) return 8;
+  return 2;
 };
 
 export const formatAmount = (amount: string | number, precision: number = 6): string => {
@@ -224,6 +217,9 @@ export const formatAmount = (amount: string | number, precision: number = 6): st
 
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
+
+export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+  formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {
   return new BigNumber(amount).toFixed(); // strip trailing zeros
@@ -618,7 +614,7 @@ export const findEnsNameCaseInsensitive = (ensRegistry: EnsRegistry, address: st
   return ensRegistry[addressMixedCase];
 };
 
-export const getEnsPrefix = () => isProdEnv
+export const getEnsPrefix = () => isProdEnv()
   ? '.pillar.eth' // eslint-disable-line i18next/no-literal-string
   : '.pillar.kovan';
 
@@ -631,19 +627,42 @@ export const hitSlop10 = {
 
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
 
-export const formatBigAmount = (amount: number) => {
-  if (amount >= 1e6) {
-    return `${Math.round(amount / 1e6)}M`; // eslint-disable-line i18next/no-literal-string
-  }
-  if (amount >= 1e3) {
-    return `${Math.round(amount / 1e3)}K`; // eslint-disable-line i18next/no-literal-string
-  }
-  return `${Math.round(amount)}`;
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
 };
 
-export const formatBigFiatAmount = (amount: number, fiatCurrency: string) => {
+export const formatBigAmount = (value: Value) => {
+  const _value = wrapBigNumber(value);
+
+  if (_value.gte(1e12)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e12).toFixed(2)}T`;
+  }
+
+  if (_value.gte(1e9)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e9).toFixed(2)}B`;
+  }
+
+  if (_value.gte(1e6)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e6).toFixed(2)}M`;
+  }
+
+  if (_value.gte(1e3)) {
+    // eslint-disable-next-line i18next/no-literal-string
+    return `${_value.dividedBy(1e3).toFixed(2)}K`;
+  }
+
+  return _value.toFixed(2);
+};
+
+export const formatBigFiatAmount = (value: Value, fiatCurrency: string) => {
   const currencySymbol = getCurrencySymbol(fiatCurrency);
-  return `${currencySymbol} ${formatBigAmount(amount)}`;
+  return `${currencySymbol} ${formatBigAmount(value)}`;
 };
 
 export const removeTrailingZeros = (amount: string) => {
@@ -654,3 +673,4 @@ export const removeTrailingZeros = (amount: string) => {
 export const toFixedString = (amount: number) => {
   return removeTrailingZeros(amount.toFixed(VISIBLE_NUMBER_DECIMALS));
 };
+

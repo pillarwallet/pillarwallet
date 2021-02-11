@@ -32,7 +32,7 @@ import Button from 'components/Button';
 import { BaseText } from 'components/Typography';
 import Toast from 'components/Toast';
 
-import { formatAmount, formatFiat } from 'utils/common';
+import { formatTokenAmount, formatFiat } from 'utils/common';
 import { getFormattedRate, getRate } from 'utils/assets';
 import { getRemoveLiquidityTransactions } from 'utils/liquidityPools';
 
@@ -138,7 +138,10 @@ const RemoveLiquidityReviewScreen = ({
             <TableRow>
               <TableLabel>{token.name}</TableLabel>
               <BaseText regular>
-                {t('tokenValue', { value: formatAmount(obtainedTokensValues[i]), token: token.symbol })}{' '}
+                {t('tokenValue', {
+                  value: formatTokenAmount(obtainedTokensValues[i], token.symbol),
+                  token: token.symbol,
+                })}{' '}
                 <BaseText secondary>{tokensValuesInFiat[i]}</BaseText>
               </BaseText>
             </TableRow>

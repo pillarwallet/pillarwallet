@@ -23,10 +23,10 @@ import { Platform } from 'react-native';
 import { MediumText, BaseText } from 'components/Typography';
 import t from 'translations/translate';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 
 import IconButton from 'components/IconButton';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 
 import { TRANSACTION_EVENT, TX_CONFIRMED_STATUS, TX_FAILED_STATUS } from 'constants/historyConstants';
 import { COLLECTIBLE_TRANSACTION, COLLECTIBLE_SENT } from 'constants/collectiblesConstants';
@@ -140,7 +140,7 @@ const EventIcon = styled(Icon)`
   margin-top: ${spacing.medium}px;
 `;
 
-const EventImage = styled(CachedImage)`
+const EventImage = styled(Image)`
   width: ${props => props.imageDiameter || 58}px;
   height: ${props => props.imageDiameter || 58}px;
 `;

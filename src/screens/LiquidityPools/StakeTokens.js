@@ -26,7 +26,7 @@ import debounce from 'lodash.debounce';
 
 // components
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
-import { Spacing } from 'components/Layout';
+import { Container, Spacing } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import ValueInput from 'components/ValueInput';
@@ -34,6 +34,9 @@ import FeeLabelToggle from 'components/FeeLabelToggle';
 
 // constants
 import { LIQUIDITY_POOLS_STAKE_REVIEW } from 'constants/navigationConstants';
+
+// models
+import { LIQUIDITY_POOL_TYPES } from 'models/LiquidityPools';
 
 // actions
 import { resetEstimateTransactionAction } from 'actions/transactionEstimateActions';
@@ -47,7 +50,7 @@ import { getPoolStats } from 'utils/liquidityPools';
 import type { Asset } from 'models/Asset';
 import type { TransactionFeeInfo } from 'models/Transaction';
 import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
-import type { LiquidityPool } from 'models/LiquidityPools';
+import type { UnipoolLiquidityPool } from 'models/LiquidityPools';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 
 
@@ -58,13 +61,13 @@ type Props = {
   feeInfo: ?TransactionFeeInfo,
   estimateErrorMessage: ?string,
   resetEstimateTransaction: () => void,
-  calculateStakeTransactionEstimate: (
-    pool: LiquidityPool,
-    tokenAmount: string,
-    tokenAsset: Asset,
-  ) => void,
+  calculateStakeTransactionEstimate: (pool: UnipoolLiquidityPool, tokenAmount: string, tokenAsset: Asset) => void,
   liquidityPoolsReducer: LiquidityPoolsReducerState,
 };
+
+type NaivgationParams = {|
+  pool: UnipoolLiquidityPool,
+|};
 
 const MainContainer = styled.View`
   padding: 24px 20px;
@@ -95,7 +98,13 @@ const StakeTokensScreen = ({
     resetEstimateTransaction();
   }, []);
 
-  const { pool } = navigation.state.params;
+  const { pool }: NaivgationParams = navigation.state.params;
+  useEffect(() => {
+    if (pool.type !== LIQUIDITY_POOL_TYPES.UNIPOOL) {
+      navigation.goBack();
+    }
+  }, [pool]);
+
   const poolStats = getPoolStats(pool, liquidityPoolsReducer);
   const assetData = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
   const [assetValue, setAssetValue] = useState('');
@@ -109,6 +118,10 @@ const StakeTokensScreen = ({
       assetData,
     );
   }, [assetValue, isValid]);
+
+  if (!assetData) {
+    return <Container />;
+  }
 
   const nextButtonTitle = isEstimating ? t('label.gettingFee') : t('button.next');
   const isNextButtonDisabled = !!isEstimating
@@ -190,7 +203,7 @@ const mapStateToProps = ({
 const mapDispatchToProps = (dispatch: Dispatch): $Shape<Props> => ({
   resetEstimateTransaction: () => dispatch(resetEstimateTransactionAction()),
   calculateStakeTransactionEstimate: debounce((
-    pool: LiquidityPool,
+    pool: UnipoolLiquidityPool,
     tokenAmount: string,
     tokenAsset: Asset,
   ) => dispatch(calculateStakeTransactionEstimateAction(pool, tokenAmount, tokenAsset)), 500),

@@ -21,11 +21,11 @@ import React, { useState } from 'react';
 import { TouchableOpacity } from 'react-native';
 import { connect } from 'react-redux';
 import styled, { withTheme } from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 import { getFormattedRate } from 'utils/assets';
 import { formatAmount, hitSlop10 } from 'utils/common';
 import { images } from 'utils/images';
+import Image from 'components/Image';
 import { BaseText } from 'components/Typography';
 import Tooltip from 'components/Tooltip';
 import { defaultFiatCurrency } from 'constants/assetsConstants';
@@ -42,7 +42,7 @@ type Props = {
   theme: Theme,
 };
 
-const HighFeesIcon = styled(CachedImage)`
+const HighFeesIcon = styled(Image)`
   height: 16px;
   width: 16px;
   margin-right: 4px;

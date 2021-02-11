@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import { createStructuredSelector } from 'reselect';
 import styled, { withTheme } from 'styled-components/native';
 import { format as formatDate } from 'date-fns';
-import { CachedImage } from 'react-native-cached-image';
 import { utils, BigNumber as EthersBigNumber } from 'ethers';
 import get from 'lodash.get';
 import isEmpty from 'lodash.isempty';
@@ -33,6 +32,7 @@ import t from 'translations/translate';
 // components
 import { BaseText, MediumText } from 'components/Typography';
 import Icon from 'components/Icon';
+import Image from 'components/Image';
 import TankAssetBalance from 'components/TankAssetBalance';
 import ReceiveModal from 'screens/Asset/ReceiveModal';
 import SWActivationModal from 'components/SWActivationModal';
@@ -278,7 +278,7 @@ export const shouldShowEventDetails = (event: Object): boolean => {
   }
 };
 
-const TokenImage = styled(CachedImage)`
+const TokenImage = styled(Image)`
   width: 64px;
   height: 64px;
   border-radius: ${({ borderRadius }) => borderRadius || 64}px;
@@ -344,7 +344,7 @@ const PoolTogetherTicketsWrapper = styled.View`
   align-items: center;
 `;
 
-const CornerIcon = styled(CachedImage)`
+const CornerIcon = styled(Image)`
   width: 22px;
   height: 22px;
   position: absolute;

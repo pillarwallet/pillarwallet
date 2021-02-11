@@ -26,13 +26,13 @@ import {
   Keyboard,
   FlatList,
 } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import { BaseText, MediumText } from 'components/Typography';
 import SearchBar from 'components/SearchBar';
 import SlideModal from 'components/Modals/SlideModal';
 import EmptyStateParagraph from 'components/EmptyState/EmptyStateParagraph';
+import Image from 'components/Image';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import ProfileImage from 'components/ProfileImage';
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
@@ -134,7 +134,7 @@ const IconCircle = styled.View`
   overflow: hidden;
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(Image)`
   height: ${DIAMETER}px;
   width: ${DIAMETER}px;
 `;

@@ -22,10 +22,10 @@ import React, { useRef } from 'react';
 import styled from 'styled-components/native';
 import t from 'translations/translate';
 import { getEnv } from 'configs/envConfig';
-import { CachedImage } from 'react-native-cached-image';
 
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
+import Image from 'components/Image';
 import ModalBox from 'components/ModalBox';
 import { Spacing } from 'components/Layout';
 
@@ -41,7 +41,7 @@ const Wrapper = styled.View`
   padding: 24px 20px 32px;
 `;
 
-const PoolIcon = styled(CachedImage)`
+const PoolIcon = styled(Image)`
   width: 76px;
   height: 76px;
 `;

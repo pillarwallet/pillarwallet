@@ -23,10 +23,10 @@ import styled, { withTheme } from 'styled-components/native';
 import { Keyboard } from 'react-native';
 import type { NavigationScreenProp } from 'react-navigation';
 import { connect } from 'react-redux';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
+import Image from 'components/Image';
 import { Footer, ScrollWrapper } from 'components/Layout';
 import { Label, MediumText } from 'components/Typography';
 import Title from 'components/Title';
@@ -106,7 +106,7 @@ class WalletConnectSessionRequestScreen extends React.Component<Props> {
         <ScrollWrapper regularPadding>
           <Title subtitle title={t('walletConnectContent.title.walletConnectRequests')} />
           {!!icon && (
-            <CachedImage
+            <Image
               key={name}
               style={{
                 height: 55,

@@ -5888,7 +5888,7 @@ exports[`Storyshots ActivityFeedItem Liquidity staked 1`] = `
                   ]
                 }
               >
-                Uniswap v2 ETH/PLR
+                Uniswap v2 ETH-PLR
               </Text>
             </View>
             <View
@@ -6147,7 +6147,7 @@ exports[`Storyshots ActivityFeedItem Liquidity unstaked 1`] = `
                   ]
                 }
               >
-                Uniswap v2 ETH/PLR
+                Uniswap v2 ETH-PLR
               </Text>
             </View>
             <View
@@ -27512,7 +27512,7 @@ exports[`Storyshots EventDetail Liquidity added 1`] = `
                       ]
                     }
                   >
-                    Uniswap v2 ETH/PLR
+                    Uniswap v2 ETH-PLR
                   </Text>
                   <Text
                     fontSize={20}
@@ -27859,7 +27859,7 @@ exports[`Storyshots EventDetail Liquidity removed 1`] = `
                       ]
                     }
                   >
-                    Uniswap v2 ETH/PLR
+                    Uniswap v2 ETH-PLR
                   </Text>
                   <Text
                     regular={true}

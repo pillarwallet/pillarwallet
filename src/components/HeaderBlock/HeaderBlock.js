@@ -19,7 +19,6 @@
 */
 import * as React from 'react';
 import { StatusBar, View, TouchableOpacity, Animated } from 'react-native';
-import { CachedImage } from 'react-native-cached-image';
 
 import { fontSizes, fontStyles, spacing } from 'utils/variables';
 import styled, { ThemeProvider, withTheme } from 'styled-components/native';
@@ -27,6 +26,7 @@ import SafeAreaView from 'react-native-safe-area-view';
 import type { NavigationScreenProp } from 'react-navigation';
 import { BaseText } from 'components/Typography';
 import IconButton from 'components/IconButton';
+import Image from 'components/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
 import type { Theme } from 'models/Theme';
@@ -167,7 +167,7 @@ const Indicator = styled.View`
   right: 0;
 `;
 
-const IconImage = styled(CachedImage)`
+const IconImage = styled(Image)`
   width: 24px;
   height: 24px;
 `;

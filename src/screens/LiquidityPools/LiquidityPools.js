@@ -17,31 +17,30 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { connect } from 'react-redux';
 import { FlatList, View, TouchableOpacity, RefreshControl } from 'react-native';
 import styled, { withTheme } from 'styled-components/native';
 import type { NavigationScreenProp } from 'react-navigation';
-import { CachedImage } from 'react-native-cached-image';
 import { getEnv } from 'configs/envConfig';
 import t from 'translations/translate';
 
 import ContainerWithHeader from 'components/Layout/ContainerWithHeader';
 import Table, { TableRow, TableLabel } from 'components/Table';
+import Image from 'components/Image';
 import { Spacing, ScrollWrapper } from 'components/Layout';
 import { BaseText } from 'components/Typography';
 import Tabs from 'components/Tabs';
 import ListItemWithImage from 'components/ListItem/ListItemWithImage';
 import RetryGraphQueryBox from 'components/RetryGraphQueryBox';
 
-import { formatAmount, formatFiat, formatBigFiatAmount, formatBigAmount } from 'utils/common';
-import { findSupportedAsset, convertUSDToFiat } from 'utils/assets';
-import { getPoolStats } from 'utils/liquidityPools';
+import { formatFiat, formatBigFiatAmount, formatBigAmount, formatTokenAmount } from 'utils/common';
+import { convertUSDToFiat } from 'utils/assets';
+import { getPoolStats, supportedLiquidityPools } from 'utils/liquidityPools';
 import { getThemeColors } from 'utils/themes';
 
 import { defaultFiatCurrency } from 'constants/assetsConstants';
 import { LIQUIDITY_POOL_DASHBOARD, LIQUIDITY_POOLS_INFO } from 'constants/navigationConstants';
-import { LIQUIDITY_POOLS } from 'constants/liquidityPoolsConstants';
 
 import { fetchLiquidityPoolsDataAction } from 'actions/liquidityPoolsActions';
 
@@ -50,7 +49,6 @@ import type { Dispatch, RootReducerState } from 'reducers/rootReducer';
 import type { LiquidityPoolsReducerState } from 'reducers/liquidityPoolsReducer';
 import type { LiquidityPool } from 'models/LiquidityPools';
 import type { Theme } from 'models/Theme';
-
 
 type Props = {
   fetchLiquidityPoolsData: (pools: LiquidityPool[]) => void,
@@ -109,7 +107,7 @@ const Rewards = styled.View`
   margin-bottom: -8px;
 `;
 
-const RewardIcon = styled(CachedImage)`
+const RewardIcon = styled(Image)`
   width: 20px;
   height: 20px;
 `;
@@ -133,11 +131,13 @@ const LiquidityPoolsScreen = ({
 }) => {
   const [activeTab, setActiveTab] = useState(TABS.AVAILABLE);
 
+  const supportedPools = useMemo(() => supportedLiquidityPools(supportedAssets), [supportedAssets]);
+  const poolsStats = supportedPools.map((pool) => getPoolStats(pool, liquidityPoolsReducer));
+
   useEffect(() => {
-    fetchLiquidityPoolsData(LIQUIDITY_POOLS());
+    fetchLiquidityPoolsData(supportedPools);
   }, []);
 
-  const poolsStats = LIQUIDITY_POOLS().map(pool => getPoolStats(pool, liquidityPoolsReducer));
 
   const tabs = [
     {
@@ -209,34 +209,51 @@ const LiquidityPoolsScreen = ({
             <VerticalDivider />
             <CardColumn>
               <BaseText big>
-                {formatFiat(convertUSDToFiat(poolStats.currentPrice, rates, fiatCurrency), fiatCurrency)}
+                {formatBigFiatAmount(
+                  convertUSDToFiat(poolStats.currentPrice, rates, fiatCurrency),
+                  fiatCurrency,
+                )}
               </BaseText>
-              <BaseText small secondary>{t('liquidityPoolsContent.label.price')}</BaseText>
+              <BaseText small secondary>
+                {t('liquidityPoolsContent.label.price')}
+              </BaseText>
             </CardColumn>
             <VerticalDivider />
             <CardColumn>
               <BaseText big>
-                {formatBigFiatAmount(convertUSDToFiat(poolStats.volume, rates, fiatCurrency), fiatCurrency)}
+                {formatBigFiatAmount(
+                  convertUSDToFiat(poolStats.volume, rates, fiatCurrency),
+                  fiatCurrency,
+                )}
               </BaseText>
-              <BaseText small secondary>{t('liquidityPoolsContent.label.volume')}</BaseText>
+              <BaseText small secondary>
+                {t('liquidityPoolsContent.label.volume')}
+              </BaseText>
             </CardColumn>
           </Row>
           {pool.rewardsEnabled && (
             <>
               <HorizontalDivider />
               <Row>
-                <BaseText small secondary>{t('liquidityPoolsContent.label.weeklyRewards')}</BaseText>
+                <BaseText small secondary>
+                  {t('liquidityPoolsContent.label.weeklyRewards')}
+                </BaseText>
                 <Spacing w={16} />
                 <Rewards>
-                  {pool.rewards.map(reward => {
-                    const asset = supportedAssets.find(({ symbol }) => symbol === reward.symbol);
+                  {pool.rewards.map((reward) => {
+                    const asset = supportedAssets.find(
+                      ({ symbol }) => symbol === reward.symbol,
+                    );
                     const iconUri = `${getEnv().SDK_PROVIDER}/${asset.iconUrl}?size=3`;
                     return (
-                      <Reward>
+                      <Reward key={reward.symbol}>
                         <RewardIcon source={{ uri: iconUri }} />
                         <Spacing w={6} />
                         <BaseText regular>
-                          {t('tokenValue', { value: formatBigAmount(reward.amount), token: reward.symbol })}
+                          {t('tokenValue', {
+                            value: formatBigAmount(reward.amount),
+                            token: reward.symbol,
+                          })}
                         </BaseText>
                       </Reward>
                     );
@@ -256,7 +273,7 @@ const LiquidityPoolsScreen = ({
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
         <ListItemWithImage
           label={pool.name}
-          subtext={t('tokenValue', { token: pool.symbol, value: formatAmount(balance) })}
+          subtext={t('tokenValue', { token: pool.symbol, value: formatTokenAmount(balance, pool.symbol) })}
           itemImageUrl={`${getEnv().SDK_PROVIDER}/${pool.iconUrl}?size=3`}
           customAddon={(
             <View style={{ alignItems: 'flex-end' }}>
@@ -271,10 +288,7 @@ const LiquidityPoolsScreen = ({
 
   const renderPurchasedPool = ({ item: pool, index }) => {
     const poolStats = poolsStats[index];
-    const poolToken = findSupportedAsset(supportedAssets, pool.uniswapPairAddress);
-    if (!poolToken) return null;
     const balance = poolStats.userLiquidityTokenBalance;
-
     const { currentPrice } = poolStats;
     const balanceInFiat = formatFiat(convertUSDToFiat(currentPrice * balance, rates, fiatCurrency), fiatCurrency);
 
@@ -287,6 +301,7 @@ const LiquidityPoolsScreen = ({
     const { currentPrice } = poolStats;
     const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount, rates, fiatCurrency);
     const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
+    const tokenSymbol = pool.rewards[0].symbol;
 
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>
@@ -295,7 +310,10 @@ const LiquidityPoolsScreen = ({
           <TableRow>
             <TableLabel>{t('liquidityPoolsContent.label.availableRewards')}</TableLabel>
             <BaseText>
-              {t('tokenValue', { value: formatAmount(poolStats.rewardsToClaim), token: pool.rewards[0].symbol })}
+              {t(
+                'tokenValue',
+                { value: formatTokenAmount(poolStats.rewardsToClaim, tokenSymbol), token: tokenSymbol },
+              )}
             </BaseText>
           </TableRow>
         </Table>
@@ -314,7 +332,7 @@ const LiquidityPoolsScreen = ({
   };
 
   const areThereNotAvailablePools = () => {
-    return LIQUIDITY_POOLS().some(isPurchasedPool) || LIQUIDITY_POOLS().some(isStakedPool);
+    return supportedPools.some(isPurchasedPool) || supportedPools.some(isStakedPool);
   };
 
   const renderTab = () => {
@@ -322,13 +340,13 @@ const LiquidityPoolsScreen = ({
     let items;
     if (activeTab === TABS.AVAILABLE) {
       renderFunction = renderAvailablePool;
-      items = LIQUIDITY_POOLS();
+      items = supportedPools;
     } else if (activeTab === TABS.PURCHASED) {
       renderFunction = renderPurchasedPool;
-      items = LIQUIDITY_POOLS().filter(isPurchasedPool);
+      items = supportedPools.filter(isPurchasedPool);
     } else {
       renderFunction = renderStakedPool;
-      items = LIQUIDITY_POOLS().filter(isStakedPool);
+      items = supportedPools.filter(isStakedPool);
     }
     return (
       <FlatList
@@ -358,7 +376,7 @@ const LiquidityPoolsScreen = ({
         refreshControl={
           <RefreshControl
             refreshing={isFetchingLiquidityPoolsData}
-            onRefresh={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS())}
+            onRefresh={() => fetchLiquidityPoolsData(supportedPools)}
           />
         }
       >
@@ -379,7 +397,7 @@ const LiquidityPoolsScreen = ({
         message={t('error.theGraphQueryFailed.liquidityPools')}
         hasFailed={poolDataGraphQueryFailed}
         isFetching={isFetchingLiquidityPoolsData}
-        onRetry={() => fetchLiquidityPoolsData(LIQUIDITY_POOLS())}
+        onRetry={() => fetchLiquidityPoolsData(supportedPools)}
       />
     </ContainerWithHeader>
   );

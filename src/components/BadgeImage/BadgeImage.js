@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import FastImage from 'react-native-fast-image';
+import Image from 'components/Image';
 import type { Badge } from 'models/Badge';
 
 type Props = {
@@ -14,16 +14,16 @@ const BadgeImage = ({ data: badge, size = 96 }: Props) => {
   size = parseInt(size, 10);
   const badgeUri = badge.imageUrl ? `${badge.imageUrl}?t=${badge.updatedAt || 0}` : '';
   return (
-    <FastImage
+    <Image
       style={{
         height: size,
         width: size,
       }}
       source={{
         uri: badgeUri,
-        priority: FastImage.priority.normal,
+        priority: Image.priority.normal,
       }}
-      resizeMode={FastImage.resizeMode.contain}
+      resizeMode={Image.resizeMode.contain}
       fallback
       defaultSource={defaultBadge}
     />

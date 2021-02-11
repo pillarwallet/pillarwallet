@@ -20,9 +20,9 @@
 
 import * as React from 'react';
 import styled from 'styled-components/native';
-import { CachedImage } from 'react-native-cached-image';
 import t from 'translations/translate';
 
+import Image from 'components/Image';
 import ShadowedCard from 'components/ShadowedCard';
 import { BaseText, MediumText } from 'components/Typography';
 import Button from 'components/Button';
@@ -52,7 +52,7 @@ const HeaderWrapper = styled.View`
   padding: ${spacing.large}px 36px;
 `;
 
-const InviteImage = styled(CachedImage)`
+const InviteImage = styled(Image)`
   width: 138px;
   height: 95px;
   position: absolute;

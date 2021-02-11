@@ -34,8 +34,12 @@ import {
   extractJwtPayload,
   parseTokenAmount,
   getFormattedTransactionFeeValue,
+  formatBigAmount,
   formatBigFiatAmount,
-} from '../common';
+  formatTokenAmount,
+} from 'utils/common';
+
+import { ETH, PLR, HIGH_VALUE_TOKENS, USDC } from 'constants/assetsConstants';
 
 const gasToken = {
   address: '0x0',
@@ -303,18 +307,54 @@ describe('Common utils', () => {
     });
   });
 
+  describe('formatBigAmount', () => {
+    it('basic cases', () => {
+      expect(formatBigAmount('1')).toEqual('1.00');
+      expect(formatBigAmount('1.01')).toEqual('1.01');
+      expect(formatBigAmount('1.001')).toEqual('1.00');
+      expect(formatBigAmount('1.0055')).toEqual('1.01');
+
+      expect(formatBigAmount('12')).toEqual('12.00');
+      expect(formatBigAmount('123')).toEqual('123.00');
+
+      expect(formatBigAmount('1234')).toEqual('1.23K');
+      expect(formatBigAmount('12345')).toEqual('12.35K');
+      expect(formatBigAmount('123456')).toEqual('123.46K');
+      expect(formatBigAmount('1234567')).toEqual('1.23M');
+      expect(formatBigAmount('12345678')).toEqual('12.35M');
+      expect(formatBigAmount('123456789')).toEqual('123.46M');
+
+      expect(formatBigAmount('1002003004')).toEqual('1.00B');
+      expect(formatBigAmount('1002003004005')).toEqual('1.00T');
+    });
+  });
+
   describe('formatBigFiatAmount', () => {
-    it('should format 1000 to 1K', () => {
-      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1K');
+    it('basic cases', () => {
+      expect(formatBigFiatAmount(1000, 'EUR')).toEqual('€ 1.00K');
+      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1.00M');
+      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12.35K');
+      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123.45');
     });
-    it('should format 1000000 to 1KK', () => {
-      expect(formatBigFiatAmount(1000000, 'EUR')).toEqual('€ 1M');
+  });
+
+  describe('formatTokenAmount', () => {
+    it('formats ETH correctly', () => {
+      expect(formatTokenAmount(123.456789, ETH)).toEqual('123.4567');
+      expect(formatTokenAmount(123.45, ETH)).toEqual('123.45');
+      expect(formatTokenAmount('123.450000000', ETH)).toEqual('123.45');
     });
-    it('should format 12345.67 to 12K', () => {
-      expect(formatBigFiatAmount(12345.67, 'EUR')).toEqual('€ 12K');
+    it('formats high value tokens correctly', () => {
+      HIGH_VALUE_TOKENS.forEach(token => {
+        // 8 decimals
+        expect(formatTokenAmount('123.123456789', token)).toEqual('123.12345678');
+      });
     });
-    it('should format 123.45 to 123', () => {
-      expect(formatBigFiatAmount(123.45, 'EUR')).toEqual('€ 123');
+    it('formats other tokens correctly', () => {
+      expect(formatTokenAmount(123.456789, PLR)).toEqual('123.45');
+      expect(formatTokenAmount('123.456789', USDC)).toEqual('123.45');
+      expect(formatTokenAmount('123.4000000', USDC)).toEqual('123.4');
+      expect(formatTokenAmount('123.456789')).toEqual('123.45');
     });
   });
 });
