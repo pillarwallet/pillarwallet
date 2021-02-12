@@ -70,7 +70,7 @@ export type OwnProps = {|
   wrapperStyle?: Object,
   noHorizontalPadding?: boolean,
   forceInsetTop?: string,
-  bottomBorderAnimationValue?: Animated.Value,
+  bottomBorderAnimationValue?: Animated.Value | Animated.Interpolation,
 |};
 
 type Props = {|

@@ -29,7 +29,7 @@ import { DARK_THEME, LIGHT_THEME } from 'constants/appSettingsConstants';
 import { getThemeColors, getThemeType } from 'utils/themes';
 
 // types
-import type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+import type { ViewStyleProp, TextStyleProp } from 'utils/types/react-native';
 import type { Theme } from 'models/Theme';
 
 export type Props = {|
