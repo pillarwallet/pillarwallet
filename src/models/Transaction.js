@@ -123,7 +123,7 @@ export type GasToken = {
 };
 
 export type FeeWithGasToken = {
-  feeInWei: number,
+  feeInWei: BigNumber,
   gasToken: GasToken,
 };
 
@@ -223,7 +223,7 @@ export type EstimatedTransactionFee = {
 };
 
 export type TransactionFeeInfo = {
-  fee: BigNumber,
+  fee: ?BigNumber,
   gasToken?: ?GasToken,
 };
 

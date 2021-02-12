@@ -54,7 +54,7 @@ type TableUserProps = {
 };
 
 type TableFeeProps = {
-  txFeeInWei: BigNumber | number,
+  txFeeInWei: ?(BigNumber | string | number),
   gasToken: ?GasToken,
 };
 

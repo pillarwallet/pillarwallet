@@ -20,7 +20,7 @@
 
 import { createSelector } from 'reselect';
 import isEmpty from 'lodash.isempty';
-import BigNumber from 'bignumber.js';
+import { BigNumber } from 'bignumber.js';
 
 // constants
 import { PAYMENT_COMPLETED } from 'constants/smartWalletConstants';
