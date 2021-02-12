@@ -217,7 +217,7 @@ const InputLabel = styled(MediumText)`
 
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
-  searchInput: RNInput;
+  searchInput: typeof RNInput;
   rnInput: Object;
 
   static defaultProps = {
@@ -421,18 +421,21 @@ class TextInput extends React.Component<Props, State> {
     const justifyContent = rightLabel && !(label || customLabel) ? 'flex-end' : 'space-between';
 
     return (
-      <View style={{
-        flexDirection: 'row',
-        width: '100%',
-        justifyContent,
-        ...inputHeaderStyle,
-      }}
+      <View
+        style={[
+          {
+            flexDirection: 'row',
+            width: '100%',
+            justifyContent,
+          },
+          inputHeaderStyle,
+        ]}
       >
         {customLabel}
         {!!label && <InputLabel>{label}</InputLabel>}
-        {!!rightLabel &&
+        {!!rightLabel && (
           <ButtonText buttonText={rightLabel} onPress={onPressRightLabel} fontSize={fontSizes.regular} />
-        }
+        )}
         {customRightLabel}
       </View>
     );
@@ -528,7 +531,7 @@ class TextInput extends React.Component<Props, State> {
     };
 
     return (
-      <View style={{ paddingBottom: 10, flexDirection: 'column', ...inputWrapperStyle }}>
+      <View style={[{ paddingBottom: 10, flexDirection: 'column' }, inputWrapperStyle]}>
         {this.renderInputHeader()}
         <InputBorder error={hasError} style={itemHolderStyle}>
           <ItemHolder error={hasError} style={itemHolderStyle} >
@@ -560,6 +563,7 @@ class TextInput extends React.Component<Props, State> {
                 </LeftSideWrapper>
               </TouchableWithoutFeedback>}
               {!fullWidthSelector && (
+                /* $FlowFixMe: incorrect RN flow types */
                 <TouchableWithoutFeedback style={{ flex: 1 }} onPress={this.focusMultilineInput}>
                   <View style={{ flex: 1 }}>
                     <Tooltip

@@ -150,7 +150,7 @@ const MIN_QUERY_LENGTH = 2;
 
 
 class SelectorOptions extends React.Component<Props, State> {
-  searchInput: TextInput;
+  searchInput: typeof TextInput;
   modalRef = React.createRef<SlideModalInstance>();
 
   constructor(props: Props) {
