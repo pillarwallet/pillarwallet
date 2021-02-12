@@ -164,7 +164,6 @@ class ExchangeScreen extends React.Component<Props, State> {
         getExchangeSupportedAssets, hasSeenExchangeIntro, getWbtcFees, getBtcRate,
       } = this.props;
       const { fromAsset, toAsset } = this.state;
-      this._isMounted = true;
       getWbtcFees();
       getBtcRate();
       getExchangeSupportedAssets(() => {
@@ -182,6 +181,8 @@ class ExchangeScreen extends React.Component<Props, State> {
       navigation.addListener('didFocus', this.focusInputWithKeyboard),
       navigation.addListener('didBlur', this.blurFromInput),
     ];
+
+    this._isMounted = true;
   }
 
   componentWillUnmount() {
@@ -328,7 +329,7 @@ class ExchangeScreen extends React.Component<Props, State> {
     setTimeout(() => {
       if (!this.fromInputRef || !this._isMounted || !hasSeenExchangeIntro) return;
       this.fromInputRef.focus();
-    }, 200);
+    }, 650);
   };
 
   resetSearch = () => {
