@@ -18,7 +18,6 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import * as React from 'react';
-import { StyleSheet } from 'react-native';
 import styled from 'styled-components/native';
 import { fontSizes } from 'utils/variables';
 import { MediumText } from 'components/Typography';
@@ -26,16 +25,19 @@ import Icon from 'components/Icon';
 import Animation from 'components/Animation';
 import { getColorByTheme } from 'utils/themes';
 
+// types
+import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+
 type Props = {
   label: string,
   onPress: () => void,
   hasChevron?: boolean,
   isActive?: boolean,
-  wrapperStyle?: StyleSheet.Style,
+  wrapperStyle?: ViewStyleProp,
   backgroundColor?: string,
-  style?: StyleSheet.Style,
+  style?: ViewStyleProp,
   color?: string,
-}
+};
 
 const HeaderButtonRounded = styled.TouchableOpacity`
   flex-direction: row;

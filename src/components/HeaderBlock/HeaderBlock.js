@@ -29,15 +29,27 @@ import IconButton from 'components/IconButton';
 import Image from 'components/Image';
 import { getColorByTheme, getColorByThemeOutsideStyled, getThemeColors } from 'utils/themes';
 import { noop } from 'utils/common';
+
+// types
 import type { Theme } from 'models/Theme';
+import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 
 // partials
 import HeaderTitleText from './HeaderTitleText';
 import HeaderActionButton from './HeaderActionButton';
 
-type NavItem = {
-  [string]: any,
-};
+type NavItem = {|
+  title?: string,
+  icon?: string,
+  link?: string,
+  close?: boolean,
+  onPress?: () => void,
+  iconProps?: any,
+  custom?: any,
+  addon?: any,
+  style?: ViewStyleProp,
+  // [string]: any,
+|};
 
 export type OwnProps = {|
   rightItems?: NavItem[],
@@ -238,10 +250,7 @@ class HeaderBlock extends React.Component<Props> {
     if (item.title) {
       return (
         <View
-          style={{
-            ...commonStyle,
-            ...itemStyle,
-          }}
+          style={[commonStyle, itemStyle]}
           key={item.title}
         >
           <HeaderTitleText
@@ -260,7 +269,7 @@ class HeaderBlock extends React.Component<Props> {
       if (type === LEFT) additionalIconStyle.marginLeft = -10;
       if (type === RIGHT) additionalIconStyle.marginRight = -10;
       return (
-        <View style={{ ...commonStyle, ...itemStyle, ...additionalIconStyle }} key={item.icon}>
+        <View style={[commonStyle, itemStyle, additionalIconStyle]} key={item.icon}>
           <ActionIcon
             icon={item.icon}
             color={item.color
@@ -279,7 +288,7 @@ class HeaderBlock extends React.Component<Props> {
         <TouchableOpacity
           onPress={item.onPress}
           key={item.key || item.iconSource}
-          style={{ ...commonStyle, ...itemStyle }}
+          style={[commonStyle, itemStyle]}
         >
           <IconImage source={item.iconSource} />
           {!!item.indicator && <Indicator />}
@@ -291,7 +300,7 @@ class HeaderBlock extends React.Component<Props> {
         <TextButton
           onPress={item.onPress}
           key={item.link}
-          style={{ ...commonStyle, ...itemStyle }}
+          style={[commonStyle, itemStyle]}
         >
           <ButtonLabel maxFontSizeMultiplier={1.1}>{item.link}</ButtonLabel>
           {item.addon}
@@ -311,18 +320,23 @@ class HeaderBlock extends React.Component<Props> {
 
       return (
         <View
-          style={{
-            ...wrapperStyle,
-            marginTop: -20,
-            marginBottom: -20,
-            ...itemStyle,
-          }}
+          style={[
+            wrapperStyle,
+            {
+              marginTop: -20,
+              marginBottom: -20,
+            },
+            itemStyle,
+          ]}
           key="close"
         >
           <CloseIcon
             icon="close"
-            color={getColorByThemeOutsideStyled(theme.current, { lightKey: 'basic010', darkKey: 'basic020' })}
-            onPress={getCloseAction({ ...item, onClose }, navigation)}
+            color={getColorByThemeOutsideStyled(theme.current, {
+              lightKey: 'basic010',
+              darkKey: 'basic020',
+            })}
+            onPress={getCloseAction({...item, onClose}, navigation)}
             fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />
@@ -330,10 +344,10 @@ class HeaderBlock extends React.Component<Props> {
       );
     }
     if (item.actionButton) {
-      return (<HeaderActionButton {...item.actionButton} wrapperStyle={{ ...commonStyle, ...itemStyle }} />);
+      return (<HeaderActionButton {...item.actionButton} wrapperStyle={[commonStyle, itemStyle]} />);
     }
     if (item.custom) {
-      return <View key={item.key || 'custom'} style={{ ...commonStyle, ...itemStyle }}>{item.custom}</View>;
+      return <View key={item.key || 'custom'} style={[commonStyle, itemStyle]}>{item.custom}</View>;
     }
     return null;
   };
@@ -366,7 +380,7 @@ class HeaderBlock extends React.Component<Props> {
     } else {
       backgroundColor = bottomBorderAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [theme.colors.basic070, theme.colors.basic050],
+        outputRange: ([theme.colors.basic070, theme.colors.basic050]: string[]),
         extrapolate: 'clamp',
       });
 
@@ -375,7 +389,7 @@ class HeaderBlock extends React.Component<Props> {
 
       borderColor = bottomBorderAnimationValue.interpolate({
         inputRange: [0, 1],
-        outputRange: [`${borderColorByTheme}00`, borderColorByTheme],
+        outputRange: ([`${borderColorByTheme}00`, borderColorByTheme]: string[]),
         extrapolate: 'clamp',
       });
     }

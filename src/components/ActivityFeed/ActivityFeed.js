@@ -127,7 +127,7 @@ type Props = {
   ensRegistry: EnsRegistry,
   tabsComponent?: React.Node,
   headerComponent?: React.Node,
-  flatListProps?: FlatList,
+  flatListProps?: React.ElementConfig<typeof FlatList>,
   isPPNView?: boolean,
   isForAllAccounts?: boolean,
   isAssetView?: boolean,
