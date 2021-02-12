@@ -41,6 +41,7 @@ import type {
 import type { GasToken } from 'models/Transaction';
 import type { Collectible } from 'models/Collectible';
 import type { Option } from 'models/Selector';
+import type { Value } from 'utils/common';
 
 
 const sortAssetsFn = (a: Asset, b: Asset): number => {
@@ -137,7 +138,7 @@ export const getFormattedRate = (
 export const calculateMaxAmount = (
   token: string,
   balance: number | string,
-  txFeeInWei: ?(BigNumber | string | number),
+  txFeeInWei: ?Value,
   gasToken: ?GasToken = {},
 ): string => {
   if (!txFeeInWei) txFeeInWei = new BigNumber(0);
@@ -164,7 +165,7 @@ export const calculateMaxAmount = (
 export const isEnoughBalanceForTransactionFee = (
   balances: Balances,
   transaction: {
-    txFeeInWei: ?(BigNumber | string | number),
+    txFeeInWei: ?Value,
     gasToken?: ?GasToken,
     amount?: any,
     decimals?: number,

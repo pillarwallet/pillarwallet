@@ -154,6 +154,13 @@ export const pipe = (...fns: Function[]) => {
 
 export const noop = () => {};
 
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
 /**
  * formatMoney(n, x, s, c)
  *
@@ -182,7 +189,7 @@ export const formatMoney = (
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
 };
 
-export const parseNumber = (amount: BigNumber | string | number = '0') => {
+export const parseNumber = (amount: Value = '0') => {
   let strg = amount.toString();
   let decimal = '.';
   strg = strg.replace(/[^0-9$.,]/g, '');
@@ -194,7 +201,7 @@ export const parseNumber = (amount: BigNumber | string | number = '0') => {
   return parseFloat(strg);
 };
 
-export const isValidNumber = (amount: BigNumber | string | number = '0') => {
+export const isValidNumber = (amount: Value = '0') => {
   const strg = amount.toString();
   const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
 
@@ -628,13 +635,6 @@ export const hitSlop10 = {
 };
 
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
-
-export type Value = BigNumber | number | string;
-
-export const wrapBigNumber = (value: Value): BigNumber => {
-  if (value instanceof BigNumber) return value;
-  return new BigNumber(value);
-};
 
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);
