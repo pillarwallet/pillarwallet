@@ -65,7 +65,7 @@ export type ExternalProps = {
   assetData: Option,
   onAssetDataChange: (Option) => void,
   value: string,
-  onValueChange: (string) => void,
+  onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
   horizontalOptions?: HorizontalOption[],
   showCollectibles?: boolean,
   txFeeInfo?: ?TransactionFeeInfo,
@@ -196,9 +196,9 @@ export const ValueInputComponent = (props: Props) => {
     );
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
     if (percent === 100) {
-      onValueChange(newMaxValue);
+      onValueChange(newMaxValue, percent);
     } else {
-      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)));
+      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)), percent);
     }
     const fiatValue = maxValueInFiat * (percent / 100);
     setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));

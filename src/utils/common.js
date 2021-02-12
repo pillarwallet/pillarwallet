@@ -219,13 +219,19 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
   return 2;
 };
 
-export const formatAmount = (amount: string | number, precision: number = 6): string => {
-  const roundedNumber = new BigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
+export type Value = BigNumber | number | string;
 
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
+export const formatAmount = (amount: Value, precision: number = 6): string => {
+  const roundedNumber = wrapBigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
 
-export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {
