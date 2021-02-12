@@ -154,6 +154,13 @@ export const pipe = (...fns: Function[]) => {
 
 export const noop = () => {};
 
+export type Value = BigNumber | number | string;
+
+export const wrapBigNumber = (value: Value): BigNumber => {
+  if (value instanceof BigNumber) return value;
+  return new BigNumber(value);
+};
+
 /**
  * formatMoney(n, x, s, c)
  *
@@ -182,7 +189,7 @@ export const formatMoney = (
   return (c ? num.replace('.', c) : num).replace(new RegExp(re, 'g'), `$&${s || ','}`);
 };
 
-export const parseNumber = (amount: string = '0') => {
+export const parseNumber = (amount: Value = '0') => {
   let strg = amount.toString();
   let decimal = '.';
   strg = strg.replace(/[^0-9$.,]/g, '');
@@ -194,7 +201,7 @@ export const parseNumber = (amount: string = '0') => {
   return parseFloat(strg);
 };
 
-export const isValidNumber = (amount: string = '0') => {
+export const isValidNumber = (amount: Value = '0') => {
   const strg = amount.toString();
   const numericalSymbols = strg.replace(/[^0-9$.,]/g, '');
 
@@ -212,13 +219,12 @@ export const getDecimalPlaces = (assetSymbol: ?string): number => {
   return 2;
 };
 
-export const formatAmount = (amount: string | number, precision: number = 6): string => {
-  const roundedNumber = new BigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
-
+export const formatAmount = (amount: Value, precision: number = 6): string => {
+  const roundedNumber = wrapBigNumber(amount).toFixed(precision, 1); // 1 = ROUND_DOWN
   return new BigNumber(roundedNumber).toFixed(); // strip trailing zeros
 };
 
-export const formatTokenAmount = (amount: string | number, assetSymbol: ?string): string =>
+export const formatTokenAmount = (amount: Value, assetSymbol: ?string): string =>
   formatAmount(amount, getDecimalPlaces(assetSymbol));
 
 export const formatFullAmount = (amount: string | number): string => {
@@ -431,10 +437,10 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
-export const formatUnits = (val: string = '0', decimals: number): string => {
+export const formatUnits = (val: Value = '0', decimals: number): string => {
   let formattedUnits = decimals === 0 ? '0' : '0.0';
   let preparedValue = null; // null for sentry reports
-  let valueWithoutDecimals = null; // null for sentry reports
+  let valueWithoutDecimals: string | null = null; // null for sentry reports
   try {
     // check if val is exact number or other format (might be hex, exponential, etc.)
     preparedValue = isValidNumber(val) ? Math.floor(+val) : val;
@@ -443,7 +449,7 @@ export const formatUnits = (val: string = '0', decimals: number): string => {
     if (decimals === 0) {
       // check additionally if string contains decimal pointer
       // because converting exponential numbers back to number will result as exponential expression again
-      if (valueWithoutDecimals.includes('.')) return Math.floor(valueWithoutDecimals).toFixed();
+      if (valueWithoutDecimals.includes('.')) return Math.floor(+valueWithoutDecimals).toFixed();
       // else return as it is
       return valueWithoutDecimals;
     }
@@ -585,10 +591,12 @@ export const humanizeHexString = (hexString: ?string) => {
 };
 
 export const convertToBaseUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  // $FlowFixMe: inexact bignumber.js typings
   return quantity.multipliedBy(new BigNumber(10).pow(decimals));
 };
 
 export const convertToNominalUnits = (decimals: BigNumber, quantity: BigNumber): BigNumber => {
+  // $FlowFixMe: inexact bignumber.js typings
   return quantity.dividedBy(new BigNumber(10).pow(decimals));
 };
 
@@ -626,13 +634,6 @@ export const hitSlop10 = {
 };
 
 export const scaleBN = (power: number) => EthersBigNumber.from(10).pow(power);
-
-export type Value = BigNumber | number | string;
-
-export const wrapBigNumber = (value: Value): BigNumber => {
-  if (value instanceof BigNumber) return value;
-  return new BigNumber(value);
-};
 
 export const formatBigAmount = (value: Value) => {
   const _value = wrapBigNumber(value);

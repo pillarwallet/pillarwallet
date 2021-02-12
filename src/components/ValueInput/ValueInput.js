@@ -53,6 +53,7 @@ import type { RootReducerState } from 'reducers/rootReducer';
 import type { Rates, Balances } from 'models/Asset';
 import type { Option, HorizontalOption } from 'models/Selector';
 import type { Theme } from 'models/Theme';
+import type { TransactionFeeInfo } from 'models/Transaction';
 
 import ValueInputHeader from './ValueInputHeader';
 
@@ -64,10 +65,10 @@ export type ExternalProps = {
   assetData: Option,
   onAssetDataChange: (Option) => void,
   value: string,
-  onValueChange: (string) => void,
+  onValueChange: (string, number | void) => void, // `newPercent` provided as the second argument (if used by user)
   horizontalOptions?: HorizontalOption[],
   showCollectibles?: boolean,
-  txFeeInfo?: Object,
+  txFeeInfo?: ?TransactionFeeInfo,
   hideMaxSend?: boolean,
   updateTxFee?: (string, number) => Object,
   leftSideSymbol?: string,
@@ -195,9 +196,9 @@ export const ValueInputComponent = (props: Props) => {
     );
     const maxValueInFiat = getBalanceInFiat(fiatCurrency, newMaxValue, ratesWithCustomRates, assetSymbol);
     if (percent === 100) {
-      onValueChange(newMaxValue);
+      onValueChange(newMaxValue, percent);
     } else {
-      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)));
+      onValueChange(toFixedString(parseFloat(newMaxValue) * (percent / 100)), percent);
     }
     const fiatValue = maxValueInFiat * (percent / 100);
     setValueInFiat(String(fiatValue ? fiatValue.toFixed(2) : 0));

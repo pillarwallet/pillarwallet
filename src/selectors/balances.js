@@ -135,9 +135,10 @@ const liquidityPoolsBalanceListSelector = createSelector(
       stakedAmount,
     } = getPoolStats(pool, liquidityPoolsState) ?? {};
 
-    if ([currentPrice, userLiquidityTokenBalance, stakedAmount].includes(undefined)) return null;
+    if (currentPrice == null || !userLiquidityTokenBalance || !stakedAmount) return null;
+
     return {
-      balance: (userLiquidityTokenBalance + stakedAmount) * currentPrice,
+      balance: (userLiquidityTokenBalance.toNumber() + stakedAmount.toNumber()) * currentPrice,
       symbol: USD,
     };
   }).filter(Boolean),
