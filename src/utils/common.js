@@ -444,7 +444,7 @@ export const getGasPriceWei = (gasInfo: GasInfo): BigNumber => {
   return utils.parseUnits(gasPrice.toString(), 'gwei');
 };
 
-export const formatUnits = (val: BigNumber | string | number = '0', decimals: number): string => {
+export const formatUnits = (val: Value = '0', decimals: number): string => {
   let formattedUnits = decimals === 0 ? '0' : '0.0';
   let preparedValue = null; // null for sentry reports
   let valueWithoutDecimals: string | null = null; // null for sentry reports
