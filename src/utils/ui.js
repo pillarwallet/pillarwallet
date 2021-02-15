@@ -17,6 +17,7 @@
     with this program; if not, write to the Free Software Foundation, Inc.,
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
+import * as React from 'react';
 import { Dimensions, Platform, PixelRatio, View } from 'react-native';
 import type { Measurements } from 'reducers/walkthroughsReducer';
 
@@ -73,7 +74,7 @@ export function hexToRgba(hex: string, opacity: ?number) {
     : null;
 }
 
-export const measure = (ref: ?React$ElementRef<typeof View>): Promise<Measurements> =>
+export const measure = (ref: ?React.ElementRef<typeof View>): Promise<Measurements> =>
   new Promise(resolve => ref?.measureInWindow((x, y, w, h) => resolve({
     x, y, w, h,
   })));

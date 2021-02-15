@@ -217,7 +217,7 @@ const InputLabel = styled(MediumText)`
 
 class TextInput extends React.Component<Props, State> {
   multilineInputField: Input;
-  searchInput: typeof RNInput;
+  searchInput: React.ElementRef<typeof RNInput>;
   rnInput: Object;
 
   static defaultProps = {

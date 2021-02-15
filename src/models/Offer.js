@@ -34,7 +34,7 @@ export type Offer = {
   description: string,
   fromAsset: Asset,
   toAsset: Asset,
-  askRate: number | string,
+  askRate: string,
   minQuantity: string,
   maxQuantity: string,
   allowanceSet: boolean,

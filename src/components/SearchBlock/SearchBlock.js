@@ -35,7 +35,7 @@ type Props = {
   backgroundColor?: string,
   hideSearch?: boolean,
   onSearchFocus?: () => void,
-  inputRef?: (ref: React$ElementRef<typeof TextInput>) => void,
+  inputRef?: (ref: React.ElementRef<typeof TextInput>) => void,
   wrapperStyle?: Object,
   onSearchBlur?: () => void,
   hideOverlay?: boolean,

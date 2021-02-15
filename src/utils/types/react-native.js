@@ -26,6 +26,9 @@ import { ScrollView } from 'react-native';
 export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+
+export type { RenderItemProps } from 'react-native/Libraries/Lists/VirtualizedList';
+
 export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar/StatusBar';
 
 export type KeyboardShouldPersistTaps = $PropertyType<React.ElementConfig<typeof ScrollView>, 'keyboardShouldPersistTaps'>;

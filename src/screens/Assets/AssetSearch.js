@@ -143,7 +143,7 @@ class AssetSearch extends React.Component<Props, State> {
     ];
   };
 
-  handleAssetToggle = (asset: Asset, added: Boolean) => {
+  handleAssetToggle = (asset: Asset, added: boolean) => {
     if (!added) {
       this.addTokenToWallet(asset);
     } else {

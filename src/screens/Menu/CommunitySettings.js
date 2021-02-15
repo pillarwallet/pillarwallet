@@ -62,6 +62,7 @@ class CommunitySettings extends React.Component<{}, State> {
       Linking.openURL(link.web);
     } else {
       Linking.canOpenURL(link.app)
+        // $FlowFixMe: already checked
         .then(supported => supported ? Linking.openURL(link.app) : Linking.openURL(link.web))
         .catch(() => {});
     }

@@ -684,7 +684,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={rariDeposits}
-                          keyExtractor={(item) => item.id}
+                          keyExtractor={(item) => item.pool}
                           renderItem={this.renderRariPool}
                           initialNumToRender={2}
                           listKey="rari"
@@ -703,7 +703,7 @@ class HomeScreen extends React.Component<Props> {
                       collapseContent={
                         <FlatList
                           data={purchasedLiquidityPools}
-                          keyExtractor={(item) => item.name}
+                          keyExtractor={(item) => item.pool.name}
                           renderItem={this.renderLiquidityPool}
                           initialNumToRender={2}
                           listKey="liquidityPools"

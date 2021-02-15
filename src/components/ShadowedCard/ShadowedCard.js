@@ -78,7 +78,7 @@ type State = {
 const SHADOW_LENGTH = 3;
 
 class ShadowedCard extends React.Component<Props, State> {
-  cardOutterRef: View;
+  cardOutterRef: React.ElementRef<typeof View>;
 
   state = {
     cardHeight: null,

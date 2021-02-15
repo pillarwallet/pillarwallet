@@ -242,7 +242,7 @@ const LiquidityPoolsScreen = ({
                 </BaseText>
                 <Spacing w={16} />
                 <Rewards>
-                  {pool.rewards.map((reward) => {
+                  {pool.rewards?.map((reward) => {
                     const asset = supportedAssets.find(
                       ({ symbol }) => symbol === reward.symbol,
                     );
@@ -308,7 +308,7 @@ const LiquidityPoolsScreen = ({
     const { currentPrice } = poolStats;
     const stakedAmountInFiat = convertUSDToFiat(currentPrice * poolStats.stakedAmount.toNumber(), rates, fiatCurrency);
     const formattedStakedAmount = formatFiat(stakedAmountInFiat, fiatCurrency);
-    const tokenSymbol = pool.rewards[0].symbol;
+    const tokenSymbol = pool.rewards?.[0].symbol;
 
     return (
       <TouchableOpacity onPress={() => goToPoolDashboard(pool)}>

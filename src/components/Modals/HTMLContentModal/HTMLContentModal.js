@@ -42,7 +42,6 @@ import { firebaseRemoteConfig } from 'services/firebase';
 // types
 import type { ScrollToProps } from 'components/Modals/SlideModal';
 import type { Theme } from 'models/Theme';
-import type { Ref } from 'utils/types/react';
 
 export const ENDPOINTS = {
   TERMS_OF_SERVICE: 'terms_of_service',
@@ -102,12 +101,11 @@ const baseStyles = (colors) => {
 };
 
 class HTMLContentModal extends React.Component<Props, State> {
-  scrollViewRef: Ref<typeof ScrollView>;
+  scrollViewRef = React.createRef<React.ElementRef<typeof ScrollView>>();
   modalRef = React.createRef();
 
   constructor(props: Props) {
     super(props);
-    this.scrollViewRef = React.createRef();
     this.state = {
       isHtmlFetched: false,
       htmlData: '',
@@ -150,7 +148,7 @@ class HTMLContentModal extends React.Component<Props, State> {
 
   handleModalScrollTo = (p: ScrollToProps) => {
     if (!p || !this.scrollViewRef.current) return;
-    this.scrollViewRef.current?.scrollTo(p);
+    this.scrollViewRef.current.scrollTo({});
   };
 
   handleContentOnScroll = (event: Object) => {
@@ -220,6 +218,7 @@ class HTMLContentModal extends React.Component<Props, State> {
           }
           {!!isHtmlFetched &&
             // do not put ScrollView as styled component or ref.scrollTo will fail
+            // $FlowFixMe: react-native types
             <ScrollView
               paddingHorizontal={spacing.rhythm}
               ref={this.scrollViewRef}
