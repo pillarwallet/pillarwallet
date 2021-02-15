@@ -966,14 +966,14 @@ workflows:
             branches:
               only:
                 - feature/etherspot
-      - appcenter_ios_appcenter:
+      - appcenter_ios_etherspot:
           requires:
             - build-and-test-etherspot
           filters:
             branches:
               only:
                 - feature/etherspot
-      - appcenter_android_appcenter:
+      - appcenter_android_etherspot:
           context: docker-hub-creds
           requires:
             - build-and-test-etherspot
