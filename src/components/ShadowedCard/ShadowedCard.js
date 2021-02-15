@@ -21,12 +21,15 @@
 import * as React from 'react';
 import styled, { withTheme } from 'styled-components/native';
 import { Animated, TouchableWithoutFeedback, View } from 'react-native';
-import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import { Shadow } from 'components/Shadow';
 import { getThemeType } from 'utils/themes';
 import { noop } from 'utils/common';
 import { DARK_THEME } from 'constants/appSettingsConstants';
+
+// Types
 import type { Theme } from 'models/Theme';
+import type { LayoutEvent } from 'utils/types/react-native';
+
 
 const CardOutter = styled.View`
   position: relative;

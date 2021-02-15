@@ -32,7 +32,7 @@ import { noop } from 'utils/common';
 
 // types
 import type { Theme } from 'models/Theme';
-import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 // partials
 import HeaderTitleText from './HeaderTitleText';

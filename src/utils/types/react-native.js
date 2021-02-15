@@ -20,9 +20,18 @@
 
 /* eslint-disable max-len */
 
+/**
+ * Provided encapsulated access to React Native types.
+ *
+ * Most reliable way to access these types is to import from `react-native/Libraries`, which means we rely on
+ * implementation details. This file centralizes the exports so that they are easier to maintain.
+ *
+ */
+
 import * as React from 'react';
 import { ScrollView } from 'react-native';
 
+// Props
 export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
 
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
@@ -32,3 +41,6 @@ export type { RenderItemProps } from 'react-native/Libraries/Lists/VirtualizedLi
 export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar/StatusBar';
 
 export type KeyboardShouldPersistTaps = $PropertyType<React.ElementConfig<typeof ScrollView>, 'keyboardShouldPersistTaps'>;
+
+// Events
+export type { LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';

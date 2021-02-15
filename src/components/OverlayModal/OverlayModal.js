@@ -19,14 +19,15 @@
 */
 
 import * as React from 'react';
-import { type LayoutEvent } from 'react-native/Libraries/Types/CoreEventTypes';
 import SlideModal from 'components/Modals/SlideModal';
-import type { SlideModalInstance } from 'components/Modals/SlideModal';
 import styled from 'styled-components/native';
 import { fontStyles, UIColors, baseColors } from 'utils/variables';
 import { BaseText } from 'components/Typography';
 import Button from 'components/Button';
 import { getDeviceHeight } from 'utils/common';
+
+import type { LayoutEvent } from 'utils/types/react-native';
+import type { SlideModalInstance } from 'components/Modals/SlideModal';
 
 
 type Props = {|
