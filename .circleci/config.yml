@@ -240,40 +240,6 @@ jobs:
           failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
           webhook: "${SLACK_WEBHOOK_URL}"
 
-  # Run tests and set build numbers - etherspot temporary
-  build-and-test-etherspot:
-    executor: node10-executor
-    steps:
-      - checkout
-      - run:
-          name: Save build number
-          command: |
-            APP_BUILD_NUMBER=${CIRCLE_BUILD_NUM}
-            mkdir -p /tmp/workspace/build-num
-            mkdir -p /tmp/workspace/releases
-            cd /tmp/workspace/build-num
-            echo ${APP_BUILD_NUMBER} > app_build_number.txt
-            export buildNumber=$(node -e "console.log(require('./package.json').version);")
-            echo $buildNumber-etherspot > build_number.txt
-      - persist_to_workspace:
-          root: /tmp/workspace
-          paths:
-            - build-num
-            - releases
-      - *node_restore_cache
-      - *android_latest_npm
-      - *yarn_restore_cache
-      - *yarn_install
-      - *yarn_save_cache
-      - *node_save_cache
-      - run:
-          name: Run validation
-          command: yarn validate
-      - slack/status:
-          fail_only: true
-          failure_message: "Triggered by: *${CIRCLE_USERNAME}* \n\n Hi *${CIRCLE_USERNAME}*, the *$CIRCLE_JOB* job has failed. :circleci-fail:"
-          webhook: "${SLACK_WEBHOOK_URL}"
-
   # Build temporary appcenter etherspot ios
   appcenter_ios_etherspot:
     executor: ios-executor
@@ -317,7 +283,9 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/build_number.txt)"
+            export buildNum=$(node -e "console.log(require('./package.json').version);")
+            echo $buildNum-etherspot > build_number.txt
+            export buildNumber=$(cat build_number.txt)
             npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             sed -i.bak "s/_build_type_/staging/g" .env
             sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
@@ -337,8 +305,8 @@ jobs:
           no_output_timeout: 20m
           name: Upload to App Center
           command: |
-            export buildNumber="$(cat /tmp/workspace/build-num/build_number.txt)"
-            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat build_number.txt)
+            export APP_BUILD_NUMBER=$(cat /tmp/workspace/build-num/app_build_number.txt)
             cd ios && bundle exec fastlane deploy_ios_appcenter APP_BUILD_NUMBER:$APP_BUILD_NUMBER build_number:$buildNumber APP_NAME:"Pillar Staging"
       - run:
           name: prepare to archive ipa file
@@ -405,7 +373,9 @@ jobs:
             git config user.email "devops@pillar.io"
             git config user.name "Issabot"
             export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
-            export buildNumber="$(cat /tmp/workspace/build-num/build_number.txt)"
+            export buildNum=$(node -e "console.log(require('./package.json').version);")
+            echo $buildNum-etherspot > build_number.txt
+            export buildNumber=$(cat build_number.txt)
             npm --no-git-tag-version version $(node -e "const currentVersion=require('./package.json').version; const firstTwoDots=currentVersion.substring(0, currentVersion.lastIndexOf('.')+1); console.log(firstTwoDots);")$APP_BUILD_NUMBER
             sed -i.bak "s/_build_type_/staging/g" .env
             sed -i.bak "s/_build_number_/$buildNumber/g" ./src/configs/buildConfig.js
@@ -420,8 +390,8 @@ jobs:
       - run:
           name: Initial build
           command: |
-            export buildNumber="$(cat /tmp/workspace/build-num/build_number.txt)"
-            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat build_number.txt)
+            export APP_BUILD_NUMBER=$(cat /tmp/workspace/build-num/app_build_number.txt)
             cd android && ./gradlew clean app:assembleStaging --no-daemon --stacktrace --max-workers=2 -PBUILD_NUMBER=$APP_BUILD_NUMBER
 
       - *gradle_save_cache
@@ -429,8 +399,8 @@ jobs:
       - run:
           name: Upload to App Center
           command: |
-            export buildNumber="$(cat /tmp/workspace/build-num/build_number.txt)"
-            export APP_BUILD_NUMBER="$(cat /tmp/workspace/build-num/app_build_number.txt)"
+            export buildNumber=$(cat build_number.txt)
+            export APP_BUILD_NUMBER=$(cat /tmp/workspace/build-num/app_build_number.txt)
             export ENVFILE=$(echo ~/pillarwallet/.env)
             cd android && bundle exec fastlane deploy_android_appcenter
       - store_artifacts:
@@ -960,7 +930,7 @@ workflows:
 
   build_and_deploy_etherspot_appcenter:
     jobs:
-      - build-and-test-etherspot:
+      - build-and-test:
           context: docker-hub-creds
           filters:
             branches:
