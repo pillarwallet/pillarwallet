@@ -100,7 +100,7 @@ const Tooltip = (props: Props) => {
     wrapperStyle,
   } = props;
 
-  const [wrapperLayout, setWrapperLayout] = React.useState<Layout>({
+  const [wrapperLayout, setWrapperLayout] = React.useState<$ReadOnly<Layout>>({
     width: 0, height: 0, x: 0, y: 0,
   });
 
@@ -122,7 +122,7 @@ const Tooltip = (props: Props) => {
         toValue: isVisible ? 1 : 0,
         duration: 200,
         useNativeDriver: true,
-      }).start(() => !isVisible && setVisibilityState(false));
+      }).start(() => { if (!isVisible) setVisibilityState(false); });
     }
     if (isVisible) {
       setVisibilityState(true);

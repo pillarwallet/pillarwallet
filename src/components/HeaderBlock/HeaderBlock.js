@@ -48,7 +48,8 @@ type NavItem = {|
   custom?: any,
   addon?: any,
   style?: ViewStyleProp,
-  // [string]: any,
+  color?: string,
+  fontSize?: number,
 |};
 
 export type OwnProps = {|

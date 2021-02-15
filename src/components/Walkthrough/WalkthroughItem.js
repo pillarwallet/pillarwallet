@@ -40,7 +40,7 @@ type State = {
 };
 
 class WalkthroughItem extends React.Component<Props, State> {
-  reference = React.createRef();
+  reference: React.ElementRef<typeof View>;
 
   state = {
     showTooltip: false,

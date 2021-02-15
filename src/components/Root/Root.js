@@ -22,9 +22,12 @@ import { View } from 'react-native';
 import { ActionSheet } from 'native-base';
 import { ToastProvider } from 'components/Toast';
 
-type Props = {
+import type { ViewProps } from 'utils/types/react-native';
+
+type Props = {|
+  ...ViewProps,
   children: React.Node,
-}
+|}
 
 const Root = (props: Props) => (
   <View {...props} style={{ flex: 1 }}>

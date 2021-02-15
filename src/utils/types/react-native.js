@@ -23,6 +23,8 @@
 import * as React from 'react';
 import { ScrollView } from 'react-native';
 
+export type { Props as ViewProps } from 'react-native/Libraries/Components/View/View';
+
 export type { ViewStyleProp, TextStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
 export type { StatusBarStyle } from 'react-native/Libraries/Components/StatusBar/StatusBar';
 

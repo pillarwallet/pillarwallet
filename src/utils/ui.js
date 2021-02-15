@@ -73,7 +73,7 @@ export function hexToRgba(hex: string, opacity: ?number) {
     : null;
 }
 
-export const measure = (ref: View): Promise<Measurements> =>
-  new Promise(resolve => ref.measureInWindow((x, y, w, h) => resolve({
+export const measure = (ref: ?React$ElementRef<typeof View>): Promise<Measurements> =>
+  new Promise(resolve => ref?.measureInWindow((x, y, w, h) => resolve({
     x, y, w, h,
   })));
