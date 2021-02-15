@@ -132,7 +132,12 @@ class ContainerWithHeader extends React.Component<Props, State> {
   };
 
   renderContent = (shouldRenderFooter, shouldRenderChildrenInScrollView) => {
-    const { children, footer, keyboardShouldPersistTaps = 'never', shouldFooterAvoidKeyboard = true } = this.props;
+    const {
+      children,
+      footer,
+      keyboardShouldPersistTaps = 'never',
+      shouldFooterAvoidKeyboard = true,
+    } = this.props;
 
     if (!shouldRenderFooter) {
       if (!shouldRenderChildrenInScrollView) {

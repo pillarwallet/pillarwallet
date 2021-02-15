@@ -336,7 +336,14 @@ class ServicesScreen extends React.Component<Props> {
   }
 
   renderServicesItem = ({ item }) => {
-    const { title, body, action, disabled, label, hidden = false } = item;
+    const {
+      title,
+      body,
+      action,
+      disabled,
+      label,
+      hidden = false,
+    } = item;
 
     if (hidden) {
       return null;

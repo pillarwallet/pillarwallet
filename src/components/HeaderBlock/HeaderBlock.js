@@ -337,7 +337,7 @@ class HeaderBlock extends React.Component<Props> {
               lightKey: 'basic010',
               darkKey: 'basic020',
             })}
-            onPress={getCloseAction({...item, onClose}, navigation)}
+            onPress={getCloseAction({ ...item, onClose }, navigation)}
             fontSize={fontSizes.regular}
             horizontalAlign="flex-end"
           />

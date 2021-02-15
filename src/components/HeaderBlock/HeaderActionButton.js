@@ -26,7 +26,7 @@ import Animation from 'components/Animation';
 import { getColorByTheme } from 'utils/themes';
 
 // types
-import type { ViewStyleProp } from 'react-native/Libraries/StyleSheet/StyleSheet';
+import type { ViewStyleProp } from 'utils/types/react-native';
 
 type Props = {
   label: string,
