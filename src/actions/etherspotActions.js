@@ -18,7 +18,7 @@
     51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 */
 import isEmpty from 'lodash.isempty';
-import { type Account as EtherspotAccount } from 'etherspot';
+import { type Account as EtherspotAccount, NotificationTypes } from 'etherspot';
 import t from 'translations/translate';
 
 // constants
@@ -33,6 +33,7 @@ import {
 } from 'constants/paymentNetworkConstants';
 import { SET_ESTIMATING_TRANSACTION } from 'constants/transactionEstimateConstants';
 import { REMOTE_CONFIG } from 'constants/remoteConfigConstants';
+import { TX_CONFIRMED_STATUS } from 'constants/historyConstants';
 
 // actions
 import { addAccountAction, setActiveAccountAction } from 'actions/accountsActions';
@@ -46,26 +47,26 @@ import {
   setTransactionsEstimateFeeAction,
 } from 'actions/transactionEstimateActions';
 import { checkUserENSNameAction } from 'actions/ensRegistryActions';
+import { setHistoryTransactionStatusByHashAction } from 'actions/historyActions';
 
 // services
 import etherspot from 'services/etherspot';
 import { firebaseRemoteConfig } from 'services/firebase';
 
+// components
+import Toast from 'components/Toast';
+
 // utils
 import { normalizeWalletAddress } from 'utils/wallet';
-import { formatUnits, reportErrorLog } from 'utils/common';
-import {
-  addressesEqual,
-  getAssetData,
-  getAssetsAsList,
-  mapAssetToAssetData,
-} from 'utils/assets';
+import { formatUnits, isCaseInsensitiveMatch, reportErrorLog } from 'utils/common';
+import { addressesEqual, getAssetData, getAssetsAsList, mapAssetToAssetData } from 'utils/assets';
 import { findFirstEtherspotAccount } from 'utils/accounts';
+import { parseEtherspotTransactionState } from 'utils/etherspot';
 
 // selectors
 import { accountAssetsSelector } from 'selectors/assets';
 import { accountHistorySelector } from 'selectors/history';
-import { activeAccountAddressSelector } from 'selectors';
+import { activeAccountAddressSelector, supportedAssetsSelector } from 'selectors';
 import { preferredGasTokenSelector, useGasTokenSelector } from 'selectors/smartWallet';
 
 // types
@@ -85,14 +86,61 @@ export const initEtherspotServiceAction = (privateKey: string) => {
   };
 };
 
-export const subscribeToEtherspotEventsAction = () => {
-  return async () => {
-    etherspot.subscribe();
+export const subscribeToEtherspotNotificationsAction = () => {
+  return (dispatch: Dispatch, getState: GetState) => {
+    etherspot.subscribe(async (notification) => {
+      let notificationMessage;
+
+      if (notification.type === NotificationTypes.GatewayBatchUpdated) {
+        const { hash } = notification.payload;
+        const submittedBatch = await etherspot.getSubmittedBatchByHash(hash);
+
+        // check if submitted hash exists within Etherspot. otherwise it's a failure
+        if (!submittedBatch) {
+          reportErrorLog('subscribeToEtherspotNotificationsAction failed: no matching batch', { notification });
+          return;
+        }
+
+        const accountHistory = accountHistorySelector(getState());
+        const existingTransaction = accountHistory.find(({
+          hash: existingHash,
+        }) => isCaseInsensitiveMatch(existingHash, hash));
+
+        // check if matching transaction exists in history, if not – nothing to update
+        if (!existingTransaction) return;
+
+        const accountAssets = accountAssetsSelector(getState());
+        const supportedAssets = supportedAssetsSelector(getState());
+        const assetData = getAssetData(getAssetsAsList(accountAssets), supportedAssets, existingTransaction.asset);
+
+        const etherspotBatchStatus = parseEtherspotTransactionState(submittedBatch.state);
+
+        // checks for confirmed transaction notification
+        if (existingTransaction.status !== etherspotBatchStatus
+          && !isEmpty(assetData)
+          && etherspotBatchStatus === TX_CONFIRMED_STATUS) {
+          dispatch(setHistoryTransactionStatusByHashAction(hash, TX_CONFIRMED_STATUS));
+          const { symbol, decimals } = assetData;
+          const { value } = existingTransaction;
+          const paymentInfo = `${formatUnits(value, decimals)} ${symbol}`;
+          notificationMessage = t('toast.transactionSent', { paymentInfo });
+        }
+      }
+
+      // check if any notification needs to be shown
+      if (!notificationMessage) return;
+
+      Toast.show({
+        message: notificationMessage,
+        emoji: 'ok_hand',
+        autoClose: false,
+      });
+    });
   };
 };
 
-export const unsubscribeToEtherspotEventsAction = () => {
-  return async () => {
+export const unsubscribeToEtherspotNotificationsAction = () => {
+  return () => {
     etherspot.unsubscribe();
   };
 };

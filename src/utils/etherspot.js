@@ -19,10 +19,12 @@
 */
 
 import BigNumber from 'bignumber.js';
-import type { GatewayEstimatedBatch } from 'etherspot';
+import { type GatewayEstimatedBatch, GatewayBatchStates } from 'etherspot';
 
 // constants
 import { COLLECTIBLES, ETH } from 'constants/assetsConstants';
+import { TX_CONFIRMED_STATUS, TX_FAILED_STATUS, TX_PENDING_STATUS } from 'constants/historyConstants';
+
 
 // utils
 import { parseTokenAmount } from 'utils/common';
@@ -36,7 +38,6 @@ import ERC20_CONTRACT_ABI from 'abi/erc20.json';
 // types
 import type { TransactionFeeInfo, TransactionPayload } from 'models/Transaction';
 import type { EtherspotTransaction } from 'models/Etherspot';
-
 
 export const buildTxFeeInfo = (estimated: ?GatewayEstimatedBatch, useGasToken: boolean = false): TransactionFeeInfo => {
   if (!estimated) return { fee: null };
@@ -113,4 +114,15 @@ export const mapToEtherspotTransactionsBatch = async (
   });
 
   return etherspotTransactions;
+};
+
+export const parseEtherspotTransactionState = (state: GatewayBatchStates): ?string => {
+  switch (state) {
+    case GatewayBatchStates.Sent: return TX_CONFIRMED_STATUS;
+    case GatewayBatchStates.Sending: return TX_PENDING_STATUS;
+    case GatewayBatchStates.Resending: return TX_PENDING_STATUS;
+    case GatewayBatchStates.Queued: return TX_PENDING_STATUS;
+    case GatewayBatchStates.Reverted: return TX_FAILED_STATUS;
+    default: return null;
+  }
 };

@@ -29,8 +29,15 @@ import {
   ENSNode,
   EnvNames,
   GatewayKnownOps,
+  GatewaySubmittedBatch,
 } from 'etherspot';
 import { BigNumber } from 'bignumber.js';
+import { map } from 'rxjs/operators';
+import type {
+  P2PPaymentChannel,
+  Notification as EtherspotNotification,
+  IncreaseP2PPaymentChannelAmountDto,
+} from 'etherspot';
 
 // utils
 import {
@@ -52,12 +59,11 @@ import { getEnv } from 'configs/envConfig';
 import type { EtherspotTransaction, EtherspotTransactionEstimate } from 'models/Etherspot';
 import type { Asset, Balance } from 'models/Asset';
 import type { TransactionPayload } from 'models/Transaction';
-import type { P2PPaymentChannel } from 'etherspot';
-import type { IncreaseP2PPaymentChannelAmountDto } from 'etherspot/dist/sdk/dto';
 
 
 class EtherspotService {
   sdk: EtherspotSdk;
+  subscription: any;
 
   async init(privateKey: string) {
     const networkName = getEnv().NETWORK_PROVIDER === 'homestead'
@@ -75,12 +81,15 @@ class EtherspotService {
     });
   }
 
-  subscribe() {
-    // return this.sdk.api.subscribe()
+  subscribe(callback: (notification: EtherspotNotification) => Promise<void>) {
+    this.subscription = this.sdk.notifications$
+      .pipe(map(callback))
+      .subscribe();
   }
 
   unsubscribe() {
-    // return this.sdk.api.subscribe()
+    if (!this.subscription) return;
+    this.subscription.unsubscribe();
   }
 
   getAccounts(): Promise<?EtherspotAccount[]> {
@@ -278,9 +287,16 @@ class EtherspotService {
     return paymentChannels;
   }
 
-  async getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
+  getENSNode(nameOrHashOrAddress: string): Promise<?ENSNode> {
     return this.sdk.getENSNode({ nameOrHashOrAddress }).catch((error) => {
       reportErrorLog('getENSNode failed', { nameOrHashOrAddress, error });
+      return null;
+    });
+  }
+
+  getSubmittedBatchByHash(hash: string): Promise<?GatewaySubmittedBatch> {
+    return this.sdk.getGatewaySubmittedBatch({ hash }).catch((error) => {
+      reportErrorLog('getSubmittedBatchByHash failed', { hash, error });
       return null;
     });
   }

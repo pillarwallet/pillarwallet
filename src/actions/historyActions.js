@@ -30,6 +30,7 @@ import {
 // utils
 import {
   updateAccountHistory,
+  updateHistoryRecord,
 } from 'utils/history';
 import {
   getAccountId,
@@ -172,6 +173,26 @@ export const fetchGasInfoAction = () => {
 //     payload: hash,
 //   };
 // };
+
+export const setHistoryTransactionStatusByHashAction = (transactionHash: string, status: string) => {
+  return async (dispatch: Dispatch, getState: GetState) => {
+    const transactionsHistory = historySelector(getState());
+
+    const { txUpdated, updatedHistory } = updateHistoryRecord(
+      transactionsHistory,
+      transactionHash,
+      (transaction) => ({ ...transaction, status }),
+    );
+
+    // check if updated
+    if (!txUpdated) return;
+
+    dispatch(saveDbAction('history', { history: updatedHistory }, true));
+    dispatch({ type: SET_HISTORY, payload: updatedHistory });
+  };
+};
+
+
 // export const updateTransactionStatusAction = (hash: string) => {
 //   return async (dispatch: Dispatch, getState: GetState) => {
 //     const { session: { data: { isOnline } } } = getState();
